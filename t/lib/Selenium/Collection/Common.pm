@@ -23,8 +23,8 @@ sub login_ok {
     diag("Do Admin Login");
     ok($self->driver->find_text("Admin Sign In"), "Text Admin Sign In found");
     is($self->driver->get_title, '', 'No Tab Title was set');
-    $self->driver->find_element('#username', 'css')->send_keys($login);
-    $self->driver->find_element('#password', 'css')->send_keys($pwd);
+    $self->driver->fill_element('#username', 'css', $login);
+    $self->driver->fill_element('#password', 'css', $pwd);
     $self->driver->find_element('#submit', 'css')->click();
 
     diag("Checking Admin interface");
@@ -48,9 +48,9 @@ sub create_domain {
     $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $reseller);
     ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $reseller), "Reseller and creation site are avalible");
     $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
-    $self->driver->find_element('//*[@id="domain"]')->send_keys($name);
+    $self->driver->fill_element('//*[@id="domain"]', 'xpath', $name);
     $self->driver->find_element('//*[@id="save"]')->click();
-    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Domain successfully created")]'), "Label 'Domain successfully created' was shown");
+    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully created",  "Correct Alert was shown");
 }
 
 sub delete_domain {
@@ -66,12 +66,12 @@ sub delete_domain {
     ok($self->driver->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $name), "Domain found");
-    $self->driver->move_and_click('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]', 'xpath', '//*[@id="Domain_table"]');
+    $self->driver->move_and_click('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this domain');
     } else {
         popup_confirm_ok($self, 'We are going to delete this domain');
-        ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Domain successfully deleted!")]'), "Label 'Domain successfully deleted!' was shown");
+        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully deleted!",  "Correct Alert was shown");
     };
 }
 
@@ -92,7 +92,7 @@ sub create_reseller {
     $self->driver->select_if_unselected('//*[@id="contractidtable"]/tbody/tr/td[5]/input');
     $self->driver->fill_element('//*[@id="name"]', 'xpath', $name);
     $self->driver->find_element('//*[@id="save"]')->click();
-    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Reseller successfully created.")]'), "Label 'Reseller successfully created.' was shown");
+    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created.",  "Correct Alert was shown");
 }
 
 sub create_reseller_contract {
@@ -135,12 +135,12 @@ sub delete_reseller {
     ok($self->driver->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $name);
     ok($self->driver->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $name), 'Entry found');
-    $self->driver->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="Resellers_table"]');
+    $self->driver->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="Resellers_table_filter"]/label/input');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller');
     } else {
         popup_confirm_ok($self, 'We are going to delete this reseller');
-        ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Successfully terminated reseller")]'), "Label 'Successfully terminated reseller' was shown");
+        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully terminated reseller",  "Correct Alert was shown");
     };
 }
 
@@ -157,12 +157,12 @@ sub delete_reseller_contract {
     ok($self->driver->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $resellerid);
     ok($self->driver->wait_for_text('//*[@id="contract_table"]/tbody/tr/td[2]', $resellerid), 'Entry found');
-    $self->driver->move_and_click('//*[@id="contract_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="contract_table"]');
+    $self->driver->move_and_click('//*[@id="contract_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="contract_table_filter"]/label/input');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller contract');
     } else {
         popup_confirm_ok($self, 'We are going to delete this reseller contract');
-        ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Contract successfully terminated")]'), "Label 'Contract successfully terminated' was shown");
+        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully terminated",  "Correct Alert was shown");
     };
 }
 
@@ -184,7 +184,7 @@ sub create_rw_ruleset {
     $self->driver->fill_element('//*[@id="name"]', 'xpath', $rulesetname);
     $self->driver->fill_element('//*[@id="description"]', 'xpath', 'For testing purposes');
     $self->driver->find_element('//*[@id="save"]')->click();
-    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Rewrite rule set successfully created")]'), "Label 'Rewrite rule set successfully created' was shown");
+    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully created",  "Correct Alert was shown");
 }
 
 sub delete_rw_ruleset {
@@ -200,12 +200,12 @@ sub delete_rw_ruleset {
     ok($self->driver->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
     ok($self->driver->wait_for_text('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]/td[3]', $rulesetname), 'Ruleset was found');
-    $self->driver->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="rewrite_rule_set_table"]');
+    $self->driver->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to delete this ruleset');
     } else {
         popup_confirm_ok($self, 'We are going to delete this ruleset');
-        ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Rewrite rule set successfully deleted")]'), "Label 'Rewrite rule set successfully deleted' was shown");
+        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully deleted",  "Correct Alert was shown");
     };
 }
 
@@ -234,7 +234,7 @@ sub create_customer {
         $self->driver->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
     }
     $self->driver->find_element('#save', 'css')->click();
-    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "successfully created")]'), "Label 'Customer successfully created' was shown");
+    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "successfully created")]'), "Correct Alert was shown");
 }
 
 sub delete_customer {
@@ -250,12 +250,12 @@ sub delete_customer {
     ok($self->driver->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('#Customer_table_filter input', 'css', $customerid);
     ok($self->driver->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
-    $self->driver->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="Customer_table"]');
+    $self->driver->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to terminate this customer');
     } else {
         popup_confirm_ok($self, 'We are going to terminate this customer');
-        ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Customer successfully terminated")]'), "Label 'Customer successfully terminated' was shown");
+        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Customer successfully terminated",  "Correct Alert was shown");
     };
 }
 
@@ -279,7 +279,7 @@ sub create_contact {
     $self->driver->fill_element('//*[@id="email"]', 'xpath', $contactmail);
     $self->driver->fill_element('//*[@id="company"]', 'xpath', 'SIPWISE');
     $self->driver->find_element('//*[@id="save"]')->click();
-    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Contact successfully created")]'), "Label 'Contact successfully created' was shown");
+    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully created",  "Correct Alert was shown");
 }
 
 sub delete_contact {
@@ -295,12 +295,12 @@ sub delete_contact {
     ok($self->driver->find_element_by_css('#contact_table tr > td.dataTables_empty'), "Garbage text was not found");
     $self->driver->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
     ok($self->driver->wait_for_text('//*[@id="contact_table"]/tbody/tr[1]/td[6]', $contactmail), 'Found contact');
-    $self->driver->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+    $self->driver->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]/label/input');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to terminate this contact');
     } else {
         popup_confirm_ok($self, 'We are going to terminate this contact');
-        ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Contact successfully terminated")]'), "Label 'Contact successfully terminated' was shown");
+        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully terminated",  "Correct Alert was shown");
     };
 }
 
@@ -323,7 +323,7 @@ sub create_billing_profile {
     $self->driver->fill_element('[name=handle]', 'css', $billingname);
     $self->driver->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
     $self->driver->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
-    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Billing profile successfully created")]'), "Label 'Billing profile successfully created' was shown");
+    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Billing profile successfully created",  "Correct Alert was shown");
 }
 
 sub delete_billing_profile {
@@ -337,12 +337,12 @@ sub delete_billing_profile {
     ok($self->driver->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
     ok($self->driver->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
-    $self->driver->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+    $self->driver->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="billing_profile_table_filter"]/label/input');
     if($cancel){
         popup_confirm_cancel($self, 'We are NOT going to terminate this billing profile');
     } else {
         popup_confirm_ok($self, 'We are going to terminate this billing profile');
-        ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Billing profile successfully terminated")]'), "Label 'Billing profile successfully terminated' was shown");
+            is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Billing profile successfully terminated",  "Correct Alert was shown");
     };
 }
 
