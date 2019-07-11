@@ -1,3 +1,13 @@
+ngcp-panel (7.4.1.5+0~mr7.4.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [58068a4] TT#59866 fix js Date month starting with 0 in rrule/toText
+  * [6536f36] TT#61813 fix timeset.create after nested reseller creation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 11 Jul 2019 10:19:59 +0200
+
 ngcp-panel (7.4.1.4+0~mr7.4.1.4) unstable; urgency=medium
 
   [ Nico Schedel ]
