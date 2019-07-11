@@ -368,14 +368,9 @@ sub crash_handler {
     my $url = $self->driver->get_current_url();
     my $title = $self->driver->get_title();
     my $realtime = localtime();
-    my $label = "Could not find a label";
-    eval {
-        $label = $self->driver->find_element('//*[@id="content"]//div[@class="alert alert-error"]')->get_text();
-    };
     diag("Server: $ENV{CATALYST_SERVER}");
     diag("Url: $url");
     diag("Tab Title: $title");
-    diag("Label: $label");
     diag("Perl localtime(): $realtime");
     if($jenkins) {
         $self->driver->capture_screenshot($filename);
