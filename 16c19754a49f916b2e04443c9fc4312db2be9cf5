@@ -16,6 +16,24 @@
       "revId": "16c19754a49f916b2e04443c9fc4312db2be9cf5",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa1b9901_6f04e014",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-07-11T10:15:56Z",
+      "side": 1,
+      "message": "This was my first thought as well. But since this is inside an if which checks that user is admin or reseller, it\u0027s nedeed to specifically check if the flag is defined which is the case for admins only. Do you think i should move it outside and be something like if ( $c-\u003euser-\u003eroles eq \"admin\" \u0026\u0026 !$c-\u003euser-\u003eshow_passwords )?",
+      "parentUuid": "fa1b9901_7d033d10",
+      "revId": "16c19754a49f916b2e04443c9fc4312db2be9cf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
