@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_7d033d10",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-07-11T10:02:58Z",
+      "side": 1,
+      "message": "unless ($c-\u003euser-\u003eshow_passwords) {\n..\n\nso it will not add them if show_passwords is undef, empty string or 0",
+      "revId": "16c19754a49f916b2e04443c9fc4312db2be9cf5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
