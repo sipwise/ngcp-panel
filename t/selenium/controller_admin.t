@@ -128,10 +128,6 @@ $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Admin is still here");
 
 diag('Try to delete Administrator');
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Admin found");
 $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
