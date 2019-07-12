@@ -56,9 +56,9 @@ diag("Continuing creating a legit customer");
 $d->find_element('//*[@id="mod_close"]')->click();
 
 if($pbx == 1){
-    $c->create_customer($customerid, $contactmail, $billingname, 1);
+    $c->create_customer($customerid, $contactmail, $billingname, 'pbx locked');
 } else {
-    $c->create_customer($customerid, $contactmail, $billingname);
+    $c->create_customer($customerid, $contactmail, $billingname, 'locked');
 }
 
 diag("Search for Customer");
@@ -71,16 +71,26 @@ ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail), 'Contact Email is correct');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "locked")]'), 'Status is correct');
 $custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
 $compstring = "Customer #" . $custnum . " successfully created - Details";
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
 
-diag("Edit Customer");
+diag("Check if Customer is locked");
+$d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Customer is locked',  "Correct Alert was shown");
+
+diag("Go back and edit Customer");
+$d->find_element('Back', 'link_text')->click();
+$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
-diag("Set status to 'locked'");
+diag("Set status to 'active'");
 $d->scroll_to_element($d->find_element('//*[@id="status"]'));
-$d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
+$d->find_element('//*[@id="status"]/option[contains(text(), "active")]')->click();
 $d->find_element('#save', 'css')->click();
 
 diag("Search for Customer");
@@ -88,9 +98,12 @@ $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 
-diag("Check if status has changed for customer");
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "locked")]'), 'Status has changed');
-$compstring = "Customer #" . $custnum . " successfully updated";
+diag("Check customer details");
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail), 'Contact Email is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "active")]'), 'Status is correct');$compstring = "Customer #" . $custnum . " successfully updated";
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
 
 diag("Open Details for our just created Customer");

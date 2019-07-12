@@ -210,7 +210,7 @@ sub delete_rw_ruleset {
 }
 
 sub create_customer {
-    my($self, $customerid, $contactmail, $billingname, $pbx) = @_;
+    my($self, $customerid, $contactmail, $billingname, $special) = @_;
     return unless $customerid && $contactmail && $billingname;
 
     diag("Go to Customers page");
@@ -227,9 +227,14 @@ sub create_customer {
     $self->driver->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
     $self->driver->fill_element('#billing_profileidtable_filter input', 'css', $billingname);
     $self->driver->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
+    if(index($special, 'locked') != -1) {
+        diag('Creating a locked customer');
+        $self->driver->scroll_to_element($self->driver->find_element('//*[@id="status"]'));
+        $self->driver->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
+    }
     $self->driver->scroll_to_id('external_id');
     $self->driver->fill_element('#external_id', 'css', $customerid);
-    if($pbx) {
+    if(index($special, 'pbx') != -1) {
         diag("Creating customer for PBX testing");
         $self->driver->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
     }
