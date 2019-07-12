@@ -17,6 +17,8 @@ my $billingname = ("billing" . int(rand(100000)) . "test");
 my $resellername = ("reseller" . int(rand(100000)) . "test");
 my $contractid = ("contract" . int(rand(100000)) . "test");
 my $billingnetwork = ("billing" . int(rand(100000)) . "network");
+my $zonename = ("billing" . int(rand(100000)) . "zone");
+my $zonedetailname = ("zone" . int(rand(100000)) . "detail");
 my $run_ok = 0;
 
 $c->login_ok();
@@ -60,82 +62,120 @@ $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $bil
 ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
 $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
-diag("Create a billing fee");
+diag('Go To Billing Zones');
+$d->find_element('Edit Zones', 'link_text')->click();
+
+diag('Create a Billing Zone');
+$d->find_element('Create', 'link_text')->click();
+
+diag('Press "Save" without entering anything');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if Errors show up');
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Zone field is required")]'));
+
+diag('Fill in Values');
+$d->fill_element('//*[@id="zone"]', 'xpath', $zonename);
+$d->fill_element('//*[@id="detail"]', 'xpath', $zonedetailname);
+$d->find_element('//*[@id="save"]')->click();
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Zone successfully created',  "Correct Alert was shown");
+
+diag('Check Billing Zone details');
+$d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', $zonename);
+ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[2]', $zonename), 'Billing Zone name is correct');
+ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[3]', $zonedetailname), 'Billing Zone detail is correct');
+
+diag('Go back to Billing Fees Page');
+$d->find_element('Back', 'link_text')->click();
+
+diag('Create a Billing Fee');
 $d->find_element('Create Fee Entry', 'link_text')->click();
 
-diag("Press 'Save'");
-$d->find_element('#save', 'css')->click();
+diag('Press "Save" without entering anything');
+$d->unselect_if_selected('//*[@id="billing_zoneidtable"]//tr[1]/td[4]/input');
+$d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Errors show up');
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Zone field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Destination field is required")]'));
 
-diag("Create a billing zone (redirect from previous form)");
-$d->find_element('//div[contains(@class,"modal")]//input[@value="Create Zone"]')->click();
-
-diag("Press 'Save'");
-$d->find_element('#save', 'css')->click();
-
-diag('Check if Errors show up');
-ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Zone field is required")]'));
-
-diag('Fill Zone info');
-$d->fill_element('#zone', 'css', 'testingzone');
-$d->fill_element('#detail', 'css', 'testingdetail');
-$d->find_element('#save', 'css')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Zone successfully created',  "Correct Alert was shown");
-
-diag("Back to orignial form (create billing fees)");
-$d->select_if_unselected('//div[contains(@class,"modal")]//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//input[@type="checkbox"]');
+diag('Fill in Values');
+$d->select_if_unselected('//*[@id="billing_zoneidtable"]//tr[1]/td[4]/input');
 $d->fill_element('#source', 'css', '.*');
 $d->fill_element('#destination', 'css', '.+');
-$d->find_element('//*[@id="direction"]/option[@value="in"]')->click();
-$d->find_element('#save', 'css')->click();
+$d->find_element('//*[@id="save"]')->click();
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Fee successfully created!',  "Correct Alert was shown");
 
-diag("Check if billing fee values are correct");
-$d->fill_element('//*[@id="billing_fee_table_filter"]//input', 'xpath', 'thisshouldnotexist');
+diag('Check Billing Fee Details');
+$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Garbage text was not found');
-$d->fill_element('//*[@id="billing_fee_table_filter"]//input', 'xpath', '.+');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'in'), 'Direction pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', 'testingdetail'), 'Billing zone is correct');
+$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', $zonedetailname);
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source Pattern is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination Pattern is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular expression - longest pattern'), 'Match Mode is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'out'), 'Direction is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Zone Detail is correct');
 
-diag("Delete billing fee");
-$d->move_and_click('//*[@id="billing_fee_table"]/tbody/tr[1]/td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_fee_table_filter"]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
-$d->find_element('#dataConfirmOK', 'css')->click();
+diag('Edit Billing Fee');
+$d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_fee_table_filter"]/label/input');
+$d->find_element('//*[@id="direction"]/option[@value="in"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing fee successfully changed!',  "Correct Alert was shown");
 
-diag("Check if billing fee was deleted");
+diag('Check Billing Fee Details');
+$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', $zonedetailname);
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source Pattern is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination Pattern is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular expression - longest pattern'), 'Match Mode is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'in'), 'Direction is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Zone Detail is correct');
+
+diag('Trying to NOT delete Billing Fee');
+$d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_fee_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmCancel"]')->click();
+
+diag('Check if Billing Fee is still here');
+$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', $zonedetailname);
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Billing Fee Entry is still here');
+
+diag('Trying to delete Billing Fee');
+$d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_fee_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing fee successfully deleted!',  "Correct Alert was shown");
-$d->fill_element('//*[@id="billing_fee_table_filter"]//input', 'xpath', '.+');
-ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Billing fee was deleted');
 
-diag("Click Edit Zones");
-$d->find_element("Edit Zones", 'link_text')->click();
-ok($d->find_element('//*[@id="masthead"]//h2[contains(text(),"Billing Zones")]'));
+diag('Check if Billing Fee was deleted');
+$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', $zonedetailname);
+ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Billing Fee was deleted');
 
-diag("Check if billing zone values are correct");
-ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[2]', 'testingzone'), 'Billing zone name is correct');
-ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[3]', 'testingdetail'), 'Billing zone detail is correct');
+diag('Go To Billing Zones');
+$d->find_element('Edit Zones', 'link_text')->click();
 
-diag("Delete testingzone");
-$d->fill_element('//*[@id="billing_zone_table_filter"]//input', 'xpath', 'thisshouldnotexist');
+diag('Trying to NOT delete Billing zone');
+$d->move_and_click('//*[@id="billing_zone_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_zone_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmCancel"]')->click();
+
+diag('Check if Billing Zone is still here');
+$d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Garbage text was not found');
-$d->fill_element('//*[@id="billing_zone_table_filter"]//input', 'xpath', 'testingdetail');
-$d->move_and_click('//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(text(),"Delete")]', 'xpath', '//*[@id="billing_zone_table_filter"]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
-$d->find_element('#dataConfirmOK', 'css')->click();
+$d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', $zonename);
+ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[2]', $zonename), 'Billing Zone is still here');
 
-diag("Check if Billing zone was deleted");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing zone successfully deleted',  "Correct Alert was shown");
-$d->fill_element('//*[@id="billing_zone_table_filter"]//input', 'xpath', 'testingdetail');
-ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Billing zone was deleted');
+diag('Trying to delete Billing zone');
+$d->move_and_click('//*[@id="billing_zone_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_zone_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
 
-diag("Go to Billing page (again)");
+diag('Check if Billing Zone was deleted');
+$d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', $zonename);
+ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Billing Zone was deleted');
+
+diag("Go back to Billing Profile page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-ok($d->find_element('//a[contains(@href,"/domain")]'));
 $d->find_element("Billing", 'link_text')->click();
 
 diag('Open "Edit Peak Times" for Test Profile');
