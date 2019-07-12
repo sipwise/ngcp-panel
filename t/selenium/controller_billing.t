@@ -26,8 +26,6 @@ $c->create_billing_profile($billingname, $resellername);
 
 diag('Trying to create a empty billing profile');
 $d->find_element('Create Billing Profile', 'link_text')->click();
-
-diag("Click 'Save'");
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Errors show up');
@@ -36,28 +34,33 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Handle field i
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
 $d->find_element('//*[@id="mod_close"]')->click();
 
-diag('Search for Test Profile in billing profile');
+diag('Search for Billing profile');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
 
 diag('Check if values are correct');
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', $resellername), 'Correct reseller was found');
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing name is correct');
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', $resellername), 'Reseller name is correct');
 
-diag("Open edit dialog for Test Profile");
+diag("Edit Billing Profile");
 $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
-
-diag("Edit Test Profile");
+$billingname = ("billing" . int(rand(100000)) . "test");
+$d->fill_element('#name', 'css', $billingname);
+$d->select_if_unselected('//*[@id="prepaid"]');
 $d->fill_element('#interval_charge', 'css', '3.2');
 $d->find_element('#save', 'css')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing profile successfully updated',  "Correct Alert was shown");
 
-diag('Open "Fees" for Test Profile');
+diag("Check if values are correct");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing profile successfully updated',  "Correct Alert was shown");
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing profile was found');
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing name is correct');
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', $resellername), 'Reseller name is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]/tbody/tr[1]/td[4]/input[@checked="checked"]'), "Prepaid setting is correct");
+
+diag('Open "Fees"');
 $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
 diag("Create a billing fee");
