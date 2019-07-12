@@ -102,7 +102,7 @@ sub _auth {
             # migrate password to bcrypt
             $admin->update({
                 md5pass => undef,
-                saltedpass => NGCP::Panel::Utils::Admin::get_salted_hash($auth->{password}),
+                saltedpass => NGCP::Panel::Utils::Admin::generate_salted_hash($auth->{password}),
             });
         }
 
