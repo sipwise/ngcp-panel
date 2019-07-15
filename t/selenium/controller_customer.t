@@ -137,6 +137,17 @@ diag("Edit Fraud Limits");
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]'));
 $d->move_and_click('//*[@id="collapse_fraud"]//table//tr//td[text()[contains(.,"Monthly Settings")]]/../td//a[text()[contains(.,"Edit")]]', 'xpath', '//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]');
+
+diag("Fill in invalid info");
+$d->fill_element('#fraud_interval_limit', 'css', "invalid");
+$d->fill_element('#fraud_interval_notify', 'css', 'stuff');
+$d->find_element('#save', 'css')->click();
+
+diag("Check Error Messages");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Value must be an integer")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "stuff is no valid email address")]'));
+
+diag("Fill in valid info");
 $d->fill_element('#fraud_interval_limit', 'css', "100");
 $d->fill_element('#fraud_interval_notify', 'css', 'mymail@example.org');
 $d->find_element('#save', 'css')->click();
