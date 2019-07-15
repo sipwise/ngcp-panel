@@ -332,7 +332,8 @@ diag('Check Details');
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing network successfully updated',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[2]', $resellername), "Reseller is correct");
 ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[3]', $billingnetwork), "Billing network name is correct");
-#ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[text()[contains(., "127.0.0.1/8, 10.0.0.138/16")]]'), "Network Block is correct");
+ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "127.0.0.1/8")]'), "Network Block (IP 1) is correct");
+ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "10.0.0.138/16")]'), "Network Block (IP 2) is correct");
 
 diag('Try to NOT delete Billing Network');
 $d->move_and_click('//*[@id="networks_table"]//tr[1]//td//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="networks_table_filter"]/label/input');
