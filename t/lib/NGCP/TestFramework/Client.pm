@@ -5,6 +5,7 @@ use warnings;
 use Data::Dumper;
 use Digest::MD5 qw/md5_hex/;
 use IO::Uncompress::Unzip;
+use Log::Log4perl qw(:easy);
 use LWP::UserAgent;
 use Moose;
 use Time::HiRes qw/gettimeofday tv_interval/;
@@ -54,12 +55,6 @@ has 'verify_ssl' => (
     default => 0,
 );
 
-has 'log_debug' => (
-    isa => 'Bool',
-    is => 'rw',
-    default => 0,
-);
-
 has '_crt_path' => (
     is => 'ro',
     isa => 'Str',
@@ -94,16 +89,16 @@ sub _build_ua {
         $uri = $self->sub_uri;
     }
     $self->_uri($uri);
-    $self->debug("client using uri $uri\n");
+    DEBUG("client using uri $uri\n");
     $uri =~ s/^https?:\/\///;
-    $self->debug("client using ip:port $uri\n");
+    DEBUG("client using ip:port $uri\n");
     my $realm;
     if($self->role eq 'admin' || $self->role eq 'reseller') {
         $realm = 'api_admin_http';
     } elsif($self->role eq 'subscriber') {
         $realm = 'api_subscriber_http';
     }
-    $self->debug("client using realm $realm with user=" . $self->username . " and pass " . $self->password . "\n");
+    DEBUG("client using realm $realm with user=" . $self->username . " and pass " . $self->password . "\n");
     $ua->credentials($uri, $realm, $self->username, $self->password);
     unless($self->verify_ssl) {
         $ua->ssl_opts(
@@ -168,23 +163,10 @@ sub _build_ua {
 sub perform_request {
     my ($self, $req) = @_;
     my $t0 = [gettimeofday];
-    $self->debug("content of " . $req->method . " request to " . $req->uri . ":\n");
-    $self->debug($req->content || "<empty request>");
-    $self->debug("\n");
     my $res = $self->_ua->request($req);
     my $rtt = tv_interval($t0);
     $self->last_rtt($rtt);
-    $self->debug("content of response:\n");
-    $self->debug($res->decoded_content || "<empty response>");
-    $self->debug("\n");
     return $res;
-}
-
-sub debug {
-    my ($self, $msg) = @_;
-    if($self->log_debug) {
-        print $msg;
-    }
 }
 
 1;

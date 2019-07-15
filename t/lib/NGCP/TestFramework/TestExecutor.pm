@@ -4,9 +4,13 @@ use strict;
 use warnings;
 use Cpanel::JSON::XS;
 use Data::Walk;
+use Log::Log4perl qw(:easy);
 use Moose;
 use Test::More;
 use Data::Dumper;
+
+Test::More->builder->output ('/var/log/test-framework/result.txt');
+Test::More->builder->failure_output ('/var/log/test-framework/errors.txt');
 
 sub run_tests {
     my ( $self, $conditions, $result, $retained, $test_name ) = @_;
@@ -23,18 +27,42 @@ sub run_tests {
                 if ( $check_param =~ /.+\..+/ ) {
                     my @splitted_values = split (/\./, $check_param);
                     $check_param = $self->_retrieve_from_composed_key( $result, \@splitted_values, $retained );
-                    is ($check_param, $check_value, $test_name);
+                    DEBUG ( "Checking is for $check_param and $check_value" );
+                    if ( is ($check_param, $check_value, $test_name) ) {
+                        INFO ( "Check ok." );
+                    }
+                    else {
+                        ERROR ( "NOT OK. Expected: $check_param. Got: $check_value" );
+                    }
                 }
                 elsif ( $check_param eq 'code' ) {
-                    is ($result->code, $check_value, $test_name);
+                    DEBUG ( "Checking is for ".$result->code." and $check_value" );
+                    if ( is ($result->code, $check_value, $test_name) ) {
+                        INFO ( "Check ok." );
+                    }
+                    else {
+                        ERROR ( "NOT OK. Expected: ".$result->code.". Got: $check_value" );
+                    }
                 }
                 elsif ( $check_param eq 'header' ) {
                     foreach my $header_condition ( keys %{$conditions->{$condition}->{$check_param}} ) {
-                        is ($result->header($header_condition), $check_value->{$header_condition}, $test_name);
+                        DEBUG ( "Checking is for ".$result->header($header_condition)."and ".$check_value );
+                        if ( is ($result->header($header_condition), $check_value->{$header_condition}, $test_name) ) {
+                            INFO ( "Check ok." );
+                        }
+                        else{
+                            ERROR ( "NOT OK. Expected: ".$result->header($header_condition).". Got: ".$check_value->{$header_condition} );
+                        }
                     }
                 }
                 else {
-                    is ($check_param, $check_value, $test_name);
+                    DEBUG ( "Checking is for $check_param and $check_value" );
+                    if ( is ($check_param, $check_value, $test_name) ) {
+                        INFO ( "Check ok." );
+                    }
+                    else {
+                        ERROR ( "NOT OK. Expected: ".$check_param.". Got: ".$check_value );
+                    }
                 }
             }
         }
@@ -43,18 +71,50 @@ sub run_tests {
                 if ( $check_param eq 'options' ) {
                     my $body = decode_json($result->decoded_content);
                     my @hopts = split /\s*,\s*/, $result->header('Allow');
-                    ok(exists $body->{methods} && ref $body->{methods} eq "ARRAY", $test_name);
+                    DEBUG ( "Checking ok for options" );
+                    if ( ok(exists $body->{methods} && ref $body->{methods} eq "ARRAY", $test_name) ) {
+                        INFO ( "Check ok." );
+                    }
+                    else {
+                        ERROR ( "NOT OK. Check failed for existence of methods in body and reference of \$body->{methods} is ARRAY");
+                    }
                     foreach my $opt(@{$conditions->{$condition}->{$check_param}}) {
-                        ok(grep { /^$opt$/ } @hopts, $test_name);
-                        ok(grep { /^$opt$/ } @{ $body->{methods} }, $test_name);
+                        if ( ok(grep { /^$opt$/ } @hopts, $test_name) ) {
+                            INFO ( "Check ok." );
+                        }
+                        else {
+                            ERROR ( "NOT OK. Check failed for existence of ".$opt." in header methods" );
+                        }
+                        if ( ok(grep { /^$opt$/ } @{ $body->{methods} }, $test_name) ) {
+                            INFO ( "Check ok." );
+                        }
+                        else {
+                            ERROR ( "NOT OK. Check failed for existence of ".$opt." in body methods" );
+                        }
                     }
                 }
                 if ( $conditions->{$condition}->{$check_param} eq 'defined' || $conditions->{$condition}->{$check_param} eq 'undefined') {
                     if ( $check_param =~ /.+\..+/ ) {
                         my @splitted_values = split (/\./, $check_param);
                         my $check_value = $self->_retrieve_from_composed_key( $result, \@splitted_values, $retained );
-                        $conditions->{$condition}->{$check_param} eq 'defined' ?
-                            ok(defined $check_value, $test_name) : ok(!defined $check_value, $test_name);
+                        if ( $conditions->{$condition}->{$check_param} eq 'defined' ) {
+                            DEBUG ( "Checking ok for defined" );
+                            if ( ok(defined $check_value, $test_name) ) {
+                                INFO ( "Check ok." );
+                            }
+                            else {
+                                ERROR ( "NOT OK. Check failed for existence of ".$check_param );
+                            }
+                        }
+                        else {
+                            DEBUG ( "Checking ok for undefined" );
+                            if ( ok(!defined $check_value, $test_name) ) {
+                                INFO ( "Check ok." );
+                            }
+                            else {
+                                ERROR ( "NOT OK. Check failed for non-existence of ".$check_param );
+                            }
+                        }
                     }
                 }
             }
@@ -64,7 +124,13 @@ sub run_tests {
                 if ( $check_param =~ /.+\..+/ ) {
                     my @splitted_values = split (/\./, $check_param);
                     my $check_value = $self->_retrieve_from_composed_key( $result, \@splitted_values, $retained );
-                    like ($check_value, qr/$conditions->{$condition}->{$check_param}/, $test_name);
+                    DEBUG ( "Checking like for ".$check_value." against ".$conditions->{$condition}->{$check_param} );
+                    if ( like ($check_value, qr/$conditions->{$condition}->{$check_param}/, $test_name) ) {
+                        INFO ( "Check ok." );
+                    }
+                    else{
+                        ERROR ( "NOT OK. Expected: ".$check_value." to be like: ".$conditions->{$condition}->{$check_param} );
+                    }
                 }
             }
         }
@@ -92,7 +158,13 @@ sub run_tests {
                     my @splitted_values = split (/\./, $check_param);
                     $check_value = $self->_retrieve_from_composed_key( $result, \@splitted_values, $retained );
                 }
-                is_deeply ($check_value, $conditions->{$condition}->{$check_param}, $test_name);
+                DEBUG ( "Checking is_deeply for: ".(Dumper $check_value)." and ".(Dumper $conditions->{$condition}->{$check_param}) );
+                if ( is_deeply ($check_value, $conditions->{$condition}->{$check_param}, $test_name) ) {
+                    INFO ( "Check ok." );
+                }
+                else{
+                        ERROR ( "NOT OK. Expected:\n".$check_value."\n. Got:\n".$conditions->{$condition}->{$check_param} );
+                }
             }
         }
     }
