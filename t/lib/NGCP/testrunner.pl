@@ -66,6 +66,7 @@ sub worker {
     my ($tests_queue) = @_;
 
     while ( my $test_file = $tests_queue->dequeue_nb() ) {
+        chomp $test_file;
         my $start_time = time;
         print "Running tests from $test_file\n";
         my $test_framework = NGCP::TestFramework->new( {file_path => $test_file} );
@@ -74,7 +75,7 @@ sub worker {
 
         my $total_time = time - $start_time;
         print "Finished test execution for $test_file, test execution returned with exit code $result_code.\n";
-        print "Tests for $test_file took $total_time seconds.\n";
+        print "Tests for $test_file took $total_time seconds.\n\n";
     }
 }
 

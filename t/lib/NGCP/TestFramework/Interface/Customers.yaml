@@ -602,7 +602,7 @@
                                                           stop => $dtf->format_datetime($now),},];
             $retained->{malformed_profilemappings4} = [ { profile_id => $billing_profile_id,
                                                           start => $dtf->format_datetime($t1),
-                                                          stop => $dtf->format_datetime($t2),}, ] , [];
+                                                          stop => $dtf->format_datetime($t2),}, ];
             $retained->{correct_profile_mappings1} = [ { profile_id => $retained->{second_billing_profile_id},
                                                         start => undef,
                                                         stop => undef,

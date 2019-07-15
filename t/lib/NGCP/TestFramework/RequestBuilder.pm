@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use HTTP::Request;
 use Cpanel::JSON::XS;
+use Log::Log4perl qw(:easy);
 use Moose;
 use Data::Dumper;
 
