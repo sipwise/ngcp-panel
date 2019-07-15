@@ -66,15 +66,19 @@ sub worker {
     my ($tests_queue) = @_;
 
     while ( my $test_file = $tests_queue->dequeue_nb() ) {
+        chomp $test_file;
         my $start_time = time;
         print "Running tests from $test_file\n";
         my $test_framework = NGCP::TestFramework->new( {file_path => $test_file} );
 
-        my $result_code = $test_framework->run();
+        my $result = $test_framework->run();
 
         my $total_time = time - $start_time;
-        print "Finished test execution for $test_file, test execution returned with exit code $result_code.\n";
-        print "Tests for $test_file took $total_time seconds.\n";
+        print "Finished test execution for $test_file, test execution returned with exit code ".$result->{success}."\n";
+        if ( !$result->{success} ) {
+            print $result->{error_count}." errors were found!\n";
+        }
+        print "Tests for $test_file took $total_time seconds.\n\n";
     }
 }
 
