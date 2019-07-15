@@ -193,15 +193,28 @@ diag("Edit Wednesday");
 $d->move_and_click('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]', 'xpath', '//h3[contains(text(),"Weekdays")]');
 ok($d->find_text("Edit Wednesday"), 'Edit dialog was opened');
 
-diag("add/delete a time def to Wednesday");
+diag("Fill in invalid values");
+$d->fill_element('#start', 'css', "invalid");
+$d->fill_element('#end', 'css', "value");
+$d->find_element('#add', 'css')->click();
+
+diag("Check if errors show up");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "wrong format - must be HH:MM:SS or HH:MM")]'));
+
+diag("Add a time def to Wednesday");
 $d->fill_element('#start', 'css', "04:20:00");
 $d->fill_element('#end', 'css', "13:37:00");
+$d->find_element('#add', 'css')->click();
+
+diag("Add empty time def");
 $d->find_element('#add', 'css')->click();
 $d->find_element('#mod_close', 'css')->click();
 
 diag("check if time def has correct values");
 ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"04:20:00")]]'), "Time def 1 is correct");
 ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"13:37:00")]]'), "Time def 2 is correct");
+ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"00:00:00")]]'), "Time def 3 is correct");
+ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"23:59:59")]]'), "Time def 4 is correct");
 
 diag("Create a Date Definition");
 $d->find_element('Create Special Off-Peak Date', 'link_text')->click();
@@ -236,6 +249,21 @@ ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'c
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2008-02-28 04:20:00');
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2008-02-28 04:20:00'), 'Start Date definition is correct');
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2008-02-28 13:37:00'), 'End Date definition is correct');
+
+diag("Edit created date definition");
+$d->move_and_click('//*[@id="date_definition_table"]/tbody/tr/td[4]/div/a[1]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
+$d->fill_element('#start', 'css', "2018-01-01 00:00:00");
+$d->fill_element('#end', 'css', "2019-01-01 23:59:59");
+$d->find_element('#save', 'css')->click();
+
+diag("Check if created date definition is correct");
+$d->scroll_to_element($d->find_element('//div[contains(@class, "dataTables_filter")]//input'));
+$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2018-01-01 00:00:00');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully updated',  "Correct Alert was shown");
+ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2018-01-01 00:00:00'), 'Start Date definition is correct');
+ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2019-01-01 23:59:59'), 'End Date definition is correct');
 
 diag("Delete my created date definition");
 $d->move_and_click('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
