@@ -106,8 +106,7 @@ $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Hello, i
 
 diag("Check Details");
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Hello, im a special Event =)'), "Description is correct");
-#ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2019-01-01 12:00:00"]'), "Start Date/Time is correct");
-#ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2019-06-05 12:20:00"]'), "End Date/Time is correct");
+ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[3]', 'every week from 2019-01-01 12:00:00 to 2019-06-05 12:20:00'), "Date/Time is correct");
 
 diag("Edit Event");
 $d->move_and_click('//*[@id="event_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="event_table_filter"]//input');
@@ -126,8 +125,7 @@ $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Very imp
 
 diag("Check Details");
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Very important event'), "Description is correct");
-#ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2020-06-01 12:00:00"]'), "Start Date/Time is correct");
-#ok($d->find_element_by_xpath('//*[@id="event_table"]/tbody/tr[1]/td[contains(text(), "2020-07-01 13:00:00"]'), "End Date/Time is correct");
+ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[3]', 'every week from 2020-06-01 12:00:00 to 2020-07-01 13:00:00'), "Date/Time is correct");
 
 diag("Go back to Time set page");
 $d->find_element("Back", 'link_text')->click();
