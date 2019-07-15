@@ -8,6 +8,7 @@ use DateTime qw();
 use DateTime::Format::Strptime qw();
 use DateTime::Format::ISO8601 qw();
 use Digest::MD5 qw/md5_hex/;
+use Log::Log4perl qw(:easy);
 use Moose;
 use Net::Domain qw(hostfqdn);
 use Test::More;
@@ -27,6 +28,27 @@ has 'file_path' => (
 sub run {
     my ( $self ) = @_;
 
+    my $test_case_name = $self->file_path;
+    $test_case_name =~ s/.+\/(\w+).yaml/$1/;
+    chomp $test_case_name;
+    Log::Log4perl->easy_init( { level    => $DEBUG,
+                                file     => ">>/var/log/ngcp/test-framework/$test_case_name.log",
+                                category => "TestFramework::Client",
+                                layout   => '%d - %F{1} line %L - %M: %m%n' },
+                              { level    => $DEBUG,
+                                file     => ">>/var/log/ngcp/test-framework/$test_case_name.log",
+                                category => "TestFramework::RequestBuilder",
+                                layout   => '%d - %F{1} line %L - %M: %m%n' },
+                              { level    => $DEBUG,
+                                file     => ">>/var/log/ngcp/test-framework/$test_case_name.log",
+                                category => "TestFramework::TestExecutor",
+                                layout   => '%d - %F{1} line %L - %M: %m%n' },
+                              { level    => $DEBUG,
+                                file     => ">/var/log/ngcp/test-framework/$test_case_name.log",
+                                layout   => '%d - %F{1} line %L - %M: %m%n' }
+                            );
+
+    INFO( "Started running the Test TestFramework!" );
     unless ( $self->file_path ) {
         return;
     }
@@ -35,17 +57,25 @@ sub run {
     $YAML::XS::UseCode = 1;
     $YAML::XS::LoadBlessed = 1;
 
+    INFO( "Loading YAML file." );
     my $testing_data = LoadFile($self->file_path);
 
+    INFO( "Setting up the base URI." );
     my $base_uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
+    INFO( "Setting up the RequestBuilder." );
     my $request_builder = NGCP::TestFramework::RequestBuilder->new({ base_uri => $base_uri });
-    my $client = NGCP::TestFramework::Client->new( { uri => $base_uri, log_debug => 0 } );
+    INFO( "Setting up the Client." );
+    my $client = NGCP::TestFramework::Client->new( { uri => $base_uri } );
+    INFO( "Setting up the Test Executor." );
     my $test_executor = NGCP::TestFramework::TestExecutor->new();
 
     # initializing time to add to fields which need to be unique
     my $retained = { unique_id => int(rand(100000)) };
 
+    my $test_case_result = { success => 1, error_count => 0 };
+
     foreach my $test ( @$testing_data ) {
+        DEBUG( "In test '".$test->{name}."'" );
         next if ( $test->{skip} );
 
         # build request
@@ -56,45 +86,63 @@ sub run {
             content => $test->{content} || undef,
             retain  => $retained
         });
+        DEBUG ( "Request: ".Dumper $request );
 
         # handle separate types
         if ( $test->{type} eq 'item' ) {
+            INFO( "Performing request." );
             my $result = $client->perform_request($request);
+            DEBUG ( "Result: ".Dumper $result );
             if ( $test->{retain} ) {
+                INFO( "Storing retained variables." );
                 $self->_get_retained_elements( $test->{retain}, $retained, $result );
             }
-            if ( $test->{operations} ) {
-                $self->_perform_operations( $test->{operations}, $retained );
-            }
             if ( $test->{perl_code} ){
+                INFO( "Executing perl code." );
                 my $sub = $test->{perl_code};
-                warn Dumper $sub;
                 $sub->( $retained );
             }
-            $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} ) if ( $test->{conditions} );
+            if ( $test->{conditions} ) {
+                INFO( "Running tests." );
+                my $tests_result = $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} );
+                if ( !$tests_result->{success} ) {
+                    map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
+                    $test_case_result->{success} = 0;
+                    $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
+                }
+            }
         }
         elsif ( $test->{type} eq 'batch' ) {
             foreach my $iteration ( 1..$test->{iterations} ) {
+                INFO( "Performing request for iteration $iteration." );
                 my $result = $client->perform_request($request);
+                DEBUG ( "Result: ".Dumper $result );
                 if ( $test->{retain} ) {
+                    INFO( "Storing retained variables." );
                     $self->_get_retained_elements( $test->{retain}, $retained, $result );
                 }
-                if ( $test->{operations} ) {
-                    $self->_perform_operations( $test->{operations}, $retained );
+                if ( $test->{conditions} ) {
+                    INFO( "Running tests." );
+                    my $tests_result = $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} );
+                    if ( !$tests_result->{success} ) {
+                        map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
+                        $test_case_result->{success} = 0;
+                        $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
+                    }
                 }
-                $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} ) if ( $test->{conditions} );
+                $retained->{unique_id}=int(rand(100000));
             }
         }
         elsif ( $test->{type} eq 'pagination' ) {
             my $nexturi = $test->{path};
             do {
+                INFO( "Performing request for pagination." );
                 $request->uri( $base_uri.$nexturi );
                 my $result = $client->perform_request($request);
+                DEBUG ( "Result: ".Dumper $result );
                 if ( $test->{retain} ) {
+                    INFO( "Storing retained variables." );
                     $self->_get_retained_elements( $test->{retain}, $retained, $result );
-                }
-                if ( $test->{operations} ) {
-                    $self->_perform_operations( $test->{operations}, $retained );
                 }
                 my $body = decode_json( $result->decoded_content() );
 
@@ -118,7 +166,15 @@ sub run {
                     $test->{conditions}->{ok}->{'${collection}._links.next.href'} = 'defined';
                 }
 
-                $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} ) if ( $test->{conditions} );
+                if ( $test->{conditions} ) {
+                    INFO( "Running tests." );
+                    my $tests_result = $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} );
+                    if ( !$tests_result->{success} ) {
+                        map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
+                        $test_case_result->{success} = 0;
+                        $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
+                    }
+                }
 
                 if( $body->{_links}->{next}->{href} ) {
                     $nexturi = $body->{_links}->{next}->{href};
@@ -128,6 +184,7 @@ sub run {
             } while ( $nexturi )
         }
     }
+    return $test_case_result;
 }
 
 sub _get_retained_elements {
