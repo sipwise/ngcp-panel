@@ -62,8 +62,8 @@ ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[6][c
 
 diag('Edit Admin details');
 $adminname = ("admin" . int(rand(100000)) . "test");
-$d->fill_element('//*[@id="login"]', 'xpath', $adminname);
 $d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
+$d->fill_element('//*[@id="login"]', 'xpath', $adminname);
 $d->scroll_to_element($d->find_element('//form//div/label[contains(text(), "Read only")]'));
 $d->select_if_unselected('//*[@id="read_only"]');
 $d->find_element('//*[@id="save"]')->click();
