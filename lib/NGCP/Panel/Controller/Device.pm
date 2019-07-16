@@ -1479,8 +1479,8 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
 
     foreach my $did (@id) {
         $c->log->debug("checking bootstrap path part '$did'");
-        $did =~ s/\.cfg$//;
-        $did =~ s/\.ini$//;
+        $did =~ s/\.(cfg|ini|xml)$//;
+        $did =~ s/^config\.//;
         $did =~ s/^([^\=]+)\=0$/$1/;
         $did = lc $did;
         $did =~ s/\-[a-z]+$//;
