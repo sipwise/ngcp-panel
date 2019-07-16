@@ -37,10 +37,6 @@ sub ctr_reseller {
     diag("Check Reseller Details");
     ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
 
-    diag("Click Edit on our newly created reseller");
-    $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
-    $d->find_element('#mod_close', 'css')->click();
-
     diag("Click Details on our newly created reseller");
     $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
 
