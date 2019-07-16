@@ -52,6 +52,18 @@ $d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[
 $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]')->click();
 $d->find_element('#mod_close', 'css')->click();
 
+diag("Search nonexisting reseller");
+$searchfield = $d->find_element('#Resellers_table_filter label input', 'css');
+$searchfield->send_keys('thisshouldnotexist');
+
+diag("Verify that nothing is shown");
+ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$searchfield->clear();
+
+diag("Search for our newly created reseller");
+$searchfield->send_keys($resellername);
+ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Our new reseller was found');
+
 diag("Click Details on our newly created reseller");
 $d->move_action(element=> $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]'));
 $d->find_element('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]')->click();
