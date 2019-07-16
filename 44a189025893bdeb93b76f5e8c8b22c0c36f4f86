@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "fa1b9901_651ddf72",
+        "filename": "t/lib/NGCP/TestFramework/TestExecutor.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-07-16T13:29:56Z",
+      "side": 1,
+      "message": "I thought we\u0027ll keep them just for the error output. Because it says exactly where the problem is in your structure, whereas now it only logs the full structures that where compared. I guess I could try and do a deep comparison and then log exactly where the fault is. Do you think that\u0027s worth it?",
+      "parentUuid": "fa1b9901_0599836e",
+      "revId": "44a189025893bdeb93b76f5e8c8b22c0c36f4f86",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa1b9901_259e0757",
         "filename": "t/lib/NGCP/TestFramework/TestExecutor.pm",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2019-07-16T12:04:59Z",
       "side": 1,
       "message": "a label prefix (eg. stringified condition test+request, or even better the line number in the .yml) would be needed imho, otherwise it will be hard to find where the failed test happened.",
+      "revId": "44a189025893bdeb93b76f5e8c8b22c0c36f4f86",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa1b9901_0512e362",
+        "filename": "t/lib/NGCP/TestFramework/TestExecutor.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-07-16T13:29:56Z",
+      "side": 1,
+      "message": "Because of the easy_init param \u0027layout\u0027 the log looks something like:\n2002/08/04 11:43:09 ERROR\u003e script.pl:16 main::function - This will get logged.\nIt has date, function, line number. You think we need to add something extra?",
+      "parentUuid": "fa1b9901_259e0757",
       "revId": "44a189025893bdeb93b76f5e8c8b22c0c36f4f86",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
