@@ -118,7 +118,7 @@ sub create_reseller_contract {
     $self->driver->select_if_unselected('//*[@id="billing_profileidtable"]/tbody/tr[1]/td[4]/input');
     $self->driver->fill_element('//*[@id="external_id"]', 'xpath', $resellerid);
     $self->driver->find_element('//*[@id="save"]')->click();
-    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "successfully created")]'), "Label 'Contract successfully created' was shown");
+    ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "successfully created")]'), "Correct Alert was shown");
 }
 
 

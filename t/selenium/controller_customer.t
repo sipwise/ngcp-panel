@@ -103,7 +103,8 @@ ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail), 'Contact Email is correct');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "active")]'), 'Status is correct');$compstring = "Customer #" . $custnum . " successfully updated";
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "active")]'), 'Status is correct');
+$compstring = "Customer #" . $custnum . " successfully updated";
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
 
 diag("Open Details for our just created Customer");
