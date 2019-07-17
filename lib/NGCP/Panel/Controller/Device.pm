@@ -1542,7 +1542,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
             url => "$schema://$host:$config_port/device/autoprov/config/$id",
             baseurl => "$schema://$host:$config_port/device/autoprov/config/",
             caurl => "http://$host:$boot_port/device/autoprov/cacert",
-            ca => $c->model('CA')->get_provisioning_root_ca_cert($c),
+            ca => $c->model('CA')->get_provisioning_ca_cert($c),
             mac => $id,
             bootstrap => 1,
         },
