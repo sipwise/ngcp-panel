@@ -15,6 +15,7 @@ my $c = Selenium::Collection::Common->new(
 
 my $resellername = ("reseller" . int(rand(100000)) . "test");
 my $contractid = ("contract" . int(rand(100000)) . "test");
+my $rulesetname = ("rule" . int(rand(100000)) . "test");
 my $headername = ("header" . int(rand(100000)) . "manipuls");
 my $headerrule = ("header" . int(rand(100000)) . "rule");
 my $headercondition = ("header" . int(rand(100000)) . "condition");
@@ -24,6 +25,7 @@ my $run_ok = 0;
 $c->login_ok();
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
+$c->create_rw_ruleset($rulesetname, $resellername);
 
 diag('Go to Header Manipulations');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -160,6 +162,8 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is 
 
 diag('Fill in values');
 $d->fill_element('//*[@id="match_name"]', 'xpath', $headercondition);
+$d->find_element('//*[@id="rwr_set"]/option[contains(text(), "' . $rulesetname . '")]')->click();
+$d->find_element('//*[@id="rwr_dp"]/option[@value="caller_in_dpid"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
@@ -169,6 +173,8 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "full")]'), "Part is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "is")]'), "Expression is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "input")]'), "Type is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "' . $rulesetname . '")]'), "Rewrite Rule set is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "caller_in")]'), "Ruleset Direction is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "1")]'), "Condition is enabled");
 
 diag('Edit Condition');
@@ -182,6 +188,7 @@ $d->select_if_unselected('//*[@id="expression_negation"]');
 $d->find_element('//*[@id="value_type"]/option[@value="preference"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="value_add"]'));
 $d->unselect_if_selected('//*[@id="enabled"]');
+$d->find_element('//*[@id="rwr_dp"]/option[@value="callee_in_dpid"]')->click();
 $d->find_element('//*[@id="value_add"]')->click();
 $d->fill_element('//*[@id="values.0.value"]', 'xpath', 'randomvalue');
 $d->find_element('//*[@id="save"]')->click();
@@ -194,6 +201,8 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "! matches")]'), "Expression is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "preference")]'), "Type is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "randomvalue")]'), "Value is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "' . $rulesetname . '")]'), "Rewrite Rule set is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "callee_in")]'), "Ruleset Direction is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "0")]'), "Condition is disabled");
 
 diag('Delete Header Rule Condition');
@@ -222,6 +231,8 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Header field i
 diag('Fill in values');
 $d->fill_element('//*[@id="c_header"]', 'xpath', $headeraction);
 $d->find_element('//*[@id="value_part"]/option[@value="domain"]')->click();
+$d->find_element('//*[@id="rwr_set"]/option[contains(text(), "' . $rulesetname . '")]')->click();
+$d->find_element('//*[@id="rwr_dp"]/option[@value="caller_in_dpid"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
@@ -230,6 +241,8 @@ ok($d->wait_for_text('//*[@id="header_rule_actions_table"]/tbody/tr[1]/td[3]', $
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "full")]'), "Header Part is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "set")]'), "Type is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "domain")]'), "Value Part is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "' . $rulesetname . '")]'), "Rewrite Rule set is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "caller_in")]'), "Ruleset Direction is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "1")]'), "Action is Enabled");
 
 diag('Edit Header Rule Action');
@@ -241,6 +254,7 @@ $d->find_element('//*[@id="action_type"]/option[@value="add"]')->click();
 $d->find_element('//*[@id="value_part"]/option[@value="username"]')->click();
 $d->fill_element('//*[@id="value"]', 'xpath', 'randomvalue');
 $d->scroll_to_element($d->find_element('//*[@id="enabled"]'));
+$d->find_element('//*[@id="rwr_dp"]/option[@value="callee_in_dpid"]')->click();
 $d->unselect_if_selected('//*[@id="enabled"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -250,6 +264,8 @@ ok($d->wait_for_text('//*[@id="header_rule_actions_table"]/tbody/tr[1]/td[3]', $
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "port")]'), "Header Part is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "add")]'), "Type is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "username")]'), "Value Part is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "' . $rulesetname . '")]'), "Rewrite Rule set is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "callee_in")]'), "Ruleset Direction is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "0")]'), "Action is Disabled");
 
 diag('Create a second Header Rule action');
@@ -293,6 +309,7 @@ is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header r
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', $headername);
 ok($d->find_element_by_css('#header_rule_set_table tr > td.dataTables_empty', 'css'), 'Header Rule set was deleted');
 
+$c->delete_rw_ruleset($rulesetname);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 
