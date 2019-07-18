@@ -1,3 +1,12 @@
+ngcp-panel (7.4.1.7+0~mr7.4.1.7) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [037b8be] TT#56376 selenium: fixing failing reseller tests
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 18 Jul 2019 08:46:50 +0200
+
 ngcp-panel (7.4.1.6+0~mr7.4.1.6) unstable; urgency=medium
 
   [ Rene Krenn ]
