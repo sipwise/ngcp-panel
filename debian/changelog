@@ -1,3 +1,12 @@
+ngcp-panel (5.5.9.6+0~mr5.5.9.6) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [3e3210e] TT#62866 find created reg. if domain is NULL
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 18 Jul 2019 15:23:39 +0200
+
 ngcp-panel (5.5.9.5+0~mr5.5.9.5) unstable; urgency=medium
 
   [ Rene Krenn ]
