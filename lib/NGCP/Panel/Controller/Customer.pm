@@ -288,15 +288,19 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $contract_rs = $c->stash->{contract_select_rs}
+    my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, now => $now, contract_id => $contract_id, )
         ->search({
             'me.id' => $contract_id,
         },{
             '+select' => 'billing_mappings.id',
             '+as' => 'bmid',
         });
-    my $contract_terminated_rs = $c->stash->{contract_select_all_rs}
-        ->search({
+    my $contract_terminated_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+            schema => $c->model('DB'),
+            now => $now,
+            include_terminated => 1,
+            contract_id => $contract_id,
+        )->search({
             'me.id' => $contract_id,
         },{
             '+select' => 'billing_mappings.id',
