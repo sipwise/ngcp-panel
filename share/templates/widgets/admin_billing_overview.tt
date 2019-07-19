@@ -4,21 +4,21 @@ enqueLists.push([{
     widgetName: "AdminBillingOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Peering Costs') %]</li>');
+        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.escape_js(c.loc('Peering Costs')) %]</li>');
     }
 },{
     res: 'reseller_sum',
     widgetName: "AdminBillingOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Reseller Revenue') %]</li>');
+        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.escape_js(c.loc('Reseller Revenue')) %]</li>');
     }
 },{
     res: 'customer_sum',
     widgetName: "AdminBillingOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Customer Revenue') %]</li>');
+        $("#admin_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.escape_js(c.loc('Customer Revenue')) %]</li>');
     }
 },{
     res: 'profiles_count',
@@ -29,7 +29,7 @@ enqueLists.push([{
         $("#admin_billing_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + data.widget_data + '</span>' +
-                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Billing Profile') %]' : '[% c.loc('Billing Profiles') %]') + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Billing Profile')) %]' : '[% c.escape_js(c.loc('Billing Profiles')) %]') + '</span>' +
             '</div>');
     }
 }]);

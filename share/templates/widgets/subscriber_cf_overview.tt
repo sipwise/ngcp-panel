@@ -11,9 +11,9 @@ enqueLists.push([{
             $("#subscriber_cf_overview_lazy_items_list").append('<li>' +
                 cf_mappings.desc + ' <strong style="color:' +
                 (cf_mappings.mappings.length > 0 ?
-                    'green">[% c.loc('active') %]'
+                    'green">[% c.escape_js(c.loc('active')) %]'
                 :
-                    'grey">[% c.loc('inactive') %]'
+                    'grey">[% c.escape_js(c.loc('inactive')) %]'
                 ) + '</strong>' +
                 '</li>');
             mcount += cf_mappings.mappings.length;
@@ -22,7 +22,7 @@ enqueLists.push([{
         $("#subscriber_cf_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + mcount + '</span>' +
-                '<span class="term">' + (mcount == 1 ? '[% c.loc('Call Forward Configured') %]' : '[% c.loc('Call Forwards Configured') %]') + '</span>' +
+                '<span class="term">' + (mcount == 1 ? '[% c.escape_js(c.loc('Call Forward Configured')) %]' : '[% c.escape_js(c.loc('Call Forwards Configured')) %]') + '</span>' +
             '</div>');
     }
 }]);

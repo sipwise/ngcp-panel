@@ -15,7 +15,7 @@ enqueLists.push([{
         //console.log(data);
         var txt = data.widget_data.text;
         var col = data.widget_data.color;
-        $("#admin_system_overview_lazy_items_list").append('<li>[% c.loc('System') %] <strong style="color:' + col + '">' + txt + '</strong></li>');
+        $("#admin_system_overview_lazy_items_list").append('<li>[% c.escape_js(c.loc('System')) %] <strong style="color:' + col + '">' + txt + '</strong></li>');
     }
 },{
     res: 'hardware',
@@ -24,7 +24,7 @@ enqueLists.push([{
         //console.log(data);
         var txt = data.widget_data.text;
         var col = data.widget_data.color;
-        $("#admin_system_overview_lazy_items_list").append('<li>[% c.loc('Hardware') %] <strong style="color:' + col + '">' + txt + '</strong></li>');
+        $("#admin_system_overview_lazy_items_list").append('<li>[% c.escape_js(c.loc('Hardware')) %] <strong style="color:' + col + '">' + txt + '</strong></li>');
     }
 },{
     res: 'overall_status',

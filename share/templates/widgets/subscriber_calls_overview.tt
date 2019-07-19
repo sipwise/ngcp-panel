@@ -6,7 +6,7 @@ enqueLists.push([{
         //console.log(data);
         var calls = data.widget_data;
         if (calls.length == 0) {
-            $("#subscriber_call_overview_lazy_items_list").append('<li>[% c.loc('No calls yet') %]</li>');
+            $("#subscriber_call_overview_lazy_items_list").append('<li>[% c.escape_js(c.loc('No calls yet')) %]</li>');
         } else {
             for (var i = 0; i < calls.length; i++) {
                 var call = calls[i];
@@ -47,7 +47,7 @@ enqueLists.push([{
         $("#subscriber_call_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + data.widget_data + '</span>' +
-                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Recent Call') %]' : '[% c.loc('Recent Calls') %]') + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Recent Call')) %]' : '[% c.escape_js(c.loc('Recent Calls')) %]') + '</span>' +
             '</div>');
     }
 }]);

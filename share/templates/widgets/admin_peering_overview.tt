@@ -4,14 +4,14 @@ enqueLists.push([{
     widgetName: "AdminPeeringOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_peering_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Peering Server') %]' : '[% c.loc('Peering Servers') %]') + '</li>');
+        $("#admin_peering_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Peering Server')) %]' : '[% c.escape_js(c.loc('Peering Servers')) %]') + '</li>');
     }
 },{
     res: 'rules_count',
     widgetName: "AdminPeeringOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_peering_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Peering Rule') %]' : '[% c.loc('Peering Rules') %]') + '</li>');
+        $("#admin_peering_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Peering Rule')) %]' : '[% c.escape_js(c.loc('Peering Rules')) %]') + '</li>');
     }
 },{
     res: 'groups_count',
@@ -22,7 +22,7 @@ enqueLists.push([{
         $("#admin_peering_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + data.widget_data + '</span>' +
-                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Peering Group') %]' : '[% c.loc('Peering Groups') %]') + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Peering Group')) %]' : '[% c.escape_js(c.loc('Peering Groups')) %]') + '</span>' +
             '</div>');
     }
 }]);

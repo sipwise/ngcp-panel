@@ -27,6 +27,7 @@ use Catalyst qw/
     Session::Store::Redis
     Session::State::Cookie
     EscapeSensitiveValue
+    EscapeJs
     I18N
 /;
 use Log::Log4perl::Catalyst qw();

@@ -4,14 +4,14 @@ enqueLists.push([{
     widgetName: "ResellerCustomerOverview",
     cb: function(data) {
         //console.log(data);
-        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Contact') %]' : '[% c.loc('Contacts') %]') + '</li>');
+        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Contact')) %]' : '[% c.escape_js(c.loc('Contacts')) %]') + '</li>');
     }
 },{
     res: 'subscribers_count',
     widgetName: "ResellerCustomerOverview",
     cb: function(data) {
         //console.log(data);
-        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Subscriber') %]' : '[% c.loc('Subscribers') %]') + '</li>');
+        $("#reseller_customer_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Subscriber')) %]' : '[% c.escape_js(c.loc('Subscribers')) %]') + '</li>');
     }
 },{
     res: 'customers_count',
@@ -22,7 +22,7 @@ enqueLists.push([{
         $("#reseller_customer_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + data.widget_data + '</span>' +
-                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Customer') %]' : '[% c.loc('Customers') %]') + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Customer')) %]' : '[% c.escape_js(c.loc('Customers')) %]') + '</span>' +
             '</div>');
     }
 }]);

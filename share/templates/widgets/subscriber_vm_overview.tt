@@ -6,7 +6,7 @@ enqueLists.push([{
         //console.log(data);
         var voicemails = data.widget_data;
         if (voicemails.length == 0) {
-            $("#subscriber_voicemail_overview_lazy_items_list").append('<li>[% c.loc('No new messages') %]</li>');
+            $("#subscriber_voicemail_overview_lazy_items_list").append('<li>[% c.escape_js(c.loc('No new messages')) %]</li>');
         } else {
             for (var i = 0; i < voicemails.length; i++) {
                 var voicemail = voicemails[i];
@@ -36,7 +36,7 @@ enqueLists.push([{
         $("#subscriber_voicemail_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + data.widget_data + '</span>' +
-                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('New Message') %]' : '[% c.loc('New Messages') %]') + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('New Message')) %]' : '[% c.escape_js(c.loc('New Messages')) %]') + '</span>' +
             '</div>');
     }
 }]);

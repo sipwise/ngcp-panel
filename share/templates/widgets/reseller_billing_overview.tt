@@ -4,14 +4,14 @@ enqueLists.push([{
     widgetName: "ResellerBillingOverview",
     cb: function(data) {
         //console.log(data);
-        $("#reseller_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Reseller Cost') %]</li>');
+        $("#reseller_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.escape_js(c.loc('Reseller Cost')) %]</li>');
     }
 },{
     res: 'customer_sum',
     widgetName: "ResellerBillingOverview",
     cb: function(data) {
         //console.log(data);
-        $("#reseller_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.loc('Customer Revenue') %]</li>');
+        $("#reseller_billing_overview_lazy_items_list").append('<li><strong>' + sprintf('%.02f',data.widget_data / 100.0) + '</strong> [% c.escape_js(c.loc('Customer Revenue')) %]</li>');
     }
 },{
     res: 'profiles_count',
@@ -22,7 +22,7 @@ enqueLists.push([{
         $("#reseller_billing_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + data.widget_data + '</span>' +
-                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Billing Profile') %]' : '[% c.loc('Billing Profiles') %]') + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Billing Profile')) %]' : '[% c.escape_js(c.loc('Billing Profiles')) %]') + '</span>' +
             '</div>');
     }
 }]);

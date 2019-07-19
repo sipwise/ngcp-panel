@@ -4,21 +4,21 @@ enqueLists.push([{
     widgetName: "AdminResellerOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Domain') %]' : '[% c.loc('Domains') %]') + '</li>');
+        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Domain')) %]' : '[% c.escape_js(c.loc('Domains')) %]') + '</li>');
     }
 },{
     res: 'customers_count',
     widgetName: "AdminResellerOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Customer') %]' : '[% c.loc('Customers') %]') + '</li>');
+        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Customer')) %]' : '[% c.escape_js(c.loc('Customers')) %]') + '</li>');
     }
 },{
     res: 'subscribers_count',
     widgetName: "AdminResellerOverview",
     cb: function(data) {
         //console.log(data);
-        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.loc('Subscriber') %]' : '[% c.loc('Subscribers') %]') + '</li>');
+        $("#admin_reseller_overview_lazy_items_list").append('<li><strong>' + data.widget_data + '</strong> ' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Subscriber')) %]' : '[% c.escape_js(c.loc('Subscribers')) %]') + '</li>');
     }
 },{
     res: 'resellers_count',
@@ -29,7 +29,7 @@ enqueLists.push([{
         $("#admin_reseller_overview_lazy_items_header").append(
             '<div class="plan-price">' +
                 '<span>' + data.widget_data + '</span>' +
-                '<span class="term">' + (data.widget_data == 1 ? '[% c.loc('Reseller') %]' : '[% c.loc('Resellers') %]') + '</span>' +
+                '<span class="term">' + (data.widget_data == 1 ? '[% c.escape_js(c.loc('Reseller')) %]' : '[% c.escape_js(c.loc('Resellers')) %]') + '</span>' +
             '</div>');
     }
 }]);
