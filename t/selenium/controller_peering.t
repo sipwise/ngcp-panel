@@ -67,7 +67,7 @@ ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[5]', 'A gro
 
 diag("Edit Peering Group");
 $groupname = ("group" . int(rand(100000)) . "test");
-$d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath');
+$d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
 $d->fill_element('#name', 'css', $groupname);
 $d->fill_element('#description', 'css', 'A group created for very testing purposes');
 $d->find_element('//*[@id="priority"]/option[@value="1"]')->click();
@@ -86,7 +86,7 @@ ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[4]', '1'), 
 ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[5]', 'A group created for very testing purposes'), 'Description is correct');
 
 diag("Go to Details of the Peering Group");
-$d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath');
+$d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
 
 diag("Create empty Outbound Peering Rule");
 $d->find_element('//a[contains(text(),"Create Outbound Peering Rule")]')->click();
