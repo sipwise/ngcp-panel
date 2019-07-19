@@ -67,18 +67,30 @@ diag("Check Reseller Details");
 ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr//td[contains(text(), "locked")]'), 'Status is correct');
 
+diag("Go to Details and check if 'Reseller is locked' message appears");
+$d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller is locked",  "'Reseller is locked' message appears");
+$d->find_element("Back", 'link_text')->click();
+
 diag("Unlock reseller");
+$d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
+ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller was found');
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+$d->scroll_to_element($d->find_element('//*[@id="status"]'));
 $d->find_element('//*[@id="status"]/option[@value="active"]')->click();
 $d->find_element('#save', 'css')->click();
 
-diag("Click Details on our newly created reseller");
+diag("Check Reseller Details");
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
 $d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
 ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr//td[contains(text(), "active")]'), 'Status is correct');
+
+diag("Go to Reseller Details");
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
 
 diag("Create a empty Phonebook entry");
