@@ -212,6 +212,29 @@ is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successf
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile Set")]/../td[contains(text(), "'. $setname .'")]'));
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile")]/../td[contains(text(), "'. $profilename .'")]'));
 
+diag('Lock Subscriber');
+$d->find_element("Edit", 'link_text')->click();
+$d->find_element('//*[@id="lock"]/option[contains(text(), "global")]')->click();
+$d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if subscriber got locked');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully updated subscriber",  "Correct Alert was shown");
+#ok($d->find_element_by_xpath('//div[text()[contains(., "Subscriber status is locked")]]'), 'Message "Subscriber status is locked" was shown');
+#ok($d->find_element_by_xpath('//div[text()[contains(., "Subscriber is locked for global")]]'), 'Message "Subscriber is locked for global" was shown');
+ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), "Status is correct");
+ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), "Status is correct");
+
+diag('Unlock Subscriber');
+$d->find_element("Edit", 'link_text')->click();
+$d->find_element('//*[@id="lock"]/option[contains(text(), "none")]')->click();
+$d->find_element('//*[@id="status"]/option[contains(text(), "active")]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if subscriber got unlocked');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully updated subscriber",  "Correct Alert was shown");
+ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "active")]'), "Status is correct");
+
 diag('Go to Subscriber preferences');
 $d->find_element("Preferences", 'link_text')->click();
 
