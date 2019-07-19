@@ -1,3 +1,12 @@
+ngcp-panel (1.14.4.9+0~mr4.5.4.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [5a11b85] TT#62903 inject contract_id in rs's of Customers controller
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 19 Jul 2019 10:11:55 +0200
+
 ngcp-panel (1.14.4.8+0~mr4.5.4.8) unstable; urgency=medium
 
   [ Victor Seva ]
