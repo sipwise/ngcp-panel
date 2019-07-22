@@ -18,6 +18,7 @@ my $contractid = ("contract" . int(rand(100000)) . "test");
 my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
 my $soundsetname = ("sound" . int(rand(100000)) . "set");
 my $phonebookname = ("phone" . int(rand(100000)) . "book");
+my $contactmail = ("contact" . int(rand(100000)) . '@test.org');
 my $run_ok = 0;
 
 $c->login_ok();
@@ -50,7 +51,7 @@ ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empt
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
 
 diag('Check details');
-ok($d->wait_for_text('//*[@id="call_list_suppression_table"]//tr[1]/td[2]', $domainstring), "Label is correct");
+ok($d->wait_for_text('//*[@id="call_list_suppression_table"]//tr[1]/td[2]', $domainstring), "Domain is correct");
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "outgoing")]'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "test")]'), 'Pattern is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "filter")]'), 'Mode is correct');
@@ -71,7 +72,7 @@ ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empt
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
 
 diag('Check details');
-ok($d->wait_for_text('//*[@id="call_list_suppression_table"]//tr[1]/td[2]', $domainstring), "Label is correct");
+ok($d->wait_for_text('//*[@id="call_list_suppression_table"]//tr[1]/td[2]', $domainstring), "Domain is correct");
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "incoming")]'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "testing")]'), 'Pattern is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "obfuscate")]'), 'Mode is correct');
@@ -167,6 +168,97 @@ diag('Check if Phonebook entry has been deleted');
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', $phonebookname);
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Phonebook entry has been deleted');
+
+diag('Go to Contacts');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Contacts", 'link_text')->click();
+
+diag('Trying to create a empty Contact');
+$d->find_element("Create Contact", "link_text")->click();
+$d->unselect_if_selected('//*[@id="reselleridtable"]//tr[1]/td[5]/input');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check error messages');
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Email field is required")]'));
+
+diag('Fill in values');
+$d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
+ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), "Reseller found");
+$d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
+$d->fill_element('//*[@id="firstname"]', 'xpath', 'Test');
+$d->fill_element('//*[@id="lastname"]', 'xpath', 'User');
+$d->fill_element('//*[@id="company"]', 'xpath', 'SIPWISE');
+$d->fill_element('//*[@id="email"]', 'xpath', $contactmail);
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Search Contact');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully created",  "Correct Alert was shown");
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
+
+diag('Check details');
+ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), "Reseller is correct");
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "Test")]'), 'First Name is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "User")]'), 'Last Name is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "SIPWISE")]'), 'Company is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Email is correct');
+
+diag('Edit Contact');
+$contactmail = ("contact" . int(rand(100000)) . '@test.org');
+$d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+$d->fill_element('//*[@id="firstname"]', 'xpath', 'Tester');
+$d->fill_element('//*[@id="lastname"]', 'xpath', 'Using');
+$d->fill_element('//*[@id="company"]', 'xpath', 'sip');
+$d->fill_element('//*[@id="email"]', 'xpath', $contactmail);
+$d->fill_element('#company', 'css', 'sip');
+$d->fill_element('#street', 'css', 'Europaring');
+$d->fill_element('#postcode', 'css', '2345');
+$d->fill_element('#city', 'css', 'Brunn/Gebirge');
+$d->fill_element('#countryidtable_filter input', 'css', 'thisshouldnotexist');
+$d->find_element('#countryidtable tr > td.dataTables_empty', 'css');
+$d->fill_element('#countryidtable_filter input', 'css', 'Austria');
+$d->select_if_unselected('//table[@id="countryidtable"]/tbody/tr[1]/td[contains(text(),"Austria")]/..//input[@type="checkbox"]');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Search Contact');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully changed",  "Correct Alert was shown");
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
+
+diag('Check details');
+ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), "Reseller is correct");
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "Tester")]'), 'First Name is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "Using")]'), 'Last Name is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "sip")]'), 'Company is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Email is correct');
+
+diag('Trying to NOT delete Contact');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
+ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), "Contact Found");
+$d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+$d->find_element('//*[@id="dataConfirmCancel"]')->click();
+
+diag('Check if Contact is still here');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
+ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), "Contact is still here");
+
+diag('Trying to delete Contact');
+$d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+
+diag('Check if Contact was deleted');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully deleted",  "Correct Alert was shown");
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Contact has been deleted');
 
 $c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
