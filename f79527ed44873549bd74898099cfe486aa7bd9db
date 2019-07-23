@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_3412b7b5",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-23T13:06:21Z",
+      "side": 1,
+      "message": "I am not sure about trailing comma here, but let\u0027s try.",
+      "range": {
+        "startLine": 40,
+        "startChar": 37,
+        "endLine": 40,
+        "endChar": 38
+      },
+      "revId": "f79527ed44873549bd74898099cfe486aa7bd9db",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
