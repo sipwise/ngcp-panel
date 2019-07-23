@@ -1,3 +1,12 @@
+ngcp-panel (6.5.3.10+0~mr6.5.3.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [015657a] TT#53382 no default '.' source for prefix fees
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 Jul 2019 13:33:59 +0200
+
 ngcp-panel (6.5.3.9+0~mr6.5.3.9) unstable; urgency=medium
 
   [ Rene Krenn ]
