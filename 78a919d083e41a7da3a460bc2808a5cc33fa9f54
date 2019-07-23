@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_54872b61",
+        "filename": "t/selenium/runner.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-23T10:01:51Z",
+      "side": 1,
+      "message": "don\u0027t you thing the line is not readable?\nplease consider to use multyline here.\nFor perl it is easy enough:\n\n@tests \u003d (\n    $dir . \u0027controller_subscriber.t\u0027,\n    $dir . \u0027controller_admin.t\u0027,\n    $dir . \u0027controller_billing.t\u0027,\n  );",
+      "revId": "78a919d083e41a7da3a460bc2808a5cc33fa9f54",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
