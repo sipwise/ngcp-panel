@@ -215,7 +215,6 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Header Rule Condition was deleted');
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully deleted',  "Correct Alert was shown");
-$d->fill_element('//*[@id="header_rule_conditions_table_filter"]//input', 'xpath', $headercondition);
 ok($d->find_element_by_css('#header_rule_conditions_table tr > td.dataTables_empty', 'css'), 'Header Rule Condition was deleted');
 
 diag('Go to Header Rule Actions');
