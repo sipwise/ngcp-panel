@@ -212,6 +212,7 @@ sub delete_rw_ruleset {
 sub create_customer {
     my($self, $customerid, $contactmail, $billingname, $special) = @_;
     return unless $customerid && $contactmail && $billingname;
+    $special = 'empty' unless $special;
 
     diag("Go to Customers page");
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
