@@ -23,9 +23,42 @@ if(!admin_login()) {
 }
 
 if($testplan eq $dir . 'runner.t') {
-    @tests = ($dir . 'controller_subscriber.t', $dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_emergency.t', $dir . 'controller_invoice.t', $dir . 'controller_ncos.t', $dir . 'controller_other.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t', $dir . 'controller_soundset.t', $dir . 'controller_timeset.t');
+    @tests = (
+        $dir . 'controller_subscriber.t',
+        $dir . 'controller_admin.t',
+        $dir . 'controller_billing.t',
+        $dir . 'controller_customer.t',
+        $dir . 'controller_domain.t',
+        $dir . 'controller_emergency.t',
+        $dir . 'controller_invoice.t',
+        $dir . 'controller_ncos.t',
+        $dir . 'controller_other.t',
+        $dir . 'controller_peering.t',
+        $dir . 'controller_reseller.t',
+        $dir . 'controller_rw_ruleset.t',
+        $dir . 'controller_soundset.t',
+        $dir . 'controller_timeset.t',
+        );
+
 } elsif($testplan eq 'exp') {
-    @tests = ($dir . 'controller_subscriber.t', $dir . 'controller_admin.t', $dir . 'controller_billing.t', $dir . 'controller_customer.t', $dir . 'controller_domain.t', $dir . 'controller_emergency.t', $dir . 'controller_header.t', $dir . 'controller_invoice.t', $dir . 'controller_ncos.t', $dir . 'controller_other.t', $dir . 'controller_peering.t', $dir . 'controller_reseller.t', $dir . 'controller_rw_ruleset.t', $dir . 'controller_soundset.t', $dir . 'controller_timeset.t');
+    @tests = (
+        $dir . 'controller_subscriber.t',
+        $dir . 'controller_admin.t',
+        $dir . 'controller_billing.t',
+        $dir . 'controller_customer.t',
+        $dir . 'controller_domain.t',
+        $dir . 'controller_emergency.t',
+        $dir . 'controller_header.t',
+        $dir . 'controller_invoice.t',
+        $dir . 'controller_ncos.t',
+        $dir . 'controller_other.t',
+        $dir . 'controller_peering.t',
+        $dir . 'controller_reseller.t',
+        $dir . 'controller_rw_ruleset.t',
+        $dir . 'controller_soundset.t',
+        $dir . 'controller_timeset.t',
+        );
+
 } else {
     if (index($testplan, $dir . 'controller_admin.t') != -1) {
         $string = $dir . 'controller_admin.t';
@@ -97,7 +130,8 @@ if($jenkins) {
         'verbosity', '0',
         'formatter_class', 'TAP::Formatter::JUnit',
         'jobs', '4',
-        'timer', '1');
+        'timer', '1',
+        );
     my $harness = TAP::Harness->new( \%args );
     $harness->runtests(@tests);
     print "\n";
@@ -109,7 +143,8 @@ if($jenkins) {
         'formatter_class', 'TAP::Formatter::Console',
         'verbosity', '0',
         'color', '1',
-        'jobs', '4');
+        'jobs', '4',
+        );
     my $harness = TAP::Harness->new( \%args );
     $harness->runtests(@tests);
     print "\n";
