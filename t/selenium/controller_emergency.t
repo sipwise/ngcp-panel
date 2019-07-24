@@ -179,10 +179,6 @@ $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpat
 ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Mapping is still here');
 
 diag("Trying to delete Emergency Mapping");
-$d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
-ok($d->wait_for_text('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[2]', $containername), 'Emergency mapping was found');
 $d->move_and_click('//*[@id="emergency_mappings_table"]/tbody/tr/td[6]/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="emergency_mappings_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
