@@ -104,10 +104,38 @@ diag('Check if Errors show up');
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Zone field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Destination field is required")]'));
 
-diag('Fill in Values');
-$d->select_if_unselected('//*[@id="billing_zoneidtable"]//tr[1]/td[4]/input');
+diag('Fill in invalid values');
 $d->fill_element('#source', 'css', '.*');
 $d->fill_element('#destination', 'css', '.+');
+$d->scroll_to_element($d->find_element('//*[@id="onpeak_init_rate"]'));
+$d->fill_element('//*[@id="onpeak_init_rate"]', 'xpath', 'e');
+$d->fill_element('//*[@id="onpeak_init_interval"]', 'xpath', 'e');
+$d->fill_element('//*[@id="onpeak_follow_rate"]', 'xpath', 'e');
+$d->fill_element('//*[@id="onpeak_follow_interval"]', 'xpath', 'e');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if Errors show up');
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Must be a number. May contain numbers, +, - and decimal separator")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Value must be an integer")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Onpeak init interval must be greater than 0")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Onpeak follow interval must be greater than 0")]'));
+
+diag('Fill in more invalid Values');
+$d->scroll_to_element($d->find_element('//*[@id="onpeak_init_rate"]'));
+$d->fill_element('//*[@id="onpeak_init_rate"]', 'xpath', '0');
+$d->fill_element('//*[@id="onpeak_init_interval"]', 'xpath', '-10');
+$d->fill_element('//*[@id="onpeak_follow_rate"]', 'xpath', '0');
+$d->fill_element('//*[@id="onpeak_follow_interval"]', 'xpath', '-10');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if Errors show up');
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Onpeak init interval must be greater than 0")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Onpeak follow interval must be greater than 0")]'));
+
+diag('Fill in valid Values');
+$d->select_if_unselected('//*[@id="billing_zoneidtable"]//tr[1]/td[4]/input');
+$d->fill_element('//*[@id="onpeak_init_interval"]', 'xpath', '1');
+$d->fill_element('//*[@id="onpeak_follow_interval"]', 'xpath', '1');
 $d->find_element('//*[@id="save"]')->click();
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Fee successfully created!',  "Correct Alert was shown");
 
