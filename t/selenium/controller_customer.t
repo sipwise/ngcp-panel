@@ -217,10 +217,38 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Location Name 
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Description field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Blocks field is required")]'));
 
-diag('Enter information');
+diag('Fill in Values');
 $d->fill_element('//*[@id="name"]', 'xpath', 'Test Location');
 $d->fill_element('//*[@id="description"]', 'xpath', 'This is a Test Location');
-$d->fill_element('//*[@id="name"]', 'xpath', 'Test Location');
+
+diag('Fill in invalid IP address');
+$d->fill_element('//*[@id="blocks.0.row.ip"]', 'xpath', 'invalid');
+$d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', 'ip');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Error messages appear");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Ip is no valid IPv4 or IPv6 address")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Value must be an integer")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Invalid IP address")]'));
+
+diag('Fill in another invalid ip address');
+$d->fill_element('//*[@id="blocks.0.row.ip"]', 'xpath', '10.0.0.256');
+$d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', '16');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Error messages appear");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Ip is no valid IPv4 or IPv6 address")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Invalid IP address")]'));
+
+diag('Fill in invalid subnet mask');
+$d->fill_element('//*[@id="blocks.0.row.ip"]', 'xpath', '127.0.0.1');
+$d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', '33');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Error messages appear");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Invalid mask")]'));
+
+diag('Fill in valid ip address');
 $d->fill_element('//*[@id="blocks.0.row.ip"]', 'xpath', '127.0.0.1');
 $d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', '16');
 $d->find_element('//*[@id="save"]')->click();
@@ -238,26 +266,25 @@ ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "This is a Test Location")]'), "Description is correct");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "127.0.0.1/16")]'), "Network block is correct");
 
-diag("Edit Location");
+diag("Edit Location and add another location block");
 $d->move_and_click('//*[@id="locations_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="customer_details"]//div//a[contains(text(), "Locations")]');
 $d->fill_element('//*[@id="description"]', 'xpath', 'This is a very Test Location');
 $d->fill_element('//*[@id="name"]', 'xpath', 'TestTest Location');
 $d->fill_element('//*[@id="blocks.0.row.ip"]', 'xpath', '10.0.0.138');
 $d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', '16');
+$d->find_element('//*[@id="blocks_add"]')->click();
+$d->fill_element('//*[@id="blocks.1.row.ip"]', 'xpath', '127.0.0.1');
+$d->fill_element('//*[@id="blocks.1.row.mask"]', 'xpath', '16');
 $d->find_element('//*[@id="save"]')->click();
-
-diag("Search for Location");
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully updated',  "Correct Alert was shown");
-$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]')->click();
-$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]'));
-$d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'TestTest Location');
 
 diag("Check location details");
+$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]'));
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "TestTest Location")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "This is a very Test Location")]'), "Description is correct");
 ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "10.0.0.138/16")]'), "Network block is correct");
+ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "127.0.0.1/16")]'), "Network block 2 is correct");
 
 diag("Open delete dialog and press cancel");
 $c->delete_customer($customerid, 1);
