@@ -17,10 +17,7 @@ my $domainstring = ("domain" . int(rand(100000)) . ".example.org");
 my $run_ok = 0;
 
 $c->login_ok();
-
-diag('Go to domains page');
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element("Domains", 'link_text')->click();
+$c->create_domain($domainstring);
 
 diag('Try to add a empty domain');
 $d->find_element('Create Domain', 'link_text')->click();
@@ -29,11 +26,7 @@ $d->find_element('//*[@id="save"]')->click();
 diag('Check error messages');
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "SIP Domain field is required")]'));
-
-diag("Continuing creating a legit domain");
 $d->find_element('//*[@id="mod_close"]')->click();
-
-$c->create_domain($domainstring);
 
 diag("Check if entry exists and if the search works");
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
