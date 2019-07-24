@@ -72,10 +72,8 @@ diag("Click edit for the preference allowed_ips");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
 
 diag("Enter an IP address");
-=pod
 $d->find_element('//*[@id="add"]')->click();
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), "Invalid IP address detected");
-=cut
 $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.0.0');
 $d->find_element('//*[@id="add"]')->click();
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), "Invalid IP address detected");
