@@ -157,5 +157,6 @@ END {
     if(!$run_ok) {
         $c->crash_handler("/results/crash_header.png");
     }
+    $d->quit();
     done_testing;
 }

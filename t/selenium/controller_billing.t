@@ -420,5 +420,6 @@ END {
     if(!$run_ok) {
         $c->crash_handler("/results/crash_billing.png");
     }
+    $d->quit();
     done_testing;
 }
