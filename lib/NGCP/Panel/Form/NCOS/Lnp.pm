@@ -20,6 +20,11 @@ has_field 'lnp_provider' => (
     },
 );
 
+has_field 'pattern' => (
+    type => '+NGCP::Panel::Field::Regexp',
+    required => 1,
+);
+
 has_field 'description' => (
     type => 'Text',
     required => 0,
@@ -35,7 +40,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/lnp_provider description/],
+    render_list => [qw/lnp_provider pattern description/],
 );
 
 has_block 'actions' => (

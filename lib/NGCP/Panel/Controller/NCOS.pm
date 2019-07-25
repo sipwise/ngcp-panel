@@ -246,6 +246,7 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
             { name => 'id', search => 1, title => $c->loc('#') },
             { name => 'lnp_provider.name', search => 1, title => $c->loc('LNP Carrier') },
             { name => 'description', search => 1, title => $c->loc('Description') },
+            { name => 'pattern', search => 1, title => $c->loc('Pattern') },
         ]);
     }
     
