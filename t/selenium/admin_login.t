@@ -29,9 +29,11 @@ sub admin_login {
         $d->find_element('#username', 'css')->send_keys($login);
         $d->find_element('#password', 'css')->send_keys($pwd);
         $d->find_element('#submit', 'css')->click();
+        $d->quit();
         return 1;
     }
     catch {
+        $d->quit();
         return 0;
     };
 }

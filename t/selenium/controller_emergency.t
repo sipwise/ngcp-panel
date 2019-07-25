@@ -221,5 +221,6 @@ END {
     if(!$run_ok) {
         $c->crash_handler("/results/crash_emergency.png");
     }
+    $d->quit();
     done_testing;
 }

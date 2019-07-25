@@ -189,5 +189,6 @@ END {
     if(!$run_ok) {
         $c->crash_handler("/results/crash_invoice.png");
     }
+    $d->quit();
     done_testing;
 }
