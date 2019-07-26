@@ -1,4 +1,4 @@
-package NGCP::TestFramework::Client;
+package TestFramework::Client;
 
 use strict;
 use warnings;
