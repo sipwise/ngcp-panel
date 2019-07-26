@@ -1,7 +1,9 @@
-use lib '..';
+#!/usr/bin/perl
+
+use lib 't/api-rest2/lib';
 use strict;
 use warnings;
-use NGCP::TestFramework;
+use TestFramework;
 use Test::More;
 use threads;
 use Thread::Queue;
@@ -14,7 +16,7 @@ if ( !$server ){
     print "Usage: \$ perl testrunner.pl [<testsystem>] [<testset>]\n";
     print "Usage example: \$ perl testrunner.pl 192.168.88.162\n";
     print "Usage example: \$ perl testrunner.pl 192.168.88.162 fast\n";
-    print "Possible test set: all, stable, fast, t/lib/NGCP/TestFramework/Interface/Contracts.yaml\n";
+    print "Possible test set: all, stable, fast, t/api-rest2/Contracts.yaml\n";
     print "Default test set: all\n";
     exit(1);
 }
@@ -29,7 +31,7 @@ elsif ( $selected eq 'fast' ) {
 }
 elsif ( $selected eq 'all' ) {
     print "Test selection: all\n";
-    map { push @test_files, "TestFramework/Interface/$_" } `ls TestFramework/Interface`;
+    map { push @test_files, "./$_" } `ls`;
 }
 else{
     print "Test selection: $selected\n";
@@ -69,7 +71,7 @@ sub worker {
         chomp $test_file;
         my $start_time = time;
         print "Running tests from $test_file\n";
-        my $test_framework = NGCP::TestFramework->new( {file_path => $test_file} );
+        my $test_framework = TestFramework->new( {file_path => $test_file} );
 
         my $result = $test_framework->run();
 
