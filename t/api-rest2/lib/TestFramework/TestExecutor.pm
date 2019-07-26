@@ -1,4 +1,4 @@
-package NGCP::TestFramework::TestExecutor;
+package TestFramework::TestExecutor;
 
 use strict;
 use warnings;
@@ -9,8 +9,8 @@ use Moose;
 use Test::More;
 use Data::Dumper;
 
-Test::More->builder->output ('/var/log/ngcp/test-framework/result.txt');
-Test::More->builder->failure_output ('/var/log/ngcp/test-framework/errors.txt');
+Test::More->builder->output ('/results/result.txt');
+Test::More->builder->failure_output ('/results/errors.txt');
 
 sub run_tests {
     my ( $self, $conditions, $result, $retained, $test_name ) = @_;

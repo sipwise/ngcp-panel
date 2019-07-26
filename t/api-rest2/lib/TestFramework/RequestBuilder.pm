@@ -1,4 +1,4 @@
-package NGCP::TestFramework::RequestBuilder;
+package TestFramework::RequestBuilder;
 
 use strict;
 use warnings;
