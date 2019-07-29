@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8c8e9b0_f1574611",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-29T10:52:42Z",
+      "side": 1,
+      "message": "IMHO we can get rid of this concept completely as we have Docker env now.\nIn the past we have no Docker env and wanted to share env with devel/jenkins somehow,\nso we created:\n  \n\u003e cat ngcp-panel.git/t/selenium/control\nSource: ngcp-panel-tests-selenium\nBuild-Depends: libmoosex-method-signatures-perl,\n               libtrycatch-perl,\n\n\nNow we can just add libtrycatch-perl +  libmoosex-method-signatures-perl to \"RUN apt-get install --assume-yes ...\" above and delete this code here and also remove t/selenium/control file.\nPlease perform this as a next commit here, do not mix it together.",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 35
+      },
+      "revId": "fb87dd3d52c43bb1754f998346e094c48016ad0f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
