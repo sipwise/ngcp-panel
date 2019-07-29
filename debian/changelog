@@ -1,3 +1,34 @@
+ngcp-panel (7.3.3.0+0~mr7.3.3.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [fbe8098] TT#58004 stop+start_profile instead of update_profile event
+  * [30c0927] TT#60850 fix api cert unique serial generator
+  * [90df930] TT#61559 TT#61752 apply orderby to datatable setop queries
+  * [31c81b6] TT#62063 fix ac string instead of numeric comparison
+  * [5b9db9a] TT#62059 disable bootstrapdatatable html5 statesaving
+
+  [ Nico Schedel ]
+  * [6e43373] TT#56376 selenium: backport move_and_click function from master
+  * [3acb571] TT#56376 selenium: backport better fraud limit checks
+  * [8725085] TT#56376 selenium: use unique name for creating a peering server
+  * [732f56e] TT#56376 selenium: move_and_click: add optional fallback parameter
+  * [3d40f2d] TT#56376 selenium: fix crash when creating domain
+  * [c13eb0c] TT#56376 selenium: fixing failing reseller tests
+
+  [ Flaviu Mates ]
+  * [bb822ac] TT#50655 Fix for Call Flow page
+
+  [ Kirill Solomko ]
+  * [6aeda2d] TT#59164 Field::URI allow "\\" char in sip-username
+  * [bd0f018] TT#59324 disable DeviceBootStrap LWP::UserAgent keep_alive
+  * [4625731] TT#60502 fix PATCH removal by value when multiple elements are removed
+  * [d8ea4e6] TT#60502 refactor PATCH by value ARRAY
+  * [f06f353] TT#58950 RedisLocationResult improvements
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Jul 2019 18:14:32 +0200
+
 ngcp-panel (7.3.2.0+0~mr7.3.2.0) unstable; urgency=medium
 
   [ Nico Schedel ]
