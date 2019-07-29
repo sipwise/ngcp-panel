@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-buster:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2019-06-27
+ENV REFRESHED_AT 2019-07-30
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -13,7 +13,9 @@ RUN apt-get install --assume-yes \
         devscripts \
         fluxbox \
         git \
+        libmoosex-method-signatures-perl \
         libtap-formatter-junit-perl \
+        libtrycatch-perl \
         lsof \
         net-tools \
         procps \
@@ -29,35 +31,28 @@ RUN adduser --disabled-password --gecos=Selenium-User selenium
 
 WORKDIR /home/selenium/
 
-# build-dependencies
-COPY t/selenium/control /home/selenium/control
-RUN mk-build-deps /home/selenium/control
-RUN dpkg --force-depends -i /home/selenium/ngcp-panel-tests-selenium-build-deps_1.0_all.deb
-RUN apt-get --assume-yes -f install
-
 # the connection between firefox and our selenium tests
-# this is a workaround until upstream released v1.21:
-RUN wget https://deb.sipwise.com/files/libselenium-remote-driver-perl_1.20-0.1-git-16.orig.tar.xz
-RUN tar xvf libselenium-remote-driver-perl_1.20-0.1-git-16.orig.tar.xz
+RUN wget http://deb.sipwise.com/files/Selenium-Remote-Driver-1.33.tar.gz && \
+    tar xvf Selenium-Remote-Driver-1.33.tar.gz && \
+    mv Selenium-Remote-Driver-1.33 Selenium-Remote-Driver && \
+    rm -f Selenium-Remote-Driver-1.33.tar.gz
 RUN apt-get --assume-yes -f install libarchive-zip-perl libfile-which-perl libhttp-message-perl libio-string-perl libjson-perl libmoo-perl libnamespace-clean-perl libsub-install-perl libtest-longstring-perl libtest-time-perl libtry-tiny-perl libwww-perl libxml-simple-perl
-RUN wget https://deb.sipwise.com/files/geckodriver-v0.18.0-linux64.tar.gz
-RUN tar xvf geckodriver-v0.18.0-linux64.tar.gz
-RUN ln -s /home/selenium/geckodriver /usr/bin/geckodriver
+RUN wget http://deb.sipwise.com/files/geckodriver-v0.24.0-linux64.tar.gz && \
+    tar xvf geckodriver-v0.24.0-linux64.tar.gz && \
+    ln -s /home/selenium/geckodriver /usr/bin/geckodriver && \
+    rm -f geckodriver-v0.24.0-linux64.tar.gz
 
-# firefox-esr 52.2.0esr-1~deb9u1 from Debian/buster fails with geckodriver e.g. in click events
-RUN wget https://deb.sipwise.com/files/firefox-54.0.tar.bz2
-RUN tar xvf firefox-54.0.tar.bz2
-RUN ln -s /home/selenium/firefox/firefox /usr/bin/firefox
+# pulling firefox 68.0.1 (download en_US version of firefox package)
+RUN wget http://deb.sipwise.com/files/firefox-68.0.1.tar.bz2 && \
+    tar xvf firefox-68.0.1.tar.bz2 && \
+    ln -s /home/selenium/firefox/firefox /usr/bin/firefox && \
+    rm -f firefox-68.0.1.tar.bz2
+
 # runtime dependencies for firefox
 RUN apt-get --assume-yes install libgtk-3-0 libdbus-glib-1-2
 
-# for prove execution by developers
-RUN wget https://deb.sipwise.com/files/libtest-pretty-perl_0.32-0.1~bpo9+1_all.deb
-RUN dpkg --force-depends -i libtest-pretty-perl_0.32-0.1~bpo9+1_all.deb
-RUN apt-get --assume-yes -f install
-
 # this is a workaround with PERL5LIB= ... until we've a proper libselenium-remote-driver-perl package again
-RUN echo "cd /code && PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/ ./t/selenium/testrunner 1.2.3.4" >/home/selenium/.bash_history
+RUN echo "cd /code && PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/ ./t/selenium/testrunner 1.2.3.4 /code/ tap" >/home/selenium/.bash_history
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 
