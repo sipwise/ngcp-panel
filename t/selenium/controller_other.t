@@ -133,7 +133,7 @@ ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "0123456789")]'), 'Number is correct');
 
 diag('Edit Phonebook entry');
-my $phonebookname = ("phone" . int(rand(100000)) . "book");
+$phonebookname = ("phone" . int(rand(100000)) . "book");
 $d->move_and_click('//*[@id="phonebook_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="phonebook_table_filter"]//input');
 $d->fill_element('//*[@id="name"]', 'xpath', $phonebookname);
 $d->fill_element('//*[@id="number"]', 'xpath', '9876543210');
@@ -238,10 +238,6 @@ ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text()
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Email is correct');
 
 diag('Trying to NOT delete Contact');
-$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), "Contact Found");
 $d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
