@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee200849_f92e2855",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-29T09:28:31Z",
+      "side": 1,
+      "message": "all this and above creates independent layers... maybe we should combine them? Also probably we should add cleanup for tar.gz files? Like:\n  \nRUN wget http://deb.sipwise.com/files/firefox-68.0.1.tar.bz2 \u0026\u0026 \\\n    tar xvf firefox-68.0.1.tar.bz2 \u0026\u0026 \\\n    ln -s /home/selenium/firefox/firefox /usr/bin/firefox \u0026\u0026 \\\n    rm -f firefox-68.0.1.tar.bz2\n\nWhat do you think?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 57
+      },
+      "revId": "d776f4080756d06c678e4f94c7cb11c3eb1268ae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
