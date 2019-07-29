@@ -1,3 +1,0 @@
-Source: ngcp-panel-tests-selenium
-Build-Depends: libmoosex-method-signatures-perl,
-               libtrycatch-perl,
