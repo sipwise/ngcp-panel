@@ -175,12 +175,18 @@ sub subscriber_from_id {
 sub _item_by_aor {
     my ($self, $c, $sub, $contact) = @_;
 
+    my $domain = $sub->provisioning_voip_subscriber->domain->domain;
+
     return $self->item_rs($c)->search({
         'me.contact'  => $contact,
         'me.username' => $sub->provisioning_voip_subscriber->username,
-        'me.domain'   => $c->config->{features}->{multidomain}
-                            ? undef
-                            : $sub->provisioning_voip_subscriber->domain->domain,
+        $c->config->{redis}->{usrloc}
+            ? ($c->config->{features}->{multidomain}
+                ? ('me.domain' => $domain)
+                : ())
+            : ($c->config->{features}->{multidomain}
+                ? ('me.domain' => $domain)
+                : ('me.domain' => undef))
     })->first;
 }
 
