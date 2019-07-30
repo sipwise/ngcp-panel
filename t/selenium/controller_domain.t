@@ -47,6 +47,7 @@ diag("Click edit for the preference concurrent_max");
 $d->move_and_click('//table//tr/td[contains(text(), "concurrent_max")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "reject_emergency")]');
 
 diag("Try to change this to a value which is not a number");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->fill_element('#concurrent_max', 'css', 'thisisnonumber');
 $d->find_element("#save", 'css')->click();
 
@@ -58,11 +59,13 @@ $d->fill_element('#concurrent_max', 'css', '789');
 $d->find_element('#save', 'css')->click();
 
 diag('Check if value has been applied');
+$d->find_element("Access Restrictions", 'link_text')->click();
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference concurrent_max successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), "Value has been applied");
 
 diag("Click edit for the preference allowed_ips");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 
 diag("Enter an IP address");
 $d->find_element('//*[@id="add"]')->click();
@@ -82,6 +85,7 @@ ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips"
 
 diag("Add another IP address");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '10.0.0.138');
 $d->find_element('//*[@id="add"]')->click();
 $d->find_element('//*[@id="mod_close"]')->click();
@@ -91,6 +95,7 @@ ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips"
 
 diag("Delete the first IP address");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->find_element('//*[@id="mod_edit"]/div[2]/div[2]/a')->click();
 $d->find_element('//*[@id="mod_close"]')->click();
 
@@ -98,12 +103,14 @@ diag("Check if IP addresses have been changed");
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "10.0.0.138")]'), "IP address has beeen found");
 
 diag("Enable transcoding to Opus Mono and Stereo");
+$d->find_element("Access Restrictions", 'link_text')->click();
 $d->scroll_to_element($d->find_element('Media Codec Transcoding Options', 'link_text'));
 $d->find_element('Media Codec Transcoding Options', 'link_text')->click();
 
 diag("Enable Opus Mono");
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "transcode_opus_stereo")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->select_if_unselected('//*[@id="transcode_opus_mono"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -114,6 +121,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_mo
 diag("Change Opus Mono Bitrate");
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "opus_stereo_bitrate")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 
 diag("Change to 32 kbit/s");
 $d->find_element('//*[@id="opus_mono_bitrate"]/option[contains(text(), "32")]')->click();
@@ -126,6 +134,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_mono_bitrate
 diag("Enable Opus Stereo");
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_stereo")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "transcode_opus_mono")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->select_if_unselected('//*[@id="transcode_opus_stereo"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -136,6 +145,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_st
 diag("Change Opus Stereo Bitrate");
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_stereo")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "opus_mono_bitrate")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 
 diag("Change to 32 kbit/s");
 $d->find_element('//*[@id="opus_stereo_bitrate"]/option[contains(text(), "32")]')->click();
