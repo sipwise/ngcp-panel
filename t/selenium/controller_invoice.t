@@ -108,7 +108,6 @@ ok($d->find_element_by_css('#templateidtable tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="templateidtable_filter"]/label/input', 'xpath', $templatename);
 ok($d->wait_for_text('//*[@id="templateidtable"]/tbody/tr[1]/td[3]', $templatename), 'Template was found');
 $d->select_if_unselected('//*[@id="templateidtable"]/tbody/tr[1]/td[4]/input');
-$d->scroll_to_element($d->find_element('//*[@id="contractidtable_filter"]/label/input'));
 $d->fill_element('#contractidtable_filter input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contractidtable tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('#contractidtable_filter input', 'css', $customerid);
