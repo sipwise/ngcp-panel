@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6750959d_d4173b28",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-30T10:58:38Z",
+      "side": 1,
+      "message": "can you please specify it in commit message, so reviewer can compare what you describe in commit message and what you have in code. \u0027Proper\u0027 is not clear here :-). IMHO:\n\u003e TT#62215 Return zero exit code for successful tests and non-zero on any error",
+      "range": {
+        "startLine": 7,
+        "startChar": 16,
+        "endLine": 7,
+        "endChar": 22
+      },
+      "revId": "cc36a69bcf714cf31a1ff42ad89cd3e9c9e2694d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
