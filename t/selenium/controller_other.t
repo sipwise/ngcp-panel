@@ -59,6 +59,7 @@ ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[c
 
 diag('Edit Call list suppression');
 $d->move_and_click('//*[@id="call_list_suppression_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="call_list_suppression_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Call List Suppression")]'), "Edit Window has been opened");
 $d->find_element('//*[@id="direction"]/option[@value="incoming"]')->click();
 $d->fill_element('//*[@id="pattern"]', 'xpath', 'testing');
 $d->find_element('//*[@id="mode"]/option[@value="obfuscate"]')->click();
@@ -135,6 +136,7 @@ ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text
 diag('Edit Phonebook entry');
 $phonebookname = ("phone" . int(rand(100000)) . "book");
 $d->move_and_click('//*[@id="phonebook_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="phonebook_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Phonebook")]'), "Edit Window has been opened");
 $d->fill_element('//*[@id="name"]', 'xpath', $phonebookname);
 $d->fill_element('//*[@id="number"]', 'xpath', '9876543210');
 $d->find_element('//*[@id="save"]')->click();
@@ -210,6 +212,7 @@ ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text()
 diag('Edit Contact');
 $contactmail = ("contact" . int(rand(100000)) . '@test.org');
 $d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contact")]'), "Edit Window has been opened");
 $d->fill_element('//*[@id="firstname"]', 'xpath', 'Tester');
 $d->fill_element('//*[@id="lastname"]', 'xpath', 'Using');
 $d->fill_element('//*[@id="company"]', 'xpath', 'sip');
@@ -265,7 +268,7 @@ $run_ok = 1;
 
 END {
     if(!$run_ok) {
-        $c->crash_handler("/results/crash_header.png");
+        $c->crash_handler("/results/crash_other.png");
     }
     $d->quit();
     done_testing;
