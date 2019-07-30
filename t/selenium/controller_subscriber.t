@@ -74,6 +74,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Trying to find Subscriber');
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber successfully created",  "Correct Alert was shown");
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', $username);
@@ -199,7 +200,6 @@ $d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Da
 $d->find_element("Edit", 'link_text')->click();
 
 diag('Add Subscriber to profile');
-$d->scroll_to_element($d->find_element('//*[@id="profile_setidtable_filter"]/label/input'));
 $d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#profile_setidtable tr > td.dataTables_empty'), 'Garbage Text was not found');
 $d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', $setname);
@@ -213,6 +213,7 @@ ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile")]/../td[contains(text(), "'. $profilename .'")]'));
 
 diag('Lock Subscriber');
+$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
 $d->find_element("Edit", 'link_text')->click();
 $d->find_element('//*[@id="lock"]/option[contains(text(), "global")]')->click();
 $d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
@@ -226,6 +227,7 @@ ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), "Status is correct");
 
 diag('Unlock Subscriber');
+$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
 $d->find_element("Edit", 'link_text')->click();
 $d->find_element('//*[@id="lock"]/option[contains(text(), "none")]')->click();
 $d->find_element('//*[@id="status"]/option[contains(text(), "active")]')->click();

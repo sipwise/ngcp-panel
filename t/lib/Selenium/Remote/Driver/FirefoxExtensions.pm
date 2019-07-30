@@ -5,6 +5,7 @@ use strict;
 use TryCatch;
 use Moo;
 use Selenium::Remote::WDKeys;
+use Selenium::ActionChains;
 use Test::More import => [qw(diag ok is)];
 
 extends 'Selenium::Firefox';
@@ -72,6 +73,7 @@ sub unselect_if_selected {
 sub fill_element {
     my ($self, $query, $scheme, $filltext) = @_;
     my $elem = $self->find_element($query, $scheme);
+    $self->scroll_to_element($elem);
     return 0 unless $elem;
     return 0 unless $elem->is_displayed;
     $elem->send_keys(KEYS->{'control'}, 'A');
@@ -124,6 +126,7 @@ sub wait_for_text {
 sub move_and_click {
     my ($self, $path, $type, $fallback, $timeout) = @_;
     return unless $path && $type;
+    my $action_chains = Selenium::ActionChains->new(driver => $self);
     $timeout = 15 unless $timeout; # seconds. Default timeout value if none is specified.
     my $started = time();
     my $elapsed = time();
@@ -131,10 +134,11 @@ sub move_and_click {
         $elapsed = time();
         try{
             if($fallback) {
-                $self->move_action(element => $self->find_element($fallback, $type));
+                $action_chains->move_to_element($self->find_element($fallback, $type));
             }
-            $self->move_action(element => $self->find_element($path, $type));
-            $self->find_element($path, $type)->click();
+            $action_chains->move_to_element($self->find_element($path, $type));
+            $action_chains->click($self->find_element($path, $type));
+            $action_chains->perform;
             return 1;
         };
     }
