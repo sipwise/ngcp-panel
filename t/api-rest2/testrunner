@@ -55,17 +55,18 @@ for ( @test_files ) {
 $tests_queue->end();
 
 for (1..2) {
-    push @threads, threads->create( {'context' => 'void'}, \&worker, $tests_queue );
+    push @threads, threads->create( {'context' => 'scalar'}, \&worker, $tests_queue, 0 );
 }
 
+my @exit_codes;
 foreach ( @threads ){
-  $_->join();
+  push @exit_codes, $_->join();
 }
 
 done_testing();
 
 sub worker {
-    my ($tests_queue) = @_;
+    my ( $tests_queue, $exit_code ) = @_;
 
     while ( my $test_file = $tests_queue->dequeue_nb() ) {
         chomp $test_file;
@@ -76,12 +77,19 @@ sub worker {
         my $result = $test_framework->run();
 
         my $total_time = time - $start_time;
-        print "Finished test execution for $test_file, test execution returned with exit code ".$result->{success}."\n";
+        print "Finished test execution for $test_file\n";
         if ( !$result->{success} ) {
+            $exit_code = 1;
             print $result->{error_count}." errors were found!\n";
         }
         print "Tests for $test_file took $total_time seconds.\n\n";
     }
+    return $exit_code;
 }
 
-1;
+if ( grep { $_ == 1 } @exit_codes ) {
+    exit 1;
+}
+else {
+    exit 0;
+}
