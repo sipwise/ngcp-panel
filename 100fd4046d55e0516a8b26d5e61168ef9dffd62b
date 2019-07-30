@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "6ae60756_e4a7ed3f",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-30T09:47:52Z",
+      "side": 1,
+      "message": "For the history -f here was the historically and it looks like it is no longer necessary.\nIt was not removed in https://gerrit.mgm.sipwise.com/c/ngcp-panel/+/15331/3/t/selenium/Dockerfile when Mika converted task from package to tar.gz processing.",
+      "parentUuid": "d2de220b_2e684a17",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 272
+      },
+      "revId": "100fd4046d55e0516a8b26d5e61168ef9dffd62b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a5ba23a6_fc0aaede",
         "filename": "t/selenium/Dockerfile",
         "patchSetId": 4
