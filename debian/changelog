@@ -1,3 +1,17 @@
+ngcp-panel (5.5.11.0+0~mr5.5.11.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [fee6d92] TT#28472 cert file per Collection.pm instance
+  * [e9ca2fa] TT#42776 contract_id lookup for /customers/?external_id=123
+  * [2ab05c3] TT#62457 inject contract_id to get_customer|contract_rs()
+  * [958e3ab] TT#62802 fix LI soap rail saltedpass migration
+  * [78f0bfa] TT#62866 find created reg. if domain is NULL
+  * [8887d41] TT#60850 fix api cert unique serial generator
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 30 Jul 2019 18:38:19 +0200
+
 ngcp-panel (5.5.10.0+0~mr5.5.10.0) unstable; urgency=medium
 
   [ Rene Krenn ]
