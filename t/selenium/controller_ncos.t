@@ -129,6 +129,8 @@ ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]/tbody/tr[1]/td[contain
 
 diag("Enter NCOS patterns");
 $d->move_and_click('//*[@id="ncos_level_table"]/tbody/tr[1]/td/div/a[contains(text(), "Patterns")]', 'xpath', '//*[@id="ncos_level_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "NCOS details")]'), "We are on the correct Page");
+sleep 1;
 
 diag("Create new pattern");
 $d->find_element("Create Pattern Entry", 'link_text')->click();
@@ -140,6 +142,7 @@ diag("Check Error messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Pattern field is required")]'));
 
 diag("Enter pattern details");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Number Pattern")]'), "Edit Window has been opened");
 $d->fill_element('//*[@id="pattern"]', 'xpath', '^439');
 $d->fill_element('//*[@id="description"]', 'xpath', 'Austrian Premium Numbers');
 $d->find_element('//*[@id="save"]')->click();
@@ -212,6 +215,7 @@ $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[con
 
 diag("Edit setting 'NCOS'");
 $d->move_and_click('//table//tr//td[contains(text(), "ncos")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(),"Call Blockings")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->find_element('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 

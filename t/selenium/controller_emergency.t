@@ -91,7 +91,6 @@ $d->fill_element('//*[@id="prefix"]', 'xpath', "E1_133_");
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for our new Emergency Mapping");
-$d->scroll_to_element($d->find_element('//*[@id="emergency_mappings_table_filter"]//input'));
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Emergency mapping successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
@@ -138,6 +137,7 @@ $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[con
 diag("Edit setting 'emergency_mapping_container'");
 $d->scroll_to_element($d->find_element('//table//tr//td[contains(text(), "emergency_mapping_container")]'));
 $d->move_and_click('//table//tr//td[contains(text(), "emergency_mapping_container")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "NAT and Media Flow Control")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->find_element('//*[@id="emergency_mapping_container"]/option[contains(text(), "' . $containername . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -152,6 +152,7 @@ $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[con
 diag("Edit setting 'emergency_mode_enabled'");
 $d->scroll_to_element($d->find_element('//table//tr//td[contains(text(), "emergency_mode_enabled")]'));
 $d->move_and_click('//table//tr//td[contains(text(), "emergency_mode_enabled")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr//td[contains(text(), "call_deflection")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->select_if_unselected('//*[@id="emergency_mode_enabled"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -164,7 +165,6 @@ $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click()
 $d->find_element("Emergency Mappings", 'link_text')->click();
 
 diag("Trying to NOT delete Emergency Mapping");
-$d->scroll_to_element($d->find_element('//*[@id="emergency_mappings_table_filter"]//input'));
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);

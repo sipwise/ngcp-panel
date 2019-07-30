@@ -69,8 +69,12 @@ ok($d->wait_for_text('//*[@id="rewrite_rule_set_table"]//tr[1]/td[2]', $reseller
 ok($d->wait_for_text('//*[@id="rewrite_rule_set_table"]//tr[1]/td[3]', $rulesetname), 'Ruleset Name is correct');
 ok($d->find_element_by_xpath('//*[@id="rewrite_rule_set_table"]//tr[1]//td[contains(text(), "For very testing purposes")]'), 'Description is correct');
 
-diag('Create a new empty Rule for Caller');
+diag('Go To Rewrite Rule Set Rules');
 $d->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Rules")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Rewrite Rules")]'), "We are on the correct Page");
+sleep 1;
+
+diag('Create a new empty Rule for Caller');
 $d->find_element('Create Rewrite Rule', 'link_text')->click;
 $d->find_element('//*[@id="save"]')->click();
 
@@ -211,6 +215,7 @@ $d->move_and_click('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(tex
 diag('Add ruleset to a domain');
 $d->find_element('Number Manipulations', 'link_text')->click();
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Number Manipulations")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->find_element('//*[@id="rewrite_rule_set"]/option[contains(text(), "' . $rulesetname . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
