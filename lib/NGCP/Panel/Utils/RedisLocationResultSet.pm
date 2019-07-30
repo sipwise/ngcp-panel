@@ -188,7 +188,7 @@ sub _filter {
             $colname =~ s/^$source_alias\.//;
             next if ($colname =~ /\./); # we don't support joined table columns
             $filter_applied = 1;
-            if (ref $condition eq "") {
+            if (defined $condition && ref $condition eq "") {
                 if (lc($row->$colname) ne lc($condition)) {
                     $match = 0;
                     last;
@@ -205,6 +205,13 @@ sub _filter {
                 } else {
                     $match = 1;
                 }
+            } else { # condition is undef
+                if ($row->$colname) {
+                    $match = 0;
+                    last;
+                } else {
+                    $match = 1;
+                }
             }
         }
         next if ($filter_applied && !$match);
@@ -216,11 +223,18 @@ sub _filter {
 sub _scan {
     my ($self, $filter) = @_;
     $filter //= {};
-    my $match = ($filter->{username} // "") . ":" . ($filter->{domain} // "");
+    my $domain = ref $filter->{domain} eq "HASH"
+                    ? ''
+                    : ($filter->{domain} // "");
+    my $match = ($filter->{username} // "") . ":" . ($domain);
     if ($match eq ":") {
         $match = "*";
     } elsif ($match =~ /:$/) {
-        $match .= '*';
+        if (exists $filter->{domain}) {
+            $match = substr($match, 0, -1);
+        } else {
+            $match .= '*';
+        }
     }
 
     $self->_rows([]);
