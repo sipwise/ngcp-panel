@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "818c8b18_3ed43ec4",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-30T09:38:11Z",
+      "side": 1,
+      "message": "httpS?",
+      "range": {
+        "startLine": 35,
+        "startChar": 9,
+        "endLine": 35,
+        "endChar": 13
+      },
+      "revId": "100fd4046d55e0516a8b26d5e61168ef9dffd62b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3325723_4b1d62c9",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-30T09:38:11Z",
+      "side": 1,
+      "message": "why this is not a part of RUN in line 11?",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 272
+      },
+      "revId": "100fd4046d55e0516a8b26d5e61168ef9dffd62b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5ba23a6_fc0aaede",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-30T09:38:11Z",
+      "side": 1,
+      "message": "line 11?",
+      "range": {
+        "startLine": 52,
+        "startChar": 1,
+        "endLine": 52,
+        "endChar": 60
+      },
+      "revId": "100fd4046d55e0516a8b26d5e61168ef9dffd62b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
