@@ -69,6 +69,7 @@ ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr//td[contains(text()
 
 diag("Go to Details and check if 'Reseller is locked' message appears");
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Reseller Details")]'), "We are on the correct Page");
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller is locked",  "'Reseller is locked' message appears");
 $d->find_element("Back", 'link_text')->click();
 
@@ -113,7 +114,6 @@ diag("Searching Phonebook entry");
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully created",  "Correct Alert was shown");
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
 $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
-$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'testname');
@@ -132,7 +132,6 @@ diag("Searching Phonebook entry");
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully updated",  "Correct Alert was shown");
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
 $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
-$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'newtestname');

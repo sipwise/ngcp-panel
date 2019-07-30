@@ -265,7 +265,7 @@ $run_ok = 1;
 
 END {
     if(!$run_ok) {
-        $c->crash_handler("/results/crash_header.png");
+        $c->crash_handler("/results/crash_other.png");
     }
     $d->quit();
     done_testing;
