@@ -107,7 +107,6 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Destination fi
 diag('Fill in invalid values');
 $d->fill_element('#source', 'css', '.*');
 $d->fill_element('#destination', 'css', '.+');
-$d->scroll_to_element($d->find_element('//*[@id="onpeak_init_rate"]'));
 $d->fill_element('//*[@id="onpeak_init_rate"]', 'xpath', 'e');
 $d->fill_element('//*[@id="onpeak_init_interval"]', 'xpath', 'e');
 $d->fill_element('//*[@id="onpeak_follow_rate"]', 'xpath', 'e');
@@ -121,7 +120,6 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Onpeak init in
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Onpeak follow interval must be greater than 0")]'));
 
 diag('Fill in more invalid Values');
-$d->scroll_to_element($d->find_element('//*[@id="onpeak_init_rate"]'));
 $d->fill_element('//*[@id="onpeak_init_rate"]', 'xpath', '0');
 $d->fill_element('//*[@id="onpeak_init_interval"]', 'xpath', '-10');
 $d->fill_element('//*[@id="onpeak_follow_rate"]', 'xpath', '0');
@@ -218,7 +216,7 @@ ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billing
 $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
 diag("Edit Wednesday");
-$d->move_and_click('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]', 'xpath', '//h3[contains(text(),"Weekdays")]');
+$d->move_and_click('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]', 'xpath', '//table//td[contains(text(),"Monday")]');
 ok($d->find_text("Edit Wednesday"), 'Edit dialog was opened');
 
 diag("Fill in invalid values");
@@ -271,7 +269,6 @@ $d->find_element('#save', 'css')->click();
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully created',  "Correct Alert was shown");
 
 diag("Check if created date definition is correct");
-$d->scroll_to_element($d->find_element('//div[contains(@class, "dataTables_filter")]//input'));
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2008-02-28 04:20:00');
@@ -285,7 +282,6 @@ $d->fill_element('#end', 'css', "2019-01-01 23:59:59");
 $d->find_element('#save', 'css')->click();
 
 diag("Check if created date definition is correct");
-$d->scroll_to_element($d->find_element('//div[contains(@class, "dataTables_filter")]//input'));
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2018-01-01 00:00:00');
