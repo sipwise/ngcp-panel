@@ -29,8 +29,17 @@ sub _item_rs {
             }
             if($c->config->{features}->{multidomain}) {
                 $filter->{domain} = $sub->domain->domain;
+            } else {
+                $filter->{domain} = undef;
+            }
+        } else {
+            if ($c->config->{features}->{multidomain}) {
+                $filter->{domain} = { like => '.+' };
+            } else {
+                $filter->{domain} = undef;
             }
         }
+
         if ($c->user->roles eq "admin") {
         } elsif ($c->user->roles eq "reseller") {
             $filter->{reseller_id} = $c->user->reseller_id;
@@ -44,7 +53,7 @@ sub _item_rs {
         $item_rs = $c->model('DB')->resultset('location');
         if($c->user->roles eq "admin") {
             $item_rs = $item_rs->search({
-            
+
             },{
                 join => [@joins,'subscriber'],
             });
@@ -175,12 +184,18 @@ sub subscriber_from_id {
 sub _item_by_aor {
     my ($self, $c, $sub, $contact) = @_;
 
+    my $domain = $sub->provisioning_voip_subscriber->domain->domain;
+
     return $self->item_rs($c)->search({
         'me.contact'  => $contact,
         'me.username' => $sub->provisioning_voip_subscriber->username,
-        'me.domain'   => $c->config->{features}->{multidomain}
-                            ? undef
-                            : $sub->provisioning_voip_subscriber->domain->domain,
+        $c->config->{redis}->{usrloc}
+            ? ($c->config->{features}->{multidomain}
+                ? ('me.domain' => $domain)
+                : ())
+            : ($c->config->{features}->{multidomain}
+                ? ('me.domain' => $domain)
+                : ('me.domain' => undef))
     })->first;
 }
 
