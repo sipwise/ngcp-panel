@@ -1,5 +1,5 @@
 Source: ngcp-panel
-Section: admin
+Section: web
 Priority: optional
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends:
@@ -151,6 +151,7 @@ Description: catalyst based panel application for NGCP
  A completely overhauled provisioning interface for the NGCP system.
 
 Package: ngcp-panel-tools
+Section: admin
 Architecture: all
 Depends:
  curl,
