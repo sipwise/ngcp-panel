@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47ff6612_65bdc00b",
+        "filename": "lib/NGCP/Panel/Controller/API/NcosLnpPatterns.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-01T13:58:41Z",
+      "side": 1,
+      "message": "maybe better take the more modern template, those that utilize create_item() etc.?",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6c28679_d3480969",
+        "filename": "lib/NGCP/Panel/Controller/API/NcosLnpPatterns.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-01T13:58:41Z",
+      "side": 1,
+      "message": "jfyi, the proper method here is to let the unique constraint raise this error.\ni know we have it like this also in other places, but this bethod is not safe - at least it must not be used with heavy traffic rails.",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5893fa6_e2234139",
+        "filename": "lib/NGCP/Panel/Controller/NCOS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 581,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-01T13:58:41Z",
+      "side": 1,
+      "message": "maybe it\u0027s also worth to add a count column in the lnp carrier list in Controller/Lnp.pm",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9fffdde_cfbab2e0",
+        "filename": "lib/NGCP/Panel/Controller/NCOS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-01T13:58:41Z",
+      "side": 1,
+      "message": "it\u0027s recommended to have here the same checks as in api",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "828f44cc_d4f51bac",
+        "filename": "lib/NGCP/Panel/Form/NCOS/LnpPatternAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-01T13:58:41Z",
+      "side": 1,
+      "message": "does it properly detects invalid regexes in this inherited form as well?",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
