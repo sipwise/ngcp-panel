@@ -74,6 +74,7 @@
         helper.dt_buttons = [
             { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Patterns'), uri = helper.tmpuri _ "/'+full.id+'/lnp_patterns", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
             { name = c.loc('Create LNP Entry'), uri = c.uri_for_action( "/ncos/lnp_create", [c.req.captures.0] ), icon = 'icon-star' },
