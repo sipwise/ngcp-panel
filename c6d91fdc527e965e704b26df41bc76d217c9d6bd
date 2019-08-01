@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6fda55e2_9ca422d8",
+        "filename": "lib/NGCP/Panel/Controller/API/NcosLnpPatterns.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-01T22:58:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47ff6612_65bdc00b",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b6c28679_d3480969",
         "filename": "lib/NGCP/Panel/Controller/API/NcosLnpPatterns.pm",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4af32620_83a07fbb",
+        "filename": "lib/NGCP/Panel/Controller/API/NcosLnpPatterns.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-01T22:58:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6c28679_d3480969",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     },
     {
       "key": {
@@ -88,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "89bb1259_6f9d303e",
+        "filename": "lib/NGCP/Panel/Controller/NCOS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-01T22:58:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9fffdde_cfbab2e0",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "828f44cc_d4f51bac",
         "filename": "lib/NGCP/Panel/Form/NCOS/LnpPatternAPI.pm",
         "patchSetId": 1
@@ -120,6 +174,24 @@
       "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8ba50b6_6a4a0af1",
+        "filename": "lib/NGCP/Panel/Form/NCOS/LnpPatternAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-01T22:58:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c28acf33_26740074",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
