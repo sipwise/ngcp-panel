@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "7f59479e_7c6da4a7",
+        "filename": "lib/NGCP/Panel/Controller/NCOS.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 581,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-01T22:37:54Z",
+      "side": 1,
+      "message": "A count column with how many patterns the carrier has?",
+      "parentUuid": "a5893fa6_e2234139",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e9fffdde_cfbab2e0",
         "filename": "lib/NGCP/Panel/Controller/NCOS.pm",
         "patchSetId": 1
@@ -81,6 +99,24 @@
       "writtenOn": "2019-08-01T13:58:41Z",
       "side": 1,
       "message": "does it properly detects invalid regexes in this inherited form as well?",
+      "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c28acf33_26740074",
+        "filename": "lib/NGCP/Panel/Form/NCOS/LnpPatternAPI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-01T22:37:54Z",
+      "side": 1,
+      "message": "I tried it and it does.",
+      "parentUuid": "828f44cc_d4f51bac",
       "revId": "c6d91fdc527e965e704b26df41bc76d217c9d6bd",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
