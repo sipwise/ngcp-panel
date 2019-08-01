@@ -579,7 +579,159 @@ sub lnp_create :Chained('pattern_list') :PathPart('lnp/create') :Args(0) :Allowe
     );
 }
 
+sub lnp_pattern_list :Chained('lnp_base') :PathPart('lnp_patterns') :CaptureArgs(0) {
+    my ( $self, $c ) = @_;
 
+    my $lnp_id = $c->stash->{lnp_result}->id;
+    my $pattern_rs = $c->model('DB')->resultset('ncos_lnp_pattern_list')->search({ncos_lnp_list_id => $lnp_id});
+    $c->stash(lnp_pattern_rs => $pattern_rs);
+    $c->stash(lnp_pattern_base_uri =>
+        $c->uri_for_action("/ncos/lnp_pattern_root", [$c->req->captures->[0], $c->req->captures->[1]]));
+
+    $c->stash->{lnp_pattern_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'pattern', search => 1, title => $c->loc('Pattern') },
+        { name => 'description', search => 1, title => $c->loc('Description') },
+    ]);
+
+    $c->stash( template => 'ncos/lnp_pattern_list.tt' );
+}
+
+sub lnp_pattern_root :Chained('lnp_pattern_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub lnp_pattern_ajax :Chained('lnp_pattern_list') :PathPart('lnp_pattern_ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{lnp_pattern_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{lnp_pattern_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub lnp_pattern_create :Chained('lnp_pattern_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::Pattern", $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{lnp_pattern_rs}->create($form->values);
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('NCOS pattern successfully created'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create NCOS pattern'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{lnp_pattern_base_uri});
+    }
+
+    $c->stash(
+        close_target => $c->stash->{lnp_pattern_base_uri},
+        form => $form,
+        create_flag => 1
+    );
+}
+
+sub lnp_pattern_base :Chained('lnp_pattern_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $pattern_id) = @_;
+
+    unless($pattern_id && is_int($pattern_id)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'Invalid NCOS LNP pattern id detected',
+            desc  => $c->loc('Invalid NCOS LNP pattern id detected'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{lnp_pattern_base_uri});
+    }
+
+    my $res = $c->stash->{lnp_pattern_rs}->find($pattern_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => 'NCOS LNP pattern does not exist',
+            desc  => $c->loc('NCOS LNP pattern does not exist'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{lnp_pattern_base_uri});
+    }
+    $c->stash(lnp_pattern_result => $res);
+}
+
+sub lnp_pattern_edit :Chained('lnp_pattern_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::Pattern", $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $c->stash->{lnp_pattern_result},
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{lnp_pattern_result}->update($form->values);
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                data => { $c->stash->{lnp_pattern_result}->get_inflated_columns },
+                desc => $c->loc('NCOS pattern successfully updated'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update NCOS pattern'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{lnp_pattern_base_uri});
+    }
+
+    $c->stash(
+        close_target => $c->stash->{lnp_pattern_base_uri},
+        form => $form,
+        edit_flag => 1
+    );
+}
+
+sub lnp_pattern_delete :Chained('lnp_pattern_base') :PathPart('delete') {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{lnp_pattern_result}->delete;
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { $c->stash->{lnp_pattern_result}->get_inflated_columns },
+            desc => $c->loc('NCOS pattern successfully deleted'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete NCOS pattern'),
+        );
+    };
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{lnp_pattern_base_uri});
+}
 
 1;
 
