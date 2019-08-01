@@ -1,0 +1,29 @@
+[% site_config.title = c.loc('LNP Patterns for [_1]', lnp_result.lnp_provider.name) -%]
+
+[%
+    helper.name = c.loc('LNP Pattern');
+    helper.identifier = 'lnp_pattern';
+    helper.messages = messages;
+    helper.dt_columns = lnp_pattern_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+
+    helper.ajax_uri = c.uri_for_action( "/ncos/lnp_pattern_ajax", [c.req.captures.0, c.req.captures.1] );
+    helper.tmpuri = c.uri_for_action( "/ncos/lnp_pattern_root", [c.req.captures.0, c.req.captures.1] );
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create LNP Pattern Entry'), uri = c.uri_for_action( "/ncos/lnp_pattern_create", c.req.captures ), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
