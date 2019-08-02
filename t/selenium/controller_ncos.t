@@ -216,6 +216,7 @@ $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[con
 diag("Edit setting 'NCOS'");
 $d->move_and_click('//table//tr//td[contains(text(), "ncos")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(),"Call Blockings")]');
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
+ok($d->find_element_by_xpath('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]'), "Element was found");
 $d->find_element('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
