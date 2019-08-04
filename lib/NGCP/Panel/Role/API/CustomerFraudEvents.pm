@@ -12,12 +12,13 @@ use HTTP::Status qw(:constants);
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('contract_fraud_events')->search(
-        undef,
-        {
-            bind => [ $c->request->param('interval') || 'month' ]
-        }
-    );
+    my $interval = $c->request->param('interval') // '';
+
+    my $item_rs = $c->model('DB')->resultset('contract_fraud_events')->search({
+        $interval
+            ? ('me.interval' => $interval)
+            : ()
+    });
 
     if($c->user->roles eq "admin") {
         #
@@ -73,7 +74,42 @@ sub hal_from_item {
 sub item_by_id {
     my ($self, $c, $id) = @_;
     my $item_rs = $self->item_rs($c);
-    return $item_rs->find($id);
+    my ($contract_id, $period, $period_date) = split(/-/, $id, 3);
+
+    return $item_rs->search_rs({
+        id => $contract_id,
+        interval => $period,
+        interval_date => $period_date
+    })->first;
+}
+
+sub update_item {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+    );
+
+    my $cpc_rs = $c->model('DB')->resultset('cdr_period_costs')->search({
+        contract_id => $item->id,
+        period => $item->interval,
+        period_date => $item->interval_date
+    });
+    my $cpc = $cpc_rs->first;
+    unless ($cpc) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer fraud event does not exist");
+        return;
+    }
+
+    # only update r/w fields
+    $cpc->update({
+        map { $_ => $resource->{$_} } qw(notify_status notified_at)
+    });
+
+    return $item;
 }
 
 1;

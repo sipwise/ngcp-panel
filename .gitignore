@@ -42,3 +42,5 @@ NGCP-Panel-*
 ngcp_panel_local.conf
 api-rest.pretty
 nytprof
+.tags
+.remote-sync.json
