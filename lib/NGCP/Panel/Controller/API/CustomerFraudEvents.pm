@@ -69,7 +69,7 @@ sub GET :Allow {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
+                href     => sprintf('/%s%d-%s-%s', $c->request->path, $item->id, $item->interval, $item->interval_date),
             );
         }
         push @links,
