@@ -32,7 +32,11 @@ sub query_params {
         },
         {
             param => 'interval',
-            description => 'Interval filter. values: day, month. default: month',
+            description => 'Interval filter. values: ["day", "month"].',
+        },
+        {
+            param => 'notify_status',
+            description => 'Notify status filter. values: ["new", "notified"].',
         },
     ];
 }
@@ -69,7 +73,7 @@ sub GET :Allow {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
+                href     => sprintf('/%s%d-%s-%s', $c->request->path, $item->id, $item->interval, $item->interval_date),
             );
         }
         push @links,
