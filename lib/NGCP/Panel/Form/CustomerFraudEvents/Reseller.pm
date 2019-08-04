@@ -23,6 +23,16 @@ has_field 'interval' => (
     },
 );
 
+has_field 'interval_date' => (
+    type => 'Text',
+    label => 'Interval Date',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Interval date of the fraud events.']
+    },
+);
+
 has_field 'type' => (
     type => 'Text',
     label => 'Type',
@@ -36,6 +46,7 @@ has_field 'type' => (
 has_field 'interval_cost' => (
     type => 'Float',
     label => 'Interval cost',
+    precision => '3',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
@@ -63,6 +74,16 @@ has_field 'interval_lock' => (
     },
 );
 
+has_field 'interval_notify' => (
+    type => 'Text',
+    label => 'Notify Email',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Email used for this notification.']
+    },
+);
+
 has_field 'use_reseller_rates' => (
     type => 'Integer',
     label => 'Use reseller rates',
@@ -73,15 +94,26 @@ has_field 'use_reseller_rates' => (
     },
 );
 
-has_field 'interval_notify' => (
+has_field 'notify_status' => (
     type => 'Text',
-    label => 'Interval Notify',
+    label => 'Notify Status',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['A list of emails to send the notify to.']
+        title => ['Status of the notification.']
     },
 );
+
+has_field 'notified_at' => (
+    type => 'Text',
+    label => 'Notified at',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['When the last related notification was sent.']
+    },
+);
+
 
 1;
 
