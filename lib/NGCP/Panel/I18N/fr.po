@@ -1869,6 +1869,10 @@ msgstr "Créer un Opérateur LNP"
 msgid "Create LNP Entry"
 msgstr "Créer une entrée LNP"
 
+#: share/templates/ncos/lnp_pattern_list.tt
+msgid "Create LNP Pattern Entry"
+msgstr ""
+
 #: share/templates/customer/details.tt
 msgid "Create Location"
 msgstr "Créer un emplacement"
@@ -2205,6 +2209,7 @@ msgstr ""
 #: share/templates/invoice/invoice_list.tt
 #: share/templates/invoice/template_list.tt share/templates/lnp/list.tt
 #: share/templates/maliciouscall/list.tt share/templates/ncos/list.tt
+#: share/templates/ncos/lnp_pattern_list.tt
 #: share/templates/ncos/pattern_list.tt
 #: share/templates/numberblock/block_list.tt
 #: share/templates/numberblock/profile_list.tt share/templates/package/list.tt
@@ -2587,8 +2592,9 @@ msgstr "ECM"
 #: share/templates/header/conditions_list.tt
 #: share/templates/header/rules_list.tt share/templates/header/set_list.tt
 #: share/templates/helpers/pref_table.tt share/templates/lnp/list.tt
-#: share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt
-#: share/templates/network/list.tt share/templates/numberblock/block_list.tt
+#: share/templates/ncos/list.tt share/templates/ncos/lnp_pattern_list.tt
+#: share/templates/ncos/pattern_list.tt share/templates/network/list.tt
+#: share/templates/numberblock/block_list.tt
 #: share/templates/numberblock/profile_list.tt share/templates/package/list.tt
 #: share/templates/peering/list.tt share/templates/peering/servers_rules.tt
 #: share/templates/phonebook/list.tt share/templates/reseller/details.tt
@@ -4845,6 +4851,10 @@ msgid "Invalid LNP provider id detected!"
 msgstr "Identifiant invalide de fournisseur LNP détecté!"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm
+msgid "Invalid NCOS LNP pattern id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "Invalid NCOS level id detected"
 msgstr "Identifiant invalide de niveau NCOS détecté"
 
@@ -5192,6 +5202,15 @@ msgstr "Opérateurs LNP"
 #: share/templates/lnp/list.tt
 msgid "LNP Numbers"
 msgstr "Numéros LNP"
+
+#: share/templates/ncos/lnp_pattern_list.tt
+msgid "LNP Pattern"
+msgstr ""
+
+#. (lnp_result.lnp_provider.name)
+#: share/templates/ncos/lnp_pattern_list.tt
+msgid "LNP Patterns for %1"
+msgstr ""
 
 #: share/templates/rewrite/rules_list.tt
 msgid "LNP Rewrite Rules for Callee"
@@ -5687,6 +5706,10 @@ msgstr "Pinger NAT"
 #: share/templates/ncos/pattern_list.tt
 msgid "NCOS LNP Carriers"
 msgstr "Opérateurs LNP NCOS"
+
+#: lib/NGCP/Panel/Controller/NCOS.pm
+msgid "NCOS LNP pattern does not exist"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/ncos/list.tt
 msgid "NCOS Level"
@@ -6239,7 +6262,8 @@ msgstr "Mot de passe du téléphone administrateur."
 msgid "Pattern"
 msgstr "Modèle"
 
-#: share/templates/ncos/list.tt share/templates/subscriber/preferences.tt
+#: share/templates/ncos/list.tt share/templates/ncos/pattern_list.tt
+#: share/templates/subscriber/preferences.tt
 msgid "Patterns"
 msgstr "Modèles"
 
