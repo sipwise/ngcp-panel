@@ -98,6 +98,7 @@ $ua = Test::Collection->new()->ua();
         headerruleactions => 1,
         lnpcarriers => 1,
         lnpnumbers => 1,
+        ncoslnppatterns => 1,
         mailtofaxsettings => 1,
         maliciouscalls => 1,
         managersecretary => 1,
