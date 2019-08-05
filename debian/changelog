@@ -1,3 +1,150 @@
+ngcp-panel (7.5.1.0+0~mr7.5.1.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [cf6ae55] TT#60850 fix api cert unique serial generator
+  * [6d89e74] TT#59803 obfuscate .*password.* fields in request+response body (json)
+  * [0c93d71] TT#61559 TT#61752 apply orderby to datatable setop queries
+  * [2391e3c] TT#62063 fix ac string instead of numeric comparison
+  * [6732f52] TT#62059 disable bootstrapdatatable html5 statesaving
+  * [263f97a] TT#59866 fix js Date month starting with 0 in rrule/toText
+  * [3478751] TT#61105 allow modifying billing profile/networks if not actual (6.5+)
+  * [9195681] TT#61813 fix timeset.create after nested reseller creation
+  * [29cab28] TT#62802 fix LI soap rail saltedpass migration
+  * [05958e4] TT#63402 escape localized strings used in js arguments
+  * [0932969] TT#64011 add ncoslnppatterns to api-root.t
+
+  [ Nico Schedel ]
+  * [e2fad09] TT#56376 selenium: more tests for controller_ncos.t
+  * [bfc3f7a] TT#56376 selenium: more tests for controller_peering.t
+  * [f7cc62a] TT#56376 selenium: more tests for controller_reseller.t
+  * [81a1b5c] TT#56376 Revert "TT#56376 selenium: change timeout values"
+  * [d725631] TT#56376 selenium: more tests for controller_rw_ruleset.t
+  * [a3e5c4f] TT#56376 selenium: more tests for controller_subscriber.t
+  * [23b69ab] TT#56376 selenium: more tests for controller_timeset.t
+  * [5a8afa9] TT#56376 selenium: add controller_invoice.t to default test plan
+  * [49046fc] TT#56376 selenium: add label checks to Common.pm
+  * [5f503e2] TT#56376 selenium: add label check + missing deletion check to ctr_billing
+  * [fb7467b] TT#56376 selenium: add label checks to controller_admin.t
+  * [925e79a] TT#56376 selenium: add label checks to controller_customer.t
+  * [085041e] TT#56376 selenium: add label checks + other tests to ctr_domain.t
+  * [6a63326] TT#56376 selenium: print more infos if test crashes
+  * [5256569] TT#56376 selenium: add label checks to controller_emergency.t
+  * [6c19ce2] TT#56376 selenium: make code much more readable
+  * [c765599] TT#56376 selenium: add missing delete_* calls
+  * [24c19b9] TT#56376 selenium: add more features to the crash detection
+  * [9a6cee3] TT#56376 selenium: extend timeouts for move_and_click and wait_for_text
+  * [1e55e5a] TT#56376 selenium: add label checks to controller_invoice.t + cleanups
+  * [a1708bb] TT#56376 selenium: add label checks to controller_ncos.t
+  * [1a5c09f] TT#56376 selenium: add label checks to ctr_peering.t + add missing feature
+  * [dfdde86] TT#56376 selenium: add label checks to controller_reseller.t
+  * [119c41e] TT#56376 selenium: move crash_handler to Collection.pm
+  * [38d730e] TT#56376 selenium: add error labels to crash detection
+  * [dd9da61] TT#56376 selenium: add missing label check to controller_reseller.t
+  * [5d40ebc] TT#56376 selenium: add label checks to controller_rw_ruleset.t
+  * [ea5823c] TT#56376 selenium: add label checks to controller_subscriber.t
+  * [6b6adc6] TT#56376 selenium: add test: cloning a rewrite rule set
+  * [530a227] TT#56376 selenium: add label checks to controller_timeset.t
+  * [a8711e0] TT#56376 selenium: create lnp carrier + re-enable LNP tests
+  * [856cc68] TT#56376 selenium: capture screenshot if program crashes
+  * [af33c44] TT#56376 selenium: slim down crash handler
+  * [2c4b57b] TT#56376 selenium: delete domain before deleting rw ruleset
+  * [25ae53f] TT#56376 selenium: add tests: billing networks
+  * [a7dab67] TT#56376 selenium: fix for 'stale element reference' in ctr_subscriber
+  * [d51b276] TT#56376 selenium: another crash fix for controller_subscriber
+  * [4cd1ae5] TT#56376 selenium: fix for crashes in controller_customer
+  * [63a6d8b] TT#56376 selenium: fix for crashes in controller_billing
+  * [2ab123a] TT#56376 selenium: improved label checks for controller_admin.t
+  * [eaad5ca] TT#56376 selenium: improved label checks for controller_customer.t
+  * [5438b95] TT#56376 selenium: temporarly disable a check for network blocks
+  * [d179497] TT#56376 selenium: fix for buttons not visible in browser window
+  * [2ce4f9b] TT#56376 selenium: some fixes for controller_subscriber
+  * [ed09166] TT#56376 selenium: improved label checks for controller_domain.t
+  * [f1b0193] TT#56376 selenium: improved label checks for controller_billing.t
+  * [afe92bc] TT#56376 selenium: improved label checks for controller_invoice.t
+  * [7bf6294] TT#56376 selenium: improved label checks for controller_emergency.t
+  * [85ba31c] TT#56376 selenium: improved label checks for controller_ncos.t
+  * [c9714a5] TT#56376 selenium: improved label checks for controller_peering.t
+  * [a3586f0] TT#56376 selenium: improved label checks for controller_reseller.t
+  * [8ccb2f0] TT#56376 selenium: improved label checks for controller_rw_ruleset.t
+  * [dae4771] TT#56376 selenium: improved label checks for controller_subscriber.t
+  * [f64d6f1] TT#56376 selenium: improved label checks for controller_timeset.t
+  * [5da733f] TT#56376 selenium: remove checks for labels in crash handler
+  * [0fcaddd] TT#56376 selenium: cleaned up Common.pm
+  * [6aa7cf9] TT#56376 selenium: unlock reseller after changing status to locked
+  * [3489a3d] TT#56376 selenium: improvments when creating billing profile
+  * [e0df16d] TT#56376 selenium: re-write billing zones and billing fee tests
+  * [007b1a4] TT#56376 selenium: little cleanups for controller_admin
+  * [2237af7] TT#56376 selenium: add test: create locked customer and unlock them
+  * [cb95cfa] TT#56376 selenium: fix mistake in controller_admin
+  * [0ba4b15] TT#56376 selenium: re-enable check for billing network blocks
+  * [c95d54a] TT#56376 selenium: re-enable event checks in controller_timeset.t
+  * [e53a590] TT#56376 selenium: add more checks when editing fraud limits
+  * [4417bb9] TT#56376 selenium: add new off-peaktimes tests
+  * [9a1254b] TT#56376 selenium: add file controller_header.t
+  * [d783bb6] TT#56376 selenium: minor cleanups
+  * [500de0f] TT#56376 selenium: add controller_timeset.t to default test plan
+  * [2525b8a] TT#56376 selenium: add rewrite rule set to header actions and conditions
+  * [d0a87f4] TT#56376 selenium: add file controller_soundset.t
+  * [97a7d39] TT#56376 selenium: add test: check if reseller is locked and unlock him
+  * [22f7343] TT#56376 selenium: add missing fallback elements in controller_peering
+  * [999a956] TT#56376 selenium: add test: lock and unlock subscriber
+  * [788d733] TT#56376 selenium: add file controller_other.t
+  * [b9aa82a] TT#56376 selenium: add tests: create/edit/delete contact
+  * [78a919d] TT#56376 selenium: add ctr_other and ctr_soundset to default test plan
+  * [c6d185d] TT#56376 selenium: fix use of uninitialized variable
+  * [7fe8a93] TT#56376 selenium: fix crash when deleting header rule condition
+  * [f79527e] TT#56376 selenium: runner.t cleanups
+  * [07c3496] TT#56376 selenium: re-enable a test in controller_domain
+  * [7e4961a] TT#56376 selenium: add test: use invalid values when creating billing fee
+  * [5375b13] TT#56376 selenium: add more tests for locations in controller_customer
+  * [45998e9] TT#56376 selenium: cleanups when trying to create empty domain
+  * [5960a16] TT#56376 selenium: remove unnecessary search in controller_emergency
+  * [a85457f] TT#56376 selenium: call driver->quit() after test has been executed
+  * [d18eada] TT#56376 clean up controller_other
+  * [5b4438b] TT#63700 updating selenium test packages
+  * [53b958f] TT#63700 update selenium tests to work with new docker image
+  * [1276313] TT#56376 fix crash when selection ncos domain setting
+  * [240e693] TT#56376 selenium: fix crash when opening edit dialog in off-peak times
+  * [5852e2d] TT#56376 selenium: minor changes to controller_billing
+  * [6321048] TT#56376 selenium: add pageLoadStrategy argument when creating driver
+
+  [ Kirill Solomko ]
+  * [28d51dc] TT#58950 RedisLocationResult improvements
+  * [09a1034] TT#63542 use multidomain in item_by_aor
+  * [4db3127] TT#63542 API/SubscriberRegistrations respect redis usrloc
+  * [914722e] TT#63545 rework /api/customerfraudevents support cdr_period_costs
+
+  [ Alexander Lutay ]
+  * [c384b2c] TT#60950 Switch ngcp-panel Selenium docker to buster
+  * [d44140c] TT#60950 Switch ngcp-panel REST API docker to buster
+  * [cfc4ed7] TT#56060 Remove garbage from t/ folder
+  * [0ae8ad5] TT#62215 Add initial integration for Jenkins daily-build-testrunner
+
+  [ Guillem Jover ]
+  * [929bfbf] TT#61101 Remove obsolete alternative dependencies
+  * [f77e463] TT#61954 Update copyright years
+  * [bbef397] TT#60750 Do not install deprecated command aliases
+  * [6351678] TT#60750 Use modern commands in preference of deprecated ones
+  * [06e40dd] TT#61954 Set debhelper compat level in Build-Depends instead of debian/compat
+  * [9a10b9d] TT#63301 Fix package sections
+
+  [ Flaviu Mates ]
+  * [818f22c] TT#57652 Implement a Proof of Concept for the new API Test Framework
+  * [603351c] TT#59024 - Disable web_password and sip password fields 	   for administrators with disabled 'show_passwords'
+  * [67f11e1] TT#61401 - Fix for adding empty string in 'allowed_ips'
+  * [13688f2] TT#62215 - Add logging for NGCP Test Framework
+  * [aa50796] TT#62215 Return zero exit code for successful tests and non-zero on any error
+  * [430e590] TT#64011 - Implement NCOS LNP Carrier patterns support in UI/API
+
+  [ Andreas Granig ]
+  * [01cb479] TT#62952 Strip ALE autoprov pre/suffix in bootstrap
+  * [b110ac2] TT#62983 Provide full server ca certfile
+
+  [ Sipwise Jenkins Builder ]
+  * [eed8765] TT#4166 I18N dump: snapshot 2019.08.05-14.00.44
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 05 Aug 2019 20:57:06 +0200
+
 ngcp-panel (7.5.0.0+0~mr7.5.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
