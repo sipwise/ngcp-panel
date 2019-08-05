@@ -217,7 +217,7 @@ $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[con
 
 diag("Edit Wednesday");
 ok($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2[contains(text(), "Off-peak-times")]'), "We are on the correct Page");
-$d->move_and_click('//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]', 'xpath', '//table//td[contains(text(),"Monday")]');
+$d->move_and_click('//*[@id="content"]//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]', 'xpath', '//*[@id="content"]//td[contains(text(),"Monday")]');
 ok($d->find_text("Edit Wednesday"), 'Edit dialog was opened');
 
 diag("Fill in invalid values");
@@ -290,7 +290,7 @@ is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special 
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2018-01-01 00:00:00'), 'Start Date definition is correct');
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2019-01-01 23:59:59'), 'End Date definition is correct');
 
-diag("Delete my created date definition");
+diag("Delete created date definition");
 $d->move_and_click('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
