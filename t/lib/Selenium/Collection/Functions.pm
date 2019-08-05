@@ -6,6 +6,7 @@ use Moo;
 use TryCatch;
 
 use Selenium::Remote::Driver::FirefoxExtensions;
+$Selenium::Remote::Driver::FORCE_WD3=1;
 
 sub create_driver {
     my ($port) = @_;
@@ -13,6 +14,7 @@ sub create_driver {
     if ($port) {
         my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
             browser_name => $browsername,
+            pageLoadStrategy => 'normal',
             extra_capabilities => {
                 acceptInsecureCerts => \1,
             },
@@ -23,6 +25,7 @@ sub create_driver {
         try {
             my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
                 browser_name => $browsername,
+                pageLoadStrategy => 'normal',
                 extra_capabilities => {
                     acceptInsecureCerts => \1,
                 },
@@ -33,6 +36,7 @@ sub create_driver {
         try {
             my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
                 browser_name => $browsername,
+                pageLoadStrategy => 'normal',
                 extra_capabilities => {
                     acceptInsecureCerts => \1,
                 },
@@ -43,6 +47,7 @@ sub create_driver {
         try {
             my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
                 browser_name => $browsername,
+                pageLoadStrategy => 'normal',
                 extra_capabilities => {
                     acceptInsecureCerts => \1,
                 },
@@ -53,6 +58,7 @@ sub create_driver {
         try {
             my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
                 browser_name => $browsername,
+                pageLoadStrategy => 'normal',
                 extra_capabilities => {
                     acceptInsecureCerts => \1,
                 },
