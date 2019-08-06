@@ -53,10 +53,10 @@ firefox --version
 
 # ensure we don't leave any process behind causing problems with re-execution
 pkill -f 'geckodriver' || true
-DISPLAY=:99 ~/geckodriver -p 4444 &
-DISPLAY=:99 ~/geckodriver -p 5555 &
-DISPLAY=:99 ~/geckodriver -p 6666 &
-DISPLAY=:99 ~/geckodriver -p 7777 &
+DISPLAY=:99 ~/geckodriver -p 4444 --log fatal &
+DISPLAY=:99 ~/geckodriver -p 5555 --log fatal &
+DISPLAY=:99 ~/geckodriver -p 6666 --log fatal &
+DISPLAY=:99 ~/geckodriver -p 7777 --log fatal &
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
