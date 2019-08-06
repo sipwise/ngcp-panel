@@ -54,7 +54,7 @@ sub create_location {
         # 1: now
         # >=1: now + seconds to the future
     } else {
-        $expires = 4294967295;
+        $expires = 2147483647;
     }
     $expires = 0 if $expires < 0;
     $flags //= 0;
