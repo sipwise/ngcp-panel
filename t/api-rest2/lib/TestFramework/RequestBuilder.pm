@@ -53,7 +53,7 @@ sub _replace_vars {
     if ( $args->{content} ) {
         if ( ref $args->{content} eq 'HASH' ) {
             foreach my $content_key (keys %{$args->{content}}) {
-                if ( $args->{content}->{$content_key} && $args->{content}->{$content_key} =~ /\$\{(.*)\}$/ ) {
+                if ( $args->{content}->{$content_key} && $args->{content}->{$content_key} =~ /\$\{(.*)\}/ ) {
                     if ( ref $args->{retain}->{$1} eq 'ARRAY' || ref $args->{retain}->{$1} eq 'HASH' ) {
                         $args->{content}->{$content_key} = $args->{retain}->{$1};
                     }
