@@ -109,13 +109,12 @@ sub browser_name_in {
 }
 
 sub wait_for_text {
-    my ($self, $xpath, $expected, $timeout) = @_;
+    my ($self, $xpath, $expected, $tries) = @_;
     return unless $xpath && $expected;
-    $timeout = 15 unless $timeout; # seconds. Default timeout value if none is specified.
-    my $started = time();
-    my $elapsed = time();
-    while ($elapsed - $started <= $timeout){
-        $elapsed = time();
+    $tries = 3 unless $tries;
+    my $try = 1;
+    while ($try <= $tries){
+        $try++;
         try{
             return 1 if $self->find_element($xpath)->get_text() eq $expected;
         };
@@ -124,14 +123,13 @@ sub wait_for_text {
 }
 
 sub move_and_click {
-    my ($self, $path, $type, $fallback, $timeout) = @_;
+    my ($self, $path, $type, $fallback, $tries) = @_;
     return unless $path && $type;
     my $action_chains = Selenium::ActionChains->new(driver => $self);
-    $timeout = 15 unless $timeout; # seconds. Default timeout value if none is specified.
-    my $started = time();
-    my $elapsed = time();
-    while ($elapsed - $started <= $timeout){
-        $elapsed = time();
+    $tries = 3 unless $tries;
+    my $try = 1;
+    while ($try <= $tries){
+        $try++;
         try{
             if($fallback) {
                 $action_chains->move_to_element($self->find_element($fallback, $type));
@@ -146,13 +144,12 @@ sub move_and_click {
 }
 
 sub wait_for_attribute {
-    my ($self, $path, $attrib, $expected, $timeout) = @_;
+    my ($self, $path, $attrib, $expected, $tries) = @_;
     return unless $path && $attrib && $expected;
-    $timeout = 15 unless $timeout; # seconds. Default timeout value if none is specified.
-    my $started = time();
-    my $elapsed = time();
-    while ($elapsed - $started <= $timeout){
-        $elapsed = time();
+    $tries = 3 unless $tries;
+    my $try = 1;
+    while ($try <= $tries){
+        $try++;
         try{
             return 1 if $self->find_element($path)->get_attribute($attrib, 1) eq $expected;
         };
