@@ -35,9 +35,10 @@ sub login_ok {
 sub create_domain {
     my ($self, $name, $reseller) = @_;
     return unless $name;
-
     $reseller = 'default' unless $reseller;
+
     diag('Go to domains page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Domains", 'link_text')->click();
 
@@ -57,6 +58,7 @@ sub delete_domain {
     return unless $name;
 
     diag('Go to domains page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Domains", 'link_text')->click();
 
@@ -78,6 +80,7 @@ sub create_reseller {
     return unless $name && $resellerid;
 
     diag('Go to reseller page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Resellers', 'link_text')->click();
 
@@ -97,6 +100,7 @@ sub create_reseller_contract {
     return unless $resellerid;
 
     diag('Go to Reseller and Peering Contracts page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Reseller and Peering Contracts', 'link_text')->click();
 
@@ -123,6 +127,7 @@ sub delete_reseller {
     return unless $name;
 
     diag('Go to reseller page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Resellers', 'link_text')->click();
 
@@ -144,6 +149,7 @@ sub delete_reseller_contract {
     return unless $resellerid;
 
     diag('Go to Reseller and Peering Contracts page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Reseller and Peering Contracts', 'link_text')->click();
 
@@ -165,6 +171,7 @@ sub create_rw_ruleset {
     return unless $rulesetname && $resellername;
 
     diag('Go to Rewrite Rule Sets page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Rewrite Rule Sets', 'link_text')->click();
 
@@ -185,6 +192,7 @@ sub delete_rw_ruleset {
     return unless $rulesetname;
 
     diag('Go to Rewrite Rule Sets page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Rewrite Rule Sets', 'link_text')->click();
 
@@ -206,6 +214,7 @@ sub create_customer {
     return unless $customerid && $contactmail && $billingname;
 
     diag("Go to Customers page");
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Customers", 'link_text')->click();
 
@@ -233,6 +242,7 @@ sub delete_customer {
     return unless $customerid;
 
     diag("Go to Customers page");
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Customers", 'link_text')->click();
 
@@ -254,6 +264,7 @@ sub create_contact {
     return unless $contactmail && $reseller;
 
     diag("Go to Contacts page");
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Contacts", 'link_text')->click();
 
@@ -276,6 +287,7 @@ sub delete_contact {
     return unless $contactmail;
 
     diag("Go to Contacts page");
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Contacts", 'link_text')->click();
 
@@ -297,6 +309,7 @@ sub create_billing_profile {
     return unless $billingname && $resellername;
 
     diag("Go to Billing page");
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Billing", 'link_text')->click();
 
@@ -317,9 +330,12 @@ sub delete_billing_profile {
     my($self, $billingname, $cancel) = @_;
     return unless $billingname;
 
-    diag("Terminate our Billing Profile");
+    diag("Go to Billing page");
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Billing", 'link_text')->click();
+
+    diag("Trying to delete Billing Profile");
     $self->driver->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
     ok($self->driver->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
