@@ -60,11 +60,13 @@ ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[c
 diag('Edit Call list suppression');
 $d->move_and_click('//*[@id="call_list_suppression_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="call_list_suppression_table_filter"]//input');
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Call List Suppression")]'), "Edit Window has been opened");
+sleep 1;
 $d->find_element('//*[@id="direction"]/option[@value="incoming"]')->click();
-$d->fill_element('//*[@id="pattern"]', 'xpath', 'testing');
 $d->find_element('//*[@id="mode"]/option[@value="obfuscate"]')->click();
-$d->fill_element('//*[@id="label"]', 'xpath', 'text');
 $d->find_element('//*[@id="save"]')->click();
+$d->fill_element('//*[@id="pattern"]', 'xpath', 'testing');
+$d->fill_element('//*[@id="label"]', 'xpath', 'text');
+
 
 diag('Search Call list suppression');
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Call list suppression successfully updated",  "Correct Alert was shown");
