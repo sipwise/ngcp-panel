@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c88da207_d388c094",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-09T22:44:25Z",
+      "side": 1,
+      "message": "regarding \n\n\u003eAn customer exceeds limit 2019-07-31 23:55:00 and locked.\n\u003eThe ngcp-fraud-notifier runs at 2018-08-01 00:00:01  ...\n\u003eOr another scenario, ngcp-fraud-notifier is stopped for some reason for a few days and then \u003ereenabled again.\n\ni ended up with the conclusion that it is better to not change the existing behaviour but keep it as it was. if the old fraud job was disabled for a time, they do not send notifications piled up for the days.\n\nit uses indexes properly now and there will not be bad surprises if the job was inactive for some time, eg. if maintenance mode was on for some days of a stuck upgrade etc.\n\nit will be a rare scenario that a subscriber gets locked just close before midnight.\na good compromise to cover the 23:55 case is to include the events of the previous day only.\nthe proper approach for this would be to not have the demracation by midnight at all, but record cost of \"last 24h\" (sliding window).",
+      "parentUuid": "c50cc2a9_96a2bb0a",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 40,
+        "endChar": 60
+      },
+      "revId": "4a0515bbd8fde05cbab880a06893460fb5efb7ac",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5a46f702_f85309ee",
         "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
         "patchSetId": 2
