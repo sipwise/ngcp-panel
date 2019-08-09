@@ -5,41 +5,59 @@ extends 'HTML::FormHandler';
 
 has_field 'id' => (
     type => 'PosInteger',
-    label => 'Customer',
-    required => 1,
+    label => 'ID',
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Customer that a fraud event belongs to.']
+        title => ['ID of the period.']
+    },
+);
+
+has_field 'contract_id' => (
+    type => 'PosInteger',
+    label => 'Contract',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Contract ID of the customer/system contract causing the fraud event.']
     },
 );
 
 has_field 'interval' => (
-    type => 'Text',
+    type => 'Select',
     label => 'Interval',
     required => 1,
+    options => [
+        { label => 'current day', value => 'day' },
+        { label => 'current month', value => 'month' },
+    ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Interval of the fraud events.']
+        title => ['Period of the fraud event.']
     },
 );
 
-has_field 'interval_date' => (
-    type => 'Text',
-    label => 'Interval Date',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Interval date of the fraud events.']
-    },
-);
+#has_field 'interval_date' => (
+#    type => 'Text',
+#    label => 'Interval Date',
+#    required => 1,
+#    element_attr => {
+#        rel => ['tooltip'],
+#        title => ['Interval date of the fraud events.']
+#    },
+#);
 
 has_field 'type' => (
-    type => 'Text',
+    type => 'Select',
     label => 'Type',
     required => 1,
+    options => [
+        { label => 'contract fraud preference', value => 'account_limit' },
+        { label => 'billing_profile', value => 'profile_limit' },
+    ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Type of the fraud event.']
+        title => ['Origin of fraud setting in effect.']
     },
 );
 
@@ -65,22 +83,12 @@ has_field 'interval_limit' => (
 );
 
 has_field 'interval_lock' => (
-    type => 'Integer',
+    type => '+NGCP::Panel::Field::SubscriberLockSelect',
     label => 'Interval Lock',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Lock type for the interval.']
-    },
-);
-
-has_field 'interval_notify' => (
-    type => 'Text',
-    label => 'Notify Email',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Email used for this notification.']
+        title => ['Lock level to apply.']
     },
 );
 
@@ -94,26 +102,39 @@ has_field 'use_reseller_rates' => (
     },
 );
 
-has_field 'notify_status' => (
+has_field 'interval_notify' => (
     type => 'Text',
-    label => 'Notify Status',
-    required => 1,
+    label => 'Notify Email',
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Status of the notification.']
+        title => ['Email used for this notification.']
+    },
+);
+
+has_field 'notify_status' => (
+    type => 'Select',
+    label => 'Notify Status',
+    required => 1,
+    options => [
+        { label => 'new', value => 'new' },
+        { label => 'notified', value => 'notified' },
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Status of the notification. \'new\' events are pending to be sent.']
     },
 );
 
 has_field 'notified_at' => (
     type => 'Text',
     label => 'Notified at',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['When the last related notification was sent.']
+        title => ['When the last email notification was sent.']
     },
 );
-
 
 1;
 
