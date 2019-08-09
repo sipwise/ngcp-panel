@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c50cc2a9_96a2bb0a",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-09T19:31:28Z",
+      "side": 1,
+      "message": "I think it must return all events instead of current day/month.\n\nAn example:\n\nAn customer exceeds limit 2019-07-31 23:55:00 and locked.\nThe ngcp-fraud-notifier runs at 2018-08-01 00:00:01  ...\n\nOr another scenario, ngcp-fraud-notifier is stopped for some reason for a few days and then reenabled again.\n\nWe should also have the default behaviour (resultset ) to return \"notify_status\u003dnew\", then the list will be small by default.\n\nIf a customer wants to retrieve \"notified\" - he sets the param to /?notify_status\u003dnotified",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 40,
+        "endChar": 60
+      },
+      "revId": "4a0515bbd8fde05cbab880a06893460fb5efb7ac",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a46f702_f85309ee",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-09T19:31:28Z",
+      "side": 1,
+      "message": "a leftover I believe",
+      "range": {
+        "startLine": 43,
+        "startChar": 26,
+        "endLine": 43,
+        "endChar": 64
+      },
+      "revId": "4a0515bbd8fde05cbab880a06893460fb5efb7ac",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f466ab21_86c29e5e",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-09T19:31:28Z",
+      "side": 1,
+      "message": "clean up if not going to be used ?",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 17
+      },
+      "revId": "4a0515bbd8fde05cbab880a06893460fb5efb7ac",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
