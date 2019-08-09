@@ -15,6 +15,7 @@ sub create_domain {
     return unless $name;
 
     diag('Go to domains page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Domains", 'link_text')->click();
 
@@ -31,6 +32,7 @@ sub delete_domain {
     return unless $name;
 
     diag('Go to domains page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element("Domains", 'link_text')->click();
 
@@ -54,6 +56,7 @@ sub create_reseller {
     return unless $name && $resellerid;
 
     diag('Go to reseller page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Resellers', 'link_text')->click();
 
@@ -73,6 +76,7 @@ sub create_reseller_contract {
     return unless $resellerid;
 
     diag('Go to Reseller and Peering Contracts page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Reseller and Peering Contracts', 'link_text')->click();
 
@@ -101,6 +105,7 @@ sub delete_reseller {
     return unless $name;
 
     diag('Go to reseller page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Resellers', 'link_text')->click();
 
@@ -124,6 +129,7 @@ sub delete_reseller_contract {
     return unless $resellerid;
 
     diag('Go to Reseller and Peering Contracts page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Reseller and Peering Contracts', 'link_text')->click();
 
@@ -146,6 +152,7 @@ sub create_rw_ruleset {
     my($self, $resellername, $rulesetname) = @_;
 
     diag('Go to Rewrite Rule Sets page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Rewrite Rule Sets', 'link_text')->click();
 
@@ -165,6 +172,7 @@ sub delete_rw_ruleset {
     my($self, $rulesetname) = @_;
 
     diag('Go to Rewrite Rule Sets page');
+    $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
     $self->driver->find_element('Rewrite Rule Sets', 'link_text')->click();
 
