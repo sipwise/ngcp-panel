@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "78a70142_215114e3",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-12T11:39:33Z",
+      "side": 1,
+      "message": "is this intentional or just a debug leftover ?",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 187,
+        "endChar": 0
+      },
+      "revId": "9230bafa6a2ab185c5f4bf23fab627b595ee2efd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
