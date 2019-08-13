@@ -140,6 +140,30 @@
       "revId": "4a0515bbd8fde05cbab880a06893460fb5efb7ac",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8c339ed_0b42e1ba",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-13T13:14:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f466ab21_86c29e5e",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 17
+      },
+      "revId": "4a0515bbd8fde05cbab880a06893460fb5efb7ac",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
