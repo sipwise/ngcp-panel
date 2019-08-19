@@ -304,6 +304,7 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 diag("Check if Entry was deleted");
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "LNP carrier successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
+$d->move_and_click('//*[@id="lnp_numbers_table_filter"]//label//input', 'xpath', '//*[@id="content"]/div/h3[contains(text(), "LNP Numbers")]');
 ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Entry was deleted');
 
 $c->delete_domain($domainstring);
