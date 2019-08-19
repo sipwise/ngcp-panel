@@ -154,7 +154,7 @@ sub resource_from_item {
             }
         }
     } else {
-        if (!$self->subscriberadmin_write_access($c)) {
+        if ($c->user->roles eq "subscriberadmin" && !$self->subscriberadmin_write_access($c)) {
             # fields we never want to see
             foreach my $k(qw/domain_id status profile_id profile_set_id external_id/) {
                 delete $resource{$k};
@@ -339,6 +339,14 @@ sub prepare_resource {
         $resource->{customer_id} = $pilot->account_id;
         $resource->{status} = 'active';
         #deny to create subscriberadmin, the same as in the web ui
+        $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
+    } elsif($c->user->roles eq "subscriber") {
+        $domain = $item->domain;
+        delete $resource->{domain};
+        $resource->{domain_id} = $domain->id;
+        $resource->{customer_id} = $item->provisioning_voip_subscriber->account_id;
+        $resource->{status} = 'active';
+
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     }
     $resource->{e164} = delete $resource->{primary_number};
@@ -604,7 +612,7 @@ sub prepare_resource {
 sub update_item {
     my ($self, $c, $schema, $item, $full_resource, $resource, $form) = @_;
 
-    return unless $self->check_write_access($c, $item);
+    return unless $self->check_write_access($c, $item->id);
 
     my $subscriber = $item;
     my $customer = $full_resource->{customer};
@@ -777,23 +785,17 @@ sub update_item {
 }
 
 sub check_write_access {
-    my($self, $c, $item) = @_;
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-    } elsif($c->user->roles eq "subscriber"
-        || (
-              $c->user->roles eq "subscriberadmin"
-            && !$self->subscriberadmin_write_access($c)
-        )
-    ) {
+    my ( $self, $c, $id ) = @_;
+
+    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+
+    }
+    elsif ($c->user->roles eq "subscriberadmin" && !$self->subscriberadmin_write_access($c)) {
         $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
         return;
-    } elsif($c->user->roles eq "subscriberadmin") {
-        unless($c->config->{features}->{cloudpbx}) {
-            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-            return;
-        }
-        my $customer = $self->get_customer($c, $c->user->account_id);
-        if($customer->product->class ne 'pbxaccount') {
+    }
+    elsif($c->user->roles eq "subscriber") {
+        if ( $id != $c->user->voip_subscriber->id ) {
             $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
             return;
         }
@@ -803,15 +805,14 @@ sub check_write_access {
 
 sub subscriberadmin_write_access {
     my($self,$c) = @_;
-    if ($c->user->roles eq "subscriberadmin"
-        && (
-                ( $c->config->{privileges}->{subscriberadmin}->{subscribers}
-                    && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/
-                )
-            ||  ( $c->config->{features}->{cloudpbx} #user can disable pbx feature after some time of using it
-                    && $c->user->contract->product->class eq 'pbxaccount'
-                )
-            ) ) {
+    if ( ( $c->config->{privileges}->{subscriberadmin}->{subscribers}
+           && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/
+         )
+         ||
+         ( $c->config->{features}->{cloudpbx} #user can disable pbx feature after some time of using it
+           && $c->user->contract->product->class eq 'pbxaccount'
+         )
+        ) {
         return 1;
     }
     return 0;
