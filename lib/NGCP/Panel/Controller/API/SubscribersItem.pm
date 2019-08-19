@@ -70,7 +70,7 @@ sub GET :Allow {
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
 
-    return unless $self->check_write_access($c);
+    return unless $self->check_write_access($c, $id);
 
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
@@ -112,7 +112,7 @@ sub PUT :Allow {
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
 
-    return unless $self->check_write_access($c);
+    return unless $self->check_write_access($c, $id);
 
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
@@ -161,7 +161,7 @@ sub PATCH :Allow {
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
-    return unless $self->check_write_access($c);
+    return unless $self->check_write_access($c, $id);
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {
