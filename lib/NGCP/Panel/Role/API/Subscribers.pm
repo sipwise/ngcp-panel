@@ -154,7 +154,7 @@ sub resource_from_item {
             }
         }
     } else {
-        if (!$self->subscriberadmin_write_access($c)) {
+        if ($c->user->roles eq "subscriberadmin" && !$self->subscriberadmin_write_access($c)) {
             # fields we never want to see
             foreach my $k(qw/domain_id status profile_id profile_set_id external_id/) {
                 delete $resource{$k};
@@ -323,7 +323,7 @@ sub prepare_resource {
         }
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
-    } elsif($c->user->roles eq "subscriberadmin") {
+    } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         my $pilot = $schema->resultset('provisioning_voip_subscribers')->search({
             account_id => $c->user->account_id,
             is_pbx_pilot => 1,
@@ -779,12 +779,7 @@ sub update_item {
 sub check_write_access {
     my($self, $c, $item) = @_;
     if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-    } elsif($c->user->roles eq "subscriber"
-        || (
-              $c->user->roles eq "subscriberadmin"
-            && !$self->subscriberadmin_write_access($c)
-        )
-    ) {
+    } elsif( $c->user->roles eq "subscriberadmin" && !$self->subscriberadmin_write_access($c) ) {
         $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
         return;
     } elsif($c->user->roles eq "subscriberadmin") {
