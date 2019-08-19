@@ -1980,11 +1980,7 @@ sub create_cf_destination{
     }
     foreach my $dest(@$fields) {
         my $d = $dest->field('destination')->value;
-        my $t = 300;
-        if ($d eq "uri") {
-            $t = $dest->field('uri')->field('timeout')->value;
-            # TODO: check for valid timeout here
-        }
+        my $t = $dest->field('uri')->field('timeout')->value || 300;
         $d = NGCP::Panel::Utils::Subscriber::field_to_destination(
                 number => $numberstr,
                 domain => $subscriber->domain->domain,

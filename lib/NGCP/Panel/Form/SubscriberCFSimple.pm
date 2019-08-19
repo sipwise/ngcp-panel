@@ -78,6 +78,10 @@ has_field 'destination.uri.timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     label => 'for (seconds)',
     default => 300,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['NOTE: please note that for some scenarios the value is ignored, despite the fact that the field can be freely changed.']
+    },
 );
 has_field 'destination.announcement_id' => (
     type => 'Select',
