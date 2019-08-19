@@ -947,15 +947,13 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         my $duri;
         my $t = $destination ? ($destination->timeout || 300) : 300;
         ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($d);
-        if ($d eq "uri") {
-            $c->stash->{cf_tmp_params} = {
-                uri => {
-                    destination => $duri,
-                    timeout => $t,
-                },
-                id => $destination ? $destination->id : undef,
-            };
-        }
+        $c->stash->{cf_tmp_params} = {
+            uri => {
+                destination => $duri,
+                timeout => $t,
+            },
+            id => $destination ? $destination->id : undef,
+        };
         $params = { destination => $c->stash->{cf_tmp_params} };
         $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
