@@ -307,9 +307,70 @@ is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Customer
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
 
+$c->delete_contact($contactmail);
+
+diag('Create a new Contact for termination testing');
+$contactmail = ("contact" . int(rand(100000)) . '@test.org');
+$c->create_contact($contactmail, $resellername);
+
+diag('Create a new customer for termination testing');
+$c->create_customer($customerid, $contactmail, $billingname);
+
+diag("Search for Customer");
+$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer found');
+$custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
+$compstring = "Customer #" . $custnum . " successfully created - Details";
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
+
+diag('Edit customer status to terminated');
+$d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
+$d->scroll_to_element($d->find_element('//*[@id="status"]'));
+$d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
+$d->find_element('#save', 'css')->click();
+
+diag('Check if customer was deleted');
+$compstring = "Customer #" . $custnum . " successfully updated";
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
+$d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
+
+diag('Go to Contacts page');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Contacts", 'link_text')->click();
+
+diag('Search for Contact');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
+ok($d->find_element_by_xpath('//*[@id="contact_table"]/tbody/tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Contact found');
+
+diag('Check if Editing Contact works');
+$d->move_and_click('//*[@id="contact_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contact")]'), "'Edit Contact' window has been opened");
+$d->fill_element('//*[@id="firstname"]', 'xpath', 'TestContactAndStuff');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if Contact was edited');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
+ok($d->find_element_by_xpath('//*[@id="contact_table"]/tbody/tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Contact found');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]/tbody/tr[1]/td[contains(text(), "TestContactAndStuff")]'), 'Name was edited');
+
+diag('Delete Contact');
+$d->move_and_click('//*[@id="contact_table"]/tbody/tr[1]//td//div//a[contains(text(),"Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+
+diag('Check if Contact has been deleted');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully terminated",  "Correct Alert was shown");
+$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
+ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Contact has been deleted');
+
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
-$c->delete_contact($contactmail);
 $c->delete_billing_profile($billingname);
 
 diag("This test run was successfull");
