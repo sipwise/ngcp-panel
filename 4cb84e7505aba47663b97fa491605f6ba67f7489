@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21e3fcc9_b272483c",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 782,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-20T09:40:30Z",
+      "side": 1,
+      "message": "but now there is no check for the \"subscriber\" role and according to the \"if/else\" it will always return \"true\" for \"subscriber\" roles..",
+      "revId": "4cb84e7505aba47663b97fa491605f6ba67f7489",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
