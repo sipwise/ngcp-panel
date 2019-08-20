@@ -405,6 +405,7 @@ diag('Check if Subscriber has been deleted');
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully terminated subscriber",  "Correct Alert was shown");
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
+$d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
 
 diag('Go to Subscriber Profiles page');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
