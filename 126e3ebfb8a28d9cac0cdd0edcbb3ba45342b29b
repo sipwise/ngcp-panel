@@ -16,6 +16,24 @@
       "revId": "126e3ebfb8a28d9cac0cdd0edcbb3ba45342b29b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de355897_19812221",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-20T09:46:27Z",
+      "side": 0,
+      "message": "most likely because there was no \"auto-attendant\" when this code was added. but as \"timeout\" is the value that is visible and editable for all destination types, it should be possible to edit it, and wether it is used by an internal logic for some destination types and unused for others is a different topic.",
+      "parentUuid": "7396f86d_612f6a6d",
+      "revId": "126e3ebfb8a28d9cac0cdd0edcbb3ba45342b29b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
