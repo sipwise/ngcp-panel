@@ -434,7 +434,66 @@ is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscrib
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 
-$c->delete_customer($customerid);
+diag("Go to Customers page");
+$d->scroll_to_element($d->find_element('//*[@id="main-nav"]'));
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Customers", 'link_text')->click();
+
+diag('Create Subscriber for Termination Test');
+$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
+$d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
+$d->find_element('Create Subscriber', 'link_text')->click();
+$d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#domainidtable tr > td.dataTables_empty'), 'Table is empty');
+$d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', $domainstring);
+ok($d->wait_for_text('//*[@id="domainidtable"]/tbody/tr[1]/td[3]', $domainstring), 'Domain found');
+$d->select_if_unselected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
+$d->find_element('//*[@id="username"]')->send_keys($username);
+$d->find_element('//*[@id="password"]')->send_keys('testing1234');
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Terminate Subscriber');
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+$d->move_and_click('//*[@id="subscribers_table"]//tr[1]/td//a[contains(text(), "Details")]', 'xpath', '//*[@id="subscribers_table_filter"]/label/input');
+$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
+$d->find_element('//*[@id="collapse_master"]/div/a[contains(text(), "Edit")]')->click();
+$d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")][contains(text(), "Subscriber does not exist")]'), "Correct Alert was shown");
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Subscriber was deleted');
+$d->find_element('//*[@id="content"]//div//span//a[contains(text(), "Back")]')->click();
+
+diag('Check if Customer can be edited');
+$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
+$d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Customer")]'), "Edit Dialog has been opened");
+$d->find_element('//*[@id="status"]/option[@value="locked"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check if Customer was edited');
+$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[8]', 'locked'), 'Status was changed');
+
+diag('Delete Customer');
+$d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Terminate")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+
+diag('Check if Customer was deleted');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Customer was deleted');
+
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 $c->delete_contact($contactmail);
