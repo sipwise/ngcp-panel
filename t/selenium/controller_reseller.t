@@ -246,6 +246,54 @@ is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successf
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller was deleted');
 
+diag('Create Reseller + Contract for termination testing');
+$resellername = ("reseller" . int(rand(100000)) . "test");
+$contractid = ("contract" . int(rand(100000)) . "test");
+$templatename = ("template" . int(rand(100000)) . "mail");
+$c->create_reseller_contract($contractid);
+$c->create_reseller($resellername, $contractid);
+
+diag("Go to Reseller Contracts");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element('Reseller and Peering Contracts', 'link_text')->click();
+
+diag("Search for Reseller Contract");
+$d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
+ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[2]', $contractid), 'Reseller contract found');
+
+diag("Terminate Reseller Contract");
+$d->move_and_click('//*[@id="contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="contract_table_filter"]/label/input');
+$d->scroll_to_element($d->find_element('//*[@id="status"]'));
+$d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Reseller Contract was terminated");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully changed!",  "Correct Alert was shown");
+$d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
+ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Reseller Contract was terminated');
+
+diag("Go to Reseller");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element('Resellers', 'link_text')->click();
+
+diag("Search reseller");
+$d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
+ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
+
+diag("Terminate Reseller");
+$d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+$d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Reseller was terminated");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
+$d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
+ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Reseller was deleted');
+
 diag("This test run was successfull");
 $run_ok = 1;
 
