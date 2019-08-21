@@ -34,6 +34,7 @@ if($testplan eq $dir . 'runner.t') {
         $dir . 'controller_ncos.t',
         $dir . 'controller_other.t',
         $dir . 'controller_peering.t',
+        $dir . 'controller_profile.t',
         $dir . 'controller_reseller.t',
         $dir . 'controller_rw_ruleset.t',
         $dir . 'controller_soundset.t',
