@@ -208,7 +208,8 @@ $d->find_element('//*[@id="dataConfirmOK"]')->click();
 diag("Check if Emergency Container was deleted");
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Emergency mapping container successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
-ok($d->find_element_by_css('#emergency_containers_table tr > td.dataTables_empty', 'css'), 'Emergency Mapping was deleted');
+ok($d->find_element_by_css('#emergency_containers_table tr > td.dataTables_empty', 'css'), 'Emergency Container was deleted');
+$d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
 
 $c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
