@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "986888d0_fb5e78fe",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-22T12:09:36Z",
+      "side": 1,
+      "message": "what is the point of adding it here if in subscriberadmin_write access it checks for $c-\u003euser-\u003eroles eq \"subscriberadmin\" ?",
+      "range": {
+        "startLine": 157,
+        "startChar": 12,
+        "endLine": 157,
+        "endChar": 48
+      },
+      "revId": "94f70883ad92b8da44b871cfe11f9e74cd297af1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a96841b_8da0e82b",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-22T12:09:36Z",
+      "side": 1,
+      "message": "this will not work. as if there is no pbx enabled and it\u0027s just a normal subscriber (always is_pbx_pilot\u003d0), this will then always end up in \"Unable to find PBX pilot for this customer\".",
+      "range": {
+        "startLine": 326,
+        "startChar": 49,
+        "endLine": 326,
+        "endChar": 83
+      },
+      "revId": "94f70883ad92b8da44b871cfe11f9e74cd297af1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da0ca965_eec846a7",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 785,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-22T12:09:36Z",
+      "side": 1,
+      "message": "what is the point of adding it here if in subscriberadmin_write access it checks for $c-\u003euser-\u003eroles eq \"subscriberadmin\" ?",
+      "range": {
+        "startLine": 785,
+        "startChar": 12,
+        "endLine": 785,
+        "endChar": 48
+      },
+      "revId": "94f70883ad92b8da44b871cfe11f9e74cd297af1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87cdefeb_adf9cb59",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 801,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-22T12:09:36Z",
+      "side": 1,
+      "message": "id there is always an integer. please use \"\u003d\u003d\" instead",
+      "range": {
+        "startLine": 801,
+        "startChar": 17,
+        "endLine": 801,
+        "endChar": 19
+      },
+      "revId": "94f70883ad92b8da44b871cfe11f9e74cd297af1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
