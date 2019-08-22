@@ -1,0 +1,590 @@
+---
+#check options
+-
+    name: check OPTIONS for peeringinboundrules
+    type: item
+    method: OPTIONS
+    path: /api/peeringinboundrules/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-peeringinboundrules
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create peeringgroup
+-
+    name: create peeringgroup
+    type: item
+    method: POST
+    path: '/api/peeringgroups/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test_api_p_group_1
+        description: test_api peering group
+        priority: 1
+        contract_id: 1
+    retain:
+        peeringgroups_path: header.location
+        peeringgroups_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringinboundrules
+-
+    name: create peeringinboundrules
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^111$'
+        reject_code: null
+        reject_reason: null
+        priority: 50
+        enabled: 1
+    retain:
+        peeringinboundrules_path_1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringinboundrules
+-
+    name: create peeringinboundrules
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^222$'
+        reject_code: null
+        reject_reason: null
+        priority: 51
+        enabled: 1
+    retain:
+        peeringinboundrules_path_2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringinboundrules
+-
+    name: create peeringinboundrules
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^333$'
+        reject_code: null
+        reject_reason: null
+        priority: 52
+        enabled: 1
+    retain:
+        peeringinboundrules_path_3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/peeringinboundrules/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#create same peeringinboundrules again
+-
+    name: create same peeringinboundrules again
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^1111$'
+        reject_code: null
+        reject_reason: null
+        priority: 51
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#create peeringinboundrules with reject code but no reject reason
+-
+    name: create peeringinboundrules with reject code but no reject reason
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^20$'
+        reject_code: 404
+        reject_reason: null
+        priority: 60
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#create peeringinboundrules with reject reason but no reject code
+-
+    name: create peeringinboundrules with reject reason but no reject code
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^21$'
+        reject_code: null
+        reject_reason: 'some reason'
+        priority: 61
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#create peeringinboundrules with too small code
+-
+    name: create peeringinboundrules with too small code
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^22$'
+        reject_code: 399
+        reject_reason: 'some reason'
+        priority: 62
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#create peeringinboundrules with too large code
+-
+    name: create peeringinboundrules with too large code
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^23$'
+        reject_code: 701
+        reject_reason: 'some reason'
+        priority: 63
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#create peeringinboundrules with valid code and reason
+-
+    name: create peeringinboundrules with valid code and reason
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: '^24$'
+        reject_code: 400
+        reject_reason: 'some reason'
+        priority: 64
+        enabled: 1
+    conditions:
+        is:
+            code: 201
+
+#create peeringinboundrules with invalid group_id
+-
+    name: create peeringinboundrules with invalid group_id
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: 99999
+        field: 'ruri_uri'
+        pattern: '^25$'
+        reject_code: 400
+        reject_reason: 'some reason'
+        priority: 65
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#create peeringinboundrules with specific priority
+-
+    name: create peeringinboundrules with specific priority
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: 'my_identical_prio'
+        reject_code: 400
+        reject_reason: 'some reason'
+        priority: 99
+        enabled: 1
+    conditions:
+        is:
+            code: 201
+
+#create peeringinboundrules with identical priority
+-
+    name: create peeringinboundrules with identical priority
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: 'my_identical_prio1'
+        reject_code: 400
+        reject_reason: 'some reason'
+        priority: 99
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#create peeringinboundrules for preparing priority move attempt
+-
+    name: create peeringinboundrules for preparing priority move attempt
+    type: item
+    method: POST
+    path: '/api/peeringinboundrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        field: 'ruri_uri'
+        pattern: 'my_move_attempt'
+        reject_code: 400
+        reject_reason: 'some reason'
+        priority: 101
+        enabled: 1
+    retain:
+        peeringinboundrules_path4: header.location
+    conditions:
+        is:
+            code: 201
+
+#fetch rule for prioritymove attempt
+-
+    name: fetch rule for prioritymove attempt
+    type: item
+    method: GET
+    path: '/${peeringinboundrules_path4}'
+    retain:
+        peeringinboundrule: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{peeringinboundrule}->{_links};
+            delete $retained->{peeringinboundrule}->{_embedded};
+            $retained->{peeringinboundrule}->{priority} = 99;
+        }
+    conditions:
+        is:
+            code: 200
+
+#PUT with existing priority
+-
+    name: PUT with existing priority
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path4}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrule}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{peeringinboundrule}->{priority} = 102;
+        }
+    conditions:
+        is:
+            code: 422
+
+#PUT with new priority
+-
+    name: PUT with new priority
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path4}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrule}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{peeringinboundrule}->{reject_reason} = 'some reason';
+            $retained->{peeringinboundrule}->{reject_code} = undef;
+        }
+    conditions:
+        is:
+            code: 200
+
+#PUT with reason but no code
+-
+    name: PUT with reason but no code
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path4}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrule}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{peeringinboundrule}->{reject_reason} = undef;
+            $retained->{peeringinboundrule}->{reject_code} = 401;
+        }
+    conditions:
+        is:
+            code: 422
+
+#PUT with code but no reason
+-
+    name: PUT with code but no reason
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path4}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrule}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{peeringinboundrule}->{reject_reason} = 'some reason';
+            $retained->{peeringinboundrule}->{reject_code} = 301;
+        }
+    conditions:
+        is:
+            code: 422
+
+#PUT with too small code
+-
+    name: PUT with too small code
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path4}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrule}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{peeringinboundrule}->{reject_reason} = 'some reason';
+            $retained->{peeringinboundrule}->{reject_code} = 701;
+        }
+    conditions:
+        is:
+            code: 422
+
+#PUT with too large code
+-
+    name: PUT with too large code
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path4}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrule}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{peeringinboundrule}->{reject_reason} = 'some reason';
+            $retained->{peeringinboundrule}->{reject_code} = 404;
+        }
+    conditions:
+        is:
+            code: 422
+
+#PUT with valid code and reason
+-
+    name: PUT with valid code and reason
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path4}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrule}'
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for peeringinboundrules item
+    type: item
+    method: OPTIONS
+    path: '/${peeringinboundrules_path_3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get peeringinboundrules
+-
+    name: GET peeringinboundrules
+    type: item
+    method: GET
+    path: '/${peeringinboundrules_path_3}'
+    retain:
+        peeringinboundrules: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{peeringinboundrules}->{_links};
+            delete $retained->{peeringinboundrules}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put peeringinboundrules
+-
+    name: PUT peeringinboundrules
+    type: item
+    method: PUT
+    path: '/${peeringinboundrules_path_3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringinboundrules}'
+    conditions:
+        is:
+            code: 200
+
+#get peeringinboundrules
+-
+    name: GET peeringinboundrules
+    type: item
+    method: GET
+    path: '/${peeringinboundrules_path_3}'
+    retain:
+        new_peeringinboundrules: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_peeringinboundrules}->{_links};
+            delete $retained->{new_peeringinboundrules}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${peeringinboundrules}': ${new_peeringinboundrules}
+
+#DELETE peeringinboundrules
+-
+    name: DELETE peeringinboundrules
+    type: item
+    method: DELETE
+    path: '/${peeringinboundrules_path_1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringinboundrules
+-
+    name: DELETE peeringinboundrules
+    type: item
+    method: DELETE
+    path: '/${peeringinboundrules_path_2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringinboundrules
+-
+    name: DELETE peeringinboundrules
+    type: item
+    method: DELETE
+    path: '/${peeringinboundrules_path_3}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringinboundrules
+-
+    name: DELETE peeringinboundrules
+    type: item
+    method: DELETE
+    path: '/${peeringinboundrules_path4}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringinboundrulespeeringgroup
+-
+    name: DELETE peeringgroup
+    type: item
+    method: DELETE
+    path: '/${peeringgroups_path}'
+    conditions:
+        is:
+            code: 204
