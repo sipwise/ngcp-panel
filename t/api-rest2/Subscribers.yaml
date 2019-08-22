@@ -1,0 +1,349 @@
+---
+#check options
+-
+    name: check OPTIONS for subscribers
+    type: item
+    method: OPTIONS
+    path: /api/subscribers/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-subscribers
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#get a domain for testing
+-
+    name: get a domain for testing
+    type: item
+    method: GET
+    path: '/api/domains/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    retain:
+        domain: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $domain = $retained->{domain}->{'_embedded'}->{'ngcp:domains'}->[0];
+            $retained->{domain} = $domain;
+            $retained->{domain_id} = $domain->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${domain}.id': defined
+
+#get a customer for testing
+-
+    name: get a customer for testing
+    type: item
+    method: GET
+    path: '/api/customers/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    retain:
+        customer: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $customer = $retained->{customer}->{'_embedded'}->{'ngcp:customers'}->[0];
+            $retained->{customer} = $customer;
+            $retained->{customer_id} = $customer->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${customer}.id': defined
+
+#get a subscriberprofile for testing
+-
+    name: get a subscriberprofile for testing
+    type: item
+    method: GET
+    path: '/api/subscriberprofiles/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    retain:
+        subscriberprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriberprofile = $retained->{subscriberprofile}->{'_embedded'}->{'ngcp:subscriberprofiles'}->[0];
+            $retained->{subscriberprofile} = $subscriberprofile;
+            $retained->{subscriberprofile_id} = $subscriberprofile->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriberprofile}.id': defined
+
+#get a subscriberprofileset for testing
+-
+    name: get a subscriberprofileset for testing
+    type: item
+    method: GET
+    path: '/api/subscriberprofilesets/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    retain:
+        subscriberprofileset: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriberprofileset = $retained->{subscriberprofileset}->{'_embedded'}->{'ngcp:subscriberprofilesets'}->[0];
+            $retained->{subscriberprofileset} = $subscriberprofileset;
+            $retained->{subscriberprofileset_id} = $subscriberprofileset->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriberprofileset}.id': defined
+
+#create subscriber
+-
+    name: create subscriber
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        administrative: 0
+        customer_id: ${customer_id}
+        primary_number:
+            ac: 12
+            cc: 12
+            sn: 12
+        alias_numbers:
+            -
+                ac: 112
+                cc: 112
+                sn: 112
+        username: 'api_test_username_1'
+        password: 'api_test_password'
+        webusername: 'api_test_webusername_1'
+        webpassword: 'web_password_1'
+        domain_id: ${domain_id}
+        email: null
+        external_id: null
+        is_pbx_group: 0
+        is_pbx_pilot: 1
+        pbx_extension: '111'
+        pbx_group_ids:
+            - null
+        pbx_groupmember_ids:
+            - null
+        profile_id: ${subscriberprofile_id}
+        profile_set_id: ${subscriberprofileset_id}
+        status: 'active'
+        pbx_hunt_policy: 'parallel'
+        pbx_hunt_timeout: '15'
+    retain:
+        subscriber_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create subscriber
+-
+    name: create subscriber
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        administrative: 0
+        customer_id: ${customer_id}
+        primary_number:
+            ac: 121
+            cc: 12
+            sn: 12
+        alias_numbers:
+            -
+                ac: 111
+                cc: 11
+                sn: 11
+            -
+                ac: 112
+                cc: 11
+                sn: 11
+        username: 'api_test_username_2'
+        password: 'api_test_password'
+        webusername: 'api_test_webusername_2'
+        webpassword: 'web_password_1'
+        domain_id: ${domain_id}
+        email: null
+        external_id: null
+        is_pbx_group: 0
+        is_pbx_pilot: 0
+        pbx_extension: '222'
+        pbx_group_ids:
+            - null
+        pbx_groupmember_ids:
+            - null
+        profile_id: ${subscriberprofile_id}
+        profile_set_id: ${subscriberprofileset_id}
+        status: 'active'
+        pbx_hunt_policy: 'parallel'
+        pbx_hunt_timeout: '15'
+    retain:
+        subscriber_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create subscriber
+-
+    name: create subscriber
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        administrative: 0
+        customer_id: ${customer_id}
+        primary_number:
+            ac: 12
+            cc: 12
+            sn: 12
+        alias_numbers:
+            -
+                ac: 112
+                cc: 112
+                sn: 112
+        username: 'api_test_username'
+        password: 'api_test_password'
+        webusername: 'api_test_webusername'
+        webpassword: 'web_password_1'
+        domain_id: ${domain_id}
+        email: null
+        external_id: null
+        is_pbx_group: 0
+        is_pbx_pilot: 0
+        pbx_extension: '111'
+        pbx_group_ids:
+            - null
+        pbx_groupmember_ids:
+            - null
+        profile_id: ${subscriberprofile_id}
+        profile_set_id: ${subscriberprofileset_id}
+        status: 'active'
+        pbx_hunt_policy: 'parallel'
+        pbx_hunt_timeout: '15'
+    conditions:
+        is:
+            code: 422
+        like:
+            body.message: already exists
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/subscribers/?page=1&rows=1'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for subscriber item
+    type: item
+    method: OPTIONS
+    path: '/${subscriber_path2}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get subscriber
+-
+    name: GET subscriber
+    type: item
+    method: GET
+    path: '/${subscriber_path2}'
+    retain:
+        subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{subscriber}->{_links};
+            delete $retained->{subscriber}->{_embedded};
+            delete $retained->{subscriber}->{modify_timestamp};
+            delete $retained->{subscriber}->{create_timestamp};
+            delete $retained->{subscriber}->{primary_number_id};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put subscriber
+-
+    name: PUT subscriber
+    type: item
+    method: PUT
+    path: '/${subscriber_path2}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${subscriber}'
+    conditions:
+        is:
+            code: 200
+
+#get subscriber
+-
+    name: GET subscriber
+    type: item
+    method: GET
+    path: '/${subscriber_path2}'
+    retain:
+        new_subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_subscriber}->{_links};
+            delete $retained->{new_subscriber}->{_embedded};
+            delete $retained->{new_subscriber}->{modify_timestamp};
+            delete $retained->{new_subscriber}->{create_timestamp};
+            delete $retained->{new_subscriber}->{primary_number_id};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${subscriber}': ${new_subscriber}
+
+#DELETE subscriber
+-
+    name: DELETE subscriber
+    type: item
+    method: DELETE
+    path: '/${subscriber_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE subscriber
+-
+    name: DELETE subscriber
+    type: item
+    method: DELETE
+    path: '/${subscriber_path2}'
+    conditions:
+        is:
+            code: 204

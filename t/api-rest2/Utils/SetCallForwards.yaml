@@ -1,0 +1,26 @@
+---
+#set Call Forwards
+-
+    name: set Call Forwards
+    type: item
+    method: PUT
+    path: '/api/callforwards/${subscriber_id}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${callforwards_content}'
+    conditions:
+        is:
+            code: 200
+
+#get Call Forwards
+-
+    name: GET Call Forwards
+    type: item
+    method: GET
+    path: '/api/callforwards/${subscriber_id}'
+    retain:
+        callforwards: body
+    conditions:
+        is:
+            code: 200

@@ -1,0 +1,597 @@
+---
+#check options
+-
+    name: check OPTIONS for resellers
+    type: item
+    method: OPTIONS
+    path: /api/resellers/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-resellers
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create a System Contact
+-
+    name: create a System Contact
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first
+        lastname: sys_contact_last
+        email: sys_contact@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_path: header.location
+        system_contact_id: header.location
+
+#create billingprofile
+-
+    name: create billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: test_profile_${unique_id}
+        name: test profile ${unique_id}
+    retain:
+        billing_profile_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create contract
+-
+    name: create contract
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        type: reseller
+        billing_profile_id: ${billing_profile_id}
+    retain:
+        contract1_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create contract
+-
+    name: create contract
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        type: reseller
+        billing_profile_id: ${billing_profile_id}
+    retain:
+        contract2_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create contract
+-
+    name: create contract
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        type: reseller
+        billing_profile_id: ${billing_profile_id}
+    retain:
+        contract3_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create contract
+-
+    name: create contract
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        type: reseller
+        billing_profile_id: ${billing_profile_id}
+    retain:
+        contract4_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create reseller
+-
+    name: create reseller
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract1_id}
+        status: active
+        name: test reseller 1 ${unique_id}
+    retain:
+        reseller_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create reseller
+-
+    name: create reseller
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract2_id}
+        status: active
+        name: test reseller 2 ${unique_id}
+    retain:
+        reseller_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create reseller
+-
+    name: create reseller
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract3_id}
+        status: active
+        name: test reseller 3 ${unique_id}
+    retain:
+        reseller_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#create reseller without contract id
+-
+    name: create reseller without contract id
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        name: test reseller 4 ${unique_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='contract_id'
+
+#create reseller with empty contract id
+-
+    name: create reseller with empty contract id
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: null
+        status: active
+        name: test reseller 4 ${unique_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='contract_id'
+
+#create reseller with existing contract id
+-
+    name: create reseller with existing contract id
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract1_id}
+        status: active
+        name: test reseller 4 ${unique_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: reseller with this contract already exists
+
+#create reseller with existing name
+-
+    name: create reseller with existing name
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract4_id}
+        status: active
+        name: test reseller 1 ${unique_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: reseller with this name already exists
+
+#create reseller with missing name
+-
+    name: create reseller with missing name
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract4_id}
+        status: active
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='name'
+
+#create reseller with missing status
+-
+    name: create reseller with missing status
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract4_id}
+        name: test reseller 4 ${unique_id}
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='status'
+
+#create reseller with invalid status
+-
+    name: create reseller with invalid status
+    type: item
+    method: POST
+    path: '/api/resellers/'
+    header:
+        Content-Type: application/json
+    content:
+        contract_id: ${contract4_id}
+        name: test reseller 4 ${unique_id}
+        status: invalid
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='status'
+
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/resellers/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for resellers item
+    type: item
+    method: OPTIONS
+    path: '/${reseller_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+
+#get reseller
+-
+    name: GET reseller
+    type: item
+    method: GET
+    path: '/${reseller_path3}'
+    retain:
+        reseller: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{reseller}->{_links};
+            delete $retained->{reseller}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${reseller}.id': defined
+            '${reseller}.contract_id': defined
+            '${reseller}.name': defined
+            '${reseller}.status': defined
+        like:
+            '${reseller}.id': '[0-9]+'
+            '${reseller}.contract_id': '[0-9]+'
+
+#put reseller with missing content type
+-
+    name: PUT reseller with missing content type
+    type: item
+    method: PUT
+    path: '/${reseller_path3}'
+    header:
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put reseller with unsuported content type
+-
+    name: PUT reseller with unsuported content type
+    type: item
+    method: PUT
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/xxx
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put reseller with no body
+-
+    name: PUT reseller with no body
+    type: item
+    method: PUT
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    conditions:
+        is:
+            code: 400
+
+#put reseller
+-
+    name: PUT reseller
+    type: item
+    method: PUT
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${reseller}'
+    conditions:
+        is:
+            code: 200
+
+#get reseller
+-
+    name: GET reseller
+    type: item
+    method: GET
+    path: '/${reseller_path3}'
+    retain:
+        new_reseller: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_reseller}->{_links};
+            delete $retained->{new_reseller}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${reseller}': ${new_reseller}
+
+#PATCH reseller
+-
+    name: PATCH reseller
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /name
+            value: patched reseller name ${unique_id}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{patched_name} = 'patched reseller name '.$retained->{unique_id};
+        }
+    retain:
+        patched_reseller: body
+    conditions:
+        is:
+            code: 200
+            '${patched_reseller}.name': '${patched_name}'
+            '${patched_reseller}._links.self.href': '${reseller_path3}'
+            '${patched_reseller}._links.collection.href': '/api/resellers/'
+
+#PATCH reseller with undef contract id
+-
+    name: PATCH reseller with undef contract id
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /contract_id
+            value: null
+    conditions:
+        is:
+            code: 422
+
+#PATCH reseller with invalid contract id
+-
+    name: PATCH reseller with invalid contract id
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /contract_id
+            value: 99999
+    conditions:
+        is:
+            code: 422
+
+#PATCH reseller with existing contract id
+-
+    name: PATCH reseller with existing contract id
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /contract_id
+            value: ${contract2_id}
+    conditions:
+        is:
+            code: 422
+
+#PATCH reseller with existing name
+-
+    name: PATCH reseller with existing name
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /name
+            value: test reseller 2 ${unique_id}
+    conditions:
+        is:
+            code: 422
+
+#PATCH reseller with undef name
+-
+    name: PATCH reseller with undef name
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /name
+            value: null
+    conditions:
+        is:
+            code: 422
+
+#PATCH reseller with invalid status
+-
+    name: PATCH reseller with invalid status
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: invalid
+    conditions:
+        is:
+            code: 422
+
+#PATCH reseller with undef status
+-
+    name: PATCH reseller with undef status
+    type: item
+    method: PATCH
+    path: '/${reseller_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: null
+    conditions:
+        is:
+            code: 422

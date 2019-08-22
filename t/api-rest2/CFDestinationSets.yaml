@@ -1,0 +1,214 @@
+---
+#check options
+-
+    name: check OPTIONS for cfdestinationsets
+    type: item
+    method: OPTIONS
+    path: /api/cfdestinationsets/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-cfdestinationsets
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#get a subscriber for testing
+-
+    name: get a subscriber for testing
+    type: item
+    method: GET
+    path: '/api/subscribers/?page=1&rows=1'
+    retain:
+        subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriber = $retained->{subscriber}->{'_embedded'}->{'ngcp:subscribers'}->[0];
+            $retained->{subscriber} = $subscriber;
+            $retained->{subscriber_id} = $subscriber->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriber}.id': defined
+
+#create cfdestinationsets
+-
+    name: create cfdestinationsets
+    type: item
+    method: POST
+    path: '/api/cfdestinationsets/'
+    header:
+        Content-Type: application/json
+    content:
+        subscriber_id: ${subscriber_id}
+        name: Weekend days 1
+        destinations:
+            -
+                destination: customhours
+                priority: 1
+                timeout: 300
+                announcement_id: 255
+            -
+                destination: customhours
+                priority: 1
+                timeout: 300
+    retain:
+        cfdestinationsets_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create cfdestinationsets
+-
+    name: create cfdestinationsets
+    type: item
+    method: POST
+    path: '/api/cfdestinationsets/'
+    header:
+        Content-Type: application/json
+    content:
+        subscriber_id: ${subscriber_id}
+        name: Weekend days 2
+        destinations:
+            -
+                destination: customhours
+                priority: 1
+                timeout: 300
+                announcement_id: 255
+            -
+                destination: customhours
+                priority: 1
+                timeout: 300
+    retain:
+        cfdestinationsets_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create cfdestinationsets
+-
+    name: create cfdestinationsets
+    type: item
+    method: POST
+    path: '/api/cfdestinationsets/'
+    header:
+        Content-Type: application/json
+    content:
+        subscriber_id: ${subscriber_id}
+        name: Weekend days 2
+        destinations:
+            -
+                destination: customhours
+                priority: 1
+                timeout: 300
+                announcement_id: 255
+            -
+                destination: customhours
+                priority: 1
+                timeout: 300
+    retain:
+        cfdestinationsets_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/cfdestinationsets/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#get cfdestinationsets
+-
+    name: GET cfdestinationsets
+    type: item
+    method: GET
+    path: '/${cfdestinationsets_path3}'
+    retain:
+        cfdestinationsets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{cfdestinationsets}->{_links};
+            delete $retained->{cfdestinationsets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put cfdestinationsets
+-
+    name: PUT cfdestinationsets
+    type: item
+    method: PUT
+    path: '/${cfdestinationsets_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${cfdestinationsets}'
+    conditions:
+        is:
+            code: 200
+
+#get cfdestinationsets
+-
+    name: GET cfdestinationsets
+    type: item
+    method: GET
+    path: '/${cfdestinationsets_path3}'
+    retain:
+        new_cfdestinationsets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_cfdestinationsets}->{_links};
+            delete $retained->{new_cfdestinationsets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${cfdestinationsets}': ${new_cfdestinationsets}
+
+#DELETE cfdestinationsets
+-
+    name: DELETE cfdestinationsets
+    type: item
+    method: DELETE
+    path: '/${cfdestinationsets_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE cfdestinationsets
+-
+    name: DELETE cfdestinationsets
+    type: item
+    method: DELETE
+    path: '/${cfdestinationsets_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE cfdestinationsets
+-
+    name: DELETE cfdestinationsets
+    type: item
+    method: DELETE
+    path: '/${cfdestinationsets_path3}'
+    conditions:
+        is:
+            code: 204
