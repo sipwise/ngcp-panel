@@ -43,6 +43,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
                 {
                     mac_image_exists   => \'mac_image is not null',
                     front_image_exists => \'front_image is not null',
+                    front_thumbnail_exists => \'front_thumbnail is not null',
                 }
             ],
     });
@@ -157,6 +158,7 @@ sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) :Does(ACL) :AC
             my %data = (
                 mac_image_exists => $result->get_column('mac_image_exists'),
                 front_image_exists => $result->get_column('front_image_exists'),
+                front_thumbnail_exists => $result->get_column('front_thumbnail_exists'),
             );
             return %data
         },
@@ -176,6 +178,7 @@ sub extensionmodel_ajax :Chained('base') :PathPart('extensionmodel/ajax') :Args(
             my %data = (
                 mac_image_exists => $result->get_column('mac_image_exists'),
                 front_image_exists => $result->get_column('front_image_exists'),
+                front_thumbnail_exists => $result->get_column('front_thumbnail_exists'),
             );
             return %data
         },
@@ -199,6 +202,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
     if($posted) {
         $c->req->params->{front_image} = $c->req->upload('front_image');
         $c->req->params->{mac_image} = $c->req->upload('mac_image');
+        $c->req->params->{front_thumbnail} = $c->req->upload('front_thumbnail');
     }
     $form->process(
         posted => $posted,
@@ -226,7 +230,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 delete $form->values->{reseller};
 
                 my $ft = File::Type->new();
-                foreach(qw/front_image mac_image/){
+                foreach(qw/front_image mac_image front_thumbnail/){
                     if($form->values->{$_}) {
                         my $image = delete $form->values->{$_};
                         $form->values->{$_} = $image->slurp;
@@ -287,7 +291,7 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
-    my $devmod = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image/]});
+    my $devmod = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image front_thumbnail/]});
     unless($devmod) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
@@ -368,6 +372,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     if($posted) {
         $c->req->params->{front_image} = $c->req->upload('front_image');
         $c->req->params->{mac_image} = $c->req->upload('mac_image');
+        $c->req->params->{front_thumbnail} = $c->req->upload('front_thumbnail');
     }
 
     $form->process(
@@ -395,7 +400,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 }
                 delete $form->values->{reseller};
 
-                foreach (qw/front_image mac_image/){
+                foreach (qw/front_image mac_image front_thumbnail/){
                     if($form->values->{$_}) {
                         my $image = delete $form->values->{$_};
                         $form->values->{$_} = $image->slurp;
@@ -476,6 +481,33 @@ sub devmod_download_macimage :Chained('devmod_base') :PathPart('macimage') :Args
     $c->response->body($devmod->mac_image);
 }
 
+sub devmod_download_frontthumbnail_by_profile :Chained('devprof_base') :PathPart('frontthumbnail') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $devprof = $c->stash->{devprof};
+    my $devmod = $devprof->config->device;
+    unless($devmod->front_thumbnail) {
+        $c->log->info("No device thumbnail for profile id " . $c->stash->{devprof}->id . ", redirecting to front image");
+        $c->res->redirect($c->uri_for_action("/device/devmod_download_frontimage_by_profile", [$c->stash->{devprof}->id]));
+        return;
+    }
+    $c->response->content_type($devmod->front_thumbnail_type);
+    $c->response->body($devmod->front_thumbnail);
+}
+
+sub devmod_download_frontthumbnail :Chained('devmod_base') :PathPart('frontthumbnail') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $devmod = $c->stash->{devmod};
+    unless($devmod->front_thumbnail) {
+        $c->log->info("No device thumbnail for model id " . $c->stash->{devmod}->id . ", redirecting to front image");
+        $c->res->redirect($c->uri_for_action("/device/devmod_download_frontimage", [$c->stash->{devmod}->id]));
+        return;
+    }
+    $c->response->content_type($devmod->front_thumbnail_type);
+    $c->response->body($devmod->front_thumbnail);
+}
+
 sub devfw_ajax :Chained('base') :PathPart('firmware/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
@@ -515,7 +547,7 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
             $schema->txn_do(sub {
                 my $file = delete $form->values->{data};
                 $form->values->{filename} = $file->filename;
-                my $devmod = $c->stash->{devmod_rs}->find($form->values->{device}{id},{'+columns' => [qw/mac_image front_image/]});
+                my $devmod = $c->stash->{devmod_rs}->find($form->values->{device}{id},{'+columns' => [qw/mac_image front_image front_thumbnail/]});
                 my $devfw = $devmod->create_related('autoprov_firmwares', $form->values);
                 if ($file->size) {
                     NGCP::Panel::Utils::DeviceFirmware::insert_firmware_data(
@@ -702,7 +734,7 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $devmod = $c->stash->{devmod_rs}->find($form->values->{device}{id},{'+columns' => [qw/mac_image front_image/]});
+                my $devmod = $c->stash->{devmod_rs}->find($form->values->{device}{id},{'+columns' => [qw/mac_image front_image front_thumbnail/]});
                 my $devconf = $devmod->create_related('autoprov_configs', $form->values);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{config} = { id => $devconf->id };
@@ -925,7 +957,7 @@ sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0)
 
     my $rs = $c->stash->{devprof}->config->device->autoprov_extensions_link;
     my $device_info = { $c->stash->{devprof}->config->device->get_inflated_columns };
-    foreach(qw/front_image mac_image/){
+    foreach(qw/front_image mac_image front_thumbnail/){
         delete $device_info->{$_};
     }
 
