@@ -1,3 +1,12 @@
+ngcp-panel (7.4.1.8+0~mr7.4.1.8) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [4b1fa2a] TT#56376 selenium: add scroll_to_element to the beginning of every function
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 22 Aug 2019 09:00:15 +0200
+
 ngcp-panel (7.4.1.7+0~mr7.4.1.7) unstable; urgency=medium
 
   [ Nico Schedel ]
