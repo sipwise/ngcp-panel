@@ -1,0 +1,376 @@
+---
+#create test domain
+-
+    name: create test domain
+    type: item
+    method: POST
+    path: /api/domains/
+    header:
+        Content-Type: application/json
+    content:
+        domain: test${unique_id}.example.org
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        domain_path: header.location
+        domain_id: header.location
+
+#create a BillingProfile
+-
+    name: create a BillingProfile
+    type: item
+    method: POST
+    path: /api/billingprofiles/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile ${unique_id}
+        handle: test_profile_handle${unique_id}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        billing_profile_id: header.location
+
+#create SubscriberProfileSet 1
+-
+    name: create SubscriberProfileSet 1
+    type: item
+    method: POST
+    path: /api/subscriberprofilesets/
+    header:
+        Content-Type: application/json
+    content:
+        name: subscriber_profile_1_set_${unique_id}
+        description: subscriber_profile_1_set_description_${unique_id}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        subscriber_profile_set_1_path: header.location
+        subscriber_profile_set_1_id: header.location
+
+#get SubscriberProfileSet 1
+-
+    name: get SubscriberProfileSet 1
+    type: item
+    method: GET
+    path: '/${subscriber_profile_set_1_path}'
+    retain:
+        subscriber_profile_set_1: body
+    conditions:
+        is:
+            code: 200
+
+#create SubscriberProfileSet 2
+-
+    name: create SubscriberProfileSet 2
+    type: item
+    method: POST
+    path: /api/subscriberprofilesets/
+    header:
+        Content-Type: application/json
+    content:
+        name: subscriber_profile_2_set_${unique_id}
+        description: subscriber_profile_2_set_description_${unique_id}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        subscriber_profile_set_2_path: header.location
+        subscriber_profile_set_2_id: header.location
+
+#get SubscriberProfileSet 2
+-
+    name: get SubscriberProfileSet 2
+    type: item
+    method: GET
+    path: '/${subscriber_profile_set_2_path}'
+    retain:
+        subscriber_profile_set_2: body
+    conditions:
+        is:
+            code: 200
+
+#create SubscriberProfileSet 3
+-
+    name: create SubscriberProfileSet 3
+    type: item
+    method: POST
+    path: /api/subscriberprofilesets/
+    header:
+        Content-Type: application/json
+    content:
+        name: subscriber_profile_3_set_${unique_id}
+        description: subscriber_profile_3_set_description_${unique_id}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        subscriber_profile_set_3_path: header.location
+        subscriber_profile_set_3_id: header.location
+
+#get SubscriberProfileSet
+-
+    name: get SubscriberProfileSet
+    type: item
+    method: GET
+    path: '/${subscriber_profile_set_3_path}'
+    retain:
+        subscriber_profile_set_3: body
+    conditions:
+        is:
+            code: 200
+
+#get SubscriberPreferenceDefs
+-
+    name: get SubscriberPreferenceDefs
+    type: item
+    method: GET
+    path: '/api/subscriberpreferencedefs/'
+    retain:
+        subscriber_preference_defs: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            foreach my $attr (keys %{$retained->{subscriber_preference_defs}}) {
+                push(@{$retained->{subscriber_profile_attributes}},$attr);
+            }
+        }
+    conditions:
+        is:
+            code: 200
+
+#create SubscriberProfile 1
+-
+    name: create SubscriberProfile 1
+    type: item
+    method: POST
+    path: /api/subscriberprofiles/
+    header:
+        Content-Type: application/json
+    content:
+        name: subscriber_profile_1_${unique_id}
+        description: subscriber_profile_1_description_${unique_id}
+        profile_set_id: ${subscriber_profile_set_1_id}
+        attributes: ${subscriber_profile_attributes}
+    conditions:
+        is:
+            code: 201
+    retain:
+        subscriber_profile_1_path: header.location
+
+#get SubscriberProfileSet 1
+-
+    name: get SubscriberProfile 1
+    type: item
+    method: GET
+    path: '/${subscriber_profile_1_path}'
+    retain:
+        subscriber_profile_1: body
+    conditions:
+        is:
+            code: 200
+
+#create SubscriberProfile 2
+-
+    name: create SubscriberProfile 2
+    type: item
+    method: POST
+    path: /api/subscriberprofiles/
+    header:
+        Content-Type: application/json
+    content:
+        name: subscriber_profile_2_${unique_id}
+        description: subscriber_profile_2_description_${unique_id}
+        profile_set_id: ${subscriber_profile_set_2_id}
+        attributes: ${subscriber_profile_attributes}
+    conditions:
+        is:
+            code: 201
+    retain:
+        subscriber_profile_2_path: header.location
+
+#get SubscriberProfileSet 2
+-
+    name: get SubscriberProfile 2
+    type: item
+    method: GET
+    path: '/${subscriber_profile_2_path}'
+    retain:
+        subscriber_profile_2: body
+    conditions:
+        is:
+            code: 200
+
+#create SubscriberProfile 3
+-
+    name: create SubscriberProfile 3
+    type: item
+    method: POST
+    path: /api/subscriberprofiles/
+    header:
+        Content-Type: application/json
+    content:
+        name: subscriber_profile_3_${unique_id}
+        description: subscriber_profile_3_description_${unique_id}
+        profile_set_id: ${subscriber_profile_set_3_id}
+        attributes: ${subscriber_profile_attributes}
+    conditions:
+        is:
+            code: 201
+    retain:
+        subscriber_profile_3_path: header.location
+
+#get SubscriberProfileSet 3
+-
+    name: get SubscriberProfile 3
+    type: item
+    method: GET
+    path: '/${subscriber_profile_3_path}'
+    retain:
+        subscriber_profile_3: body
+    conditions:
+        is:
+            code: 200
+
+#create a Customer Contact
+-
+    name: create a Customer Contact
+    type: item
+    method: POST
+    path: /api/customercontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: cust_contact_first
+        lastname: cust_contact_last
+        email: cust_contact@custcontact.invalid
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        customer_contact_path: header.location
+        customer_contact_id: header.location
+
+#get CustomerContact
+-
+    name: check CustomerContact
+    type: item
+    method: GET
+    path: '/${customer_contact_path}'
+    retain:
+        customer_contact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{customer_type} = 'sipaccount';
+        }
+    conditions:
+        is:
+            code: 200
+
+#create Customer
+-
+    name: include create Customer
+    type: include
+    file: CreateCustomer.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{subscriber_map} = ();
+            $retained->{customer_map} = ();
+
+            $retained->{customer_content} = {
+                status => 'active',
+                contact_id => $retained->{customer_contact_id},
+                billing_profile_id => $retained->{billing_profile_id},
+                type => 'sipaccount',
+                max_subscribers => undef,
+                external_id => undef
+            };
+        }
+
+#create Subscriber
+-
+    name: include create Subscriber
+    type: include
+    file: CreateSubscriber.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{customer_map}->{$retained->{customer}->{id}} = $retained->{customer};
+
+            my $cc = 800;
+            my $ac = '1'.(scalar keys %{$retained->{subscriber_map}});
+            my $sn = $retained->{unique_id};
+            $retained->{subscriber_content} = {
+                primary_number => { cc => $cc, ac => $ac, sn => $sn },
+                domain_id => $retained->{domain_id},
+                username => 'subscriber_' . (scalar keys %{$retained->{subscriber_map}}) . '_'.$retained->{unique_id},
+                password => 'subscriber_password',
+                customer_id => $retained->{customer}->{id},
+            };
+        }
+
+#set Call Forwards
+-
+    name: include set Call Forwards
+    type: include
+    file: SetCallForwards.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            $retained->{callforwards_content} = {
+                cfu => {
+                    destinations => [
+                        { destination => "5678" },
+                        { destination => "autoattendant", },
+                    ]
+                }
+            };
+        }
+
+#set Call Forwards
+-
+    name: include set Call Forwards
+    type: include
+    file: SetCallForwards.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            $retained->{callforwards_content} = {
+                cfu => {
+                    destinations => [
+                        { destination => "5678" }
+                    ]
+                }
+            };
+        }
+
+#Check Event History
+-
+    name: include Chech Event History
+    type: include
+    file: CheckEventHistory.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            $retained->{eventhistory_path} = "api/events/?page=1&rows=10&order_by_direction=asc&order_by=id&subscriber_id=$retained->{subscriber_id}&type=%ivr";
+
+            $retained->{expected_events} = [
+                { subscriber_id => $retained->{subscriber}->{id}, type => "start_ivr" },
+                { subscriber_id => $retained->{subscriber}->{id}, type => "end_ivr" },
+            ];
+        }
