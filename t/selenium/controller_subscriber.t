@@ -457,17 +457,29 @@ $d->find_element('//*[@id="username"]')->send_keys($username);
 $d->find_element('//*[@id="password"]')->send_keys('testing1234');
 $d->find_element('//*[@id="save"]')->click();
 
+diag('Go to Subscribers page');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Subscribers", 'link_text')->click();
+
 diag('Terminate Subscriber');
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
-$d->move_and_click('//*[@id="subscribers_table"]//tr[1]/td//a[contains(text(), "Details")]', 'xpath', '//*[@id="subscribers_table_filter"]/label/input');
+$d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
+$d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
+ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber was found');
+$d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
 $d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
 $d->find_element('//*[@id="collapse_master"]/div/a[contains(text(), "Edit")]')->click();
 $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")][contains(text(), "Subscriber does not exist")]'), "Correct Alert was shown");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
-ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Subscriber was deleted');
-$d->find_element('//*[@id="content"]//div//span//a[contains(text(), "Back")]')->click();
+
+diag('Check if Subscriber was deleted');
+$d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
+ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Subscriber was deleted');
+
+diag('Go to Customers Page');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Customers", 'link_text')->click();
 
 diag('Check if Customer can be edited');
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
