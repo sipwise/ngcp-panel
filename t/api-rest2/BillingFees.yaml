@@ -1,0 +1,193 @@
+---
+#check options
+-
+    name: check OPTIONS for billingfees
+    type: item
+    method: OPTIONS
+    path: /api/billingfees/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingfees
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create billingfees
+-
+    name: create billingfees
+    type: item
+    method: POST
+    path: '/api/billingfees/'
+    header:
+        Content-Type: application/json
+    content:
+        billing_profile_id: 1
+        billing_zone_id: 1
+        destination: '^1234'
+        direction: out
+        onpeak_init_rate: 1
+        onpeak_init_interval: 60
+        onpeak_follow_rate: 1
+        onpeak_follow_interval: 30
+        offpeak_init_rate: 0.5
+        offpeak_init_interval: 60
+        offpeak_follow_rate: 0.5
+        offpeak_follow_interval: 30
+    retain:
+        billingfees_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create billingfees
+-
+    name: create billingfees
+    type: item
+    method: POST
+    path: '/api/billingfees/'
+    header:
+        Content-Type: application/json
+    content:
+        billing_profile_id: 1
+        billing_zone_id: 1
+        destination: '^4567'
+        direction: out
+        onpeak_init_rate: 1
+        onpeak_init_interval: 60
+        onpeak_follow_rate: 1
+        onpeak_follow_interval: 30
+        offpeak_init_rate: 0.5
+        offpeak_init_interval: 60
+        offpeak_follow_rate: 0.5
+        offpeak_follow_interval: 30
+    retain:
+        billingfees_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create billingfees
+-
+    name: create billingfees
+    type: item
+    method: POST
+    path: '/api/billingfees/'
+    header:
+        Content-Type: application/json
+    content:
+        billing_profile_id: 1
+        billing_zone_id: 1
+        destination: '^8901'
+        direction: out
+        onpeak_init_rate: 1
+        onpeak_init_interval: 60
+        onpeak_follow_rate: 1
+        onpeak_follow_interval: 30
+        offpeak_init_rate: 0.5
+        offpeak_init_interval: 60
+        offpeak_follow_rate: 0.5
+        offpeak_follow_interval: 30
+    retain:
+        billingfees_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/billingfees/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#get billingfees
+-
+    name: GET billingfees
+    type: item
+    method: GET
+    path: '/${billingfees_path3}'
+    retain:
+        billingfees: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{billingfees}->{_links};
+            delete $retained->{billingfees}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put billingfees
+-
+    name: PUT billingfees
+    type: item
+    method: PUT
+    path: '/${billingfees_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${billingfees}'
+    conditions:
+        is:
+            code: 200
+
+#get billingfees
+-
+    name: GET billingfees
+    type: item
+    method: GET
+    path: '/${billingfees_path3}'
+    retain:
+        new_billingfees: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_billingfees}->{_links};
+            delete $retained->{new_billingfees}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${billingfees}': ${new_billingfees}
+
+#DELETE billingfees
+-
+    name: DELETE billingfees
+    type: item
+    method: DELETE
+    path: '/${billingfees_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE billingfees
+-
+    name: DELETE billingfees
+    type: item
+    method: DELETE
+    path: '/${billingfees_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE billingfees
+-
+    name: DELETE billingfees
+    type: item
+    method: DELETE
+    path: '/${billingfees_path3}'
+    conditions:
+        is:
+            code: 204

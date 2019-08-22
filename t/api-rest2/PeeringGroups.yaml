@@ -1,0 +1,204 @@
+---
+#check options
+-
+    name: check OPTIONS for peeringgroups
+    type: item
+    method: OPTIONS
+    path: /api/peeringgroups/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-peeringgroups
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create peeringgroups
+-
+    name: create peeringgroups
+    type: item
+    method: POST
+    path: '/api/peeringgroups/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test_api_p_group_1
+        description: test_api peering group
+        priority: 1
+        contract_id: 1
+    retain:
+        peeringgroups_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringgroups
+-
+    name: create peeringgroups
+    type: item
+    method: POST
+    path: '/api/peeringgroups/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test_api_p_group_2
+        description: test_api peering group
+        priority: 1
+        contract_id: 1
+    retain:
+        peeringgroups_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringgroups
+-
+    name: create peeringgroups
+    type: item
+    method: POST
+    path: '/api/peeringgroups/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test_api_p_group_3
+        description: test_api peering group
+        priority: 1
+        contract_id: 1
+    retain:
+        peeringgroups_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#create same peeringgroup again
+-
+    name: create same peering group again
+    type: item
+    method: POST
+    path: '/api/peeringgroups/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test_api_p_group_1
+        description: test_api peering group
+        priority: 1
+        contract_id: 1
+    conditions:
+        is:
+            code: 422
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/peeringgroups/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for peeringgroups item
+    type: item
+    method: OPTIONS
+    path: '/${peeringgroups_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get peeringgroups
+-
+    name: GET peeringgroups
+    type: item
+    method: GET
+    path: '/${peeringgroups_path3}'
+    retain:
+        peeringgroups: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{peeringgroups}->{_links};
+            delete $retained->{peeringgroups}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put peeringgroups
+-
+    name: PUT peeringgroups
+    type: item
+    method: PUT
+    path: '/${peeringgroups_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringgroups}'
+    conditions:
+        is:
+            code: 200
+
+#get peeringgroups
+-
+    name: GET peeringgroups
+    type: item
+    method: GET
+    path: '/${peeringgroups_path3}'
+    retain:
+        new_peeringgroups: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_peeringgroups}->{_links};
+            delete $retained->{new_peeringgroups}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${peeringgroups}': ${new_peeringgroups}
+
+#DELETE peeringgroups
+-
+    name: DELETE peeringgroups
+    type: item
+    method: DELETE
+    path: '/${peeringgroups_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringgroups
+-
+    name: DELETE peeringgroups
+    type: item
+    method: DELETE
+    path: '/${peeringgroups_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringgroups
+-
+    name: DELETE peeringgroups
+    type: item
+    method: DELETE
+    path: '/${peeringgroups_path3}'
+    conditions:
+        is:
+            code: 204
