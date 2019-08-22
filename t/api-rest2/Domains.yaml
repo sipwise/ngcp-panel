@@ -1,0 +1,57 @@
+---
+#check options
+-
+    name: check OPTIONS for domains
+    type: item
+    method: OPTIONS
+    path: /api/domains/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-domains
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create domain
+-
+    name: create domain
+    type: item
+    method: POST
+    path: '/api/domains/'
+    header:
+        Content-Type: application/json
+    content:
+        domain: api_test.api_test${unique_id}
+        reseller_id: 1
+    retain:
+        domain_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/domains/?page=1&rows=1'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#DELETE domain
+-
+    name: DELETE domain
+    type: item
+    method: DELETE
+    path: '/${domain_path1}'
+    conditions:
+        is:
+            code: 204

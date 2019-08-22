@@ -1,0 +1,172 @@
+---
+#check options
+-
+    name: check OPTIONS for emailtemplates
+    type: item
+    method: OPTIONS
+    path: /api/emailtemplates/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-emailtemplates
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create emailtemplates
+-
+    name: create emailtemplates
+    type: item
+    method: POST
+    path: '/api/emailtemplates/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test_email_template_name1'
+        from_email: 'api_test1@api-test.email.com'
+        subject: 'api_test email template 1'
+        body: 'api_test email template 1: a lot of the text here'
+    retain:
+        emailtemplates_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create emailtemplates
+-
+    name: create emailtemplates
+    type: item
+    method: POST
+    path: '/api/emailtemplates/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test_email_template_name2'
+        from_email: 'api_test2@api-test.email.com'
+        subject: 'api_test email template 2'
+        body: 'api_test email template 2: a lot of the text here'
+    retain:
+        emailtemplates_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create emailtemplates
+-
+    name: create emailtemplates
+    type: item
+    method: POST
+    path: '/api/emailtemplates/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test_email_template_name3'
+        from_email: 'api_test3@api-test.email.com'
+        subject: 'api_test email template 3'
+        body: 'api_test email template 3: a lot of the text here'
+    retain:
+        emailtemplates_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/emailtemplates/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#get emailtemplates
+-
+    name: GET emailtemplates
+    type: item
+    method: GET
+    path: '/${emailtemplates_path3}'
+    retain:
+        emailtemplates: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{emailtemplates}->{_links};
+            delete $retained->{emailtemplates}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put emailtemplates
+-
+    name: PUT emailtemplates
+    type: item
+    method: PUT
+    path: '/${emailtemplates_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${emailtemplates}'
+    conditions:
+        is:
+            code: 200
+
+#get emailtemplates
+-
+    name: GET emailtemplates
+    type: item
+    method: GET
+    path: '/${emailtemplates_path3}'
+    retain:
+        new_emailtemplates: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_emailtemplates}->{_links};
+            delete $retained->{new_emailtemplates}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${emailtemplates}': ${new_emailtemplates}
+
+#DELETE emailtemplates
+-
+    name: DELETE emailtemplates
+    type: item
+    method: DELETE
+    path: '/${emailtemplates_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE emailtemplates
+-
+    name: DELETE emailtemplates
+    type: item
+    method: DELETE
+    path: '/${emailtemplates_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE emailtemplates
+-
+    name: DELETE emailtemplates
+    type: item
+    method: DELETE
+    path: '/${emailtemplates_path3}'
+    conditions:
+        is:
+            code: 204

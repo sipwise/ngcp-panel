@@ -1,0 +1,321 @@
+---
+#check options
+-
+    name: check OPTIONS for rewriterulesets
+    type: item
+    method: OPTIONS
+    path: /api/rewriterulesets/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-rewriterulesets
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create rewriteruleset
+-
+    name: create rewriteruleset
+    type: item
+    method: POST
+    path: '/api/rewriterulesets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test1'
+        description: 'api_test rule set description'
+        caller_in_dpid: 1
+        callee_in_dpid: 2
+        caller_out_dpid: 3
+        callee_out_dpid: 4
+        rewriterules:
+            -
+                match_pattern: '^111$'
+                replace_pattern: '222'
+                description: 'test_api rewrite rule 1'
+                direction: 'in'
+                field: 'caller'
+                priority: 1
+                enabled: 1
+            -
+                match_pattern: '^333$'
+                replace_pattern: '444'
+                description: 'test_api rewrite rule 2'
+                direction: 'in'
+                field: 'caller'
+                priority: 2
+                enabled: 1
+            -
+                match_pattern: '^555$'
+                replace_pattern: '666'
+                description: 'test_api rewrite rule 3'
+                direction: 'in'
+                field: 'caller'
+                priority: 3
+                enabled: 1
+    retain:
+        rewriterulesets_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create rewriteruleset
+-
+    name: create rewriteruleset
+    type: item
+    method: POST
+    path: '/api/rewriterulesets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test2'
+        description: 'api_test rule set description'
+        caller_in_dpid: 1
+        callee_in_dpid: 2
+        caller_out_dpid: 3
+        callee_out_dpid: 4
+        rewriterules:
+            -
+                match_pattern: '^111$'
+                replace_pattern: '222'
+                description: 'test_api rewrite rule 1'
+                direction: 'in'
+                field: 'caller'
+                priority: 1
+                enabled: 1
+            -
+                match_pattern: '^333$'
+                replace_pattern: '444'
+                description: 'test_api rewrite rule 2'
+                direction: 'in'
+                field: 'caller'
+                priority: 2
+                enabled: 1
+            -
+                match_pattern: '^555$'
+                replace_pattern: '666'
+                description: 'test_api rewrite rule 3'
+                direction: 'in'
+                field: 'caller'
+                priority: 3
+                enabled: 1
+    retain:
+        rewriterulesets_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create rewriteruleset
+-
+    name: create rewriteruleset
+    type: item
+    method: POST
+    path: '/api/rewriterulesets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test3'
+        description: 'api_test rule set description'
+        caller_in_dpid: 1
+        callee_in_dpid: 2
+        caller_out_dpid: 3
+        callee_out_dpid: 4
+        rewriterules:
+            -
+                match_pattern: '^111$'
+                replace_pattern: '222'
+                description: 'test_api rewrite rule 1'
+                direction: 'in'
+                field: 'caller'
+                priority: 1
+                enabled: 1
+            -
+                match_pattern: '^333$'
+                replace_pattern: '444'
+                description: 'test_api rewrite rule 2'
+                direction: 'in'
+                field: 'caller'
+                priority: 2
+                enabled: 1
+            -
+                match_pattern: '^555$'
+                replace_pattern: '666'
+                description: 'test_api rewrite rule 3'
+                direction: 'in'
+                field: 'caller'
+                priority: 3
+                enabled: 1
+    retain:
+        rewriterulesets_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/rewriterulesets/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for rewriterulesets item
+    type: item
+    method: OPTIONS
+    path: '/${rewriterulesets_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get rewriterulesets
+-
+    name: GET rewriterulesets
+    type: item
+    method: GET
+    path: '/${rewriterulesets_path3}'
+    retain:
+        rewriterulesets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{rewriterulesets}->{_links};
+            delete $retained->{rewriterulesets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put rewriterulesets
+-
+    name: PUT rewriterulesets
+    type: item
+    method: PUT
+    path: '/${rewriterulesets_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${rewriterulesets}'
+    conditions:
+        is:
+            code: 200
+
+#get rewriterulesets
+-
+    name: GET rewriterulesets
+    type: item
+    method: GET
+    path: '/${rewriterulesets_path3}'
+    retain:
+        new_rewriterulesets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_rewriterulesets}->{_links};
+            delete $retained->{new_rewriterulesets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${rewriterulesets}': ${new_rewriterulesets}
+
+#create rewriteruleset without reseller_id
+-
+    name: create rewriteruleset without reseller_id
+    type: item
+    method: POST
+    path: '/api/rewriterulesets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: null
+        name: 'api_test4'
+        description: 'api_test rule set description'
+        caller_in_dpid: 1
+        callee_in_dpid: 2
+        caller_out_dpid: 3
+        callee_out_dpid: 4
+        rewriterules:
+            -
+                match_pattern: '^111$'
+                replace_pattern: '222'
+                description: 'test_api rewrite rule 1'
+                direction: 'in'
+                field: 'caller'
+                priority: 1
+                enabled: 1
+            -
+                match_pattern: '^333$'
+                replace_pattern: '444'
+                description: 'test_api rewrite rule 2'
+                direction: 'in'
+                field: 'caller'
+                priority: 2
+                enabled: 1
+            -
+                match_pattern: '^555$'
+                replace_pattern: '666'
+                description: 'test_api rewrite rule 3'
+                direction: 'in'
+                field: 'caller'
+                priority: 3
+                enabled: 1
+    retain:
+        rewriterulesets_path4: header.location
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='reseller_id'
+
+#DELETE rewriterulesets
+-
+    name: DELETE rewriterulesets
+    type: item
+    method: DELETE
+    path: '/${rewriterulesets_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE rewriterulesets
+-
+    name: DELETE rewriterulesets
+    type: item
+    method: DELETE
+    path: '/${rewriterulesets_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE rewriterulesets
+-
+    name: DELETE rewriterulesets
+    type: item
+    method: DELETE
+    path: '/${rewriterulesets_path3}'
+    conditions:
+        is:
+            code: 204

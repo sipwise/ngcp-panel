@@ -1,0 +1,30 @@
+---
+#Check Event History
+-
+    name: Check Event History
+    type: item
+    method: GET
+    path: '/${eventhistory_path}'
+    retain:
+        event_history: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            my $i = 0;
+            $retained->{got1_subscriber_id} = $retained->{event_history}->{_embedded}->{'ngcp:events'}->[0]->{subscriber_id};
+            $retained->{got1_type} = $retained->{event_history}->{_embedded}->{'ngcp:events'}->[0]->{type};
+            $retained->{got2_subscriber_id} = $retained->{event_history}->{_embedded}->{'ngcp:events'}->[1]->{subscriber_id};
+            $retained->{got2_type} = $retained->{event_history}->{_embedded}->{'ngcp:events'}->[1]->{type};
+            $retained->{expected1_subscriber_id} =  $retained->{expected_events}->[0]->{subscriber_id};
+            $retained->{expected1_type} =  $retained->{expected_events}->[0]->{type};
+            $retained->{expected2_subscriber_id} =  $retained->{expected_events}->[1]->{subscriber_id};
+            $retained->{expected2_type} =  $retained->{expected_events}->[1]->{type};
+        }
+    conditions:
+        is:
+            code: 200
+            '${got1_subscriber_id}': '${expected1_subscriber_id}'
+            '${got1_type}': '${expected1_type}'
+            '${got2_subscriber_id}': '${expected2_subscriber_id}'
+            '${got2_type}': '${expected2_type}'

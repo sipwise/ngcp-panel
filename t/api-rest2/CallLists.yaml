@@ -1,0 +1,138 @@
+---
+#get a subscriber for testing
+-
+    name: get a subscriber for testing
+    type: item
+    method: GET
+    path: '/api/subscribers/?page=1&rows=1'
+    retain:
+        subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriber = $retained->{subscriber}->{'_embedded'}->{'ngcp:subscribers'}->[0];
+            $retained->{subscriber} = $subscriber;
+            $retained->{subscriber_id} = $subscriber->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriber}.id': defined
+
+#get call lists for subscriber
+-
+    name: get call lists for subscriber
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&subscriber_id=${subscriber_id}'
+    retain:
+        calllists: body
+    conditions:
+        is:
+            code: 200
+
+#get call lists for subscriber with direction in
+-
+    name: get call lists for subscriber with direction in
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&direction=in&subscriber_id=${subscriber_id}'
+    retain:
+        calllists_in: body
+    conditions:
+        is:
+            code: 200
+
+#get call lists for subscriber with direction out
+-
+    name: get call lists for subscriber with direction out
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&direction=out&subscriber_id=${subscriber_id}'
+    retain:
+        calllists_out: body
+    conditions:
+        is:
+            code: 200
+
+#get call lists for subscriber with rating_status filter ok
+-
+    name: get call lists for subscriber with rating_status filter ok
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&rating_status=ok&subscriber_id=${subscriber_id}'
+    retain:
+        calllists_ok: body
+    conditions:
+        is:
+            code: 200
+
+#get call lists for subscriber with rating_status filter unrated,failed
+-
+    name: get call lists for subscriber with rating_status filter unrated,failed
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&rating_status=unrated,failed&subscriber_id=${subscriber_id}'
+    retain:
+        calllists_unrated_failed: body
+    conditions:
+        is:
+            code: 200
+
+#get a customer for testing
+-
+    name: get a customer for testing
+    type: item
+    method: GET
+    path: '/api/customers/?page=1&rows=1'
+    retain:
+        customer: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $customer = $retained->{customer}->{'_embedded'}->{'ngcp:customers'}->[0];
+            $retained->{customer} = $customer;
+            $retained->{customer_id} = $customer->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${customer}.id': defined
+
+#get call lists for customer
+-
+    name: get call lists for customer
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&customer_id=${customer_id}'
+    retain:
+        calllists: body
+    conditions:
+        is:
+            code: 200
+
+#get call lists for customer with direction in
+-
+    name: get call lists for customer with direction in
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&direction=in&customer_id=${customer_id}'
+    retain:
+        calllists_in: body
+    conditions:
+        is:
+            code: 200
+
+#get call lists for customer with direction out
+-
+    name: get call lists for customer with direction out
+    type: item
+    method: GET
+    path: '/api/calllists/?page=1&rows=10&direction=out&customer_id=${customer_id}'
+    retain:
+        calllists_out: body
+    conditions:
+        is:
+            code: 200

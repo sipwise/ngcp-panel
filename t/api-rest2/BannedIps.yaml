@@ -1,0 +1,29 @@
+---
+#check options
+-
+    name: check OPTIONS for bannedips
+    type: item
+    method: OPTIONS
+    path: /api/bannedips/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-bannedips
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/bannedips/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
