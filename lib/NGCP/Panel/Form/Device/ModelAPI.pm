@@ -15,7 +15,7 @@ override 'field_list' => sub {
     return unless $c;
 
     super();
-    foreach my $f(qw/front_image mac_image linerange_add/) {
+    foreach my $f(qw/front_image mac_image front_thumbnail linerange_add/) {
         $self->field($f)->inactive(1);
     }
 };

@@ -68,6 +68,7 @@ $fake_data->set_data_from_script({
             #TODO: can check big files
             #front_image => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
             front_image => [ dirname($0).'/resources/empty.txt' ],
+            front_thumbnail => [ dirname($0).'/resources/empty.txt' ],
         },
         'query' => [ ['model','json','model'] ],
         'no_delete_available' => 1,

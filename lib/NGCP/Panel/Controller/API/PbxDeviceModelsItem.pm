@@ -8,7 +8,7 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PbxDeviceM
 __PACKAGE__->set_config({
     PUT => {
         'ContentType' => ['multipart/form-data'],
-        'Uploads'     => [qw/front_image mac_image/],
+        'Uploads'     => [qw/front_image mac_image front_thumbnail/],
     },
     allowed_roles => {
         'Default' => [qw/admin reseller subscriberadmin subscriber/],
