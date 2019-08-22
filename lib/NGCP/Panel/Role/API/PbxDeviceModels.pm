@@ -77,6 +77,7 @@ sub resource_from_item {
     my %resource = $item->get_inflated_columns;
     delete $resource{front_image};
     delete $resource{mac_image};
+    delete $resource{front_thumbnail};
 
     my ($form) = $self->get_form($c);
     return unless $self->validate_form(
@@ -138,13 +139,18 @@ sub process_form_resource{
 
     my $ft = File::Type->new();
     if($resource->{front_image}) {
-        my $front_image = delete $resource->{front_image};
-        $resource->{front_image} = $front_image->slurp;
+        my $image = delete $resource->{front_image};
+        $resource->{front_image} = $image->slurp;
         $resource->{front_image_type} = $ft->mime_type($resource->{front_image});
     }
+    if($resource->{front_thumbnail}) {
+        my $image = delete $resource->{front_thumbnail};
+        $resource->{front_thumbnail} = $image->slurp;
+        $resource->{front_thumbnail_type} = $ft->mime_type($resource->{front_thumbnail});
+    }
     if($resource->{mac_image}) {
-        my $front_image = delete $resource->{mac_image};
-        $resource->{mac_image} = $front_image->slurp;
+        my $image = delete $resource->{mac_image};
+        $resource->{mac_image} = $image->slurp;
         $resource->{mac_image_type} = $ft->mime_type($resource->{mac_image});
     }
 
