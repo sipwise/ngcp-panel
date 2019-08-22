@@ -1,0 +1,28 @@
+---
+#create Subscriber
+-
+    name: create Subscriber
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content: '${subscriber_content}'
+    retain:
+        subscriber_path: header.location
+        subscriber_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#get subscriber
+-
+    name: GET subscriber
+    type: item
+    method: GET
+    path: '/${subscriber_path}'
+    retain:
+        subscriber: body
+    conditions:
+        is:
+            code: 200

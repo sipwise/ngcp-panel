@@ -1,0 +1,367 @@
+---
+#check options
+-
+    name: check OPTIONS for rewriterules
+    type: item
+    method: OPTIONS
+    path: /api/rewriterules/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-rewriterules
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create rewriteruleset
+-
+    name: create rewriteruleset
+    type: item
+    method: POST
+    path: '/api/rewriterulesets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test'
+        description: 'api_test rule set description'
+        caller_in_dpid: 1
+        callee_in_dpid: 2
+        caller_out_dpid: 3
+        callee_out_dpid: 4
+        rewriterules: null
+    retain:
+        rewriterulesets_path: header.location
+        rewriterulesets_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create rewriterules
+-
+    name: create rewriterules
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id:  ${rewriterulesets_id}
+        match_pattern: '^111$'
+        replace_pattern: '222'
+        description: 'test_api rewrite rule 1'
+        direction: 'in'
+        field: 'caller'
+        priority: 1
+        enabled: 1
+    retain:
+        rewriterules_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create rewriterules
+-
+    name: create rewriterules
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id:  ${rewriterulesets_id}
+        match_pattern: '^333$'
+        replace_pattern: '444'
+        description: 'test_api rewrite rule 2'
+        direction: 'in'
+        field: 'caller'
+        priority: 1
+        enabled: 1
+    retain:
+        rewriterules_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create rewriterules
+-
+    name: create rewriterules
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id:  ${rewriterulesets_id}
+        match_pattern: '^555$'
+        replace_pattern: '666'
+        description: 'test_api rewrite rule 3'
+        direction: 'in'
+        field: 'caller'
+        priority: 1
+        enabled: 1
+    retain:
+        rewriterules_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/rewriterules/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for rewriterules item
+    type: item
+    method: OPTIONS
+    path: '/${rewriterules_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get rewriterules
+-
+    name: GET rewriterules
+    type: item
+    method: GET
+    path: '/${rewriterules_path3}'
+    retain:
+        rewriterules: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{rewriterules}->{_links};
+            delete $retained->{rewriterules}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put rewriterules
+-
+    name: PUT rewriterules
+    type: item
+    method: PUT
+    path: '/${rewriterules_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${rewriterules}'
+    retain:
+        new_rewriterules: body
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${new_rewriterules}._links.ngcp:rewriterules': defined
+            '${new_rewriterules}._links.ngcp:rewriterulesets': defined
+            '${new_rewriterules}.direction': defined
+            '${new_rewriterules}.field': defined
+            '${new_rewriterules}.match_pattern': defined
+            '${new_rewriterules}.replace_pattern': defined
+            '${new_rewriterules}.description': defined
+        like:
+            '${new_rewriterules}.direction': '^(in|out)$'
+            '${new_rewriterules}.field': '^(caller|callee)$'
+
+#get rewriterules
+-
+    name: GET rewriterules
+    type: item
+    method: GET
+    path: '/${rewriterules_path3}'
+    retain:
+        new_rewriterules: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_rewriterules}->{_links};
+            delete $retained->{new_rewriterules}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${rewriterules}': ${new_rewriterules}
+
+#create rewriterules with invalid set_id
+-
+    name: create rewriterules with invalid set_id
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id: 99999
+        match_pattern: '^777$'
+        replace_pattern: '888'
+        description: 'test_api rewrite rule 4'
+        direction: 'in'
+        field: 'caller'
+        priority: 1
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Invalid 'set_id'
+
+#create rewriterules with negative set_id
+-
+    name: create rewriterules with negative set_id
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id: -100
+        match_pattern: '^777$'
+        replace_pattern: '888'
+        description: 'test_api rewrite rule 4'
+        direction: 'in'
+        field: 'caller'
+        priority: 1
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: (Invalid|Validation failed).*'set_id'
+
+#create rewriterules without set_id
+-
+    name: create rewriterules without set_id
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id: null
+        match_pattern: '^777$'
+        replace_pattern: '888'
+        description: 'test_api rewrite rule 4'
+        direction: 'in'
+        field: 'caller'
+        priority: 1
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: "Required: 'set_id'|set_id.*required"
+
+#create rewriterules without match_pattern
+-
+    name: create rewriterules without match_pattern
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id: ${rewriterulesets_id}
+        match_pattern: null
+        replace_pattern: '888'
+        description: 'test_api rewrite rule 4'
+        direction: 'in'
+        field: 'caller'
+        priority: 1
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='match_pattern'
+
+#create rewriterules with invalid direction and field
+-
+    name: create rewriterules with invalid direction and field
+    type: item
+    method: POST
+    path: '/api/rewriterules/'
+    header:
+        Content-Type: application/json
+    content:
+        set_id: ${rewriterulesets_id}
+        match_pattern: '^777$'
+        replace_pattern: '888'
+        description: 'test_api rewrite rule 4'
+        direction: 'foo'
+        field: 'bar'
+        priority: 1
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='direction'
+            body.message: field='field'
+
+#DELETE rewriterules
+-
+    name: DELETE rewriterules
+    type: item
+    method: DELETE
+    path: '/${rewriterules_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE rewriterules
+-
+    name: DELETE rewriterules
+    type: item
+    method: DELETE
+    path: '/${rewriterules_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE rewriterules
+-
+    name: DELETE rewriterules
+    type: item
+    method: DELETE
+    path: '/${rewriterules_path3}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE rewriteruleset
+-
+    name: DELETE rewriteruleset
+    type: item
+    method: DELETE
+    path: '/${rewriterulesets_path}'
+    conditions:
+        is:
+            code: 204

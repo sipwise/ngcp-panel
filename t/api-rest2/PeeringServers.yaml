@@ -1,0 +1,258 @@
+---
+#check options
+-
+    name: check OPTIONS for peeringservers
+    type: item
+    method: OPTIONS
+    path: /api/peeringservers/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-peeringservers
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create peeringgroup
+-
+    name: create peeringgroup
+    type: item
+    method: POST
+    path: '/api/peeringgroups/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test_api_p_group_peering_servers
+        description: test_api peering group
+        priority: 1
+        contract_id: 1
+    retain:
+        peeringgroups_path: header.location
+        peeringgroups_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringservers
+-
+    name: create peeringservers
+    type: item
+    method: POST
+    path: '/api/peeringservers/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        name: 'test_api peering host 1'
+        ip: '1.1.1.1'
+        host: 'test-api.com'
+        port: 1025
+        transport: 1
+        weight: 1
+        via_route: ''
+        via_lb: ''
+        enabled: 1
+    retain:
+        peeringservers_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringservers
+-
+    name: create peeringservers
+    type: item
+    method: POST
+    path: '/api/peeringservers/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        name: 'test_api peering host 2'
+        ip: '1.1.1.1'
+        host: 'test-api.com'
+        port: 1025
+        transport: 1
+        weight: 1
+        via_route: ''
+        via_lb: ''
+        enabled: 1
+    retain:
+        peeringservers_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringservers
+-
+    name: create peeringservers
+    type: item
+    method: POST
+    path: '/api/peeringservers/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        name: 'test_api peering host 3'
+        ip: '1.1.1.1'
+        host: 'test-api.com'
+        port: 1025
+        transport: 1
+        weight: 1
+        via_route: ''
+        via_lb: ''
+        enabled: 1
+    retain:
+        peeringservers_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#create same peering server code again
+-
+    name: create same peering server code again
+    type: item
+    method: POST
+    path: '/api/peeringservers/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        name: 'test_api peering host 1'
+        ip: '1.1.1.1'
+        host: 'test-api.com'
+        port: 1025
+        transport: 1
+        weight: 1
+        via_route: ''
+        via_lb: ''
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/peeringservers/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for peeringservers item
+    type: item
+    method: OPTIONS
+    path: '/${peeringservers_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get peeringservers
+-
+    name: GET peeringservers
+    type: item
+    method: GET
+    path: '/${peeringservers_path3}'
+    retain:
+        peeringservers: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{peeringservers}->{_links};
+            delete $retained->{peeringservers}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put peeringservers
+-
+    name: PUT peeringservers
+    type: item
+    method: PUT
+    path: '/${peeringservers_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringservers}'
+    conditions:
+        is:
+            code: 200
+
+#get peeringservers
+-
+    name: GET peeringservers
+    type: item
+    method: GET
+    path: '/${peeringservers_path3}'
+    retain:
+        new_peeringservers: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_peeringservers}->{_links};
+            delete $retained->{new_peeringservers}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${peeringservers}': ${new_peeringservers}
+
+#DELETE peeringservers
+-
+    name: DELETE peeringservers
+    type: item
+    method: DELETE
+    path: '/${peeringservers_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringservers
+-
+    name: DELETE peeringservers
+    type: item
+    method: DELETE
+    path: '/${peeringservers_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringservers
+-
+    name: DELETE peeringservers
+    type: item
+    method: DELETE
+    path: '/${peeringservers_path3}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringgroup
+-
+    name: DELETE peeringgroup
+    type: item
+    method: DELETE
+    path: '/${peeringgroups_path}'
+    conditions:
+        is:
+            code: 204
