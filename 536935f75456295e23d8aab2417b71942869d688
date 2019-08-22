@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6d0c90c_2844d92b",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 9
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-22T12:15:03Z",
+      "side": 1,
+      "message": "if not provided, a scaled-down version of front_image could be used",
+      "revId": "536935f75456295e23d8aab2417b71942869d688",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
