@@ -16,6 +16,7 @@ my $c = Selenium::Collection::Common->new(
 my $resellername = ("reseller" . int(rand(100000)) . "test");
 my $contractid = ("contract" . int(rand(100000)) . "test");
 my $timesetname = ("time" . int(rand(100000)) . "set");
+my $groupname = ("group" . int(rand(100000)) . "test");
 my $run_ok = 0;
 
 $c->login_ok();
@@ -127,8 +128,46 @@ diag("Check Details");
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Very important event'), "Description is correct");
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[3]', 'every week on Monday from 2020-06-01 12:00:00 to 2020-07-01 13:00:00'), "Date/Time is correct");
 
+diag("Go to Peering Page");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Peerings", 'link_text')->click();
+
+diag("Create a Peering Group");
+$d->find_element("Create Peering Group", 'link_text')->click();
+$d->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#contractidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');
+ok($d->wait_for_text('//*[@id="contractidtable"]/tbody/tr[1]/td[3]', 'default-system@default.invalid'), "Contact found");
+$d->select_if_unselected('//*[@id="contractidtable"]/tbody/tr[1]/td[5]/input');
+$d->fill_element('//*[@id="name"]', 'xpath', $groupname);
+$d->fill_element('//*[@id="description"]', 'xpath', 'For Timeset Testing');
+$d->fill_element('//*[@id="time_setidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#time_setidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="time_setidtable_filter"]/label/input', 'xpath', $timesetname);
+ok($d->wait_for_text('//*[@id="time_setidtable"]/tbody/tr[1]/td[2]', $timesetname), "Time Set found");
+$d->select_if_unselected('//*[@id="time_setidtable"]/tbody/tr[1]/td[4]/input');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Search for Peering Group");
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Peering group successfully created",  "Correct Alert was shown");
+$d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
+
+diag("Check Peering Group Details");
+ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[2]', 'default-system@default.invalid'), 'Contact is correct');
+ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[3]', $groupname), 'Name is correct');
+ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[5]', 'For Timeset Testing'), 'Description is correct');
+ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[6]', $timesetname), 'Time Set is correct');
+
+diag("Delete Peering Group");
+$d->move_and_click('//*[@id="sip_peering_group_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]/label/input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Peering Group successfully deleted",  "Correct Alert was shown");
+
 diag("Go back to Time set page");
-$d->find_element("Back", 'link_text')->click();
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Time Sets", 'link_text')->click();
 
 diag("Trying to NOT delete Time set");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
