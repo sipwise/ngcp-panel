@@ -1,0 +1,505 @@
+---
+#check options
+-
+    name: check OPTIONS for customercontacts
+    type: item
+    method: OPTIONS
+    path: /api/customercontacts/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-customercontacts
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create customercontact
+-
+    name: create customercontact
+    type: item
+    method: POST
+    path: '/api/customercontacts/'
+    header:
+        Content-Type: application/json
+    content:
+        firstname: Test_First_1_${unique_id}
+        lastname: Test_Last_1_${unique_id}
+        email: test_1_.${unique_id}@test.invalid
+        reseller_id: 1
+    retain:
+        customercontact1_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#create customercontact
+-
+    name: create customercontact
+    type: item
+    method: POST
+    path: '/api/customercontacts/'
+    header:
+        Content-Type: application/json
+    content:
+        firstname: Test_First_2_${unique_id}
+        lastname: Test_Last_2_${unique_id}
+        email: test_2_.${unique_id}@test.invalid
+        reseller_id: 1
+    retain:
+        customercontact2_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#create customercontact
+-
+    name: create customercontact
+    type: item
+    method: POST
+    path: '/api/customercontacts/'
+    header:
+        Content-Type: application/json
+    content:
+        firstname: Test_First_3_${unique_id}
+        lastname: Test_Last_3_${unique_id}
+        email: test_3_.${unique_id}@test.invalid
+        reseller_id: 1
+    retain:
+        customercontact3_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/customercontacts/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#create contact without email
+-
+    name: create contact without email
+    type: item
+    method: POST
+    path: '/api/customercontacts/'
+    header:
+        Content-Type: application/json
+    content:
+        firstname: Test_First_invalid
+        lastname: Test_Last_invalid
+        reseller_id: 1
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='email'
+
+#create contact without reseller_id
+-
+    name: create contact without reseller_id
+    type: item
+    method: POST
+    path: '/api/customercontacts/'
+    header:
+        Content-Type: application/json
+    content:
+        firstname: Test_First_invalid
+        lastname: Test_Last_invalid
+        email: test_invalid@test.invalid
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='reseller_id'
+
+#create contact with invalid reseller_id
+-
+    name: create contact with invalid reseller_id
+    type: item
+    method: POST
+    path: '/api/customercontacts/'
+    header:
+        Content-Type: application/json
+    content:
+        firstname: Test_First_invalid
+        lastname: Test_Last_invalid
+        email: test_invalid@test.invalid
+        reseller_id: 99999
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Invalid 'reseller_id'
+
+#check options for item
+-
+    name: check OPTIONS for customercontacts item
+    type: item
+    method: OPTIONS
+    path: /${customercontact1_path}
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get customercontact
+-
+    name: GET customercontact
+    type: item
+    method: GET
+    path: /${customercontact1_path}
+    retain:
+        customercontact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{customercontact}->{_links};
+            delete $retained->{customercontact}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${customercontact}.firstname': defined
+            '${customercontact}.lastname': defined
+            '${customercontact}.email': defined
+        like:
+            '${customercontact}.id': '[0-9]+'
+            '${customercontact}.reseller_id': '[0-9]+'
+
+#put customercontact with missing content-type
+-
+    name: PUT customercontact with missing content-type
+    type: item
+    method: PUT
+    path: '/${customercontact1_path}'
+    header:
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put customercontact with unsupported content type
+-
+    name: PUT customercontact with unsupported Content-Type
+    type: item
+    method: PUT
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/xxx
+    conditions:
+        is:
+            code: 415
+
+#put customercontact with missing body
+-
+    name: PUT customercontact with missing body
+    type: item
+    method: PUT
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    conditions:
+        is:
+            code: 400
+
+#put customercontact
+-
+    name: PUT customercontact
+    type: item
+    method: PUT
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${customercontact}'
+    retain:
+        new_customercontact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_customercontact}->{_links};
+            delete $retained->{new_customercontact}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${customercontact}': ${new_customercontact}
+
+#PATCH customercontact firstname
+-
+    name: PATCH customercontact firstname
+    type: item
+    method: PATCH
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /firstname
+            value: patchedfirst
+    retain:
+        modified_customercontact: body
+    conditions:
+        is: 
+            code: 200
+            '${modified_customercontact}.firstname': patchedfirst
+
+#PATCH customercontact firstname
+-
+    name: PATCH customercontact firstname
+    type: item
+    method: PATCH
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /firstname
+            value: null
+    retain:
+        modified_customercontact: body
+    conditions:
+        is: 
+            code: 200
+        ok:
+            '${modified_customercontact}.firstname': undefined
+
+#PATCH customercontact with undefined email
+-
+    name: PATCH customercontact with undefined email
+    type: item
+    method: PATCH
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /email
+            value: null
+    retain:
+        modified_customercontact: body
+    conditions:
+        is: 
+            code: 422
+
+#PATCH customercontact with undefined reseller_id
+-
+    name: PATCH customercontact with undefined reseller_id
+    type: item
+    method: PATCH
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /reseller_id
+            value: null
+    retain:
+        modified_customercontact: body
+    conditions:
+        is: 
+            code: 422
+
+#PATCH customercontact with invalid reseller_id
+-
+    name: PATCH customercontact with invalid reseller_id
+    type: item
+    method: PATCH
+    path: '/${customercontact1_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /reseller_id
+            value: 99999
+    retain:
+        modified_customercontact: body
+    conditions:
+        is: 
+            code: 422
+
+#DELETE customercontact
+-
+    name: DELETE customercontact
+    type: item
+    method: DELETE
+    path: '/${customercontact1_path}'
+    conditions:
+        is:
+            code: 204
+
+#create test domain
+-
+    name: create test domain
+    type: item
+    method: POST
+    path: '/api/domains/'
+    header:
+        Content-Type: application/json
+    content:
+        domain: test${unique_id}.example.org
+        reseller_id: 1 
+    retain:
+        domain_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get test domain
+-
+    name: get test domain
+    type: item
+    method: GET
+    path: '/${domain_path}'
+    retain:
+        domain: body
+    conditions:
+        is:
+            code: 200
+
+#create test billingprofile
+-
+    name: create test billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test profile ${unique_id}
+        handle: testprofile${unique_id}
+        reseller_id: 1 
+    retain:
+        billingprofile_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create CustomerContact
+-
+    name: include create CustomerContact
+    type: include
+    file: CreateCustomerContact.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            $retained->{customercontact_content} = {
+                firstname => "cust_contact_first",
+                lastname  => "cust_contact_last",
+                email     => "cust_contact\@custcontact.invalid",
+                reseller_id => 1,
+            };
+        }
+
+#create Customer
+-
+    name: include create Customer
+    type: include
+    file: CreateCustomer.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{subscriber_map} = ();
+            $retained->{customer_map} = ();
+
+            $retained->{customer_content} = {
+                status => 'active',
+                contact_id => $retained->{customercontact_id},
+                billing_profile_id => $retained->{billingprofile_id},
+                type => 'sipaccount',
+                max_subscribers => undef,
+                external_id => undef
+            };
+        }
+
+#DELETE customercontact
+-
+    name: DELETE customercontact
+    type: item
+    method: DELETE
+    path: '/${customercontact_path}'
+    conditions:
+        is:
+            code: 423
+
+#get customercontact
+-
+    name: get customercontact
+    type: item
+    method: GET
+    path: '/${customercontact_path}'
+    conditions:
+        is:
+            code: 200
+
+#PATCH customer status
+-
+    name: PATCH customer status
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is: 
+            code: 200
+
+#DELETE customercontact
+-
+    name: DELETE customercontact
+    type: item
+    method: DELETE
+    path: '/${customercontact_path}'
+    conditions:
+        is:
+            code: 204
+
+#get customercontact
+-
+    name: get customercontact
+    type: item
+    method: GET
+    path: '/${customercontact_path}'
+    conditions:
+        is:
+            code: 404

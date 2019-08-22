@@ -1,0 +1,27 @@
+---
+#create Customer
+-
+    name: create Customer
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content: '${customer_content}'
+    retain:
+        customer_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get customer
+-
+    name: GET customer
+    type: item
+    method: GET
+    path: '/${customer_path}'
+    retain:
+        customer: body
+    conditions:
+        is:
+            code: 200

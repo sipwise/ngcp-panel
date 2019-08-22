@@ -1,0 +1,166 @@
+---
+#check options
+-
+    name: check OPTIONS for billingzones
+    type: item
+    method: OPTIONS
+    path: /api/billingzones/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingzones
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create billingzones
+-
+    name: create billingzones
+    type: item
+    method: POST
+    path: '/api/billingzones/'
+    header:
+        Content-Type: application/json
+    content:
+        billing_profile_id: 1
+        zone: apitestzone1${unique_id}
+        detail: api_test zone
+    retain:
+        billingzones_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create billingzones
+-
+    name: create billingzones
+    type: item
+    method: POST
+    path: '/api/billingzones/'
+    header:
+        Content-Type: application/json
+    content:
+        billing_profile_id: 1
+        zone: apitestzone2${unique_id}
+        detail: api_test zone
+    retain:
+        billingzones_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create billingzones
+-
+    name: create billingzones
+    type: item
+    method: POST
+    path: '/api/billingzones/'
+    header:
+        Content-Type: application/json
+    content:
+        billing_profile_id: 1
+        zone: apitestzone3${unique_id}
+        detail: api_test zone
+    retain:
+        billingzones_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/billingzones/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#get billingzones
+-
+    name: GET billingzones
+    type: item
+    method: GET
+    path: '/${billingzones_path3}'
+    retain:
+        billingzones: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{billingzones}->{_links};
+            delete $retained->{billingzones}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put billingzones
+-
+    name: PUT billingzones
+    type: item
+    method: PUT
+    path: '/${billingzones_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${billingzones}'
+    conditions:
+        is:
+            code: 200
+
+#get billingzones
+-
+    name: GET billingzones
+    type: item
+    method: GET
+    path: '/${billingzones_path3}'
+    retain:
+        new_billingzones: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_billingzones}->{_links};
+            delete $retained->{new_billingzones}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${billingzones}': ${new_billingzones}
+
+#DELETE billingzones
+-
+    name: DELETE billingzones
+    type: item
+    method: DELETE
+    path: '/${billingzones_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE billingzones
+-
+    name: DELETE billingzones
+    type: item
+    method: DELETE
+    path: '/${billingzones_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE billingzones
+-
+    name: DELETE billingzones
+    type: item
+    method: DELETE
+    path: '/${billingzones_path3}'
+    conditions:
+        is:
+            code: 204

@@ -1,0 +1,338 @@
+---
+#get a subscriber for testing
+-
+    name: get a subscriber for testing
+    type: item
+    method: GET
+    path: '/api/subscribers/?page=1&rows=1'
+    retain:
+        subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriber = $retained->{subscriber}->{'_embedded'}->{'ngcp:subscribers'}->[0];
+            $retained->{subscriber} = $subscriber;
+            $retained->{subscriber_id} = $subscriber->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriber}.id': defined
+
+#get a customer for testing
+-
+    name: get a customer for testing
+    type: item
+    method: GET
+    path: '/api/customers/?page=1&rows=1'
+    retain:
+        customer: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $customer = $retained->{customer}->{'_embedded'}->{'ngcp:customers'}->[0];
+            $retained->{customer} = $customer;
+            $retained->{customer_id} = $customer->{id};
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=call&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${customer}.id': defined
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=call&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=voicemail&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=voicemail&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=fax&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=fax&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=sms&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=sms&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=xmpp&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=xmpp&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=call&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=call&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=voicemail&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=voicemail&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=fax&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=fax&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=sms&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=sms&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=xmpp&order_by=type";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=xmpp&order_by=timestamp";
+        } 
+    conditions:
+        is:
+            code: 200
+
+#get conversations
+-
+    name: get conversations
+    type: item
+    method: GET
+    path: '/${link}'
+    conditions:
+        is:
+            code: 200

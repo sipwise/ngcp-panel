@@ -1,0 +1,288 @@
+---
+#check options
+-
+    name: check OPTIONS for vouchers
+    type: item
+    method: OPTIONS
+    path: /api/vouchers/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-vouchers
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create vouchers
+-
+    name: create vouchers
+    type: item
+    method: POST
+    path: '/api/vouchers/'
+    header:
+        Content-Type: application/json
+    content:
+        amount: 100
+        code: 'apitestcode_1'
+        customer_id: null
+        package_id: null
+        reseller_id: 1
+        valid_until: '2037-01-01 12:00:00'
+    retain:
+        vouchers_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create vouchers
+-
+    name: create vouchers
+    type: item
+    method: POST
+    path: '/api/vouchers/'
+    header:
+        Content-Type: application/json
+    content:
+        amount: 100
+        code: 'apitestcode_2'
+        customer_id: null
+        package_id: null
+        reseller_id: 1
+        valid_until: '2037-01-01 12:00:00'
+    retain:
+        vouchers_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create vouchers
+-
+    name: create vouchers
+    type: item
+    method: POST
+    path: '/api/vouchers/'
+    header:
+        Content-Type: application/json
+    content: &content
+        amount: 100
+        code: 'apitestcode_3'
+        customer_id: null
+        package_id: null
+        reseller_id: 1
+        valid_until: '2037-01-01 12:00:00'
+    retain:
+        vouchers_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#create voucher with same voucher code again
+-
+    name: create voucher with same voucher code again
+    type: item
+    method: POST
+    path: '/api/vouchers/'
+    header:
+        Content-Type: application/json
+    content:
+        amount: 100
+        code: 'apitestcode_1'
+        customer_id: null
+        package_id: null
+        reseller_id: 1
+        valid_until: '2037-01-01 12:00:00'
+    conditions:
+        is:
+            code: 422
+
+#get vouchers
+-
+    name: GET vouchers
+    type: item
+    method: GET
+    path: '/${vouchers_path3}'
+    retain:
+        vouchers3: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{vouchers3}->{id};
+            delete $retained->{vouchers3}->{_links};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${vouchers3}': *content
+
+#patch vouchers
+-
+    name: patch vouchers
+    type: item
+    method: PATCH
+    path: '/${vouchers_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /code
+            value: 'apitestcode_3'
+    retain:
+        modified_voucher: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{modified_voucher}->{id};
+            delete $retained->{modified_voucher}->{_links};
+        } 
+    conditions:
+        is: 
+            code: 200
+        is_deeply:
+            '${vouchers3}': '${modified_voucher}'
+
+#patch vouchers with invalid valid_until
+-
+    name: patch vouchers with invalid valid_until
+    type: item
+    method: PATCH
+    path: '/${vouchers_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /valid_until
+            value: '2099-01-01 00:00:00'
+    conditions:
+        is: 
+            code: 422
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/vouchers/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for vouchers item
+    type: item
+    method: OPTIONS
+    path: '/${vouchers_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get vouchers
+-
+    name: GET vouchers
+    type: item
+    method: GET
+    path: '/${vouchers_path3}'
+    retain:
+        vouchers: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{vouchers}->{_links};
+            delete $retained->{vouchers}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put vouchers
+-
+    name: PUT vouchers
+    type: item
+    method: PUT
+    path: '/${vouchers_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${vouchers}'
+    conditions:
+        is:
+            code: 200
+
+#get vouchers
+-
+    name: GET vouchers
+    type: item
+    method: GET
+    path: '/${vouchers_path3}'
+    retain:
+        new_vouchers: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_vouchers}->{_links};
+            delete $retained->{new_vouchers}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${vouchers}': ${new_vouchers}
+
+#DELETE vouchers
+-
+    name: DELETE vouchers
+    type: item
+    method: DELETE
+    path: '/${vouchers_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE vouchers
+-
+    name: DELETE vouchers
+    type: item
+    method: DELETE
+    path: '/${vouchers_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE vouchers
+-
+    name: DELETE vouchers
+    type: item
+    method: DELETE
+    path: '/${vouchers_path3}'
+    conditions:
+        is:
+            code: 204
+
+#get vouchers
+-
+    name: get vouchers
+    type: item
+    method: GET
+    path: '/${vouchers_path3}'
+    conditions:
+        is:
+            code: 404

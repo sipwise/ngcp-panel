@@ -1,0 +1,105 @@
+---
+#create a BillingProfile
+-
+    name: create a BillingProfile
+    type: item
+    thread: 1
+    method: POST
+    path: /api/billingprofiles/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile ${unique_id}
+        handle: test_profile_handle${unique_id}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        billing_profile_id: header.location
+
+#create a Customer Contact
+-
+    name: create a Customer Contact
+    type: item
+    method: POST
+    path: /api/customercontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: cust_contact_first
+        lastname: cust_contact_last
+        email: cust_contact@custcontact.invalid
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        customer_contact_path: header.location
+        customer_contact_id: header.location
+
+#check CustomerContact
+-
+    name: check CustomerContact
+    type: item
+    method: GET
+    path: '/${customer_contact_path}'
+    conditions:
+        is:
+            code: 200
+
+#create customer_path
+-
+    name: create customer_path
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${customer_contact_id}
+        type: sipaccount
+        billing_profile_id: ${billing_profile_id}
+        max_subscribers: null
+        external_id: null
+    retain:
+        customer_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get customer
+-
+    name: GET customer
+    type: item
+    method: GET
+    path: '/${customer_path}'
+    retain:
+        customer: body
+    conditions:
+        is:
+            code: 200
+
+#PATCH customer with DELETE
+-
+    name: PATCH customer with DELETE
+    type: item
+    method: DELETE
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+        x-tunneled-method: PATCH
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    retain:
+        new_customer: body
+    conditions:
+        is:
+            code: 200
+            '${new_customer}.status': terminated

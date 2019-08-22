@@ -9,6 +9,8 @@ use DateTime::Format::Strptime qw();
 use DateTime::Format::ISO8601 qw();
 use Digest::MD5 qw/md5_hex/;
 use Log::Log4perl qw(:easy);
+use LWP::Protocol::http;
+push @LWP::Protocol::http::EXTRA_SOCK_OPTS, MaxHeaderLines => 256;
 use Moose;
 use Net::Domain qw(hostfqdn);
 use Test::More;
@@ -75,22 +77,68 @@ sub run {
     my $test_case_result = { success => 1, error_count => 0 };
 
     foreach my $test ( @$testing_data ) {
-        DEBUG( "In test '".$test->{name}."'" );
-        next if ( $test->{skip} );
+        $self->process_test( $test_case_name, $base_uri, $request_builder, $client, $test_executor, $retained, $test_case_result, $test );
+    }
+    return $test_case_result;
+}
 
-        # build request
-        my $request = $request_builder->build({
-            method  => $test->{method},
-            path    => $test->{path},
-            header  => $test->{header} || undef,
-            content => $test->{content} || undef,
-            retain  => $retained
-        });
-        DEBUG ( "Request: ".Dumper $request );
+sub process_test{
+    my ( $self, $test_case_name, $base_uri, $request_builder, $client, $test_executor, $retained, $test_case_result, $test ) = @_;
 
-        # handle separate types
-        if ( $test->{type} eq 'item' ) {
-            INFO( "Performing request." );
+    DEBUG( "In test '".$test->{name}."'" );
+    return if ( $test->{skip} );
+
+    if ( $test->{type} eq 'include' ) {
+        if ( $test->{perl_code} ){
+            INFO( "Executing perl code." );
+            my $sub = $test->{perl_code};
+            $sub->( $retained );
+        }
+        INFO( "Loading include YAML file." );
+        my $include_testing_data = LoadFile("./t/api-rest2/Utils/".$test->{file});
+        foreach my $include_test ( @$include_testing_data ) {
+            $self->process_test( $include_test->{name}, $base_uri, $request_builder, $client, $test_executor, $retained, $test_case_result, $include_test );
+        }
+        return;
+    }
+
+    # build request
+    my $request = $request_builder->build({
+        method  => $test->{method},
+        path    => $test->{path},
+        header  => $test->{header} || undef,
+        content => $test->{content} || undef,
+        retain  => $retained
+    });
+    DEBUG ( "Request: ".Dumper $request );
+
+    # handle separate types
+    if ( $test->{type} eq 'item' ) {
+        INFO( "Performing request." );
+        my $result = $client->perform_request($request);
+        DEBUG ( "Result: ".Dumper $result );
+        if ( $test->{retain} ) {
+            INFO( "Storing retained variables." );
+            $self->_get_retained_elements( $test->{retain}, $retained, $result );
+        }
+        if ( $test->{perl_code} ){
+            INFO( "Executing perl code." );
+            my $sub = $test->{perl_code};
+            $sub->( $retained );
+        }
+        if ( $test->{conditions} ) {
+            INFO( "Running tests." );
+            my $tests_result = $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} );
+            if ( !$tests_result->{success} ) {
+                map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
+                $test_case_result->{success} = 0;
+                $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
+            }
+        }
+    }
+    elsif ( $test->{type} eq 'batch' ) {
+        foreach my $iteration ( 1..$test->{iterations} ) {
+            INFO( "Performing request for iteration $iteration." );
             my $result = $client->perform_request($request);
             DEBUG ( "Result: ".Dumper $result );
             if ( $test->{retain} ) {
@@ -112,77 +160,56 @@ sub run {
                 }
             }
         }
-        elsif ( $test->{type} eq 'batch' ) {
-            foreach my $iteration ( 1..$test->{iterations} ) {
-                INFO( "Performing request for iteration $iteration." );
-                my $result = $client->perform_request($request);
-                DEBUG ( "Result: ".Dumper $result );
-                if ( $test->{retain} ) {
-                    INFO( "Storing retained variables." );
-                    $self->_get_retained_elements( $test->{retain}, $retained, $result );
-                }
-                if ( $test->{conditions} ) {
-                    INFO( "Running tests." );
-                    my $tests_result = $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} );
-                    if ( !$tests_result->{success} ) {
-                        map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
-                        $test_case_result->{success} = 0;
-                        $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
-                    }
-                }
-                $retained->{unique_id}=int(rand(100000));
+    }
+    elsif ( $test->{type} eq 'pagination' ) {
+        my $nexturi = $test->{path};
+        do {
+            INFO( "Performing request for pagination." );
+            $request->uri( $base_uri.$nexturi );
+            my $result = $client->perform_request($request);
+            DEBUG ( "Result: ".Dumper $result );
+            if ( $test->{retain} ) {
+                INFO( "Storing retained variables." );
+                $self->_get_retained_elements( $test->{retain}, $retained, $result );
             }
-        }
-        elsif ( $test->{type} eq 'pagination' ) {
-            my $nexturi = $test->{path};
-            do {
-                INFO( "Performing request for pagination." );
-                $request->uri( $base_uri.$nexturi );
-                my $result = $client->perform_request($request);
-                DEBUG ( "Result: ".Dumper $result );
-                if ( $test->{retain} ) {
-                    INFO( "Storing retained variables." );
-                    $self->_get_retained_elements( $test->{retain}, $retained, $result );
-                }
-                my $body = decode_json( $result->decoded_content() );
+            my $body = decode_json( $result->decoded_content() );
 
-                #build default conditions for pagination
-                $test->{conditions}->{is}->{$nexturi} = $body->{_links}->{self}->{href};
+            #build default conditions for pagination
+            $test->{conditions}->{is}->{$nexturi} = $body->{_links}->{self}->{href};
 
-                my $colluri = URI->new($base_uri.$body->{_links}->{self}->{href});
-                my %q = $colluri->query_form;
-                $test->{conditions}->{ok}->{$q{page}} = 'defined';
-                $test->{conditions}->{ok}->{$q{rows}} = 'defined';
-                my $page = int($q{page});
-                my $rows = int($q{rows});
-                if($page == 1) {
-                    $test->{conditions}->{ok}->{'${collection}._links.prev.href'} = 'undefined';
-                } else {
-                    $test->{conditions}->{ok}->{'${collection}._links.prev.href'} = 'defined';
-                }
-                if(($retained->{collection}->{total_count} / $rows) <= $page) {
-                    $test->{conditions}->{ok}->{'${collection}._links.next.href'} = 'undefined';
-                } else {
-                    $test->{conditions}->{ok}->{'${collection}._links.next.href'} = 'defined';
-                }
+            my $colluri = URI->new($base_uri.$body->{_links}->{self}->{href});
+            my %q = $colluri->query_form;
+            $test->{conditions}->{ok}->{$q{page}} = 'defined';
+            $test->{conditions}->{ok}->{$q{rows}} = 'defined';
+            my $page = int($q{page});
+            my $rows = int($q{rows});
+            if($page == 1) {
+                $test->{conditions}->{ok}->{'${collection}._links.prev.href'} = 'undefined';
+            } else {
+                $test->{conditions}->{ok}->{'${collection}._links.prev.href'} = 'defined';
+            }
+            if(($retained->{collection}->{total_count} / $rows) <= $page) {
+                $test->{conditions}->{ok}->{'${collection}._links.next.href'} = 'undefined';
+            } else {
+                $test->{conditions}->{ok}->{'${collection}._links.next.href'} = 'defined';
+            }
 
-                if ( $test->{conditions} ) {
-                    INFO( "Running tests." );
-                    my $tests_result = $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} );
-                    if ( !$tests_result->{success} ) {
-                        map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
-                        $test_case_result->{success} = 0;
-                        $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
-                    }
+            if ( $test->{conditions} ) {
+                INFO( "Running tests." );
+                my $tests_result = $test_executor->run_tests( $test->{conditions}, $result, $retained, $test->{name} );
+                if ( !$tests_result->{success} ) {
+                    map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
+                    $test_case_result->{success} = 0;
+                    $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
                 }
+            }
 
-                if( $body->{_links}->{next}->{href} ) {
-                    $nexturi = $body->{_links}->{next}->{href};
-                } else {
-                    $nexturi = undef;
-                }
-            } while ( $nexturi )
-        }
+            if( $body->{_links}->{next}->{href} ) {
+                $nexturi = $body->{_links}->{next}->{href};
+            } else {
+                $nexturi = undef;
+            }
+        } while ( $nexturi )
     }
     return $test_case_result;
 }

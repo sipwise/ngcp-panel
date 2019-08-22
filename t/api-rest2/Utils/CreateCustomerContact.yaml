@@ -1,0 +1,28 @@
+---
+#create CustomerContact
+-
+    name: create CustomerContact
+    type: item
+    method: POST
+    path: '/api/customercontacts/'
+    header:
+        Content-Type: application/json
+    content: '${customercontact_content}'
+    retain:
+        customercontact_path: header.location
+        customercontact_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#get customercontact
+-
+    name: GET customercontact
+    type: item
+    method: GET
+    path: '/${customercontact_path}'
+    retain:
+        customercontact: body
+    conditions:
+        is:
+            code: 200

@@ -1,0 +1,132 @@
+---
+#check patch missing media type
+-
+    name: check patch missing media type
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Prefer: return=minimal
+    conditions:
+        is: 
+            code: 415
+
+#check patch invalid media type
+-
+    name: check patch invalid media type
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Content-Type: application/xxx
+        Prefer: return=minimal
+    conditions:
+        is: 
+            code: 415
+
+#check patch missing body
+-
+    name: check patch missing body
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=minimal
+    conditions:
+        is: 
+            code: 400
+        like:
+            body.message: is missing a message body
+
+#check patch no array body
+-
+    name: check patch no array body
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=minimal
+    content:
+        foo: bar
+    conditions:
+        is: 
+            code: 400
+        like:
+            body.message: must be an array
+
+#check patch no op in body
+-
+    name: check patch no op in body
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=minimal
+    content:
+        -
+            foo: bar
+    conditions:
+        is: 
+            code: 400
+        like:
+            body.message: must have an 'op' field
+
+#check patch invalid op in body
+-
+    name: check patch invalid op in body
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=minimal
+    content:
+        -
+            op: bar
+    conditions:
+        is: 
+            code: 400
+        like:
+            body.message: Invalid PATCH op
+
+#check patch missing fields for op
+-
+    name: check patch missing fields for op
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=minimal
+    content:
+        -
+            op: replace
+    conditions:
+        is: 
+            code: 400
+        like:
+            body.message: Missing PATCH keys
+
+#check patch extra fields for op
+-
+    name: check patch extra fields for op
+    type: item
+    method: PATCH
+    path: '/api/systemcontacts/1'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=minimal
+    content:
+        -
+            op: replace
+            path: /foo
+            value: bar
+            invalid: sna
+    conditions:
+        is: 
+            code: 400
+        like:
+            body.message: Invalid PATCH key

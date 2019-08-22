@@ -1,0 +1,693 @@
+---
+#check options
+-
+    name: check OPTIONS for profilepackages
+    type: item
+    method: OPTIONS
+    path: /api/profilepackages/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-profilepackages
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create billingprofile
+-
+    name: create billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: test_profile_${unique_id}
+        name: test profile ${unique_id}
+    retain:
+        billingprofile_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#get billingprofile
+-
+    name: get billingprofile
+    type: item
+    method: GET
+    path: '/api/billingprofiles/${billingprofile_id}'
+    retain:
+        billingprofile: body
+    conditions:
+        is:
+            code: 200
+
+#create prepaid billingprofile
+-
+    name: create prepaid billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: test_prepaid_${unique_id}
+        name: test prepaid ${unique_id}
+        prepaid: 1
+    retain:
+        prepaid_billingprofile_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#get prepaid billingprofile
+-
+    name: get prepaid billingprofile
+    type: item
+    method: GET
+    path: '/api/billingprofiles/${prepaid_billingprofile_id}'
+    retain:
+        prepaid_billingprofile: body
+    conditions:
+        is:
+            code: 200
+
+#create free cash billingprofile
+-
+    name: create free cash billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: test_free_cash_${unique_id}
+        name: test free cash ${unique_id}
+        interval_free_cash: 100
+    retain:
+        free_cash_billingprofile_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#get free cash billingprofile
+-
+    name: get free cash billingprofile
+    type: item
+    method: GET
+    path: '/api/billingprofiles/${free_cash_billingprofile_id}'
+    retain:
+        free_cash_billingprofile: body
+    conditions:
+        is:
+            code: 200
+
+#create free time billingprofile
+-
+    name: create free time billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: test_free_time_${unique_id}
+        name: test free time ${unique_id}
+        interval_free_time: 100
+    retain:
+        free_time_billingprofile_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#get billingprofile
+-
+    name: get billingprofile
+    type: item
+    method: GET
+    path: '/api/billingprofiles/${free_time_billingprofile_id}'
+    retain:
+        free_time_billingprofile: body
+    conditions:
+        is:
+            code: 200
+
+#POST billingnetwork
+-
+    name: POST billingnetwork
+    type: item
+    method: POST
+    path: /api/billingnetworks/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test billing network ${unique_id}
+        description: test billing network description ${unique_id}
+        reseller_id: 1
+        blocks:
+            -
+                ip: 'fdfe::5a55:caff:fefa:9089'
+                mask: 128
+            -
+                ip: 'fdfe::5a55:caff:fefa:908a'
+            -
+                ip: 'fdfe::5a55:caff:fefa:908b'
+                mask: 128
+    retain:
+        billingnetwork_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#GET billingnetwork
+-
+    name: fetch POSTed billingnetwork
+    type: item
+    method: GET
+    path: '/api/billingnetworks/${billingnetwork_id}'
+    retain:
+        billingnetwork: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{initial_profiles} = [{ profile_id => $retained->{billingprofile_id}, }, ];
+        }
+    conditions:
+        is:
+            code: 200
+
+#create profilepackage
+-
+    name: create profilepackage
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: test profile package ${unique_id}
+        description: test profile package description ${unique_id}
+        initial_profiles: ${initial_profiles}
+    retain:
+        profilepackage_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get profilepackage
+-
+    name: get profilepackage
+    type: item
+    method: GET
+    path: '/${profilepackage_path}'
+    retain:
+        profilepackage: body
+    conditions:
+        is:
+            code: 200
+
+#put profilepackage
+-
+    name: PUT profilepackage
+    type: item
+    method: PUT
+    path: '/${profilepackage_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile package PUT ${unique_id}
+        description: test profile package description PUT ${unique_id}
+        initial_profiles: ${initial_profiles}
+    conditions:
+        is:
+            code: 200
+
+#get PUT profilepackage
+-
+    name: get PUT profilepackage
+    type: item
+    method: GET
+    path: '/${profilepackage_path}'
+    retain:
+        profilepackage: body
+    conditions:
+        is:
+            code: 200
+
+#patch profilepackage
+-
+    name: patch profilepackage
+    type: item
+    method: PATCH
+    path: '/${profilepackage_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /name
+            value: test profile package PATCH
+    conditions:
+        is: 
+            code: 200
+
+#get PATCHed profilepackage
+-
+    name: get PATCHed profilepackage
+    type: item
+    method: GET
+    path: '/${profilepackage_path}'
+    retain:
+        profilepackage: body
+    conditions:
+        is:
+            code: 200
+
+#DELETE profilepackage
+-
+    name: DELETE profilepackage
+    type: item
+    method: DELETE
+    path: '/${profilepackage_path}'
+    conditions:
+        is:
+            code: 204
+
+#get deleted profilepackage
+-
+    name: get deleted profilepackage
+    type: item
+    method: GET
+    path: '/${profilepackage_path}'
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content} = {
+                name => "test profile package 1". ' ' . $retained->{unique_id},
+                description  => "test profile package description 1 " . $retained->{unique_id},
+                reseller_id => 1,
+                #status => 'active',
+                initial_profiles => [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                     { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}],
+                initial_balance => 0.0,
+                balance_interval_value => 30,
+                balance_interval_unit => 'day',
+                balance_interval_start_mode => 'create',
+                service_charge => 0.0,
+                notopup_discard_intervals => undef,
+                carry_over_mode => 'carry_over',
+                timely_duration_value => 7,
+                timely_duration_unit => 'day',        
+                underrun_profile_threshold => 0.0,
+                underrun_profiles => [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ],
+                underrun_lock_threshold => 0.0,
+                underrun_lock_level => 4,
+                topup_profiles => [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ],
+                topup_lock_level => undef,
+            }
+        }
+    conditions:
+        is:
+            code: 404
+
+#create profilepackage
+-
+    name: create profilepackage
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    retain:
+        profilepackage_path1: header.location
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{name} = "test profile package 2". ' ' . $retained->{unique_id};
+            $retained->{profilepackage_content}->{description} = "test profile package description 1 " . $retained->{unique_id};
+        }
+    conditions:
+        is:
+            code: 201
+
+#get profilepackage
+-
+    name: get profilepackage
+    type: item
+    method: GET
+    path: '/${profilepackage_path1}'
+    retain:
+        profilepackage1: body
+    conditions:
+        is:
+            code: 200
+
+#create profilepackage
+-
+    name: create profilepackage
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    retain:
+        profilepackage_path2: header.location
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{name} = "test profile package 3". ' ' . $retained->{unique_id};
+            $retained->{profilepackage_content}->{description} = "test profile package description 3 " . $retained->{unique_id};
+        }
+    conditions:
+        is:
+            code: 201
+
+#get profilepackage
+-
+    name: get profilepackage
+    type: item
+    method: GET
+    path: '/${profilepackage_path2}'
+    retain:
+        profilepackage2: body
+    conditions:
+        is:
+            code: 200
+
+#create profilepackage
+-
+    name: create profilepackage
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    retain:
+        profilepackage_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#get profilepackage
+-
+    name: get profilepackage
+    type: item
+    method: GET
+    path: '/${profilepackage_path3}'
+    retain:
+        profilepackage3: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{link} = "/api/profilepackages/?page=1&rows=5&network_name=".$retained->{billingnetwork}->{name};
+        }
+    conditions:
+        is:
+            code: 200
+
+#get profilepackages
+-
+    name: get profilepackages
+    type: item
+    method: GET
+    path: '/${link}'
+    retain:
+        collection: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{got_profilepackages} = $retained->{collection}->{_embedded}->{'ngcp:profilepackages'};
+            $retained->{posted_profilepackages} = [$retained->{profilepackage1}, $retained->{profilepackage2}, $retained->{profilepackage3}];
+
+            $retained->{profilepackage_content}->{name} = "test profile package 4". ' ' . $retained->{unique_id};
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{prepaid_billingprofile_id}, network_id => undef },
+                                                                       { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${got_profilepackages}': '${posted_profilepackages}'
+
+#check if mixing prepaid initial profiles is prohibited
+-
+    name: check if mixing prepaid initial profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [{ profile_id => $retained->{prepaid_billingprofile_id}, network_id => undef },
+                                                                        { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'Mixing prepaid'
+
+#check if mixing prepaid underrun profiles is prohibited
+-
+    name: check if mixing prepaid underrun profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [{ profile_id => $retained->{prepaid_billingprofile_id}, network_id => undef },
+                                                                     { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'Mixing prepaid'
+
+#check if mixing prepaid topup profiles is prohibited
+-
+    name: check if mixing prepaid topup profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{prepaid_billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{prepaid_billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                                                     { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'Mixing prepaid'
+
+#check if creating a package with mixed prepaid profile sets was ok
+-
+    name: check if creating a package with mixed prepaid profile sets was ok
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{free_cash_billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+        }
+    conditions:
+        is:
+            code: 201
+
+#check if mixing free cash initial profiles is prohibited
+-
+    name: check if mixing free cash initial profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [{ profile_id => $retained->{free_cash_billingprofile_id}, network_id => undef },
+                                                                        { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'the same interval_free_cash'
+
+#check if mixing free cash underrun profiles is prohibited
+-
+    name: check if mixing free cash underrun profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [{ profile_id => $retained->{free_cash_billingprofile_id}, network_id => undef },
+                                                                     { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'the same interval_free_cash'
+
+#check if mixing free cash topup profiles is prohibited
+-
+    name: check if mixing free cash topup profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{name} = "test profile package 5". ' ' . $retained->{unique_id};
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{free_cash_billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{free_cash_billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                                                     { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'the same interval_free_cash'
+
+#check if creating a package with mixed free cash profile sets was ok
+-
+    name: check if creating a package with mixed free cash profile sets was ok
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{free_time_billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+        }
+    conditions:
+        is:
+            code: 201
+
+#check if mixing free time initial profiles is prohibited
+-
+    name: check if mixing free time initial profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [{ profile_id => $retained->{free_time_billingprofile_id}, network_id => undef },
+                                                                        { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'the same interval_free_time'
+
+#check if mixing free time underrun profiles is prohibited
+-
+    name: check if mixing free time underrun profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [{ profile_id => $retained->{free_time_billingprofile_id}, network_id => undef },
+                                                                     { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'the same interval_free_time'
+
+#check if mixing free time topup profiles is prohibited
+-
+    name: check if mixing free time topup profiles is prohibited
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{profilepackage_content}->{name} = "test profile package 6". ' ' . $retained->{unique_id};
+            $retained->{profilepackage_content}->{initial_profiles} = [{ profile_id => $retained->{free_time_billingprofile_id}, network_id => undef },
+                                                                      { profile_id => $retained->{free_time_billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+            $retained->{profilepackage_content}->{underrun_profiles} = [ { profile_id => $retained->{billingprofile_id}, network_id => undef } ];
+            $retained->{profilepackage_content}->{topup_profiles} = [{ profile_id => $retained->{billingprofile_id}, network_id => undef },
+                                                                     { profile_id => $retained->{billingprofile_id}, network_id => $retained->{billingnetwork_id}}];
+        }
+    conditions:
+        like:
+            body.message: 'the same interval_free_time'
+
+#check if creating a package with mixed free time profile sets was ok
+-
+    name: check if creating a package with mixed free time profile sets was ok
+    type: item
+    method: POST
+    path: '/api/profilepackages/'
+    header:
+        Content-Type: application/json
+    content: ${profilepackage_content}
+    conditions:
+        is:
+            code: 201

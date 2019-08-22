@@ -1,0 +1,29 @@
+---
+#check options
+-
+    name: check OPTIONS for bannedusers
+    type: item
+    method: OPTIONS
+    path: /api/bannedusers/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-bannedusers
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/bannedusers/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200

@@ -1,0 +1,245 @@
+---
+#get a customer for testing
+-
+    name: get a customer for testing
+    type: item
+    method: GET
+    path: '/api/customers/?page=1&rows=1&reseller_id=1'
+    retain:
+        customer: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $customer = $retained->{customer}->{'_embedded'}->{'ngcp:customers'}->[0];
+            $retained->{customer} = $customer;
+            $retained->{customer_id} = $customer->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${customer}.id': defined
+
+#check options
+-
+    name: check OPTIONS for soundsets
+    type: item
+    method: OPTIONS
+    path: /api/soundsets/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-soundsets
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create soundset with files
+-
+    name: create soundset with files
+    type: item
+    method: POST
+    path: '/api/soundsets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        contract_id: ${customer_id}
+        name: 'api_test soundset name 1'
+        description: 'api_test soundset description'
+        contract_default: 1
+        copy_from_default: 1
+        language: 'en'
+        override: 1
+        loopplay: 1
+    retain:
+        soundsets_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create soundset without contract
+-
+    name: create soundset without contract
+    type: item
+    method: POST
+    path: '/api/soundsets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        name: 'api_test soundset name 2'
+        description: 'api_test soundset description'
+        contract_default: 1
+        copy_from_default: 1
+        language: 'en'
+        override: 1
+        loopplay: 1
+    retain:
+        soundsets_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create soundset without files
+-
+    name: create soundset without files
+    type: item
+    method: POST
+    path: '/api/soundsets/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        contract_id: ${customer_id}
+        name: 'api_test soundset name 3'
+        description: 'api_test soundset description'
+        contract_default: 1
+        copy_from_default: 0
+        language: 'en'
+        override: 1
+        loopplay: 1
+    retain:
+        soundsets_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/soundsets/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#put with files replacement
+-
+    name: PUT with files replacement
+    type: item
+    method: PUT
+    path: '/${soundsets_path1}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        reseller_id: 1
+        contract_id: ${customer_id}
+        name: 'api_test soundset name 1'
+        description: 'api_test soundset description'
+        contract_default: 1
+        copy_from_default: 1
+        language: 'en'
+        override: 1
+        loopplay: 1
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for soundsets item
+    type: item
+    method: OPTIONS
+    path: '/${soundsets_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get soundsets
+-
+    name: GET soundsets
+    type: item
+    method: GET
+    path: '/${soundsets_path3}'
+    retain:
+        soundsets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{soundsets}->{_links};
+            delete $retained->{soundsets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put soundsets
+-
+    name: PUT soundsets
+    type: item
+    method: PUT
+    path: '/${soundsets_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${soundsets}'
+    conditions:
+        is:
+            code: 200
+
+#get soundsets
+-
+    name: GET soundsets
+    type: item
+    method: GET
+    path: '/${soundsets_path3}'
+    retain:
+        new_soundsets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_soundsets}->{_links};
+            delete $retained->{new_soundsets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${soundsets}': ${new_soundsets}
+
+#DELETE soundsets
+-
+    name: DELETE soundsets
+    type: item
+    method: DELETE
+    path: '/${soundsets_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE soundsets
+-
+    name: DELETE soundsets
+    type: item
+    method: DELETE
+    path: '/${soundsets_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE soundsets
+-
+    name: DELETE soundsets
+    type: item
+    method: DELETE
+    path: '/${soundsets_path3}'
+    conditions:
+        is:
+            code: 204

@@ -1,0 +1,492 @@
+---
+#check options
+-
+    name: check OPTIONS for systemcontacts
+    type: item
+    method: OPTIONS
+    path: /api/systemcontacts/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-systemcontacts
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create a System Contact
+-
+    name: create a System Contact
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first1
+        lastname: sys_contact_last1
+        email: sys_contact1@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_path1: header.location
+
+#create a System Contact
+-
+    name: create a System Contact
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first2
+        lastname: sys_contact_last2
+        email: sys_contact2@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_path2: header.location
+
+#create a System Contact
+-
+    name: create a System Contact
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first3
+        lastname: sys_contact_last3
+        email: sys_contact3@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_path3: header.location
+
+#create a System Contact without email
+-
+    name: create a System Contact without email
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first4
+        lastname: sys_contact_last4
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='email'
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/systemcontacts/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for systemcontacts item
+    type: item
+    method: OPTIONS
+    path: '/${system_contact_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get systemcontact
+-
+    name: GET systemcontact
+    type: item
+    method: GET
+    path: '/${system_contact_path3}'
+    retain:
+        system_contact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{system_contact}->{_links};
+            delete $retained->{system_contact}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${system_contact}.id': defined
+            '${system_contact}.email': defined
+            '${system_contact}.firstname': defined
+            '${system_contact}.lastname': defined
+            '${system_contact}.reseller_id': undefined
+        like:
+            '${system_contact}.id': '[0-9]+'
+
+#put system_contact with missing content type
+-
+    name: PUT system_contact with missing content type
+    type: item
+    method: PUT
+    path: '/${system_contact_path3}'
+    header:
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put system_contact with unsuported content type
+-
+    name: PUT system_contact with unsuported content type
+    type: item
+    method: PUT
+    path: '/${system_contact_path3}'
+    header:
+        Content-Type: application/xxx
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put system_contact with no body
+-
+    name: PUT system_contact with no body
+    type: item
+    method: PUT
+    path: '/${system_contact_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    conditions:
+        is:
+            code: 400
+
+#put systemcontact
+-
+    name: PUT systemcontact
+    type: item
+    method: PUT
+    path: '/${system_contact_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${system_contact}'
+    conditions:
+        is:
+            code: 200
+
+#get systemcontact
+-
+    name: GET systemcontact
+    type: item
+    method: GET
+    path: '/${system_contact_path3}'
+    retain:
+        new_system_contact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_system_contact}->{_links};
+            delete $retained->{new_system_contact}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${system_contact}': ${new_system_contact}
+
+#get systemcontact
+-
+    name: GET systemcontact
+    type: item
+    method: GET
+    path: '/${system_contact_path3}'
+    retain:
+        system_contact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{system_contact}->{_links};
+            delete $retained->{system_contact}->{_embedded};
+            $retained->{reseller_id} = 1;
+        }
+    conditions:
+        is:
+            code: 200
+
+#check if a system contact with reseller has no resellers link
+-
+    name: check if a system contact with reseller has no resellers link
+    type: item
+    method: PUT
+    path: '/${system_contact_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${system_contact}'
+    retain:
+        new_system_contact: body
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${new_system_contact}.reseller_id': undefined
+            '${new_system_contact}._links.ngcp:resellers': undefined
+
+#PATCH systemcontact
+-
+    name: PATCH systemcontact
+    type: item
+    method: PATCH
+    path: '/${system_contact_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /firstname
+            value: patchedfirst
+    retain:
+        patched_reseller: body
+    conditions:
+        is:
+            code: 200
+            '${patched_reseller}.firstname': 'patchedfirst'
+
+#PATCH systemcontact with undef name
+-
+    name: PATCH systemcontact with undef name
+    type: item
+    method: PATCH
+    path: '/${system_contact_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /firstname
+            value: null
+    retain:
+        patched_reseller: body
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${patched_reseller}.firstname': undefined
+
+#PATCH systemcontact with no emil
+-
+    name: PATCH systemcontact with no emil
+    type: item
+    method: PATCH
+    path: '/${system_contact_path3}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /email
+            value: null
+    retain:
+        patched_reseller: body
+    conditions:
+        is:
+            code: 422
+
+#DELETE systemcontacts
+-
+    name: DELETE systemcontacts
+    type: item
+    method: DELETE
+    path: '/${system_contact_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE systemcontacts
+-
+    name: DELETE systemcontacts
+    type: item
+    method: DELETE
+    path: '/${system_contact_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE systemcontacts
+-
+    name: DELETE systemcontacts
+    type: item
+    method: DELETE
+    path: '/${system_contact_path3}'
+    conditions:
+        is:
+            code: 204
+
+#create domain
+-
+    name: create domain
+    type: item
+    method: POST
+    path: '/api/domains/'
+    header:
+        Content-Type: application/json
+    content:
+        domain: api_test.api_test${unique_id}
+        reseller_id: 1
+    retain:
+        domain_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get domain
+-
+    name: GET domain
+    type: item
+    method: GET
+    path: '/${domain_path}'
+    retain:
+        domain: body
+    conditions:
+        is:
+            code: 200
+
+#create billingprofile
+-
+    name: create billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: test_profile_${unique_id}
+        name: test profile ${unique_id}
+    retain:
+        billing_profile_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create a System Contact
+-
+    name: create a System Contact
+    type: item
+    method: POST
+    path: /api/systemcontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: sys_contact_first4
+        lastname: sys_contact_last4
+        email: sys_contact4@syscontact.invalid
+    conditions:
+        is:
+            code: 201
+    retain:
+        system_contact_id: header.location
+        system_contact_path4: header.location
+
+#create contract
+-
+    name: create contract
+    type: item
+    method: POST
+    path: '/api/contracts/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: ${system_contact_id}
+        type: reseller
+        billing_profile_id: ${billing_profile_id}
+    retain:
+        contract_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#DELETE systemcontacts
+-
+    name: DELETE systemcontacts
+    type: item
+    method: DELETE
+    path: '/${system_contact_path4}'
+    conditions:
+        is:
+            code: 423
+
+#get systemcontact
+-
+    name: GET systemcontact
+    type: item
+    method: GET
+    path: '/${system_contact_path4}'
+    conditions:
+        is:
+            code: 200
+
+#PATCH contract status terminated
+-
+    name: PATCH contract status terminated
+    type: item
+    method: PATCH
+    path: '/api/contracts/${contract_id}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+#DELETE systemcontacts
+-
+    name: DELETE systemcontacts
+    type: item
+    method: DELETE
+    path: '/${system_contact_path4}'
+    conditions:
+        is:
+            code: 204
+
+#get systemcontact
+-
+    name: GET systemcontact
+    type: item
+    method: GET
+    path: '/${system_contact_path4}'
+    conditions:
+        is:
+            code: 404

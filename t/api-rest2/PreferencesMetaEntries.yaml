@@ -1,0 +1,179 @@
+---
+#check options
+-
+    name: check OPTIONS for preferencesmetaentries
+    type: item
+    method: OPTIONS
+    path: /api/preferencesmetaentries/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-preferencesmetaentries
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create preferencesmetaentries
+-
+    name: create preferencesmetaentries
+    type: item
+    method: POST
+    path: '/api/preferencesmetaentries/'
+    header:
+        Content-Type: application/json
+    content:
+        label: Custom pbx device model preference 1 ${unique_id}
+        description: Custom pbx device model preference description 1 ${unique_id}
+        attribute: api_test_1_${unique_id}
+        fielddev_pref: 1
+        max_occur: 1
+        data_type: enum
+        autoprov_device_id: 1
+        dev_pref: 1
+        enum:
+            -
+                label: api_test_enum_1
+                value: 1
+                default_val: 0
+            -
+                label: api_test_enum2
+                value: 2
+                default_val: 1
+    retain:
+        preferencesmetaentries_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#create preferencesmetaentries
+-
+    name: create preferencesmetaentries
+    type: item
+    method: POST
+    path: '/api/preferencesmetaentries/'
+    header:
+        Content-Type: application/json
+    content:
+        label: Custom pbx device model preference 2 ${unique_id}
+        description: Custom pbx device model preference description 2 ${unique_id}
+        attribute: api_test_2_${unique_id}
+        fielddev_pref: 1
+        max_occur: 1
+        data_type: enum
+        autoprov_device_id: 1
+        dev_pref: 1
+        enum:
+            -
+                label: api_test_enum_1
+                value: 1
+                default_val: 0
+            -
+                label: api_test_enum2
+                value: 2
+                default_val: 1
+    retain:
+        preferencesmetaentries_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#create preferencesmetaentries
+-
+    name: create preferencesmetaentries
+    type: item
+    method: POST
+    path: '/api/preferencesmetaentries/'
+    header:
+        Content-Type: application/json
+    content:
+        label: Custom pbx device model preference 3 ${unique_id}
+        description: Custom pbx device model preference description 3 ${unique_id}
+        attribute: api_test_3_${unique_id}
+        fielddev_pref: 1
+        max_occur: 1
+        data_type: enum
+        autoprov_device_id: 1
+        dev_pref: 1
+        enum:
+            -
+                label: api_test_enum_1
+                value: 1
+                default_val: 0
+            -
+                label: api_test_enum2
+                value: 2
+                default_val: 1
+    retain:
+        preferencesmetaentries_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    skip: 1
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/preferencesmetaentries/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#get preferencesmetaentries
+-
+    name: GET preferencesmetaentries
+    type: item
+    method: GET
+    path: '/${preferencesmetaentries_path}'
+    retain:
+        preferencesmetaentries: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{preferencesmetaentries}->{_links};
+            delete $retained->{preferencesmetaentries}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put preferencesmetaentries
+-
+    name: PUT preferencesmetaentries
+    type: item
+    method: PUT
+    path: '/${preferencesmetaentries_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${preferencesmetaentries}'
+    conditions:
+        is:
+            code: 200
+
+#get preferencesmetaentries
+-
+    name: GET preferencesmetaentries
+    type: item
+    method: GET
+    path: '/${preferencesmetaentries_path}'
+    retain:
+        new_preferencesmetaentries: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_preferencesmetaentries}->{_links};
+            delete $retained->{new_preferencesmetaentries}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${preferencesmetaentries}': ${new_preferencesmetaentries}

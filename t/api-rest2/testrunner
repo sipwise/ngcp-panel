@@ -53,7 +53,7 @@ for ( @test_files ) {
 
 $tests_queue->end();
 
-for (1..2) {
+for (1..4) {
     push @threads, threads->create( {'context' => 'scalar'}, \&worker, $tests_queue, 0 );
 }
 
