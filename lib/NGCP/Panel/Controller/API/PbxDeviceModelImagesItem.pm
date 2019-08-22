@@ -27,6 +27,13 @@ sub get_item_binary_data{
     if($type eq 'mac') {
         $data = $item->mac_image;
         $mime_type = $item->mac_image_type;
+    } elsif($type eq 'front_thumb') {
+        $data = $item->front_thumbnail;
+        $mime_type = $item->front_thumbnail_type;
+        unless (defined $data) {
+            $data = $item->front_image;
+            $mime_type = $item->front_image_type;
+        }
     } else {
         $data = $item->front_image;
         $mime_type = $item->front_image_type;

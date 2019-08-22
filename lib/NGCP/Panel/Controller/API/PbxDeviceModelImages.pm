@@ -23,7 +23,7 @@ sub query_params {
     return [
         {
             param => 'type',
-            description => 'Either "front" (default) or "mac" to download one or the other.',
+            description => 'Either "front" (default), "front_thumb" or "mac" to download one or the other.',
             query => {
                 # handled directly in role
                 first => sub {},

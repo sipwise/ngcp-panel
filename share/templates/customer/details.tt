@@ -343,7 +343,7 @@ $(function() {
                     <tbody>
                         [% FOR dev IN pbx_devices -%]
                         <tr class="sw_action_row">
-                            <td><img src="[% c.uri_for_action('/device/devmod_download_frontimage', [ dev.profile.config.device.id]) %]" style="height:40px"/></td>
+                            <td><img src="[% c.uri_for_action('/device/devmod_download_frontthumbnail', [ dev.profile.config.device.id]) %]" style="height:40px"/></td>
                             <td>[% dev.station_name %]</td>
                             <td>
                                 <ul style="list-style-type:none; margin-left:0">
