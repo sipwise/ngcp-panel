@@ -1,0 +1,173 @@
+---
+#check options
+-
+    name: check OPTIONS for cftimesets
+    type: item
+    method: OPTIONS
+    path: /api/cftimesets/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-cftimesets
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#get a subscriber for testing
+-
+    name: get a subscriber for testing
+    type: item
+    method: GET
+    path: '/api/subscribers/?page=1&rows=1'
+    retain:
+        subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriber = $retained->{subscriber}->{'_embedded'}->{'ngcp:subscribers'}->[0];
+            $retained->{subscriber} = $subscriber;
+            $retained->{subscriber_id} = $subscriber->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriber}.id': defined
+
+#create cftimesets
+-
+    name: create cftimesets
+    type: item
+    method: POST
+    path: '/api/cftimesets/'
+    header:
+        Content-Type: application/json
+    content:
+        subscriber_id: ${subscriber_id}
+        name: API_test call forward time-set
+        times:
+            -
+                wday: '1-5'
+                hour: '5-5'
+                minute: '50-59'
+                year: null
+                month: null
+                mday: null
+    retain:
+        cftimesets_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/cftimesets/?page=1&rows=1'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#get cftimesets
+-
+    name: GET cftimesets
+    type: item
+    method: GET
+    path: '/${cftimesets_path1}'
+    retain:
+        cftimesets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{cftimesets}->{_links};
+            delete $retained->{cftimesets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put cftimesets
+-
+    name: PUT cftimesets
+    type: item
+    method: PUT
+    path: '/${cftimesets_path1}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${cftimesets}'
+    conditions:
+        is:
+            code: 200
+
+#get cftimesets
+-
+    name: GET cftimesets
+    type: item
+    method: GET
+    path: '/${cftimesets_path1}'
+    retain:
+        new_cftimesets: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_cftimesets}->{_links};
+            delete $retained->{new_cftimesets}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${cftimesets}': ${new_cftimesets}
+
+#create cftimesets with cyclic wday
+-
+    name: create cftimesets with cyclic wday
+    type: item
+    method: POST
+    path: '/api/cftimesets/'
+    header:
+        Content-Type: application/json
+    content:
+        subscriber_id: ${subscriber_id}
+        name: API_test call forward time-set
+        times:
+            -
+                wday: '6-1'
+                hour: '5-5'
+                minute: '50-59'
+                year: null
+                month: null
+                mday: null
+    retain:
+        cftimesets_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#DELETE cftimesets
+-
+    name: DELETE cftimesets
+    type: item
+    method: DELETE
+    path: '/${cftimesets_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE cftimesets
+-
+    name: DELETE cftimesets
+    type: item
+    method: DELETE
+    path: '/${cftimesets_path2}'
+    conditions:
+        is:
+            code: 204

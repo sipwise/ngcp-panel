@@ -1,0 +1,536 @@
+---
+#check options
+-
+    name: check OPTIONS for billingprofiles
+    type: item
+    method: OPTIONS
+    path: /api/billingprofiles/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingprofiles
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+#create billingprofile
+-
+    name: create billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: testapihandle1${unique_id}
+        name: test api name 1 ${unique_id}
+    retain:
+        billingprofile_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create billingprofile
+-
+    name: create billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: testapihandle2${unique_id}
+        name: test api name 2 ${unique_id}
+    retain:
+        billingprofile_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create billingprofile
+-
+    name: create billingprofile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: testapihandle3${unique_id}
+        name: test api name 3 ${unique_id}
+    retain:
+        billingprofile_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/billingprofiles/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#create billingprofile without reseller id
+-
+    name: create billingprofile without reseller id
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        handle: testapihandle
+        name: test api name
+    retain:
+        billingprofiles_path3: header.location
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='reseller_id'
+
+#create billingprofile with empty reseller id
+-
+    name: create billingprofiles with empty reseller id
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: null
+        handle: testapihandle
+        name: test api name
+    retain:
+        billingprofiles_path3: header.location
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: field='reseller_id'
+
+#create billingprofile with invalid reseller id
+-
+    name: create billingprofile with invalid reseller id
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 99999
+        handle: testapihandle
+        name: test api name
+    retain:
+        billingprofiles_path3: header.location
+    conditions:
+        is:
+            code: 422
+            body.code: 422
+        like:
+            body.message: Invalid reseller
+
+#check options for item
+-
+    name: check OPTIONS for billingprofiles item
+    type: item
+    method: OPTIONS
+    path: /${billingprofile_path1}
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get billingprofile
+-
+    name: GET billingprofile
+    type: item
+    method: GET
+    path: /${billingprofile_path1}
+    retain:
+        billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{billingprofile}->{_links};
+            delete $retained->{billingprofile}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${billingprofile}.reseller_id': defined
+            '${billingprofile}.handle': defined
+            '${billingprofile}.name': defined
+
+#put billingprofile with missing content-type
+-
+    name: PUT billingprofile with missing content-type
+    type: item
+    method: PUT
+    path: '/${billingprofile_path1}'
+    header:
+        Prefer: return=minimal
+    conditions:
+        is:
+            code: 415
+
+#put billingprofile with unsupported content type
+-
+    name: PUT billingprofile with unsupported Content-Type
+    type: item
+    method: PUT
+    path: '/${billingprofile_path1}'
+    header:
+        Content-Type: application/xxx
+    conditions:
+        is:
+            code: 415
+
+#put billingprofile with missing body
+-
+    name: PUT billingprofile with missing body
+    type: item
+    method: PUT
+    path: '/${billingprofile_path1}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    conditions:
+        is:
+            code: 400
+
+#put billingprofile
+-
+    name: PUT billingprofile
+    type: item
+    method: PUT
+    path: '/${billingprofile_path1}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${billingprofile}'
+    retain:
+        new_billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_billingprofile}->{_links};
+            delete $retained->{new_billingprofile}->{_embedded};
+            $retained->{patched_name} = 'patched name '.$retained->{unique_id};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${billingprofile}': ${new_billingprofile}
+
+#PATCH billingprofile name
+-
+    name: PATCH billingprofile name
+    type: item
+    method: PATCH
+    path: '/${billingprofile_path1}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /name
+            value: patched name ${unique_id}
+    retain:
+        modified_billingprofile: body
+    conditions:
+        is: 
+            code: 200
+            '${modified_billingprofile}.name': ${patched_name}
+            '${modified_billingprofile}._links.self.href': ${billingprofile_path1}
+            '${modified_billingprofile}._links.collection.href': /api/billingprofiles/
+
+#check patch with undef reseller
+-
+    name: check patch with undef reseller
+    type: item
+    method: PATCH
+    path: '/${billingprofile_path1}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /reseller_id
+            value: null
+    conditions:
+        is: 
+            code: 422
+
+#check patch with invalid reseller
+-
+    name: check patch with invalid reseller
+    type: item
+    method: PATCH
+    path: '/${billingprofile_path1}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /reseller_id
+            value: 99999
+    conditions:
+        is: 
+            code: 422
+
+#check patch prepaid
+-
+    name: check patch prepaid
+    type: item
+    method: PATCH
+    path: '/${billingprofile_path1}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /prepaid
+            value: 1
+    conditions:
+        is: 
+            code: 200
+
+#DELETE billingprofile
+-
+    name: DELETE billingprofile
+    type: item
+    method: DELETE
+    path: '/${billingprofile_path1}'
+    conditions:
+        is:
+            code: 204
+
+#get terminated billingprofile
+-
+    name: GET terminated billingprofile
+    type: item
+    method: GET
+    path: /${billingprofile_path1}
+    conditions:
+        is:
+            code: 404
+
+#create peaktimes weekday billing profile
+-
+    name: create peaktimes weekday billing profile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: peakweekdays${unique_id}
+        name: peak week days ${unique_id}
+        peaktime_weekdays:
+            -
+                weekday: 1
+                start: '8:00'
+                stop: '10:00'
+            -
+                weekday: 1
+                start: '10:01'
+                stop: '12:00'
+            -
+                weekday: 2
+                start: '10:00'
+                stop: '12:00'
+    retain:
+        peaktimes_weekday_billingprofile_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get POSTed billingprofile
+-
+    name: GET POSTed billingprofile
+    type: item
+    method: GET
+    path: /${peaktimes_weekday_billingprofile_path}
+    retain:
+        peaktimes_weekday_billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{peaktimes_weekday_billingprofile}->{_links};
+            delete $retained->{peaktimes_weekday_billingprofile}->{_embedded};
+            $retained->{malformed_profile} = {%{$retained->{peaktimes_weekday_billingprofile}}};
+            $retained->{malformed_profile}->{peaktime_weekdays} = [
+                { weekday => 1,
+                  start => '08:00',
+                  stop => '10:00',
+                },
+                { weekday => 1,
+                  start => '10:00',
+                  stop => '12:00',
+                },
+            ];
+        }
+    conditions:
+        is:
+            code: 200
+
+#put malformed billingprofile
+-
+    name: PUT malformed billingprofile
+    type: item
+    method: PUT
+    path: '/${peaktimes_weekday_billingprofile_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${malformed_profile}'
+    conditions:
+        is:
+            code: 422
+        like:
+            body.message: overlap
+
+#put billingprofile
+-
+    name: PUT billingprofile
+    type: item
+    method: PUT
+    path: '/${peaktimes_weekday_billingprofile_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peaktimes_weekday_billingprofile}'
+    retain:
+        new_billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_billingprofile}->{_links};
+            delete $retained->{new_billingprofile}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${peaktimes_weekday_billingprofile}': ${new_billingprofile}
+
+#create peaktimes special billing profile
+-
+    name: create peaktimes special billing profile
+    type: item
+    method: POST
+    path: '/api/billingprofiles/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        handle: peakspecials${unique_id}
+        name: peak specials ${unique_id}
+        peaktime_special:
+            -
+                start: '2016-01-01 08:00:00'
+                stop: '2016-01-02 07:59:59'
+            -
+                start: '2016-01-02 08:00:00'
+                stop: '2016-01-02 10:00:00'
+    retain:
+        peaktimes_special_billingprofile_path: header.location
+    conditions:
+        is:
+            code: 201
+
+#get POSTed billingprofile
+-
+    name: GET POSTed billingprofile
+    type: item
+    method: GET
+    path: /${peaktimes_special_billingprofile_path}
+    retain:
+        peaktimes_special_billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{peaktimes_special_billingprofile}->{_links};
+            delete $retained->{peaktimes_special_billingprofile}->{_embedded};
+            $retained->{malformed_profile} = {%{$retained->{peaktimes_special_billingprofile}}};
+            $retained->{malformed_profile}->{peaktime_special} = [
+                { start => '2016-01-01 08:00:00',
+                  stop => '2016-01-02 08:00:00',
+                },
+                { start => '2016-01-02 08:00:00',
+                  stop => '2016-01-02 08:00:01',
+                },
+            ];
+        }
+    conditions:
+        is:
+            code: 200
+
+#put malformed billingprofile
+-
+    name: PUT malformed billingprofile
+    type: item
+    method: PUT
+    path: '/${peaktimes_special_billingprofile_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${malformed_profile}'
+    conditions:
+        is:
+            code: 422
+        like:
+            body.message: overlap
+
+#put billingprofile
+-
+    name: PUT billingprofile
+    type: item
+    method: PUT
+    path: '/${peaktimes_special_billingprofile_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peaktimes_special_billingprofile}'
+    retain:
+        new_billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_billingprofile}->{_links};
+            delete $retained->{new_billingprofile}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${peaktimes_special_billingprofile}': ${new_billingprofile}

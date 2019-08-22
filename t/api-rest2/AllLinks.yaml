@@ -1,0 +1,2370 @@
+---
+#check options
+-
+    name: check OPTIONS for api
+    type: item
+    method: OPTIONS
+    path: /api/?foo=bar&bla
+    conditions:
+        is:
+            code: 200
+
+#check options
+-
+    name: check OPTIONS for api
+    type: item
+    method: OPTIONS
+    path: /api/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/ccmapentries/
+-
+    name: check OPTIONS for /api/ccmapentries/
+    type: item
+    method: OPTIONS
+    path: /api/ccmapentries/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/ccmapentries/
+-
+    name: GET /api/ccmapentries/
+    type: item
+    method: GET
+    path: /api/ccmapentries/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/subscriberregistrations/
+-
+    name: check OPTIONS for /api/subscriberregistrations/
+    type: item
+    method: OPTIONS
+    path: /api/subscriberregistrations/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/subscriberregistrations/
+-
+    name: GET /api/subscriberregistrations/
+    type: item
+    method: GET
+    path: /api/subscriberregistrations/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdevices/
+-
+    name: check OPTIONS for /api/pbxdevices/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdevices/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdevices/
+-
+    name: GET /api/pbxdevices/
+    type: item
+    method: GET
+    path: /api/pbxdevices/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdevicepreferencedefs/
+-
+    name: check OPTIONS for /api/pbxdevicepreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdevicepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdevicepreferencedefs/
+-
+    name: GET /api/pbxdevicepreferencedefs/
+    type: item
+    method: GET
+    path: /api/pbxdevicepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/bannedips/
+-
+    name: check OPTIONS for /api/bannedips/
+    type: item
+    method: OPTIONS
+    path: /api/bannedips/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/bannedips/
+-
+    name: GET /api/bannedips/
+    type: item
+    method: GET
+    path: /api/bannedips/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/interceptions/
+-
+    name: check OPTIONS for /api/interceptions/
+    type: item
+    method: OPTIONS
+    path: /api/interceptions/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/interceptions/
+-
+    name: GET /api/interceptions/
+    type: item
+    method: GET
+    path: /api/interceptions/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/reminders/
+-
+    name: check OPTIONS for /api/reminders/
+    type: item
+    method: OPTIONS
+    path: /api/reminders/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/reminders/
+-
+    name: GET /api/reminders/
+    type: item
+    method: GET
+    path: /api/reminders/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/callcontrols/
+-
+    name: check OPTIONS for /api/callcontrols/
+    type: item
+    method: OPTIONS
+    path: /api/callcontrols/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/lnpcarriers/
+-
+    name: check OPTIONS for /api/lnpcarriers/
+    type: item
+    method: OPTIONS
+    path: /api/lnpcarriers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/lnpcarriers/
+-
+    name: GET /api/lnpcarriers/
+    type: item
+    method: GET
+    path: /api/lnpcarriers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/resellerpreferences/
+-
+    name: check OPTIONS for /api/resellerpreferences/
+    type: item
+    method: OPTIONS
+    path: /api/resellerpreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/resellerpreferences/
+-
+    name: GET /api/resellerpreferences/
+    type: item
+    method: GET
+    path: /api/resellerpreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/invoicetemplates/
+-
+    name: check OPTIONS for /api/invoicetemplates/
+    type: item
+    method: OPTIONS
+    path: /api/invoicetemplates/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/invoicetemplates/
+-
+    name: GET /api/invoicetemplates/
+    type: item
+    method: GET
+    path: /api/invoicetemplates/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customerfraudpreferences/
+-
+    name: check OPTIONS for /api/customerfraudpreferences/
+    type: item
+    method: OPTIONS
+    path: /api/customerfraudpreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customerfraudpreferences/
+-
+    name: GET /api/customerfraudpreferences/
+    type: item
+    method: GET
+    path: /api/customerfraudpreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/emergencymappingcontainers/
+-
+    name: check OPTIONS for /api/emergencymappingcontainers/
+    type: item
+    method: OPTIONS
+    path: /api/emergencymappingcontainers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/emergencymappingcontainers/
+-
+    name: GET /api/emergencymappingcontainers/
+    type: item
+    method: GET
+    path: /api/emergencymappingcontainers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdeviceconfigfiles/
+-
+    name: check OPTIONS for /api/pbxdeviceconfigfiles/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdeviceconfigfiles/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customerzonecosts/
+-
+    name: check OPTIONS for /api/customerzonecosts/
+    type: item
+    method: OPTIONS
+    path: /api/customerzonecosts/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customerzonecosts/
+-
+    name: GET /api/customerzonecosts/
+    type: item
+    method: GET
+    path: /api/customerzonecosts/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/soundsets/
+-
+    name: check OPTIONS for /api/soundsets/
+    type: item
+    method: OPTIONS
+    path: /api/soundsets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/soundsets/
+-
+    name: GET /api/soundsets/
+    type: item
+    method: GET
+    path: /api/soundsets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/numbers/
+-
+    name: check OPTIONS for /api/numbers/
+    type: item
+    method: OPTIONS
+    path: /api/numbers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/numbers/
+-
+    name: GET /api/numbers/
+    type: item
+    method: GET
+    path: /api/numbers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/admins/
+-
+    name: check OPTIONS for /api/admins/
+    type: item
+    method: OPTIONS
+    path: /api/admins/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/admins/
+-
+    name: GET /api/admins/
+    type: item
+    method: GET
+    path: /api/admins/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/faxrecordings/
+-
+    name: check OPTIONS for /api/faxrecordings/
+    type: item
+    method: OPTIONS
+    path: /api/faxrecordings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/rtcapps/
+-
+    name: check OPTIONS for /api/rtcapps/
+    type: item
+    method: OPTIONS
+    path: /api/rtcapps/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/rtcapps/
+-
+    name: GET /api/rtcapps/
+    type: item
+    method: GET
+    path: /api/rtcapps/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/callrecordingstreams/
+-
+    name: check OPTIONS for /api/callrecordingstreams/
+    type: item
+    method: OPTIONS
+    path: /api/callrecordingstreams/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/callrecordingstreams/
+-
+    name: GET /api/callrecordingstreams/
+    type: item
+    method: GET
+    path: /api/callrecordingstreams/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/peeringinboundrules/
+-
+    name: check OPTIONS for /api/peeringinboundrules/
+    type: item
+    method: OPTIONS
+    path: /api/peeringinboundrules/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/peeringinboundrules/
+-
+    name: GET /api/peeringinboundrules/
+    type: item
+    method: GET
+    path: /api/peeringinboundrules/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/billingfees/
+-
+    name: check OPTIONS for /api/billingfees/
+    type: item
+    method: OPTIONS
+    path: /api/billingfees/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/billingfees/
+-
+    name: GET /api/billingfees/
+    type: item
+    method: GET
+    path: /api/billingfees/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/conversations/
+-
+    name: check OPTIONS for /api/conversations/
+    type: item
+    method: OPTIONS
+    path: /api/conversations/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/ncoslevels/
+-
+    name: check OPTIONS for /api/ncoslevels/
+    type: item
+    method: OPTIONS
+    path: /api/ncoslevels/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/ncoslevels/
+-
+    name: GET /api/ncoslevels/
+    type: item
+    method: GET
+    path: /api/ncoslevels/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/cfmappings/
+-
+    name: check OPTIONS for /api/cfmappings/
+    type: item
+    method: OPTIONS
+    path: /api/cfmappings/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/cfmappings/
+-
+    name: GET /api/cfmappings/
+    type: item
+    method: GET
+    path: /api/cfmappings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/voicemailrecordings/
+-
+    name: check OPTIONS for /api/voicemailrecordings/
+    type: item
+    method: OPTIONS
+    path: /api/voicemailrecordings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/balanceintervals/
+-
+    name: check OPTIONS for /api/balanceintervals/
+    type: item
+    method: OPTIONS
+    path: /api/balanceintervals/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/balanceintervals/
+-
+    name: GET /api/balanceintervals/
+    type: item
+    method: GET
+    path: /api/balanceintervals/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/phonebookentries/
+-
+    name: check OPTIONS for /api/phonebookentries/
+    type: item
+    method: OPTIONS
+    path: /api/phonebookentries/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/billingzones/
+-
+    name: check OPTIONS for /api/billingzones/
+    type: item
+    method: OPTIONS
+    path: /api/billingzones/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/billingzones/
+-
+    name: GET /api/billingzones/
+    type: item
+    method: GET
+    path: /api/billingzones/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/profilepreferencedefs/
+-
+    name: check OPTIONS for /api/profilepreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/profilepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/profilepreferencedefs/
+-
+    name: GET /api/profilepreferencedefs/
+    type: item
+    method: GET
+    path: /api/profilepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/billingprofiles/
+-
+    name: check OPTIONS for /api/billingprofiles/
+    type: item
+    method: OPTIONS
+    path: /api/billingprofiles/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/billingprofiles/
+-
+    name: GET /api/billingprofiles/
+    type: item
+    method: GET
+    path: /api/billingprofiles/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/headerrules/
+-
+    name: check OPTIONS for /api/headerrules/
+    type: item
+    method: OPTIONS
+    path: /api/headerrules/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/headerrules/
+-
+    name: GET /api/headerrules/
+    type: item
+    method: GET
+    path: /api/headerrules/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customerfraudevents/
+-
+    name: check OPTIONS for /api/customerfraudevents/
+    type: item
+    method: OPTIONS
+    path: /api/customerfraudevents/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/soundfilerecordings/
+-
+    name: check OPTIONS for /api/soundfilerecordings/
+    type: item
+    method: OPTIONS
+    path: /api/soundfilerecordings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customercontacts/
+-
+    name: check OPTIONS for /api/customercontacts/
+    type: item
+    method: OPTIONS
+    path: /api/customercontacts/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customercontacts/
+-
+    name: GET /api/customercontacts/
+    type: item
+    method: GET
+    path: /api/customercontacts/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/cftimesets/
+-
+    name: check OPTIONS for /api/cftimesets/
+    type: item
+    method: OPTIONS
+    path: /api/cftimesets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/cftimesets/
+-
+    name: GET /api/cftimesets/
+    type: item
+    method: GET
+    path: /api/cftimesets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/callrecordings/
+-
+    name: check OPTIONS for /api/callrecordings/
+    type: item
+    method: OPTIONS
+    path: /api/callrecordings/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/callrecordings/
+-
+    name: GET /api/callrecordings/
+    type: item
+    method: GET
+    path: /api/callrecordings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdevicemodels/
+-
+    name: check OPTIONS for /api/pbxdevicemodels/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdevicemodels/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdevicemodels/
+-
+    name: GET /api/pbxdevicemodels/
+    type: item
+    method: GET
+    path: /api/pbxdevicemodels/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/domainpreferences/
+-
+    name: check OPTIONS for /api/domainpreferences/
+    type: item
+    method: OPTIONS
+    path: /api/domainpreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/domainpreferences/
+-
+    name: GET /api/domainpreferences/
+    type: item
+    method: GET
+    path: /api/domainpreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/metaconfigdefs/
+-
+    name: check OPTIONS for /api/metaconfigdefs/
+    type: item
+    method: OPTIONS
+    path: /api/metaconfigdefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/metaconfigdefs/
+-
+    name: GET /api/metaconfigdefs/
+    type: item
+    method: GET
+    path: /api/metaconfigdefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/profilepackages/
+-
+    name: check OPTIONS for /api/profilepackages/
+    type: item
+    method: OPTIONS
+    path: /api/profilepackages/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/profilepackages/
+-
+    name: GET /api/profilepackages/
+    type: item
+    method: GET
+    path: /api/profilepackages/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/autoattendants/
+-
+    name: check OPTIONS for /api/autoattendants/
+    type: item
+    method: OPTIONS
+    path: /api/autoattendants/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/autoattendants/
+-
+    name: GET /api/autoattendants/
+    type: item
+    method: GET
+    path: /api/autoattendants/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customerlocations/
+-
+    name: check OPTIONS for /api/customerlocations/
+    type: item
+    method: OPTIONS
+    path: /api/customerlocations/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customerlocations/
+-
+    name: GET /api/customerlocations/
+    type: item
+    method: GET
+    path: /api/customerlocations/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/voicemailgreetings/
+-
+    name: check OPTIONS for /api/voicemailgreetings/
+    type: item
+    method: OPTIONS
+    path: /api/voicemailgreetings/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/voicemailgreetings/
+-
+    name: GET /api/voicemailgreetings/
+    type: item
+    method: GET
+    path: /api/voicemailgreetings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/voicemailsettings/
+-
+    name: check OPTIONS for /api/voicemailsettings/
+    type: item
+    method: OPTIONS
+    path: /api/voicemailsettings/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/voicemailsettings/
+-
+    name: GET /api/voicemailsettings/
+    type: item
+    method: GET
+    path: /api/voicemailsettings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customers/
+-
+    name: check OPTIONS for /api/customers/
+    type: item
+    method: OPTIONS
+    path: /api/customers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customers/
+-
+    name: GET /api/customers/
+    type: item
+    method: GET
+    path: /api/customers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/subscriberprofiles/
+-
+    name: check OPTIONS for /api/subscriberprofiles/
+    type: item
+    method: OPTIONS
+    path: /api/subscriberprofiles/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/subscriberprofiles/
+-
+    name: GET /api/subscriberprofiles/
+    type: item
+    method: GET
+    path: /api/subscriberprofiles/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdevicefirmwares/
+-
+    name: check OPTIONS for /api/pbxdevicefirmwares/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdevicefirmwares/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdevicefirmwares/
+-
+    name: GET /api/pbxdevicefirmwares/
+    type: item
+    method: GET
+    path: /api/pbxdevicefirmwares/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/resellers/
+-
+    name: check OPTIONS for /api/resellers/
+    type: item
+    method: OPTIONS
+    path: /api/resellers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/resellers/
+-
+    name: GET /api/resellers/
+    type: item
+    method: GET
+    path: /api/resellers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/subscriberpreferences/
+-
+    name: check OPTIONS for /api/subscriberpreferences/
+    type: item
+    method: OPTIONS
+    path: /api/subscriberpreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/subscriberpreferences/
+-
+    name: GET /api/subscriberpreferences/
+    type: item
+    method: GET
+    path: /api/subscriberpreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/subscriberpreferencedefs/
+-
+    name: check OPTIONS for /api/subscriberpreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/subscriberpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/subscriberpreferencedefs/
+-
+    name: GET /api/subscriberpreferencedefs/
+    type: item
+    method: GET
+    path: /api/subscriberpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/mailtofaxsettings/
+-
+    name: check OPTIONS for /api/mailtofaxsettings/
+    type: item
+    method: OPTIONS
+    path: /api/mailtofaxsettings/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/mailtofaxsettings/
+-
+    name: GET /api/mailtofaxsettings/
+    type: item
+    method: GET
+    path: /api/mailtofaxsettings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/peeringrules/
+-
+    name: check OPTIONS for /api/peeringrules/
+    type: item
+    method: OPTIONS
+    path: /api/peeringrules/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/peeringrules/
+-
+    name: GET /api/peeringrules/
+    type: item
+    method: GET
+    path: /api/peeringrules/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/callforwards/
+-
+    name: check OPTIONS for /api/callforwards/
+    type: item
+    method: OPTIONS
+    path: /api/callforwards/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/callforwards/
+-
+    name: GET /api/callforwards/
+    type: item
+    method: GET
+    path: /api/callforwards/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdeviceprofilepreferences/
+-
+    name: check OPTIONS for /api/pbxdeviceprofilepreferences/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdeviceprofilepreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdeviceprofilepreferences/
+-
+    name: GET /api/pbxdeviceprofilepreferences/
+    type: item
+    method: GET
+    path: /api/pbxdeviceprofilepreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdeviceprofiles/
+-
+    name: check OPTIONS for /api/pbxdeviceprofiles/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdeviceprofiles/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdeviceprofiles/
+-
+    name: GET /api/pbxdeviceprofiles/
+    type: item
+    method: GET
+    path: /api/pbxdeviceprofiles/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/peeringgroups/
+-
+    name: check OPTIONS for /api/peeringgroups/
+    type: item
+    method: OPTIONS
+    path: /api/peeringgroups/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/peeringgroups/
+-
+    name: GET /api/peeringgroups/
+    type: item
+    method: GET
+    path: /api/peeringgroups/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/sipcaptures/
+-
+    name: check OPTIONS for /api/sipcaptures/
+    type: item
+    method: OPTIONS
+    path: /api/sipcaptures/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/sipcaptures/
+-
+    name: GET /api/sipcaptures/
+    type: item
+    method: GET
+    path: /api/sipcaptures/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/rewriterules/
+-
+    name: check OPTIONS for /api/rewriterules/
+    type: item
+    method: OPTIONS
+    path: /api/rewriterules/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/rewriterules/
+-
+    name: GET /api/rewriterules/
+    type: item
+    method: GET
+    path: /api/rewriterules/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/rewriterulesets/
+-
+    name: check OPTIONS for /api/rewriterulesets/
+    type: item
+    method: OPTIONS
+    path: /api/rewriterulesets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/rewriterulesets/
+-
+    name: GET /api/rewriterulesets/
+    type: item
+    method: GET
+    path: /api/rewriterulesets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/subscriberprofilesets/
+-
+    name: check OPTIONS for /api/subscriberprofilesets/
+    type: item
+    method: OPTIONS
+    path: /api/subscriberprofilesets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/subscriberprofilesets/
+-
+    name: GET /api/subscriberprofilesets/
+    type: item
+    method: GET
+    path: /api/subscriberprofilesets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/contracts/
+-
+    name: check OPTIONS for /api/contracts/
+    type: item
+    method: OPTIONS
+    path: /api/contracts/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/contracts/
+-
+    name: GET /api/contracts/
+    type: item
+    method: GET
+    path: /api/contracts/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/applyrewrites/
+-
+    name: check OPTIONS for /api/applyrewrites/
+    type: item
+    method: OPTIONS
+    path: /api/applyrewrites/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/callrecordingfiles/
+-
+    name: check OPTIONS for /api/callrecordingfiles/
+    type: item
+    method: OPTIONS
+    path: /api/callrecordingfiles/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/lnpnumbers/
+-
+    name: check OPTIONS for /api/lnpnumbers/
+    type: item
+    method: OPTIONS
+    path: /api/lnpnumbers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/lnpnumbers/
+-
+    name: GET /api/lnpnumbers/
+    type: item
+    method: GET
+    path: /api/lnpnumbers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/partycallcontrols/
+-
+    name: check OPTIONS for /api/partycallcontrols/
+    type: item
+    method: OPTIONS
+    path: /api/partycallcontrols/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/cfdestinationsets/
+-
+    name: check OPTIONS for /api/cfdestinationsets/
+    type: item
+    method: OPTIONS
+    path: /api/cfdestinationsets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/cfdestinationsets/
+-
+    name: GET /api/cfdestinationsets/
+    type: item
+    method: GET
+    path: /api/cfdestinationsets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/faxserversettings/
+-
+    name: check OPTIONS for /api/faxserversettings/
+    type: item
+    method: OPTIONS
+    path: /api/faxserversettings/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/faxserversettings/
+-
+    name: GET /api/faxserversettings/
+    type: item
+    method: GET
+    path: /api/faxserversettings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/voicemails/
+-
+    name: check OPTIONS for /api/voicemails/
+    type: item
+    method: OPTIONS
+    path: /api/voicemails/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/voicemails/
+-
+    name: GET /api/voicemails/
+    type: item
+    method: GET
+    path: /api/voicemails/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/emailtemplates/
+-
+    name: check OPTIONS for /api/emailtemplates/
+    type: item
+    method: OPTIONS
+    path: /api/emailtemplates/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/emailtemplates/
+-
+    name: GET /api/emailtemplates/
+    type: item
+    method: GET
+    path: /api/emailtemplates/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxfielddevicepreferencedefs/
+-
+    name: check OPTIONS for /api/pbxfielddevicepreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/pbxfielddevicepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxfielddevicepreferencedefs/
+-
+    name: GET /api/pbxfielddevicepreferencedefs/
+    type: item
+    method: GET
+    path: /api/pbxfielddevicepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/rtcsessions/
+-
+    name: check OPTIONS for /api/rtcsessions/
+    type: item
+    method: OPTIONS
+    path: /api/rtcsessions/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/rtcsessions/
+-
+    name: GET /api/rtcsessions/
+    type: item
+    method: GET
+    path: /api/rtcsessions/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/invoices/
+-
+    name: check OPTIONS for /api/invoices/
+    type: item
+    method: OPTIONS
+    path: /api/invoices/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/invoices/
+-
+    name: GET /api/invoices/
+    type: item
+    method: GET
+    path: /api/invoices/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customerpreferencedefs/
+-
+    name: check OPTIONS for /api/customerpreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/customerpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customerpreferencedefs/
+-
+    name: GET /api/customerpreferencedefs/
+    type: item
+    method: GET
+    path: /api/customerpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/headerruleconditions/
+-
+    name: check OPTIONS for /api/headerruleconditions/
+    type: item
+    method: OPTIONS
+    path: /api/headerruleconditions/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/headerruleconditions/
+-
+    name: GET /api/headerruleconditions/
+    type: item
+    method: GET
+    path: /api/headerruleconditions/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/callqueues/
+-
+    name: check OPTIONS for /api/callqueues/
+    type: item
+    method: OPTIONS
+    path: /api/callqueues/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/callqueues/
+-
+    name: GET /api/callqueues/
+    type: item
+    method: GET
+    path: /api/callqueues/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/peeringserverpreferences/
+-
+    name: check OPTIONS for /api/peeringserverpreferences/
+    type: item
+    method: OPTIONS
+    path: /api/peeringserverpreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/peeringserverpreferences/
+-
+    name: GET /api/peeringserverpreferences/
+    type: item
+    method: GET
+    path: /api/peeringserverpreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/peeringservers/
+-
+    name: check OPTIONS for /api/peeringservers/
+    type: item
+    method: OPTIONS
+    path: /api/peeringservers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/peeringservers/
+-
+    name: GET /api/peeringservers/
+    type: item
+    method: GET
+    path: /api/peeringservers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/sms/
+-
+    name: check OPTIONS for /api/sms/
+    type: item
+    method: OPTIONS
+    path: /api/sms/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/sms/
+-
+    name: GET /api/sms/
+    type: item
+    method: GET
+    path: /api/sms/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/calls/
+-
+    name: check OPTIONS for /api/calls/
+    type: item
+    method: OPTIONS
+    path: /api/calls/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/calls/
+-
+    name: GET /api/calls/
+    type: item
+    method: GET
+    path: /api/calls/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/topuplogs/
+-
+    name: check OPTIONS for /api/topuplogs/
+    type: item
+    method: OPTIONS
+    path: /api/topuplogs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/topuplogs/
+-
+    name: GET /api/topuplogs/
+    type: item
+    method: GET
+    path: /api/topuplogs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/cfbnumbersets/
+-
+    name: check OPTIONS for /api/cfbnumbersets/
+    type: item
+    method: OPTIONS
+    path: /api/cfbnumbersets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/cfbnumbersets/
+-
+    name: GET /api/cfbnumbersets/
+    type: item
+    method: GET
+    path: /api/cfbnumbersets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/cfsourcesets/
+-
+    name: check OPTIONS for /api/cfsourcesets/
+    type: item
+    method: OPTIONS
+    path: /api/cfsourcesets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/cfsourcesets/
+-
+    name: GET /api/cfsourcesets/
+    type: item
+    method: GET
+    path: /api/cfsourcesets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/domains/
+-
+    name: check OPTIONS for /api/domains/
+    type: item
+    method: OPTIONS
+    path: /api/domains/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/domains/
+-
+    name: GET /api/domains/
+    type: item
+    method: GET
+    path: /api/domains/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/systemcontacts/
+-
+    name: check OPTIONS for /api/systemcontacts/
+    type: item
+    method: OPTIONS
+    path: /api/systemcontacts/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/systemcontacts/
+-
+    name: GET /api/systemcontacts/
+    type: item
+    method: GET
+    path: /api/systemcontacts/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/maliciouscalls/
+-
+    name: check OPTIONS for /api/maliciouscalls/
+    type: item
+    method: OPTIONS
+    path: /api/maliciouscalls/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/maliciouscalls/
+-
+    name: GET /api/maliciouscalls/
+    type: item
+    method: GET
+    path: /api/maliciouscalls/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/headerrulesets/
+-
+    name: check OPTIONS for /api/headerrulesets/
+    type: item
+    method: OPTIONS
+    path: /api/headerrulesets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/headerrulesets/
+-
+    name: GET /api/headerrulesets/
+    type: item
+    method: GET
+    path: /api/headerrulesets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/vouchers/
+-
+    name: check OPTIONS for /api/vouchers/
+    type: item
+    method: OPTIONS
+    path: /api/vouchers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/vouchers/
+-
+    name: GET /api/vouchers/
+    type: item
+    method: GET
+    path: /api/vouchers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdeviceconfigs/
+-
+    name: check OPTIONS for /api/pbxdeviceconfigs/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdeviceconfigs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdeviceconfigs/
+-
+    name: GET /api/pbxdeviceconfigs/
+    type: item
+    method: GET
+    path: /api/pbxdeviceconfigs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/resellerpreferencedefs/
+-
+    name: check OPTIONS for /api/resellerpreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/resellerpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/resellerpreferencedefs/
+-
+    name: GET /api/resellerpreferencedefs/
+    type: item
+    method: GET
+    path: /api/resellerpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/speeddials/
+-
+    name: check OPTIONS for /api/speeddials/
+    type: item
+    method: OPTIONS
+    path: /api/speeddials/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/speeddials/
+-
+    name: GET /api/speeddials/
+    type: item
+    method: GET
+    path: /api/speeddials/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/rtcnetworks/
+-
+    name: check OPTIONS for /api/rtcnetworks/
+    type: item
+    method: OPTIONS
+    path: /api/rtcnetworks/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/rtcnetworks/
+-
+    name: GET /api/rtcnetworks/
+    type: item
+    method: GET
+    path: /api/rtcnetworks/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdevicefirmwarebinaries/
+-
+    name: check OPTIONS for /api/pbxdevicefirmwarebinaries/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdevicefirmwarebinaries/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/ncospatterns/
+-
+    name: check OPTIONS for /api/ncospatterns/
+    type: item
+    method: OPTIONS
+    path: /api/ncospatterns/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/ncospatterns/
+-
+    name: GET /api/ncospatterns/
+    type: item
+    method: GET
+    path: /api/ncospatterns/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/emergencymappings/
+-
+    name: check OPTIONS for /api/emergencymappings/
+    type: item
+    method: OPTIONS
+    path: /api/emergencymappings/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/emergencymappings/
+-
+    name: GET /api/emergencymappings/
+    type: item
+    method: GET
+    path: /api/emergencymappings/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/faxes/
+-
+    name: check OPTIONS for /api/faxes/
+    type: item
+    method: OPTIONS
+    path: /api/faxes/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/faxes/
+-
+    name: GET /api/faxes/
+    type: item
+    method: GET
+    path: /api/faxes/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/topupvouchers/
+-
+    name: check OPTIONS for /api/topupvouchers/
+    type: item
+    method: OPTIONS
+    path: /api/topupvouchers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/subscribers/
+-
+    name: check OPTIONS for /api/subscribers/
+    type: item
+    method: OPTIONS
+    path: /api/subscribers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/subscribers/
+-
+    name: GET /api/subscribers/
+    type: item
+    method: GET
+    path: /api/subscribers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/capabilities/
+-
+    name: check OPTIONS for /api/capabilities/
+    type: item
+    method: OPTIONS
+    path: /api/capabilities/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/capabilities/
+-
+    name: GET /api/capabilities/
+    type: item
+    method: GET
+    path: /api/capabilities/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdevicepreferences/
+-
+    name: check OPTIONS for /api/pbxdevicepreferences/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdevicepreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdevicepreferences/
+-
+    name: GET /api/pbxdevicepreferences/
+    type: item
+    method: GET
+    path: /api/pbxdevicepreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/domainpreferencedefs/
+-
+    name: check OPTIONS for /api/domainpreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/domainpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/domainpreferencedefs/
+-
+    name: GET /api/domainpreferencedefs/
+    type: item
+    method: GET
+    path: /api/domainpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/events/
+-
+    name: check OPTIONS for /api/events/
+    type: item
+    method: OPTIONS
+    path: /api/events/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/events/
+-
+    name: GET /api/events/
+    type: item
+    method: GET
+    path: /api/events/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxfielddevicepreferences/
+-
+    name: check OPTIONS for /api/pbxfielddevicepreferences/
+    type: item
+    method: OPTIONS
+    path: /api/pbxfielddevicepreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxfielddevicepreferences/
+-
+    name: GET /api/pbxfielddevicepreferences/
+    type: item
+    method: GET
+    path: /api/pbxfielddevicepreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/soundfiles/
+-
+    name: check OPTIONS for /api/soundfiles/
+    type: item
+    method: OPTIONS
+    path: /api/soundfiles/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/soundfiles/
+-
+    name: GET /api/soundfiles/
+    type: item
+    method: GET
+    path: /api/soundfiles/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/bannedusers/
+-
+    name: check OPTIONS for /api/bannedusers/
+    type: item
+    method: OPTIONS
+    path: /api/bannedusers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/bannedusers/
+-
+    name: GET /api/bannedusers/
+    type: item
+    method: GET
+    path: /api/bannedusers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customerpreferences/
+-
+    name: check OPTIONS for /api/customerpreferences/
+    type: item
+    method: OPTIONS
+    path: /api/customerpreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customerpreferences/
+-
+    name: GET /api/customerpreferences/
+    type: item
+    method: GET
+    path: /api/customerpreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/headerruleactions/
+-
+    name: check OPTIONS for /api/headerruleactions/
+    type: item
+    method: OPTIONS
+    path: /api/headerruleactions/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/headerruleactions/
+-
+    name: GET /api/headerruleactions/
+    type: item
+    method: GET
+    path: /api/headerruleactions/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdeviceprofilepreferencedefs/
+-
+    name: check OPTIONS for /api/pbxdeviceprofilepreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdeviceprofilepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/pbxdeviceprofilepreferencedefs/
+-
+    name: GET /api/pbxdeviceprofilepreferencedefs/
+    type: item
+    method: GET
+    path: /api/pbxdeviceprofilepreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/ncoslnpcarriers/
+-
+    name: check OPTIONS for /api/ncoslnpcarriers/
+    type: item
+    method: OPTIONS
+    path: /api/ncoslnpcarriers/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/ncoslnpcarriers/
+-
+    name: GET /api/ncoslnpcarriers/
+    type: item
+    method: GET
+    path: /api/ncoslnpcarriers/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/topupcash/
+-
+    name: check OPTIONS for /api/topupcash/
+    type: item
+    method: OPTIONS
+    path: /api/topupcash/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/soundhandles/
+-
+    name: check OPTIONS for /api/soundhandles/
+    type: item
+    method: OPTIONS
+    path: /api/soundhandles/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/soundhandles/
+-
+    name: GET /api/soundhandles/
+    type: item
+    method: GET
+    path: /api/soundhandles/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/pbxdevicemodelimages/
+-
+    name: check OPTIONS for /api/pbxdevicemodelimages/
+    type: item
+    method: OPTIONS
+    path: /api/pbxdevicemodelimages/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/peeringserverpreferencedefs/
+-
+    name: check OPTIONS for /api/peeringserverpreferencedefs/
+    type: item
+    method: OPTIONS
+    path: /api/peeringserverpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/peeringserverpreferencedefs/
+-
+    name: GET /api/peeringserverpreferencedefs/
+    type: item
+    method: GET
+    path: /api/peeringserverpreferencedefs/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/preferencesmetaentries/
+-
+    name: check OPTIONS for /api/preferencesmetaentries/
+    type: item
+    method: OPTIONS
+    path: /api/preferencesmetaentries/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/preferencesmetaentries/
+-
+    name: GET /api/preferencesmetaentries/
+    type: item
+    method: GET
+    path: /api/preferencesmetaentries/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/calllists/
+-
+    name: check OPTIONS for /api/calllists/
+    type: item
+    method: OPTIONS
+    path: /api/calllists/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/upnrewritesets/
+-
+    name: check OPTIONS for /api/upnrewritesets/
+    type: item
+    method: OPTIONS
+    path: /api/upnrewritesets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/upnrewritesets/
+-
+    name: GET /api/upnrewritesets/
+    type: item
+    method: GET
+    path: /api/upnrewritesets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/timesets/
+-
+    name: check OPTIONS for /api/timesets/
+    type: item
+    method: OPTIONS
+    path: /api/timesets/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/timesets/
+-
+    name: GET /api/timesets/
+    type: item
+    method: GET
+    path: /api/timesets/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/profilepreferences/
+-
+    name: check OPTIONS for /api/profilepreferences/
+    type: item
+    method: OPTIONS
+    path: /api/profilepreferences/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/profilepreferences/
+-
+    name: GET /api/profilepreferences/
+    type: item
+    method: GET
+    path: /api/profilepreferences/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/managersecretary/
+-
+    name: check OPTIONS for /api/managersecretary/
+    type: item
+    method: OPTIONS
+    path: /api/managersecretary/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/managersecretary/
+-
+    name: GET /api/managersecretary/
+    type: item
+    method: GET
+    path: /api/managersecretary/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/trustedsources/
+-
+    name: check OPTIONS for /api/trustedsources/
+    type: item
+    method: OPTIONS
+    path: /api/trustedsources/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/trustedsources/
+-
+    name: GET /api/trustedsources/
+    type: item
+    method: GET
+    path: /api/trustedsources/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/billingnetworks/
+-
+    name: check OPTIONS for /api/billingnetworks/
+    type: item
+    method: OPTIONS
+    path: /api/billingnetworks/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/billingnetworks/
+-
+    name: GET /api/billingnetworks/
+    type: item
+    method: GET
+    path: /api/billingnetworks/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/soundgroups/
+-
+    name: check OPTIONS for /api/soundgroups/
+    type: item
+    method: OPTIONS
+    path: /api/soundgroups/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/soundgroups/
+-
+    name: GET /api/soundgroups/
+    type: item
+    method: GET
+    path: /api/soundgroups/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/customerbalances/
+-
+    name: check OPTIONS for /api/customerbalances/
+    type: item
+    method: OPTIONS
+    path: /api/customerbalances/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/customerbalances/
+-
+    name: GET /api/customerbalances/
+    type: item
+    method: GET
+    path: /api/customerbalances/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/ncoslnppatterns/
+-
+    name: check OPTIONS for /api/ncoslnppatterns/
+    type: item
+    method: OPTIONS
+    path: /api/ncoslnppatterns/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/ncoslnppatterns/
+-
+    name: GET /api/ncoslnppatterns/
+    type: item
+    method: GET
+    path: /api/ncoslnppatterns/
+    conditions:
+        is:
+            code: 200
+
+#check options for /api/admincerts/
+-
+    name: check OPTIONS for /api/admincerts/
+    type: item
+    method: OPTIONS
+    path: /api/admincerts/
+    conditions:
+        is:
+            code: 200
