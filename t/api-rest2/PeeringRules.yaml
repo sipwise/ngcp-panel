@@ -1,0 +1,242 @@
+---
+#check options
+-
+    name: check OPTIONS for peeringrules
+    type: item
+    method: OPTIONS
+    path: /api/peeringrules/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-peeringrules
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create peeringgroup
+-
+    name: create peeringgroup
+    type: item
+    method: POST
+    path: '/api/peeringgroups/'
+    header:
+        Content-Type: application/json
+    content:
+        name: test_api_p_group_peering_rules
+        description: test_api peering group
+        priority: 1
+        contract_id: 1
+    retain:
+        peeringgroups_path: header.location
+        peeringgroups_id: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringrules
+-
+    name: create peeringrules
+    type: item
+    method: POST
+    path: '/api/peeringrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        callee_prefix: 111
+        callee_pattern: '^111$'
+        caller_pattern: '^222$'
+        description: 'api_test peering rule'
+        enabled: 1
+    retain:
+        peeringrules_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringrules
+-
+    name: create peeringrules
+    type: item
+    method: POST
+    path: '/api/peeringrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        callee_prefix: 222
+        callee_pattern: '^111$'
+        caller_pattern: '^222$'
+        description: 'api_test peering rule'
+        enabled: 1
+    retain:
+        peeringrules_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create peeringrules
+-
+    name: create peeringrules
+    type: item
+    method: POST
+    path: '/api/peeringrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        callee_prefix: 333
+        callee_pattern: '^111$'
+        caller_pattern: '^222$'
+        description: 'api_test peering rule'
+        enabled: 1
+    retain:
+        peeringrules_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#create same peering rule code again
+-
+    name: create same peering rule code again
+    type: item
+    method: POST
+    path: '/api/peeringrules/'
+    header:
+        Content-Type: application/json
+    content:
+        group_id: ${peeringgroups_id}
+        callee_prefix: 111
+        callee_pattern: '^111$'
+        caller_pattern: '^222$'
+        description: 'api_test peering rule'
+        enabled: 1
+    conditions:
+        is:
+            code: 422
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/peeringrules/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for peeringrules item
+    type: item
+    method: OPTIONS
+    path: '/${peeringrules_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get peeringrules
+-
+    name: GET peeringrules
+    type: item
+    method: GET
+    path: '/${peeringrules_path3}'
+    retain:
+        peeringrules: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{peeringrules}->{_links};
+            delete $retained->{peeringrules}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put peeringrules
+-
+    name: PUT peeringrules
+    type: item
+    method: PUT
+    path: '/${peeringrules_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${peeringrules}'
+    conditions:
+        is:
+            code: 200
+
+#get peeringrules
+-
+    name: GET peeringrules
+    type: item
+    method: GET
+    path: '/${peeringrules_path3}'
+    retain:
+        new_peeringrules: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_peeringrules}->{_links};
+            delete $retained->{new_peeringrules}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${peeringrules}': ${new_peeringrules}
+
+#DELETE peeringrules
+-
+    name: DELETE peeringrules
+    type: item
+    method: DELETE
+    path: '/${peeringrules_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringrules
+-
+    name: DELETE peeringrules
+    type: item
+    method: DELETE
+    path: '/${peeringrules_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringrules
+-
+    name: DELETE peeringrules
+    type: item
+    method: DELETE
+    path: '/${peeringrules_path3}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE peeringgroup
+-
+    name: DELETE peeringgroup
+    type: item
+    method: DELETE
+    path: '/${peeringgroups_path}'
+    conditions:
+        is:
+            code: 204

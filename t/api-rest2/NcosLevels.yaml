@@ -1,0 +1,193 @@
+---
+#check options
+-
+    name: check OPTIONS for ncoslevels
+    type: item
+    method: OPTIONS
+    path: /api/ncoslevels/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-ncoslevels
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - POST
+
+#create ncoslevels
+-
+    name: create ncoslevels
+    type: item
+    method: POST
+    path: '/api/ncoslevels/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        level: 'api_test 1 ncos ${unique_id}'
+        mode: 'whitelist'
+        description: 'api_test ncos level description'
+        local_ac: 1
+        intra_pbx: 1
+    retain:
+        ncoslevels_path1: header.location
+    conditions:
+        is:
+            code: 201
+
+#create ncoslevels
+-
+    name: create ncoslevels
+    type: item
+    method: POST
+    path: '/api/ncoslevels/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        level: 'api_test 2 ncos ${unique_id}'
+        mode: 'whitelist'
+        description: 'api_test ncos level description'
+        local_ac: 1
+        intra_pbx: 1
+    retain:
+        ncoslevels_path2: header.location
+    conditions:
+        is:
+            code: 201
+
+#create ncoslevels
+-
+    name: create ncoslevels
+    type: item
+    method: POST
+    path: '/api/ncoslevels/'
+    header:
+        Content-Type: application/json
+    content:
+        reseller_id: 1
+        level: 'api_test 3 ncos ${unique_id}'
+        mode: 'whitelist'
+        description: 'api_test ncos level description'
+        local_ac: 1
+        intra_pbx: 1
+    retain:
+        ncoslevels_path3: header.location
+    conditions:
+        is:
+            code: 201
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/ncoslevels/?page=1&rows=2'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for ncoslevels item
+    type: item
+    method: OPTIONS
+    path: '/${ncoslevels_path3}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+                - PUT
+                - PATCH
+                - DELETE
+
+#get ncoslevels
+-
+    name: GET ncoslevels
+    type: item
+    method: GET
+    path: '/${ncoslevels_path3}'
+    retain:
+        ncoslevels: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{ncoslevels}->{_links};
+            delete $retained->{ncoslevels}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+
+#put ncoslevels
+-
+    name: PUT ncoslevels
+    type: item
+    method: PUT
+    path: '/${ncoslevels_path3}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${ncoslevels}'
+    conditions:
+        is:
+            code: 200
+
+#get ncoslevels
+-
+    name: GET ncoslevels
+    type: item
+    method: GET
+    path: '/${ncoslevels_path3}'
+    retain:
+        new_ncoslevels: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            delete $retained->{new_ncoslevels}->{_links};
+            delete $retained->{new_ncoslevels}->{_embedded};
+        }
+    conditions:
+        is:
+            code: 200
+        is_deeply:
+            '${ncoslevels}': ${new_ncoslevels}
+
+#DELETE ncoslevels
+-
+    name: DELETE ncoslevels
+    type: item
+    method: DELETE
+    path: '/${ncoslevels_path1}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE ncoslevels
+-
+    name: DELETE ncoslevels
+    type: item
+    method: DELETE
+    path: '/${ncoslevels_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE ncoslevels
+-
+    name: DELETE ncoslevels
+    type: item
+    method: DELETE
+    path: '/${ncoslevels_path3}'
+    conditions:
+        is:
+            code: 204
