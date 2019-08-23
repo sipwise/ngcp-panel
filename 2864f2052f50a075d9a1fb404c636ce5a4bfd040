@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "86bfc103_fa94a54f",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 790,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-23T10:25:42Z",
+      "side": 1,
+      "message": "we do not code with extra spaces after parentheses. the commonly used Perl style is:\n\nif (expression) {\n}\n\n---- not exactly common Perl style ----\nif(expression){\nif(expression) {\nif ( expression ) {",
+      "range": {
+        "startLine": 790,
+        "startChar": 8,
+        "endLine": 790,
+        "endChar": 9
+      },
+      "revId": "2864f2052f50a075d9a1fb404c636ce5a4bfd040",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5714874_72a41e42",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 807,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-08-23T10:25:42Z",
+      "side": 1,
+      "message": "this is already checked inside subscriberadmin_write_access as I can see, so can be removed.\n\nthen it is as:\n\nif ($c-\u003euser-\u003eroles eq \"subscriberadmin\" \u0026\u0026 !$self-\u003esubscriberadmin_write_access($c)) {\n} else if ($c-\u003euser-\u003eroles eq \"subscriber\") {\n}",
+      "range": {
+        "startLine": 797,
+        "startChar": 3,
+        "endLine": 807,
+        "endChar": 5
+      },
+      "revId": "2864f2052f50a075d9a1fb404c636ce5a4bfd040",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
