@@ -137,7 +137,7 @@ $d->find_element('//a[contains(text(),"Create Inbound Peering Rule")]')->click()
 $d->find_element('#save', 'css')->click();
 
 diag("Check if creation failed");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "Failed to create inbound peering rule")]'), "Correct Alert was shown");
+ok($d->find_element_by_css('#InboundPeeringRules_table tr > td.dataTables_empty', 'css'), 'Inbound Peering Rule was not created');
 
 diag("Create Inbound Peering Rule");
 $d->find_element('//a[contains(text(),"Create Inbound Peering Rule")]')->click();
