@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7870859d_76f7a6d4",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 790,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-23T10:36:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "86bfc103_fa94a54f",
+      "range": {
+        "startLine": 790,
+        "startChar": 8,
+        "endLine": 790,
+        "endChar": 9
+      },
+      "revId": "2864f2052f50a075d9a1fb404c636ce5a4bfd040",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d5714874_72a41e42",
         "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "2864f2052f50a075d9a1fb404c636ce5a4bfd040",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f5136b6_aa4dfe90",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 807,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-08-23T10:36:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5714874_72a41e42",
+      "range": {
+        "startLine": 797,
+        "startChar": 3,
+        "endLine": 807,
+        "endChar": 5
+      },
+      "revId": "2864f2052f50a075d9a1fb404c636ce5a4bfd040",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
