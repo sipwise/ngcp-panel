@@ -74,12 +74,12 @@ ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "locked")]'), 'Status is correct');
 $custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
 $compstring = "Customer #" . $custnum . " successfully created - Details";
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), $compstring,  "Correct Alert was shown");
 
 diag("Check if Customer is locked");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 $d->find_element_by_xpath('//div/h2[contains(text(), "Customer Details")]');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Customer is locked',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Customer is locked',  "Correct Alert was shown");
 
 diag("Go back and edit Customer");
 $d->find_element('Back', 'link_text')->click();
@@ -106,7 +106,7 @@ ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "active")]'), 'Status is correct');
 $compstring = "Customer #" . $custnum . " successfully updated";
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), $compstring,  "Correct Alert was shown");
 
 diag("Open Details for our just created Customer");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
@@ -128,7 +128,7 @@ $d->find_element('#save', 'css')->click();
 
 diag("Check contact details");
 $d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Contact Details")]')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contact successfully changed',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Contact successfully changed',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Email")]/../td[2]', $contactmail), "Email is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Name")]/../td[contains(text(), "Alice")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Company")]/../td[contains(text(), "Sipwise")]'), "Company is correct");
@@ -157,7 +157,7 @@ $d->fill_element('#fraud_interval_notify', 'css', 'mymail@example.org');
 $d->find_element('#save', 'css')->click();
 
 diag("Check Fraud Limit details");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Fraud settings successfully changed!',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Fraud settings successfully changed!',  "Correct Alert was shown");
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]'));
 if($d->find_element('//*[@id="collapse_fraud"]')->get_attribute('class', 1) eq 'accordion-body collapse') {
     $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
@@ -186,7 +186,7 @@ $d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for Phonebook Entry");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully created',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Phonebook entry successfully created',  "Correct Alert was shown");
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]')->click();
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
@@ -205,7 +205,7 @@ $d->fill_element('//*[@id="number"]', 'xpath', '987654321');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if information has changed");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully updated',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Phonebook entry successfully updated',  "Correct Alert was shown");
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]')->click();
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
@@ -264,7 +264,7 @@ $d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', '16');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for Location");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully created',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Location successfully created',  "Correct Alert was shown");
 $d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]'));
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -286,7 +286,7 @@ $d->find_element('//*[@id="blocks_add"]')->click();
 $d->fill_element('//*[@id="blocks.1.row.ip"]', 'xpath', '127.0.0.1');
 $d->fill_element('//*[@id="blocks.1.row.mask"]', 'xpath', '16');
 $d->find_element('//*[@id="save"]')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully updated',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Location successfully updated',  "Correct Alert was shown");
 
 diag("Check location details");
 $d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]')->click();
@@ -303,7 +303,7 @@ ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr/td[2]', $customerid), '
 
 diag('Open delete dialog and press delete');
 $c->delete_customer($customerid, 0);
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Customer successfully terminated',  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Customer successfully terminated',  "Correct Alert was shown");
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
 
@@ -323,7 +323,7 @@ $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer found');
 $custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
 $compstring = "Customer #" . $custnum . " successfully created - Details";
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), $compstring,  "Correct Alert was shown");
 
 diag('Edit customer status to terminated');
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
@@ -333,7 +333,7 @@ $d->find_element('#save', 'css')->click();
 
 diag('Check if customer was deleted');
 $compstring = "Customer #" . $custnum . " successfully updated";
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), $compstring,  "Correct Alert was shown");
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
 
@@ -365,7 +365,7 @@ $d->move_and_click('//*[@id="contact_table"]/tbody/tr[1]//td//div//a[contains(te
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Contact has been deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully terminated",  "Correct Alert was shown");
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Contact successfully terminated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Contact has been deleted');
 
