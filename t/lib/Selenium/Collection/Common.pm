@@ -237,6 +237,10 @@ sub create_customer {
     $self->driver->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
     $self->driver->fill_element('#billing_profileidtable_filter input', 'css', $billingname);
     $self->driver->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
+    $self->driver->fill_element('//*[@id="productidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    $self->driver->find_element('#productidtable tr > td.dataTables_empty', 'css');
+    $self->driver->fill_element('//*[@id="productidtable_filter"]/label/input', 'xpath', 'Basic SIP Account');
+    $self->driver->select_if_unselected('//*[@id="productidtable"]/tbody/tr/td[3]/input[@type="checkbox"]');
     if(index($special, 'locked') != -1) {
         diag('Creating a locked customer');
         $self->driver->scroll_to_element($self->driver->find_element('//*[@id="status"]'));
