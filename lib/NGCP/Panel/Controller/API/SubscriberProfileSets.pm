@@ -60,7 +60,7 @@ sub relation{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller/],
+    allowed_roles => [qw/admin reseller ccareadmin ccare/],
 });
 
 sub GET :Allow {
@@ -109,6 +109,11 @@ sub GET :Allow {
 
 sub POST :Allow {
     my ($self, $c) = @_;
+
+    if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
         $c->log->error("profile set creation by reseller forbidden via config");

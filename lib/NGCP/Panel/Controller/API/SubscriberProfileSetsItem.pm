@@ -36,7 +36,7 @@ sub journal_query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller/],
+        Default => [qw/admin reseller ccareadmin ccare/],
         Journal => [qw/admin reseller/],
     }
 });
@@ -65,6 +65,11 @@ sub GET :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+
+    if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
         $c->log->error("profile set modification by reseller forbidden via config");
@@ -107,6 +112,11 @@ sub PATCH :Allow {
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
 
+    if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
+
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
         $c->log->error("profile set modification by reseller forbidden via config");
         $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set modification forbidden for resellers.");
@@ -143,6 +153,11 @@ sub PUT :Allow {
 
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
+
+    if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
         $c->log->error("profile set deletion by reseller forbidden via config");

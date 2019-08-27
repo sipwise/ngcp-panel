@@ -14,14 +14,14 @@ use HTTP::Status qw(:constants);
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('voicemail_users')->search({ 
+    my $item_rs = $c->model('DB')->resultset('voicemail_users')->search({
         'voip_subscriber.status' => { '!=' => 'terminated' },
     }, {
         join => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } },
     });
-    if ($c->user->roles eq "admin") {
-    } elsif ($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ 
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
+        $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         });
     } elsif ($c->user->roles eq "subscriberadmin") {

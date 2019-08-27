@@ -12,7 +12,7 @@ sub allowed_methods{
 
 __PACKAGE__->set_config({
     preferences_group => 'usr_pref',
-    allowed_roles    => [qw/admin reseller subscriberadmin subscriber/],
+    allowed_roles    => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
 });
 
 1;

@@ -37,8 +37,8 @@ sub journal_query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller/],
-        Journal => [qw/admin reseller/],
+        Default => [qw/admin reseller ccareadmin ccare/],
+        Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
 
@@ -80,6 +80,11 @@ sub PATCH :Allow {
         );
         last unless $json;
 
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            last;
+        }
+
         my $profile = $self->profile_by_id($c, $id);
         last unless $self->resource_exists($c, billingprofile => $profile);
         my $old_resource = { $profile->get_inflated_columns };
@@ -107,6 +112,11 @@ sub PUT :Allow {
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
+
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            last;
+        }
 
         my $profile = $self->profile_by_id($c, $id);
         last unless $self->resource_exists($c, billingprofile => $profile );
@@ -136,6 +146,11 @@ sub DELETE :Allow {
    my ($self, $c, $id) = @_;
    my $guard = $c->model('DB')->txn_scope_guard;
    {
+       if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+           $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+           last;
+       }
+
        my $billing_profile = $self->item_by_id($c, $id);
        last unless $self->resource_exists($c, billingprofile => $billing_profile);
        last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c, $billing_profile->reseller_id, sub {
