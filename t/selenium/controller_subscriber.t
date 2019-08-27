@@ -53,7 +53,6 @@ $d->find_element('//*[@id="save"]')->click();
 diag("Check Error Messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Domain field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "SIP Username field is required")]'));
-ok($d->find_element_by_xpath('//form//div//span[contains(text(), "SIP Password field is required")]'));
 
 diag('Enter necessary information');
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -67,9 +66,7 @@ $d->find_element('//*[@id="e164.sn"]')->send_keys(int(rand(99999999)));
 $d->find_element('//*[@id="email"]')->send_keys($emailstring);
 $d->find_element('//*[@id="webusername"]')->send_keys($username);
 $d->find_element('//*[@id="webpassword"]')->send_keys('testing1234'); #workaround for misclicking on ok button
-$d->find_element('//*[@id="gen_password"]')->click();
 $d->find_element('//*[@id="username"]')->send_keys($username);
-$d->find_element('//*[@id="password"]')->send_keys('testing1234'); #using normal pwd, cant easily seperate both generate buttons
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Trying to find Subscriber');
@@ -454,7 +451,6 @@ $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', $domain
 ok($d->wait_for_text('//*[@id="domainidtable"]/tbody/tr[1]/td[3]', $domainstring), 'Domain found');
 $d->select_if_unselected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
 $d->find_element('//*[@id="username"]')->send_keys($username);
-$d->find_element('//*[@id="password"]')->send_keys('testing1234');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Go to Subscribers page');
