@@ -22,6 +22,30 @@
       "revId": "826da3e9302686fb539c2e9a12767818fd7dd64f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a24abfbb_bac841a2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-08-27T09:58:31Z",
+      "side": 1,
+      "message": "not sure if it is a ngcp-panel bug. the test just sraight up refuses sometimes to find the edit buttons, even though they are here. (sry for eventual confusing wording in my commit message)",
+      "parentUuid": "7490ae52_4de1be39",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 36
+      },
+      "revId": "826da3e9302686fb539c2e9a12767818fd7dd64f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
