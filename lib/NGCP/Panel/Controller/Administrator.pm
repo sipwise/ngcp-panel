@@ -33,6 +33,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     @{ $cols } =  (@{ $cols },
         { name => "login", search => 1, title => $c->loc("Login") },
         { name => "is_master", title => $c->loc("Master") },
+        { name => "is_ccare", title => $c->loc("Customer Care") },
         { name => "is_active", title => $c->loc("Active") },
         { name => "read_only", title => $c->loc("Read Only") },
         { name => "show_passwords", title => $c->loc("Show Passwords") },
@@ -374,7 +375,7 @@ sub toggle_openvpn :Chained('list_admin') :PathPart('openvpn/toggle') :Args(1) {
 
     unless ($set_active eq 'confirm') {
         my ($message, $error) = NGCP::Panel::Utils::Admin::toggle_openvpn($c, $set_active);
-        if ( $message ) { 
+        if ( $message ) {
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc($message),
@@ -383,7 +384,7 @@ sub toggle_openvpn :Chained('list_admin') :PathPart('openvpn/toggle') :Args(1) {
                 flash => 0,
             );
         }
-        if ( $error ) { 
+        if ( $error ) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $error,

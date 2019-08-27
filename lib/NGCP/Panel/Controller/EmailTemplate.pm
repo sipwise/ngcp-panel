@@ -10,7 +10,7 @@ use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Message;
 use JSON qw/encode_json decode_json/;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -19,7 +19,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 
 }
 
-sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) {
+sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ( $self, $c ) = @_;
 
     my $tmpl_rs = $c->model('DB')->resultset('email_templates');
@@ -31,9 +31,9 @@ sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) {
         { name => 'subject', search => 1, title => $c->loc('Subject') },
     ]);
 
-    #select r.id as reseller_id,r.name as reseller_name, etd.id as email_template_id, etd.name as email_template_name from resellers r 
+    #select r.id as reseller_id,r.name as reseller_name, etd.id as email_template_id, etd.name as email_template_name from resellers r
     #join email_templates etd on etd.reseller_id is null
-    #left join email_templates et on et.name=etd.name and et.reseller_id=r.id 
+    #left join email_templates et on et.name=etd.name and et.reseller_id=r.id
     #where et.id is null order by r.id,etd.id;
     my $tmpl_missed_rs = $c->model('DB')->resultset('resellers')->search_rs({
             'et.id' => undef,
@@ -86,6 +86,10 @@ sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) {
     $c->stash->{email_template_external_filter} = $c->session->{email_template_external_filter};
 
     $c->stash(template => 'emailtemplate/list.tt');
+}
+
+sub tmpl_list_restricted :Chained('tmpl_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
 }
 
 sub tmpl_root :Chained('tmpl_list') :PathPart('') :Args(0) {
@@ -142,7 +146,7 @@ sub tmpl_ajax_missed :Chained('tmpl_list') :PathPart('ajax/missed') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
+sub tmpl_create :Chained('tmpl_list_restricted') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -176,13 +180,13 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     );
 }
 
-sub tmpl_sync :Chained('tmpl_list') :PathPart('sync') :Args(0) {
+sub tmpl_sync :Chained('tmpl_list_restricted') :PathPart('sync') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::EmailTemplate::Sync", $c);
     my $params = { id => encode_json([map { $_->id } $c->stash->{tmpl_missed_rs}->all]) };
-    
+
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -227,7 +231,7 @@ sub tmpl_sync :Chained('tmpl_list') :PathPart('sync') :Args(0) {
     );
 }
 
-sub tmpl_base :Chained('tmpl_list') :PathPart('') :CaptureArgs(1) {
+sub tmpl_base :Chained('tmpl_list_restricted') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $tmpl_id) = @_;
 
     $c->detach('/denied_page')
@@ -317,7 +321,7 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
     );
 }
 
-sub tmpl_copy :Chained('tmpl_list') :PathPart('copy'): Args(1) {
+sub tmpl_copy :Chained('tmpl_list_restricted') :PathPart('copy'): Args(1) {
     my ($self, $c, $tmpl_id) = @_;
 
     $c->detach('/denied_page')

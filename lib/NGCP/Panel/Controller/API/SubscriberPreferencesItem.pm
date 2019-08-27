@@ -17,8 +17,8 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 __PACKAGE__->set_config({
     PATCH => { ops => [qw/add replace remove copy/] },
     allowed_roles => {
-        Default => [qw/admin reseller subscriberadmin subscriber/],
-        Journal => [qw/admin reseller subscriberadmin subscriber/],
+        Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
+        Journal => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
     }
 });
 

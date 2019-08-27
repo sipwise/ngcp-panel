@@ -33,9 +33,10 @@ sub relation{
 sub get_form {
     my ($self, $c) = @_;
 
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+        $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
         return (NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberAPI", $c));
-    } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+    } elsif ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         return (NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::SubscriberSubAdminAPI", $c));
     }
 }
@@ -134,7 +135,8 @@ sub resource_from_item {
     # don't leak internal info to subscribers via API for those fields
     # not filtered via forms
     my $contract_id = int(delete $resource{contract_id});
-    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+        $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
         $resource{customer_id} = $contract_id;
         $resource{uuid} = $item->uuid;
 
@@ -176,7 +178,8 @@ sub resource_from_item {
 sub hal_from_item {
     my ($self, $c, $item, $resource, $form) = @_;
     my $is_sub = 1;
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+        $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
         $is_sub = 0;
     }
     my $is_subadm = 1;
@@ -230,22 +233,22 @@ sub _item_rs {
     my $item_rs;
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search({ 'me.status' => { '!=' => 'terminated' } });
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $item_rs = $item_rs->search(undef,
         {
             join => { 'contract' => 'contact' }, #for filters
         });
-    } elsif($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => { 'contract' => 'contact' },
         });
-    } elsif($c->user->roles eq "subscriberadmin") {
+    } elsif ($c->user->roles eq "subscriberadmin") {
         $item_rs = $item_rs->search({
             'contract_id' => $c->user->account_id,
         });
-    } elsif($c->user->roles eq "subscriber") {
+    } elsif ($c->user->roles eq "subscriber") {
         $item_rs = $item_rs->search({
             #voip_subscriber is a provisioning.voip_subscribers relation
             #$c->user is provisioning.voip_subscribers, so we use ->voip_subscriber->id and compare to billing.voip-subscribers.
@@ -285,8 +288,8 @@ sub get_customer {
                 'product.class' => 'pbxaccount',
             ],
         },undef);
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $customer_rs = $customer_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         });
@@ -305,7 +308,8 @@ sub prepare_resource {
     my $groups = [];
     my $groupmembers = [];
     my $domain;
-    if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $resource->{domain}) {
+    if (($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+         $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $resource->{domain}) {
         $domain = $schema->resultset('domains')
             ->search({ domain => $resource->{domain} });
         if($c->user->roles eq "admin") {
@@ -323,7 +327,7 @@ sub prepare_resource {
         }
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
-    } elsif($c->user->roles eq "subscriberadmin") {
+    } elsif ($c->user->roles eq "subscriberadmin") {
         my $pilot = $schema->resultset('provisioning_voip_subscribers')->search({
             account_id => $c->user->account_id,
             is_pbx_pilot => 1,
@@ -392,8 +396,8 @@ sub prepare_resource {
 
     unless($domain) {
         $domain = $c->model('DB')->resultset('domains')->search({'me.id' => $resource->{domain_id}});
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
+        if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+        } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
             $domain = $domain->search({
                 'domain_resellers.reseller_id' => $c->user->reseller_id,
             }, {
@@ -787,8 +791,9 @@ sub update_item {
 sub check_write_access {
     my ( $self, $c, $id ) = @_;
 
-    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-
+    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+        $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            return 1;
     }
     elsif ($c->user->roles eq "subscriberadmin" && !$self->subscriberadmin_write_access($c)) {
         $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");

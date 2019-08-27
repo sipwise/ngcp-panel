@@ -32,7 +32,7 @@ sub _item_rs {
             { 'me.status' => { '!=' => 'terminated' } },
             { prefetch => 'provisioning_voip_subscriber',},
         );
-    if($c->user->roles eq "reseller") {
+    if($c->user->roles eq "reseller" || $c->user->roles eq "ccareadmin") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {

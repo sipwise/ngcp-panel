@@ -17,8 +17,8 @@ sub auto :Private {
     return 1;
 }
 
-sub template_list :Chained('/') :PathPart('invoicetemplate') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
-    my ( $self, $c ) = @_;
+sub template_list :Chained('/') :PathPart('invoicetemplate') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
+    my ($self, $c) = @_;
 
     $c->stash->{tmpl_rs} = $c->model('DB')->resultset('invoice_templates');
     if($c->user->roles eq "admin") {
@@ -36,6 +36,10 @@ sub template_list :Chained('/') :PathPart('invoicetemplate') :CaptureArgs(0) :Do
     ]);
 
     $c->stash(template => 'invoice/template_list.tt');
+}
+
+sub template_list_restricted :Chained('template_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
 }
 
 sub root :Chained('template_list') :PathPart('') :Args(0) {
@@ -58,7 +62,7 @@ sub reseller_ajax :Chained('template_list') :PathPart('ajax/reseller') :Args(1) 
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('template_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('template_list_restricted') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $tmpl_id) = @_;
 
     unless($tmpl_id && is_int($tmpl_id)) {
@@ -82,7 +86,7 @@ sub base :Chained('template_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(tmpl => $res);
 }
 
-sub create :Chained('template_list') :PathPart('create') :Args() {
+sub create :Chained('template_list_restricted') :PathPart('create') :Args() {
     my ($self, $c, $reseller_id) = @_;
 
     if(defined $reseller_id && !is_int($reseller_id)) {
@@ -270,7 +274,7 @@ sub edit_content :Chained('base') :PathPart('editcontent') :Args(0) {
     $c->stash(template => 'invoice/template.tt');
 }
 
-sub messages_ajax :Chained('template_list') :PathPart('messages') :Args(0) {
+sub messages_ajax :Chained('template_list_restricted') :PathPart('messages') :Args(0) {
     my ($self, $c) = @_;
     $c->stash(
         messages => $c->flash->{messages},
