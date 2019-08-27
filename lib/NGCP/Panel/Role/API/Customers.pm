@@ -38,7 +38,8 @@ sub hal_from_customer {
     my ($self, $c, $customer, $form, $now) = @_;
 
     my $is_adm = 0;
-    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+        $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
         $is_adm = 1;
     }
 
@@ -86,7 +87,9 @@ sub hal_from_customer {
                 $customer->subscriber_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
                 $customer->passreset_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:passresetemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->passreset_email_template_id))) : (),
                 $customer->invoice_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoiceemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->invoice_email_template_id))) : (),
-                Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?customer_id=%d", $customer->id)),
+                (($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare")
+                    ? ()
+                    : Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?customer_id=%d", $customer->id))),
                 $self->get_journal_relation_link($c, $customer->id),
             ) : ()),
         ],

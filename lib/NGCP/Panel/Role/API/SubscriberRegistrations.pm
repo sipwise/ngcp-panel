@@ -31,8 +31,8 @@ sub _item_rs {
                 $filter->{domain} = $sub->domain->domain;
             }
         }
-        if ($c->user->roles eq "admin") {
-        } elsif ($c->user->roles eq "reseller") {
+        if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+        } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
             $filter->{reseller_id} = $c->user->reseller_id;
         }
         $item_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter);
@@ -42,13 +42,13 @@ sub _item_rs {
             push @joins, 'domain';
         }
         $item_rs = $c->model('DB')->resultset('location');
-        if($c->user->roles eq "admin") {
+        if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
             $item_rs = $item_rs->search({
             
             },{
                 join => [@joins,'subscriber'],
             });
-        } elsif($c->user->roles eq "reseller") {
+        } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
             $item_rs = $item_rs->search({ 
                 'contact.reseller_id' => $c->user->reseller_id 
             },{
@@ -156,8 +156,8 @@ sub subscriber_from_id {
         'me.id' => $id,
         'me.status' => { '!=' => 'terminated' },
     });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $sub_rs = $sub_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{
