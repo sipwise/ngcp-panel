@@ -1,4 +1,4 @@
-[% 
+[%
     IF subscriber.provisioning_voip_subscriber.is_pbx_group;
         site_config.title = c.loc('PBX Group [_1]@[_2]', subscriber.username, subscriber.domain.domain);
     ELSE;
@@ -11,7 +11,9 @@
     <span class="pull-left" style="margin:0 5px 0 5px;">
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/preferences', [ subscriber.id ]) %]"><i class="icon-list"></i> [% c.loc('Preferences') %]</a>
+        [% IF c.user.roles != "ccareadmin" && c.user.roles != "ccare" -%]
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]"><i class="icon-list"></i> [% c.loc('Calls history') %]</a>
+        [% END -%]
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/details', [ subscriber.contract_id ]) %]"><i class="icon-user"></i> [% c.loc('Customer') %]</a>
     </span>
 </div>
@@ -32,8 +34,9 @@
 <div class="ngcp-separator"></div>
 
 <div class="accordion" id="subscriber_data">
-    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller'
-            || c.user.roles == 'subscriberadmin' -%]
+    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' ||
+          c.user.roles == 'ccareadmin' || c.user.roles == 'ccare' ||
+          c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_master">[% c.loc('Master Data') %]</a>
@@ -41,8 +44,9 @@
         <div class="accordion-body collapse" id="collapse_master">
             <div class="accordion-inner">
 
-                [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only -%]
-                    [% 
+                [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller" ||
+                           c.user.roles == "ccareadmin" || c.user.roles == "ccare") && c.user.read_only -%]
+                    [%
                         IF subscriber.provisioning_voip_subscriber.is_pbx_group;
                             href = c.uri_for_action('/customer/pbx_group_edit', [ contract.id, subscriber.id ]);
                         ELSE;
@@ -54,7 +58,7 @@
                 [% IF subscriber.contract.passreset_email_template -%]
                     <a class="btn btn-secondary btn-large" href="[% c.uri_for_action('/subscriber/reset_webpassword', [subscriber.id]) %]" data-confirm="Reset"><i class="icon-repeat"></i> [% c.loc('Reset Web Password') %]</a>
                 [% END -%]
-                
+
                 <div class="ngcp-separator"></div>
 
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
@@ -65,13 +69,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        [% IF c.user.roles == "admin" || c.user.roles == "reseller" -%]
+                        [% IF c.user.roles == "admin" || c.user.roles == "reseller"  || c.user.roles == "ccareadmin" || c.user.roles == "ccare" -%]
                         <tr class="sw_action_row">
                             <td>[% c.loc('Customer #') %]</td>
                             <td>[% subscriber.contract.id %]</td>
                         </tr>
                         [% END -%]
-                        [% 
+                        [%
                             elements = [];
 
                             elements.push({ value = subscriber.status, desc = c.loc('Status') });
@@ -86,7 +90,7 @@
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
                                 elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = c.loc('SIP Password') });
                             END;
-                            IF c.user.roles == "admin" || c.user.roles == "reseller";
+                            IF c.user.roles == "admin" || c.user.roles == "reseller" || c.user.roles == "ccareadmin" || c.user.roles == "ccare";
                                 elements.push({ value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = c.loc('Administrative') });
                                 elements.push({ value = subscriber.external_id, desc = c.loc('External #')});
                                 elements.push({ value = subscriber.uuid, desc = c.loc('UUID') });
@@ -155,7 +159,7 @@
     </div>
     [% END -%]
 
-    [% IF 
+    [% IF
         ((c.user.roles == 'admin' || c.user.roles == 'reseller') && c.user.call_data) ||
         c.user.roles == 'subscriberadmin'
     -%]
@@ -171,7 +175,7 @@ function process_pbx_items(moveId,direction){
         'pbx_group_items',
         uri,
         '',
-        function(){ 
+        function(){
             mainWrapperInit();
         }
     );
@@ -183,11 +187,11 @@ function process_pbx_items(moveId,direction){
         </div>
         <div class="accordion-body collapse" id="collapse_pbx_group_items">
             <div class="accordion-inner" id="pbx_group_items">
-[%PROCESS 'subscriber/pbx_group_items.tt' %]  
+[%PROCESS 'subscriber/pbx_group_items.tt' %]
             </div>
         </div>
     </div>
-    
+
     [% END -%]
 
 
@@ -206,7 +210,7 @@ function process_pbx_items(moveId,direction){
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_voicemails', [c.req.captures.0]);
 
-    
+
     IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only;
     helper.dt_buttons = [
         { name = c.loc('Play'), uri = "details/voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
@@ -217,7 +221,7 @@ function process_pbx_items(moveId,direction){
         { name = c.loc('Delete'), uri = "details/voicemail/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     END;
-   
+
 
     PROCESS 'helpers/datatables.tt';
 %]
@@ -225,6 +229,7 @@ function process_pbx_items(moveId,direction){
         </div>
     </div>
 
+[% IF c.user.roles != "ccareadmin" && c.user.roles != "ccare" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_recordings">[% c.loc('Call Recordings') %]</a>
@@ -240,7 +245,7 @@ function process_pbx_items(moveId,direction){
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_recordings', [c.req.captures.0]);
 
-    
+
     IF ((c.user.roles == "admin" || c.user.roles == "reseller") && !c.user.read_only) || c.user.roles == "subscriber" || c.user.roles == "subscriberadmin";
     helper.dt_buttons = [
         { name = c.loc('Call Details'), uri = "/subscriber/" _ subscriber.id _ "/calls?callid=' + encodeURIComponent(full.call_id_url) + '", class = 'btn-small btn-tertiary', icon = 'icon-search' },
@@ -254,13 +259,14 @@ function process_pbx_items(moveId,direction){
         { name = c.loc('Files'), uri = "details/recording/'+full.id+'/streams", class = 'btn-small btn-tertiary', icon = 'icon-play' },
     ];
     END;
-   
+
 
     PROCESS 'helpers/datatables.tt';
 %]
             </div>
         </div>
     </div>
+[% END -%]
 
 
 
@@ -272,7 +278,8 @@ function process_pbx_items(moveId,direction){
         <div class="accordion-body collapse" id="collapse_regdev">
             <div class="accordion-inner">
 
-            [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only -%]
+            [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller" ||
+                       c.user.roles == "ccareadmin" || c.user.roles == "ccare") && c.user.read_only -%]
             <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/create_registered', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Create Permanent Registration') %]</a>
             [% END -%]
 [%
@@ -287,12 +294,13 @@ function process_pbx_items(moveId,direction){
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_registered', [c.req.captures.0]);
 
-    UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only;
+    UNLESS (c.user.roles == "admin" || c.user.roles == "reseller" ||
+            c.user.roles == "ccareadmin" || c.user.roles == "ccare") && c.user.read_only;
     helper.dt_buttons = [
         { name = c.loc('Delete'), uri = "details/registered/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     END;
-   
+
 
     PROCESS 'helpers/datatables.tt';
 %]
@@ -300,7 +308,7 @@ function process_pbx_items(moveId,direction){
         </div>
     </div>
 
-[% IF c.config.features.callflow && c.user.call_data -%]
+[% IF c.config.features.callflow && c.user.call_data && c.user.roles != "ccareadmin" && c.user.roles != "ccare" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_cap">[% c.loc('Captured Dialogs') %]</a>
@@ -323,7 +331,7 @@ function process_pbx_items(moveId,direction){
     helper.dt_buttons = [
         { name = c.loc('Call Flow'), uri = "callflow/'+encodeURIComponent(full.call_id_url)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
     ];
-   
+
 
     PROCESS 'helpers/datatables.tt';
 %]
@@ -332,7 +340,8 @@ function process_pbx_items(moveId,direction){
     </div>
 [% END -%]
 
-    [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller" -%]
+    [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
+           c.user.roles == "admin" || c.user.roles == "reseller" || c.user.roles == "ccareadmin" || c.user.roles == "ccare" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_phonebook">[% c.loc('Phonebook') %]</a>

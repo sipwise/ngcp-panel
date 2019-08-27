@@ -90,6 +90,11 @@ sub PUT :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            last;
+        }
+
         my $preference = $self->require_preference($c);
         last unless $preference;
 

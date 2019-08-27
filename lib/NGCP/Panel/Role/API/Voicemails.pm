@@ -22,8 +22,8 @@ sub _item_rs {
     },{
             join => { mailboxuser => { provisioning_voip_subscriber => 'voip_subscriber' } }
     });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
