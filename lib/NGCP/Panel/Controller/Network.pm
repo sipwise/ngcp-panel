@@ -10,17 +10,18 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::BillingNetworks qw();
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
-sub network_list :Chained('/') :PathPart('network') :CaptureArgs(0) {
+sub network_list :Chained('/') :PathPart('network') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
-    my $dispatch_to = '_network_resultset_' . $c->user->roles;
+    my $dispatch_role = $c->user->roles =~ /admin$/ ? 'admin' : 'reseller';
+    my $dispatch_to = '_network_resultset_' . $dispatch_role;
     my $network_rs = $self->$dispatch_to($c);
 
     $c->stash->{network_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -32,6 +33,10 @@ sub network_list :Chained('/') :PathPart('network') :CaptureArgs(0) {
 
     $c->stash(network_rs   => $network_rs,
               template => 'network/list.tt');
+}
+
+sub network_list_restricted :Chained('network_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
 }
 
 sub _network_resultset_admin {
@@ -68,7 +73,7 @@ sub root :Chained('network_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('network_list') :PathPart('create') :Args(0) {
+sub create :Chained('network_list_restricted') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -130,7 +135,7 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
     );
 }
 
-sub base :Chained('/network/network_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('/network/network_list_restricted') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $network_id) = @_;
 
     unless($network_id && is_int($network_id)) {

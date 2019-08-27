@@ -93,6 +93,14 @@ sub auto :Private {
             my $uuid = $c->user->uuid;
             my $tz_row = $c->model('DB')->resultset('voip_subscriber_timezone')->find({uuid => $uuid});
             _set_session_tz_from_row($c, $tz_row, 'subscriber', $uuid);
+        } elsif ($c->user->roles eq 'ccareadmin') {
+            my $reseller_id = $c->user->reseller_id;
+            my $tz_row = $c->model('DB')->resultset('reseller_timezone')->find({reseller_id => $reseller_id});
+            _set_session_tz_from_row($c, $tz_row, 'admin', $reseller_id);
+        } elsif($c->user->roles eq 'ccare') {
+            my $reseller_id = $c->user->reseller_id;
+            my $tz_row = $c->model('DB')->resultset('reseller_timezone')->find({reseller_id => $reseller_id});
+            _set_session_tz_from_row($c, $tz_row, 'reseller', $reseller_id);
         } else {
             # this shouldnt happen
         }
@@ -298,18 +306,12 @@ sub auto :Private {
 
     # load top menu widgets
     my $topmenu_templates = [];
+    $topmenu_templates = ['widgets/'.$c->user->roles.'_topmenu_settings.tt'];
     if ($c->user->roles eq 'admin') {
-        $topmenu_templates = ['widgets/admin_topmenu_settings.tt'];
         if (!$c->stash->{openvpn_info}) {
             my $openvpn_info = NGCP::Panel::Utils::Admin::check_openvpn_status($c);
             $c->stash(openvpn_info => $openvpn_info);
         }
-    } elsif ($c->user->roles eq 'reseller') {
-        $topmenu_templates = ['widgets/reseller_topmenu_settings.tt'];
-    } elsif ($c->user->roles eq 'subscriberadmin') {
-        $topmenu_templates = ['widgets/subscriberadmin_topmenu_settings.tt'];
-    } elsif ($c->user->roles eq 'subscriber') {
-        $topmenu_templates = ['widgets/subscriber_topmenu_settings.tt'];
     }
     $c->stash(topmenu => $topmenu_templates);
 

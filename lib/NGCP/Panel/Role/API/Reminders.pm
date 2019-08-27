@@ -16,8 +16,8 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_reminder');
-    if ($c->user->roles eq "admin") {
-    } elsif ($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
@@ -152,7 +152,7 @@ sub get_subscriber_by_id {
     my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
         'me.id' =>  $subscriber_id,
     });
-    if ($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $sub_rs = $sub_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{

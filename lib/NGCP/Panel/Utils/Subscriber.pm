@@ -212,7 +212,7 @@ sub create_subscriber {
         $c->log->warn("invalid license status: $status");
         # die("invalid license status: $status");
     }
-    if ($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         if ($contract->contact->reseller_id ne $c->user->reseller_id) {
             die("invalid contract id '".$contract->id."'");
         }
@@ -450,7 +450,7 @@ sub create_subscriber {
 
 sub check_profile_set_and_profile {
     my ($c, $resource, $subscriber) = @_;
-    
+
     my ($profile_set, $profile, $profile_set_rs);
     my $schema = $c->model('DB');
 
@@ -465,12 +465,12 @@ sub check_profile_set_and_profile {
     } else {
         $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets');
     }
-    if($c->user->roles eq "admin") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         #we allow to admins (both superadmin and reseller admin roles)
-        #to pick any profile_set, even not linked to pilot. 
+        #to pick any profile_set, even not linked to pilot.
         #it may lead to situation when subscriberadmin will not see profile options, as profile ajax call is based on pilot profile_set setting
         #this was old behavior and I left untouched this administrator privilege
-    } elsif($c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $profile_set_rs = $profile_set_rs->search({
             'me.reseller_id' => $c->user->reseller_id,
         });
@@ -504,7 +504,7 @@ sub check_profile_set_and_profile {
         }
     } elsif (!exists $resource->{profile_set}{id}) {
         if ($c->user->roles eq "subscriberadmin") { #we are in subscriberadmin web UI
-        #this is for subscriberadmin web ui to edit subscriber. 
+        #this is for subscriberadmin web ui to edit subscriber.
         #Edit subscriber form for subscriberadmin doesn't contain profile_set control
         #API form doesn't suppose profile_set field.
         # => subscriberadmin can't manage profile_set via web ui and API
@@ -525,14 +525,15 @@ sub check_profile_set_and_profile {
                 id => $resource->{profile}{id},
             });
         }
-        if (!$profile 
+        if (!$profile
             && (
                     #we force default profile instead of empty for all roles those can't unset profile_set
-                    (!$resource->{profile}{id}) 
+                    (!$resource->{profile}{id})
                     #to admin roles we forgive incorrect profile_id (no error)
                     #this is due web ui, when not dynamic profile field can't reflect profile_set change
                     #and user need to edit twice to 1) change profile_set + incorrect profile_id) and 2) select not-default profile
-                ||  ($c->user->roles eq "admin" || $c->user->roles eq "reseller")
+                ||  ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+                     $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare")
             )
         ) {
             $profile = $profile_set->voip_subscriber_profiles->find({
@@ -547,7 +548,7 @@ sub check_profile_set_and_profile {
         };
     }
     if (!$profile && (
-        $profile_set 
+        $profile_set
         || ( $c->user->roles eq "subscriberadmin"
             && $resource->{profile}{id} )
         )
@@ -573,8 +574,8 @@ sub check_profile_set_and_profile {
 
     # if the profile changed, clear any preferences which are not in the new profile
     #in create use case we don't have prov_subscriber
-    if($prov_subscriber 
-        && $prov_subscriber->voip_subscriber_profile 
+    if($prov_subscriber
+        && $prov_subscriber->voip_subscriber_profile
         && ( !$profile || $prov_subscriber->voip_subscriber_profile->id != $profile->id )
     ) {
         my %old_profile_attributes = map { $_ => 1 }
@@ -2040,7 +2041,7 @@ sub delete_callrecording {
     my($recording, $force_delete) = @params{qw/recording force_delete/};
 
     foreach my $stream($recording->recording_streams->all) {
-        #if we met some error deleting file - we will fail and transaction will be rollbacked 
+        #if we met some error deleting file - we will fail and transaction will be rollbacked
         if (! -e $stream->full_filename) {
             if ( !$force_delete ) {
                 die("Callrecording file ".$stream->full_filename." is absent");

@@ -41,9 +41,9 @@ sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs;
 
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $item_rs = $c->model('DB')->resultset('voip_cf_bnumber_sets');
-    } elsif ($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         my $reseller_id = $c->user->reseller_id;
         $item_rs = $c->model('DB')->resultset('voip_cf_bnumber_sets')
             ->search_rs({
@@ -52,7 +52,7 @@ sub _item_rs {
                     join => {'subscriber' => {'contract' => 'contact'} },
                 });
     # TODO: do we want subscriberadmins to update other subs' entries?
-    } elsif($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+    } elsif ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         $item_rs = $c->model('DB')->resultset('voip_cf_bnumber_sets')
             ->search_rs({
                     'subscriber_id' => $c->user->id,
