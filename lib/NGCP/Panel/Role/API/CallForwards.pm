@@ -92,7 +92,7 @@ sub _item_rs {
             { 'me.status' => { '!=' => 'terminated' } },
             { 'prefetch' => { 'provisioning_voip_subscriber' => 'voip_cf_mappings' },},
         );
-    if ($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {

@@ -60,7 +60,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     $c->stash->{subscribers_rs} = $c->model('DB')->resultset('voip_subscribers')->search({
         'me.status' => { '!=' => 'terminated' },
     });
-    if($c->user->roles eq 'reseller') {
+    if ($c->user->roles eq 'reseller' || $c->user->roles eq 'ccare') {
         $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{
@@ -101,7 +101,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     ]);
 }
 
-sub root :Chained('sub_list') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub root :Chained('sub_list') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 }
 
@@ -358,7 +358,7 @@ sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare)  {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{subscribers_rs};
@@ -366,7 +366,7 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo
     $c->detach( $c->view("JSON") );
 }
 
-sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
     my $subscriber = $c->stash->{subscriber};
 
@@ -774,7 +774,8 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if (($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+             $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     $c->stash(edit_preference => 1);
 
@@ -842,7 +843,8 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     my ($self, $c, $cf_type) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $cf_desc;
     SWITCH: for ($cf_type) {
@@ -1068,7 +1070,8 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     my ($self, $c, $cf_type, $advanced) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     # TODO bail out of $advanced ne "advanced"
     if(defined $advanced && $advanced eq 'advanced') {
@@ -1278,7 +1281,8 @@ sub preferences_callforward_destinationset :Chained('base') :PathPart('preferenc
     my ($self, $c, $cf_type) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
@@ -2594,7 +2598,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     );
 }
 
-sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole('subscriberadmin') {
+sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole('subscriberadmin') {
     my ($self, $c) = @_;
 
     $self->underrun_catchup($c);
@@ -2616,7 +2620,7 @@ sub voicemails :Chained('master') :PathPart('voicemails') :Args(0) {
     );
 }
 
-sub recordings :Chained('master') :PathPart('recordings') :Args(0) {
+sub recordings :Chained('master') :PathPart('recordings') :Args(0) :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     $c->stash(
@@ -2624,7 +2628,7 @@ sub recordings :Chained('master') :PathPart('recordings') :Args(0) {
     );
 }
 
-sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
+sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     $c->stash->{callid_enc} = $c->req->params->{callid};
@@ -2682,11 +2686,12 @@ sub reglist :Chained('master') :PathPart('regdevices') :Args(0) {
     );
 }
 
-sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
@@ -2858,7 +2863,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     );
                     return;
                 }
-                if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+                if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+                    $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
                     $prov_params->{profile_set_id} = $profile_set ? $profile_set->id : undef;
                     $prov_params->{profile_id} = $profile ? $profile->id : undef;
                 } else {
@@ -3058,7 +3064,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
 }
 
-sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) : AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) : AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
     my $move_id  = $c->req->params->{move};
@@ -3094,7 +3100,7 @@ sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does
     $c->detach( $c->view('TT') );
 }
 
-sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -3141,7 +3147,8 @@ sub webpass :Chained('base') :PathPart('webpass') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if (($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
 
     $c->stash(
@@ -3153,7 +3160,8 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
 
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::EditWebpass", $c);
@@ -3202,7 +3210,8 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     my ($self, $c, $attribute, @additions) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $form;
     my $posted = ($c->request->method eq 'POST');
@@ -3431,7 +3440,8 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
     my ($self, $c, $attribute) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $form;
     my $posted = ($c->request->method eq 'POST');
@@ -3571,7 +3581,8 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
     my ($self, $c, $attribute) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $form;
     my $posted = ($c->request->method eq 'POST');
@@ -3729,7 +3740,8 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
     my ($self, $c, $attribute) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $reminder = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_reminder;
@@ -3803,7 +3815,8 @@ sub delete_reminder :Chained('base') :PathPart('preferences/reminder/delete') {
     my ($self, $c, $attribute) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $reminder = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_reminder;
     if($reminder){
@@ -4069,7 +4082,8 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     try {
         $c->stash->{voicemail}->delete;
@@ -4160,7 +4174,8 @@ sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::CallRecordingDelete", $c);
@@ -4228,7 +4243,8 @@ sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $ret;
 
@@ -4303,7 +4319,7 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
     );
 }
 
-sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -4354,7 +4370,7 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
     );
 }
 
-sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c, $trusted_id) = @_;
 
     $c->stash->{trusted} = $c->stash->{subscriber}->provisioning_voip_subscriber
@@ -4375,7 +4391,8 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $trusted = $c->stash->{trusted};
@@ -4435,7 +4452,8 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     try {
         $c->stash->{trusted}->delete;
@@ -4457,7 +4475,7 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
 
-sub create_upn_rewrite :Chained('base') :PathPart('preferences/upnrewrite/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub create_upn_rewrite :Chained('base') :PathPart('preferences/upnrewrite/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -4511,7 +4529,7 @@ sub create_upn_rewrite :Chained('base') :PathPart('preferences/upnrewrite/create
     );
 }
 
-sub upn_rewrite_base :Chained('base') :PathPart('preferences/upnrewrite') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub upn_rewrite_base :Chained('base') :PathPart('preferences/upnrewrite') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c, $rws_id) = @_;
 
     $c->stash->{upn_rws} = $c->stash->{subscriber}->provisioning_voip_subscriber
@@ -4532,7 +4550,8 @@ sub edit_upn_rewrite :Chained('upn_rewrite_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $upn_rws = $c->stash->{upn_rws};
@@ -4592,7 +4611,8 @@ sub delete_upn_rewrite :Chained('upn_rewrite_base') :PathPart('delete') :Args(0)
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     try {
         my $upnr_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -4732,7 +4752,8 @@ sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     try {
         $c->stash->{speeddial}->delete;
@@ -4756,7 +4777,8 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
@@ -4847,7 +4869,8 @@ sub delete_autoattendant :Chained('autoattendant') :PathPart('delete') :Args(0) 
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     try {
         $c->stash->{autoattendant}->delete;
@@ -4871,7 +4894,8 @@ sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') 
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
@@ -4974,7 +4998,8 @@ sub delete_ccmapping :Chained('ccmappings') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     try {
         $c->stash->{ccmapping}->delete;
@@ -4999,7 +5024,8 @@ sub edit_ccmapping :Chained('base') :PathPart('preferences/ccmappings/edit') :Ar
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
@@ -5061,7 +5087,7 @@ sub edit_ccmapping :Chained('base') :PathPart('preferences/ccmappings/edit') :Ar
     return;
 }
 
-sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c, $callid) = @_;
 
     $c->detach('/denied_page')
