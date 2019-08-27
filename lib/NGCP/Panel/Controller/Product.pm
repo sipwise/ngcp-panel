@@ -7,14 +7,14 @@ use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
-sub prod_list :Chained('/') :PathPart('product') :CaptureArgs(0) {
+sub prod_list :Chained('/') :PathPart('product') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
     my $prod_rs = $c->model('DB')->resultset('products')

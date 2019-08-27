@@ -23,8 +23,8 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Subscriber
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller subscriberadmin subscriber/],
-        Journal => [qw/admin reseller/],
+        Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
+        Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
 

@@ -17,7 +17,7 @@ sub auto :Private {
     return 1;
 }
 
-sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
     my $contacts = $c->model('DB')->resultset('contacts')->search({
@@ -332,7 +332,7 @@ sub ajax_list_contacts{
 
 }
 
-sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
     my $from = $c->request->params->{iDisplayStart} // 0;
