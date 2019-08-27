@@ -16,11 +16,11 @@ sub _item_rs {
     my ($self, $c, $id) = @_;
 
     my %cond = ();
-    if ($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         if (my $reseller_id = $c->request->param('reseller_id')) {
             $cond{'contact.reseller_id'} = $reseller_id;
         }
-    } elsif ($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $cond{'contact.reseller_id'} = $c->user->reseller_id;
     }
     if (my $contract_id = $c->request->param('contract_id')) {
@@ -90,9 +90,9 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CustomerFraudEvents::Admin", $c);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CustomerFraudEvents::Reseller", $c);
     }
 }

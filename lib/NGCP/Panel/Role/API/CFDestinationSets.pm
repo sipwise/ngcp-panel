@@ -81,9 +81,9 @@ sub _item_rs {
     my ($self, $c) = @_;
     my $item_rs;
 
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
-    } elsif ($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         my $reseller_id = $c->user->reseller_id;
         $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')
             ->search_rs({

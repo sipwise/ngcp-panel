@@ -14,17 +14,18 @@ use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Billing;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
-sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
+sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ( $self, $c ) = @_;
 
-    my $dispatch_to = '_profile_resultset_' . $c->user->roles;
+    my $dispatch_role = $c->user->roles =~ /admin$/ ? 'admin' : 'reseller';
+    my $dispatch_to = '_profile_resultset_' . $dispatch_role;
     my $profiles_rs = $self->$dispatch_to($c);
     $c->stash(profiles_rs => $profiles_rs);
     $c->stash->{profile_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -36,6 +37,10 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     ]);
 
     $c->stash(template => 'billing/list.tt');
+}
+
+sub profile_list_restricted :Chained('profile_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
 }
 
 sub _profile_resultset_admin {
@@ -94,7 +99,7 @@ sub ajax_filter_reseller :Chained('profile_list') :PathPart('ajax/filter_reselle
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('profile_list_restricted') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $profile_id) = @_;
 
     unless($profile_id && is_int($profile_id)) {
@@ -201,10 +206,11 @@ sub process_edit :Private {
     $c->stash( 'form'           => $form );
 }
 
-sub create :Chained('profile_list') :PathPart('create') :Args(0) {
+sub create :Chained('profile_list_restricted') :PathPart('create') :Args(0) {
     my ($self, $c, $no_reseller) = @_;
     $c->forward('process_create', [$no_reseller, 0 ]);
 }
+
 sub duplicate :Chained('base') :PathPart('duplicate') {
     my ($self, $c, $no_reseller) = @_;
     my $posted = ($c->request->method eq 'POST');
@@ -289,7 +295,7 @@ sub process_create :Private {
     $c->stash(form => $form);
 }
 
-sub create_without_reseller :Chained('profile_list') :PathPart('create/noreseller') :Args(0) {
+sub create_without_reseller :Chained('profile_list_restricted') :PathPart('create/noreseller') :Args(0) {
     my ($self, $c) = @_;
 
     $self->create($c, 1);
@@ -1130,4 +1136,3 @@ it under the same terms as Perl itself.
 =cut
 
 # vim: set tabstop=4 expandtab:
-

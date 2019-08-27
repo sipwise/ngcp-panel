@@ -67,7 +67,8 @@ $(function() {
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/preferences', [c.req.captures.0]) %]"><i class="icon-list"></i> [% c.loc('Preferences') %]</a>
     </span>
-    [% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
+    [% IF (c.user.roles == 'admin' || c.user.roles == 'reseller' ||
+           c.user.roles == 'ccaradmin' || c.user.roles == 'ccare') && !c.user.read_only -%]
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/edit', [ contract.id ]) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
     </span>
@@ -118,7 +119,7 @@ $(function() {
     </div>
     [% END -%]
 
-    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
+    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' || c.user.roles == 'ccareadmin' || c.user.roles == 'ccare' %]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_contact">[% c.loc('Contact Details') %]</a>
@@ -221,7 +222,10 @@ $(function() {
         </div>
         <div class="accordion-body collapse" id="collapse_subs">
             <div class="accordion-inner">
-                [% IF ((c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller") && contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
+                [% IF ((c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
+                        c.user.roles == "admin" || c.user.roles == "reseller" ||
+                        c.user.roles == "ccareadmin" || c.user.roles == "ccare") &&
+                        contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
                     <div class="alert alert-info">
                         [% c.loc('[_1] of maximum [_2] subscribers [_3] created',subscriber_count,contract.max_subscribers,
                                 c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
@@ -234,7 +238,9 @@ $(function() {
                         [% c.loc('Maximum number of [_1] subscribers [_2] created',contract.max_subscribers,
                             c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
-                [% ELSIF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller" -%]
+                [% ELSIF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
+                          c.user.roles == "admin" || c.user.roles == "reseller" ||
+                          c.user.roles == "ccaradmin" || c.user.roles == "ccare" -%]
                     <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]">
                         <i class="icon-star"></i> [% c.loc('Create Subscriber') %]
                     </a>
@@ -390,7 +396,9 @@ $(function() {
     [% IF
         c.config.features.cloudpbx &&
         product.class == 'pbxaccount' &&
-        (c.user.roles == 'admin' || c.user.roles == 'reseller' || c.user.roles == 'subscriberadmin')
+        (c.user.roles == 'admin' || c.user.roles == 'reseller' ||
+         c.user.roles == 'ccaradmin' || c.user.roles == 'ccare' ||
+         c.user.roles == 'subscriberadmin')
     -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -435,7 +443,8 @@ $(function() {
 
             <div class="accordion-inner">
 
-                [% IF (c.user.roles == 'admin' || c.user.roles == 'reseller') && !c.user.read_only -%]
+                [% IF (c.user.roles == 'admin' || c.user.roles == 'reseller' ||
+                       c.user.roles == 'ccaradmin' || c.user.roles == 'ccare') && !c.user.read_only -%]
                 <span>
                     [% IF c.user.billing_data -%]
                     <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/topup_voucher", [contract.id]) %]"><i class="icon-repeat"></i> [% c.loc('Top-up Voucher') %]</a>
@@ -582,7 +591,8 @@ $(function() {
         </div>
     </div>
 
-    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
+    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' ||
+          c.user.roles == 'ccareadmin' || c.user.roles == 'ccare' %]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_fraud">[% c.loc('Fraud Limits') %]</a>
@@ -689,7 +699,9 @@ $(function() {
         </div>
     </div>
 
-    [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller" -%]
+    [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
+           c.user.roles == "admin" || c.user.roles == "reseller" ||
+           c.user.roles == "ccareadmin" || c.user.roles == "ccare" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_locations">[% c.loc('Locations') %]</a>
@@ -724,7 +736,9 @@ $(function() {
     </div>
     [% END -%]
 
-    [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller" -%]
+    [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
+           c.user.roles == "admin" || c.user.roles == "reseller" ||
+           c.user.roles == "ccareadmin" || c.user.roles == "ccare" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_phonebook">[% c.loc('Phonebook') %]</a>

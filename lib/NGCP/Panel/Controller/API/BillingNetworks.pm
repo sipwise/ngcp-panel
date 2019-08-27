@@ -132,9 +132,12 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
+        if ($c->user->roles eq "admin") {
+        } elsif ($c->user->roles eq "reseller") {
             $resource->{reseller_id} = $c->user->reseller_id;
+        } elsif ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            last;
         }
 
         my $form = $self->get_form($c);

@@ -39,8 +39,8 @@ sub _item_rs {
         '+select' => [qw/voip_subscriber.id/],
         '+as' => [qw/subscriber_id/],
     });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
@@ -103,7 +103,7 @@ sub check_resource{
         'me.status' => { '!=' => 'terminated' },
         'me.id'     => $resource->{subscriber_id},
     });
-    if($c->user->roles eq 'reseller') {
+    if ($c->user->roles eq 'reseller' || $c->user->roles eq "ccare") {
         $subscriber_rs = $subscriber_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{

@@ -12,8 +12,8 @@
                 <ul class="pull-right">
                     <li>
                       [% IF c.user -%]
-                        [%- IF c.user.roles == 'admin' || c.user.roles == 'reseller' -%]
-                          [% login_name = c.user.login %]
+                        [%- IF c.user.roles == 'admin' || c.user.roles == 'reseller' || c.user.roles == 'ccareadmin' || c.user.roles == 'ccare' -%]
+                          [% login_name = c.user.login _ ' (' _ c.user.roles _ ')' %]
                         [%- ELSE -%]
                           [% login_name = c.user.webusername _'@'_ c.user.domain.domain %]
                         [%- END -%]

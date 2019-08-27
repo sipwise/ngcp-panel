@@ -11,8 +11,8 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::FaxserverS
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller subscriber subscriberadmin/],
-        Journal => [qw/admin reseller subscriber subscriberadmin/],
+        Default => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
+        Journal => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
     },
     PATCH => { ops => [qw/add replace remove copy/] },
 });

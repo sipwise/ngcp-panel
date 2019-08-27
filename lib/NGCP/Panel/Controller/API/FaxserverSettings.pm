@@ -6,7 +6,7 @@ use Sipwise::Base;
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::FaxserverSettings/;
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriber subscriberadmin/],
+    allowed_roles => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
 });
 
 sub allowed_methods{
