@@ -17,7 +17,7 @@ sub allowed_methods{
 }
 
 sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
+    return [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/];
 }
 
 sub api_description {

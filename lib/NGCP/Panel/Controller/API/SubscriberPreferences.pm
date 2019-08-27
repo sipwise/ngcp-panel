@@ -16,7 +16,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ProfilePackages qw();
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    allowed_roles => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
 });
 
 sub allowed_methods{

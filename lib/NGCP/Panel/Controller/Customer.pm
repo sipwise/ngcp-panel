@@ -33,7 +33,7 @@ Catalyst Controller.
 
 =cut
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -73,7 +73,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     );
 }
 
-sub root :Chained('list_customer') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub root :Chained('list_customer') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 }
 
@@ -283,7 +283,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             'me.id' => $contract_id,
         },undef);
 
-    if($c->user->roles eq 'reseller') {
+    if ($c->user->roles eq 'reseller' || $c->user->roles eq 'ccare') {
         $contract_rs = $contract_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
@@ -503,7 +503,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(phonebook => $contract_first->phonebook );
 }
 
-sub base_restricted :Chained('base') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub base_restricted :Chained('base') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 }
 

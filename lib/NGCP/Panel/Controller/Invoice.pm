@@ -49,7 +49,7 @@ sub inv_list :Chained('/') :PathPart('invoice') :CaptureArgs(0) :Does(ACL) :ACLD
     $c->stash(template => 'invoice/invoice_list.tt');
 }
 
-sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ( $self, $c, $contract_id ) = @_;
 
     $c->stash->{inv_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [

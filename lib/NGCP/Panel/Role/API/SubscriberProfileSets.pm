@@ -15,8 +15,8 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
     }
     return $item_rs;
@@ -24,9 +24,9 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetAdmin", $c);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::SubscriberProfile::SetReseller", $c);
     }
 }
@@ -81,9 +81,12 @@ sub update_item {
         form => $form,
         resource => $resource,
     );
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $resource->{reseller_id} = $c->user->reseller_id;
+    } elsif ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
     }
 
     my $dup_item = $c->model('DB')->resultset('voip_subscriber_profile_sets')->find({

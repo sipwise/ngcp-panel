@@ -14,7 +14,7 @@ has_field 'password' => (type => 'Password', required => 1, label => 'Password')
 for (qw(is_active show_passwords call_data billing_data)) {
     has_field $_ => (type => 'Boolean', default => 1);
 }
-for (qw(is_master read_only)) {
+for (qw(is_master is_ccare read_only)) {
     has_field $_ => (type => 'Boolean',);
 }
 has_field 'save' => (type => 'Submit', element_class => [qw(btn btn-primary)],);

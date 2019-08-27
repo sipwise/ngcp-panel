@@ -55,7 +55,7 @@ sub query_params {
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller/],
+    allowed_roles => [qw/admin reseller ccareadmin ccare/],
     action_add    => {
         item_base => {
             Chained => '/',

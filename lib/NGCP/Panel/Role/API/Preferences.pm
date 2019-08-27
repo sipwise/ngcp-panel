@@ -338,7 +338,7 @@ sub _item_rs {
         # we actually return the profile rs here, as we can easily
         # go to prof_preferences from there
         $item_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
-        if($c->user->roles eq "reseller") {
+        if($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
             $item_rs = $item_rs->search({
                 'profile_set.reseller_id' => $c->user->reseller_id,
             },{
@@ -346,13 +346,13 @@ sub _item_rs {
             });
         }
     } elsif($type eq "subscribers") {
-        if($c->user->roles eq "admin") {
+        if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
             $item_rs = $c->model('DB')->resultset('voip_subscribers')->search({
                 'me.status' => { '!=' => 'terminated' }
             }, {
                 join => { 'contract' => 'contact' }, #for filters
             });
-        } elsif($c->user->roles eq "reseller") {
+        } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
             $item_rs = $c->model('DB')->resultset('voip_subscribers')->search({
                 'contact.reseller_id' => $c->user->reseller_id,
                 'me.status' => { '!=' => 'terminated' },
@@ -426,7 +426,7 @@ sub _item_rs {
             });
         }
     } elsif($type eq "contracts") {
-        if($c->user->roles eq "admin") {
+        if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
             $item_rs = $c->model('DB')->resultset('contracts')->search({
                 'me.status' => { '!=' => 'terminated' },
                 'contact.reseller_id' => { '!=' => undef },
@@ -434,7 +434,7 @@ sub _item_rs {
             },{
                 join => 'contact',
             });
-        } elsif($c->user->roles eq "reseller") {
+        } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccareadmin") {
             $item_rs = $c->model('DB')->resultset('contracts')->search({
                 'contact.reseller_id' => $c->user->reseller_id,
                 'me.status' => { '!=' => 'terminated' },

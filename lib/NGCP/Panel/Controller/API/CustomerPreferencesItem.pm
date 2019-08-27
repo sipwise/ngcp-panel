@@ -8,8 +8,8 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Preference
 __PACKAGE__->set_config({
     PATCH => { ops => [qw/add replace remove copy/] },
     allowed_roles => {
-        Default => [qw/admin reseller/],
-        Journal => [qw/admin reseller/],
+        Default => [qw/admin reseller ccareadmin ccare/],
+        Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
 

@@ -154,11 +154,11 @@ sub get_customer_rs {
         join => 'contact',
     });
 
-    if($c->user->roles eq "admin") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $rs = $rs->search_rs({
             'contact.reseller_id' => { '-not' => undef },
         },undef);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $rs = $rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },undef);

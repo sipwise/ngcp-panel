@@ -11,17 +11,18 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Voucher qw();
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
-sub package_list :Chained('/') :PathPart('package') :CaptureArgs(0) {
+sub package_list :Chained('/') :PathPart('package') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
-    my $dispatch_to = '_package_resultset_' . $c->user->roles;
+    my $dispatch_role = $c->user->roles =~ /admin$/ ? 'admin' : 'reseller';
+    my $dispatch_to = '_package_resultset_' . $dispatch_role;
     my $package_rs = $self->$dispatch_to($c);
 
     $c->stash->{package_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -33,6 +34,10 @@ sub package_list :Chained('/') :PathPart('package') :CaptureArgs(0) {
 
     $c->stash(package_rs   => $package_rs,
               template => 'package/list.tt');
+}
+
+sub package_list_restricted :Chained('package_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
 }
 
 sub _package_resultset_admin {
@@ -69,7 +74,7 @@ sub root :Chained('package_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('package_list') :PathPart('create') :Args(0) {
+sub create :Chained('package_list_restricted') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -137,7 +142,7 @@ sub create :Chained('package_list') :PathPart('create') :Args(0) {
     );
 }
 
-sub base :Chained('/package/package_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('/package/package_list_restricted') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $package_id) = @_;
 
     unless($package_id && is_int($package_id)) {
@@ -289,10 +294,11 @@ sub ajax_filter_reseller :Chained('package_list') :PathPart('ajax/filter_reselle
 }
 
 
-sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
+sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $package_id) = @_;
 
-    my $dispatch_to = '_package_resultset_' . $c->user->roles;
+    my $dispatch_role = $c->user->roles =~ /admin$/ ? 'admin' : 'reseller';
+    my $dispatch_to = '_package_resultset_' . $dispatch_role;
     my $package_rs = $self->$dispatch_to($c);
 
     unless($package_id && is_int($package_id)) {

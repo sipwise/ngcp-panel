@@ -36,8 +36,8 @@ sub journal_query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller/],
-        Journal => [qw/admin reseller/],
+        Default => [qw/admin reseller ccareadmin ccare/],
+        Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
 
@@ -67,6 +67,11 @@ sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
+        }
+
         my $preference = $self->require_preference($c);
         last unless $preference;
 
@@ -103,6 +108,11 @@ sub PUT :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
+        }
+
         my $preference = $self->require_preference($c);
         last unless $preference;
 
@@ -130,6 +140,11 @@ sub PUT :Allow {
 
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
+
+    if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
         $c->log->error("profile deletion by reseller forbidden via config");
