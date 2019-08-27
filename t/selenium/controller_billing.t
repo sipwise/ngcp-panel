@@ -217,6 +217,7 @@ $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[con
 
 diag("Edit Wednesday");
 ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Off-peak-times")]'), "We are on the correct Page");
+$d->refresh();
 $d->move_and_click('//*[@id="content"]//table//tr[3]/td//a[text()[contains(., "Edit")]]', 'xpath', '//*[@id="masthead"]//div//h2[contains(text(), "Off-peak-times")]');
 ok($d->find_text("Edit Wednesday"), 'Edit dialog was opened');
 
