@@ -191,7 +191,7 @@ ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]/tbody/tr/td[contains
 ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]/tbody/tr/td[contains(text(), "Rule for LNP Carrier 2")]'), "Description is correct");
 
 diag("Edit NCOS settings");
-$d->find_element('//*[@id="number_patterns_extra"]/div[2]/a')->click();
+$d->find_element('//*[@id="number_patterns_extra"]//div//a')->click();
 $d->select_if_unselected('//*[@id="local_ac"]');
 $d->find_element('//*[@id="save"]')->click();
 
