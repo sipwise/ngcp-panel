@@ -63,7 +63,7 @@ sub relation{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller/],
+    allowed_roles => [qw/admin reseller ccareadmin ccare/],
 });
 
 sub GET :Allow {
@@ -112,6 +112,11 @@ sub GET :Allow {
 
 sub POST :Allow {
     my ($self, $c) = @_;
+
+    if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {

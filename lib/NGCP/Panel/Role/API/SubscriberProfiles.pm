@@ -15,8 +15,8 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({ 'profile_set.reseller_id' => $c->user->reseller_id }, {
             join => 'profile_set',
         });
@@ -89,6 +89,11 @@ sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     # delete $resource->{attribute} in case reseller not allowed to update set
+
+    if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+        return;
+    }
 
     $resource->{attribute} = delete $resource->{attributes};
     $form //= $self->get_form($c);

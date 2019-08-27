@@ -18,8 +18,8 @@ sub _item_rs {
         reseller_id => { '-not' => undef },
         'me.status' => { '!=' => 'terminated' },
     });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             reseller_id => $c->user->reseller_id,
         });
@@ -33,9 +33,9 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Admin", $c);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Reseller", $c);
     }
 }

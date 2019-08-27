@@ -18,7 +18,7 @@ use NGCP::Panel::Utils::Events qw();
 use UUID;
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    allowed_roles => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
 });
 
 sub allowed_methods{
