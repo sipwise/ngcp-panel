@@ -11,7 +11,7 @@ use NGCP::Panel::Utils::DateTime;
 use Config::General;
 my $catalyst_config;
 my $panel_config;
-for my $path(qw#ngcp_panel.conf /etc/ngcp-panel/ngcp_panel.conf#) {
+for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
     if(-f $path) {
         $panel_config = $path;
         last;
