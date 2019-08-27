@@ -51,6 +51,7 @@ $d->find_element('#save', 'css')->click();
 diag("Check if error messages appear");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Contact field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Invalid \'billing_profile_id\', not defined.")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Product field is required")]'));
 
 diag("Continuing creating a legit customer");
 $d->find_element('//*[@id="mod_close"]')->click();
