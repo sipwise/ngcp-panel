@@ -209,11 +209,18 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if change was applied');
 is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Successfully updated subscriber",  "Correct Alert was shown");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Subscribers", 'link_text')->click();
+$d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
+$d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
+ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[3]', $contactmail), 'Subscriber was found');
+$d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
+$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile Set")]/../td[contains(text(), "'. $setname .'")]'));
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile")]/../td[contains(text(), "'. $profilename .'")]'));
 
 diag('Lock Subscriber');
-$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
 $d->find_element("Edit", 'link_text')->click();
 $d->find_element('//*[@id="lock"]/option[contains(text(), "global")]')->click();
 $d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
