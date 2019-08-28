@@ -8,6 +8,7 @@ use NGCP::Panel::Utils::RedisLocationResultSource;
 
 use Data::Dumper;
 use Time::HiRes qw(time);
+use POSIX qw(strftime);
 
 has _c => (
     is => 'ro',
@@ -96,6 +97,12 @@ sub find {
 
     my %entry = $self->_redis->hgetall("location:entry::$id");
     $entry{id} = $entry{ruid};
+    # deflate expires column
+    if ($entry{expires}) {
+        $entry{expires} = strftime("%Y-%m-%d %H:%M:%S", localtime($entry{expires}));
+    } else {
+        $entry{expires} = "1970-01-01 00:00:00";
+    }
     if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_domain_resellers->{$entry{domain}}) {
         return;
     }
@@ -165,10 +172,18 @@ sub _rows_from_mapkey {
     foreach my $key (@{ $keys }) {
         my %entry = $self->_redis->hgetall($key);
         $entry{id} = $entry{ruid};
+        # deflate expires column
+        if ($entry{expires}) {
+            $entry{expires} = strftime("%Y-%m-%d %H:%M:%S", localtime($entry{expires}));
+        } else {
+            $entry{expires} = "1970-01-01 00:00:00";
+        }
+
         if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_domain_resellers->{$entry{domain}}) {
             next;
         }
         my $res = NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
+
         push @rows, $res;
     }
     return \@rows;
