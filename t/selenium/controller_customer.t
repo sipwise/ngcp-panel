@@ -307,8 +307,6 @@ is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was deleted');
 
-<<<<<<< HEAD
-=======
 $c->delete_contact($contactmail);
 
 diag('Create a new Contact for termination testing');
@@ -371,10 +369,8 @@ is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Contact has been deleted');
 
->>>>>>> d67dd2f07... TT#56376 selenium: ctr_customer: prevent missing alert from crashing script
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
-$c->delete_contact($contactmail);
 $c->delete_billing_profile($billingname);
 
 diag("This test run was successfull");
