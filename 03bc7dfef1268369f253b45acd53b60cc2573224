@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c05d4227_775df6e7",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-08-29T13:51:36Z",
+      "side": 1,
+      "message": "isnt this prepare_resource also called when creating a subs? -\u003e $item does not exist then yet, and there will be a \"can\u0027t call method on undef\" error.",
+      "range": {
+        "startLine": 342,
+        "startChar": 22,
+        "endLine": 342,
+        "endChar": 27
+      },
+      "revId": "03bc7dfef1268369f253b45acd53b60cc2573224",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
