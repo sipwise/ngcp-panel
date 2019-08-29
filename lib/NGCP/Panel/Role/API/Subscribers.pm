@@ -324,24 +324,43 @@ sub prepare_resource {
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
     } elsif($c->user->roles eq "subscriberadmin") {
-        my $pilot = $schema->resultset('provisioning_voip_subscribers')->search({
-            account_id => $c->user->account_id,
-            is_pbx_pilot => 1,
-        })->first;
-        if($pilot) {
-            $domain = $pilot->voip_subscriber->domain;
+        if ( $c->config->{features}->{cloudpbx} && $c->user->contract->product->class eq 'pbxaccount') {
+            my $pilot = $schema->resultset('provisioning_voip_subscribers')->search({
+                account_id => $c->user->account_id,
+                is_pbx_pilot => 1,
+            })->first;
+            if($pilot) {
+                $domain = $pilot->voip_subscriber->domain;
+                delete $resource->{domain};
+                $resource->{domain_id} = $domain->id;
+            } else {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unable to find PBX pilot for this customer.");
+                return;
+            }
+            $resource->{customer_id} = $pilot->account_id;
+        } else {
+            $domain = $schema->resultset('domains')
+                ->search({ domain => $resource->{domain} });
+            $domain = $domain->first;
+            unless($domain) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't exist.");
+                return;
+            }
             delete $resource->{domain};
             $resource->{domain_id} = $domain->id;
-        } else {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unable to find PBX pilot for this customer.");
-            return;
+            $resource->{customer_id} = $item->provisioning_voip_subscriber->account_id;
         }
-        $resource->{customer_id} = $pilot->account_id;
         $resource->{status} = 'active';
         #deny to create subscriberadmin, the same as in the web ui
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     } elsif($c->user->roles eq "subscriber") {
-        $domain = $item->domain;
+        $domain = $schema->resultset('domains')
+                ->search({ domain => $resource->{domain} });
+        $domain = $domain->first;
+        unless($domain) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't exist.");
+            return;
+        }
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
         $resource->{customer_id} = $item->provisioning_voip_subscriber->account_id;
