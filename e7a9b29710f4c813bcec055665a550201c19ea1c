@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4f7344e_6b04480d",
+        "filename": "t/selenium/controller_customer.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-08-29T16:10:03Z",
+      "side": 0,
+      "message": "it is not available in trunk, so I removed it here too.",
+      "revId": "e7a9b29710f4c813bcec055665a550201c19ea1c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
