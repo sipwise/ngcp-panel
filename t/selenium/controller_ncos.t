@@ -306,6 +306,7 @@ is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]
 $d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
 $d->move_and_click('//*[@id="lnp_numbers_table_filter"]//label//input', 'xpath', '//*[@id="content"]/div/h3[contains(text(), "LNP Numbers")]');
 ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Entry was deleted');
+$d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
 
 $c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
