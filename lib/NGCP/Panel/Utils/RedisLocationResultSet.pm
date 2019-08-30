@@ -10,6 +10,11 @@ use Data::Dumper;
 use Time::HiRes qw(time);
 use POSIX qw(strftime);
 
+has usrloc_path => (
+    is => 'ro',
+    default => '1:location',
+);
+
 has _c => (
     is => 'ro',
     isa => sub { die "$_[0] must be NGCP::Panel" unless $_[0] && ref $_[0] eq 'NGCP::Panel' },
@@ -95,7 +100,7 @@ sub find {
         return;
     }
 
-    my %entry = $self->_redis->hgetall("location:entry::$id");
+    my %entry = $self->_redis->hgetall($self->usrloc_path.":entry::$id");
     $entry{id} = $entry{ruid};
     # deflate expires column
     if ($entry{expires}) {
@@ -119,11 +124,11 @@ sub search {
             push @{ $new_rs->_rows }, $new_rs->find($filter);
         } elsif ($filter->{username} && $filter->{domain}) {
             push @{ $new_rs->_rows },
-                @{ $new_rs->_rows_from_mapkey("location:usrdom::" .
+                @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
                     lc($filter->{username}) . ":" . lc($filter->{domain}), $filter) };
         } elsif ($filter->{username}) {
             push @{ $new_rs->_rows },
-                @{ $new_rs->_rows_from_mapkey("location:usrdom::" .
+                @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
                     lc($filter->{username}), $filter) };
         } else {
             $new_rs->_scan($filter);
@@ -255,7 +260,7 @@ sub _scan {
     $self->_rows([]);
     my $cursor = 0;
     do {
-        my $res = $self->_redis->scan($cursor, MATCH => "location:usrdom::$match", COUNT => 1000);
+        my $res = $self->_redis->scan($cursor, MATCH => $self->usrloc_path.":usrdom::$match", COUNT => 1000);
         $cursor = shift @{ $res };
         my $mapkeys = shift @{ $res };
         foreach my $mapkey (@{ $mapkeys }) {
