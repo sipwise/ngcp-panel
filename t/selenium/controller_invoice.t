@@ -19,7 +19,6 @@ my $templatename = ("invoice" . int(rand(100000)) . "tem");
 my $contactmail = ("contact" . int(rand(100000)) . '@test.org');
 my $billingname = ("billing" . int(rand(100000)) . "test");
 my $customerid = ("id" . int(rand(100000)) . "ok");
-my $custnum;
 my $compstring;
 my $run_ok = 0;
 
@@ -29,13 +28,6 @@ $c->create_reseller($resellername, $contractid);
 $c->create_contact($contactmail, $resellername);
 $c->create_billing_profile($billingname, $resellername);
 $c->create_customer($customerid, $contactmail, $billingname);
-
-diag("Search for Customer");
-$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
-ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
-$d->fill_element('#Customer_table_filter input', 'css', $customerid);
-ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
-my $customernumber = $d->find_element('//*[@id="Customer_table"]/tbody/tr/td[1]')->get_text();
 
 diag('Go to Invoice Templates page');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -87,6 +79,38 @@ ok($d->wait_for_text('//*[@id="InvoiceTemplate_table"]/tbody/tr/td[2]', $reselle
 ok($d->wait_for_text('//*[@id="InvoiceTemplate_table"]/tbody/tr/td[3]', $templatename), 'Name is correct');
 ok($d->wait_for_text('//*[@id="InvoiceTemplate_table"]/tbody/tr/td[4]', 'svg'), 'Type is correct');
 
+diag('Go to Customers page');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Customers", 'link_text')->click();
+
+diag("Search for Customer");
+$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
+my $custnum = $d->find_element('//*[@id="Customer_table"]/tbody/tr/td[1]')->get_text();
+
+diag("Add Invoice Template to Customer");
+$d->move_and_click('//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
+$d->fill_element('//*[@id="invoice_templateidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#invoice_templateidtable tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('//*[@id="invoice_templateidtable_filter"]/label/input', 'xpath', $templatename);
+ok($d->wait_for_text('//*[@id="invoice_templateidtable"]/tbody/tr/td[3]', $templatename), "Invoice Template was found");
+$d->find_element('//*[@id="invoice_templateidtable"]//tr[1]/td[4]/input')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check if Invoice Template was applied");
+$compstring = "Customer #" . $custnum . " successfully updated";
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), $compstring,  "Correct Alert was shown");
+$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
+$d->fill_element('#Customer_table_filter input', 'css', $customerid);
+ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
+$d->move_and_click('//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
+$d->scroll_to_element($d->find_element('//*[@id="Customer_table_filter"]/label/input'));
+ok($d->find_element_by_xpath('//*[@id="invoice_templateidtable"]/tbody/tr/td[contains(text(), "'. $templatename .'")]/../td[4]/input[@checked="checked"]'), "Invoice Template was selected");
+$d->find_element('//*[@id="mod_close"]')->click();
+
 diag('Go to Invoices page');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Invoices", 'link_text')->click();
@@ -123,10 +147,10 @@ ok($d->find_element_by_css('#Invoice_table tr > td.dataTables_empty', 'css'), 'G
 $d->fill_element('//*[@id="Invoice_table_filter"]/label/input', 'xpath', $contactmail);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[2]', $customernumber), 'Customer# is correct');
+ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[2]', $custnum), 'Customer# is correct');
 ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[3]', $contactmail), 'Customer Email is correct');
-$custnum = $d->get_text('//*[@id="Invoice_table"]/tbody/tr/td[1]');
-$compstring = "Invoice #" . $custnum . " successfully created";
+my $invnum = $d->get_text('//*[@id="Invoice_table"]/tbody/tr/td[1]');
+$compstring = "Invoice #" . $invnum . " successfully created";
 is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
 
 diag("Trying to NOT delete Invoice");
@@ -137,7 +161,7 @@ diag("Check if Invoice is still here");
 $d->fill_element('//*[@id="Invoice_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Invoice_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="Invoice_table_filter"]/label/input', 'xpath', $contactmail);
-ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[2]', $customernumber), 'Invoice is still here');
+ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[2]', $custnum), 'Invoice is still here');
 ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[3]', $contactmail), 'Invoice is still here');
 
 diag("Trying to delete Invoice");
