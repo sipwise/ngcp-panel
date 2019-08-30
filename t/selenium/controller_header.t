@@ -130,7 +130,9 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'this is a nice description'
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Move new entry up');
-$d->move_and_click('//*[@id="header_rules_table"]//tr/td[contains(text(), "second")]/../td/div/a[1]', 'xpath', '//*[@id="header_rules_table_filter"]//input');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
+$d->refresh();
+$d->move_and_click('//*[@id="header_rules_table"]//tr[2]//td//a[1]', 'xpath', '//*[@id="header_rules_table_filter"]/label/input');
 
 diag('Check if Entry has moved up');
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]/td[3]', 'second'), "Entry has been moved");
@@ -214,8 +216,8 @@ $d->move_and_click('//*[@id="header_rule_conditions_table"]//tr[1]//td//a[contai
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Header Rule Condition was deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully deleted',  "Correct Alert was shown");
 ok($d->find_element_by_css('#header_rule_conditions_table tr > td.dataTables_empty', 'css'), 'Header Rule Condition was deleted');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully deleted',  "Correct Alert was shown");
 
 diag('Go to Header Rule Actions');
 $d->find_element('Actions', 'link_text')->click();
@@ -273,7 +275,9 @@ $d->fill_element('//*[@id="c_header"]', 'xpath', 'second');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Move new entry up');
-$d->move_and_click('//*[@id="header_rule_actions_table"]//tr/td[contains(text(), "second")]/../td/div/a[1]', 'xpath', '//*[@id="header_rule_actions_table_filter"]//input');
+is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully created',  "Correct Alert was shown");
+$d->refresh();
+$d->move_and_click('//*[@id="header_rule_actions_table"]//tr[2]//td//a[1]', 'xpath', '//*[@id="header_rule_actions_table_filter"]//input');
 
 diag('Check if Entry has moved up');
 ok($d->wait_for_text('//*[@id="header_rule_actions_table"]//tr[1]/td[3]', 'second'), "Entry has been moved");
