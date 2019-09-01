@@ -1482,6 +1482,7 @@ msgstr "Konfigurations-Version"
 #: share/templates/widgets/admin_billing_overview.tt
 #: share/templates/widgets/admin_peering_overview.tt
 #: share/templates/widgets/admin_reseller_overview.tt
+#: share/templates/widgets/ccare_customer_overview.tt
 #: share/templates/widgets/reseller_billing_overview.tt
 #: share/templates/widgets/reseller_customer_overview.tt
 #: share/templates/widgets/reseller_domain_overview.tt
@@ -1494,6 +1495,7 @@ msgstr "Präferenzen konfigurieren"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm share/templates/contact/list.tt
 #: share/templates/reseller/details.tt
+#: share/templates/widgets/ccare_customer_overview.tt
 #: share/templates/widgets/reseller_customer_overview.tt
 msgid "Contact"
 msgstr "Kontakt"
@@ -1536,6 +1538,7 @@ msgstr ""
 
 #: share/templates/contact/list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccare_customer_overview.tt
 #: share/templates/widgets/reseller_customer_overview.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Contacts"
@@ -1908,6 +1911,7 @@ msgstr ""
 #: share/templates/reseller/details.tt share/templates/subscriber/list.tt
 #: share/templates/subscriber/master.tt
 #: share/templates/widgets/admin_reseller_overview.tt
+#: share/templates/widgets/ccare_customer_overview.tt
 #: share/templates/widgets/reseller_customer_overview.tt
 msgid "Customer"
 msgstr "Kunde"
@@ -1942,6 +1946,10 @@ msgstr "Kunde #%1 erfolgreich erstellt"
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Customer #%1 successfully updated"
 msgstr "Kunde #%1 erfolgreich aktualisiert"
+
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Customer Care"
+msgstr ""
 
 #: share/templates/package/details.tt
 msgid "Customer Contracts"
@@ -1994,6 +2002,9 @@ msgstr "Kunde nicht gefunden"
 #: share/templates/customer/list.tt share/templates/reseller/details.tt
 #: share/templates/widgets/admin_reseller_overview.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccare_customer_overview.tt
+#: share/templates/widgets/ccare_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
 #: share/templates/widgets/reseller_customer_overview.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Customers"
@@ -2374,6 +2385,8 @@ msgid "Do not increase outgoing call counter on CF"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccare_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Documentation"
 msgstr ""
@@ -4078,6 +4091,8 @@ msgid "Groups"
 msgstr "Gruppen"
 
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccare_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Handbook"
 msgstr ""
@@ -7319,6 +7334,8 @@ msgstr "Einstellung"
 
 #: share/templates/customer/details.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccare_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt
@@ -7667,6 +7684,7 @@ msgstr "Betreff"
 #: share/templates/subscriber/pbx_group_items.tt
 #: share/templates/subscriber/preferences.tt
 #: share/templates/widgets/admin_reseller_overview.tt
+#: share/templates/widgets/ccare_customer_overview.tt
 #: share/templates/widgets/reseller_customer_overview.tt
 msgid "Subscriber"
 msgstr "Subscriber"
@@ -7787,6 +7805,9 @@ msgstr ""
 #: share/templates/customer/details.tt share/templates/subscriber/list.tt
 #: share/templates/widgets/admin_reseller_overview.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccare_customer_overview.tt
+#: share/templates/widgets/ccare_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
 #: share/templates/widgets/reseller_customer_overview.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Subscribers"
