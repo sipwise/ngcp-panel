@@ -1,3 +1,40 @@
+ngcp-panel (7.5.2.0+0~mr7.5.2.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [365314a] TT#56376 selenium: reduce geckodriver console logs
+  * [714b2aa] TT#56376 selenium: more work on edit peak times
+  * [e6839c7] TT#56376 selenium: add scroll_to_element to the beginning of every function
+  * [c829a09] TT#56376 selenium: fix for tooltip blocking main menu in ctr_ncos
+  * [fc40653] TT#56376 selenium: fix for tooltip blocking main menu in ctr_subscriber
+  * [3ad523f] TT#56376 selenium: fix for tooltip blocking main menu in ctr_emergency
+  * [61f8ebd] TT#56376 selenium: change how empty inbound rule creation gets tested
+  * [96fda19] TT#56376 selenium: ctr_emergency: prevent missing alert from crashing script
+  * [0a7da58] TT#56376 selenium: ctr_peering: prevent missing alert from crashing script
+  * [ccfb3b4] TT#56376 selenium: ctr_ncos: prevent missing alert from crashing script
+  * [70f55fa] TT#56376 selenium: ctr_subscriber: prevent missing alert from crashing script
+  * [e869e0b] TT#56376 selenium: ctr_customer: prevent missing alert from crashing script
+  * [01be7ca] TT#56376 selenium: reload peak times page to prevent missing edit button
+  * [e7a9b29] TT#56376 selenium: ctr_other: prevent missing alert from crashing script
+  * [6a508b2] TT#56376 selenium: fix ncos tooltip crashing the test
+
+  [ Rene Krenn ]
+  * [6e77eff] TT#64701 remove customer_fraud_events.pm virtualview
+
+  [ Kirill Solomko ]
+  * [2d23984] TT#64605 add usrloc_expires_type support
+  * [a7778d6] TT#64605 api-subscriberregistrations.t: adjust conf path
+  * [d14f0bf] Revert "TT#64605 api-subscriberregistrations.t: adjust conf path"
+  * [5ed34ea] Revert "TT#64605 add usrloc_expires_type support"
+  * [882849f] TT#65505 deflate RedisLocation from unixtime to datetime
+  * [3dbbeb8] TT#66052 add RedisLocation versioning 1
+
+  [ Alexander Lutay ]
+  * [86fc323] TT#56376 Fix e869e0b2: remove git conflict markers (sync with trunk codebase)
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 01 Sep 2019 21:51:12 +0200
+
 ngcp-panel (7.5.1.0+0~mr7.5.1.0) unstable; urgency=medium
 
   [ Rene Krenn ]
