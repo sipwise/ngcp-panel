@@ -95,6 +95,8 @@ $d->find_element('//*[@id="status"]/option[contains(text(), "active")]')->click(
 $d->find_element('#save', 'css')->click();
 
 diag("Search for Customer");
+$compstring = "Customer #" . $custnum . " successfully updated";
+is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), $compstring,  "Correct Alert was shown");
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
