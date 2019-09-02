@@ -58,7 +58,7 @@ $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $
 diag('Check Admin details');
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Name is correct");
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[6][contains(text(), "0")]'), "Read-Only value is correct");
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[7][contains(text(), "0")]'), "Read-Only value is correct");
 
 diag('Edit Admin details');
 $adminname = ("admin" . int(rand(100000)) . "test");
