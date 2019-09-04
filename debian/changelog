@@ -1,3 +1,12 @@
+ngcp-panel (1.14.12.2+0~mr4.5.12.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [cb931a7] TT#57900 scenario in balanceintervals.t fails on fast hardware
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 04 Sep 2019 14:01:34 +0200
+
 ngcp-panel (1.14.12.1+0~mr4.5.12.1) unstable; urgency=medium
 
   * New release.
