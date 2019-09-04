@@ -142,7 +142,7 @@
         contact: test_1
         subscriber_id: ${subscriber_id}
         q: '0.5'
-        expires: 1567412713
+        expires: '2019-09-03 12:00:00'
     retain:
         subscriberregistrations_path1: header.location
     conditions:
@@ -161,7 +161,7 @@
         contact: test_2
         subscriber_id: ${subscriber_id}
         q: '0.5'
-        expires: 1567412713
+        expires: '2019-09-03 12:00:00'
         enabled: 1
     retain:
         subscriberregistrations_path2: header.location
@@ -181,7 +181,7 @@
         contact: test_3
         subscriber_id: ${subscriber_id}
         q: '0.5'
-        expires: 1567412713
+        expires: '2019-09-03 12:00:00'
     retain:
         subscriberregistrations_path3: header.location
     conditions:
@@ -260,7 +260,7 @@
         contact: test_4
         subscriber_id: ${subscriber_id}
         q: '0.5'
-        expires: 1567412713
+        expires: '2019-09-03 12:00:00'
     retain:
         subscriberregistrations_path4: header.location
     conditions:
@@ -347,7 +347,7 @@
         contact: test_5
         subscriber_id: ${subscriber_id}
         q: '2'
-        expires: 1567412713
+        expires: '2019-09-03 12:00:00'
     retain:
         subscriberregistrations_path5: header.location
     conditions:
@@ -366,7 +366,7 @@
         contact: test_5
         subscriber_id: ${subscriber_id}
         q: '-2'
-        expires: 1567412713
+        expires: '2019-09-03 12:00:00'
     retain:
         subscriberregistrations_path5: header.location
     conditions:
@@ -384,7 +384,7 @@
     content:
         contact: test_5
         subscriber_id: ${subscriber_id}
-        expires: 1567412713
+        expires: '2019-09-03 12:00:00'
     retain:
         subscriberregistrations_path5: header.location
     conditions:
