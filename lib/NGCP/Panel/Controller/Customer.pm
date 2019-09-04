@@ -288,6 +288,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
+    my $now = $c->stash->{now};
     my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, now => $now, contract_id => $contract_id, )
         ->search({
             'me.id' => $contract_id,
@@ -331,7 +332,6 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
     }
 
-    my $now = $c->stash->{now};
     my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_rs->first->get_column('bmid'));
     my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
     my $billing_mapping = $contract_rs->first->billing_mappings->find($contract_rs->first->get_column('bmid'));
