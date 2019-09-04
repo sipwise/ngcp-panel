@@ -38,26 +38,68 @@
         ok:
             '${domain}.id': defined
 
-#get a customer for testing
+#create a BillingProfile
 -
-    name: get a customer for testing
+    name: create a BillingProfile
     type: item
-    method: GET
-    path: '/api/customers/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    method: POST
+    path: /api/billingprofiles/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        name: test profile ${unique_id}
+        handle: test_profile_handle${unique_id}
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
     retain:
-        customer: body
+        billing_profile_id: header.location
+
+#create a Customer Contact
+-
+    name: create a Customer Contact
+    type: item
+    method: POST
+    path: /api/customercontacts/
+    header:
+        Content-Type: application/json
+    content:
+        firstname: cust_contact_first
+        lastname: cust_contact_last
+        email: cust_contact@custcontact.invalid
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
     perl_code: !!perl/code |
         {
             my ($retained) = @_;
-            my $customer = $retained->{customer}->{'_embedded'}->{'ngcp:customers'}->[0];
-            $retained->{customer} = $customer;
-            $retained->{customer_id} = $customer->{id};
-        } 
-    conditions:
-        is:
-            code: 200
-        ok:
-            '${customer}.id': defined
+            $retained->{customer_type} = 'sipaccount';
+        }
+    retain:
+        customer_contact_path: header.location
+        customer_contact_id: header.location
+
+#create Customer
+-
+    name: include create Customer
+    type: include
+    file: CreateCustomer.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+
+            $retained->{customer_content} = {
+                status => 'active',
+                contact_id => $retained->{customer_contact_id},
+                billing_profile_id => $retained->{billing_profile_id},
+                type => 'sipaccount',
+                max_subscribers => undef,
+                external_id => undef
+            };
+        }
 
 #get a subscriberprofile for testing
 -
@@ -73,6 +115,7 @@
             my $subscriberprofile = $retained->{subscriberprofile}->{'_embedded'}->{'ngcp:subscriberprofiles'}->[0];
             $retained->{subscriberprofile} = $subscriberprofile;
             $retained->{subscriberprofile_id} = $subscriberprofile->{id};
+            $retained->{customer_id} = $retained->{customer}->{id};
         } 
     conditions:
         is:
