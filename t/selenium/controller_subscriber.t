@@ -74,7 +74,16 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Trying to find Subscriber');
 is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber successfully created",  "Correct Alert was shown");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() eq "Customers"){ #workaround for misbehaving ngcp panel randomly throwing test out of customer details
+    $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
+    $d->fill_element('#Customer_table_filter input', 'css', $customerid);
+    ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
+    $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
+}
+if($d->find_element_by_xpath('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]/../../../div')->get_attribute('class', 1) eq 'accordion-group') {
+    $d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+}
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', $username);
