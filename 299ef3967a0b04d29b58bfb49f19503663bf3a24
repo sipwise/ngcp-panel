@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45edae14_b13ab4de",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-09-05T11:19:55Z",
+      "side": 1,
+      "message": "Nico ensure it is not a bug in JS/ngcp-panel.\nThe behavious should be static here. LGTM.",
+      "range": {
+        "startLine": 7,
+        "startChar": 19,
+        "endLine": 7,
+        "endChar": 68
+      },
+      "revId": "299ef3967a0b04d29b58bfb49f19503663bf3a24",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
