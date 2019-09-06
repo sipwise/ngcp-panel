@@ -1193,6 +1193,9 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
 sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        unless($c->config->{features}->{voucher});
+
     my $contract = $c->stash->{contract};
     my $now = $c->stash->{now};
     my $posted = ($c->request->method eq 'POST');
