@@ -30,6 +30,7 @@ if($testplan eq $dir . 'runner.t') {
         $dir . 'controller_customer.t',
         $dir . 'controller_domain.t',
         $dir . 'controller_emergency.t',
+        $dir . 'controller_header.t',
         $dir . 'controller_invoice.t',
         $dir . 'controller_ncos.t',
         $dir . 'controller_other.t',
