@@ -19,15 +19,15 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
 
-    $c->detach('/denied_page')
-        unless($c->config->{features}->{voucher});
-
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
 sub voucher_list :Chained('/') :PathPart('voucher') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
+
+    $c->detach('/denied_page')
+        unless($c->config->{features}->{voucher});
 
     my $voucher_rs = $c->model('DB')->resultset('vouchers'); #->search_rs(undef, {
             #'join' => { 'customer' => 'contact'},

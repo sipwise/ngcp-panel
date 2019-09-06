@@ -446,7 +446,7 @@ $(function() {
                 [% IF (c.user.roles == 'admin' || c.user.roles == 'reseller' ||
                        c.user.roles == 'ccaradmin' || c.user.roles == 'ccare') && !c.user.read_only -%]
                 <span>
-                    [% IF c.user.billing_data -%]
+                    [% IF c.user.billing_data && c.config.features.voucher -%]
                     <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/topup_voucher", [contract.id]) %]"><i class="icon-repeat"></i> [% c.loc('Top-up Voucher') %]</a>
                     [% END -%]
                     <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/topup_cash", [contract.id]) %]"><i class="icon-repeat"></i> [% c.loc('Top-up Cash') %]</a>
