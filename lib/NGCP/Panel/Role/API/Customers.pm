@@ -18,7 +18,7 @@ use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Form::Contract::CustomerAPI qw();
 
 sub _item_rs {
-    my ($self, $c, $now) = @_;
+    my ($self, $c, $now, $id) = @_;
 
     my $contract_id;
     if (my $external_id = $c->req->params->{external_id}) {
@@ -129,7 +129,7 @@ sub hal_from_customer {
 
 sub customer_by_id {
     my ($self, $c, $id, $now) = @_;
-    my $customers = $self->item_rs($c,$now);
+    my $customers = $self->item_rs($c,$now,$id);
     return $customers->find($id);
 }
 

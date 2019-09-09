@@ -16,12 +16,13 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Form::Contract::ContractAPI qw();
 
 sub _item_rs {
-    my ($self, $c, $include_terminated,$now) = @_;
+    my ($self, $c, $include_terminated,$now,$id) = @_;
 
     my $item_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'),
         include_terminated => (defined $include_terminated && $include_terminated ? 1 : 0),
         now => $now,
+        contract_id => $id,
     );
     $item_rs = $item_rs->search({
             'contact.reseller_id' => undef
@@ -105,7 +106,7 @@ sub hal_from_contract {
 
 sub contract_by_id {
     my ($self, $c, $id, $include_terminated, $now) = @_;
-    my $item_rs = $self->item_rs($c,$include_terminated,$now);
+    my $item_rs = $self->item_rs($c,$include_terminated,$now,$id);
     return $item_rs->find($id);
 }
 
