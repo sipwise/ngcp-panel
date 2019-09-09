@@ -451,6 +451,7 @@ $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 
 diag("Go to Customers page");
+$d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="main-nav"]'));
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Customers", 'link_text')->click();
