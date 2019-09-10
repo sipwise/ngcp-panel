@@ -41,7 +41,7 @@ $d->find_element('#mod_close', 'css')->click();
 $c->create_rw_ruleset($rulesetname, $resellername);
 
 diag('Search for our new Rewrite Rule Set');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
@@ -59,7 +59,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'For very testing purposes')
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for our new Rewrite Rule Set');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
@@ -100,7 +100,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been created');
 $d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully created",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "Not International to E.164")]'), "Description is correct");
@@ -112,7 +112,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been edited');
 $d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
@@ -127,7 +127,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been created');
 $d->find_element('Inbound Rewrite Rules for Callee', 'link_text')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully created",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "Not International to E.164")]'), "Description is correct");
@@ -139,7 +139,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been edited');
 $d->find_element('Inbound Rewrite Rules for Callee', 'link_text')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
@@ -161,7 +161,7 @@ ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]/
 diag('Delete Rule');
 $d->move_and_click('//*[@id="collapse_icaller"]//table//tr[1]//td//a[text()[contains(., "Delete")]]', 'xpath', '//*[@id="masthead"]//div/h2');
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully deleted",  "Correct Alert was shown");
 =cut
 diag('Go Back to the Rewrite Rule set Page');
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -179,7 +179,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'Im a clone, beep boop');
 $d->find_element('//*[@id="clone"]')->click();
 
 diag('Search for the cloned Rewrite Rule Set');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully cloned",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully cloned",  "Correct Alert was shown");
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetclonename);
@@ -221,7 +221,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if correct ruleset has been selected');
 $d->find_element('Number Manipulations', 'link_text')->click;
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference rewrite_rule_set successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference rewrite_rule_set successfully updated",  "Correct Alert was shown");
 ok($d->wait_for_text('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td[4]/select/option[@selected="selected"]', $rulesetname), 'rewrite_rule_set value has been set');
 
 diag('Delete Domain');
@@ -236,7 +236,7 @@ ok($d->wait_for_text('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]/td[3]', $rul
 
 diag('Open delete dialog and press delete');
 $c->delete_rw_ruleset($rulesetname, 0);
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
 ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Ruleset was deleted');
 

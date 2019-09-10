@@ -46,7 +46,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'nice desc');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search Sound Set');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#sound_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', $soundsetname);
@@ -64,7 +64,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'very nice desc');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search Sound Set');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#sound_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', $soundsetname);
@@ -84,7 +84,7 @@ $d->select_if_unselected('//*[@id="loopplay"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if loop setting was enabled');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound handle successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound handle successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td//input[@checked="checked"]'), 'loop for conference_first was activated');
 
 diag('Load the default files');
@@ -92,7 +92,7 @@ $d->find_element('Load Default Files', 'link_text')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check in "conference" if settings are correct');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully loaded with default files.",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully loaded with default files.",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td//input[@checked="checked"]'), 'loop for conference_first is still activated');
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td[not(contains(text(), "conference_first.wav"))]'), 'conference_first.wav was not loaded');
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_greeting")]/..//td//input[not(@checked="checked")]'), 'loop for conference_greeting is not activated');
@@ -104,7 +104,7 @@ $d->select_if_unselected('//*[@id="replace_existing"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check in "conference" if settings are correct');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully loaded with default files.",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully loaded with default files.",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td//input[not(@checked="checked")]'), 'loop for conference_first is not activated');
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td[contains(text(), "conference_first.wav")]'), 'conference_first.wav was loaded');
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_greeting")]/..//td//input[not(@checked="checked")]'), 'loop for conference_greeting is not activated');
@@ -117,7 +117,7 @@ $d->select_if_unselected('//*[@id="replace_existing"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check in "conference" if settings are correct');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully loaded with default files.",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully loaded with default files.",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td//input[@checked="checked"]'), 'loop for conference_first was activated');
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td[contains(text(), "conference_first.wav")]'), 'conference_first.wav was loaded');
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_greeting")]/..//td//input[@checked="checked"]'), 'loop for conference_greeting was activated');
@@ -143,7 +143,7 @@ $d->move_and_click('//*[@id="sound_set_table"]//tr[1]//td//a[contains(text(), "D
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Sound Set was deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Sound set successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', $soundsetname);
 ok($d->find_element_by_css('#sound_set_table tr > td.dataTables_empty', 'css'), 'Sound Set was deleted');
 

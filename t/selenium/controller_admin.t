@@ -50,7 +50,7 @@ $d->fill_element('//*[@id="password"]', 'xpath', $adminpwd);
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for our new admin');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully created',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully created',  "Correct Alert was shown");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
@@ -69,7 +69,7 @@ $d->select_if_unselected('//*[@id="read_only"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Admin details');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  "Correct Alert was shown");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
@@ -132,7 +132,7 @@ $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(te
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if admin is deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully deleted',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully deleted',  "Correct Alert was shown");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Admin was deleted');
 

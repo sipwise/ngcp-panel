@@ -45,7 +45,7 @@ $d->fill_element('//*[@id="name"]', 'xpath', $timesetname);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for our new Timeset");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
@@ -61,7 +61,7 @@ $d->fill_element('//*[@id="name"]', 'xpath', $timesetname);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for our new Timeset");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
@@ -99,7 +99,7 @@ $d->select_if_unselected('//*[@id="byday.weekdays.0"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for new Event");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Hello, im a special Event =)');
@@ -118,7 +118,7 @@ $d->fill_element('//*[@id="endtime_datetimepicker"]', 'xpath', '13:00:00');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for Event");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Very important event');
@@ -149,7 +149,7 @@ $d->move_and_click('//*[@id="timeset_table"]//tr[1]/td//a[contains(text(), "Dele
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Time set was deleted");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Time set was deleted');
 
