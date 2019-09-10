@@ -127,8 +127,17 @@ $d->select_if_unselected('//table[@id="countryidtable"]/tbody/tr[1]/td[contains(
 $d->find_element('#save', 'css')->click();
 
 diag("Check contact details");
-$d->find_element('//div[contains(@class,"accordion-heading")]//a[contains(text(),"Contact Details")]')->click();
 is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), 'Contact successfully changed',  "Correct Alert was shown");
+if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() eq "Customers"){ #workaround for misbehaving ngcp panel randomly throwing test out of customer details
+    $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
+    $d->fill_element('#Customer_table_filter input', 'css', $customerid);
+    ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
+    $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
+}
+if($d->find_element_by_xpath('//*[@id="customer_details"]//div//a[contains(text(), "Contact Details")]/../../../div')->get_attribute('class', 1) eq 'accordion-group') {
+    $d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contact Details")]')->click();
+}
 ok($d->wait_for_text('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Email")]/../td[2]', $contactmail), "Email is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Name")]/../td[contains(text(), "Alice")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Company")]/../td[contains(text(), "Sipwise")]'), "Company is correct");
