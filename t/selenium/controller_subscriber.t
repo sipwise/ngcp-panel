@@ -73,7 +73,7 @@ $d->find_element('//*[@id="password"]')->send_keys('testing1234'); #using normal
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Trying to find Subscriber');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber successfully created",  "Correct Alert was shown");
 if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() eq "Customers"){ #workaround for misbehaving ngcp panel randomly throwing test out of customer details
     $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
     ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
@@ -114,7 +114,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'This is a description. It d
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Trying to find Subscriber profile set');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber profile set successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber profile set successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
@@ -132,7 +132,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'Very Good description here'
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Trying to find Subscriber profile set');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber profile set successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber profile set successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
@@ -161,7 +161,7 @@ $d->select_if_unselected('//*[@id="attribute.ncos"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for Profile');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber profile successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber profile successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
@@ -179,7 +179,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'Very very useful descriptio
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for Profile');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber profile successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber profile successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
@@ -217,7 +217,7 @@ $d->select_if_unselected('//*[@id="profile_setidtable"]/tbody/tr/td[5]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if change was applied');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Successfully updated subscriber",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully updated subscriber",  "Correct Alert was shown");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Subscribers", 'link_text')->click();
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -236,7 +236,7 @@ $d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click(
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if subscriber got locked');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Successfully updated subscriber",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully updated subscriber",  "Correct Alert was shown");
 #ok($d->find_element_by_xpath('//div[text()[contains(., "Subscriber status is locked")]]'), 'Message "Subscriber status is locked" was shown');
 #ok($d->find_element_by_xpath('//div[text()[contains(., "Subscriber is locked for global")]]'), 'Message "Subscriber is locked for global" was shown');
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), "Status is correct");
@@ -250,7 +250,7 @@ $d->find_element('//*[@id="status"]/option[contains(text(), "active")]')->click(
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if subscriber got unlocked');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Successfully updated subscriber",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully updated subscriber",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "active")]'), "Status is correct");
 
 diag('Go to Subscriber preferences');
@@ -267,7 +267,7 @@ $d->find_element('//*[@id="language"]/option[contains(text(), "German")]')->clic
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if language has been applied');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Preference language successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference language successfully updated",  "Correct Alert was shown");
 $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Internals")]'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "language")]/../td/select/option[contains(text(), "German") and @selected="selected"]'), '"German" has been selected');
 
@@ -282,7 +282,7 @@ $d->select_if_unselected('//*[@id="record_call"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if call recording was enabled');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Preference record_call successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference record_call successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "record_call")]/../td//input[@checked="checked"]'), "Call recording was enabled");
 
 diag('Trying to add a simple call forward');
@@ -346,7 +346,7 @@ diag('Save');
 $d->find_element('//*[@id="cf_actions.save"]')->click();
 
 diag('Check if call-forward has been applied');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Successfully saved Call Forward",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully saved Call Forward",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $bsetname . ')]'), 'B-Set was selected');
 ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $destinationname . ')]'), 'Destination set was selected');
 
@@ -361,7 +361,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if value was set');
 $d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Preference block_in_mode successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference block_in_mode successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_mode")]/../td/input[@checked="checked"]'), "Setting is correct");
 
 diag('Edit block_in_list');
@@ -392,7 +392,7 @@ $d->find_element('//*[@id="block_in_clir"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if value was set');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Preference block_in_clir successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference block_in_clir successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_clir")]/../td/input[@checked="checked"]'), "Setting is correct");
 
 diag('Go to Subscribers Page');
@@ -418,7 +418,7 @@ $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(te
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Subscriber has been deleted');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Successfully terminated subscriber",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully terminated subscriber",  "Correct Alert was shown");
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
 $d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
@@ -446,7 +446,7 @@ $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Subscriber Profile Set has been deleted');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber profile set successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber profile set successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 

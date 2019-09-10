@@ -45,7 +45,7 @@ $d->fill_element('//*[@id="label"]', 'xpath', 'label');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search Call list suppression');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Call list suppression successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Call list suppression successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
@@ -71,7 +71,7 @@ $d->fill_element('//*[@id="label"]', 'xpath', 'text');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search Call list suppression');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Call list suppression successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Call list suppression successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
@@ -98,7 +98,7 @@ $d->move_and_click('//*[@id="call_list_suppression_table"]//tr[1]//td//a[contain
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Call list suppression was deleted');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Call list suppression successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Call list suppression successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
 ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empty', 'css'), 'Call list suppression has been deleted');
 
@@ -127,7 +127,7 @@ $d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for Phonebook entry');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Phonebook entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', $phonebookname);
@@ -146,7 +146,7 @@ $d->fill_element('//*[@id="number"]', 'xpath', '9876543210');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for Phonebook entry');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Phonebook entry successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', $phonebookname);
@@ -171,7 +171,7 @@ $d->move_and_click('//*[@id="phonebook_table"]//tr[1]//td//a[contains(text(), "D
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Phonebook entry has been deleted');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Phonebook entry successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', $phonebookname);
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Phonebook entry has been deleted');
 
@@ -201,7 +201,7 @@ $d->fill_element('//*[@id="email"]', 'xpath', $contactmail);
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search Contact');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Contact successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
@@ -232,7 +232,7 @@ $d->select_if_unselected('//table[@id="countryidtable"]/tbody/tr[1]/td[contains(
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search Contact');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Contact successfully changed",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully changed",  "Correct Alert was shown");
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
@@ -259,7 +259,7 @@ $d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Del
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Contact was deleted');
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Contact successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Contact has been deleted');
 
