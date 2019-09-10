@@ -59,13 +59,12 @@ sub send_fax {
     } else {
         $number = $sender;
     }
-    {
+    if ($c->config->{faxserver}{number_rewrite_enable} eq 'yes') {
         my ($user, $domain) = split(/\@/, $args{destination});
         $user =~ s/^sips?://;
         $user = uri_unescape(NGCP::Panel::Utils::Subscriber::apply_rewrite(
             c => $c, subscriber => $subscriber, number => $user, direction => 'callee_in'
         ));
-
         if ($user) {
             if($domain && $domain ne $subscriber->domain->domain) {
                 $user = $user . '@' . $domain;
@@ -75,26 +74,26 @@ sub send_fax {
             $args{destination} = $user;
 
         } else {
-            $c->log->debug('number normalization: caller_in apply_rewrite result is empty for '.$args{destination}.', billing subscriber id '.$subscriber->id.'.');    
+            $c->log->debug('number normalization: caller_in apply_rewrite result is empty for '.$args{destination}.', billing subscriber id '.$subscriber->id.'.');
         }
     }
 
     $sendfax_args{caller} = $number;
     $sendfax_args{callee} = $args{destination};
 
-    if($args{quality}) {#low|medium|extended
+    if ($args{quality}) {#low|medium|extended
         $sendfax_args{quality} = $args{quality};
     }
-    if($args{pageheader}) {
+    if ($args{pageheader}) {
         $sendfax_args{header} = $args{pageheader};
     }
 
     $sendfax_args{files} = [];
-    if($args{upload}){
+    if ($args{upload}){
         push @{$sendfax_args{files}}, eval { $args{upload}->tempname };
         $c->log->debug('error to retrieve tempfile of upload: ' . @_) if @_;
     }
-    if($args{data}){
+    if ($args{data}){
         $sendfax_args{input} = [\$args{data}];
     }
     my $client = new NGCP::Fax;
