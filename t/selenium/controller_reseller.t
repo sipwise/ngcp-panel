@@ -39,7 +39,7 @@ $d->find_element('#mod_close', 'css')->click();
 $c->create_reseller($resellername, $contractid);
 
 diag("Search our new reseller");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created.",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created.",  "Correct Alert was shown");
 $d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
@@ -58,7 +58,7 @@ $d->find_element('//*[@id="status"]/option[@value="locked"]')->click();
 $d->find_element('#save', 'css')->click();
 
 diag("Search our new reseller");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
 $d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
@@ -70,7 +70,7 @@ ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr//td[contains(text()
 diag("Go to Details and check if 'Reseller is locked' message appears");
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
 ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Reseller Details")]'), "We are on the correct Page");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller is locked",  "'Reseller is locked' message appears");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller is locked",  "'Reseller is locked' message appears");
 $d->find_element("Back", 'link_text')->click();
 
 diag("Unlock reseller");
@@ -84,7 +84,7 @@ $d->find_element('//*[@id="status"]/option[@value="active"]')->click();
 $d->find_element('#save', 'css')->click();
 
 diag("Check Reseller Details");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
 $d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
@@ -111,7 +111,7 @@ $d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Searching Phonebook entry");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully created",  "Correct Alert was shown");
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
 $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -129,7 +129,7 @@ $d->fill_element('//*[@id="number"]', 'xpath', '0987654321');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Searching Phonebook entry");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully updated",  "Correct Alert was shown");
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
 $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -168,7 +168,7 @@ $d->fill_element('//*[@id="attachment_name"]', 'xpath', 'Random Character');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Searching new Template');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Email template successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Email template successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
@@ -190,7 +190,7 @@ $d->fill_element('//*[@id="attachment_name"]', 'xpath', '=)');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Searching new Template');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Email template successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Email template successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
@@ -216,7 +216,7 @@ $d->move_and_click('//*[@id="email_template_table"]//tr[1]/td//a[contains(text()
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Template Email was deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Email template successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Email template successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', $templatename);
 ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'css'), 'Template was deleted');
 
@@ -229,7 +229,7 @@ ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[2]', $contractid)
 
 diag('Open delete dialog and press delete');
 $c->delete_reseller_contract($contractid, 0);
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully terminated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully terminated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
 ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty'), 'Reseller contract was deleted');
 
@@ -242,7 +242,7 @@ ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellerna
 
 diag('Open delete dialog and press delete');
 $c->delete_reseller($resellername, 0);
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully terminated reseller",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully terminated reseller",  "Correct Alert was shown");
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller was deleted');
 
@@ -255,7 +255,7 @@ if($d->find_element_by_xpath('//*[@id="reseller_details"]//div//a[contains(text(
 }
 $resellername = $d->get_text('//*[@id="Reseller_table"]/tbody/tr/td[2]');
 my $temp = substr($resellername, 8);
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created with login Default" . $temp . " and password defaultresellerpassword, please review your settings below",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created with login Default" . $temp . " and password defaultresellerpassword, please review your settings below",  "Correct Alert was shown");
 $d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
 
 diag('Get Contract Number');
@@ -282,7 +282,7 @@ $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Reseller Contract was terminated");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully changed!",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully changed!",  "Correct Alert was shown");
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
 ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Reseller Contract was terminated');
 
@@ -302,7 +302,7 @@ $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Reseller was terminated");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Reseller was deleted');
 
