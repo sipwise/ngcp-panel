@@ -51,7 +51,7 @@ sub create_domain {
     $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
     $self->driver->fill_element('//*[@id="domain"]', 'xpath', $name);
     $self->driver->find_element('//*[@id="save"]')->click();
-    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully created",  "Correct Alert was shown");
+    is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully created",  "Correct Alert was shown");
 }
 
 sub delete_domain {
@@ -73,7 +73,7 @@ sub delete_domain {
         popup_confirm_cancel($self, 'We are NOT going to delete this domain');
     } else {
         popup_confirm_ok($self, 'We are going to delete this domain');
-        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully deleted!",  "Correct Alert was shown");
+        is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully deleted!",  "Correct Alert was shown");
     };
 }
 
@@ -95,7 +95,7 @@ sub create_reseller {
     $self->driver->select_if_unselected('//*[@id="contractidtable"]/tbody/tr/td[5]/input');
     $self->driver->fill_element('//*[@id="name"]', 'xpath', $name);
     $self->driver->find_element('//*[@id="save"]')->click();
-    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created.",  "Correct Alert was shown");
+    is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created.",  "Correct Alert was shown");
 }
 
 sub create_reseller_contract {
@@ -145,7 +145,7 @@ sub delete_reseller {
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller');
     } else {
         popup_confirm_ok($self, 'We are going to delete this reseller');
-        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully terminated reseller",  "Correct Alert was shown");
+        is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully terminated reseller",  "Correct Alert was shown");
     };
 }
 
@@ -168,7 +168,7 @@ sub delete_reseller_contract {
         popup_confirm_cancel($self, 'We are NOT going to delete this reseller contract');
     } else {
         popup_confirm_ok($self, 'We are going to delete this reseller contract');
-        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully terminated",  "Correct Alert was shown");
+        is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully terminated",  "Correct Alert was shown");
     };
 }
 
@@ -191,7 +191,7 @@ sub create_rw_ruleset {
     $self->driver->fill_element('//*[@id="name"]', 'xpath', $rulesetname);
     $self->driver->fill_element('//*[@id="description"]', 'xpath', 'For testing purposes');
     $self->driver->find_element('//*[@id="save"]')->click();
-    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully created",  "Correct Alert was shown");
+    is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully created",  "Correct Alert was shown");
 }
 
 sub delete_rw_ruleset {
@@ -213,7 +213,7 @@ sub delete_rw_ruleset {
         popup_confirm_cancel($self, 'We are NOT going to delete this ruleset');
     } else {
         popup_confirm_ok($self, 'We are going to delete this ruleset');
-        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully deleted",  "Correct Alert was shown");
+        is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule set successfully deleted",  "Correct Alert was shown");
     };
 }
 
@@ -271,7 +271,7 @@ sub delete_customer {
         popup_confirm_cancel($self, 'We are NOT going to terminate this customer');
     } else {
         popup_confirm_ok($self, 'We are going to terminate this customer');
-        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Customer successfully terminated",  "Correct Alert was shown");
+        is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Customer successfully terminated",  "Correct Alert was shown");
     };
 }
 
@@ -296,7 +296,7 @@ sub create_contact {
     $self->driver->fill_element('//*[@id="email"]', 'xpath', $contactmail);
     $self->driver->fill_element('//*[@id="company"]', 'xpath', 'SIPWISE');
     $self->driver->find_element('//*[@id="save"]')->click();
-    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully created",  "Correct Alert was shown");
+    is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully created",  "Correct Alert was shown");
 }
 
 sub delete_contact {
@@ -318,7 +318,7 @@ sub delete_contact {
         popup_confirm_cancel($self, 'We are NOT going to terminate this contact');
     } else {
         popup_confirm_ok($self, 'We are going to terminate this contact');
-        is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully terminated",  "Correct Alert was shown");
+        is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contact successfully terminated",  "Correct Alert was shown");
     };
 }
 
@@ -342,7 +342,7 @@ sub create_billing_profile {
     $self->driver->fill_element('[name=handle]', 'css', $billingname);
     $self->driver->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
     $self->driver->find_element('//div[contains(@class,"modal")]//input[@type="submit"]')->click();
-    is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Billing profile successfully created",  "Correct Alert was shown");
+    is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Billing profile successfully created",  "Correct Alert was shown");
 }
 
 sub delete_billing_profile {
@@ -364,7 +364,7 @@ sub delete_billing_profile {
         popup_confirm_cancel($self, 'We are NOT going to terminate this billing profile');
     } else {
         popup_confirm_ok($self, 'We are going to terminate this billing profile');
-            is($self->driver->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Billing profile successfully terminated",  "Correct Alert was shown");
+            is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Billing profile successfully terminated",  "Correct Alert was shown");
     };
 }
 

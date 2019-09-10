@@ -51,7 +51,7 @@ $d->fill_element('//*[@id="description"]' , 'xpath', 'This is a nice description
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for Header Rule set');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule set successfully created',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule set successfully created',  "Correct Alert was shown");
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#header_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', $headername);
@@ -69,7 +69,7 @@ $d->fill_element('//*[@id="description"]' , 'xpath', 'This is a very nice descri
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Search for Header Rule set');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule set successfully updated',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule set successfully updated',  "Correct Alert was shown");
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#header_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', $headername);
@@ -96,7 +96,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'this is a nice description'
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "100")]'), "Priority is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "' . $headerrule . '")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "this is a nice description")]'), "Reseller is correct");
@@ -117,7 +117,7 @@ $d->select_if_unselected('//*[@id="stopper"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully updated',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully updated',  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "1")]'), "Priority is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "' . $headerrule . '")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "this is a very nice description")]'), "Reseller is correct");
@@ -132,7 +132,9 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'this is a nice description'
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Move new entry up');
-$d->move_and_click('//*[@id="header_rules_table"]//tr/td[contains(text(), "second")]/../td/div/a[1]', 'xpath', '//*[@id="header_rules_table_filter"]//input');
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
+$d->refresh();
+$d->move_and_click('//*[@id="header_rules_table"]//tr[2]//td//a[1]', 'xpath', '//*[@id="header_rules_table_filter"]/label/input');
 
 diag('Check if Entry has moved up');
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]/td[3]', 'second'), "Entry has been moved");
@@ -146,7 +148,7 @@ $d->move_and_click('//*[@id="header_rules_table"]//tr[1]//td//a[contains(text(),
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Header Rule was deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully deleted',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully deleted',  "Correct Alert was shown");
 $d->fill_element('//*[@id="header_rules_table_filter"]//input', 'xpath', 'second');
 ok($d->find_element_by_css('#header_rules_table tr > td.dataTables_empty', 'css'), 'Header Rule was deleted');
 
@@ -169,7 +171,7 @@ $d->find_element('//*[@id="rwr_dp"]/option[@value="caller_in_dpid"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully created',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully created',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="header_rule_conditions_table"]//tr[1]//td[4]', $headercondition), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "header")]'), "Match is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "full")]'), "Part is correct");
@@ -196,7 +198,7 @@ $d->fill_element('//*[@id="values.0.value"]', 'xpath', 'randomvalue');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully updated',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully updated',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="header_rule_conditions_table"]//tr[1]//td[4]', $headercondition), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "avp")]'), "Match is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "port")]'), "Part is correct");
@@ -216,8 +218,8 @@ $d->move_and_click('//*[@id="header_rule_conditions_table"]//tr[1]//td//a[contai
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Header Rule Condition was deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully deleted',  "Correct Alert was shown");
 ok($d->find_element_by_css('#header_rule_conditions_table tr > td.dataTables_empty', 'css'), 'Header Rule Condition was deleted');
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule condition successfully deleted',  "Correct Alert was shown");
 
 diag('Go to Header Rule Actions');
 $d->find_element('Actions', 'link_text')->click();
@@ -237,7 +239,7 @@ $d->find_element('//*[@id="rwr_dp"]/option[@value="caller_in_dpid"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully created',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully created',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="header_rule_actions_table"]/tbody/tr[1]/td[3]', $headeraction), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "full")]'), "Header Part is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "set")]'), "Type is correct");
@@ -260,7 +262,7 @@ $d->unselect_if_selected('//*[@id="enabled"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully updated',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully updated',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="header_rule_actions_table"]/tbody/tr[1]/td[3]', $headeraction), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "port")]'), "Header Part is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[contains(text(), "add")]'), "Type is correct");
@@ -275,7 +277,9 @@ $d->fill_element('//*[@id="c_header"]', 'xpath', 'second');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Move new entry up');
-$d->move_and_click('//*[@id="header_rule_actions_table"]//tr/td[contains(text(), "second")]/../td/div/a[1]', 'xpath', '//*[@id="header_rule_actions_table_filter"]//input');
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully created',  "Correct Alert was shown");
+$d->refresh();
+$d->move_and_click('//*[@id="header_rule_actions_table"]//tr[2]//td//a[1]', 'xpath', '//*[@id="header_rule_actions_table_filter"]//input');
 
 diag('Check if Entry has moved up');
 ok($d->wait_for_text('//*[@id="header_rule_actions_table"]//tr[1]/td[3]', 'second'), "Entry has been moved");
@@ -289,7 +293,7 @@ $d->move_and_click('//*[@id="header_rule_actions_table"]//tr[1]//td//a[contains(
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Header Rule Action was deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully deleted',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule action successfully deleted',  "Correct Alert was shown");
 $d->fill_element('//*[@id="header_rule_actions_table_filter"]//input', 'xpath', $headeraction);
 ok($d->find_element_by_css('#header_rule_actions_table tr > td.dataTables_empty', 'css'), 'Header Rule Condition was deleted');
 
@@ -306,7 +310,7 @@ $d->move_and_click('//*[@id="header_rule_set_table"]//tr[1]//td//a[contains(text
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag('Check if Header Rule set was deleted');
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule set successfully deleted',  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule set successfully deleted',  "Correct Alert was shown");
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', $headername);
 ok($d->find_element_by_css('#header_rule_set_table tr > td.dataTables_empty', 'css'), 'Header Rule set was deleted');
 

@@ -60,7 +60,7 @@ $d->find_element('#save', 'css')->click();
 
 diag('Check if value has been applied');
 $d->find_element("Access Restrictions", 'link_text')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference concurrent_max successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference concurrent_max successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), "Value has been applied");
 
 diag("Click edit for the preference allowed_ips");
@@ -115,7 +115,7 @@ $d->select_if_unselected('//*[@id="transcode_opus_mono"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Opus Mono was enabled");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference transcode_opus_mono successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference transcode_opus_mono successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//input[@checked="checked"]'), "Opus mono was enabled");
 
 diag("Change Opus Mono Bitrate");
@@ -128,7 +128,7 @@ $d->find_element('//*[@id="opus_mono_bitrate"]/option[contains(text(), "32")]')-
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Bitrate was applied");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference opus_mono_bitrate successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference opus_mono_bitrate successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
 
 diag("Enable Opus Stereo");
@@ -139,7 +139,7 @@ $d->select_if_unselected('//*[@id="transcode_opus_stereo"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Opus Stereo was enabled");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference transcode_opus_stereo successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference transcode_opus_stereo successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//input[@checked="checked"]'), "Opus stereo was enabled");
 
 diag("Change Opus Stereo Bitrate");
@@ -152,7 +152,7 @@ $d->find_element('//*[@id="opus_stereo_bitrate"]/option[contains(text(), "32")]'
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Bitrate was applied");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference opus_stereo_bitrate successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference opus_stereo_bitrate successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
 
 diag("Open delete dialog and press cancel");
@@ -163,7 +163,7 @@ ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[3]', $domainstring)
 diag('Open delete dialog and press delete');
 $c->delete_domain($domainstring, 0);
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully deleted!",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Domain successfully deleted!",  "Correct Alert was shown");
 ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Domain was deleted');
 
 diag("This test run was successfull");
