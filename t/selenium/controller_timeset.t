@@ -46,7 +46,7 @@ $d->fill_element('//*[@id="name"]', 'xpath', $timesetname);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for our new Timeset");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
@@ -62,7 +62,7 @@ $d->fill_element('//*[@id="name"]', 'xpath', $timesetname);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for our new Timeset");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
@@ -100,7 +100,7 @@ $d->select_if_unselected('//*[@id="byday.weekdays.0"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for new Event");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Hello, im a special Event =)');
@@ -119,7 +119,7 @@ $d->fill_element('//*[@id="endtime_datetimepicker"]', 'xpath', '13:00:00');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for Event");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Very important event');
@@ -149,7 +149,7 @@ $d->select_if_unselected('//*[@id="time_setidtable"]/tbody/tr[1]/td[4]/input');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for Peering Group");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Peering group successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Peering group successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
@@ -163,7 +163,7 @@ ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[6]', $times
 diag("Delete Peering Group");
 $d->move_and_click('//*[@id="sip_peering_group_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Peering Group successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Peering Group successfully deleted",  "Correct Alert was shown");
 
 diag("Go back to Time set page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -188,7 +188,7 @@ $d->move_and_click('//*[@id="timeset_table"]//tr[1]/td//a[contains(text(), "Dele
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Time set was deleted");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Timeset entry successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Time set was deleted');
 

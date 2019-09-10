@@ -159,4 +159,26 @@ sub wait_for_attribute {
     }
     return 0;
 }
+
+sub get_text_safe {
+    my ($self, $path, $type) = @_;
+    $type = "xpath" unless $type;
+    if($type eq "css") {
+        try {
+            my $element = $self->find_element_by_css($path);
+            return $element->get_text();
+        } catch {
+            return 0;
+        };
+    } elsif($type eq "xpath"){
+        try {
+            my $element = $self->find_element_by_xpath($path);
+            return $element->get_text();
+        } catch {
+         return 0;
+        };
+    } else {
+        return 0;
+    } 
+}
 1;
