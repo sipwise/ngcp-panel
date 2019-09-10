@@ -59,7 +59,8 @@ ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[c
 
 diag('Edit Call list suppression');
 $d->move_and_click('//*[@id="call_list_suppression_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="call_list_suppression_table_filter"]//input');
-$d->find_element('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Call List Suppression")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Call List Suppression")]'), "Edit Window has been opened");
+$d->refresh();
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Call List Suppression")]'), "Edit Window has been opened");
 $d->fill_element('//*[@id="domain"]', 'xpath', $domainstring);
 $d->find_element('//*[@id="direction"]/option[@value="incoming"]')->click();
