@@ -52,7 +52,7 @@ $d->fill_element('//*[@id="name"]', 'xpath', $templatename);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for Template");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice template successfully created",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice template successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="InvoiceTemplate_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#InvoiceTemplate_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="InvoiceTemplate_table_filter"]/label/input', 'xpath', $templatename);
@@ -69,7 +69,7 @@ $d->fill_element('//*[@id="name"]', 'xpath', $templatename);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search for Template");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice template successfully updated",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice template successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="InvoiceTemplate_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#InvoiceTemplate_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="InvoiceTemplate_table_filter"]/label/input', 'xpath', $templatename);
@@ -151,7 +151,7 @@ ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[2]', $custnum), 'Cust
 ok($d->wait_for_text('//*[@id="Invoice_table"]/tbody/tr/td[3]', $contactmail), 'Customer Email is correct');
 my $invnum = $d->get_text('//*[@id="Invoice_table"]/tbody/tr/td[1]');
 $compstring = "Invoice #" . $invnum . " successfully created";
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  "Correct Alert was shown");
 
 diag("Trying to NOT delete Invoice");
 $d->move_and_click('//*[@id="Invoice_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="Invoice_table_filter"]/label/input');
@@ -169,7 +169,7 @@ $d->move_and_click('//*[@id="Invoice_table"]//tr[1]//td//a[contains(text(), "Del
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Invoice has been deleted");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="Invoice_table_filter"]/label/input', 'xpath', $contactmail);
 ok($d->find_element_by_css('#Invoice_table tr > td.dataTables_empty', 'css'), 'Invoice was deleted');
 
@@ -195,7 +195,7 @@ $d->move_and_click('//*[@id="InvoiceTemplate_table"]//tr[1]//td//a[contains(text
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Invoice Template was deleted");
-is($d->get_text('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice template successfully deleted",  "Correct Alert was shown");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Invoice template successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="InvoiceTemplate_table_filter"]/label/input', 'xpath', $templatename);
 ok($d->find_element_by_css('#InvoiceTemplate_table tr > td.dataTables_empty', 'css'), 'Invoice Template was deleted');
 
