@@ -94,7 +94,7 @@ has_field 'webpassword' => (
 );
 
 has_field 'username' => (
-    type => 'Text',
+    type => '+NGCP::Panel::Field::Identifier',
     label => 'SIP Username',
     required => 1,
     element_attr => { 
