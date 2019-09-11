@@ -1,3 +1,12 @@
+ngcp-panel (6.3.2.4+0~mr6.3.2.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f107e00] TT#60850 fix api cert unique serial generator
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Sep 2019 10:39:40 +0200
+
 ngcp-panel (6.3.2.3+0~mr6.3.2.3) unstable; urgency=medium
 
   [ Rene Krenn ]
