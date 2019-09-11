@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1175b24e_27a07704",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-09-11T09:00:27Z",
+      "side": 1,
+      "message": "You will return 0 if type is \"ccss\"... which is IMHO wrong.",
+      "revId": "18018a31c90f83c91620cffc1dcefe4c3ec0ea2b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
