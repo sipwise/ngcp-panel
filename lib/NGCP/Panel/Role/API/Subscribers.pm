@@ -596,7 +596,15 @@ sub prepare_resource {
             return;
         }
     } else {
-        if($subscriber) {
+        my $prov_subscriber;
+        if ($resource->{webusername}) {
+            my $prov_domain = $c->model('DB')->resultset('voip_domains')->find({domain => $domain->domain});
+            $prov_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+                webusername => $resource->{webusername},
+                domain_id => $prov_domain->id,
+            });
+        }
+        if($subscriber || $prov_subscriber) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already exists.");
             return;
         }
