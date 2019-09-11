@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "feb188d0_0fba37ba",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-09-11T08:43:33Z",
+      "side": 1,
+      "message": "should you have 1 here? is it \"impossible case\" or \"function called improperly\"?\nAlso I believe you can never reach here due to \n\n$type \u003d \"xpath\" unless $type;",
+      "range": {
+        "startLine": 181,
+        "startChar": 15,
+        "endLine": 181,
+        "endChar": 16
+      },
+      "revId": "59edda5850fd910a87815077a8c9b3b40ce3c6f3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f43f4516_ea1eb0b0",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-09-11T08:43:33Z",
+      "side": 1,
+      "message": "del trailing space?",
+      "revId": "59edda5850fd910a87815077a8c9b3b40ce3c6f3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
