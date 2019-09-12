@@ -167,6 +167,21 @@ sub DELETE :Allow {
     {
         my $subscriber = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriber => $subscriber);
+
+        if ($subscriber->contract->product->class eq "pbxaccount" && $subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
+            my $other_subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
+                                        contract_id => $subscriber->contract->id,
+                                        status => { '!=' => 'terminated' },
+                                        'provisioning_voip_subscriber.is_pbx_pilot' => 0,
+                                    }, {
+                                        join => 'provisioning_voip_subscriber',
+                                    })->first();
+            if ($other_subscriber) {
+                $self->error($c, HTTP_FORBIDDEN, "Cannot terminate pilot subscriber when other subscribers exists");
+                return;
+            }
+        }
+
         if($c->user->roles eq "subscriberadmin") {
 
             my $prov_sub = $subscriber->provisioning_voip_subscriber;
