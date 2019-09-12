@@ -256,14 +256,15 @@ if($d->find_element_by_xpath('//*[@id="reseller_details"]//div//a[contains(text(
 $resellername = $d->get_text('//*[@id="Reseller_table"]/tbody/tr/td[2]');
 my $temp = substr($resellername, 8);
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created with login Default" . $temp . " and password defaultresellerpassword, please review your settings below",  "Correct Alert was shown");
-$d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
 
-diag('Get Contract Number');
-$d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
-ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
-ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
-$contractid = $d->get_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[2]');
+diag('Add unique name to Contract');
+$contractid = ("contract" . int(rand(100000)) . "term");
+$d->find_element('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Contract")]')->click();
+$d->find_element('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Contract")]')->click();
+$d->move_and_click('//*[@id="Contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="masthead"]//div//h2[contains(text(), "Reseller Details")]');
+$d->fill_element('//*[@id="external_id"]', 'xpath', $contractid);
+$d->find_element('//*[@id="save"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully changed!",  "Correct Alert was shown");
 
 diag("Go to Reseller Contracts");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -273,7 +274,7 @@ diag("Search for Reseller Contract");
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
-ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[1]', $contractid), 'Reseller contract found');
+ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[2]', $contractid), 'Reseller contract found');
 
 diag("Terminate Reseller Contract");
 $d->move_and_click('//*[@id="contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="contract_table_filter"]/label/input');
