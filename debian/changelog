@@ -1,3 +1,12 @@
+ngcp-panel (7.4.1.9+0~mr7.4.1.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2a61b32] TT#63875 faxsend relies on config.faxserver.number_rewrite_enable
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 Sep 2019 15:35:01 +0200
+
 ngcp-panel (7.4.1.8+0~mr7.4.1.8) unstable; urgency=medium
 
   [ Nico Schedel ]
