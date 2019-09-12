@@ -1,3 +1,13 @@
+ngcp-panel (5.5.5.8+0~mr5.5.5.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [8ecf51b] TT#42776 contract_id lookup for /customers/?external_id=123
+  * [9979d32] TT#62457 inject contract_id to get_customer|contract_rs()
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 Sep 2019 16:48:35 +0200
+
 ngcp-panel (5.5.5.7+0~mr5.5.5.7) unstable; urgency=medium
 
   [ Manuel Montecelo ]
