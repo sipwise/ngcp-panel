@@ -22,6 +22,30 @@
       "revId": "b07ede75d1e37bcc1cb6ef77177da0a628479e0d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2bef82cb_201798cb",
+        "filename": "t/lib/Selenium/Remote/Driver/FirefoxExtensions.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-09-12T06:52:52Z",
+      "side": 1,
+      "message": "It doesnt need to be a number. plus if you look at the log, you can see that message easily. for example:\n\nis($d-\u003eget_text_safe(\u0027//*[@id\u003d\"content\"]//div[contains(@class, \"alert\")]\u0027, \u0027invalidclass\u0027), \"Call list suppression successfully created\",  \"Correct Alert was shown\");\n\n#   Failed test \u0027Correct Alert was shown\u0027\n#   at t/selenium/controller_other.t line 48.\n#          got: \u0027Unknown Element Type: invalidclass\u0027\n#     expected: \u0027Call list suppression successfully created\u0027",
+      "parentUuid": "85cbf6b4_b69b5fbc",
+      "range": {
+        "startLine": 181,
+        "startChar": 15,
+        "endLine": 181,
+        "endChar": 48
+      },
+      "revId": "b07ede75d1e37bcc1cb6ef77177da0a628479e0d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
