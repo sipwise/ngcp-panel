@@ -370,6 +370,24 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
     my ($self, $c) = @_;
     my $subscriber = $c->stash->{subscriber};
 
+    if ($subscriber->contract->product->class eq "pbxaccount" && $c->stash->{subscriber}->provisioning_voip_subscriber->is_pbx_pilot) {
+        my $other_subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
+                                    contract_id => $c->stash->{contract}->id,
+                                    status => { '!=' => 'terminated' },
+                                    'provisioning_voip_subscriber.is_pbx_pilot' => 0,
+                                }, {
+                                    join => 'provisioning_voip_subscriber',
+                                })->first();
+        if ($other_subscriber) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => 'forbidden termination of pilot subscriber for uuid '.$c->qs($subscriber->uuid),
+                desc  => $c->loc('Terminating pilot subscriber when other subscribers exist is prohibited.'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
+        }
+    }
+
     if($c->user->roles eq 'subscriberadmin' && $c->user->uuid eq $subscriber->uuid) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
