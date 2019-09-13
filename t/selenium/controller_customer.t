@@ -176,6 +176,56 @@ if($d->find_element('//*[@id="collapse_fraud"]')->get_attribute('class', 1) eq '
 ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[contains(text(), "100")]'), "Limit is correct");
 ok($d->wait_for_text('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[4]', 'mymail@example.org'), "Mail is correct");
 
+diag("Go to Contract Balance");
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]')->click();
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]')->click();
+
+diag("Set cash balance without entering anything");
+$d->find_element('//*[@id="collapse_balance"]//div//span//a[contains(text(), "Set Cash Balance")]')->click();
+$d->fill_element('//*[@id="cash_balance"]', 'xpath', ' ');
+$d->fill_element('//*[@id="free_time_balance"]', 'xpath', ' ');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check Error Messages");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Cash Balance field is required")]'));
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Free-Time Balance field is required")]'));
+
+diag("Set invalid Cash Balance");
+$d->fill_element('//*[@id="cash_balance"]', 'xpath', 'asdf');
+$d->fill_element('//*[@id="free_time_balance"]', 'xpath', 'asdf');
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check Error Messages");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Value must be an integer")]'));
+
+diag("Set valid Cash Balance");
+$d->fill_element('//*[@id="cash_balance"]', 'xpath', '200');
+$d->fill_element('//*[@id="free_time_balance"]', 'xpath', '300');
+$d->find_element('//*[@id="save"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  "Correct Alert was shown");
+
+diag("Check if Cash Balance was set correctly");
+ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "200.00")]'), "Cash Balance is correct");
+ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), "Free-Time Balance is correct");
+
+diag("Top-up Cash Balance");
+$d->find_element('//*[@id="collapse_balance"]//div//span//a[contains(text(), "Top-up Cash")]')->click();
+
+diag("Perform Top-up without entering anything");
+$d->find_element('//*[@id="save"]')->click();
+
+diag("Check Error Messages");
+ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Amount field is required")]'));
+
+diag("Top-up Cash");
+$d->fill_element('//*[@id="amount"]', 'xpath', '200');
+$d->find_element('//*[@id="save"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Top-up using cash performed successfully!',  "Correct Alert was shown");
+
+diag("Check if Top-up was successful");
+ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "400.00")]'), "Cash Balance is correct");
+ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), "Free-Time Balance is correct");
+
 diag("Create a new Phonebook entry");
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
