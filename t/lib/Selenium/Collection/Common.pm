@@ -368,6 +368,50 @@ sub delete_billing_profile {
     };
 }
 
+sub create_ncos {
+    my($self, $resellername, $ncosname) = @_;
+    return unless $resellername && $ncosname;
+
+    diag('Go to NCOS interface');
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element("NCOS Levels", 'link_text')->click();
+
+    diag('Create a NCOS');
+    $self->driver->find_element('Create NCOS Level', 'link_text')->click();
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
+    ok($self->driver->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), "Reseller found");
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
+    $self->driver->fill_element('//*[@id="level"]', 'xpath', $ncosname);
+    $self->driver->find_element('//*[@id="mode"]/option[@value="blacklist"]')->click();
+    $self->driver->fill_element('//*[@id="description"]', 'xpath', "This is a simple description");
+    $self->driver->find_element('//*[@id="save"]')->click();
+    is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "NCOS level successfully created",  "Correct Alert was shown");
+}
+
+sub delete_ncos {
+    my($self, $ncosname, $cancel) = @_;
+    return unless $ncosname;
+
+    diag('Go to NCOS interface');
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+    $self->driver->find_element("NCOS Levels", 'link_text')->click();
+
+    diag("Trying to delete NCOS");
+    $self->driver->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($self->driver->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+    $self->driver->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
+    ok($self->driver->wait_for_text('//*[@id="ncos_level_table"]/tbody/tr[1]/td[3]', $ncosname), "NCOS found");
+    $self->driver->move_and_click('//*[@id="ncos_level_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="ncos_level_table_filter"]/label/input');
+
+    if($cancel){
+        popup_confirm_cancel($self, 'We are NOT going to terminate this NCOS Entry');
+    } else {
+        popup_confirm_ok($self, 'We are going to terminate this NCOS Entry');
+        is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "NCOS level successfully deleted",  "Correct Alert was shown");
+    };
+}
 sub popup_confirm_ok {
     my($self, $message) = @_;
 
