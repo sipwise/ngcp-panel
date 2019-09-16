@@ -1,3 +1,12 @@
+ngcp-panel (7.5.1.3+0~mr7.5.1.3) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [3f081d5] TT#56376 selenium: workaround for customer tests going to wrong menu
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Sep 2019 14:37:14 +0200
+
 ngcp-panel (7.5.1.2+0~mr7.5.1.2) unstable; urgency=medium
 
   [ Kirill Solomko ]
