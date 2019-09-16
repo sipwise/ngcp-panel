@@ -83,20 +83,12 @@ $d->find_element('//*[@id="save"]')->click();
 diag('Check Error Messages');
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Level Name field is required")]'));
+$d->find_element('//*[@id="mod_close"]')->click();
 
-diag('Fill in values');
-$d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), "Reseller found");
-$d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
-$d->fill_element('//*[@id="level"]', 'xpath', $ncosname);
-$d->find_element('//*[@id="mode"]/option[@value="blacklist"]')->click();
-$d->fill_element('//*[@id="description"]', 'xpath', "This is a simple description");
-$d->find_element('//*[@id="save"]')->click();
+diag('Create a normal NCOS');
+$c->create_ncos($resellername, $ncosname);
 
 diag('Search for our new NCOS');
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "NCOS level successfully created",  "Correct Alert was shown");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
@@ -253,16 +245,8 @@ diag("Check if LNP Entry was deleted");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "NCOS lnp entry successfully deleted",  "Correct Alert was shown");
 ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'LNP Entry was deleted');
 
-diag("Go back to NCOS page");
-$d->find_element("Back", 'link_text')->click();
-
 diag("Trying to NOT delete NCOS");
-$d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
-ok($d->wait_for_text('//*[@id="ncos_level_table"]/tbody/tr[1]/td[3]', $ncosname), "NCOS found");
-$d->move_and_click('//*[@id="ncos_level_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="ncos_level_table_filter"]/label/input');
-$d->find_element('//*[@id="dataConfirmCancel"]')->click();
+$c->delete_ncos($ncosname, 1);
 
 diag("Check if Entry is still here");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -271,11 +255,9 @@ $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $nco
 ok($d->wait_for_text('//*[@id="ncos_level_table"]/tbody/tr[1]/td[3]', $ncosname), "NCOS still here");
 
 diag("Trying to delete NCOS");
-$d->move_and_click('//*[@id="ncos_level_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="ncos_level_table_filter"]/label/input');
-$d->find_element('//*[@id="dataConfirmOK"]')->click();
+$c->delete_ncos($ncosname);
 
 diag("Check if Entry was deleted");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "NCOS level successfully deleted",  "Correct Alert was shown");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
 ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'NCOS was deleted');
 
