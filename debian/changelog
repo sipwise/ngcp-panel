@@ -1,3 +1,30 @@
+ngcp-panel (7.4.2.1+0~mr7.4.2.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [bf61afb] TT#61559 TT#61752 apply orderby to datatable setop queries
+  * [43abbaf] TT#62063 fix ac string instead of numeric comparison
+  * [6a82f7b] TT#62059 disable bootstrapdatatable html5 statesaving
+  * [cacff8e] TT#61105 allow modifying billing profile/networks if not actual (6.5+)
+  * [5bebf7f] TT#59866 fix js Date month starting with 0 in rrule/toText
+  * [46d3c15] TT#61813 fix timeset.create after nested reseller creation
+  * [0cce0e5] TT#62802 fix LI soap rail saltedpass migration
+
+  [ Nico Schedel ]
+  * [d8fb897] TT#56376 selenium: fix for crashes in controller_customer
+  * [83a15f8] TT#56376 selenium: delete domain before deleting rw ruleset
+  * [46e3d4b] TT#56376 selenium: fix for 'stale element reference' in ctr_subscriber
+  * [ffffdff] TT#56376 selenium: another crash fix for controller_subscriber
+  * [0146671] TT#56376 selenium: some fixes for controller_subscriber
+  * [a145f27] TT#56376 selenium: fixing failing reseller tests
+  * [2720301] TT#56376 selenium: add scroll_to_element to the beginning of every function
+
+  [ Kirill Solomko ]
+  * [bec4150] TT#63875 faxsend relies on config.faxserver.number_rewrite_enable
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 18 Sep 2019 22:33:54 +0200
+
 ngcp-panel (7.4.2.0+0~mr7.4.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
