@@ -1015,6 +1015,10 @@ msgstr ""
 msgid "CDR/EDR Export Settings"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CFR Mode"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "CLI"
 msgstr ""
@@ -1093,12 +1097,6 @@ msgstr "Создано перенаправление звонка"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
 #: share/templates/subscriber/preferences.tt
-msgid "Call Forward Rerouting"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Subscriber.pm
-#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
-#: share/templates/subscriber/preferences.tt
 msgid "Call Forward SMS"
 msgstr ""
 
@@ -1119,6 +1117,18 @@ msgstr "Перенаправлять когда недоступен (CFNA)"
 #: share/templates/subscriber/preferences.tt
 msgid "Call Forward Unconditional"
 msgstr "Безусловное перенаправление звонков (CFU)"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
+#: share/templates/subscriber/preferences.tt
+msgid "Call Forward on Overflow"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm
+#: share/templates/subscriber/preferences.tt
+msgid "Call Forward on Response"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 #: share/templates/widgets/subscriber_cf_overview.tt
@@ -4597,7 +4607,7 @@ msgid "Internal Call Forward Busy map #"
 msgstr "Внутренняя схема перенаправления звонков когда занят (CFB) #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Internal Call Forward Rerouting #"
+msgid "Internal Call Forward Overflow #"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4611,6 +4621,10 @@ msgstr "Внутреннее перенаправление звонков ко�
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Call Forward Unconditional #"
 msgstr "Внутреннее безусловное перенаправление звонков (CFU) #"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Call Forward on Response #"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Contract #"
@@ -5146,7 +5160,7 @@ msgid "Limit"
 msgstr "Лимит"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "List of Rerouting Codes"
+msgid "List of Response Codes that trigger CFR"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5356,6 +5370,27 @@ msgid "Maximum number of concurrent calls of Customer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Maximum number of inbound concurrent calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Maximum number of inbound concurrent calls for Customer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Maximum number of incoming concurrent on-net and off-net calls going to a "
+"subscriber or coming from a peer, excluding subscriber's intra-PBX calls."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Maximum number of incoming concurrent on-net and off-net calls to "
+"subscribers within the same Customer account, excluding calls from the "
+"application server and intra-PBX calls."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum number of outbound concurrent calls"
 msgstr ""
 
@@ -5394,6 +5429,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Maximum number of subscribers for this customer reached"
 msgstr "Достигнуто максимальное количество абонентов для этого клиента"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Maximum total number of incoming concurrent calls going to subscribers."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
@@ -6773,10 +6812,6 @@ msgstr ""
 msgid "Reported at"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Rerouting Mode"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/Administrator.pm
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Contact.pm
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Device.pm
@@ -7567,7 +7602,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Specifies the operational mode of the Rerouting Call Forward. If set to "
+"Specifies the operational mode of the Call Forward on Response. If set to "
 "Whitelist (default) the CFR is executed only for reply codes included in the "
 "'rerouting_codes' list, if set to Blacklist the CFR is executed except for "
 "reply codes included in the list."
@@ -8290,7 +8325,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"The id pointing to the \"Call Forward Rerouting\" entry in the "
+"The id pointing to the \"Call Forward Overflow\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
 
@@ -8323,6 +8358,12 @@ msgid ""
 msgstr ""
 "ID указывающий на запись для \"Call Forward Unconditional\" в таблице "
 "voip_cf_mappings"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The id pointing to the \"Call Forward on Response\" entry in the "
+"voip_cf_mappings table"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The members (as SIP URIs) of the PBX hunt group."
@@ -8517,6 +8558,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Total Amount"
 msgstr "Общая сумма"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Total max number of inbound concurrent calls"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Total max number of outbound concurrent calls"
