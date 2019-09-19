@@ -97,5 +97,15 @@ has_field 'lines.type' => (
     element_class => [qw/ngcp-linetype-select/],
 );
 
+has_field 'lines.deviceid_alias_id' => (
+    type => '+NGCP::Panel::Field::PosInteger',
+    required => 0,
+    label => 'Device id',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The alias number id (which must be marked as device id) used for this line/subscriber assignment.'],
+    },
+);
+
 1;
 # vim: set tabstop=4 expandtab:
