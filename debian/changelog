@@ -1,3 +1,20 @@
+ngcp-panel (6.5.6.1+0~mr6.5.6.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f61fe49] TT#58950 RedisLocationResult improvements
+  * [2031cf2] TT#63875 faxsend relies on config.faxserver.number_rewrite_enable
+
+  [ Rene Krenn ]
+  * [def24a1] TT#61559 TT#61752 apply orderby to datatable setop queries
+  * [7de82eb] TT#62063 fix ac string instead of numeric comparison
+  * [0a49bc8] TT#62059 disable bootstrapdatatable html5 statesaving
+  * [99f3a02] TT#61105 allow modifying billing profile/networks if not actual (6.5+)
+  * [8033e2d] TT#62802 fix LI soap rail saltedpass migration
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Sep 2019 18:01:38 +0200
+
 ngcp-panel (6.5.6.0+0~mr6.5.6.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
