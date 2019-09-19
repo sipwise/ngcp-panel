@@ -190,6 +190,23 @@ sub POST :Allow {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'linerange'.");
                 return;
             }
+
+            if (defined $line->{deviceid_number_id}) {
+                my $devid_num = $b_subs->voip_numbers->find($line->{deviceid_number_id});
+                unless ($devid_num) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'deviceid_number_id'. Could not find number for this subscriber.");
+                    return;
+                }
+                unless ($devid_num->voip_dbalias && $devid_num->voip_dbalias->is_devid) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'deviceid_number_id'. Number is not a device id.");
+                    return;
+                }
+                $line->{deviceid_alias_id} = $devid_num->voip_dbalias->id;
+            } else {
+                $line->{deviceid_alias_id} = undef;
+            }
+            delete $line->{deviceid_number_id};
+
             my $linerange = $dev_model->autoprov_device_line_ranges->find({
                 name => $line->{linerange}
             });

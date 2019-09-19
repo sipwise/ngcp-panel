@@ -54,7 +54,7 @@ sub resource_from_item {
         my $p_subs = $line->provisioning_voip_subscriber;
         my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
         my $line_attr = { $line->get_inflated_columns };
-        foreach my $f(qw/id device_id linerange_id/) {
+        foreach my $f(qw/id device_id linerange_id deviceid_alias_id/) {
             delete $line_attr->{$f};
         }
         foreach my $f(qw/key_num/) {
@@ -64,6 +64,8 @@ sub resource_from_item {
             if($b_subs);
         $line_attr->{linerange} = $line->autoprov_device_line_range->name;
         $line_attr->{type} = delete $line_attr->{line_type};
+        $line_attr->{deviceid_number_id} = defined $line->deviceid_alias ?
+            $line->deviceid_alias->voip_number->id : undef;
         push @lines, $line_attr;
     }
     $resource{customer_id} = delete $resource{contract_id};
@@ -181,6 +183,23 @@ sub update_item {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'linerange'.");
             return;
         }
+
+        if (defined $line->{deviceid_number_id}) {
+            my $devid_num = $b_subs->voip_numbers->find($line->{deviceid_number_id});
+            unless ($devid_num) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'deviceid_number_id'. Could not find number for this subscriber.");
+                return;
+            }
+            unless ($devid_num->voip_dbalias && $devid_num->voip_dbalias->is_devid) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'deviceid_number_id'. Number is not a device id.");
+                return;
+            }
+            $line->{deviceid_alias_id} = $devid_num->voip_dbalias->id;
+        } else {
+            $line->{deviceid_alias_id} = undef;
+        }
+        delete $line->{deviceid_number_id};
+
         my $linerange = $dev_model->autoprov_device_line_ranges->find({
             name => $line->{linerange}
         });
@@ -216,6 +235,7 @@ sub update_item {
         die $err if $err;
     }
     $item->update($resource);
+    $item->discard_changes;
     
     return $item;
 }
