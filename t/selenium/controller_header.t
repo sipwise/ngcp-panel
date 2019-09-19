@@ -107,6 +107,8 @@ ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), "Enabl
 diag('Edit Header Rule');
 $headerrule = ("header" . int(rand(100000)) . "rule");
 $d->move_and_click('//*[@id="header_rules_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="header_rules_table_filter"]/label/input');
+$d->find_element('//*[@id="priority"]')->click();
+sleep 1;
 $d->fill_element('//*[@id="priority"]', 'xpath', '1');
 $d->fill_element('//*[@id="name"]', 'xpath', $headerrule);
 $d->find_element('//*[@id="direction"]/option[@value="outbound"]')->click();
