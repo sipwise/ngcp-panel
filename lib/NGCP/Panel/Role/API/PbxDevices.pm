@@ -54,7 +54,7 @@ sub resource_from_item {
         my $p_subs = $line->provisioning_voip_subscriber;
         my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
         my $line_attr = { $line->get_inflated_columns };
-        foreach my $f(qw/id device_id linerange_id/) {
+        foreach my $f(qw/id device_id linerange_id deviceid_alias_id/) {
             delete $line_attr->{$f};
         }
         foreach my $f(qw/key_num/) {
@@ -64,6 +64,8 @@ sub resource_from_item {
             if($b_subs);
         $line_attr->{linerange} = $line->autoprov_device_line_range->name;
         $line_attr->{type} = delete $line_attr->{line_type};
+        $line_attr->{deviceid_number_id} = defined $line->deviceid_alias ?
+            $line->deviceid_alias->voip_number->id : undef;
         push @lines, $line_attr;
     }
     $resource{customer_id} = delete $resource{contract_id};
