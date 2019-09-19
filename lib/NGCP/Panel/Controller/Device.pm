@@ -1359,6 +1359,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 }
             }
             $sub_preferences_vars{displayname} = delete $sub_preferences_vars{display_name};
+            $sub_preferences_vars{device_id} = $line->deviceid_alias ? $line->deviceid_alias->username : undef;
             # TODO: only push password for private/shared line?
             my $aliases = [ $sub->voip_dbaliases->search({ is_primary => 0 })->get_column("username")->all ];
             my $primary = $sub->voip_dbaliases->search({ is_primary => 1 })->get_column("username")->first;
