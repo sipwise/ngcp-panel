@@ -183,10 +183,18 @@ $d->find_element('//*[@id="lock"]/option[contains(text(), "global")]')->click();
 $d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
-diag('Check if subscriber got locked');
+diag('Check if Subscriber got locked');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully updated subscriber",  "Correct Alert was shown");
-#ok($d->find_element_by_xpath('//div[text()[contains(., "Subscriber status is locked")]]'), 'Message "Subscriber status is locked" was shown');
-#ok($d->find_element_by_xpath('//div[text()[contains(., "Subscriber is locked for global")]]'), 'Message "Subscriber is locked for global" was shown');
+if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() eq "Subscribers"){ #workaround for misbehaving ngcp panel randomly throwing test out of customer details
+    $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+    ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
+    $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
+    ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Found Subscriber');
+    $d->move_and_click('//*[@id="subscriber_table"]//tr[1]//td//a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]/label/input');
+}
+if($d->find_element_by_xpath('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]/../../../div')->get_attribute('class', 1) eq 'accordion-group') {
+    $d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
+}
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), "Status is correct");
 
 diag('Unlock Subscriber');
