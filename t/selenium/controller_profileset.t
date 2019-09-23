@@ -128,6 +128,7 @@ $d->move_and_click('//*[@id="subscriber_profile_table"]//tr[1]/td//a[contains(te
 diag('Add NCOS to Profile');
 $d->find_element('//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]')->click();
 $d->move_and_click('//table//tr//td[contains(text(), "ncos")]//..//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+$d->find_element('//*[@id="ncos"]')->click();
 $d->find_element('//*[@id="ncos"]//option[contains(text(), "'. $ncosname .'")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -217,8 +218,6 @@ $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Cloned Profile set was deleted');
 
 diag('Trying to NOT Delete Subscriber Profile Set');
-$d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
 ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Profile Set was found');
 $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
