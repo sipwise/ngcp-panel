@@ -154,9 +154,6 @@ $d->find_element('//*[@id="save"]')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing fee successfully changed!',  "Correct Alert was shown");
 
 diag('Check Billing Fee Details');
-$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Garbage text was not found');
-$d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', $zonedetailname);
 ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source Pattern is correct');
 ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination Pattern is correct');
 ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular expression - longest pattern'), 'Match Mode is correct');
@@ -284,14 +281,12 @@ $d->fill_element('#end', 'css', "2019-01-01 23:59:59");
 $d->find_element('#save', 'css')->click();
 
 diag("Check if created date definition is correct");
-$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2018-01-01 00:00:00');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully updated',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2018-01-01 00:00:00'), 'Start Date definition is correct');
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2019-01-01 23:59:59'), 'End Date definition is correct');
 
 diag("Delete created date definition");
+$d->scroll_to_element($d->find_element('//*[@id="date_definition_table_filter"]/label/input'));
 $d->move_and_click('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
 ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
