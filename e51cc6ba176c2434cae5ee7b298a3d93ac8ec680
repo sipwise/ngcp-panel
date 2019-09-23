@@ -16,6 +16,24 @@
       "revId": "e51cc6ba176c2434cae5ee7b298a3d93ac8ec680",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c461cc54_7d5c53f9",
+        "filename": "lib/NGCP/Panel/Controller/API/PbxDevices.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2019-09-23T09:33:39Z",
+      "side": 1,
+      "message": "No, it\u0027s not planned.",
+      "parentUuid": "abb21713_2fab97b7",
+      "revId": "e51cc6ba176c2434cae5ee7b298a3d93ac8ec680",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
