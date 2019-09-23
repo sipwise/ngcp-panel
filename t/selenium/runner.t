@@ -105,11 +105,11 @@ if($testplan eq $dir . 'runner.t') {
         push @tests, $string;
     };
     if (index($testplan, $dir . 'controller_profilepackage.t') != -1) {
-        $string = $dir . 'controller_profile.t';
+        $string = $dir . 'controller_profilepackage.t';
         push @tests, $string;
     };
     if (index($testplan, $dir . 'controller_profileset.t') != -1) {
-        $string = $dir . 'controller_subprofile.t';
+        $string = $dir . 'controller_profileset.t';
         push @tests, $string;
     };
     if (index($testplan, $dir . 'controller_reseller.t') != -1) {
