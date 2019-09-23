@@ -22,6 +22,30 @@
       "revId": "a69eb7a0b2822f6214332a2016867ed27f795f96",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "022bf3ef_9de9f573",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-09-23T20:51:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82034e11_cfa13701",
+      "range": {
+        "startLine": 127,
+        "startChar": 61,
+        "endLine": 127,
+        "endChar": 62
+      },
+      "revId": "a69eb7a0b2822f6214332a2016867ed27f795f96",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
