@@ -269,9 +269,6 @@ $d->find_element('//*[@id="save"]')->click();
 diag("Check if information has changed");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully updated',  "Correct Alert was shown");
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]')->click();
-$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'TesterTester');
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "TesterTester")]'), "Name is correct");
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "987654321")]'), "Number is correct");
 
