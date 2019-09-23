@@ -124,6 +124,10 @@ sub resource_from_item {
         if ($socket) {
             $resource->{socket} = $socket;
         }
+        (my ($received)) = $resource->{path} =~/;received=(.+);/;
+        if ($received) {
+            $resource->{received} = $received;
+        }
     }
 
     return $resource;
