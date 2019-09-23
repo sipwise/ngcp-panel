@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82034e11_cfa13701",
+        "filename": "lib/NGCP/Panel/Role/API/SubscriberRegistrations.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-09-23T17:59:13Z",
+      "side": 1,
+      "message": "if this token terminates with a \";\", it makes no sense to match for all non-\"\u003e\" symbols here.",
+      "range": {
+        "startLine": 127,
+        "startChar": 61,
+        "endLine": 127,
+        "endChar": 62
+      },
+      "revId": "a69eb7a0b2822f6214332a2016867ed27f795f96",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
