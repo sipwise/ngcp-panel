@@ -128,15 +128,10 @@ $d->fill_element('//*[@id="name"]', 'xpath', 'newtestname');
 $d->fill_element('//*[@id="number"]', 'xpath', '0987654321');
 $d->find_element('//*[@id="save"]')->click();
 
-diag("Searching Phonebook entry");
+diag("Checking Phonebook entry details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully updated",  "Correct Alert was shown");
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
 $d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
-$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'newtestname');
-
-diag("Checking Phonebook entry details");
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[2]', 'newtestname'), 'Name is correct');
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0987654321'), 'Number is correct');
 
@@ -189,7 +184,7 @@ $d->fill_element('//*[@id="body"]', 'xpath', 'No seriously, this is just for tes
 $d->fill_element('//*[@id="attachment_name"]', 'xpath', '=)');
 $d->find_element('//*[@id="save"]')->click();
 
-diag('Searching new Template');
+diag('Searching Template');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Email template successfully updated",  "Correct Alert was shown");
 $d->fill_element('//*[@id="email_template_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#email_template_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
