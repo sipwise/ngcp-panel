@@ -201,9 +201,9 @@ sub POST :Allow {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'deviceid_number_id'. Number is not a device id.");
                     return;
                 }
-                $line->{deviceid_alias_id} = $devid_num->voip_dbalias->id;
+                $line->{deviceid_dbalias_id} = $devid_num->voip_dbalias->id;
             } else {
-                $line->{deviceid_alias_id} = undef;
+                $line->{deviceid_dbalias_id} = undef;
             }
             delete $line->{deviceid_number_id};
 

@@ -54,7 +54,7 @@ sub resource_from_item {
         my $p_subs = $line->provisioning_voip_subscriber;
         my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
         my $line_attr = { $line->get_inflated_columns };
-        foreach my $f(qw/id device_id linerange_id deviceid_alias_id/) {
+        foreach my $f(qw/id device_id linerange_id deviceid_dbalias_id/) {
             delete $line_attr->{$f};
         }
         foreach my $f(qw/key_num/) {
@@ -194,9 +194,9 @@ sub update_item {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'deviceid_number_id'. Number is not a device id.");
                 return;
             }
-            $line->{deviceid_alias_id} = $devid_num->voip_dbalias->id;
+            $line->{deviceid_dbalias_id} = $devid_num->voip_dbalias->id;
         } else {
-            $line->{deviceid_alias_id} = undef;
+            $line->{deviceid_dbalias_id} = undef;
         }
         delete $line->{deviceid_number_id};
 
