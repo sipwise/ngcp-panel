@@ -32,6 +32,15 @@ has_field 'nat' => (
     },
 );
 
+has_field 'received' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Source IP and Port of subscriber registration.']
+    },
+);
+
 1;
 
 __END__
