@@ -32,6 +32,15 @@ has_field 'nat' => (
     },
 );
 
+has_field 'received' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The received field.']
+    },
+);
+
 1;
 
 __END__
