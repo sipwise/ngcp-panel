@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c749d54_900d3351",
+        "filename": "t/selenium/controller_header.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-09-24T13:51:01Z",
+      "side": 1,
+      "message": "Reseller?",
+      "range": {
+        "startLine": 102,
+        "startChar": 100,
+        "endLine": 102,
+        "endChar": 111
+      },
+      "revId": "9858cd785f929e065368aef86fc437dc11ab3ce1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aff5fd10_b7a9f275",
+        "filename": "t/selenium/controller_header.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-09-24T13:51:01Z",
+      "side": 1,
+      "message": "Reseller?",
+      "range": {
+        "startLine": 123,
+        "startChar": 105,
+        "endLine": 123,
+        "endChar": 116
+      },
+      "revId": "9858cd785f929e065368aef86fc437dc11ab3ce1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
