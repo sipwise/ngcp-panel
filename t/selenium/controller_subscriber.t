@@ -200,7 +200,9 @@ ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text
 diag('Unlock Subscriber');
 $d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
 $d->find_element("Edit", 'link_text')->click();
+$d->find_element('//*[@id="lock"]')->click();
 $d->find_element('//*[@id="lock"]/option[contains(text(), "none")]')->click();
+$d->find_element('//*[@id="status"]')->click();
 $d->find_element('//*[@id="status"]/option[contains(text(), "active")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
