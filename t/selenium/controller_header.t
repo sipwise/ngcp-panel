@@ -97,10 +97,10 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "100")]'), "Priority is correct");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "' . $headerrule . '")]'), "Name is correct");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "this is a nice description")]'), "Reseller is correct");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "inbound")]'), "Direction is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[1]', '100'), "Priority is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[3]', $headerrule), "Name is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a nice description'), "Description is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'inbound'), "Direction is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "0")]'), "Stopper is correct");
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), "Enabled is correct");
 
@@ -118,10 +118,10 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully updated',  "Correct Alert was shown");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "1")]'), "Priority is correct");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "' . $headerrule . '")]'), "Name is correct");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "this is a very nice description")]'), "Reseller is correct");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "outbound")]'), "Direction is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[1]', '1'), "Priority is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[3]', $headerrule), "Name is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a very nice description'), "Description is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'outbound'), "Direction is correct");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "1")]'), "Stopper is correct");
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), "Enabled is correct");
 
