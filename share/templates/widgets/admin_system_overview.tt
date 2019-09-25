@@ -54,7 +54,7 @@ enqueLists.push([{
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="/grafana/dashboard/file/system-statistics.json" class="btn">[% c.loc('View Statistics') %]</a>
+            <a href="/grafana/dashboard/file/system-statistics" class="btn">[% c.loc('View Statistics') %]</a>
         </div>
     </div>
 </div>

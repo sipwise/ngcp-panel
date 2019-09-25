@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::Statistics;
+use JSON qw(decode_json);
 
 sub template {
-    # disabled
-    #return 'widgets/admin_system_overview.tt';
-    return;
+    return 'widgets/admin_system_overview.tt';
 }
 
 sub filter {
@@ -44,6 +44,11 @@ sub system_status {
 
 sub hardware {
     my ($self, $c) = @_;
+
+    warn "#############";
+    my $ngcp_status = decode_json(NGCP::Panel::Utils::Statistics::get_ngcp_status());
+    warn $ngcp_status;
+    # my $text = map { $_->{tag} eq 'LA' } @{keys %$ngcp_status};
     return { color => "#000000", text => $c->loc("OK") };
 }
 

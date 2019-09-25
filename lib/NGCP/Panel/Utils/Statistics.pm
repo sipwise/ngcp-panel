@@ -86,6 +86,12 @@ sub get_dpkg_support_status {
     }
 }
 
+sub get_ngcp_status {
+    my ($self) = @_;
+    warn "@@@@@@";
+    return `sudo ngcp-status --format=json --status`;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
