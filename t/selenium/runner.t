@@ -60,6 +60,7 @@ if($testplan eq $dir . 'runner.t') {
         $dir . 'controller_rw_ruleset.t',
         $dir . 'controller_soundset.t',
         $dir . 'controller_subscriber.t',
+        $dir . 'controller_terminate.t',
         $dir . 'controller_timeset.t',
         );
 
@@ -126,6 +127,10 @@ if($testplan eq $dir . 'runner.t') {
     };
     if (index($testplan, $dir . 'controller_subscriber.t') != -1 || index($testplan, $dir . 'subscriber') != -1) {
         $string = $dir . 'controller_subscriber.t';
+        push @tests, $string;
+    };
+    if (index($testplan, $dir . 'controller_terminate.t') != -1 || index($testplan, $dir . 'terminate') != -1) {
+        $string = $dir . 'controller_terminate.t';
         push @tests, $string;
     };
     if (index($testplan, $dir . 'controller_timeset.t') != -1 || index($testplan, $dir . 'timeset') != -1) {
