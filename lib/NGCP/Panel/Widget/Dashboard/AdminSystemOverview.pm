@@ -4,11 +4,12 @@ use warnings;
 use strict;
 
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::Statistics;
+use JSON qw(decode_json);
+use Data::Dumper;
 
 sub template {
-    # disabled
-    #return 'widgets/admin_system_overview.tt';
-    return;
+    return 'widgets/admin_system_overview.tt';
 }
 
 sub filter {
@@ -37,18 +38,12 @@ sub emergency_mode {
     return $em_count.'';
 }
 
-sub system_status {
-    my ($self, $c) = @_;
-    return { color => "#000000", text => $c->loc("OK") };
-}
-
-sub hardware {
-    my ($self, $c) = @_;
-    return { color => "#000000", text => $c->loc("OK") };
-}
-
 sub overall_status {
     my ($self, $c) = @_;
+
+    my $ngcp_status = decode_json(NGCP::Panel::Utils::Statistics::get_ngcp_status());
+    return { class => "ngcp-red-error", text => $c->loc("Errors") } if ( grep { $_->{type} eq 'error' } @{$ngcp_status->{data}} );
+    return { class => "ngcp-orange-warning", text => $c->loc("Warnings") } if ( grep { $_->{type} eq 'warning' } @{$ngcp_status->{data}} );
     return { class => "ngcp-green-ok", text => $c->loc("All services running") };
 }
 
