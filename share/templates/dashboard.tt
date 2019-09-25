@@ -29,7 +29,7 @@ $(document).ready(function () {
         [% enabled_widgets.push(w) -%]
     [% END -%]
 [% END -%]
-[% wcount = enabled_widgets.size() > 3 ? 3 : enabled_widgets.size() -%]
+[% wcount = enabled_widgets.size() > 4 ? 4 : enabled_widgets.size() -%]
 
 <div class="row">
     <div class="span12">

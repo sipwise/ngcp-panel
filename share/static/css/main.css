@@ -503,6 +503,14 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
     color:#0f0;
 }
 
+.plan .ngcp-orage-warning {
+    color:#ff6700;
+}
+
+.plan .ngcp-red-error {
+    color:#ff0000;
+}
+
 .ngcp-quickform div.form-actions {
     padding-left: 0px;
 }
