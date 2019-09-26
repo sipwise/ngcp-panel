@@ -66,9 +66,96 @@
         name: test api name 3 ${unique_id}
     retain:
         billingprofile_path3: header.location
+        billingprofile3_id: header.location
     conditions:
         is:
             code: 201
+
+#test item journal link
+-
+    name: test item journal link
+    type: item
+    method: GET
+    path: /${billingprofile_path3}
+    retain:
+        billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{href} = $retained->{billingprofile}->{_links}->{'ngcp:journal'}->[0]->{href};
+            $retained->{expected_href} = '/api/billingprofiles/'.$retained->{billingprofile3_id}.'/journal/';
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${billingprofile}._links': defined
+            '${billingprofile}._links.ngcp:journal': defined
+            '${href}': '${expected_href}'
+
+#test journal options
+-
+    name: test journal options
+    type: item
+    method: OPTIONS
+    path: '/${billingprofile_path3}/journal'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#test journal head
+-
+    name: test journal head
+    type: item
+    method: HEAD
+    path: '/${billingprofile_path3}/journal'
+    conditions:
+        is:
+            code: 200
+
+#TestJournalTopJournalItem
+-
+    name: include TestJournalTopJournalItem
+    type: include
+    file: TestJournalTopJournalItem.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{journal_link} = '/api/billingprofiles/' . $retained->{billingprofile3_id} . '/journal/recent';
+            $retained->{resource} = 'billingprofiles';
+            $retained->{item} = $retained->{billingprofile};
+            $retained->{operation} = 'create';
+        }
+
+#test journal options
+-
+    name: test journal options
+    type: item
+    method: OPTIONS
+    path: '/${journal_item_link}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#test journal head
+-
+    name: test journal head
+    type: item
+    method: HEAD
+    path: '/${journal_item_link}'
+    conditions:
+        is:
+            code: 200
 
 #verify pagination
 -
@@ -246,6 +333,42 @@
         is_deeply:
             '${billingprofile}': ${new_billingprofile}
 
+#test item journal link
+-
+    name: test item journal link
+    type: item
+    method: GET
+    path: /${billingprofile_path1}
+    retain:
+        billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{href} = $retained->{billingprofile}->{_links}->{'ngcp:journal'}->[0]->{href};
+            $retained->{expected_href} = '/api/billingprofiles/'.$retained->{billingprofile}->{id}.'/journal/';
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${billingprofile}._links': defined
+            '${billingprofile}._links.ngcp:journal': defined
+            '${href}': '${expected_href}'
+
+#TestJournalTopJournalItem
+-
+    name: include TestJournalTopJournalItem
+    type: include
+    file: TestJournalTopJournalItem.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{journal_link} = '/api/billingprofiles/' . $retained->{billingprofile}->{id} . '/journal/recent';
+            $retained->{resource} = 'billingprofiles';
+            $retained->{item} = $retained->{billingprofile};
+            $retained->{operation} = 'update';
+        }
+
 #PATCH billingprofile name
 -
     name: PATCH billingprofile name
@@ -268,6 +391,55 @@
             '${modified_billingprofile}.name': ${patched_name}
             '${modified_billingprofile}._links.self.href': ${billingprofile_path1}
             '${modified_billingprofile}._links.collection.href': /api/billingprofiles/
+
+#test item journal link
+-
+    name: test item journal link
+    type: item
+    method: GET
+    path: /${billingprofile_path1}
+    retain:
+        billingprofile: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{href} = $retained->{billingprofile}->{_links}->{'ngcp:journal'}->[0]->{href};
+            $retained->{expected_href} = '/api/billingprofiles/'.$retained->{billingprofile}->{id}.'/journal/';
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${billingprofile}._links': defined
+            '${billingprofile}._links.ngcp:journal': defined
+            '${href}': '${expected_href}'
+
+#TestJournalTopJournalItem
+-
+    name: include TestJournalTopJournalItem
+    type: include
+    file: TestJournalTopJournalItem.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{journal_link} = '/api/billingprofiles/' . $retained->{billingprofile}->{id} . '/journal/recent';
+            $retained->{resource} = 'billingprofiles';
+            $retained->{item} = $retained->{billingprofile};
+            $retained->{operation} = 'update';
+        }
+
+#test journal collection
+-
+    name: test journal collection
+    type: pagination
+    skip: 1
+    method: GET
+    path: '${journal_collection_link}'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
 
 #check patch with undef reseller
 -
@@ -534,3 +706,43 @@
             code: 200
         is_deeply:
             '${peaktimes_special_billingprofile}': ${new_billingprofile}
+
+#DELETE billingprofile
+-
+    name: DELETE billingprofile
+    type: item
+    method: DELETE
+    path: '/${billingprofile_path2}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE billingprofile
+-
+    name: DELETE billingprofile
+    type: item
+    method: DELETE
+    path: '/${billingprofile_path3}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE billingprofile
+-
+    name: DELETE billingprofile
+    type: item
+    method: DELETE
+    path: '/${peaktimes_weekday_billingprofile_path}'
+    conditions:
+        is:
+            code: 204
+
+#DELETE billingprofile
+-
+    name: DELETE billingprofile
+    type: item
+    method: DELETE
+    path: '/${peaktimes_special_billingprofile_path}'
+    conditions:
+        is:
+            code: 204
