@@ -42,6 +42,7 @@ ok($d->wait_for_text('//*[@id="contactidtable"]/tbody/tr[1]/td[4]', 'default-sys
 $d->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->scroll_to_element($d->find_element('//table[@id="billing_profileidtable"]'));
 $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]//input[@type="checkbox"]');
+$d->find_element('//*[@id="status"]')->click();
 $d->find_element('//*[@id="status"]/option[@value="active"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 ok($d->find_text('Create Peering Group'), 'Succesfully went back to previous form'); # Should go back to prev form
@@ -49,6 +50,7 @@ ok($d->find_text('Create Peering Group'), 'Succesfully went back to previous for
 diag("Continue creating a Peering Group");
 $d->fill_element('//*[@id="name"]', 'xpath', $groupname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'A group created for testing purposes');
+$d->find_element('//*[@id="priority"]')->click();
 $d->find_element('//*[@id="priority"]/option[@value="3"]')->click();
 $d->select_if_unselected('//table[@id="contractidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->find_element('#save', 'css')->click();
@@ -70,6 +72,7 @@ $groupname = ("group" . int(rand(100000)) . "test");
 $d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
 $d->fill_element('#name', 'css', $groupname);
 $d->fill_element('#description', 'css', 'A group created for very testing purposes');
+$d->find_element('//*[@id="priority"]')->click();
 $d->find_element('//*[@id="priority"]/option[@value="1"]')->click();
 $d->find_element('#save', 'css')->click();
 
@@ -213,6 +216,7 @@ $d->move_and_click('//table//td[contains(text(), "inbound_upn")]/..//td//a[conta
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 
 diag('Change to "P-Asserted-Identity');
+$d->find_element('//*[@id="inbound_upn"]')->click();
 $d->find_element('//*[@id="inbound_upn"]/option[@value="pai_user"]')->click();
 $d->find_element('#save', 'css')->click();
 
