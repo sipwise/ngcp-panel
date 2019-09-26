@@ -1,0 +1,35 @@
+#check recent journalitem request
+-
+    name: check recent journalitem request
+    type: item
+    method: GET
+    path: /${journal_link}
+    retain:
+        journal: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{links} = $retained->{journal}->{_links}->{'ngcp:'.$retained->{resource}};
+            $retained->{href_resource} = ref $retained->{journal}->{_links}->{'ngcp:'.$retained->{resource}} eq 'ARRAY'
+                ? $retained->{journal}->{_links}->{'ngcp:'.$retained->{resource}}->[0]->{href}
+                : $retained->{journal}->{_links}->{'ngcp:'.$retained->{resource}}->{href};
+            $retained->{expected_href_resource} = '/api/'.$retained->{resource}.'/'.$retained->{item}->{id};
+            delete $retained->{item}->{_links};
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${journal}.operation': '${operation}'
+            '${journal}.id': defined
+            '${journal}.operation': defined
+            '${journal}.username': defined
+            '${journal}.timestamp': defined
+            '${journal}.content': defined
+            '${journal}._links': defined
+            '${journal}._links.self': defined
+            '${journal}._links.collection': defined
+            '${links}': defined
+            '${href_resource}': '${expected_href_resource}'
+        is_deeply:
+            '${journal}.content': '${item}'

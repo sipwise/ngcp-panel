@@ -112,6 +112,10 @@ sub run_tests {
                     if ( $check_param =~ /.+\..+/ ) {
                         my @splitted_values = split (/\./, $check_param);
                         my $check_value = $self->_retrieve_from_composed_key( $result, \@splitted_values, $retained );
+                        # if ($check_value eq 'Not found') {
+                        #     push @{$tests_result->{warnings}}, "Warning: Required variable not found for test: $test_name.\n";
+                        #     return $tests_result;
+                        # }
                         if ( $conditions->{$condition}->{$check_param} eq 'defined' ) {
                             DEBUG ( "Checking ok for defined" );
                             if ( ok(defined $check_value, $test_name) ) {
@@ -202,6 +206,9 @@ sub _retrieve_from_composed_key {
         return $body->{$splitted_values->[1]};
     }
     elsif ( $splitted_values->[0] =~ /\$\{(.*)\}/ ) {
+        if ( !defined $retained->{$1} ) {
+            return 'Not found';
+        }
         my $value = $retained->{$1};
         grep { $value = $value->{$splitted_values->[$_]} } (1..(scalar @$splitted_values - 1));
         return $value;
