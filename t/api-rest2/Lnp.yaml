@@ -1,0 +1,128 @@
+---
+#create Lnp Provider
+-
+    name: create Lnp Provider
+    type: item
+    method: POST
+    path: /api/lnpcarriers/
+    header:
+        Content-Type: application/json
+    content:
+        name: test_lnp_carrier_${unique_id}
+        prefix: test${unique_id}
+    conditions:
+        is:
+            code: 201
+    retain:
+        lnp_provider_path: header.location
+        lnp_provider_id: header.location
+
+#get Lnp Provider
+-
+    name: GET Lnp Provider
+    type: item
+    method: GET
+    path: '/${lnp_provider_path}'
+    retain:
+        lnp_provider: body
+    conditions:
+        is:
+            code: 200
+
+#create Lnp Number
+-
+    name: create Lnp Number
+    type: item
+    method: POST
+    path: /api/lnpnumbers/
+    header:
+        Content-Type: application/json
+    content:
+        carrier_id: ${lnp_provider_id}
+        number: 123${unique_id}
+    conditions:
+        is:
+            code: 201
+    retain:
+        lnp_number_path1: header.location
+
+#get Lnp Number
+-
+    name: GET Lnp Number
+    type: item
+    method: GET
+    path: '/${lnp_number_path1}'
+    retain:
+        lnp_nubmer1: body
+    conditions:
+        is:
+            code: 200
+
+#create Lnp Number
+-
+    name: create Lnp Number
+    type: item
+    method: POST
+    path: /api/lnpnumbers/
+    header:
+        Content-Type: application/json
+    content:
+        carrier_id: ${lnp_provider_id}
+        number: 456${unique_id}
+    conditions:
+        is:
+            code: 201
+    retain:
+        lnp_number_path2: header.location
+
+#get Lnp Number
+-
+    name: GET Lnp Number
+    type: item
+    method: GET
+    path: '/${lnp_number_path2}'
+    retain:
+        lnp_nubmer2: body
+    conditions:
+        is:
+            code: 200
+
+#DELETE Lnp Number
+-
+    name: DELETE Lnp Number
+    type: item
+    method: DELETE
+    path: '/${lnp_number_path1}'
+    conditions:
+        is:
+            code: 204
+
+#get Lnp Number
+-
+    name: GET Lnp Number
+    type: item
+    method: GET
+    path: '/${lnp_number_path1}'
+    conditions:
+        is:
+            code: 404
+
+#DELETE Lnp Number
+-
+    name: DELETE Lnp Number
+    type: item
+    method: DELETE
+    path: '/${lnp_number_path2}'
+    conditions:
+        is:
+            code: 204
+
+#get Lnp Number
+-
+    name: GET Lnp Number
+    type: item
+    method: GET
+    path: '/${lnp_number_path2}'
+    conditions:
+        is:
+            code: 404
