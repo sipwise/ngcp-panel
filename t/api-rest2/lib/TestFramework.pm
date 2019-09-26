@@ -87,6 +87,13 @@ sub process_test{
 
     DEBUG( "In test '".$test->{name}."'" );
     return if ( $test->{skip} );
+    if ( !$self->_variables_available( $retained, $test ) ) {
+        my $warning = "Warning: Required variable not found for test: $test->{name}.\n";
+        WARN( $warning );
+        print $warning;
+        push @{$test_case_result->{warnings}}, $warning;
+        return;
+    }
 
     if ( $test->{type} eq 'include' ) {
         if ( $test->{perl_code} ){
@@ -133,6 +140,13 @@ sub process_test{
                 map { print $_." in test case '$test_case_name'\n" } @{$tests_result->{errors}};
                 $test_case_result->{success} = 0;
                 $test_case_result->{error_count} += scalar @{$tests_result->{errors}};
+            }
+            if ( $tests_result->{warnings} && scalar @{$tests_result->{warnings}} ) {
+                my @warnings = @{$tests_result->{warnings}};
+                WARN( @warnings );
+                print @warnings;
+                push @{$test_case_result->{warnings}}, @warnings;
+                return;
             }
         }
     }
@@ -250,12 +264,12 @@ sub _retrieve_from_composed_key {
 sub _variables_available {
     my( $self, $retained, $test ) = @_;
 
-    return 0 if ( $test->{path} =~ /\$\{(.*)\}/ && !$retained->{$1} );
+    return 0 if ( $test->{path} && $test->{path} =~ /\$\{(.*)\}/ && !$retained->{$1} );
 
     # substitute variables in content
     if ( $test->{content} && ref $test->{content} eq 'HASH' ) {
         foreach my $content_key (keys %{$test->{content}}) {
-            return 0 if ( $test->{content}->{$content_key} =~ /\$\{(.*)\}/ && !$retained->{$1} );
+            return 0 if ( $test->{content}->{$content_key} && $test->{content}->{$content_key} =~ /\$\{(.*)\}/ && !$retained->{$1} );
         }
     }
     return 1;
