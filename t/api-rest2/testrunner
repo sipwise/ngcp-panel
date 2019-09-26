@@ -79,6 +79,9 @@ sub worker {
             $exit_code = 1;
             print $result->{error_count}." errors were found!\n";
         }
+        if ( $result->{warnings} && scalar @{$result->{warnings}} > 0 ) {
+            print "Warnings were found!\n";
+        }
         print "Tests for $test_file took $total_time seconds.\n\n";
     }
     return $exit_code;

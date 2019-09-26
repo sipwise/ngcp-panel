@@ -1,0 +1,142 @@
+---
+#get a subscriber for testing
+-
+    name: get a subscriber for testing
+    type: item
+    method: GET
+    path: '/api/subscribers/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    retain:
+        subscriber: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $subscriber = $retained->{subscriber}->{'_embedded'}->{'ngcp:subscribers'}->[0];
+            $retained->{subscriber} = $subscriber;
+            $retained->{subscriber_id} = $subscriber->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${subscriber}.id': defined
+
+#get Subscriber Preferences
+-
+    name: GET Subscriber Preferences
+    type: item
+    method: GET
+    path: '/api/subscriberpreferences/${subscriber_id}'
+    retain:
+        subscriberpreferences: body
+    conditions:
+        is:
+            code: 200
+
+#get Subscriber Preferencedefs
+-
+    name: GET Subscriber Preferencedefs
+    type: item
+    method: GET
+    path: '/api/subscriberpreferencedefs'
+    retain:
+        defs: body
+    conditions:
+        is:
+            code: 200
+
+#put Subscriber Preferences
+-
+    name: PUT Subscriber Preferences
+    type: item
+    method: PUT
+    path: '/api/subscriberpreferences/${subscriber_id}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${subscriberpreferences}'
+    conditions:
+        is:
+            code: 200
+
+#get Subscriber Preferences
+-
+    name: GET Subscriber Preferences
+    type: item
+    method: GET
+    path: '/api/subscriberpreferences/${subscriber_id}'
+    retain:
+        subscriberpreferences: body
+    conditions:
+        is:
+            code: 200
+
+#get a domain for testing
+-
+    name: get a domain for testing
+    type: item
+    method: GET
+    path: '/api/domains/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    retain:
+        domain: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $domain = $retained->{domain}->{'_embedded'}->{'ngcp:domains'}->[0];
+            $retained->{domain} = $domain;
+            $retained->{domain_id} = $domain->{id};
+        } 
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${domain}.id': defined
+
+#get domain Preferences
+-
+    name: GET domain Preferences
+    type: item
+    method: GET
+    path: '/api/domainpreferences/${domain_id}'
+    retain:
+        domainpreferences: body
+    conditions:
+        is:
+            code: 200
+
+#get domain Preferencedefs
+-
+    name: GET domain Preferencedefs
+    type: item
+    method: GET
+    path: '/api/domainpreferencedefs'
+    retain:
+        defs: body
+    conditions:
+        is:
+            code: 200
+
+#put domain Preferences
+-
+    name: PUT domain Preferences
+    type: item
+    method: PUT
+    path: '/api/domainpreferences/${domain_id}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content: '${domainpreferences}'
+    conditions:
+        is:
+            code: 200
+
+#get domain Preferences
+-
+    name: GET domain Preferences
+    type: item
+    method: GET
+    path: '/api/domainpreferences/${domain_id}'
+    retain:
+        domainpreferences: body
+    conditions:
+        is:
+            code: 200
