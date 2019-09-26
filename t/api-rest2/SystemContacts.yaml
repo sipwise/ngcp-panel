@@ -119,6 +119,92 @@
                 - PATCH
                 - DELETE
 
+#test item journal link
+-
+    name: test item journal link
+    type: item
+    method: GET
+    path: /${system_contact_path1}
+    retain:
+        system_contact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{href} = $retained->{system_contact}->{_links}->{'ngcp:journal'}->[0]->{href};
+            $retained->{expected_href} = '/api/systemcontacts/'.$retained->{system_contact}->{id}.'/journal/';
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${system_contact}._links': defined
+            '${system_contact}._links.ngcp:journal': defined
+            '${href}': '${expected_href}'
+
+#test journal options
+-
+    name: test journal options
+    type: item
+    method: OPTIONS
+    path: '/${system_contact_path1}/journal'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#test journal head
+-
+    name: test journal head
+    type: item
+    method: HEAD
+    path: '/${system_contact_path1}/journal'
+    conditions:
+        is:
+            code: 200
+
+#TestJournalTopJournalItem
+-
+    name: include TestJournalTopJournalItem
+    type: include
+    file: TestJournalTopJournalItem.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{journal_link} = '/api/systemcontacts/' . $retained->{system_contact}->{id} . '/journal/recent';
+            $retained->{resource} = 'systemcontacts';
+            $retained->{item} = $retained->{system_contact};
+            $retained->{operation} = 'create';
+        }
+
+#test journal options
+-
+    name: test journal options
+    type: item
+    method: OPTIONS
+    path: '/${journal_item_link}'
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#test journal head
+-
+    name: test journal head
+    type: item
+    method: HEAD
+    path: '/${journal_item_link}'
+    conditions:
+        is:
+            code: 200
+
 #get systemcontact
 -
     name: GET systemcontact
@@ -197,6 +283,42 @@
         is:
             code: 200
 
+#test item journal link
+-
+    name: test item journal link
+    type: item
+    method: GET
+    path: /${system_contact_path3}
+    retain:
+        system_contact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{href} = $retained->{system_contact}->{_links}->{'ngcp:journal'}->[0]->{href};
+            $retained->{expected_href} = '/api/systemcontacts/'.$retained->{system_contact}->{id}.'/journal/';
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${system_contact}._links': defined
+            '${system_contact}._links.ngcp:journal': defined
+            '${href}': '${expected_href}'
+
+#TestJournalTopJournalItem
+-
+    name: include TestJournalTopJournalItem
+    type: include
+    file: TestJournalTopJournalItem.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{journal_link} = '/api/systemcontacts/' . $retained->{system_contact}->{id} . '/journal/recent';
+            $retained->{resource} = 'system_contacts';
+            $retained->{item} = $retained->{system_contact};
+            $retained->{operation} = 'update';
+        }
+
 #get systemcontact
 -
     name: GET systemcontact
@@ -270,11 +392,47 @@
             path: /firstname
             value: patchedfirst
     retain:
-        patched_reseller: body
+        patched_system_contact: body
     conditions:
         is:
             code: 200
-            '${patched_reseller}.firstname': 'patchedfirst'
+            '${patched_system_contact}.firstname': 'patchedfirst'
+
+#test item journal link
+-
+    name: test item journal link
+    type: item
+    method: GET
+    path: /${system_contact_path3}
+    retain:
+        system_contact: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{href} = $retained->{system_contact}->{_links}->{'ngcp:journal'}->[0]->{href};
+            $retained->{expected_href} = '/api/systemcontacts/'.$retained->{system_contact}->{id}.'/journal/';
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${system_contact}._links': defined
+            '${system_contact}._links.ngcp:journal': defined
+            '${href}': '${expected_href}'
+
+#TestJournalTopJournalItem
+-
+    name: include TestJournalTopJournalItem
+    type: include
+    file: TestJournalTopJournalItem.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{journal_link} = '/api/systemcontacts/' . $retained->{system_contact}->{id} . '/journal/recent';
+            $retained->{resource} = 'system_contacts';
+            $retained->{item} = $retained->{system_contact};
+            $retained->{operation} = 'update';
+        }
 
 #PATCH systemcontact with undef name
 -
@@ -291,12 +449,12 @@
             path: /firstname
             value: null
     retain:
-        patched_reseller: body
+        patched_system_contact: body
     conditions:
         is:
             code: 200
         ok:
-            '${patched_reseller}.firstname': undefined
+            '${patched_system_contact}.firstname': undefined
 
 #PATCH systemcontact with no emil
 -
@@ -312,8 +470,6 @@
             op: replace
             path: /email
             value: null
-    retain:
-        patched_reseller: body
     conditions:
         is:
             code: 422
@@ -347,6 +503,34 @@
     conditions:
         is:
             code: 204
+
+
+#TestJournalTopJournalItem
+-
+    name: include TestJournalTopJournalItem
+    type: include
+    file: TestJournalTopJournalItem.yaml
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{journal_link} = '/api/systemcontacts/' . $retained->{patched_system_contact}->{id} . '/journal/recent';
+            $retained->{resource} = 'system_contacts';
+            $retained->{item} = $retained->{patched_system_contact};
+            $retained->{operation} = 'delete';
+        }
+
+#test journal collection
+-
+    name: test journal collection
+    type: pagination
+    skip: 1
+    method: GET
+    path: '${journal_collection_link}'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
 
 #create domain
 -
