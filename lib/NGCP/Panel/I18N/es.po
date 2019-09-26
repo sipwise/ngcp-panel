@@ -8179,6 +8179,11 @@ msgstr "Terminar llamada"
 msgid "Terminating own subscriber is prohibited."
 msgstr "Eliminar su propio suscriptor no está permitido"
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid ""
+"Terminating pilot subscriber when other subscribers exist is prohibited."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "The IP address of the SNMP manager which is supposed to access this IMG. "
