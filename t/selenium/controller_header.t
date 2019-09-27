@@ -97,6 +97,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
+$d->capture_screenshot("/results/DEBUG_H.png");
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[1]', '100'), "Priority is correct");
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[3]', $headerrule), "Name is correct");
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a nice description'), "Description is correct");
