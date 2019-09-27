@@ -122,6 +122,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'Very very useful descriptio
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check profile details");
+$d->capture_screenshot("/results/DEBUG_PS1.png");
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $profilename . '")]', $profilename), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "Very very useful description")]'), 'Description is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $setname . '")]', $setname), 'Profile Set is correct');
