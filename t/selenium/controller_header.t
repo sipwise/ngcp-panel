@@ -103,6 +103,7 @@ ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a n
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'inbound'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "0")]'), 'Stopper is correct');
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), 'Enabled is correct');
+$d->capture_screenshot("/results/DEBUG_H1.png");
 
 diag("Edit Header Rule");
 $headerrule = ("header" . int(rand(100000)) . "rule");
@@ -124,6 +125,7 @@ ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a v
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'outbound'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "1")]'), 'Stopper is correct');
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), 'Enabled is correct');
+$d->capture_screenshot("/results/DEBUG_H2.png");
 
 diag("Create a Second Header Rule");
 $d->find_element("Create Header Rule", 'link_text')->click();
