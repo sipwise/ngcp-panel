@@ -125,6 +125,7 @@ diag("Check profile details");
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $profilename . '")]', $profilename), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "Very very useful description")]'), 'Description is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $setname . '")]', $setname), 'Profile Set is correct');
+$d->capture_screenshot("/results/DEBUG_PS1.png");
 
 diag("Go to 'Profile Preferences' page");
 $d->move_and_click('//*[@id="subscriber_profile_table"]//tr[1]/td//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="subscriber_profile_table_filter"]/label/input');
