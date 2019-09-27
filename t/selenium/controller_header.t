@@ -96,6 +96,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'this is a nice description'
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Details');
+$d->capture_screenshot("/results/DEBUG_H.png");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[1]', '100'), "Priority is correct");
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[3]', $headerrule), "Name is correct");
