@@ -123,6 +123,9 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Eve
 ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "Very important event")]'), "Description is correct");
 ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "every week on Monday from 2020-06-01 12:00:00 to 2020-07-01 13:00:00")]'), "Date/Time is correct");
 
+diag("Take a screenshot for debugging purposes");
+$d->capture_screenshot("/results/DEBUG_T1.png");
+
 diag("Go to 'Peering Groups' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element('Peerings', 'link_text')->click();
