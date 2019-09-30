@@ -160,8 +160,63 @@ ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular exp
 ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'in'), 'Direction is correct');
 ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Zone Detail is correct');
 
+diag('Go Back to Billing Profiles Page');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Billing", 'link_text')->click();
+
+diag('Clone Billing Profile');
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing Profile was found');
+$d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//a[contains(text(), "Duplicate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+
+diag('Fill in Clone Details');
+my $clonename = ("billing" . int(rand(100000)) . "test");
+$d->fill_element('//*[@id="handle"]', 'xpath', $clonename);
+$d->fill_element('//*[@id="name"]', 'xpath', $clonename);
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Search For Cloned Billing Profile');
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $clonename);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $clonename), 'Billing Profile was found');
+$d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+
+diag('Check if Fees got cloned properly');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source Pattern is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination Pattern is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular expression - longest pattern'), 'Match Mode is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'in'), 'Direction is correct');
+ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Zone Detail is correct');
+
+diag('Check if Billing Zones got cloned properly');
+$d->find_element('Edit Zones', 'link_text')->click();
+ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[2]', $zonename), 'Billing Zone name is correct');
+ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[3]', $zonedetailname), 'Billing Zone detail is correct');
+
+diag('Delete Cloned Billing Profile');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Billing", 'link_text')->click();
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $clonename);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $clonename), 'Billing Profile was found');
+$d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+$d->find_element('//*[@id="dataConfirmOK"]')->click();
+
+diag('Check if Clone Profile got deleted');
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $clonename);
+ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Cloned Billing Profile was deleted');
+
+diag('Go Back to Billing Fees');
+$d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
+ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing Profile was found');
+$d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+
 diag('Trying to NOT delete Billing Fee');
-$d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_fee_table_filter"]/label/input');
+$d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_fee_table_filter"]//input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
 diag('Check if Billing Fee is still here');
