@@ -325,6 +325,20 @@ $c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 
+diag('Test the handbook');
+$d->find_element('//*[@id="main-nav"]/li[2]/a')->click();
+$d->find_element('//*[@id="main-nav"]//li//a[contains(text(), "Handbook")]')->click();
+
+diag('Check if we start at the right page');
+ok($d->find_element_by_xpath('/html/body//div//h2/a[@name="_introduction"]'), "We are on the right page");
+
+diag('Change Page');
+sleep 1; #else the element will get blocked by... itself? (<html>)
+$d->find_element('//*[@id="toc-root-item-2"]//a[contains(text(), "Architecture")]')->click();
+
+diag('Check if Page was successfully changed');
+ok($d->find_element_by_xpath('/html/body//div//h2/a[@name="architecture"]'), "We are on the right page");
+
 diag("This test run was successfull");
 $run_ok = 1;
 
