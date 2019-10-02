@@ -369,68 +369,6 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), '
 $c->delete_contact($contactmail);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
-
-diag('Create default Reseller + Contract');
-$d->find_element('//*[@id="content"]//div//form//button[contains(text(), "Create Reseller with default values")]')->click();
-ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Reseller Details for")]'), "We are on the correct page");
-diag('Get Reseller Name');
-if($d->find_element_by_xpath('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Base Information")]/../../../div')->get_attribute('class', 1) eq 'accordion-group') {
-    $d->find_element('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Base Information")]')->click();
-}
-$resellername = $d->get_text('//*[@id="Reseller_table"]/tbody/tr/td[2]');
-my $temp = substr($resellername, 8);
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully created with login Default" . $temp . " and password defaultresellerpassword, please review your settings below",  "Correct Alert was shown");
-
-diag('Add unique name to Contract');
-$contractid = ("contract" . int(rand(100000)) . "term");
-$d->find_element('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Contract")]')->click();
-$d->find_element('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Contract")]')->click();
-$d->move_and_click('//*[@id="Contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="masthead"]//div//h2[contains(text(), "Reseller Details")]');
-$d->fill_element('//*[@id="external_id"]', 'xpath', $contractid);
-$d->find_element('//*[@id="save"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully changed!",  "Correct Alert was shown");
-
-diag("Go to Reseller Contracts");
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element('Reseller and Peering Contracts', 'link_text')->click();
-
-diag("Search for Reseller Contract");
-$d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
-ok($d->wait_for_text('//*[@id="contract_table"]/tbody/tr[1]/td[2]', $contractid), 'Reseller contract found');
-
-diag("Terminate Reseller Contract");
-$d->move_and_click('//*[@id="contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="contract_table_filter"]/label/input');
-$d->scroll_to_element($d->find_element('//*[@id="status"]'));
-$d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
-$d->find_element('//*[@id="save"]')->click();
-
-diag("Check if Reseller Contract was terminated");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Contract successfully changed!",  "Correct Alert was shown");
-$d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
-ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Reseller Contract was terminated');
-
-diag("Go to Reseller");
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element('Resellers', 'link_text')->click();
-
-diag("Search reseller");
-$d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
-ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
-ok($d->wait_for_text('//*[@id="Resellers_table"]/tbody/tr[1]/td[3]', $resellername), 'Reseller Name is correct');
-
-diag("Terminate Reseller");
-$d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
-$d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
-$d->find_element('//*[@id="save"]')->click();
-
-diag("Check if Reseller was terminated");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Reseller successfully updated",  "Correct Alert was shown");
-$d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
-ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Reseller was deleted');
-
 $c->delete_billing_profile($billingname);
 
 diag("This test run was successfull");
