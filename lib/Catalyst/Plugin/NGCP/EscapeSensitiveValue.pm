@@ -1,4 +1,4 @@
-package Catalyst::Plugin::EscapeSensitiveValue;
+package Catalyst::Plugin::NGCP::EscapeSensitiveValue;
 use warnings;
 use strict;
 use MRO::Compat;
