@@ -1,2 +1,2 @@
-usr/share/man/man3/Catalyst::*
-usr/share/perl5/Catalyst
+usr/share/man/man3/Catalyst::Plugin::Session::Store::Redis*
+usr/share/perl5/Catalyst/Plugin/Session/Store/Redis
