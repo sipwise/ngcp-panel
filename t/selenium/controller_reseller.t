@@ -22,8 +22,8 @@ $c->login_ok();
 $c->create_reseller_contract($contractid);
 
 diag('Go to reseller page');
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element('Resellers', 'link_text')->click();
+$d->find_element('//*[@class="brand"]')->click();
+$d->find_element('//*[@id="content"]//div[contains(text(), "Resellers")]/../../div/a')->click();
 
 diag('Try to create a empty reseller');
 $d->find_element('Create Reseller', 'link_text')->click();
