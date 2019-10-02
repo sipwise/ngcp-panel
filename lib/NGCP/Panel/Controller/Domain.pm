@@ -13,7 +13,7 @@ use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::XMLDispatcher;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare)  {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -23,7 +23,14 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $dispatch_to = '_dom_resultset_' . $c->user->roles;
+    my $resultset_role = $c->user->roles;
+    if ($resultset_role eq 'ccareadmin') {
+        $resultset_role = 'admin';
+    } elsif ($resultset_role eq 'ccare') {
+        $resultset_role = 'reseller';
+    }
+
+    my $dispatch_to = '_dom_resultset_' . $resultset_role;
     my $dom_rs = $self->$dispatch_to($c);
 
     $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -34,6 +41,10 @@ sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
 
     $c->stash(dom_rs   => $dom_rs,
               template => 'domain/list.tt');
+}
+
+sub dom_list_restricted :Chained('dom_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
 }
 
 sub _dom_resultset_admin {
@@ -55,7 +66,7 @@ sub root :Chained('dom_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('dom_list') :PathPart('create') :Args() {
+sub create :Chained('dom_list_restricted') :PathPart('create') :Args() {
     my ($self, $c, $reseller_id, $type) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -169,7 +180,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
     );
 }
 
-sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('/domain/dom_list_restricted') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $domain_id) = @_;
 
     unless($domain_id && is_int($domain_id)) {
