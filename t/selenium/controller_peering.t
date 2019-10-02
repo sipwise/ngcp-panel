@@ -20,8 +20,7 @@ my $run_ok = 0;
 $c->login_ok();
 
 diag("Go to Peerings page");
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element("Peerings", 'link_text')->click();
+$d->find_element('//*[@id="content"]//div[contains(text(), "Peerings")]/../../div/a')->click();
 
 diag("Create a empty Peering Group");
 $d->find_element('//*[@id="masthead"]//h2[contains(text(),"SIP Peering Groups")]');
