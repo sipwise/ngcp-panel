@@ -28,8 +28,8 @@ sub login_ok {
     $self->driver->find_element('#submit', 'css')->click();
 
     diag("Checking Admin interface");
-    is($self->driver->get_title, 'Dashboard', 'Tab Title is correct');
-    is($self->driver->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard", 'We are in the Dashboard. Login Successful');
+    is($self->driver->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard", 'Dashboard is shown');
+    is($self->driver->get_title, 'Dashboard', 'We are in the Dashboard. Login Successful');
 }
 
 sub create_domain {
