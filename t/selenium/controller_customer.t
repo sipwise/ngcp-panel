@@ -177,7 +177,9 @@ ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(
 ok($d->wait_for_text('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[4]', 'mymail@example.org'), "Mail is correct");
 
 diag("Go to Contract Balance");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]')->click();
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
+$d->wait_for_attribute('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]', 'class', 'accordion-toggle collapsed');
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]')->click();
 
 diag("Set cash balance without entering anything");
@@ -228,9 +230,9 @@ ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[cont
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), "Free-Time Balance is correct");
 
 diag("Create a new Phonebook entry");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]')->click();
-$d->wait_for_attribute('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]', 'class', 'accordion-toggle collapsed');
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]')->click();
+$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]')->click();
+$d->wait_for_attribute('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]', 'class', 'accordion-toggle collapsed');
 $d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]'));
 
