@@ -13,6 +13,7 @@ my $c = Selenium::Collection::Common->new(
     driver => $d
 );
 
+my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 my $adminname = ("admin" . int(rand(100000)) . "test");
 my $adminpwd = ("pwd" . int(rand(100000)) . "test");
 my $resellername = ("reseller" . int(rand(100000)) . "test");
@@ -45,6 +46,9 @@ ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
 ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), "Reseller found");
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
+$d->unselect_if_selected('//*[@id="show_passwords"]');
+$d->unselect_if_selected('//*[@id="call_data"]');
+$d->unselect_if_selected('//*[@id="billing_data"]');
 $d->fill_element('//*[@id="login"]', 'xpath', $adminname);
 $d->fill_element('//*[@id="password"]', 'xpath', $adminpwd);
 $d->find_element('//*[@id="save"]')->click();
@@ -60,7 +64,7 @@ ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminn
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[7][contains(text(), "0")]'), "Read-Only value is correct");
 
-diag('Edit Admin details');
+diag('Edit Admin details. Enable Read only setting');
 $adminname = ("admin" . int(rand(100000)) . "test");
 $d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
 $d->fill_element('//*[@id="login"]', 'xpath', $adminname);
@@ -75,7 +79,7 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Name is correct");
 ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[6]', '1'), "Read-Only value is correct");
+ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[7]', '1'), "Read-Only value is correct");
 
 diag('New admin tries to login now');
 $c->login_ok($adminname, $adminpwd);
@@ -105,6 +109,40 @@ $d->find_element("Domains", 'link_text')->click();
 
 diag("Check if table is empty");
 ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Domain Table is empty');
+
+diag('Switch over to default admin');
+$c->login_ok();
+
+diag('Go to admin interface');
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element("Administrators", 'link_text')->click();
+
+diag('Edit Admin Permissions. Make Admin inactive');
+$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
+ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Admin found");
+$d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
+$d->find_element('//*[@id="is_active"]')->click();
+$d->find_element('//*[@id="save"]')->click();
+
+diag('Check Admin details');
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  "Correct Alert was shown");
+$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
+ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), "Name is correct");
+ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[6][contains(text(), "0")]'), "Active Value is correct");
+ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[7]', '1'), "Read-Only value is correct");
+
+diag("Do deactvated Admin Login");
+$d->get("$uri/logout");
+$d->get("$uri/login");
+$d->fill_element('#username', 'css', $adminname);
+$d->fill_element('#password', 'css', $adminpwd);
+$d->find_element('#submit', 'css')->click();
+ok($d->find_element_by_xpath('/html/body//div//span[contains(text(), "Invalid username/password")]'), "Login failed as intended");
 
 diag('Switch over to default admin');
 $c->login_ok();
