@@ -2748,6 +2748,16 @@ msgid ""
 "Enable T38 Fax-over-IP via auto-provisioning if the end device supports it."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable last number redial VSC"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Enable the Vertical Service Code to redial latest dialed number for this "
+"subscriber/domain."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 #: share/templates/rewrite/rules_list.tt
