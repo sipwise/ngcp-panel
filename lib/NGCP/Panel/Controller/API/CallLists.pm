@@ -59,12 +59,14 @@ sub query_params {
             new_rs => sub {
                 my ($c,$q,$rs) = @_;
                 if ($c->user->roles ne "subscriber" and $c->user->roles ne "subscriberadmin" and not exists $c->req->query_params->{subscriber_id}) {
-                    return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
-                            -or => [
-                                'source_account_id' => $q,
-                                'destination_account_id' => $q,
-                            ],
-                        },undef),NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
+                    my $out_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            source_account_id => $q,
+                    }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+                    my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            destination_account_id => $q,
+                            source_account_id => { '!=' => $q },
+                    }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
+                    return $out_rs->union_all($in_rs);
                 }
                 return $rs;
             },
