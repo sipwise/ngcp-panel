@@ -131,8 +131,7 @@ ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "d
 $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
 
 diag("Open 'Number Manipulations'");
-$d->find_element("Number Manipulations", 'link_text')->click();
-$d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Number Manipulations")]'));
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 
 diag("Edit setting 'emergency_mapping_container'");
 $d->scroll_to_element($d->find_element('//table//tr//td[contains(text(), "emergency_mapping_container")]'));
@@ -143,11 +142,8 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if 'emergency_mapping_container' was applied");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference emergency_mapping_container successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "emergency_mapping_container")]/../td/select/option[contains(text(), "' . $containername . '")][@selected="selected"]'), 'NCOS Level was applied');
-
-diag("Open 'Internals'");
-$d->find_element("Internals", 'link_text')->click();
-$d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Internals")]'));
 
 diag("Edit setting 'emergency_mode_enabled'");
 $d->scroll_to_element($d->find_element('//table//tr//td[contains(text(), "emergency_mode_enabled")]'));
@@ -158,6 +154,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Setting was enabled");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference emergency_mode_enabled successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "emergency_mode_enabled")]/../td//input[@checked="checked"]'), "Setting was enabled");
 
 diag("Go to Emergency Mappings page");

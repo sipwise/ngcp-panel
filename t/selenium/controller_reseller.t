@@ -95,9 +95,8 @@ diag("Go to Reseller Details");
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
 
 diag("Create a empty Phonebook entry");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
-$d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
-$d->scroll_to_element($d->find_element("Create Phonebook Entry", 'link_text'));
 $d->find_element("Create Phonebook Entry", 'link_text')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -112,8 +111,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Searching Phonebook entry");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully created",  "Correct Alert was shown");
-$d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
-$d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'testname');
@@ -130,8 +128,8 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Checking Phonebook entry details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Phonebook entry successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
-$d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]')->click();
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[2]', 'newtestname'), 'Name is correct');
 ok($d->wait_for_text('//*[@id="phonebook_table"]/tbody/tr/td[3]', '0987654321'), 'Number is correct');
 

@@ -40,8 +40,9 @@ ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "d
 diag("Open Preferences of first Domain");
 $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
 
-diag('Open the tab "Access Restrictions"');
-$d->find_element("Access Restrictions", 'link_text')->click();
+diag("Go to 'Acces Restrictions'");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element("Access Restrictions", 'link_text'));
 
 diag("Click edit for the preference concurrent_max");
 $d->move_and_click('//table//tr/td[contains(text(), "concurrent_max")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "reject_emergency")]');
@@ -59,8 +60,9 @@ $d->fill_element('#concurrent_max', 'css', '789');
 $d->find_element('#save', 'css')->click();
 
 diag('Check if value has been applied');
-$d->find_element("Access Restrictions", 'link_text')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference concurrent_max successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element("Access Restrictions", 'link_text'));
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), "Value has been applied");
 
 diag("Click edit for the preference allowed_ips");
@@ -81,6 +83,8 @@ $d->find_element('//*[@id="add"]')->click();
 $d->find_element('//*[@id="mod_close"]')->click();
 
 diag("Check if IP address has been added");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element("Access Restrictions", 'link_text'));
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "127.0.0.1")]'), "IP address has beeen found");
 
 diag("Add another IP address");
@@ -91,6 +95,8 @@ $d->find_element('//*[@id="add"]')->click();
 $d->find_element('//*[@id="mod_close"]')->click();
 
 diag("Check if IP address has been added");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element("Access Restrictions", 'link_text'));
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "10.0.0.138")]'), "IP address has beeen found");
 
 diag("Delete the first IP address");
@@ -100,12 +106,9 @@ $d->find_element('//*[@id="mod_edit"]/div[2]/div[2]/a')->click();
 $d->find_element('//*[@id="mod_close"]')->click();
 
 diag("Check if IP addresses have been changed");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element("Access Restrictions", 'link_text'));
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td[contains(text(), "10.0.0.138")]'), "IP address has beeen found");
-
-diag("Enable transcoding to Opus Mono and Stereo");
-$d->find_element("Access Restrictions", 'link_text')->click();
-$d->scroll_to_element($d->find_element('Media Codec Transcoding Options', 'link_text'));
-$d->find_element('Media Codec Transcoding Options', 'link_text')->click();
 
 diag("Enable Opus Mono");
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
@@ -116,6 +119,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Opus Mono was enabled");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference transcode_opus_mono successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//input[@checked="checked"]'), "Opus mono was enabled");
 
 diag("Change Opus Mono Bitrate");
@@ -130,6 +134,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Bitrate was applied");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference opus_mono_bitrate successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
 
 diag("Enable Opus Stereo");
@@ -141,6 +146,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Opus Stereo was enabled");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference transcode_opus_stereo successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//input[@checked="checked"]'), "Opus stereo was enabled");
 
 diag("Change Opus Stereo Bitrate");
@@ -155,6 +161,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Bitrate was applied");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference opus_stereo_bitrate successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), "Correct bitrate was selected");
 
 diag("Open delete dialog and press cancel");
