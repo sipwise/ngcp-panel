@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e77d4eb_35926579",
+        "filename": "lib/NGCP/Panel/Utils/Statistics.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-10-04T15:34:30Z",
+      "side": 1,
+      "message": "we need to cover CE platform here, there is no ngcp-collective check",
+      "range": {
+        "startLine": 91,
+        "startChar": 4,
+        "endLine": 91,
+        "endChar": 50
+      },
+      "revId": "0693586fd5ed6bb007c2ec547a376e203d91b2e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
