@@ -46,6 +46,30 @@
       "revId": "0693586fd5ed6bb007c2ec547a376e203d91b2e1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d103cdea_4d0ebdb0",
+        "filename": "lib/NGCP/Panel/Utils/Statistics.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-10-07T10:11:31Z",
+      "side": 1,
+      "message": "final is ngcp-collective-check, after a long and constructive discussion with Alex we had many points towards collective-chack and against using ngcp-status.\n\nwe need a \"if -f /usr/sbin/ngcp-collective-check\" to cover the case (CE) when the script is not available and in this case the widget is simply not shown at all.",
+      "parentUuid": "a016b45d_0fc07470",
+      "range": {
+        "startLine": 91,
+        "startChar": 4,
+        "endLine": 91,
+        "endChar": 50
+      },
+      "revId": "0693586fd5ed6bb007c2ec547a376e203d91b2e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
