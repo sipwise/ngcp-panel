@@ -22,6 +22,30 @@
       "revId": "0693586fd5ed6bb007c2ec547a376e203d91b2e1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a016b45d_0fc07470",
+        "filename": "lib/NGCP/Panel/Utils/Statistics.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-10-07T10:06:16Z",
+      "side": 1,
+      "message": "what is the final thing to use now, collective-check or ngcp-status?\n\none more thing: iirc we dont use backticks to execute in other places. would be nice to stick with one mechanism. however the should be a proper 500 response of the ajax call if this invocation here fails.",
+      "parentUuid": "5e77d4eb_35926579",
+      "range": {
+        "startLine": 91,
+        "startChar": 4,
+        "endLine": 91,
+        "endChar": 50
+      },
+      "revId": "0693586fd5ed6bb007c2ec547a376e203d91b2e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
