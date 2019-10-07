@@ -43,6 +43,13 @@ is($elem->get_text, 'No matching records found');
 
 diag('Search for "mytestprofile" in billing profile');
 $searchfield->clear();
+$searchfield->send_keys('donotfindme');
+diag("Verify that nothing is shown");
+
+my $elem = $d->find_element('#billing_profile_table td.dataTables_empty', 'css');
+ok($elem);
+is($elem->get_text, 'No matching records found');
+$searchfield->clear();
 $searchfield->send_keys('mytestprofile');
 #$d->find_element('#billing_profile_table tr.sw_action_row', css);
 ok($d->find_element('//table[@id="billing_profile_table"]//tr[1]/td[2][contains(text(),"mytestprofile")]'));
@@ -62,6 +69,20 @@ is($elem->get_value, "mytestprofile");
 $d->fill_element('#interval_charge', 'css', '3.2');
 $d->find_element('#save', 'css')->click();
 sleep 1;
+
+diag('Search for "mytestprofile" in billing profile');
+my $searchfield = $d->find_element('#billing_profile_table_filter label input', 'css');
+$searchfield->clear();
+$searchfield->send_keys('donotfindme');
+diag("Verify that nothing is shown");
+
+my $elem = $d->find_element('#billing_profile_table td.dataTables_empty', 'css');
+ok($elem);
+is($elem->get_text, 'No matching records found');
+$searchfield->clear();
+$searchfield->send_keys('mytestprofile');
+#$d->find_element('#billing_profile_table tr.sw_action_row', css);
+ok($d->find_element('//table[@id="billing_profile_table"]//tr[1]/td[2][contains(text(),"mytestprofile")]'));
 
 diag('Open "Fees" for mytestprofile');
 $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
@@ -119,6 +140,18 @@ ok($d->find_element('//a[contains(@href,"/domain")]'));
 $d->find_element("Billing", 'link_text')->click();
 
 diag('Open "Edit Peak Times" for mytestprofile');
+my $searchfield = $d->find_element('#billing_profile_table_filter label input', 'css');
+$searchfield->clear();
+$searchfield->send_keys('donotfindme');
+diag("Verify that nothing is shown");
+
+my $elem = $d->find_element('#billing_profile_table td.dataTables_empty', 'css');
+ok($elem);
+is($elem->get_text, 'No matching records found');
+$searchfield->clear();
+$searchfield->send_keys('mytestprofile');
+#$d->find_element('#billing_profile_table tr.sw_action_row', css);
+ok($d->find_element('//table[@id="billing_profile_table"]//tr[1]/td[2][contains(text(),"mytestprofile")]'));
 $row = $d->find_element('//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
 ok($row);
 $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Peaktimes")]');
