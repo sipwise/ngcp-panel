@@ -1,3 +1,12 @@
+ngcp-panel (6.5.6.2+0~mr6.5.6.2) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [fa17f9d] TT#68016 selenium: fix controller_billing crashing issues
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 08 Oct 2019 11:52:11 +0200
+
 ngcp-panel (6.5.6.1+0~mr6.5.6.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
