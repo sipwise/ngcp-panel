@@ -1,3 +1,128 @@
+ngcp-panel (8.0.1.0+0~mr8.0.1.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [c56be67] TT#56376 selenium: more work on edit peak times
+  * [0ab1471] TT#56376 selenium: reduce geckodriver console logs
+  * [3be6e9f] TT#56376 selenium: increase timeout values
+  * [5da4d55] TT#56376 selenium: add scroll_to_element to the beginning of every function
+  * [05f6fbe] TT#56376 selenium: add file controller_profile.t
+  * [126e3eb] TT#56376 selenium: fix for tooltips preventing input
+  * [9f1a168] TT#56376 selenium: fix for tooltip blocking main menu in ctr_ncos
+  * [323727b] TT#56376 selenium: add test: teminate customer
+  * [9cb0599] TT#56376 selenium: fix for tooltip blocking main menu in ctr_subscriber
+  * [14c677f] TT#56376 selenium: fix for tooltip blocking main menu in ctr_emergency
+  * [deeb60b] TT#56376 selenium: add test: teminate reseller + contract
+  * [55816e7] TT#56376 selenium: add controller_profile to default test plan
+  * [f962342] TT#56376 selenium: add test: teminate subscriber
+  * [be2d458] TT#56376 selenium: ctr_emergency: prevent missing alert from crashing script
+  * [aac6055] TT#56376 selenium: add test: add timeset to peering group
+  * [86faa0f] TT#56376 selenium: edit test: teminate subscriber
+  * [45db99b] TT#56376 selenium: change how empty inbound rule creation gets tested
+  * [7699e25] TT#56376 selenium: ctr_peering: prevent missing alert from crashing script
+  * [bfc75d1] TT#56376 selenium: ctr_ncos: prevent missing alert from crashing script
+  * [94d034e] TT#56376 selenium: ctr_subscriber: prevent missing alert from crashing script
+  * [d67dd2f] TT#56376 selenium: ctr_customer: prevent missing alert from crashing script
+  * [6c2676c] TT#56376 selenium: ctr_profile: prevent missing alert from crashing script
+  * [d15f37b] TT#56376 selenium: fix ctr_other tooltip crashing the script
+  * [34be398] TT#56376 selenium: ctr_other: prevent missing alert from crashing script
+  * [62ff706] TT#56376 selenium: reload peak times page to prevent missing edit button
+  * [6be0b92] TT#56376 selenium: workaround for subscriber details menu
+  * [08bf948] TT#56376 selenium: fix crash screenshot names
+  * [5b41164] TT#56376 selenium: fix a button xpath
+  * [97eb0d4] TT#56376 selenium: fix ncos tooltip crashing the test
+  * [ca9b01f] TT#56376 selenium: add test: add invoice template to customer
+  * [a0c3c3b] TT#56376 selenium: fixup controller_header for inclusion to test plan
+  * [5a11c5a] TT#56376 selenium: fix read-only value crash in controller_admin
+  * [a114ff9] TT#56376 selenium: add missing alert check to ctr_customer
+  * [299ef39] TT#56376 selenium: workaround for subscriber tests going to wrong menu
+  * [1669571] TT#56376 selenium: add controller_header.t to default test plan
+  * [492d137] TT#56376 selenium: fill call list suppression domain twice to trigger popup
+  * [f1d009a] TT#56376 selenium: work around tooltip blocking main menu
+  * [3b544b9] TT#56376 selenium: create default reseller + contract for termination test
+  * [0d9719a] TT#56376 selenium: refresh call list suppression box to clear tooltips
+  * [9242d92] TT#56376 selenium: workaround for customer tests going to wrong menu
+  * [f912a09] TT#56376 selenium: re-add old workaround on edit call list supression
+  * [407c95c] TT#56376 selenium: change clickable element on call list supression window
+  * [a801fc7] TT#56376 selenium: add function get_text_safe()
+  * [1af4601] TT#56376 selenium: add unique external id to termination reseller contract
+  * [604ca57] TT#56376 selenium: edit invalid fallback element which caused issues
+  * [9b13357] TT#56376 selenium: add test: cash balance
+  * [5e919b5] TT#56376 selenium: add function: create/delete_ncos
+  * [4155bce] TT#56376 selenium: add file controller_profileset.t
+  * [57908d2] TT#56376 selenium: workaround for call list suppression popup blocking items
+  * [582f6b3] TT#56376 selenium: workaround for header popup blocking items
+  * [6f94991] TT#56376 selenium: expand bitrate list before clicking on bitrate entry
+  * [4245f60] TT#56376 selenium: workaround for locking subscriber going into wrong menu
+  * [5afd029] TT#56376 selenium: fixes for ctr_profileset + runner
+  * [c8404cf] TT#56376 selenium: remove unnecessary search queues
+  * [e1112ef] TT#56376 selenium: change header rule information checks
+  * [2e6604c] TT#56376 selenium: expand subscriber status list before clicking on entry
+  * [1d176e3] TT#56376 selenium: add aliases for manual tests
+  * [33b9603] TT#56376 selenium: add file controller_terminate.t
+  * [f8798fd] TT#56376 selenium: expand all select elements before clicking on element
+  * [53c811b] TT#56376 selenium: add test: clone billing profile
+  * [903b7f6] TT#56376 selenium: add test: change interface language
+  * [2a4d3e1] TT#56376 selenium: add test: navigate the handbook
+  * [029cc0b] TT#56376 selenium: add controller_profileset to default test plan
+  * [8846cdf] TT#56376 selenium: remove duplicate code
+  * [be62293] TT#56376 selenium: test configure buttons on the dashboard
+  * [2d49f5d] TT#56376 selenium: improvements in customer details
+  * [ee222bc] TT#56376 selenium: improve tab title test
+  * [0016d0d] TT#56376 selenium: add test: deactivate admin
+  * [643edd5] TT#68016 selenium: remove is_shown check in fill_element
+  * [189d9ba] TT#68016 selenium: improve handling of details tabs
+  * [993577c] TT#68016 selenium: add test: edit peering details from peering overview page
+
+  [ Rene Krenn ]
+  * [ed3ea31] TT#64701 remove customer_fraud_events.pm virtualview
+
+  [ Kirill Solomko ]
+  * [73dd45c] TT#64605 add usrloc_expires_type support
+  * [c822992] TT#64605 api-subscriberregistrations.t: adjust conf path
+  * [8c69fbf] TT#64017 API/SubscriberRegistrations Redis multidomain search
+  * [2683600] Revert "TT#64605 api-subscriberregistrations.t: adjust conf path"
+  * [8e118c7] Revert "TT#64605 add usrloc_expires_type support"
+  * [cd7e213] TT#65505 deflate RedisLocation from unixtime to datetime
+  * [9d6748e] TT#66052 add RedisLocation versioning 1
+  * [ce66426] TT#65101 add ccareadmin ccare roles
+  * [e862ac8] TT#63875 faxsend relies on config.faxserver.number_rewrite_enable
+  * [7b9eac2] TT#67120 fix domains access for ccareadmin/ccare roles
+
+  [ Andreas Granig ]
+  * [536935f] TT#64653 Add thumbnail support to admin panel
+  * [800957e] TT#67210 Use device_id assignment for field devices
+  * [4ea66d6] TT#67210 Align deviceid alias name to db column
+  * [be9f360] TT#67210 More db table column alignments
+
+  [ Flaviu Mates ]
+  * [2f5dcfe] TT#63503 - Fix changing timeout for call forwards
+  * [6f8a1c8] TT#64751 - Allow subscribers to change their password
+  * [b3cd55f] TT#56467 - Migrate all basic test cases
+  * [7d17b7d] TT#64500 - Fix date format for SubscriberRegistrations.yaml
+  * [42473db] TT#64751 - Allow subscribers to change their password
+  * [a4d7fa7] TT#56467 - Fixes for Test Framework
+  * [e844163] TT#64370 - Fix for topup voucher ajax error
+  * [28cb73e] TT#65651 - Display correct DBIx error on duplicate subscriber
+  * [5c1fa40] TT#64663 - Add received field to subscriberregistrations
+  * [f546d7c] TT#60967 - Add validation for SIP Username
+  * [581f138] TT#60965 - Prohibit deletion of PBX Pilot Subscriber 	   when there are other subscribers
+  * [0a0f5e7] TT#60965 - Fix api-subscribers.t pilot deletion
+
+  [ Sipwise Jenkins Builder ]
+  * [5851ce6] TT#4166 I18N dump: snapshot 2019.09.02-01.42.21
+  * [d902e18] TT#4166 I18N dump: snapshot 2019.09.19-01.27.17
+  * [c9d673d] TT#4166 I18N dump: snapshot 2019.09.27-01.25.17
+  * [0fb080d] TT#4166 I18N dump: snapshot 2019.10.05-01.22.33
+
+  [ Marco Capetta ]
+  * [5b39645] TT#62269 add new call forward type "cfo"
+
+  [ Guillem Jover ]
+  * [651a581] TT#68012 Namespace NGCP-specific Catalyst plugins
+  * [3672cba] TT#68012 Only install the appropriate modules for the relevant package
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 08 Oct 2019 09:09:47 +0200
+
 ngcp-panel (8.0.0.0+0~mr8.0.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
