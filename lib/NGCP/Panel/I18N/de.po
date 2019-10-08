@@ -1669,6 +1669,17 @@ msgstr "Verträge"
 msgid "Controls whether to enable/disable NAT pings for a given domain/user"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Convert DTMF INFO to RFC DTMF events"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Convert SIP INFO messages containing application/dtmf-relay or application/"
+"dtmf payloads to RFC DTMF events. ATTENTION: for internal use only, external "
+"generated INFO messages will be not converted but passed through."
+msgstr ""
+
 #: share/templates/emailtemplate/list.tt
 msgid "Copy"
 msgstr ""
