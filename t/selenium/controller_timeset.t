@@ -120,6 +120,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check Details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Event entry successfully created",  "Correct Alert was shown");
+$d->refresh();
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Very important event'), "Description is correct");
 ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[3]', 'every week on Monday from 2020-06-01 12:00:00 to 2020-07-01 13:00:00'), "Date/Time is correct");
 
