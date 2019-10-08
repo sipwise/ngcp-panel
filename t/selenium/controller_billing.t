@@ -343,6 +343,7 @@ $d->find_element('#save', 'css')->click();
 
 diag("Check if created date definition is correct");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully updated',  "Correct Alert was shown");
+$d->refresh();
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2018-01-01 00:00:00'), 'Start Date definition is correct');
 ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2019-01-01 23:59:59'), 'End Date definition is correct');
 
