@@ -52,6 +52,24 @@
       "revId": "16356cba66d980de858db8d3bab56d8274202b94",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "154b56ab_c5f69dfc",
+        "filename": "share/tools/generate_invoices.pl",
+        "patchSetId": 3
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-10-09T15:43:08Z",
+      "side": 1,
+      "message": "See https://gerrit.mgm.sipwise.com/#/c/ngcpcfg/+/34049/3/helper/sync-db@67",
+      "parentUuid": "f0835634_37d6cf0d",
+      "revId": "16356cba66d980de858db8d3bab56d8274202b94",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
