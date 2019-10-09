@@ -204,6 +204,8 @@ $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "200.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), "Free-Time Balance is correct");
+ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "200.00")]'), "Cash Balance in Balance intervals table is correct");
+ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "300")]'), "Free-Time Balance in Balance intervals table is correct");
 
 diag("Top-up Cash Balance");
 $d->find_element('//*[@id="collapse_balance"]//div//span//a[contains(text(), "Top-up Cash")]')->click();
@@ -224,6 +226,7 @@ $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "400.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), "Free-Time Balance is correct");
+ok($d->find_element_by_xpath('//*[@id="topup_logs_table"]//tr//td[contains(text(), "200")]'), "Top-Up in Top-Up logs table is correct");
 
 diag("Create a new empty Phonebook entry");
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]'));

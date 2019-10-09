@@ -145,6 +145,8 @@ $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[cont
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "300.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "50")]'), "Free-Time Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td[contains(text(), "'. $billingname .'")]'), "Billing Profile is correct");
+ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "300.00")]'), "Cash Balance in Balance intervals table is correct");
+ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "50")]'), "Free-Time Balance in Balance intervals table is correct");
 
 diag('Enter "Top-up Cash"');
 $d->find_element("Top-up Cash", "link_text")->click();
@@ -171,6 +173,8 @@ $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[cont
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "500.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "50")]'), "Free-Time Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td[contains(text(), "'. $billingname .'")]'), "Billing Profile is correct");
+ok($d->find_element_by_xpath('//*[@id="topup_logs_table"]//tr//td[contains(text(), "200")]'), "Top-Up in Top-Up logs table is correct");
+ok($d->find_element_by_xpath('//*[@id="topup_logs_table"]//tr//td[contains(text(), "'. $profilename .'")]'), "Profile Package in Top-Up logs table is correct");
 
 diag("Delete Customer");
 $c->delete_customer($customerid);
