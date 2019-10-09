@@ -70,6 +70,24 @@
       "revId": "16356cba66d980de858db8d3bab56d8274202b94",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12057f5a_91e1d8a4",
+        "filename": "share/tools/generate_invoices.pl",
+        "patchSetId": 3
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-10-09T16:50:38Z",
+      "side": 1,
+      "message": "i tested https://paste.mgm.sipwise.com/show/5942/ inside a vagrant, and it shows\n\n[sipwise-lab-trunk] sipwise@spce:/vagrant$ perl test_dbi.pl \nDBI connect(\u0027database\u003dbilling;host\u003dlocalhost;port\u003d3306;mysql_read_default_file\u003d/etc/mysql/sipwise_extra.cnf\u0027,\u0027\u0027,...) failed: Access denied for user \u0027sipwise\u0027@\u0027localhost\u0027 (using password: NO) at test_dbi.pl line 9.\n\nit uses the logged-in system user as username, an no password, wether emtpy string or undef credential args. the content of the file mysql_read_default_file seems to be always ignored, only passing the credentials explicitly to -\u003econnect() worked.\n\nthe suggestion in https://www.perlmonks.org/?node_id\u003d519337 seems to work only if all params (database, host, ..) come for the file, ie. the dsn string looks exactly like\n\nDBI:mysql:;mysql_read_default_file\u003d$dbcredentials",
+      "parentUuid": "154b56ab_c5f69dfc",
+      "revId": "16356cba66d980de858db8d3bab56d8274202b94",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
