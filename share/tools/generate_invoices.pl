@@ -115,27 +115,14 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 my $dbh;
 {
     my ($dbcfg);
-    foreach(qw/dbuser dbpass dbdb dbhost dbport/){
+    foreach(qw/dbdb dbhost dbport dbcredentials dbdsn/){
         $opt->{$_} and $dbcfg->{$_} = $opt->{$_};
-    }
-    if((!$dbcfg->{dbuser}) || (!$dbcfg->{dbpass})){
-        my $mfile = '/etc/mysql/sipwise.cnf';
-        if(-f $mfile) {
-            open my $fh, "<", $mfile
-                or die "failed to open '$mfile': $!\n";
-            $_ = <$fh>; chomp;
-            s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
-            $dbcfg->{dbuser} = 'sipwise';
-            $dbcfg->{dbpass} = $_;
-        } else {
-            $dbcfg->{dbuser} = 'root';
-            $dbcfg->{dbpass} = '';
-        }
     }
     $dbcfg->{dbdb} //= 'billing';
     $dbcfg->{dbhost} //= 'localhost';
-    $dbh = DBI->connect('dbi:mysql:'.$dbcfg->{dbdb}.';host='.$dbcfg->{dbhost}, $dbcfg->{dbuser}, $dbcfg->{dbpass}, {mysql_enable_utf8 => 1})
-        or die "failed to connect to billing DB\n";
+    $dbcfg->{dbcredentials} //= '/etc/mysql/sipwise_extra.cnf';
+    $dbcfg->{dbdsn} //= 'dbi:mysql:'.$dbcfg->{dbdb}.';host='.$dbcfg->{dbhost}.';mysql_read_default_file='.$dbcfg->{dbcredentials};
+    $dbh = DBI->connect($dbcfg->{dbdsn}, "", "", {mysql_enable_utf8 => 1}) or die "failed to connect to billing DB\n";
 }
 
 Getopt::Long::GetOptions($opt, @opt_spec
