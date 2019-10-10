@@ -106,6 +106,24 @@
       "revId": "16356cba66d980de858db8d3bab56d8274202b94",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c230e23c_250ca81d",
+        "filename": "share/tools/generate_invoices.pl",
+        "patchSetId": 3
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-10-10T09:19:44Z",
+      "side": 1,
+      "message": "Tnx for testing it.\nI tested it as well before sending on review ;-)\nP.S. vagrant must have /etc/mysql/sipwise_extra.cnf since mr7.2 which is OK in default perms there. Isn\u0027t it?",
+      "parentUuid": "6fa8b0f3_987ea727",
+      "revId": "16356cba66d980de858db8d3bab56d8274202b94",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
