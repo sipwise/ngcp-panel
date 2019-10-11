@@ -7,4 +7,5 @@ script/ngcp_panel_fastcgi.pl	usr/share/ngcp-panel/
 share/*				usr/share/ngcp-panel/
 
 usr/share/man/man3/NGCP::*
+usr/share/perl5/Catalyst/Plugin/NGCP
 usr/share/perl5/NGCP

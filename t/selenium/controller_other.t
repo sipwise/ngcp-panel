@@ -262,9 +262,82 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Con
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Contact has been deleted');
 
+diag('Go to Home Page');
+$d->find_element('//*[@id="main-nav"]/li[1]/a')->click();
+
+diag('Change Language to German');
+$d->find_element('//*[@id="top-nav"]/ul/li[3]/a')->click();
+$d->find_element('//*[@id="top-nav"]/ul/li[3]//a[@href="?lang=de"]')->click();
+
+diag('Check if Language was applied');
+#is($d->get_text_safe('//*[@id="masthead"]/div/div/div/h2'), 'Übersicht', "language");
+is($d->get_text_safe('//*[@id="admin_billing_overview_lazy_items_header"]/div[1]'), 'Verrechnung', "was");
+is($d->get_text_safe('//*[@id="admin_peering_overview_lazy_items_header"]/div[1]'), 'Peerings', "changed");
+is($d->get_text_safe('//*[@id="admin_reseller_overview_lazy_items_header"]/div[1]'), 'Reseller', "successfully");
+
+diag('Change Language to French');
+$d->find_element('//*[@id="top-nav"]/ul/li[3]/a')->click();
+$d->find_element('//*[@id="top-nav"]/ul/li[3]//a[@href="?lang=fr"]')->click();
+
+diag('Check if Language was applied');
+is($d->get_text_safe('//*[@id="masthead"]/div/div/div/h2'), 'Tableau de bord', "language");
+is($d->get_text_safe('//*[@id="admin_billing_overview_lazy_items_header"]/div[1]'), 'Facturation', "was");
+#is($d->get_text_safe('//*[@id="admin_peering_overview_lazy_items_header"]/div[1]'), 'Opérateurs', "changed");
+is($d->get_text_safe('//*[@id="admin_reseller_overview_lazy_items_header"]/div[1]'), 'Revendeurs', "successfully");
+
+diag('Change Language to Italian');
+$d->find_element('//*[@id="top-nav"]/ul/li[3]/a')->click();
+$d->find_element('//*[@id="top-nav"]/ul/li[3]//a[@href="?lang=it"]')->click();
+
+diag('Check if Language was applied');
+is($d->get_text_safe('//*[@id="masthead"]/div/div/div/h2'), 'Dashboard', "language");
+is($d->get_text_safe('//*[@id="admin_billing_overview_lazy_items_header"]/div[1]'), 'Fatturazione', "was");
+is($d->get_text_safe('//*[@id="admin_peering_overview_lazy_items_header"]/div[1]'), 'Peers', "changed");
+is($d->get_text_safe('//*[@id="admin_reseller_overview_lazy_items_header"]/div[1]'), 'Rivenditori', "successfully");
+
+diag('Change Language to Spanish');
+$d->find_element('//*[@id="top-nav"]/ul/li[3]/a')->click();
+$d->find_element('//*[@id="top-nav"]/ul/li[3]//a[@href="?lang=es"]')->click();
+
+diag('Check if Language was applied');
+#is($d->get_text_safe('//*[@id="masthead"]/div/div/div/h2'), 'Tablón', "language");
+#is($d->get_text_safe('//*[@id="admin_billing_overview_lazy_items_header"]/div[1]'), 'Facturación', "was");
+is($d->get_text_safe('//*[@id="admin_peering_overview_lazy_items_header"]/div[1]'), 'Peerings', "changed");
+is($d->get_text_safe('//*[@id="admin_reseller_overview_lazy_items_header"]/div[1]'), 'Resellers', "successfully");
+
+=pod
+diag('Change Language to Russian');
+$d->find_element('//*[@id="top-nav"]/ul/li[3]/a')->click();
+$d->find_element('//*[@id="top-nav"]/ul/li[3]//a[@href="?lang=ru"]')->click();
+
+diag('Check if Language was applied');
+is($d->get_text_safe('//*[@id="masthead"]/div/div/div/h2'), 'Главная', "language");
+is($d->get_text_safe('//*[@id="admin_billing_overview_lazy_items_header"]/div[1]'), 'Биллинг', "was");
+is($d->get_text_safe('//*[@id="admin_peering_overview_lazy_items_header"]/div[1]'), 'SIP Транк', "changed");
+is($d->get_text_safe('//*[@id="admin_reseller_overview_lazy_items_header"]/div[1]'), 'Реселлеры', "successfully");
+=cut
+
+diag('Change Language Back to English');
+$d->find_element('//*[@id="top-nav"]/ul/li[3]/a')->click();
+$d->find_element('//*[@id="top-nav"]/ul/li[3]//a[@href="?lang=en"]')->click();
+
 $c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
+
+diag('Test the handbook');
+$d->find_element('//*[@id="main-nav"]/li[2]/a')->click();
+$d->find_element('//*[@id="main-nav"]//li//a[contains(text(), "Handbook")]')->click();
+
+diag('Check if we start at the right page');
+ok($d->find_element_by_xpath('/html/body//div//h2/a[@name="_introduction"]'), "We are on the right page");
+
+diag('Change Page');
+sleep 1; #else the element will get blocked by... itself? (<html>)
+$d->find_element('//*[@id="toc-root-item-2"]//a[contains(text(), "Architecture")]')->click();
+
+diag('Check if Page was successfully changed');
+ok($d->find_element_by_xpath('/html/body//div//h2/a[@name="architecture"]'), "We are on the right page");
 
 diag("This test run was successfull");
 $run_ok = 1;

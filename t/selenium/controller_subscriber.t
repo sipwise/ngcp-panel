@@ -44,7 +44,7 @@ ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid)
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
 diag("Trying to add a empty Subscriber");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
 $d->find_element('Create Subscriber', 'link_text')->click();
 $d->unselect_if_selected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
@@ -81,9 +81,7 @@ if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() e
     ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
     $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
 }
-if($d->find_element_by_xpath('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]/../../../div')->get_attribute('class', 1) eq 'accordion-group') {
-    $d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
-}
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', $username);
@@ -153,7 +151,8 @@ diag('Go to Subscriber details');
 $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
 
 diag('Edit master data');
-$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]'));
 $d->find_element("Edit", 'link_text')->click();
 
 diag('Add Subscriber to profile');
@@ -166,6 +165,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if change was applied');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Successfully updated subscriber",  "Correct Alert was shown");
+=pod
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Subscribers", 'link_text')->click();
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -173,7 +173,9 @@ ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
 ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[3]', $contactmail), 'Subscriber was found');
 $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
-$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
+=cut
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]'));
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile Set")]/../td[contains(text(), "'. $setname .'")]'));
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Subscriber Profile")]/../td[contains(text(), "'. $profilename .'")]'));
 
@@ -192,14 +194,11 @@ if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() e
     ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Found Subscriber');
     $d->move_and_click('//*[@id="subscriber_table"]//tr[1]//td//a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]/label/input');
 }
-if($d->find_element_by_xpath('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]/../../../div')->get_attribute('class', 1) eq 'accordion-group') {
-    $d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
-}
-ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), "Status is correct");
 
 diag('Unlock Subscriber');
-$d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]')->click();
-$d->scroll_to_element($d->find_element("Edit", 'link_text'));
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]'));
+ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), "Status is correct");
 $d->find_element("Edit", 'link_text')->click();
 $d->find_element('//*[@id="lock"]')->click();
 $d->find_element('//*[@id="lock"]/option[contains(text(), "none")]')->click();
@@ -215,8 +214,7 @@ diag('Go to Subscriber preferences');
 $d->find_element("Preferences", 'link_text')->click();
 
 diag('Trying to change subscriber IVR language');
-$d->scroll_to_element($d->find_element("Internals", 'link_text'));
-$d->find_element("Internals", 'link_text')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "language")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "language")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "conference_pin")]/..//td//a[contains(text(), "Edit")]');
 
@@ -226,12 +224,11 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if language has been applied');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference language successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Internals")]'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "language")]/../td/select/option[contains(text(), "German") and @selected="selected"]'), '"German" has been selected');
 
 diag('Trying to enable call recording');
-$d->scroll_to_element($d->find_element("NAT and Media Flow Control", 'link_text'));
-$d->find_element("NAT and Media Flow Control", 'link_text')->click();
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "record_call")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "record_call")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "nat_sipping")]/..//td//a[contains(text(), "Edit")]');
 
@@ -244,8 +241,8 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Pre
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "record_call")]/../td//input[@checked="checked"]'), "Call recording was enabled");
 
 diag('Trying to add a simple call forward');
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element("Call Forwards", 'link_text'));
-$d->find_element("Call Forwards", 'link_text')->click();
 $d->move_and_click('//*[@id="preferences_table_cf"]/tbody/tr/td[contains(text(), "Unconditional")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Forwards")]');
 $d->fill_element('//*[@id="destination.uri.destination"]', 'xpath', '43123456789');
 $d->find_element('//*[@id="cf_actions.advanced"]')->click();
@@ -309,7 +306,7 @@ ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[con
 ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $destinationname . ')]'), 'Destination set was selected');
 
 diag('Trying to add call blockings');
-$d->find_element("Call Blockings", 'link_text')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
 
 diag('Edit block_in_mode');
@@ -318,6 +315,7 @@ $d->find_element('//*[@id="block_in_mode"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if value was set');
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference block_in_mode successfully updated",  "Correct Alert was shown");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_mode")]/../td/input[@checked="checked"]'), "Setting is correct");
@@ -331,6 +329,7 @@ $d->find_element('//*[@id="add"]')->click();
 $d->find_element('//*[@id="mod_close"]')->click();
 
 diag('Check if value was set');
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td[contains(text(), "1337")]'), "Number 1 is correct");
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td[text()[contains(., "42")]]'), "Number 2 is correct");
@@ -341,6 +340,7 @@ $d->find_element('//*[@id="mod_edit"]//div//input[@value="1337"]/../a[2]')->clic
 $d->find_element('//*[@id="mod_close"]')->click();
 
 diag('Check if Entry was disabled');
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element("Call Blockings", 'link_text'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td/span[@class="ngcp-entry-disabled"]/../span[contains(text(), "1337")]'), "Entry was disabled");
 

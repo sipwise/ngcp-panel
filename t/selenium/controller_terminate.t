@@ -42,7 +42,7 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), '
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
 $d->find_element('Create Subscriber', 'link_text')->click();
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');

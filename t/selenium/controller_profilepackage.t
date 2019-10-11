@@ -114,8 +114,9 @@ ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(
 diag('Go to Customer details');
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
-diag('Open up "Contract Balance"');
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]')->click();
+diag('Go to "Contract Balance"');
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 
 diag('Enter "Set Cash Balance"');
 $d->find_element("Set Cash Balance", "link_text")->click();
@@ -125,7 +126,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Values');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  "Correct Alert was shown");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "0.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "0")]'), "Free-Time Balance is correct");
@@ -139,11 +140,13 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag('Check Values');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  "Correct Alert was shown");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "300.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "50")]'), "Free-Time Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td[contains(text(), "'. $billingname .'")]'), "Billing Profile is correct");
+ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "300.00")]'), "Cash Balance in Balance intervals table is correct");
+ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "50")]'), "Free-Time Balance in Balance intervals table is correct");
 
 diag('Enter "Top-up Cash"');
 $d->find_element("Top-up Cash", "link_text")->click();
@@ -165,11 +168,13 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check Details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Top-up using cash performed successfully!',  "Correct Alert was shown");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "500.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "50")]'), "Free-Time Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td[contains(text(), "'. $billingname .'")]'), "Billing Profile is correct");
+ok($d->find_element_by_xpath('//*[@id="topup_logs_table"]//tr//td[contains(text(), "200")]'), "Top-Up in Top-Up logs table is correct");
+ok($d->find_element_by_xpath('//*[@id="topup_logs_table"]//tr//td[contains(text(), "'. $profilename .'")]'), "Profile Package in Top-Up logs table is correct");
 
 diag("Delete Customer");
 $c->delete_customer($customerid);

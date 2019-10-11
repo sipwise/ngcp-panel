@@ -202,7 +202,7 @@ ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "d
 $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
 
 diag("Open 'Call Blockings'");
-$d->find_element("Call Blockings", 'link_text')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Call Blockings")]'));
 
 diag("Edit setting 'NCOS'");
@@ -214,6 +214,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS Level was applied");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference ncos successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "ncos")]/../td/select/option[contains(text(), "' . $ncosname . '")][@selected="selected"]'), 'NCOS Level was applied');
 
 diag('Go back to NCOS interface');
