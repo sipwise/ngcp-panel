@@ -1,3 +1,12 @@
+ngcp-panel (7.5.1.6+0~mr7.5.1.6) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [8a90f8a] TT#68019 Remove JS hint: sourceMappingURL=rrule.js.map from rrule.js and luxon.js
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 11 Oct 2019 12:03:25 +0200
+
 ngcp-panel (7.5.1.5+0~mr7.5.1.5) unstable; urgency=medium
 
   [ Nico Schedel ]
