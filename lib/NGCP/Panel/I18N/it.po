@@ -1730,6 +1730,17 @@ msgstr "Contratti"
 msgid "Controls whether to enable/disable NAT pings for a given domain/user"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Convert DTMF INFO to RFC DTMF events"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Convert SIP INFO messages containing application/dtmf-relay or application/"
+"dtmf payloads to RFC DTMF events. ATTENTION: for internal use only, external "
+"generated INFO messages will be not converted but passed through."
+msgstr ""
+
 #: share/templates/emailtemplate/list.tt
 msgid "Copy"
 msgstr ""
@@ -2825,6 +2836,16 @@ msgid ""
 msgstr ""
 "Abilita fax in T.38 attraverso l´auto-provisioning se il dispositivo lo "
 "supporta."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable last number redial VSC"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Enable the Vertical Service Code to redial latest dialed number for this "
+"subscriber/domain."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm

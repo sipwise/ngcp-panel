@@ -99,8 +99,8 @@ $d->find_element('//*[@id="field"]/option[@value="caller"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been created');
-$d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully created",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "Not International to E.164")]'), "Description is correct");
@@ -111,8 +111,8 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'International to E.164');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been edited');
-$d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
@@ -126,8 +126,8 @@ $d->find_element('//*[@id="field"]/option[@value="callee"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been created');
-$d->find_element('Inbound Rewrite Rules for Callee', 'link_text')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully created",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "Not International to E.164")]'), "Description is correct");
@@ -138,8 +138,8 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'International to E.164');
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if Rule has been edited');
-$d->find_element('Inbound Rewrite Rules for Callee', 'link_text')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
@@ -154,12 +154,14 @@ $d->find_element('//*[@id="field"]/option[@value="caller"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Test if new entry moves up if up arrow is clicked');
-$d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully created",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->find_element('//*[@id="collapse_icaller"]/div/table/tbody/tr/td[contains(text(), "\1")]/../td//a//i[@class="icon-arrow-up"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]/td[contains(text(), "\1")]'), "Replacement Pattern is correct");
 =pod
 diag('Delete Rule');
-$d->move_and_click('//*[@id="collapse_icaller"]//table//tr[1]//td//a[text()[contains(., "Delete")]]', 'xpath', '//*[@id="masthead"]//div/h2');
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->move_and_click('//*[@id="collapse_icaller"]//table//tr[2]//td//a[text()[contains(., "Delete")]]', 'xpath', '//*[@id="masthead"]//div/h2');
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Rewrite rule successfully deleted",  "Correct Alert was shown");
 =cut
@@ -191,13 +193,12 @@ ok($d->find_element_by_xpath('//*[@id="rewrite_rule_set_table"]//tr[1]//td[conta
 $d->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Rules")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
 
 diag('Check if Caller got properly cloned');
-$d->find_element('Inbound Rewrite Rules for Caller', 'link_text')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "\1")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
 
 diag('Check if Callee got properly cloned');
-$d->find_element('Inbound Rewrite Rules for Callee', 'link_text')->click();
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "^(00|\+)([1-9][0-9]+)$")]'), "Match Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "\2")]'), "Replacement Pattern is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table/tbody/tr[1]//td[contains(text(), "International to E.164")]'), "Description is correct");
@@ -213,15 +214,16 @@ ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr/td[3]', $domainstring), '
 $d->move_and_click('//*[@id="Domain_table"]/tbody/tr[1]//td//div//a[contains(text(),"Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
 
 diag('Add ruleset to a domain');
-$d->find_element('Number Manipulations', 'link_text')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->scroll_to_element($d->find_element('Number Manipulations', 'link_text'));
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Number Manipulations")]');
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 $d->find_element('//*[@id="rewrite_rule_set"]/option[contains(text(), "' . $rulesetname . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Check if correct ruleset has been selected');
-$d->find_element('Number Manipulations', 'link_text')->click;
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference rewrite_rule_set successfully updated",  "Correct Alert was shown");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->wait_for_text('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td[4]/select/option[@selected="selected"]', $rulesetname), 'rewrite_rule_set value has been set');
 
 diag('Delete Domain');

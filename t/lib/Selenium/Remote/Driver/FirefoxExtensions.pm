@@ -75,7 +75,6 @@ sub fill_element {
     my $elem = $self->find_element($query, $scheme);
     $self->scroll_to_element($elem);
     return 0 unless $elem;
-    return 0 unless $elem->is_displayed;
     $elem->send_keys(KEYS->{'control'}, 'A');
     $elem->send_keys($filltext);
     return 1;

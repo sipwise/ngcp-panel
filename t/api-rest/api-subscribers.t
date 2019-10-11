@@ -114,7 +114,10 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
     $test_machine->http_code_msg(422, "Check that PUT existing number will return nice error", $res, $content);
     #Number '11-1111-11' already exists
     ok($content->{message} =~ /Number ['\-\d]+ already exists/, "check error message in body");
-    $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
+    #commit 581f1386b restricted deletion of PBX pilot before deleting all other subscribers
+    $test_machine->request_delete($members->[1]->{location});
+    $test_machine->request_delete($members->[0]->{location});
+    $test_machine->clear_data_created();#fake data aren't registered in this test machine, so they will stay.
 }
 {
 # create new subscribers from DATA_ITEM. Item is not created in the fake_data->process.

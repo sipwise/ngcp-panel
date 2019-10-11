@@ -1,4 +1,4 @@
-package Catalyst::Plugin::EscapeJs;
+package Catalyst::Plugin::NGCP::EscapeJs;
 use warnings;
 use strict;
 use MRO::Compat;
