@@ -2886,6 +2886,10 @@ msgstr ""
 "Errore durante l´invio del fax (le impostazione fax dell´abbonato sono state "
 "configurate ?)"
 
+#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
+msgid "Errors"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Event entry does not exist"
 msgstr ""
@@ -4211,10 +4215,6 @@ msgstr "Gruppi"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Handbook"
 msgstr "Manuale"
-
-#: share/templates/widgets/admin_system_overview.tt
-msgid "Hardware"
-msgstr ""
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header"
@@ -6008,7 +6008,7 @@ msgstr "Numeri"
 msgid "Numbers used in the \"Manager Secretary\" call forwardings"
 msgstr ""
 
-#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm share/layout/body.tt
+#: share/layout/body.tt
 msgid "OK"
 msgstr "OK"
 
@@ -7882,6 +7882,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/subscriber/master.tt
+#: share/templates/widgets/admin_system_overview.tt
 msgid "Status"
 msgstr "Stato"
 
@@ -8306,10 +8307,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Syslog server URL."
-msgstr ""
-
-#: share/templates/widgets/admin_system_overview.tt
-msgid "System"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9152,6 +9149,10 @@ msgstr "ID Voucher"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Vouchers"
 msgstr "Vouchers"
+
+#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
+msgid "Warnings"
+msgstr ""
 
 #: share/templates/error_page.tt
 msgid "We are terribly sorry, an exceptional error has occurred:"
