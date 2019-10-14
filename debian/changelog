@@ -1,3 +1,12 @@
+ngcp-panel (7.5.1.7+0~mr7.5.1.7) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [449e91a] TT#68016 selenium: fixup subscriber
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Oct 2019 09:01:55 +0200
+
 ngcp-panel (7.5.1.6+0~mr7.5.1.6) unstable; urgency=medium
 
   [ Alexander Lutay ]
