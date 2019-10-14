@@ -8,11 +8,24 @@ my $debug = 1;
 
 sub handle_pref;
 
-my $dbcredentials = '/etc/mysql/sipwise_extra.cnf';
-print "using DB credentials from '$dbcredentials'\n" if($debug);
+my ($dbuser, $dbpass);
+my $mfile = '/etc/mysql/sipwise.cnf';
 
-my $dsn = "dbi:mysql:provisioning;host=localhost;mysql_read_default_file=${dbcredentials}";
-my $dbh = DBI->connect($dsn, "", "") or die "failed to connect to billing DB\n";
+if(-f $mfile) {
+	open my $fh, "<", $mfile
+		or die "failed to open '$mfile': $!\n";
+	$_ = <$fh>; chomp;
+	s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
+	$dbuser = 'sipwise'; $dbpass = $_;
+} else {
+	$dbuser = 'root';
+	$dbpass = '';
+}
+print "using user '$dbuser' with pass '$dbpass'\n"
+	if($debug);
+
+my $dbh = DBI->connect('dbi:mysql:provisioning;host=localhost', $dbuser, $dbpass)
+	or die "failed to connect to billing DB\n";
 
 my $sub_sth = $dbh->prepare("select ps.uuid as uuid, ps.id as s_id, bs.external_id as s_external_id, ct.external_id as c_external_id from provisioning.voip_subscribers ps left join billing.voip_subscribers bs on ps.uuid = bs.uuid left join billing.contracts ct on bs.contract_id = ct.id order by ps.id asc");
 my $prefget_sth = $dbh->prepare("select vup.value from provisioning.voip_usr_preferences vup left join voip_preferences vp on vup.attribute_id = vp.id where vp.attribute = ? and vup.subscriber_id = ?");
