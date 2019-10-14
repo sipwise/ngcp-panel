@@ -86,11 +86,6 @@ sub get_dpkg_support_status {
     }
 }
 
-sub get_ngcp_status {
-    my ($self) = @_;
-    return `/usr/sbin/ngcp-collective-check json`;
-}
-
 1;
 
 # vim: set tabstop=4 expandtab:
