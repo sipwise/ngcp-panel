@@ -73,10 +73,6 @@ $d->find_element('//*[@id="password"]')->send_keys('testing1234'); #using normal
 $d->find_element('//*[@id="save"]')->click();
 
 diag('Trying to find Subscriber');
-<<<<<<< HEAD
-is($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")]')->get_text(), "Subscriber successfully created",  "Correct Alert was shown");
-$d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
-=======
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber successfully created",  "Correct Alert was shown");
 if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() eq "Customers"){ #workaround for misbehaving ngcp panel randomly throwing test out of customer details
     $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
@@ -88,7 +84,6 @@ if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() e
 if($d->find_element_by_xpath('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]/../../../div')->get_attribute('class', 1) eq 'accordion-group') {
     $d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]')->click();
 }
->>>>>>> 23c04befd... TT#56376 selenium: add function get_text_safe()
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', $username);
