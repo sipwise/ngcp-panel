@@ -32,7 +32,7 @@ sub hal_from_item {
         delete $blockelem{_ipv4_net_from};
         delete $blockelem{_ipv4_net_to};
         delete $blockelem{_ipv6_net_from};
-        delete $blockelem{_ipv6_net_to};        
+        delete $blockelem{_ipv6_net_to};
         push @blocks, \%blockelem;
     }
     $resource{blocks} = \@blocks;
@@ -70,12 +70,12 @@ sub _item_rs {
 
     my $item_rs = $c->model('DB')->resultset('billing_networks')->search_rs({ 'me.status' => { '!=' => 'terminated' } });
     my $search_xtra = {
-            '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+            '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
-            };    
+            };
     if($c->user->roles eq "admin") {
         $item_rs = $item_rs->search(undef,
-                                    $search_xtra);        
+                                    $search_xtra);
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id },
                                     $search_xtra);
@@ -95,7 +95,7 @@ sub update_item {
 
     delete $resource->{id};
     my $schema = $c->model('DB');
-    
+
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller slip thru
     $resource->{reseller_id} //= undef;
@@ -109,18 +109,18 @@ sub update_item {
         my ($err) = @_;
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
-    
+
     return unless NGCP::Panel::Utils::BillingNetworks::check_network_update_item($c,$resource,$item,sub {
         my ($err) = @_;
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
-   
+
     return unless $self->prepare_blocks_resource($c,$resource);
     my $blocks = delete $resource->{blocks};
-    
+
     try {
         $item->update($resource);
-        $item->billing_network_blocks->delete;        
+        $item->billing_network_blocks->delete;
         for my $block (@$blocks) {
             $item->create_related("billing_network_blocks", $block);
         }

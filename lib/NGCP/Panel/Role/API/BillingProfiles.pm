@@ -20,7 +20,7 @@ sub _item_rs {
 
     my $item_rs = $c->model('DB')->resultset('billing_profiles');
     my $search_xtra = {
-            '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+            '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             };
     if($c->user->roles eq "admin") {
