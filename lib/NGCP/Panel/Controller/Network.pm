@@ -43,6 +43,7 @@ sub _network_resultset_admin {
                 'me.status' => { '!=' => 'terminated' },
                 },
                 { '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                 { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
 }
@@ -60,6 +61,7 @@ sub _network_resultset_reseller {
                 'me.status' => { '!=' => 'terminated' },
                 },
                 { '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                 { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
 }
@@ -218,7 +220,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
     try {
         #todo: putting the network fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
-        unless($network->get_column('contract_cnt') == 0) {
+        if($network->get_column('contract_exists')) {
             die(['Cannnot terminate billing network that is still used in profile mappings', "showdetails"]);
         }
         unless($network->get_column('package_cnt') == 0) {
