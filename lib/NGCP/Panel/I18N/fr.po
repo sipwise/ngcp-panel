@@ -2931,6 +2931,10 @@ msgstr ""
 "Erreur pendant l'envoi de fax (les paramètres fax ont-ils été configurés "
 "correctement ?)"
 
+#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
+msgid "Errors"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Event entry does not exist"
 msgstr ""
@@ -4276,10 +4280,6 @@ msgstr "Groupes"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Handbook"
 msgstr "Manuel"
-
-#: share/templates/widgets/admin_system_overview.tt
-msgid "Hardware"
-msgstr "Hardware"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header"
@@ -6092,7 +6092,7 @@ msgstr "Numéros"
 msgid "Numbers used in the \"Manager Secretary\" call forwardings"
 msgstr "Numéros utilisés dans les renvois d'appels \"Patron Secrétaire\""
 
-#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm share/layout/body.tt
+#: share/layout/body.tt
 msgid "OK"
 msgstr "OK"
 
@@ -7995,6 +7995,7 @@ msgstr "Administration des statistiques"
 #: lib/NGCP/Panel/Controller/Reseller.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/subscriber/master.tt
+#: share/templates/widgets/admin_system_overview.tt
 msgid "Status"
 msgstr "Statut"
 
@@ -8420,10 +8421,6 @@ msgstr "Serveur Syslog"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Syslog server URL."
 msgstr "URL Serveur Syslog."
-
-#: share/templates/widgets/admin_system_overview.tt
-msgid "System"
-msgstr "Système"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "System Sound Set"
@@ -9276,6 +9273,10 @@ msgstr "ID du coupon"
 msgid "Vouchers"
 msgstr "Coupons"
 
+#: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
+msgid "Warnings"
+msgstr ""
+
 #: share/templates/error_page.tt
 msgid "We are terribly sorry, an exceptional error has occurred:"
 msgstr ""
@@ -9668,6 +9669,12 @@ msgstr "années"
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "oui"
+
+#~ msgid "Hardware"
+#~ msgstr "Hardware"
+
+#~ msgid "System"
+#~ msgstr "Système"
 
 #~ msgid "Call Forward Rerouting"
 #~ msgstr "Temporisation du transfert d'appel"
