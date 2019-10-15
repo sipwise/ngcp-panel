@@ -11,7 +11,7 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'profile_id' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     required => 1,
     label => 'Device',
     options_method => \&build_profiles,
@@ -19,6 +19,7 @@ has_field 'profile_id' => (
         rel => ['tooltip'],
         title => ['The PBX device.']
     },
+    translate => 0,
 );
 sub build_profiles {
     my ($self) = @_;

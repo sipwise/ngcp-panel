@@ -53,9 +53,10 @@ has_field 'weight' => (
 );
 
 has_field 'via_route' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     label => 'Via Route',
     options_method => \&build_via_routes,
+    translate => 0,
 );
 
 sub build_via_routes {

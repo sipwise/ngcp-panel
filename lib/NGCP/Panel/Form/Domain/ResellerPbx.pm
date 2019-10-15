@@ -4,10 +4,11 @@ use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Domain::Reseller';
 
 has_field 'rwr_set' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     label => 'Rewrite Rule Set',
     options_method => \&build_rwr_sets,
     default => undef,
+    translate => 0,
 );
 
 sub build_rwr_sets {

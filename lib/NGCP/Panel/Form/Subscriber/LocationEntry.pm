@@ -44,7 +44,7 @@ has_field 'q' => (
 );
 
 has_field 'socket' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     label => 'Outbound socket',
     required => 0,
     options_method => \&build_socket_options,
@@ -52,6 +52,7 @@ has_field 'socket' => (
         rel => ['tooltip'],
         title => ['Points to the LB interface from which the incoming calls to this registration should be sent out.']
     },
+    translate => 0
 );
 
 sub build_socket_options {

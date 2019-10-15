@@ -105,12 +105,13 @@ has_field 'destination.priority' => (
 );
 
 has_field 'destination.announcement_id' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     #widget => 'RadioGroup',
     label => 'Custom announcement',
     options_method => \&build_announcements,
     wrapper_class => [qw/hfh-rep-field ngcp-destination ngcp-destination-customhours/],
     required => 0,
+    translate => 0,
 );
 
 
