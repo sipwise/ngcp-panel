@@ -31,18 +31,18 @@ sub check_profile_update_item {
     #    return 0 unless &{$err_code}("The prepaid rating library is mandatory for a prepaid profile.",'prepaid_library');
     #}
 
-    my $contract_cnt = $old_item->get_column('contract_cnt');
+    my $contract_exists = $old_item->get_column('contract_exists');
     #my $package_cnt = $old_item->get_column('package_cnt');
 
-    if (($contract_cnt > 0)
+    if ($contract_exists
         && defined $new_resource->{interval_charge} && $old_item->interval_charge != $new_resource->{interval_charge}) {
         return 0 unless &{$err_code}("Interval charge cannot be changed (profile linked to $contract_cnt contracts).",'interval_charge');
     }
-    if (($contract_cnt > 0)
+    if ($contract_exists
         && defined $new_resource->{interval_free_time} && $old_item->interval_free_time != $new_resource->{interval_free_time}) {
         return 0 unless &{$err_code}("Interval free time cannot be changed (profile linked to $contract_cnt contracts).",'interval_free_time');
     }
-    if (($contract_cnt > 0)
+    if ($contract_exists
         && defined $new_resource->{interval_free_cash} && $old_item->interval_free_cash != $new_resource->{interval_free_cash}) {
         return 0 unless &{$err_code}("Interval free cash cannot be changed (profile linked to $contract_cnt contracts).",'interval_free_cash');
     }
@@ -447,11 +447,11 @@ sub switch_prepaid {
 
 }
 
-sub get_contract_count_stmt {
+sub get_contract_exists_stmt {
 
     return <<EOS;
 select
-  count(distinct c.id)
+  1
 from billing.contracts_billing_profile_network_schedule cbpns
 join billing.contracts_billing_profile_network cbpn on cbpns.profile_network_id = cbpn.id
 join billing._v_actual_effective_start_time est on est.contract_id = cbpn.contract_id and cbpns.effective_start_time = est.effective_start_time
@@ -459,11 +459,36 @@ join billing.contracts as c on est.contract_id = c.id
 where
 cbpn.billing_profile_id = me.id
 and c.status != 'terminated'
+limit 1
 EOS
 
 }
+
+sub get_contract_count_stmt {
+
+    return <<EOS;
+select
+  count(distinct c.id)
+from `billing`.`contracts_billing_profile_network` cbpn
+join `billing`.`contracts` c on c.id = cbpn.contract_id
+where cbpn.`billing_profile_id` = `me`.`id`
+and c.status != 'terminated'
+and (cbpn.end_date is null or cbpn.end_date >= now())
+EOS
+
+}
+
 sub get_package_count_stmt {
-    return "select count(distinct pp.id) from `billing`.`package_profile_sets` pps join `billing`.`profile_packages` pp on pp.id = pps.package_id where pps.`profile_id` = `me`.`id`"; # and pp.status != 'terminated'";
+
+    return <<EOS;
+select
+  count(distinct pp.id)
+from `billing`.`package_profile_sets` pps
+join `billing`.`profile_packages` pp on pp.id = pps.package_id
+where pps.`profile_id` = `me`.`id`
+EOS
+# and pp.status != 'terminated'";
+
 }
 
 sub get_datatable_cols {

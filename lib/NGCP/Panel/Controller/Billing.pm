@@ -44,6 +44,7 @@ sub _profile_resultset_admin {
             'me.status' => { '!=' => 'terminated' },
             },
             { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
     return $rs;
@@ -57,6 +58,7 @@ sub _profile_resultset_reseller {
             'me.status' => { '!=' => 'terminated' },
             },
             { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
     return $rs;
@@ -299,7 +301,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
     try {
         #todo: putting the profile fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
-        unless($profile->get_column('contract_cnt') == 0) {
+        if($profile->get_column('contract_exists')) {
             die(['Cannnot terminate billing profile that is still used in profile mappings', "showdetails"]);
         }
         unless($profile->get_column('package_cnt') == 0) {
