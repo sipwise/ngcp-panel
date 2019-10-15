@@ -11,10 +11,11 @@ sub build_render_list {[qw/submitid host folder select/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'host' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     label => 'Host:',
     options_method => \&set_hosts,
     required => 1,
+    translate => 0,
 );
 
 sub set_hosts {
@@ -31,10 +32,11 @@ sub set_hosts {
 }
 
 has_field 'folder' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     label => 'Category:',
     options_method => \&set_folders,
     required => 1,
+    translate => 0,
 );
 
 sub set_folders {

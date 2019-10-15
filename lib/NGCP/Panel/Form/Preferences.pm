@@ -48,8 +48,9 @@ sub field_list {
             unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,
-                type => 'Select',
+                type => '+NGCP::Panel::Field::Select',
                 options => \@options,
+                translate => 0,
             };
         } elsif($meta->attribute eq "cdr_export_sclidui_rwrs") {
             my @options = map {{label => $_->name, value => $_->id}}
@@ -66,8 +67,9 @@ sub field_list {
             unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,
-                type => 'Select',
+                type => '+NGCP::Panel::Field::Select',
                 options => \@options,
+                translate => 0,
             };
         } elsif ($meta->attribute eq "ncos" ||
                  $meta->attribute eq "adm_ncos" ||
@@ -95,7 +97,7 @@ sub field_list {
             unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,
-                type => 'Select',
+                type => '+NGCP::Panel::Field::Select',
                 options => \@options,
             };
         } elsif ($meta->attribute eq "contract_sound_set") {

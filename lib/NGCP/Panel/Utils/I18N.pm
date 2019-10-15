@@ -29,7 +29,7 @@ sub _translate_fields_recursive {
         if ($field->isa('HTML::FormHandler::Field::Select')) {
             for my $option (@{ $field->options }) {
                 push @strings, $option->{label} if $extract_strings;
-                $option->{label} = $c->loc($option->{label}) if $option->{label};
+                $option->{label} = $c->loc($option->{label}) if ( $option->{label} && (($field->can('translate') && $field->translate) || !$field->can('translate')) );
             }
         }
         if ($field->element_attr->{title}[0]) {

@@ -14,11 +14,12 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'slot' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::Select',
     label => 'Slot',
     options_method => \&set_slots,
     required => 1,
     wrapper_class => [qw/hfh-rep-field/],
+    translate => 0,
 );
 
 sub set_slots {
