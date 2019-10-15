@@ -24,9 +24,16 @@ enqueLists.push([{
                 '<span class="term"></span>' +
             '</div>');
         $("#admin_system_overview_lazy_items_list").prepend(
-            '<li>[% c.loc('Status') %]: <strong>' + txt + ' </strong>' +
-            '<a data-toggle="modal" href="#statistics_modal">(details)</a></li>'
+            '<li>[% c.loc('Status') %]: <strong id="status_text"></strong></li>'
         );
+        if (ngcp_status) {
+            $("#status_text").append(
+                '<a data-toggle="modal" href="#statistics_modal">' + txt + '</a>'
+            );
+        }
+        else{
+            $("#status_text").append(txt);
+        }
         $.each( ngcp_status, function( i, val ) {
             $("#statistics_modal_content").append( "<h2>" + val.title + "</h2>" );
             $.each( val.messages, function( i, message ) {
