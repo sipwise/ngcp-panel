@@ -95,6 +95,7 @@ $d->fill_element('//*[@id="name"]', 'xpath', $headerrule);
 $d->fill_element('//*[@id="description"]', 'xpath', 'this is a nice description');+
 $d->find_element('//*[@id="save"]')->click();
 
+<<<<<<< HEAD   (2052c4 TT#68752 - Implement translation handling of 'Select' form f)
 diag("Check details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[1][contains(text(), "100")]'), 'Priority is correct');
@@ -103,6 +104,17 @@ ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a n
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'inbound'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "0")]'), 'Stopper is correct');
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), 'Enabled is correct');
+=======
+diag('Check Details');
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully created',  "Correct Alert was shown");
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[1][contains(text(), "100")]'), "Priority is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[3]', $headerrule), "Name is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a nice description'), "Description is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'inbound'), "Direction is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "0")]'), "Stopper is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), "Enabled is correct");
+$d->capture_screenshot("/results/DEBUG_H1.png");
+>>>>>>> BRANCH (d12915 TT#56376 selenium: debug commit)
 
 diag("Edit Header Rule");
 $headerrule = ("header" . int(rand(100000)) . "rule");
@@ -116,6 +128,7 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'this is a very nice descrip
 $d->select_if_unselected('//*[@id="stopper"]');
 $d->find_element('//*[@id="save"]')->click();
 
+<<<<<<< HEAD   (2052c4 TT#68752 - Implement translation handling of 'Select' form f)
 diag("Check details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[1][contains(text(), "1")]'), 'Priority is correct');
@@ -124,6 +137,17 @@ ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a v
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'outbound'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "1")]'), 'Stopper is correct');
 ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), 'Enabled is correct');
+=======
+diag('Check Details');
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully updated',  "Correct Alert was shown");
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[1][contains(text(), "1")]'), "Priority is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[3]', $headerrule), "Name is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a very nice description'), "Description is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'outbound'), "Direction is correct");
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "1")]'), "Stopper is correct");
+ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), "Enabled is correct");
+$d->capture_screenshot("/results/DEBUG_H2.png");
+>>>>>>> BRANCH (d12915 TT#56376 selenium: debug commit)
 
 diag("Create a Second Header Rule");
 $d->find_element("Create Header Rule", 'link_text')->click();
