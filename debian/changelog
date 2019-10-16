@@ -1,3 +1,12 @@
+ngcp-panel (7.5.1.8+0~mr7.5.1.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [37d0967] TT#68703 workaround slow contract_cnt queries of profiles
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 16 Oct 2019 11:55:05 +0200
+
 ngcp-panel (7.5.1.7+0~mr7.5.1.7) unstable; urgency=medium
 
   [ Nico Schedel ]
