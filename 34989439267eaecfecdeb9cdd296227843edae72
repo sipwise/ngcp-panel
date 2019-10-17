@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d14160fd_9cc1df44",
+        "filename": "tools_bin/ngcp-emergency-mode",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-10-17T14:59:39Z",
+      "side": 0,
+      "message": "IMHO it has better readability:\n\u003e Please confirm (yes/no): yes\ncomparing to:\n\u003e Please confirm (yes/no):yes\n\nI would keep it.",
+      "range": {
+        "startLine": 109,
+        "startChar": 69,
+        "endLine": 109,
+        "endChar": 70
+      },
+      "revId": "34989439267eaecfecdeb9cdd296227843edae72",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
