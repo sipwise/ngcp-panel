@@ -22,6 +22,30 @@
       "revId": "34989439267eaecfecdeb9cdd296227843edae72",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2134b246_8fef26d6",
+        "filename": "tools_bin/ngcp-emergency-mode",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2019-10-17T17:03:11Z",
+      "side": 0,
+      "message": "The function will add actually two space of its own.",
+      "parentUuid": "d14160fd_9cc1df44",
+      "range": {
+        "startLine": 109,
+        "startChar": 69,
+        "endLine": 109,
+        "endChar": 70
+      },
+      "revId": "34989439267eaecfecdeb9cdd296227843edae72",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
