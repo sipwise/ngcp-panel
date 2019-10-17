@@ -155,7 +155,7 @@ Section: admin
 Architecture: all
 Depends:
  curl,
- libio-prompter-perl,
+ libio-prompt-tiny-perl,
  libmoose-perl,
  libngcp-api-client-perl,
  libredis-perl,

@@ -37,7 +37,7 @@ use NGCP::API::Client;
 use Config::Simple;
 use TryCatch;
 use Sys::Syslog qw(:standard :macros);
-use IO::Prompter;
+use IO::Prompt:Tiny qw(prompt);
 
 openlog($PROGRAM_NAME, "ndelay,pid", LOG_LOCAL0);
 
@@ -106,7 +106,7 @@ foreach my $dom(@emergency_domains) {
 unless ($mode eq "status") {
     INFO "" . ($mode eq "enable" ? "A" : "Dea") . "ctivating emergency mode for domains " . join(", ", keys %emergency_domain_names);
     DEBUG "Waiting for user confirmation...";
-    $res = prompt(-in => *STDIN, -prompt => 'Please confirm (yes/no): ');
+    $res = prompt('Please confirm (yes/no):');
     DEBUG "User entered '$res'";
     if($res ne "yes") {
         INFO "Aborting emergency mode $mode by user request!";
