@@ -24,7 +24,7 @@ sub admin_login {
         my $login = 'administrator';
         my $pwd = 'administrator';
         my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
-        $d->get("$uri/logout"); # make sure we are logged out
+        $d->get("$uri/logout");
         $d->get("$uri/login");
         $d->find_element('#username', 'css')->send_keys($login);
         $d->find_element('#password', 'css')->send_keys($pwd);
@@ -44,4 +44,4 @@ if(! caller) {
 }
 
 1;
-# vim: filetype=perl
+

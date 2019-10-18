@@ -28,9 +28,6 @@ sub BUILD {
 
     my ($window_h,$window_w) = ($ENV{WINDOW_SIZE} || '1024x1280') =~ /([0-9]+)x([0-9]+)/i;
     my $browsername = $self->browser_name;
-    # $self->set_window_position(0, 50) if ($browsername ne "htmlunit");
-    # $self->set_window_size($window_h,$window_w) if ($browsername ne "htmlunit");
-    # diag("Window size: $window_h x $window_w");
     $self->set_timeout("implicit", 10_000);
 }
 
@@ -43,7 +40,6 @@ sub find_text {
     catch {
         return;
     };
-
 }
 
 sub select_if_unselected {

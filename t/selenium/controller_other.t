@@ -247,6 +247,7 @@ ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text()
 diag("Try to NOT delete Contact");
 $d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
+$d->refresh();
 
 diag("Check if Contact is still here");
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
