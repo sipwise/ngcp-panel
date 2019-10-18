@@ -39,7 +39,6 @@ $d->find_element('#mod_close', 'css')->click();
 $c->create_reseller($resellername, $contractid);
 
 diag("Search Reseller");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Reseller successfully created.',  'Correct Alert was shown');
 $d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);

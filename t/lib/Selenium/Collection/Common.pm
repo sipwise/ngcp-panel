@@ -17,7 +17,7 @@ sub login_ok {
 
     diag("Load login page (logout first)");
     my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
-    $self->driver->get("$uri/logout"); # make sure we are logged out
+    $self->driver->get("$uri/logout");
     $self->driver->get("$uri/login");
 
     diag("Do Admin Login");
