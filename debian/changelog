@@ -1,3 +1,16 @@
+ngcp-panel (8.0.1.1+0~mr8.0.1.1) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [9cc1a5b] TT#68019 Remove JS hint: sourceMappingURL=rrule.js.map from rrule.js and luxon.js
+
+  [ Rene Krenn ]
+  * [465ca7b] TT#68703 workaround slow contract_cnt queries of profiles
+  * [31eef26] TT#68703 fix workaround slow contract_cnt queries of networks
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Oct 2019 12:34:20 +0200
+
 ngcp-panel (8.0.1.0+0~mr8.0.1.0) unstable; urgency=medium
 
   [ Nico Schedel ]
