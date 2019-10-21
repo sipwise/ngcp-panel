@@ -103,21 +103,6 @@ sub browser_name_in {
     return scalar grep {/^$browser_name$/} @names;
 }
 
-sub wait_for_text {
-    my ($self, $xpath, $expected, $timeout) = @_;
-    return unless $xpath && $expected;
-    $timeout = 20 unless $timeout; # seconds. Default timeout value if none is specified.
-    my $started = time();
-    my $elapsed = time();
-    while ($elapsed - $started <= $timeout){
-        $elapsed = time();
-        try{
-            return 1 if $self->find_element($xpath)->get_text() eq $expected;
-        };
-    }
-    return 0;
-}
-
 sub move_and_click {
     my ($self, $path, $type, $fallback, $timeout) = @_;
     return unless $path && $type;
@@ -135,21 +120,6 @@ sub move_and_click {
             $action_chains->click($self->find_element($path, $type));
             $action_chains->perform;
             return 1;
-        };
-    }
-    return 0;
-}
-
-sub wait_for_attribute {
-    my ($self, $path, $attrib, $expected, $timeout) = @_;
-    return unless $path && $attrib && $expected;
-    $timeout = 20 unless $timeout; # seconds. Default timeout value if none is specified.
-    my $started = time();
-    my $elapsed = time();
-    while ($elapsed - $started <= $timeout){
-        $elapsed = time();
-        try{
-            return 1 if $self->find_element($path)->get_attribute($attrib, 1) eq $expected;
         };
     }
     return 0;

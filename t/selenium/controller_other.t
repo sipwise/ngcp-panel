@@ -51,7 +51,7 @@ ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empt
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="call_list_suppression_table"]//tr[1]/td[2]', $domainstring), "Domain is correct");
+ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "' . $domainstring . '")]'), "Domain is correct");
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "outgoing")]'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "test")]'), 'Pattern is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "filter")]'), 'Mode is correct');
@@ -76,7 +76,7 @@ ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empt
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="call_list_suppression_table"]//tr[1]/td[2]', $domainstring), "Domain is correct");
+ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "' . $domainstring . '")]'), "Domain is correct");
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "incoming")]'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "testing")]'), 'Pattern is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "obfuscate")]'), 'Mode is correct');
@@ -90,7 +90,7 @@ diag("Check if Call List Suppression is still here");
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
-ok($d->wait_for_text('//*[@id="call_list_suppression_table"]//tr[1]/td[2]', $domainstring), 'Call List Suppression is still here');
+ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "' . $domainstring . '")]'), 'Call List Suppression is still here');
 
 diag("Try to delete Call List Suppression");
 $d->move_and_click('//*[@id="call_list_suppression_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="call_list_suppression_table_filter"]//input');
@@ -119,7 +119,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller found');
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller found');
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->fill_element('//*[@id="name"]', 'xpath', $phonebookname);
 $d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
@@ -132,7 +132,7 @@ ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', $phonebookname);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="phonebook_table"]//tr[1]/td[3]', $phonebookname), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "' . $phonebookname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "0123456789")]'), 'Number is correct');
 
@@ -151,7 +151,7 @@ ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', $phonebookname);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="phonebook_table"]//tr[1]/td[3]', $phonebookname), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "' . $phonebookname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "9876543210")]'), 'Number is correct');
 
@@ -164,7 +164,7 @@ diag("Check if Phonebook entry is still here");
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]//input', 'xpath', $phonebookname);
-ok($d->wait_for_text('//*[@id="phonebook_table"]//tr[1]/td[3]', $phonebookname), 'Phonebook entry is still here');
+ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "' . $phonebookname . '")]'), 'Phonebook entry is still here');
 
 diag("Try to delete Phonebook entry");
 $d->move_and_click('//*[@id="phonebook_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="phonebook_table_filter"]//input');
@@ -192,7 +192,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller found');
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller found');
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->fill_element('//*[@id="firstname"]', 'xpath', 'Test');
 $d->fill_element('//*[@id="lastname"]', 'xpath', 'User');
@@ -207,7 +207,7 @@ ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'G
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "Test")]'), 'First Name is correct');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "User")]'), 'Last Name is correct');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "SIPWISE")]'), 'Company is correct');
@@ -238,7 +238,7 @@ ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'G
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "Tester")]'), 'First Name is correct');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "Using")]'), 'Last Name is correct');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "sip")]'), 'Company is correct');
@@ -253,7 +253,7 @@ diag("Check if Contact is still here");
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="contact_table"]//tr[1]/td[2]', $resellername), "Contact is still here");
+ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), "Contact is still here");
 
 diag("Try to delete Contact");
 $d->move_and_click('//*[@id="contact_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="contact_table_filter"]//input');

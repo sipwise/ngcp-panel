@@ -67,11 +67,11 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), '
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 
 diag("Check Customer details");
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
-ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail), 'Contact Email is correct');
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "locked")]'), 'Status is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Contact Email is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "locked")]'), 'Status is correct');
 $custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
 $compstring = "Customer #" . $custnum . " successfully created - Details";
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  'Correct Alert was shown');
@@ -86,7 +86,7 @@ $d->find_element('Back', 'link_text')->click();
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
 diag("Set status to 'active'");
@@ -102,11 +102,11 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), '
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 
 diag("Check customer details");
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
-ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[4]', $contactmail), 'Contact Email is correct');
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
-ok($d->find_element_by_xpath('//*[@id="Customer_table"]/tbody/tr[1]/td[contains(text(), "active")]'), 'Status is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer ID is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Contact Email is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "active")]'), 'Status is correct');
 $compstring = "Customer #" . $custnum . " successfully updated";
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  'Correct Alert was shown');
 
@@ -135,12 +135,12 @@ if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() e
     $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
     ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $d->fill_element('#Customer_table_filter input', 'css', $customerid);
-    ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
+    ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Found customer');
     $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
 }
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contact Details")]'));
-ok($d->wait_for_text('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Email")]/../td[2]', $contactmail), 'Email is correct');
+ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Email")]/../td[2][contains(text(), "' . $contactmail . '")]'), 'Email is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Name")]/../td[contains(text(), "Alice")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Company")]/../td[contains(text(), "Sipwise")]'), 'Company is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_contact"]//table//tr//td[contains(text(), "Address")]/../td[text()[contains(.,"03141")]]'), 'Postal code is correct');
@@ -170,7 +170,7 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Fra
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[contains(text(), "100")]'), 'Limit is correct');
-ok($d->wait_for_text('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[4]', 'mymail@example.org'), 'Mail is correct');
+ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[4][contains(text(), "' . 'mymail@example.org' . '")]'), 'Mail is correct');
 
 diag("Go to 'Contract Balance'");
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]'));
@@ -250,8 +250,8 @@ ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'Tester');
 
 diag("Check Phonebook entry details");
-ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "Tester")]'), 'Name is correct');
-ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "0123456789")]'), 'Number is correct');
+ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "Tester")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "0123456789")]'), 'Number is correct');
 
 diag("Edit Phonebook entry");
 $d->move_and_click('//*[@id="phonebook_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="customer_details"]//div//a[contains(text(), "Phonebook")]');
@@ -265,8 +265,8 @@ diag("Check Phonebook entry details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]'));
-ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "TesterTester")]'), 'Name is correct');
-ok($d->find_element_by_xpath('//*[@id="phonebook_table"]/tbody/tr[1]/td[contains(text(), "987654321")]'), 'Number is correct');
+ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "TesterTester")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "987654321")]'), 'Number is correct');
 
 diag("Create a new Location");
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Locations")]'));
@@ -322,9 +322,9 @@ ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'Test Location');
 
 diag("Check Location details");
-ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "Test Location")]'), 'Name is correct');
-ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "This is a Test Location")]'), 'Description is correct');
-ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "127.0.0.1/16")]'), 'Network block is correct');
+ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "Test Location")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "This is a Test Location")]'), 'Description is correct');
+ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "127.0.0.1/16")]'), 'Network block is correct');
 
 diag("Edit Location and add another Location block");
 $d->move_and_click('//*[@id="locations_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="customer_details"]//div//a[contains(text(), "Locations")]');
@@ -342,17 +342,17 @@ diag("Check Location details");
 $d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]')->click();
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]'));
-ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "TestTest Location")]'), 'Name is correct');
-ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "This is a very Test Location")]'), 'Description is correct');
-ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "10.0.0.138/16")]'), 'Network block is correct');
-ok($d->find_element_by_xpath('//*[@id="locations_table"]/tbody/tr[1]/td[contains(text(), "127.0.0.1/16")]'), 'Network block 2 is correct');
+ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "TestTest Location")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "This is a very Test Location")]'), 'Description is correct');
+ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "10.0.0.138/16")]'), 'Network block is correct');
+ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "127.0.0.1/16")]'), 'Network block 2 is correct');
 
 diag("Try to NOT delete Customer");
 $c->delete_customer($customerid, 1);
 
 diag("Check if Customer is still here");
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
-ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr/td[2]', $customerid), 'Customer is still here');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr/td[2][contains(text(), "' . $customerid . '")]'), 'Customer is still here');
 
 diag("Try to delete Customer");
 $c->delete_customer($customerid, 0);

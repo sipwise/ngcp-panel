@@ -39,7 +39,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller was found');
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller was found');
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
 $d->fill_element('//*[@id="name"]', 'xpath', $soundsetname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'nice desc');
@@ -52,7 +52,7 @@ ok($d->find_element_by_css('#sound_set_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', $soundsetname);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="sound_set_table"]//tr[1]/td[4]', $soundsetname), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "' . $soundsetname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "nice desc")]'), 'Description is correct');
 
@@ -70,7 +70,7 @@ ok($d->find_element_by_css('#sound_set_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', $soundsetname);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="sound_set_table"]//tr[1]/td[4]', $soundsetname), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "' . $soundsetname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "very nice desc")]'), 'Description is correct');
 
@@ -132,7 +132,7 @@ $d->find_element('Back', 'link_text')->click();
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#sound_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', $soundsetname);
-ok($d->wait_for_text('//*[@id="sound_set_table"]//tr[1]/td[4]', $soundsetname), 'Sound Set was found');
+ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "' . $soundsetname . '")]'), 'Sound Set was found');
 $d->move_and_click('//*[@id="sound_set_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sound_set_table_filter"]//input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
@@ -140,7 +140,7 @@ diag("Check if Sound Set is still here");
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#sound_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="sound_set_table_filter"]/label/input', 'xpath', $soundsetname);
-ok($d->wait_for_text('//*[@id="sound_set_table"]//tr[1]/td[4]', $soundsetname), 'Sound set is still here');
+ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text(), "' . $soundsetname . '")]'), 'Sound set is still here');
 
 diag("Try to delete Sound Set");
 $d->move_and_click('//*[@id="sound_set_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sound_set_table_filter"]//input');

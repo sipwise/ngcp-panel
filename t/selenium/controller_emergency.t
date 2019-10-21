@@ -40,7 +40,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller found');
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller found');
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->fill_element('//*[@id="name"]', 'xpath', $containername);
 $d->find_element('//*[@id="save"]')->click();
@@ -52,8 +52,8 @@ ok($d->find_element_by_css('#emergency_containers_table tr > td.dataTables_empty
 $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
 
 diag("Check Emergency Container details");
-ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
 
 diag("Edit Emergency Container name");
 $containername = ("emergency" . int(rand(100000)) . "container");
@@ -68,8 +68,8 @@ ok($d->find_element_by_css('#emergency_containers_table tr > td.dataTables_empty
 $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
 
 diag("Check Emergency Container details");
-ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
 
 diag("Try to create a empty Emergency Mapping");
 $d->find_element('Create Emergency Mapping', 'link_text')->click();
@@ -84,7 +84,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="emergency_containeridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_containeridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_containeridtable_filter"]/label/input', 'xpath', $containername);
-ok($d->wait_for_text('//*[@id="emergency_containeridtable"]/tbody/tr[1]/td[3]', $containername), 'Emergency Container found');
+ok($d->find_element_by_xpath('//*[@id="emergency_containeridtable"]//tr[1]/td[contains(text(), "' . $containername . '")]'), 'Emergency Container found');
 $d->select_if_unselected('//*[@id="emergency_containeridtable"]/tbody/tr[1]/td[4]/input', 'xpath');
 $d->fill_element('//*[@id="code"]', 'xpath', "133");
 $d->fill_element('//*[@id="prefix"]', 'xpath', "E1_133_");
@@ -97,10 +97,10 @@ ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty',
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
 
 diag("Check Emergency Mapping details");
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), "133")]'), 'Emergency Number is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), "E1_133_")]'), 'Emergency Prefix is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), "133")]'), 'Emergency Number is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), "E1_133_")]'), 'Emergency Prefix is correct');
 
 diag("Edit Emergency Mapping Details");
 $d->move_and_click('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[6]/div/a[2]', 'xpath', '//*[@id="emergency_mappings_table_filter"]//input');
@@ -115,10 +115,10 @@ ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty',
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
 
 diag("Check Emergency Mapping details");
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), "144")]'), 'Emergency Number is correct');
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), "E2_144_")]'), 'Emergency Prefix is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), "144")]'), 'Emergency Number is correct');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), "E2_144_")]'), 'Emergency Prefix is correct');
 
 diag("Create Domain to add Emergency Container");
 $c->create_domain($domainstring, $resellername);
@@ -127,7 +127,7 @@ diag("Search Domain");
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domainstring);
-ok($d->wait_for_text('//*[@id="Domain_table"]/tbody/tr[1]/td[contains(text(), "domain")]', $domainstring), 'Domain was found');
+ok($d->find_element_by_xpath('//*[@id="Domain_table"]//tr[1]/td[contains(text(), "' . $domainstring . '")]'), 'Domain was found');
 $d->move_and_click('//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Preferences")]', 'xpath', '//*[@id="Domain_table_filter"]/label/input');
 
 diag("Open 'Number Manipulations'");
@@ -165,7 +165,7 @@ diag("Try to NOT delete Emergency Mapping");
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
-ok($d->wait_for_text('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[2]', $containername), 'Emergency mapping was found');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[2][contains(text(), "' . $containername . '")]'), 'Emergency mapping was found');
 $d->move_and_click('//*[@id="emergency_mappings_table"]/tbody/tr/td[6]/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="emergency_mappings_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
@@ -173,7 +173,7 @@ diag("Check if Emergency Mapping is still here");
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
-ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Mapping is still here');
+ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), ' . $containername . ')]'), 'Mapping is still here');
 
 diag("Try to delete Emergency Mapping");
 $d->move_and_click('//*[@id="emergency_mappings_table"]/tbody/tr/td[6]/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="emergency_mappings_table_filter"]/label/input');
@@ -188,7 +188,7 @@ diag("Try to NOT delete Emergency Container");
 $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_containers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
-ok($d->wait_for_text('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[3]', $containername), 'Emergency mapping was found');
+ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[3][contains(text(), "' . $containername . '")]'), 'Emergency mapping was found');
 $d->move_and_click('//*[@id="emergency_containers_table"]/tbody/tr/td[4]/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="emergency_containers_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
@@ -196,7 +196,7 @@ diag("Check if Emergency Container is still here");
 $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_containers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_containers_table_filter"]/label/input', 'xpath', $containername);
-ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]/tbody/tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container is still here');
+ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container is still here');
 
 diag("Try to delete Emergency Container");
 $d->move_and_click('//*[@id="emergency_containers_table"]/tbody/tr/td[4]/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="emergency_containers_table_filter"]/label/input');

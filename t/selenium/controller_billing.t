@@ -48,8 +48,8 @@ ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), '
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
 
 diag("Check if values are correct");
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing name is correct');
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', $resellername), 'Reseller name is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]/tbody/tr/td[2][contains(text(), "' . $billingname . '")]'), 'Billing name is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]/tbody/tr/td[3][contains(text(), "' . $resellername . '")]'), 'Reseller name is correct');
 
 diag("Edit Billing Profile");
 $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
@@ -64,9 +64,9 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Bil
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing name is correct');
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[3]', $resellername), 'Reseller name is correct');
-ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]/tbody/tr[1]/td[4]/input[@checked="checked"]'), 'Prepaid setting is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing name is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller name is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]//td/input[@checked="checked"]'), 'Prepaid setting is correct');
 
 diag("Open 'Fees' page");
 $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
@@ -93,8 +93,8 @@ diag("Check Billing Zone details");
 $d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', $zonename);
-ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[2]', $zonename), 'Billing Zone name is correct');
-ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[3]', $zonedetailname), 'Billing Zone detail is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_zone_table"]//tr[1]/td[contains(text(), "' . $zonename .'")]'), 'Billing Zone name is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_zone_table"]//tr[1]/td[contains(text(), "' . $zonedetailname . '")]'), 'Billing Zone detail is correct');
 
 diag("Go back to Billing Fees page");
 $d->find_element('Back', 'link_text')->click();
@@ -147,11 +147,11 @@ diag("Check Billing Fee details");
 $d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', $zonedetailname);
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular expression - longest pattern'), 'Match Mode is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'out'), 'Direction is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Zone detail is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), ".*")]'), 'Source pattern is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), ".+")]'), 'Destination pattern is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "Regular expression - longest pattern")]'), 'Match Mode is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "out")]'), 'Direction is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "' . $zonedetailname . '")]'), 'Zone detail is correct');
 
 diag("Edit Billing Fee");
 $d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_fee_table_filter"]/label/input');
@@ -160,11 +160,11 @@ $d->find_element('//*[@id="save"]')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing fee successfully changed!',  'Correct Alert was shown');
 
 diag("Check Billing Fee details");
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular expression - longest pattern'), 'Match Mode is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'in'), 'Direction is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Zone detail is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), ".*")]'), 'Source pattern is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), ".+")]'), 'Destination pattern is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "Regular expression - longest pattern")]'), 'Match Mode is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "in")]'), 'Direction is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "' . $zonedetailname . '")]'), 'Zone detail is correct');
 
 diag("Go back to Billing Profiles page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -174,7 +174,7 @@ diag("Clone Billing Profile");
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing Profile was found');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile was found');
 $d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//a[contains(text(), "Duplicate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
 diag("Fill in clone details");
@@ -188,20 +188,20 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Bil
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $clonename);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $clonename), 'Billing Profile was found');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $clonename . '")]'), 'Billing Profile was found');
 $d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
 diag("Check if Fees got cloned properly");
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[2]', '.*'), 'Source pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[3]', '.+'), 'Destination pattern is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[4]', 'Regular expression - longest pattern'), 'Match mode is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[5]', 'in'), 'Direction is correct');
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Zone detail is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), ".*")]'), 'Source pattern is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), ".+")]'), 'Destination pattern is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "Regular expression - longest pattern")]'), 'Match Mode is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "in")]'), 'Direction is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "' . $zonedetailname . '")]'), 'Zone detail is correct');
 
 diag("Check if Billing Zones got cloned properly");
 $d->find_element('Edit Zones', 'link_text')->click();
-ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[2]', $zonename), 'Billing Zone name is correct');
-ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[3]', $zonedetailname), 'Billing Zone detail is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_zone_table"]//tr[1]/td[contains(text(), "' . $zonename . '")]'), 'Billing Zone name is correct');
+ok($d->find_element_by_xpath('//*[@id="billing_zone_table"]//tr[1]/td[contains(text(), "' . $zonedetailname . '")]'), 'Billing Zone detail is correct');
 
 diag("Delete cloned Billing Profile");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -209,7 +209,7 @@ $d->find_element('Billing', 'link_text')->click();
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $clonename);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $clonename), 'Billing Profile was found');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $clonename . '")]'), 'Billing Profile was found');
 $d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
@@ -219,7 +219,7 @@ ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), '
 
 diag("Go back to Billing Fees");
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing Profile was found');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile was found');
 $d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//a[contains(text(), "Fees")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
 diag("Try to NOT delete Billing Fee");
@@ -230,7 +230,7 @@ diag("Check if Billing Fee is still here");
 $d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_fee_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_fee_table_filter"]/label/input', 'xpath', $zonedetailname);
-ok($d->wait_for_text('//*[@id="billing_fee_table"]/tbody/tr/td[6]', $zonedetailname), 'Billing Fee entry is still here');
+ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(text(), "' . $zonedetailname . '")]'), 'Billing Fee entry is still here');
 
 diag("Try to delete Billing Fee");
 $d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_fee_table_filter"]/label/input');
@@ -252,7 +252,7 @@ diag("Check if Billing Zone is still here");
 $d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_zone_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_zone_table_filter"]/label/input', 'xpath', $zonename);
-ok($d->wait_for_text('//*[@id="billing_zone_table"]/tbody/tr/td[2]', $zonename), 'Billing Zone entry is still here');
+ok($d->find_element_by_xpath('//*[@id="billing_zone_table"]//tr[1]/td[contains(text(), "' . $zonename . '")]'), 'Billing Zone entry is still here');
 
 diag("Try to delete Billing Zone");
 $d->move_and_click('//*[@id="billing_zone_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="billing_zone_table_filter"]/label/input');
@@ -271,8 +271,8 @@ diag("Open 'Edit Peak Times' page");
 $d->fill_element('#billing_profile_table_filter label input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('#billing_profile_table_filter label input', 'css', $billingname);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing Profile was found');
-$d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile was found');
+$d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//div//a[contains(text(), "Off-Peaktimes")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
 diag("Edit Wednesday");
 ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Off-peak-times")]'), 'We are on the correct page');
@@ -298,10 +298,10 @@ $d->find_element('#add', 'css')->click();
 $d->find_element('#mod_close', 'css')->click();
 
 diag("Check Time Definition Details");
-ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"04:20:00")]]'), 'Time Definition 1 is correct');
-ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"13:37:00")]]'), 'Time Definition 2 is correct');
-ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"00:00:00")]]'), 'Time Definition 3 is correct');
-ok($d->find_element_by_xpath('//*[@id="content"]/div/table/tbody/tr[3]/td[text()[contains(.,"23:59:59")]]'), 'Time Definition 4 is correct');
+ok($d->find_element_by_xpath('//*[@id="content"]/div/table//tr[3]/td[text()[contains(.,"04:20:00")]]'), 'Time Definition 1 is correct');
+ok($d->find_element_by_xpath('//*[@id="content"]/div/table//tr[3]/td[text()[contains(.,"13:37:00")]]'), 'Time Definition 2 is correct');
+ok($d->find_element_by_xpath('//*[@id="content"]/div/table//tr[3]/td[text()[contains(.,"00:00:00")]]'), 'Time Definition 3 is correct');
+ok($d->find_element_by_xpath('//*[@id="content"]/div/table//tr[3]/td[text()[contains(.,"23:59:59")]]'), 'Time Definition 4 is correct');
 
 diag("Create a Date Definition");
 $d->find_element('Create Special Off-Peak Date', 'link_text')->click();
@@ -333,8 +333,8 @@ diag("Check if Date Definition is correct");
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2008-02-28 04:20:00');
-ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2008-02-28 04:20:00'), 'Start Date Definition is correct');
-ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2008-02-28 13:37:00'), 'End Date Definition is correct');
+ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2008-02-28 04:20:00")]'), 'Start Date Definition is correct');
+ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2008-02-28 13:37:00")]'), 'End Date Definition is correct');
 
 diag("Edit Date Definition");
 $d->move_and_click('//*[@id="date_definition_table"]/tbody/tr/td[4]/div/a[1]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
@@ -344,8 +344,8 @@ $d->find_element('#save', 'css')->click();
 
 diag("Check if Date Definition is correct");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully updated',  'Correct Alert was shown');
-ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[2]', '2018-01-01 00:00:00'), 'Start Date Definition is correct');
-ok($d->wait_for_text('//*[@id="date_definition_table"]/tbody/tr/td[3]', '2019-01-01 23:59:59'), 'End Date Definition is correct');
+ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2018-01-01 00:00:00")]'), 'Start Date Definition is correct');
+ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2019-01-01 23:59:59")]'), 'End Date Definition is correct');
 
 diag("Delete Date Definition");
 $d->scroll_to_element($d->find_element('//*[@id="date_definition_table_filter"]/label/input'));
@@ -364,7 +364,7 @@ diag("Check if Billing Profile is still here");
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#billing_profile_table tr > td.dataTables_empty'), 'Garbage text was not found');
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', $billingname);
-ok($d->wait_for_text('//*[@id="billing_profile_table"]/tbody/tr/td[2]', $billingname), 'Billing Profile is still here');
+ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is still here');
 
 diag("Try to delete Billing Profile");
 $c->delete_billing_profile($billingname);
@@ -391,7 +391,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller was found');
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller was found');
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
 $d->fill_element('//*[@id="name"]', 'xpath', $billingnetwork);
 $d->fill_element('//*[@id="description"]', 'xpath', 'Very nice description');
@@ -418,8 +418,8 @@ $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', $billi
 
 diag("Check details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing Network successfully created',  'Correct Alert was shown');
-ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[2]', $resellername), 'Reseller is correct');
-ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[3]', $billingnetwork), 'Billing Network name is correct');
+ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "' . $billingnetwork . '")]'), 'Billing Network name is correct');
 ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "127.0.0.1/8")]'), 'Network block is correct');
 
 diag("Edit Billing Network");
@@ -441,8 +441,8 @@ $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', $billi
 
 diag("Check Details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing network successfully updated',  'Correct Alert was shown');
-ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[2]', $resellername), 'Reseller is correct');
-ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[3]', $billingnetwork), 'Billing Network name is correct');
+ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "' . $billingnetwork . '")]'), 'Billing Network name is correct');
 ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "127.0.0.1/8")]'), 'Network block (IP 1) is correct');
 ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "10.0.0.138/16")]'), 'Network block (IP 2) is correct');
 
@@ -454,7 +454,7 @@ diag("Check if Billing Network is still here");
 $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#networks_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="networks_table_filter"]/label/input', 'xpath', $billingnetwork);
-ok($d->wait_for_text('//*[@id="networks_table"]//tr[1]/td[3]', $billingnetwork), 'Billing Network is still here');
+ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(), "' . $billingnetwork . '")]'), 'Billing Network is still here');
 
 diag("Try to delete Billing Network");
 $d->move_and_click('//*[@id="networks_table"]//tr[1]//td//a[contains(text(), "Terminate")]', 'xpath', '//*[@id="networks_table_filter"]/label/input');

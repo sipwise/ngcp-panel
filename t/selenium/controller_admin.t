@@ -44,7 +44,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller found');
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller found');
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->unselect_if_selected('//*[@id="show_passwords"]');
 $d->unselect_if_selected('//*[@id="call_data"]');
@@ -60,9 +60,9 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 
 diag("Check Administrator details");
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), 'Name is correct');
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[7][contains(text(), "0")]'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "0")]'), 'Read-Only value is correct');
 
 diag("Edit Administrator details. Enable read-only setting");
 $adminname = ("admin" . int(rand(100000)) . "test");
@@ -77,9 +77,9 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Adm
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), 'Name is correct');
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), 'Reseller is correct');
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[7]', '1'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "1")]'), 'Read-Only value is correct');
 
 diag("New Administrator tries to login now");
 $c->login_ok($adminname, $adminpwd);
@@ -89,10 +89,10 @@ $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click()
 $d->find_element('Administrators', 'link_text')->click();
 
 diag("Check if only your Administrator is shown");
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[contains(text(), '. $adminname .')]'), 'Name is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[contains(text(), '. $resellername .')]'), 'Reseller is correct');
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[5]', '1'), 'Read-Only value is correct');
-ok($d->wait_for_text('//*[@id="administrator_table_info"]', 'Showing 1 to 1 of 1 entries'), 'Only 1 entry exists');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), '. $adminname .')]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), '. $resellername .')]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "1")]'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table_info"][contains(text(), "Showing 1 to 1 of 1 entries")]'), 'Only 1 entry exists');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'administrator');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Administrator table is empty');
 
@@ -121,7 +121,7 @@ diag("Edit Administrator permissions. Make Administrator inactive");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), 'Administrator found');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname .'")]'), 'Administrator found');
 $d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
 $d->find_element('//*[@id="is_active"]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -131,10 +131,10 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Adm
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), 'Name is correct');
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[2]', $resellername), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]/tbody/tr[1]/td[6][contains(text(), "0")]'), 'Active value is correct');
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[7]', '1'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "0")]'), 'Active value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "1")]'), 'Read-Only value is correct');
 
 diag("Do deactivated Administrator login");
 $d->get("$uri/logout");
@@ -155,7 +155,7 @@ diag("Try to NOT delete Administrator");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), 'Administrator found');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Administrator found');
 $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
@@ -163,7 +163,7 @@ diag("Check if Administrator is still here");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-ok($d->wait_for_text('//*[@id="administrator_table"]/tbody/tr[1]/td[3]', $adminname), 'Administrator is still here');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Administrator is still here');
 
 diag("Try to delete Administrator");
 $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');

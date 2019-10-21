@@ -40,7 +40,7 @@ diag("Open Customer details");
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
-ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Customer found');
+ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Customer found');
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
 diag("Try to add an empty Subscriber");
@@ -59,7 +59,7 @@ diag("Fill in values");
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#domainidtable tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', $domainstring);
-ok($d->wait_for_text('//*[@id="domainidtable"]/tbody/tr[1]/td[3]', $domainstring), 'Domain found');
+ok($d->find_element_by_xpath('//*[@id="domainidtable"]//tr[1]/td[contains(text(), "' . $domainstring . '")]'), 'Domain found');
 $d->select_if_unselected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
 $d->find_element('//*[@id="e164.cc"]')->send_keys('43');
 $d->find_element('//*[@id="e164.ac"]')->send_keys('99');
@@ -78,14 +78,14 @@ if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() e
     $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
     ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
     $d->fill_element('#Customer_table_filter input', 'css', $customerid);
-    ok($d->wait_for_text('//*[@id="Customer_table"]/tbody/tr[1]/td[2]', $customerid), 'Found customer');
+    ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Found customer');
     $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
 }
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscribers_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscribers_table_filter"]/label/input', 'xpath', $username);
-ok($d->wait_for_text('//*[@id="subscribers_table"]/tbody/tr/td[2]', $username), 'Subscriber was found');
+ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr[1]/td[contains(text(), "' . $username . '")]'), 'Subscriber was found');
 
 diag("Go to 'Subscriber Profiles' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -96,7 +96,7 @@ $d->find_element('Create Subscriber Profile Set', 'link_text')->click();
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), 'Reseller found');
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller found');
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->fill_element('//*[@id="name"]', 'xpath', $setname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'This is a description. It describes things');
@@ -109,9 +109,9 @@ ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_em
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Name is correct');
-ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[4]', 'This is a description. It describes things'), 'Description is correct');
-ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr//td[contains(text(), "' . $resellername .'")]'), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr[1]/td[contains(text(), "' . $setname . '")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr[1]/td[contains(text(), "This is a description. It describes things")]'), 'Description is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr[1]/td[contains(text(), "' . $resellername .'")]'), 'Reseller is correct');
 
 diag("Enter 'Profiles' menu");
 $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Profiles")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
@@ -131,9 +131,9 @@ ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty')
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[3]', $profilename), 'Name is correct');
-ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[4]', 'This is a description. It describes things'), 'Description is correct');
-ok($d->wait_for_text('//*[@id="subscriber_profile_table"]/tbody/tr/td[2]', $setname), 'Profile Set is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $profilename . '")]', $profilename), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "This is a description. It describes things")]'), 'Description is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $setname . '")]'), 'Profile Set is correct');
 
 diag("Go to 'Subscribers' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -143,9 +143,9 @@ diag("Check Subscriber details");
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
-ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[3]', $contactmail), 'Contact Email is correct');
-ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber name is correct');
-ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[5]', $domainstring), 'Domain name is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_table"]//tr[1]/td[contains(text(), "' . $contactmail . '")]', $contactmail), 'Contact Email is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_table"]//tr[1]/td[contains(text(), "' . $username . '")]', $username), 'Subscriber name is correct');
+ok($d->find_element_by_xpath('//*[@id="subscriber_table"]//tr[1]/td[contains(text(), "' . $domainstring . '")]', $domainstring), 'Domain name is correct');
 
 diag("Go to 'Subscriber Details' page");
 $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
@@ -159,7 +159,7 @@ diag("Add Subscriber to profile");
 $d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#profile_setidtable tr > td.dataTables_empty'), 'Garbage Text was not found');
 $d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', $setname);
-ok($d->wait_for_text('//*[@id="profile_setidtable"]/tbody/tr/td[3]', $setname), 'Subscriber Profile was found');
+ok($d->find_element_by_xpath('//*[@id="profile_setidtable"]//tr[1]/td[contains(text(), "' . $setname . '")]'), 'Subscriber Profile was found');
 $d->select_if_unselected('//*[@id="profile_setidtable"]/tbody/tr/td[5]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -171,7 +171,7 @@ $d->find_element("Subscribers", 'link_text')->click();
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
-ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[3]', $contactmail), 'Subscriber was found');
+ok($d->find_element_by_xpath('//*[@id="subscriber_table"]//tr[1]/td[contains(text(), "'. $contactmail .'")]'), 'Subscriber was found');
 $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
 =cut
 $d->find_element('//*[@id="toggle-accordions"]')->click();
@@ -191,14 +191,14 @@ if($d->find_element_by_xpath('//*[@id="masthead"]/div/div/div/h2')->get_text() e
     $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
     $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
-    ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Found Subscriber');
+    ok($d->find_element_by_xpath('//*[@id="subscriber_table"]//tr[1]/td[contains(text(), "' . $username . '")]'), 'Found Subscriber');
     $d->move_and_click('//*[@id="subscriber_table"]//tr[1]//td//a[contains(text(), "Details")]', 'xpath', '//*[@id="subscriber_table_filter"]/label/input');
 }
 
 diag("Unlock Subscriber");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]'));
-ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), 'Status is correct');
+ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), 'Status is correct');
 $d->find_element("Edit", 'link_text')->click();
 $d->find_element('//*[@id="lock"]')->click();
 $d->find_element('//*[@id="lock"]/option[contains(text(), "none")]')->click();
@@ -208,7 +208,7 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if subscriber was unlocked");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Successfully updated subscriber',  'Correct Alert was shown');
-ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr//td[contains(text(), "Status")]/../td[contains(text(), "active")]'), 'Status is correct');
+ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Status")]/../td[contains(text(), "active")]'), 'Status is correct');
 
 diag("Go to 'Subscriber Preferences' page");
 $d->find_element("Preferences", 'link_text')->click();
@@ -302,8 +302,8 @@ $d->find_element('//*[@id="cf_actions.save"]')->click();
 
 diag("Check if call-forward has been applied");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Successfully saved Call Forward',  'Correct Alert was shown');
-ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $bsetname . ')]'), 'B-Set was selected');
-ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[contains(text(), ' . $destinationname . ')]'), 'Destination set was selected');
+ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]//tr[1]/td[contains(text(), ' . $bsetname . ')]'), 'B-Set was selected');
+ok($d->find_element_by_xpath('//*[@id="preferences_table_cf"]//tr[1]/td[contains(text(), ' . $destinationname . ')]'), 'Destination set was selected');
 
 diag("Try to add Call Blockings");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
@@ -362,7 +362,7 @@ diag("Try to NOT delete Subscriber");
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
-ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber was found');
+ok($d->find_element_by_xpath('//*[@id="subscriber_table"]//tr[1]/td[contains(text(), "' . $username . '")]'), 'Subscriber was found');
 $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Terminate")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
@@ -370,7 +370,7 @@ diag("Check if Subscriber is still here");
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
-ok($d->wait_for_text('//*[@id="subscriber_table"]/tbody/tr/td[4]', $username), 'Subscriber is still here');
+ok($d->find_element_by_xpath('//*[@id="subscriber_table"]//tr[1]/td[contains(text(), "' . $username . '")]'), 'Subscriber is still here');
 
 diag("Try to delete Subscriber");
 $d->move_and_click('//*[@id="subscriber_table"]/tbody/tr[1]/td/div/a[contains(text(), "Terminate")]', 'xpath', '//*[@id="subscriber_table_filter"]//input');
@@ -390,7 +390,7 @@ diag("Try to NOT Delete Subscriber Profile Set");
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
-ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Profile Set was found');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr[1]/td[contains(text(), "' . $setname . '")]'), 'Profile Set was found');
 $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
@@ -398,7 +398,7 @@ diag("Check if Subscriber Profile Set is still here");
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
-ok($d->wait_for_text('//*[@id="subscriber_profile_sets_table"]/tbody/tr/td[3]', $setname), 'Subscriber Profile Set is still here');
+ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr[1]/td[contains(text(), "' . $setname . '")]'), 'Subscriber Profile Set is still here');
 
 diag("Try to delete Subscriber Profile Set");
 $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Delete")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');

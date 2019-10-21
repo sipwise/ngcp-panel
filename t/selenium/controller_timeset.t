@@ -40,7 +40,7 @@ diag("Enter information");
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
-ok($d->wait_for_text('//*[@id="reselleridtable"]/tbody/tr[1]/td[2]', $resellername), "Reseller found");
+ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), "Reseller found");
 $d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->fill_element('//*[@id="name"]', 'xpath', $timesetname);
 $d->find_element('//*[@id="save"]')->click();
@@ -52,8 +52,8 @@ ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'G
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[3]', $timesetname), "Name is correct");
-ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[2]', $resellername), "Reseller is correct");
+ok($d->find_element_by_xpath('//*[@id="timeset_table"]//tr[1]/td[contains(text(), "' . $timesetname . '")]'), "Name is correct");
+ok($d->find_element_by_xpath('//*[@id="timeset_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), "Reseller is correct");
 
 diag("Edit Time Set");
 $timesetname = ("time" . int(rand(100000)) . "set");
@@ -68,8 +68,8 @@ ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'G
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[3]', $timesetname), 'Name is correct');
-ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[2]', $resellername), 'Reseller is correct');
+ok($d->find_element_by_xpath('//*[@id="timeset_table"]//tr[1]/td[contains(text(), "' . $timesetname . '")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="timeset_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 
 diag("Go to 'Events' page");
 $d->move_and_click('//*[@id="timeset_table"]//tr[1]//td//a[contains(text(), "Events")]', 'xpath', '//*[@id="timeset_table_filter"]/label/input');
@@ -106,8 +106,8 @@ ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Gar
 $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Hello, im a special Event =)');
 
 diag("Check details");
-ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Hello, im a special Event =)'), "Description is correct");
-ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[3]', 'every week on Monday from 2019-01-01 12:00:00 to 2019-06-05 12:20:00'), "Date/Time is correct");
+ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "Hello, im a special Event =)")]'), "Description is correct");
+ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "every week on Monday from 2019-01-01 12:00:00 to 2019-06-05 12:20:00")]'), "Date/Time is correct");
 
 diag("Edit Event");
 $d->move_and_click('//*[@id="event_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="event_table_filter"]//input');
@@ -120,8 +120,8 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Event entry successfully created',  'Correct Alert was shown');
-ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[2]', 'Very important event'), "Description is correct");
-ok($d->wait_for_text('//*[@id="event_table"]/tbody/tr[1]/td[3]', 'every week on Monday from 2020-06-01 12:00:00 to 2020-07-01 13:00:00'), "Date/Time is correct");
+ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "Very important event")]'), "Description is correct");
+ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "every week on Monday from 2020-06-01 12:00:00 to 2020-07-01 13:00:00")]'), "Date/Time is correct");
 
 diag("Go to 'Peering Groups' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -132,14 +132,14 @@ $d->find_element("Create Peering Group", 'link_text')->click();
 $d->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contractidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');
-ok($d->wait_for_text('//*[@id="contractidtable"]/tbody/tr[1]/td[3]', 'default-system@default.invalid'), "Contact found");
+ok($d->find_element_by_xpath('//*[@id="contractidtable"]//tr[1]/td[contains(text(), "default-system@default.invalid")]'), "Contact found");
 $d->select_if_unselected('//*[@id="contractidtable"]/tbody/tr[1]/td[5]/input');
 $d->fill_element('//*[@id="name"]', 'xpath', $groupname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'For Timeset Testing');
 $d->fill_element('//*[@id="time_setidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#time_setidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="time_setidtable_filter"]/label/input', 'xpath', $timesetname);
-ok($d->wait_for_text('//*[@id="time_setidtable"]/tbody/tr[1]/td[2]', $timesetname), 'Time Set found');
+ok($d->find_element_by_xpath('//*[@id="time_setidtable"]//tr[1]/td[contains(text(), "' . $timesetname . '")]'), 'Time Set found');
 $d->select_if_unselected('//*[@id="time_setidtable"]/tbody/tr[1]/td[4]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -150,10 +150,10 @@ ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 
 $d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
 
 diag("Check Peering Group details");
-ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[2]', 'default-system@default.invalid'), 'Contact is correct');
-ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[3]', $groupname), 'Name is correct');
-ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[5]', 'For Timeset Testing'), 'Description is correct');
-ok($d->wait_for_text('//*[@id="sip_peering_group_table"]/tbody/tr/td[6]', $timesetname), 'Time Set is correct');
+ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[contains(text(), "default-system@default.invalid")]'), 'Contact is correct');
+ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[contains(text(), "' . $groupname . '")]', $groupname), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[contains(text(), "For Timeset Testing")]'), 'Description is correct');
+ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[contains(text(), "' . $timesetname . '")]', $timesetname), 'Time Set is correct');
 
 diag("Delete Peering Group");
 $d->move_and_click('//*[@id="sip_peering_group_table"]//tr[1]//td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]/label/input');
@@ -168,7 +168,7 @@ diag("Try to NOT delete Time Set");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
-ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[3]', $timesetname), 'Time Set was found');
+ok($d->find_element_by_xpath('//*[@id="timeset_table"]//tr[1]/td[contains(text(), "' . $timesetname . '")]'), 'Time Set was found');
 $d->move_and_click('//*[@id="timeset_table"]//tr[1]/td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="timeset_table_filter"]/label/input');
 $d->find_element('//*[@id="dataConfirmCancel"]')->click();
 
@@ -176,7 +176,7 @@ diag("Check if Time Set is still here");
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="timeset_table_filter"]/label/input', 'xpath', $timesetname);
-ok($d->wait_for_text('//*[@id="timeset_table"]/tbody/tr[1]/td[3]', $timesetname), 'Time Set is still here');
+ok($d->find_element_by_xpath('//*[@id="timeset_table"]//tr[1]/td[contains(text(), "' . $timesetname . '")]'), 'Time Set is still here');
 
 diag("Trying to delete Time Set");
 $d->move_and_click('//*[@id="timeset_table"]//tr[1]/td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="timeset_table_filter"]/label/input');
