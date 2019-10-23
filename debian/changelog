@@ -1,3 +1,12 @@
+ngcp-panel (8.0.1.2+0~mr8.0.1.2) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [8bc4054] TT#69304 - Fix typo that broke '/api/speeddials'
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 23 Oct 2019 14:12:12 +0200
+
 ngcp-panel (8.0.1.1+0~mr8.0.1.1) unstable; urgency=medium
 
   [ Alexander Lutay ]
