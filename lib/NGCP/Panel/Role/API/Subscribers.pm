@@ -440,6 +440,11 @@ sub prepare_resource {
         return;
     }
 
+    if (!$customer->contact->reseller->domain_resellers->find({domain_id => $domain->id})) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't belong to the same reseller as subscriber's customer.");
+        return;
+    }
+
     my $pilot;
     if($customer->product->class eq 'pbxaccount') {
         $pilot = $customer->voip_subscribers->search({
