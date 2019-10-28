@@ -22,7 +22,7 @@
     name: get a domain for testing
     type: item
     method: GET
-    path: '/api/domains/?page=1&rows=1&order_by=id&order_by_direction=desc'
+    path: '/api/domains/?page=1&rows=1&order_by=id&order_by_direction=desc&reseller_id=1'
     retain:
         domain: body
     perl_code: !!perl/code |
