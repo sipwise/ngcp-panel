@@ -81,6 +81,9 @@ diag("Fill in invalid values");
 $d->fill_element('//*[@id="comment"]', 'xpath', 'testing invalid content');
 $d->fill_element('//*[@id="startdate_datetimepicker"]', 'xpath', 'invalid');
 $d->fill_element('//*[@id="starttime_datetimepicker"]', 'xpath', 'stuff');
+$d->find_element('//*[@id="repeat.freq"]/option[@value="daily"]')->click();
+$d->find_element('//*[@id="byday.label"]')->click();
+$d->fill_element('//*[@id="byday.weekdaynumber"]', 'xpath', 'invalid stuff');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -94,9 +97,8 @@ $d->fill_element('//*[@id="starttime_datetimepicker"]', 'xpath', '12:00:00');
 $d->find_element('//*[@id="end.switch.label.control"]')->click();
 $d->fill_element('//*[@id="enddate_datetimepicker"]', 'xpath', '2019-06-05');
 $d->fill_element('//*[@id="endtime_datetimepicker"]', 'xpath', '12:20:00');
-$d->find_element('//*[@id="repeat.freq"]/option[@value="weekly"]')->click();
-$d->find_element('//*[@id="byday.label"]')->click();
 $d->select_if_unselected('//*[@id="byday.weekdays.0"]');
+$d->find_element('//*[@id="byday.weekdaynumber"]')->clear();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Event");
@@ -107,7 +109,7 @@ $d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Hello, i
 
 diag("Check details");
 ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "Hello, im a special Event =)")]'), "Description is correct");
-ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "every week on Monday from 2019-01-01 12:00:00 to 2019-06-05 12:20:00")]'), "Date/Time is correct");
+ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "every day on Monday from 12:00:00 to 12:20:00")]'), "Date/Time is correct");
 
 diag("Edit Event");
 $d->move_and_click('//*[@id="event_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="event_table_filter"]//input');
@@ -116,12 +118,14 @@ $d->fill_element('//*[@id="startdate_datetimepicker"]', 'xpath', '2020-06-01');
 $d->fill_element('//*[@id="starttime_datetimepicker"]', 'xpath', '12:00:00');
 $d->fill_element('//*[@id="enddate_datetimepicker"]', 'xpath', '2020-07-01');
 $d->fill_element('//*[@id="endtime_datetimepicker"]', 'xpath', '13:00:00');
+$d->unselect_if_selected('//*[@id="byday.weekdays.0"]');
+$d->fill_element('//*[@id="byday.weekdaynumber"]', 'xpath', '+1FR');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Event entry successfully created',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "Very important event")]'), "Description is correct");
-ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "every week on Monday from 2020-06-01 12:00:00 to 2020-07-01 13:00:00")]'), "Date/Time is correct");
+ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "every day on the 1st Friday from 12:00:00 to 13:00:00")]'), "Date/Time is correct");
 
 diag("Go to 'Peering Groups' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
