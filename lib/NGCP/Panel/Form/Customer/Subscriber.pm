@@ -161,6 +161,12 @@ sub update_fields {
         );
     }
 
+    if($self->field('domain')) {
+        $self->field('domain')->field('id')->ajax_src(
+            $c->uri_for_action('/domain/ajax_filter_reseller', [$c->stash->{contract}->contact->reseller_id])->as_string
+        );
+    }
+
     if($c->config->{security}->{password_sip_autogenerate}) {
         $self->field('password')->inactive(1);
         $self->field('password')->required(0);
