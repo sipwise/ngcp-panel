@@ -53,7 +53,7 @@ sub post_process_hal_resource {
     my ($self, $c, $item, $resource, $form) = @_;
     my $dp_id = delete $resource->{rwr_dp_id};
     my @values = ();
-    if ($item->rwr_set) {
+    if ($item->rwr_set_id && $item->rwr_set) {
         my %rwr_set_cols = $item->rwr_set->get_inflated_columns;
         foreach my $dp_t (qw(callee_in callee_out caller_in caller_out)) {
             my $c_dp_id = $rwr_set_cols{$dp_t.'_dpid'} // next;
