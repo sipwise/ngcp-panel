@@ -41,10 +41,26 @@ sub emergency_mode {
 sub overall_status {
     my ($self, $c) = @_;
 
-    my $ngcp_status = decode_json(NGCP::Panel::Utils::Statistics::get_ngcp_status());
-    return { class => "ngcp-red-error", text => $c->loc("Errors"), data => $ngcp_status->{data} } if ( $ngcp_status->{system_status} eq 'ERRORS' );
-    return { class => "ngcp-orange-warning", text => $c->loc("Warnings"), , data => $ngcp_status->{data} } if ( $ngcp_status->{system_status} eq 'WARNINGS' );
-    return { class => "ngcp-green-ok", text => $c->loc("All services running") };
+    my $report = decode_json(NGCP::Panel::Utils::Statistics::get_ngcp_status());
+
+    my %status_map = (
+        ERRORS => {
+            class => 'ngcp-red-error',
+            text => $c->loc('Errors'),
+        },
+        WARNINGS => {
+            class => 'ngcp-orange-warning',
+            text => $c->loc('Warnings'),
+        },
+        OK => {
+            class => 'ngcp-green-ok',
+            text => $c->loc('All services running'),
+        },
+    );
+    my $status = $status_map{$report->{system_status}};
+    $status->{data} = $report->{data} if $report->{system_status} ne 'OK';
+
+    return $status;
 }
 
 1;
