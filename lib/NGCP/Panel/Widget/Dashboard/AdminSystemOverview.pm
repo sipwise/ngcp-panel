@@ -8,7 +8,7 @@ use NGCP::Panel::Utils::Statistics;
 use JSON qw(decode_json);
 
 sub template {
-    return unless ( -e '/usr/sbin/ngcp-collective-check' );
+    return unless NGCP::Panel::Utils::Statistics::has_ngcp_status();
     return 'widgets/admin_system_overview.tt';
 }
 
