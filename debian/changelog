@@ -1,3 +1,12 @@
+ngcp-panel (5.5.10.2+0~mr5.5.10.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [c9f16f8] TT#69375 fix DBlocation joins in case of reseller users
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 Oct 2019 10:48:29 +0100
+
 ngcp-panel (5.5.10.1+0~mr5.5.10.1) unstable; urgency=medium
 
   [ Rene Krenn ]
