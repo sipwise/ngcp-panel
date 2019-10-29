@@ -51,7 +51,7 @@ sub hal_links {
 sub post_process_hal_resource {
     my ($self, $c, $item, $resource, $form) = @_;
     my $dp_id = delete $resource->{rwr_dp_id};
-    if ($item->rwr_set) {
+    if ($item->rwr_set_id && $item->rwr_set) {
         my %rwr_set_cols = $item->rwr_set->get_inflated_columns;
         foreach my $dp_t (qw(callee_in callee_out caller_in caller_out)) {
             my $c_dp_id = $rwr_set_cols{$dp_t.'_dpid'} // next;
@@ -70,6 +70,11 @@ sub check_resource {
 
     unless (defined $resource->{rule_id}) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'rule_id'");
+        return;
+    }
+
+    if (!defined $resource->{rwr_set_id} && (defined $resource->{rwr_dp} || defined $resource->{rwr_dp_id})) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing 'rwr_set_id' (when rwr_dp is set).");
         return;
     }
 
