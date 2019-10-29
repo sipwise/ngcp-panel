@@ -86,6 +86,12 @@ sub get_dpkg_support_status {
     }
 }
 
+sub has_ngcp_status {
+    my $self = shift;
+
+    return -x '/usr/sbin/ngcp-collective-check';
+}
+
 sub get_ngcp_status {
     my ($self) = @_;
     return `/usr/sbin/ngcp-collective-check json`;
