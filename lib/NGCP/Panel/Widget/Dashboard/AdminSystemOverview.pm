@@ -58,7 +58,7 @@ sub overall_status {
         },
     };
     my $status = $status_map{$report->{system_status}};
-    $status->{data} = $report->{data} if $report->{system_status} ne 'OK';
+    $status->{data} = $report->{checks} if $report->{system_status} ne 'OK';
 
     return $status;
 }
