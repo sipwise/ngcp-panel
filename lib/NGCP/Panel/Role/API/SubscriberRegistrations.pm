@@ -26,7 +26,7 @@ sub _item_rs {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id
         },{
-            join => { 'kam_subscriber' => 'provisioning_voip_subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}},
+            join => { 'kam_subscriber' => { 'provisioning_voip_subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}}},
         });
     }
     return $item_rs;
