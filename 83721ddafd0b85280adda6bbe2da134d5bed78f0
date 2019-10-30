@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "865b1093_8e90ff4a",
+        "filename": "lib/NGCP/Panel/Controller/API/Root.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-10-30T15:07:37Z",
+      "side": 1,
+      "message": "maybe better move ontop of file",
+      "revId": "83721ddafd0b85280adda6bbe2da134d5bed78f0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
