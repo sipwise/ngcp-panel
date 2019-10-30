@@ -62,7 +62,7 @@ $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $
 diag("Check Administrator details");
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "0")]'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[7][contains(text(), "0")]'), 'Read-Only value is correct');
 
 diag("Edit Administrator details. Enable read-only setting");
 $adminname = ("admin" . int(rand(100000)) . "test");
@@ -79,7 +79,7 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "1")]'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[7][contains(text(), "1")]'), 'Read-Only value is correct');
 
 diag("New Administrator tries to login now");
 $c->login_ok($adminname, $adminpwd);
@@ -91,7 +91,7 @@ $d->find_element('Administrators', 'link_text')->click();
 diag("Check if only your Administrator is shown");
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), '. $adminname .')]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), '. $resellername .')]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "1")]'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[7][contains(text(), "1")]'), 'Read-Only value is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table_info"][contains(text(), "Showing 1 to 1 of 1 entries")]'), 'Only 1 entry exists');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'administrator');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Administrator table is empty');
@@ -133,8 +133,8 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "0")]'), 'Active value is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "1")]'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[6][contains(text(), "0")]'), 'Active value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[7][contains(text(), "1")]'), 'Read-Only value is correct');
 
 diag("Do deactivated Administrator login");
 $d->get("$uri/logout");
