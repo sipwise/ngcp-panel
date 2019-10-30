@@ -9,7 +9,8 @@ use HTTP::Headers qw();
 use HTTP::Response qw();
 use HTTP::Status qw(:constants);
 use File::Find::Rule;
-use JSON qw(to_json);
+use JSON qw(to_json encode_json);
+use YAML::XS qw/Dump/;
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API;
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
@@ -292,13 +293,18 @@ sub swagger :Private {
         $user_role,
     );
 
-    use JSON qw/encode_json/;
-
-    $c->response->headers(HTTP::Headers->new(
-        Content_Language => 'en',
-        Content_Type => 'application/json',
-    ));
-    $c->response->body(encode_json($result));
+    my $headers = HTTP::Headers->new(Content_Language => 'en');
+    my $response;
+    if ($c->req->params->{swagger} eq 'yml') {
+        $headers->header(Content_Type => 'application/x-yaml');
+        $response = Dump($result);
+    }
+    else {
+        $headers->header(Content_Type => 'application/json');
+        $response = encode_json($result);
+    }
+    $c->response->headers($headers);
+    $c->response->body($response);
     $c->response->code(200);
     return;
 }
