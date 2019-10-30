@@ -129,7 +129,7 @@ diag("Add NCOS to Profile");
 $d->find_element('//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]')->click();
 $d->move_and_click('//table//tr//td[contains(text(), "ncos")]//..//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "' . "Edit Preference 'NCOS Level'" . '")]'), 'Edit window has been opened');
-$d->find_element('//*[@id="ncos"]')->click();
+$d->move_and_click('//*[@id="ncos"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "' . "Edit Preference 'NCOS Level'" . '")]');
 $d->find_element('//*[@id="ncos"]//option[contains(text(), "'. $ncosname .'")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 

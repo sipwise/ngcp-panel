@@ -219,6 +219,8 @@ $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "languag
 $d->move_and_click('//table//tr/td[contains(text(), "language")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "conference_pin")]/..//td//a[contains(text(), "Edit")]');
 
 diag("Change Language to German");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+$d->move_and_click('//*[@id="language"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="language"]/option[contains(text(), "German")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 

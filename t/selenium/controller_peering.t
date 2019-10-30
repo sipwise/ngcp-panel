@@ -221,10 +221,10 @@ $d->scroll_to_element($d->find_element('Number Manipulations', 'link_text'));
 
 diag("Edit preference 'inbound_upn'");
 $d->move_and_click('//table//td[contains(text(), "inbound_upn")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Number Manipulation")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
 
 diag("Change to 'P-Asserted-Identity'");
-$d->find_element('//*[@id="inbound_upn"]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+$d->move_and_click('//*[@id="inbound_upn"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="inbound_upn"]/option[@value="pai_user"]')->click();
 $d->find_element('#save', 'css')->click();
 
