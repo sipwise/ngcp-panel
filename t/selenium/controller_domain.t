@@ -124,6 +124,7 @@ $d->move_and_click('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td/
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 
 diag("Change to 32 kbit/s");
+$d->move_and_click('//*[@id="opus_mono_bitrate"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="opus_mono_bitrate"]/option[contains(text(), "32")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -148,6 +149,7 @@ $d->move_and_click('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../t
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
 
 diag("Change to 32 kbit/s");
+$d->move_and_click('//*[@id="opus_stereo_bitrate"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="opus_stereo_bitrate"]/option[contains(text(), "32")]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
