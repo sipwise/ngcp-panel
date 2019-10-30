@@ -292,13 +292,20 @@ sub swagger :Private {
         $user_role,
     );
 
-    use JSON qw/encode_json/;
-
-    $c->response->headers(HTTP::Headers->new(
-        Content_Language => 'en',
-        Content_Type => 'application/json',
-    ));
-    $c->response->body(encode_json($result));
+    my $headers = HTTP::Headers->new(Content_Language => 'en');
+    my $response;
+    if ($c->req->params->{swagger} eq 'yml') {
+        use YAML::XS qw/Dump/;
+        $headers->header(Content_Type => 'application/x-yaml');
+        $response = Dump($result);
+    }
+    else {
+        use JSON qw/encode_json/;
+        $headers->header(Content_Type => 'application/json');
+        $response = encode_json($result);
+    }
+    $c->response->headers($headers);
+    $c->response->body($response);
     $c->response->code(200);
     return;
 }
