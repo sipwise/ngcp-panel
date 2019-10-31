@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb974376_5b729482",
+        "filename": "lib/NGCP/Panel/Role/API/Subscribers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-10-31T12:15:33Z",
+      "side": 1,
+      "message": "using find() with something other than an id turned out dangerous, as the unique/primary defs in ngcp-schema might be out of sync. pls use -\u003esearch()-\u003efirst().",
+      "range": {
+        "startLine": 443,
+        "startChar": 57,
+        "endLine": 443,
+        "endChar": 62
+      },
+      "revId": "2b623c31ee7f467501d483d290a18a5371f0973a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
