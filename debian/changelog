@@ -1,3 +1,12 @@
+ngcp-panel (8.0.1.3+0~mr8.0.1.3) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [50da771] TT#68016 selenium: workaround for selenium crashing on select list elements
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 31 Oct 2019 11:33:29 +0100
+
 ngcp-panel (8.0.1.2+0~mr8.0.1.2) unstable; urgency=medium
 
   [ Flaviu Mates ]
