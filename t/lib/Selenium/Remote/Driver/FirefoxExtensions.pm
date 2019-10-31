@@ -163,9 +163,11 @@ sub wait_for_attribute {
 }
 
 sub get_text_safe {
-    my ($self, $path) = @_;
+    my ($self, $path, $type) = @_;
+    return unless $path;
+    $type //= "xpath";
     try {
-        my $element = $self->find_element($path);
+        my $element = $self->find_element($path, $type);
         return $element->get_text();
     } catch {
         return 'Element not found';
