@@ -32,7 +32,7 @@ diag("Try to create a new Administrator");
 $d->find_element('Create Administrator', 'link_text')->click();
 
 diag("Save without entering anything");
-$d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
+$d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -45,12 +45,13 @@ $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'this
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller found');
-$d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
+$d->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+$d->fill_element('//*[@id="login"]', 'xpath', $adminname);
+$d->fill_element('//*[@id="password"]', 'xpath', $adminpwd);
+$d->scroll_to_element($d->find_element('//*[@id="is_superuser"]'));
 $d->unselect_if_selected('//*[@id="show_passwords"]');
 $d->unselect_if_selected('//*[@id="call_data"]');
 $d->unselect_if_selected('//*[@id="billing_data"]');
-$d->fill_element('//*[@id="login"]', 'xpath', $adminname);
-$d->fill_element('//*[@id="password"]', 'xpath', $adminpwd);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Administrator");
@@ -68,7 +69,7 @@ diag("Edit Administrator details. Enable read-only setting");
 $adminname = ("admin" . int(rand(100000)) . "test");
 $d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
 $d->fill_element('//*[@id="login"]', 'xpath', $adminname);
-$d->scroll_to_element($d->find_element('//form//div/label[contains(text(), "Read only")]'));
+$d->scroll_to_element($d->find_element('//*[@id="is_superuser"]'));
 $d->select_if_unselected('//*[@id="read_only"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -91,7 +92,7 @@ $d->find_element('Administrators', 'link_text')->click();
 diag("Check if only your Administrator is shown");
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), '. $adminname .')]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), '. $resellername .')]'), 'Reseller is correct');
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[7][contains(text(), "1")]'), 'Read-Only value is correct');
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[6][contains(text(), "1")]'), 'Read-Only value is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table_info"][contains(text(), "Showing 1 to 1 of 1 entries")]'), 'Only 1 entry exists');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'administrator');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Administrator table is empty');
@@ -123,6 +124,7 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname .'")]'), 'Administrator found');
 $d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
+$d->scroll_to_element($d->find_element('//*[@id="is_superuser"]'));
 $d->find_element('//*[@id="is_active"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
