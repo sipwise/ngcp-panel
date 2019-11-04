@@ -29,9 +29,9 @@ my $billingname = ("billing" . int(rand(100000)) . "test");
 my $run_ok = 0;
 
 $c->login_ok();
-$c->create_domain($domainstring);
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
+$c->create_domain($domainstring, $resellername);
 $c->create_contact($contactmail, $resellername);
 $c->create_billing_profile($billingname, $resellername);
 $c->create_customer($customerid, $contactmail, $billingname);
@@ -412,11 +412,11 @@ $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 
 ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_empty'), 'Subscriber Profile Set has been deleted');
 
 $c->delete_customer($customerid);
+$c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 $c->delete_contact($contactmail);
 $c->delete_billing_profile($billingname);
-$c->delete_domain($domainstring);
 
 diag("This test run was successfull");
 $run_ok = 1;
