@@ -279,9 +279,9 @@ diag("Edit Wednesday");
 ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Off-peak-times")]'), 'We are on the correct page');
 $d->refresh();
 $d->move_and_click('//*[@id="content"]//table//tr[3]/td//a[text()[contains(., "Edit")]]', 'xpath', '//*[@id="masthead"]//div//h2[contains(text(), "Off-peak-times")]');
-ok($d->find_text("Edit Wednesday"), 'Edit dialog was opened');
 
 diag("Fill in invalid values");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Wednesday")]'), 'Edit window has been opened');
 $d->fill_element('#start', 'css', "invalid");
 $d->fill_element('#end', 'css', "value");
 $d->find_element('#add', 'css')->click();
@@ -351,7 +351,6 @@ ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contain
 diag("Delete Date Definition");
 $d->scroll_to_element($d->find_element('//*[@id="date_definition_table_filter"]/label/input'));
 $d->move_and_click('//*[@id="date_definition_table"]/tbody//tr//td//div//a[contains(text(),"Delete")]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if Date Definition has been deleted");

@@ -21,7 +21,7 @@ sub login_ok {
     $self->driver->get("$uri/login");
 
     diag("Do Admin Login");
-    ok($self->driver->find_text("Admin Sign In"), "Text Admin Sign In found");
+    ok($self->driver->find_element('/html/body//div//h1[contains(text(), "Admin Sign In")]'), "Text 'Admin Sign In' found");
     is($self->driver->get_title, '', 'No Tab Title was set');
     $self->driver->fill_element('#username', 'css', $login);
     $self->driver->fill_element('#password', 'css', $pwd);

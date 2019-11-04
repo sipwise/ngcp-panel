@@ -44,7 +44,7 @@ $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]//inp
 $d->find_element('//*[@id="status"]')->click();
 $d->find_element('//*[@id="status"]/option[@value="active"]')->click();
 $d->find_element('//*[@id="save"]')->click();
-ok($d->find_text('Create Peering Group'), 'Succesfully went back to previous form'); # Should go back to prev form
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create SIP Peering Group")]'), 'Edit window has been opened');
 
 diag("Continue creating a Peering Group");
 $d->fill_element('//*[@id="name"]', 'xpath', $groupname);
@@ -205,7 +205,6 @@ ok($d->find_element_by_xpath('//*[@id="peering_servers_table"]//tr[1]/td[contain
 diag("Delete Inbound Peering Rule");
 $d->scroll_to_element($d->find_element('//*[@id="InboundPeeringRules_table_filter"]/label/input'));
 $d->move_and_click('//*[@id="InboundPeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="InboundPeeringRules_table_filter"]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if Inbound Peering Rule has been deleted");
@@ -318,7 +317,6 @@ ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[conta
 diag("Delete Peering Server");
 $d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Details")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
 $d->move_and_click('//*[@id="peering_servers_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="peering_servers_table_filter"]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if Peering Server has been deleted");
@@ -334,7 +332,6 @@ ok($d->find_element_by_xpath('//*[@id="PeeringRules_table"]//tr[1]/td[contains(t
 
 diag("Delete Outbound Peering Rule");
 $d->move_and_click('//*[@id="PeeringRules_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="PeeringRules_table_filter"]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if Outbound Peering Rule has been deleted");
@@ -350,7 +347,6 @@ ok($d->find_element_by_css('#sip_peering_group_table tr > td.dataTables_empty', 
 $d->fill_element('//*[@id="sip_peering_group_table_filter"]/label/input', 'xpath', $groupname);
 ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[contains(text(), "' . $groupname . '")]'), 'Peering Group was found');
 $d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmCancel', 'css')->click();
 
 diag('Check if Peering Group is still here');
@@ -359,7 +355,6 @@ ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[conta
 
 diag('Try to delete Peering Group');
 $d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Delete")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
-ok($d->find_text("Are you sure?"), 'Delete dialog appears');
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag('Check if Peering Group has been deleted');

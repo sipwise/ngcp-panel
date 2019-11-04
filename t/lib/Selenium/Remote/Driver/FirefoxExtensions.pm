@@ -31,17 +31,6 @@ sub BUILD {
     $self->set_timeout("implicit", 10_000);
 }
 
-sub find_text {
-    try {
-        my ($self, $text, $scheme) = @_;
-        $scheme //= "xpath";
-        return $self->find_element("//*[contains(text(),\"$text\")]", $scheme);
-    }
-    catch {
-        return;
-    };
-}
-
 sub select_if_unselected {
     my ($self, $query, $scheme) = @_;
     $scheme //= "xpath";
@@ -74,17 +63,6 @@ sub fill_element {
     $elem->send_keys(KEYS->{'control'}, 'A');
     $elem->send_keys($filltext);
     return 1;
-}
-
-sub scroll_to_id {
-    my ($self, $id) = @_;
-       my $script =
-       'var arg1 = arguments[0];' .
-       'var elem = window.document.getElementById(arg1);' .
-       'elem.scrollIntoView();' .
-       'return elem;';
-   my $elem = $self->execute_script($script,$id);
-   return $elem;
 }
 
 sub scroll_to_element {
