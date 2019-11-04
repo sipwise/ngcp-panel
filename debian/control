@@ -11,24 +11,6 @@ Build-Depends:
 Standards-Version: 3.9.8
 Homepage: https://www.sipwise.com/
 
-Package: libcatalyst-plugin-session-store-redis-perl
-Section: perl
-Architecture: all
-Depends:
- ${misc:Depends},
- ${perl:Depends},
- libcatalyst-plugin-session-perl,
- libclass-data-inheritable-perl,
- libredis-perl,
- libtry-tiny-perl,
-Breaks:
- ngcp-panel (<< 7.3.0.0+0~mr7.3.0.0),
-Replaces:
- ngcp-panel (<< 7.3.1.0+0~mr7.3.1.0),
-Description: Redis Session store for Catalyst
- Catalyst::Plugin::Session::Store::Redis is a session storage plugin
- for Catalyst that uses the Redis (https://redis.io/) key-value database.
-
 Package: ngcp-panel
 Architecture: all
 Depends:
