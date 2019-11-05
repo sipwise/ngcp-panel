@@ -24,10 +24,7 @@ my $run_ok = 0;
 $c->login_ok();
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
-
-diag("Go to 'Billing Profiles' page");
-$d->find_element('//*[@class="brand"]')->click();
-$d->find_element('//*[@id="content"]//div[contains(text(), "Billing")]/../../div/a')->click();
+$c->create_billing_profile($billingname, $resellername);
 
 diag("Try to create an empty Billing Profile");
 $d->find_element('Create Billing Profile', 'link_text')->click();
@@ -37,10 +34,7 @@ diag("Check error messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Handle field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
-
-diag("Create a legit Billing Profile");
 $d->find_element('//*[@id="mod_close"]')->click();
-$c->create_billing_profile($billingname, $resellername);
 
 diag("Search Billing Profile");
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');

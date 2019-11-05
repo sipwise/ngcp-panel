@@ -19,7 +19,7 @@ my $run_ok = 0;
 $c->login_ok();
 $c->create_domain($domainstring);
 
-diag("Try to add an empty Domain");
+diag("Try to create an empty Domain");
 $d->find_element('Create Domain', 'link_text')->click();
 $d->find_element('//*[@id="save"]')->click();
 
