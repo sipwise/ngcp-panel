@@ -44,6 +44,7 @@ if($pbx == 1){
 
 diag("Try to create an empty Customer");
 $d->find_element('Create Customer', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Customer")]'), 'Edit window has been opened');
 $d->scroll_to_element($d->find_element('//table[@id="contactidtable"]/tbody/tr[1]/td//input[@type="checkbox"]'));
 $d->unselect_if_selected('//table[@id="contactidtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
 $d->scroll_to_element($d->find_element('//table[@id="billing_profileidtable"]/tbody/tr[1]/td//input[@type="checkbox"]'));
@@ -82,6 +83,7 @@ ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
 
 diag("Set status to 'active'");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Customer")]'), 'Edit window has been opened');
 $d->scroll_to_element($d->find_element('//*[@id="status"]'));
 $d->find_element('//*[@id="status"]/option[contains(text(), "active")]')->click();
 $d->find_element('#save', 'css')->click();
@@ -109,6 +111,7 @@ diag("Edit Contact");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contact Details")]'));
 $d->find_element('//div[contains(@class,"accordion-body")]//*[contains(@class,"btn-primary") and contains(text(),"Edit Contact")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contact")]'), 'Edit window has been opened');
 $d->fill_element('div.modal #firstname', 'css', "Alice");
 $d->fill_element('#company', 'css', 'Sipwise');
 ok($d, 'Inserting name works');
@@ -144,6 +147,7 @@ $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[cont
 $d->move_and_click('//*[@id="collapse_fraud"]//table//tr//td[text()[contains(.,"Monthly Settings")]]/../td//a[text()[contains(.,"Edit")]]', 'xpath', '//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]');
 
 diag("Fill in invalid values");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Settings")]'), 'Edit window has been opened');
 $d->fill_element('#fraud_interval_limit', 'css', "invalid");
 $d->fill_element('#fraud_interval_notify', 'css', 'stuff');
 $d->find_element('#save', 'css')->click();
@@ -169,6 +173,7 @@ $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[cont
 
 diag("Set Cash Balance without entering anything");
 $d->find_element('//*[@id="collapse_balance"]//div//span//a[contains(text(), "Set Cash Balance")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Settings")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="cash_balance"]', 'xpath', ' ');
 $d->fill_element('//*[@id="free_time_balance"]', 'xpath', ' ');
 $d->find_element('//*[@id="save"]')->click();
@@ -203,6 +208,7 @@ diag("Top-up Cash Balance");
 $d->find_element('//*[@id="collapse_balance"]//div//span//a[contains(text(), "Top-up Cash")]')->click();
 
 diag("Perform Top-up without entering anything");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Settings")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -223,6 +229,7 @@ ok($d->find_element_by_xpath('//*[@id="topup_logs_table"]//tr//td[contains(text(
 diag("Create a new empty Phonebook entry");
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]'));
 $d->find_element('Create Phonebook Entry', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Phonebook")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -247,8 +254,7 @@ ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text
 
 diag("Edit Phonebook entry");
 $d->move_and_click('//*[@id="phonebook_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="customer_details"]//div//a[contains(text(), "Phonebook")]');
-
-diag("Change Information");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Phonebook")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', 'TesterTester');
 $d->fill_element('//*[@id="number"]', 'xpath', '987654321');
 $d->find_element('//*[@id="save"]')->click();
@@ -260,11 +266,10 @@ $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[cont
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "TesterTester")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "987654321")]'), 'Number is correct');
 
-diag("Create a new Location");
+diag("Create a new empty Location");
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Locations")]'));
 $d->find_element('Create Location', 'link_text')->click();
-
-diag("Try to create an empty Location");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Location")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -320,6 +325,7 @@ ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text
 
 diag("Edit Location and add another Location block");
 $d->move_and_click('//*[@id="locations_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="customer_details"]//div//a[contains(text(), "Locations")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Settings")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="description"]', 'xpath', 'This is a very Test Location');
 $d->fill_element('//*[@id="name"]', 'xpath', 'TestTest Location');
 $d->fill_element('//*[@id="blocks.0.row.ip"]', 'xpath', '10.0.0.138');

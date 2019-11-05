@@ -21,6 +21,7 @@ $c->create_domain($domainstring);
 
 diag("Try to create an empty Domain");
 $d->find_element('Create Domain', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Domain")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -67,9 +68,9 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "concurrent_max")]
 
 diag("Edit preference 'allowed_ips'");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "allowed_ips")]/../td/div/a[contains(text(), "Edit")]', 'xpath', '//table/tbody/tr/td[contains(text(), "man_allowed_ips")]/../td/div/a[contains(text(), "Edit")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 
 diag("Enter an IP address");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="add"]')->click();
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]//div//span[contains(text(), "Invalid IPv4 or IPv6 address")]'), 'Invalid IP address detected');
 $d->fill_element('//*[@id="allowed_ips"]', 'xpath', '127.0.0.0.0');
@@ -122,12 +123,10 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Pre
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//input[@checked="checked"]'), 'Opus Mono was enabled');
 
-diag("Change Opus Mono Bitrate");
+diag("Change Opus Mono Bitrate to 32 kbit/s");
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_mono")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "opus_stereo_bitrate")]');
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
-
-diag("Change to 32 kbit/s");
 $d->move_and_click('//*[@id="opus_mono_bitrate"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="opus_mono_bitrate"]/option[contains(text(), "32")]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -149,12 +148,10 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Pre
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//input[@checked="checked"]'), 'Opus Stereo was enabled');
 
-diag("Change Opus Stereo Bitrate");
+diag("Change Opus Stereo Bitrate to 32 kbit/s");
 $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "transcode_opus_stereo")]'));
 $d->move_and_click('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "opus_mono_bitrate")]');
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
-
-diag("Change to 32 kbit/s");
 $d->move_and_click('//*[@id="opus_stereo_bitrate"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="opus_stereo_bitrate"]/option[contains(text(), "32")]')->click();
 $d->find_element('//*[@id="save"]')->click();

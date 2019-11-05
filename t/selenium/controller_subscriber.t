@@ -47,6 +47,7 @@ diag("Try to add an empty Subscriber");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
 $d->find_element('Create Subscriber', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Subscriber")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -93,6 +94,7 @@ $d->find_element("Subscriber Profiles", 'link_text')->click();
 
 diag("Try to create a Subscriber Profile Set");
 $d->find_element('Create Subscriber Profile Set', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Subscriber Profile Set")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
@@ -118,6 +120,7 @@ $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/
 
 diag("Try to create a Subscriber Profile");
 $d->find_element('Create Subscriber Profile', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Subscriber Profile")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $profilename);
 $d->fill_element('//*[@id="description"]', 'xpath', 'This is a description. It describes things');
 $d->scroll_to_element($d->find_element('//*[@id="attribute.ncos"]'));
@@ -156,6 +159,7 @@ $d->scroll_to_element($d->find_element('//*[@id="subscriber_data"]//div//a[conta
 $d->find_element('Edit', 'link_text')->click();
 
 diag("Add Subscriber to profile");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Subscriber Master Data")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#profile_setidtable tr > td.dataTables_empty'), 'Garbage Text was not found');
 $d->fill_element('//*[@id="profile_setidtable_filter"]/label/input', 'xpath', $setname);
@@ -181,6 +185,7 @@ ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(
 
 diag("Lock Subscriber");
 $d->find_element("Edit", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Subscriber Master Data")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="lock"]/option[contains(text(), "global")]')->click();
 $d->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -200,6 +205,7 @@ $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Data")]'));
 ok($d->find_element_by_xpath('//*[@id="subscribers_table"]//tr/td[contains(text(), "Status")]/../td[contains(text(), "locked")]'), 'Status is correct');
 $d->find_element("Edit", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Subscriber Master Data")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="lock"]')->click();
 $d->find_element('//*[@id="lock"]/option[contains(text(), "none")]')->click();
 $d->find_element('//*[@id="status"]')->click();
@@ -219,7 +225,7 @@ $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "languag
 $d->move_and_click('//table//tr/td[contains(text(), "language")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "conference_pin")]/..//td//a[contains(text(), "Edit")]');
 
 diag("Change Language to German");
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->move_and_click('//*[@id="language"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="language"]/option[contains(text(), "German")]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -235,6 +241,7 @@ $d->scroll_to_element($d->find_element('//table//tr/td[contains(text(), "record_
 $d->move_and_click('//table//tr/td[contains(text(), "record_call")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//table//tr/td[contains(text(), "nat_sipping")]/..//td//a[contains(text(), "Edit")]');
 
 diag("Enable Call Recording");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->select_if_unselected('//*[@id="record_call"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -313,6 +320,7 @@ $d->scroll_to_element($d->find_element('Call Blockings', 'link_text'));
 
 diag("Edit 'block_in_mode'");
 $d->move_and_click('//table//tr/td[contains(text(), "block_in_mode")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="block_in_mode"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -324,6 +332,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_mode")]/
 
 diag("Edit 'block_in_list'");
 $d->move_and_click('//table//tr/td[contains(text(), "block_in_list")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="block_in_list"]', 'xpath', '1337');
 $d->find_element('//*[@id="add"]')->click();
 $d->fill_element('//*[@id="block_in_list"]', 'xpath', '42');
@@ -339,6 +348,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/
 
 diag("Disable Entry");
 $d->move_and_click('//table//tr/td[contains(text(), "block_in_list")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="mod_edit"]//div//input[@value="1337"]/../a[2]')->click();
 $d->find_element('//*[@id="mod_close"]')->click();
 
@@ -349,6 +359,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/
 
 diag("Edit 'block_in_clir'");
 $d->move_and_click('//table//tr/td[contains(text(), "block_in_clir")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Call Blockings")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="block_in_clir"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 

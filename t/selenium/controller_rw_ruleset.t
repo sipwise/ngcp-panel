@@ -26,6 +26,7 @@ $c->create_rw_ruleset($rulesetname, $resellername);
 
 diag("Try to create an empty Rewrite Rule Set");
 $d->find_element('Create Rewrite Rule Set', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Rewrite Rule Set")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -47,6 +48,7 @@ ok($d->find_element_by_xpath('//*[@id="rewrite_rule_set_table"]//tr[1]/td[contai
 diag("Edit Rewrite Rule Set");
 $rulesetname = ("rule" . int(rand(100000)) . "test");
 $d->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Rewrite Rule Set")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $rulesetname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'For very testing purposes');
 $d->find_element('//*[@id="save"]')->click();
@@ -69,6 +71,7 @@ sleep 1;
 
 diag("Create a new empty Rule for Caller");
 $d->find_element('Create Rewrite Rule', 'link_text')->click;
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Rule")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -100,6 +103,7 @@ ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table//tr[1]//td[c
 
 diag("Edit Rule for Caller");
 $d->move_and_click('//*[@id="collapse_icaller"]//table//tr[1]//td//a[text()[contains(., "Edit")]]', 'xpath', '//*[@id="masthead"]//div/h2');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="description"]', 'xpath', 'International to E.164');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -112,6 +116,7 @@ ok($d->find_element_by_xpath('//*[@id="collapse_icaller"]/div/table//tr[1]//td[c
 
 diag("Create a new Rule for Callee");
 $d->find_element('Create Rewrite Rule', 'link_text')->click;
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="match_pattern"]', 'xpath', '^(00|\+)([1-9][0-9]+)$');
 $d->fill_element('//*[@id="replace_pattern"]', 'xpath', '\2');
 $d->fill_element('//*[@id="description"]', 'xpath', 'Not International to E.164');
@@ -127,6 +132,7 @@ ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table//tr[1]//td[c
 
 diag("Edit Rule for Callee");
 $d->move_and_click('//*[@id="collapse_icallee"]//table//tr[1]//td//a[text()[contains(., "Edit")]]', 'xpath', '//*[@id="masthead"]//div/h2');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="description"]', 'xpath', 'International to E.164');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -140,6 +146,7 @@ ok($d->find_element_by_xpath('//*[@id="collapse_icallee"]/div/table//tr[1]//td[c
 diag("Testing if rules can be reordered");
 diag("Create a new Rule for Caller");
 $d->find_element('Create Rewrite Rule', 'link_text')->click;
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="match_pattern"]', 'xpath', '^(00|\+)([1-9][0-9]+)$');
 $d->fill_element('//*[@id="replace_pattern"]', 'xpath', '\1');
 $d->fill_element('//*[@id="description"]', 'xpath', 'International to E.164');
@@ -169,6 +176,7 @@ ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', '
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
 ok($d->find_element_by_xpath('//*[@id="rewrite_rule_set_table"]//tr[1]/td[contains(text(), "' . $rulesetname . '")]'), 'Ruleset was found');
 $d->move_and_click('//*[@id="rewrite_rule_set_table"]/tbody/tr[1]//td//div//a[contains(text(), "Clone")]', 'xpath', '//*[@id="rewrite_rule_set_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create cloned Rewrite Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $rulesetclonename);
 $d->fill_element('//*[@id="description"]', 'xpath', 'Im a clone, beep boop');
 $d->find_element('//*[@id="clone"]')->click();
@@ -210,7 +218,7 @@ diag("Add Ruleset to Domain");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('Number Manipulations', 'link_text'));
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Number Manipulations")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->move_and_click('//*[@id="rewrite_rule_set"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="rewrite_rule_set"]/option[contains(text(), "' . $rulesetname . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();

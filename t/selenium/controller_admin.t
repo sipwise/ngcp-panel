@@ -33,6 +33,7 @@ diag("Try to create a new Administrator");
 $d->find_element('Create Administrator', 'link_text')->click();
 
 diag("Save without entering anything");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Administrator")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -69,6 +70,7 @@ ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[7][contai
 diag("Edit Administrator details. Enable read-only setting");
 $adminname = ("admin" . int(rand(100000)) . "test");
 $d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Administrator")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="login"]', 'xpath', $adminname);
 $d->scroll_to_element($d->find_element('//*[@id="is_superuser"]'));
 $d->select_if_unselected('//*[@id="read_only"]');
@@ -125,6 +127,7 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname .'")]'), 'Administrator found');
 $d->move_and_click('//*[@id="administrator_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Administrator")]'), 'Edit window has been opened');
 $d->scroll_to_element($d->find_element('//*[@id="is_superuser"]'));
 $d->find_element('//*[@id="is_active"]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -160,6 +163,7 @@ ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Administrator found');
 $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Administrator")]'), 'Edit window has been opened');
 $d->scroll_to_element($d->find_element('//*[@id="is_superuser"]'));
 $d->select_if_unselected('//*[@id="is_superuser"]');
 $d->select_if_unselected('//*[@id="is_master"]');

@@ -32,6 +32,7 @@ $d->find_element('Call List Suppressions', 'link_text')->click();
 
 diag("Try to create an empty Call List Suppression");
 $d->find_element('Create call list suppression', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Call List Suppression")]'), "Edit window has been opened");
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -107,6 +108,7 @@ $d->find_element('Phonebook', 'link_text')->click();
 
 diag("Try to create an empty Phonebook entry");
 $d->find_element('Create Phonebook Entry', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Phonebook")]'), "Edit window has been opened");
 $d->unselect_if_selected('//*[@id="reselleridtable"]//tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -181,6 +183,7 @@ $d->find_element('Contacts', 'link_text')->click();
 
 diag("Try to create an empty Contact");
 $d->find_element('Create Contact', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Contact")]'), "Edit window has been opened");
 $d->unselect_if_selected('//*[@id="reselleridtable"]//tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 

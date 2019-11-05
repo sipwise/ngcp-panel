@@ -31,8 +31,9 @@ diag("Go to 'Header Manipulations' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element('Header Manipulations', 'link_text')->click();
 
-diag("Try to create a empty Header Rule Set");
+diag("Try to create an empty Header Rule Set");
 $d->find_element('Create Header Rule Set', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Header Rule Set")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -64,6 +65,7 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_set_table"]//tr[1]//td[contai
 diag("Edit Header Rule Set");
 $headername = ("header" . int(rand(100000)) . "manipuls");
 $d->move_and_click('//*[@id="header_rule_set_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="header_rule_set_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rule Set")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $headername);
 $d->fill_element('//*[@id="description"]' , 'xpath', 'This is a very nice description');
 $d->find_element('//*[@id="save"]')->click();
@@ -82,8 +84,9 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_set_table"]//tr[1]//td[contai
 diag("Go to 'Header Rule Set Rules' page");
 $d->move_and_click('//*[@id="header_rule_set_table"]//tr[1]//td//a[contains(text(), "Rules")]', 'xpath', '//*[@id="header_rule_set_table_filter"]/label/input');
 
-diag("Try to create a empty Header Rule");
+diag("Try to create an empty Header Rule");
 $d->find_element('Create Header Rule', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Header Rule")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -107,6 +110,7 @@ ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(
 diag("Edit Header Rule");
 $headerrule = ("header" . int(rand(100000)) . "rule");
 $d->move_and_click('//*[@id="header_rules_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="header_rules_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rule")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="priority"]')->click();
 sleep 1;
 $d->fill_element('//*[@id="priority"]', 'xpath', '1');
@@ -127,6 +131,7 @@ ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(
 
 diag("Create a Second Header Rule");
 $d->find_element("Create Header Rule", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Header Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', 'second');
 $d->fill_element('//*[@id="description"]', 'xpath', 'this is a nice description');+
 $d->find_element('//*[@id="save"]')->click();
@@ -139,7 +144,7 @@ $d->move_and_click('//*[@id="header_rules_table"]//tr[2]//td//a[1]', 'xpath', '/
 diag("Check if entry has moved up");
 ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]/td[contains(text(), "second")]'), "Entry has been moved");
 
-diag("Delete second Header Rule");
+diag("Try to delete second Header Rule");
 $d->fill_element('//*[@id="header_rules_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#header_rules_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="header_rules_table_filter"]//input', 'xpath', 'second');
@@ -157,8 +162,9 @@ $d->fill_element('//*[@id="header_rules_table_filter"]//input', 'xpath', $header
 $d->move_and_click('//*[@id="header_rules_table"]//tr[1]//td//a[contains(text(), "Conditions")]', 'xpath', '//*[@id="header_rules_table_filter"]/label/input');
 ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "Header Rule Conditions for ' . $headerrule . '")]'), "We are on the correct page");
 
-diag("Try to create a empty Header Rule Condition");
+diag("Try to create an empty Header Rule Condition");
 $d->find_element('Create Header Rule Condition', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Header Rule Condition")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -184,6 +190,7 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td
 diag("Edit Condition");
 $headercondition = ("header" . int(rand(100000)) . "condition");
 $d->move_and_click('//*[@id="header_rule_conditions_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="header_rule_conditions_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rule Condition")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="match_type"]/option[@value="avp"]')->click();
 $d->find_element('//*[@id="match_part"]/option[@value="port"]')->click();
 $d->fill_element('//*[@id="match_name"]', 'xpath', $headercondition);
@@ -210,7 +217,7 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td
 ok($d->find_element_by_xpath('//*[@id="header_rule_conditions_table"]//tr[1]//td[contains(text(), "0")]'), 'Condition is disabled');
 $d->refresh();
 
-diag("Delete Header Rule Condition");
+diag("Try to delete Header Rule Condition");
 $d->fill_element('//*[@id="header_rule_conditions_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#header_rule_conditions_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="header_rule_conditions_table_filter"]//input', 'xpath', $headercondition);
@@ -225,8 +232,9 @@ ok($d->find_element_by_css('#header_rule_conditions_table tr > td.dataTables_emp
 diag("Go to 'Header Rule Actions' page");
 $d->find_element('Actions', 'link_text')->click();
 
-diag("Try to create a empty Header Rule Action");
+diag("Try to create an empty Header Rule Action");
 $d->find_element('Create Header Rule Action', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Header Rule Action")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -252,6 +260,7 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[co
 diag("Edit Header Rule Action");
 $headeraction = ("header" . int(rand(100000)) . "action");
 $d->move_and_click('//*[@id="header_rule_actions_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="header_rule_actions_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rule Action")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="c_header"]', 'xpath', $headeraction);
 $d->find_element('//*[@id="header_part"]/option[@value="port"]')->click();
 $d->find_element('//*[@id="action_type"]/option[@value="add"]')->click();
@@ -274,6 +283,7 @@ ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]//td[co
 
 diag("Create a second Header Rule Action");
 $d->find_element('Create Header Rule Action', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Header Rule Action")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="c_header"]', 'xpath', 'second');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -285,7 +295,7 @@ $d->move_and_click('//*[@id="header_rule_actions_table"]//tr[2]//td//a[1]', 'xpa
 diag("Check if Entry has moved up");
 ok($d->find_element_by_xpath('//*[@id="header_rule_actions_table"]//tr[1]/td[contains(text(), "second")]'), 'Entry has been moved');
 
-diag("Delete Header Rule Action");
+diag("Try to delete Header Rule Action");
 $d->fill_element('//*[@id="header_rule_actions_table_filter"]//input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#header_rule_actions_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="header_rule_actions_table_filter"]//input', 'xpath', $headeraction);
@@ -302,7 +312,7 @@ diag("Go back to Header Manipulations");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("Header Manipulations", 'link_text')->click();
 
-diag("Delete Header Rule Set");
+diag("Try to delete Header Rule Set");
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#header_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="header_rule_set_table_filter"]/label/input', 'xpath', $headername);

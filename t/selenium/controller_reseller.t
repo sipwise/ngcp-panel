@@ -24,6 +24,7 @@ $c->create_reseller($resellername, $contractid);
 
 diag("Try to create an empty Reseller");
 $d->find_element('Create Reseller', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Reseller")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="contractidtable"]/tbody/tr/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -42,10 +43,9 @@ ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr[1]/td[contains(text
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr[1]/td[contains(text(), "active")]'), 'Status is correct');
 
 diag("Edit Reseller");
-$d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
-
-diag("Edit name and status");
 $resellername = ("reseller" . int(rand(100000)) . "test");
+$d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Reseller")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $resellername);
 $d->find_element('//*[@id="status"]/option[@value="locked"]')->click();
 $d->find_element('#save', 'css')->click();
@@ -72,6 +72,7 @@ ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 
 $d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller was found');
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Reseller")]'), 'Edit window has been opened');
 $d->scroll_to_element($d->find_element('//*[@id="status"]'));
 $d->find_element('//*[@id="status"]/option[@value="active"]')->click();
 $d->find_element('#save', 'css')->click();
@@ -91,6 +92,7 @@ diag("Create an empty Phonebook entry");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="reseller_details"]//div//div//a[contains(text(),"Phonebook")]'));
 $d->find_element("Create Phonebook Entry", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Phonebook")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -115,6 +117,7 @@ ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text
 
 diag("Edit Phonebook entry");
 $d->move_and_click('//*[@id="phonebook_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="phonebook_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Phonebook")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', 'newtestname');
 $d->fill_element('//*[@id="number"]', 'xpath', '0987654321');
 $d->find_element('//*[@id="save"]')->click();
@@ -132,6 +135,7 @@ $d->find_element('Email Templates', 'link_text')->click();
 
 diag("Try to create an empty Email Template");
 $d->find_element('Create Email Template', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Email Template")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]//tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -168,6 +172,7 @@ ok($d->find_element_by_xpath('//*[@id="email_template_table"]//tr[1]/td[contains
 diag("Edit Email Template");
 $templatename = ("template" . int(rand(100000)) . "mail");
 $d->move_and_click('//*[@id="email_template_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="email_template_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Email Template")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $templatename);
 $d->fill_element('//*[@id="from_email"]', 'xpath', 'standard@mail.test');
 $d->fill_element('//*[@id="subject"]', 'xpath', 'testing much stuff');
