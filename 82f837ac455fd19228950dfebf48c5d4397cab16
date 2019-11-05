@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3dd91245_d18e894c",
+        "filename": "lib/NGCP/Panel/Form/TimeSet/EventAdvanced.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-11-05T12:01:42Z",
+      "side": 1,
+      "message": "would enumerate them explicitly here.",
+      "range": {
+        "startLine": 698,
+        "startChar": 54,
+        "endLine": 698,
+        "endChar": 61
+      },
+      "revId": "82f837ac455fd19228950dfebf48c5d4397cab16",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
