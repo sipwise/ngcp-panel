@@ -691,6 +691,18 @@ sub custom_set_values {
     return $fif;
 }
 
+sub validate_byday {
+    my ($self, $field) = @_;
+
+    if (my $weekdaynumber = $field->field('weekdaynumber')) {
+        unless ($weekdaynumber->value =~ /^([+-]?\d)([A-Z]{2})$/) {
+            $weekdaynumber->add_error($weekdaynumber->label . ' should be like (\+|-)?\d*(MO|TU|WE|TH|FR|SA|SO) (e.g. 5FR)');
+            return 0;
+        }
+    }
+    return 1;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
