@@ -22,10 +22,11 @@ $c->login_ok();
 diag("Go to 'Peerings' page");
 $d->find_element('//*[@id="content"]//div[contains(text(), "Peerings")]/../../div/a')->click();
 
-diag("Create an empty Peering Group");
+diag("Try to create an empty Peering Group");
 $d->find_element('//*[@id="masthead"]//h2[contains(text(),"SIP Peering Groups")]');
 my $peerings_uri = $d->get_current_url();
 $d->find_element('Create Peering Group', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create SIP Peering Group")]'), "Edit window has been opened");
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -34,6 +35,7 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is 
 
 diag("Create a new Contract");
 $d->find_element('//input[@type="button" and @value="Create Contract"]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Contract")]'), "Edit window has been opened");
 $d->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contactidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');
@@ -44,9 +46,9 @@ $d->select_if_unselected('//table[@id="billing_profileidtable"]/tbody/tr[1]//inp
 $d->find_element('//*[@id="status"]')->click();
 $d->find_element('//*[@id="status"]/option[@value="active"]')->click();
 $d->find_element('//*[@id="save"]')->click();
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create SIP Peering Group")]'), 'Edit window has been opened');
 
 diag("Continue creating a Peering Group");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create SIP Peering Group")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $groupname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'A group created for testing purposes');
 $d->find_element('//*[@id="priority"]')->click();
@@ -69,6 +71,7 @@ ok($d->find_element_by_xpath('//*[@id="sip_peering_group_table"]//tr[1]/td[conta
 diag("Edit Peering Group");
 $groupname = ("group" . int(rand(100000)) . "test");
 $d->move_and_click('//*[@id="sip_peering_group_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="sip_peering_group_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit SIP Peering Group")]'), 'Edit window has been opened');
 $d->fill_element('#name', 'css', $groupname);
 $d->fill_element('#description', 'css', 'A group created for very testing purposes');
 $d->find_element('//*[@id="priority"]')->click();
@@ -94,6 +97,7 @@ sleep 1;
 
 diag("Create an empty Outbound Peering Rule");
 $d->find_element('//a[contains(text(),"Create Outbound Peering Rule")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Outbound Peering Rule")]'), 'Edit window has been opened');
 $d->find_element('#save', 'css')->click();
 
 diag("Check if Outbound Peering Rule was created");
@@ -106,6 +110,7 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Pee
 
 diag("Create Outbound Peering Rule");
 $d->find_element('//a[contains(text(),"Create Outbound Peering Rule")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Outbound Peering Rule")]'), 'Edit window has been opened');
 $d->fill_element('#callee_prefix', 'css', '43');
 $d->fill_element('#callee_pattern', 'css', '^sip');
 $d->fill_element('#caller_pattern', 'css', '999');
@@ -121,6 +126,7 @@ ok($d->find_element_by_xpath('//*[@id="PeeringRules_table"]//tr[1]/td[contains(t
 
 diag("Edit Outbound Peering Rule");
 $d->move_and_click('//*[@id="PeeringRules_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="PeeringRules_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Outbound Peering Rule")]'), 'Edit window has been opened');
 $d->fill_element('#callee_prefix', 'css', '49');
 $d->fill_element('#callee_pattern', 'css', '^sup');
 $d->fill_element('#caller_pattern', 'css', '888');
@@ -136,6 +142,7 @@ ok($d->find_element_by_xpath('//*[@id="PeeringRules_table"]//tr[1]/td[contains(t
 
 diag("Try to create an empty Inbound Peering Rule");
 $d->find_element('//a[contains(text(),"Create Inbound Peering Rule")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Inbound Peering Rule")]'), 'Edit window has been opened');
 $d->find_element('#save', 'css')->click();
 
 diag("Check if creation failed");
@@ -143,6 +150,7 @@ ok($d->find_element_by_css('#InboundPeeringRules_table tr > td.dataTables_empty'
 
 diag("Create Inbound Peering Rule");
 $d->find_element('//a[contains(text(),"Create Inbound Peering Rule")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Inbound Peering Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="pattern"]', 'xpath', '^sip');
 $d->fill_element('//*[@id="reject_code"]', 'xpath', '403');
 $d->fill_element('//*[@id="reject_reason"]', 'xpath', 'forbidden');
@@ -157,6 +165,7 @@ ok($d->find_element_by_xpath('//*[@id="InboundPeeringRules_table"]//tr[1]/td[con
 diag("Edit Inbound Peering Rule");
 $d->scroll_to_element($d->find_element('//a[contains(text(),"Create Inbound Peering Rule")]'));
 $d->move_and_click('//*[@id="InboundPeeringRules_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="InboundPeeringRules_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Inbound Peering Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="pattern"]', 'xpath', '^sup');
 $d->fill_element('//*[@id="reject_code"]', 'xpath', '404');
 $d->fill_element('//*[@id="reject_reason"]', 'xpath', 'not found');
@@ -170,6 +179,7 @@ ok($d->find_element_by_xpath('//*[@id="InboundPeeringRules_table"]//tr[1]/td[con
 
 diag("Create an empty Peering Server");
 $d->find_element('//a[contains(text(),"Create Peering Server")]')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Peering Server")]'), 'Edit window has been opened');
 $d->find_element('#save', 'css')->click();
 
 diag("Check error messages");
@@ -191,6 +201,7 @@ ok($d->find_element_by_xpath('//*[@id="peering_servers_table"]//tr[1]/td[contain
 diag("Edit Peering Server");
 $servername = ("peering" . int(rand(100000)) . "server");
 $d->move_and_click('//*[@id="peering_servers_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="peering_servers_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Peering Server")]'), 'Edit window has been opened');
 $d->fill_element('#name', 'css', $servername);
 $d->fill_element('#ip', 'css', '10.0.1.101');
 $d->fill_element('#host', 'css', 'google.at');
@@ -222,7 +233,7 @@ diag("Edit preference 'inbound_upn'");
 $d->move_and_click('//table//td[contains(text(), "inbound_upn")]/..//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Number Manipulation")]');
 
 diag("Change to 'P-Asserted-Identity'");
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->move_and_click('//*[@id="inbound_upn"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="inbound_upn"]/option[@value="pai_user"]')->click();
 $d->find_element('#save', 'css')->click();
@@ -238,7 +249,7 @@ $d->scroll_to_element($d->find_element('Remote Authentication', 'link_text'));
 
 diag("Edit setting 'peer_auth_user'");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "peer_auth_user")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Remote Authentication")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="peer_auth_user"]', 'xpath', 'peeruser1');
 $d->find_element('#save', 'css')->click();
 
@@ -250,7 +261,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "peer_auth_user")]
 
 diag("Edit setting 'peer_auth_pass'");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "peer_auth_pass")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Remote Authentication")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="peer_auth_pass"]', 'xpath', 'peerpass1');
 $d->find_element('#save', 'css')->click();
 
@@ -262,7 +273,7 @@ ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "peer_auth_pass")]
 
 diag("Edit setting 'peer_auth_realm'");
 $d->move_and_click('//table/tbody/tr/td[contains(text(), "peer_auth_realm")]/../td/div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "Remote Authentication")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="peer_auth_realm"]', 'xpath', 'testpeering.com');
 $d->find_element('#save', 'css')->click();
 
@@ -277,14 +288,15 @@ $d->scroll_to_element($d->find_element('//*[@id="main-nav"]'));
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Tools")]')->click();
 $d->find_element('Peering Overview', 'link_text')->click();
 
-diag("Search Peering rule");
+diag("Search Peering Rule");
 $d->fill_element('//*[@id="PeeringOverview_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#PeeringOverview_table tr > td.dataTables_empty', 'css'), 'Inbound Peering Rule was not created');
 $d->fill_element('//*[@id="PeeringOverview_table_filter"]/label/input', 'xpath', $groupname);
 ok($d->find_element_by_xpath('//*[@id="PeeringOverview_table"]//tr[1]/td[contains(text(), "' . $groupname . '")]'), 'Peering Rule was found');
 
-diag("Edit Peering rule");
+diag("Edit Peering Rule");
 $d->move_and_click('//*[@id="PeeringOverview_table"]//tr[1]//td//a[contains(text(), "Rule")]', 'xpath', '//*[@id="PeeringOverview_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Outbound Peering Rule")]'), 'Edit window has been opened');
 $d->fill_element('#caller_pattern', 'css', '999');
 $d->fill_element('#description', 'css', 'see if stuff changes');
 $d->find_element('#save', 'css')->click();
@@ -298,10 +310,11 @@ ok($d->find_element_by_xpath('//*[@id="PeeringOverview_table"]//tr[1]/td[contain
 
 diag("Edit Peering Group");
 $d->move_and_click('//*[@id="PeeringOverview_table"]//tr[1]//td//a[contains(text(), "Group")]', 'xpath', '//*[@id="PeeringOverview_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit SIP Peering Group")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="description"]', 'xpath', 'see if stuff changes');
 $d->find_element('#save', 'css')->click();
 
-diag("Go back to Peering group");
+diag("Go back to 'Peerings' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element('Peerings', 'link_text')->click();
 

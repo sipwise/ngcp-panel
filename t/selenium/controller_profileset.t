@@ -34,6 +34,7 @@ $d->find_element("Subscriber Profiles", 'link_text')->click();
 
 diag("Try to create an empty Subscriber Profile Set");
 $d->find_element("Create Subscriber Profile Set", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Subscriber Profile Set")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -66,6 +67,7 @@ ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr[1]/td
 diag("Edit Subscriber Profile set");
 $setname = ("test" . int(rand(10000)) . "set");
 $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Edit")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Subscriber Profile Set")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $setname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'Very Good description here');
 $d->find_element('//*[@id="save"]')->click();
@@ -86,6 +88,7 @@ $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/
 
 diag("Try to create an empty Subscriber Profile");
 $d->find_element('Create Subscriber Profile', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Subscriber Profile")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -113,6 +116,7 @@ ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[cont
 diag("Edit Profile");
 $profilename = ("test" . int(rand(10000)) . "profile");
 $d->move_and_click('//*[@id="subscriber_profile_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="subscriber_profile_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Subscriber Profile")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $profilename);
 $d->fill_element('//*[@id="description"]', 'xpath', 'Very very useful description');
 $d->find_element('//*[@id="save"]')->click();
@@ -143,6 +147,7 @@ if($d->find_element_by_xpath('//*[@id="masthead"]//div//h2')->get_text() eq 'Sub
 
 diag("Clone Profile");
 $d->move_and_click('//*[@id="subscriber_profile_table"]//tr[1]//td//a[contains(text(), "Clone")]', 'xpath', '//*[@id="subscriber_profile_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create cloned Subscriber Profile")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $cloneprofilename);
 $d->fill_element('//*[@id="description"]', 'xpath', 'indeed a good description');
 $d->find_element('//*[@id="clone"]')->click();
@@ -158,6 +163,7 @@ ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[cont
 
 diag("Set clone Profile as default Profile");
 $d->move_and_click('//*[@id="subscriber_profile_table"]//tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="subscriber_profile_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Subscriber Profile")]'), 'Edit window has been opened');
 $d->select_if_unselected('//*[@id="set_default"]', 'xpath');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -184,6 +190,7 @@ ok($d->find_element_by_css('#subscriber_profile_sets_table tr > td.dataTables_em
 $d->fill_element('//*[@id="subscriber_profile_sets_table_filter"]/label/input', 'xpath', $setname);
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_sets_table"]//tr[1]/td[contains(text(), "' . $setname . '")]'), 'Profile Set was found');
 $d->move_and_click('//*[@id="subscriber_profile_sets_table"]/tbody/tr[1]/td/div/a[contains(text(), "Clone")]', 'xpath', '//*[@id="subscriber_profile_sets_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create cloned Subscriber Profile Set")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $clonedsetname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'indeed a very interesting description');
 $d->find_element('//*[@id="clone"]')->click();

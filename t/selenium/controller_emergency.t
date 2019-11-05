@@ -29,6 +29,7 @@ $d->find_element('Emergency Mappings', 'link_text')->click();
 
 diag("Try to create an empty Emergency Container");
 $d->find_element('Create Emergency Container', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Emergency Container")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]//tr[1]//td//input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -58,6 +59,7 @@ ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[co
 diag("Edit Emergency Container name");
 $containername = ("emergency" . int(rand(100000)) . "container");
 $d->move_and_click('//*[@id="emergency_containers_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="emergency_containers_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Emergency Container")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $containername);
 $d->find_element('//*[@id="save"]')->click();
 
@@ -73,6 +75,7 @@ ok($d->find_element_by_xpath('//*[@id="emergency_containers_table"]//tr[1]/td[co
 
 diag("Try to create a empty Emergency Mapping");
 $d->find_element('Create Emergency Mapping', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Emergency Mapping")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="emergency_containeridtable"]//tr[1]//td//input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -104,6 +107,7 @@ ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[cont
 
 diag("Edit Emergency Mapping Details");
 $d->move_and_click('//*[@id="emergency_mappings_table"]/tbody/tr[1]/td[6]/div/a[2]', 'xpath', '//*[@id="emergency_mappings_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Emergency Mapping")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="code"]', 'xpath', "144");
 $d->fill_element('//*[@id="prefix"]', 'xpath', "E2_144_");
 $d->find_element('//*[@id="save"]')->click();
@@ -136,7 +140,7 @@ $d->find_element('//*[@id="toggle-accordions"]')->click();
 diag("Edit setting 'emergency_mapping_container'");
 $d->scroll_to_element($d->find_element('//table//tr//td[contains(text(), "emergency_mapping_container")]'));
 $d->move_and_click('//table//tr//td[contains(text(), "emergency_mapping_container")]/../td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="preference_groups"]//div//a[contains(text(), "NAT and Media Flow Control")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit Window has been opened");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), "Edit window has been opened");
 $d->move_and_click('//*[@id="emergency_mapping_container"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="emergency_mapping_container"]/option[contains(text(), "' . $containername . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -149,7 +153,7 @@ ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "emergency_mappin
 diag("Edit setting 'emergency_mode_enabled'");
 $d->scroll_to_element($d->find_element('//table//tr//td[contains(text(), "emergency_mode_enabled")]'));
 $d->move_and_click('//table//tr//td[contains(text(), "emergency_mode_enabled")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr//td[contains(text(), "call_deflection")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->select_if_unselected('//*[@id="emergency_mode_enabled"]');
 $d->find_element('//*[@id="save"]')->click();
 

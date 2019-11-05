@@ -28,6 +28,7 @@ $c->create_billing_profile($billingname, $resellername);
 
 diag("Try to create an empty Billing Profile");
 $d->find_element('Create Billing Profile', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Billing Profile")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -46,8 +47,9 @@ ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]/tbody/tr/td[2][co
 ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]/tbody/tr/td[3][contains(text(), "' . $resellername . '")]'), 'Reseller name is correct');
 
 diag("Edit Billing Profile");
-$d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 $billingname = ("billing" . int(rand(100000)) . "test");
+$d->move_and_click('//*[@id="billing_profile_table"]/tbody/tr[1]//td//div//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Billing Profile")]'), 'Edit window has been opened');
 $d->fill_element('#name', 'css', $billingname);
 $d->select_if_unselected('//*[@id="prepaid"]');
 $d->fill_element('#interval_charge', 'css', '3.2');
@@ -70,6 +72,7 @@ $d->find_element('Edit Zones', 'link_text')->click();
 
 diag("Create a Billing Zone");
 $d->find_element('Create', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Billing Zone")]'), 'Edit window has been opened');
 
 diag("Save without entering anything");
 $d->find_element('//*[@id="save"]')->click();
@@ -97,6 +100,7 @@ diag("Create a Billing Fee");
 $d->find_element('Create Fee Entry', 'link_text')->click();
 
 diag("Save without entering anything");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Billing Fee")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="billing_zoneidtable"]//tr[1]/td[4]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -150,6 +154,7 @@ ok($d->find_element_by_xpath('//*[@id="billing_fee_table"]//tr[1]/td[contains(te
 diag("Edit Billing Fee");
 $d->move_and_click('//*[@id="billing_fee_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="billing_fee_table_filter"]/label/input');
 $d->move_and_click('//*[@id="direction"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Billing Fee")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Billing Fee")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="direction"]/option[@value="in"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Billing fee successfully changed!',  'Correct Alert was shown');
@@ -173,6 +178,7 @@ ok($d->find_element_by_xpath('//*[@id="billing_profile_table"]//tr[1]/td[contain
 $d->move_and_click('//*[@id="billing_profile_table"]//tr[1]//td//a[contains(text(), "Duplicate")]', 'xpath', '//*[@id="billing_profile_table_filter"]//input');
 
 diag("Fill in clone details");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Duplicate Billing Profile")]'), 'Edit window has been opened');
 my $clonename = ("billing" . int(rand(100000)) . "test");
 $d->fill_element('//*[@id="handle"]', 'xpath', $clonename);
 $d->fill_element('//*[@id="name"]', 'xpath', $clonename);
@@ -302,6 +308,7 @@ diag("Create a Date Definition");
 $d->find_element('Create Special Off-Peak Date', 'link_text')->click();
 
 diag("Save without entering anything");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Date Definition")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -333,6 +340,7 @@ ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contain
 
 diag("Edit Date Definition");
 $d->move_and_click('//*[@id="date_definition_table"]/tbody/tr/td[4]/div/a[1]', 'xpath', '//div[contains(@class, "dataTables_filter")]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Date Definition")]'), 'Edit window has been opened');
 $d->fill_element('#start', 'css', "2018-01-01 00:00:00");
 $d->fill_element('#end', 'css', "2019-01-01 23:59:59");
 $d->find_element('#save', 'css')->click();
@@ -374,6 +382,7 @@ $d->find_element('Billing Networks', 'link_text')->click();
 
 diag("Try to create an empty Billing Network");
 $d->find_element('Create Billing Network', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Billing Network")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -419,6 +428,7 @@ ok($d->find_element_by_xpath('//*[@id="networks_table"]//tr[1]/td[contains(text(
 diag("Edit Billing Network");
 $billingnetwork = ("billing" . int(rand(100000)) . "network");
 $d->move_and_click('//*[@id="networks_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="networks_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Billing Network")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $billingnetwork);
 $d->fill_element('//*[@id="description"]', 'xpath', 'also good description');
 

@@ -33,6 +33,7 @@ $d->find_element('Profile Packages', 'link_text')->click();
 
 diag("Try to create an empty Profile Package");
 $d->find_element('Create Profile Package', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Profile Package")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -88,6 +89,7 @@ ok($d->find_element_by_xpath('//*[@id="packages_table"]//tr[1]/td[contains(text(
 diag("Edit Profile Package");
 $profilename = ("profile" . int(rand(100000)) . "package");
 $d->move_and_click('//*[@id="packages_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="packages_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Profile Package")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $profilename);
 $d->fill_element('//*[@id="description"]', 'xpath', 'nice desc');
 $d->find_element('//*[@id="save"]')->click();
@@ -118,10 +120,9 @@ diag("Go to 'Contract Balance'");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 
-diag("Set Cash Balance");
+diag("Try to set Cash Balance without entering anything");
 $d->find_element("Set Cash Balance", "link_text")->click();
-
-diag("Save without entering anything");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Settings")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check values");
@@ -132,8 +133,9 @@ ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "0")]'), 'Free-Time Balance is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td[contains(text(), "'. $billingname .'")]'), 'Billing Profile is correct');
 
-diag("Set Cash Balance again");
+diag("Set Cash Balance with proper values now");
 $d->find_element("Set Cash Balance", "link_text")->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Settings")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="cash_balance"]', 'xpath', '300');
 $d->fill_element('//*[@id="free_time_balance"]', 'xpath', '50');
 $d->find_element('//*[@id="save"]')->click();
@@ -148,10 +150,9 @@ ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td[co
 ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "300.00")]'), 'Cash Balance in Balance intervals table is correct');
 ok($d->find_element_by_xpath('//*[@id="balance_intervals_table"]//tr//td[contains(text(), "50")]'), 'Free-Time Balance in Balance intervals table is correct');
 
-diag("Top-up Cash");
+diag("Try to Top-up Cash without entering anything");
 $d->find_element('Top-up Cash', 'link_text')->click();
-
-diag("Save without entering anything");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Settings")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");

@@ -33,6 +33,7 @@ $d->find_element('Number Porting', 'link_text')->click();
 
 diag("Try to create an empty LNP Carrier");
 $d->find_element('Create LNP Carrier', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create LNP Carrier")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
@@ -56,6 +57,7 @@ ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]//tr[1]/td[contains(t
 
 diag("Edit LNP Carrier");
 $d->move_and_click('//*[@id="lnp_carriers_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="lnp_carriers_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit LNP Carrier")]'), 'Edit window has been opened');
 $lnpcarrier = ("lnp" . int(rand(100000)) . "carrier");
 $prefix = ("prefix" . int(rand(100000)) . "stuff");
 $d->fill_element('//*[@id="name"]', 'xpath', $lnpcarrier);
@@ -76,42 +78,44 @@ diag("Go to 'NCOS Levels' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("NCOS Levels", 'link_text')->click();
 
-diag("Trying to create a empty NCOS Level");
+diag("Try to create an empty NCOS Level");
 $d->find_element("Create NCOS Level", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create NCOS Level")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->find_element('//*[@id="save"]')->click();
 
-diag("Check Error Messages");
+diag("Check error messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Level Name field is required")]'));
 $d->find_element('//*[@id="mod_close"]')->click();
 
-diag("Search our new NCOS");
+diag("Search NCOS Level");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
 
-diag("Check NCOS details");
+diag("Check NCOS Level details");
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]//tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]//tr[1]/td[contains(text(), ' . $ncosname . ')]'), 'NCOS name is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]//tr[1]/td[contains(text(), "blacklist")]'), 'NCOS mode is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]//tr[1]/td[contains(text(), "This is a simple description")]'), 'NCOS description is correct');
 
-diag("Edit NCOS");
-$d->move_and_click('//*[@id="ncos_level_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="ncos_level_table_filter"]//input');
+diag("Edit NCOS Level");
 $ncosname = ("ncos" . int(rand(100000)) . "level");
+$d->move_and_click('//*[@id="ncos_level_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="ncos_level_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit NCOS Level")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="level"]', 'xpath', $ncosname);
 $d->find_element('//*[@id="mode"]/option[@value="whitelist"]')->click();
 $d->fill_element('//*[@id="description"]', 'xpath', 'This is a very simple description');
 $d->find_element('//*[@id="save"]')->click();
 
-diag("Search NCOS");
+diag("Search NCOS Level");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'NCOS level successfully updated',  'Correct Alert was shown');
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);
 
-diag("Check NCOS details");
+diag("Check NCOS Level details");
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]//tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]//tr[1]/td[contains(text(), ' . $ncosname . ')]'), 'NCOS name is correct');
 ok($d->find_element_by_xpath('//*[@id="ncos_level_table"]//tr[1]/td[contains(text(), "whitelist")]'), "NCOS mode is correct");
@@ -122,17 +126,15 @@ $d->move_and_click('//*[@id="ncos_level_table"]/tbody/tr[1]/td/div/a[contains(te
 ok($d->find_element_by_xpath('//*[@id="masthead"]//div//h2[contains(text(), "NCOS details")]'), "We are on the correct page");
 sleep 1;
 
-diag("Create a new Pattern");
+diag("Create a new empty Pattern");
 $d->find_element('Create Pattern Entry', 'link_text')->click();
-
-diag("Save Pattern");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Number Pattern")]'), "Edit window has been opened");
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check error messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Pattern field is required")]'));
 
 diag("Enter Pattern details");
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Number Pattern")]'), "Edit Window has been opened");
 $d->fill_element('//*[@id="pattern"]', 'xpath', '^439');
 $d->fill_element('//*[@id="description"]', 'xpath', 'Austrian Premium Numbers');
 $d->find_element('//*[@id="save"]')->click();
@@ -142,8 +144,9 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'NCO
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]//tr[1]/td[contains(text(), "^439")]'), 'Pattern is correct');
 ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]//tr[1]/td[contains(text(), "Austrian Premium Numbers")]'), 'Description is correct');
 
-diag("Edit NCOS Pattern");
+diag("Edit Pattern");
 $d->move_and_click('//*[@id="number_pattern_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="number_pattern_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Number Pattern")]'), "Edit window has been opened");
 $d->fill_element('//*[@id="pattern"]', 'xpath', '^491');
 $d->fill_element('//*[@id="description"]', 'xpath', 'German Premium Numbers');
 $d->find_element('//*[@id="save"]')->click();
@@ -155,6 +158,7 @@ ok($d->find_element_by_xpath('//*[@id="number_pattern_table"]//tr[1]/td[contains
 
 diag("Create LNP entry");
 $d->find_element("Create LNP Entry", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create LNP Carrier")]'), 'Edit window has been opened');
 
 diag("Enter LNP details");
 $d->fill_element('//*[@id="lnp_provideridtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -172,6 +176,7 @@ ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]//tr[1]/td[contains(t
 
 diag("Edit LNP entry");
 $d->move_and_click('//*[@id="lnp_carriers_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="lnp_carriers_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit LNP Carrier")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="description"]', 'xpath', 'Rule for LNP Carrier 2');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -182,6 +187,7 @@ ok($d->find_element_by_xpath('//*[@id="lnp_carriers_table"]//tr[1]/td[contains(t
 
 diag("Edit NCOS settings");
 $d->find_element('//*[@id="number_patterns_extra"]//div//a')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Number Pattern")]'), 'Edit window has been opened');
 $d->select_if_unselected('//*[@id="local_ac"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -205,7 +211,7 @@ $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[con
 
 diag("Edit setting 'NCOS'");
 $d->move_and_click('//table//tr//td[contains(text(), "ncos")]/../td//a[contains(text(), "Edit")]', 'xpath', '//table//tr//td[contains(text(), "adm_cf_ncos")]/../td//a[contains(text(), "Edit")]');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit Window has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]'), 'Edit window has been opened');
 $d->move_and_click('//*[@id="ncos"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Preference")]');
 $d->find_element('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -215,11 +221,11 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Pre
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "ncos")]/../td/select/option[contains(text(), "' . $ncosname . '")][@selected="selected"]'), 'NCOS Level was applied');
 
-diag("Go back to NCOS interface");
+diag("Go back to 'NCOS Levels' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element("NCOS Levels", 'link_text')->click();
 
-diag("Search our new NCOS");
+diag("Search NCOS Level");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#ncos_level_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', $ncosname);

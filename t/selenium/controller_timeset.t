@@ -29,6 +29,7 @@ $d->find_element('Time Sets', 'link_text')->click();
 
 diag("Try to create an empty Time Set");
 $d->find_element('Create Time Set Entry', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Time Set")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input', 'xpath');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -58,6 +59,7 @@ ok($d->find_element_by_xpath('//*[@id="timeset_table"]//tr[1]/td[contains(text()
 diag("Edit Time Set");
 $timesetname = ("time" . int(rand(100000)) . "set");
 $d->move_and_click('//*[@id="timeset_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="timeset_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Time Set")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $timesetname);
 $d->find_element('//*[@id="save"]')->click();
 
@@ -78,6 +80,7 @@ diag("Try to create a new Event");
 $d->find_element("Create Event", 'link_text')->click();
 
 diag("Fill in invalid values");
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Time Set Event")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="comment"]', 'xpath', 'testing invalid content');
 $d->fill_element('//*[@id="startdate_datetimepicker"]', 'xpath', 'invalid');
 $d->fill_element('//*[@id="starttime_datetimepicker"]', 'xpath', 'stuff');
@@ -113,6 +116,7 @@ ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), 
 
 diag("Edit Event");
 $d->move_and_click('//*[@id="event_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="event_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Time Set Event")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="comment"]', 'xpath', 'Very important event');
 $d->fill_element('//*[@id="startdate_datetimepicker"]', 'xpath', '2020-06-01');
 $d->fill_element('//*[@id="starttime_datetimepicker"]', 'xpath', '12:00:00');
@@ -133,6 +137,7 @@ $d->find_element('Peerings', 'link_text')->click();
 
 diag("Create a Peering Group and add Time Set to Peering Group");
 $d->find_element("Create Peering Group", 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create SIP Peering Group")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#contractidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');

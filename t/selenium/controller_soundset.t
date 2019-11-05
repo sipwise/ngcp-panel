@@ -28,6 +28,7 @@ $d->find_element('Sound Sets', 'link_text')->click();
 
 diag("Try to create an empty Sound Set");
 $d->find_element('Create Sound Set', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Sound Set")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]//tr[1]//td//input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -59,6 +60,7 @@ ok($d->find_element_by_xpath('//*[@id="sound_set_table"]//tr[1]/td[contains(text
 diag("Edit Sound Set");
 $soundsetname = ("sound" . int(rand(100000)) . "set");
 $d->move_and_click('//*[@id="sound_set_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="sound_set_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Sound Set")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $soundsetname);
 $d->fill_element('//*[@id="description"]', 'xpath', 'very nice desc');
 $d->find_element('//*[@id="save"]')->click();
@@ -80,6 +82,7 @@ $d->move_and_click('//*[@id="sound_set_table"]//tr[1]//td//a[contains(text(), "F
 diag("Edit loop setting for 'conference_first'");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->move_and_click('//table//tr//td[contains(text(), "conference_first")]/..//td//a[contains(text(), "Upload")]', 'xpath', '//*[@id="sound_groups"]//div/a[contains(text(), "conference")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit conference_first")]'), 'Edit window has been opened');
 $d->select_if_unselected('//*[@id="loopplay"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -90,6 +93,7 @@ ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first
 
 diag("Load default Files");
 $d->find_element('Load Default Files', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Default Files")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check in 'conference' if settings are correct");
@@ -102,6 +106,7 @@ ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_greet
 
 diag("Load default Files again and override everything");
 $d->find_element('Load Default Files', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Default Files")]'), 'Edit window has been opened');
 $d->select_if_unselected('//*[@id="replace_existing"]');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -115,6 +120,7 @@ ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_greet
 
 diag("Load default Files again and loop them");
 $d->find_element('Load Default Files', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Default Files")]'), 'Edit window has been opened');
 $d->select_if_unselected('//*[@id="loopplay"]');
 $d->select_if_unselected('//*[@id="replace_existing"]');
 $d->find_element('//*[@id="save"]')->click();

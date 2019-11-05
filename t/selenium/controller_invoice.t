@@ -33,8 +33,9 @@ diag("Go to 'Invoice Templates' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element('Invoice Templates', 'link_text')->click();
 
-diag("Try to create a empty Invoice Template");
+diag("Try to create an empty Invoice Template");
 $d->find_element('Create Invoice Template', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Invoice Template")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
 $d->find_element('//*[@id="save"]')->click();
 
@@ -62,9 +63,10 @@ ok($d->find_element_by_xpath('//*[@id="InvoiceTemplate_table"]//tr[1]/td[contain
 ok($d->find_element_by_xpath('//*[@id="InvoiceTemplate_table"]//tr[1]/td[contains(text(), "' . $templatename . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="InvoiceTemplate_table"]//tr[1]/td[contains(text(), "svg")]'), 'Type is correct');
 
-diag("Try to edit Invoice Template");
+diag("Edit Invoice Template");
 $templatename = ("invoice" . int(rand(100000)) . "tem");
 $d->move_and_click('//*[@id="InvoiceTemplate_table"]//tr[1]//td//a[contains(text(), "Edit Meta")]', 'xpath', '//*[@id="InvoiceTemplate_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Invoice Template")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="name"]', 'xpath', $templatename);
 $d->find_element('//*[@id="save"]')->click();
 
@@ -92,6 +94,7 @@ my $custnum = $d->find_element('//*[@id="Customer_table"]/tbody/tr/td[1]')->get_
 
 diag("Add Invoice Template to Customer");
 $d->move_and_click('//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Customer")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="invoice_templateidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#invoice_templateidtable tr > td.dataTables_empty', 'css'), 'Garbage test not found');
 $d->fill_element('//*[@id="invoice_templateidtable_filter"]/label/input', 'xpath', $templatename);
@@ -117,6 +120,7 @@ $d->find_element('Invoices', 'link_text')->click();
 
 diag("Try to create a empty Invoice");
 $d->find_element('Create Invoice', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Invoice")]'), 'Edit window has been opened');
 $d->unselect_if_selected('//*[@id="templateidtable"]/tbody/tr[1]/td[4]/input');
 $d->unselect_if_selected('//*[@id="contractidtable"]/tbody/tr[1]/td[6]/input');
 $d->find_element('//*[@id="save"]')->click();
