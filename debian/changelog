@@ -1,3 +1,12 @@
+ngcp-panel (7.5.1.11+0~mr7.5.1.11) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [3ec7d14] TT#69370 - Remove validation of SIP URI type for banned users id's
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Nov 2019 16:04:30 +0100
+
 ngcp-panel (7.5.1.10+0~mr7.5.1.10) unstable; urgency=medium
 
   [ Nico Schedel ]
