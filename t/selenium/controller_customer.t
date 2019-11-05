@@ -36,9 +36,11 @@ $c->create_reseller($resellername, $contractid);
 $c->create_contact($contactmail, $resellername);
 $c->create_billing_profile($billingname, $resellername);
 
-diag("Go to 'Customers' page");
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element('Customers', 'link_text')->click();
+if($pbx == 1){
+    $c->create_customer($customerid, $contactmail, $billingname, 'pbx locked');
+} else {
+    $c->create_customer($customerid, $contactmail, $billingname, 'locked');
+}
 
 diag("Try to create an empty Customer");
 $d->find_element('Create Customer', 'link_text')->click();
@@ -51,15 +53,7 @@ $d->find_element('#save', 'css')->click();
 diag("Check if error messages appear");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Contact field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Invalid \'billing_profile_id\', not defined.")]'));
-
-diag("Continuing creating a legit customer");
 $d->find_element('//*[@id="mod_close"]')->click();
-
-if($pbx == 1){
-    $c->create_customer($customerid, $contactmail, $billingname, 'pbx locked');
-} else {
-    $c->create_customer($customerid, $contactmail, $billingname, 'locked');
-}
 
 diag("Search Customer");
 $d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
@@ -73,8 +67,6 @@ ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $billingname . '")]'), 'Billing Profile is correct');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "locked")]'), 'Status is correct');
 $custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
-$compstring = "Customer #" . $custnum . " successfully created - Details";
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  'Correct Alert was shown');
 
 diag("Check if Customer is locked");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Details")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
