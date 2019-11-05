@@ -22,10 +22,7 @@ my $run_ok = 0;
 $c->login_ok();
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
-
-diag("Go to 'Rewrite Rule Sets' page");
-$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element('Rewrite Rule Sets', 'link_text')->click();
+$c->create_rw_ruleset($rulesetname, $resellername);
 
 diag("Try to create a empty Rewrite Rule Set");
 $d->find_element('Create Rewrite Rule Set', 'link_text')->click();
@@ -35,13 +32,9 @@ $d->find_element('//*[@id="save"]')->click();
 diag("Check error messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
-
-diag("Create a legit Rewrite Rule Set");
 $d->find_element('#mod_close', 'css')->click();
-$c->create_rw_ruleset($rulesetname, $resellername);
 
 diag("Search Rewrite Rule Set");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Rewrite rule set successfully created',  'Correct Alert was shown');
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#rewrite_rule_set_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="rewrite_rule_set_table_filter"]/label/input', 'xpath', $rulesetname);
