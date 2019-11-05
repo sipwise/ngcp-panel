@@ -24,6 +24,7 @@ my $run_ok = 0;
 $c->login_ok();
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
+$c->create_billing_profile($billingname, $resellername);
 
 diag("Go to 'Billing Profiles' page");
 $d->find_element('//*[@class="brand"]')->click();
@@ -40,7 +41,6 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is 
 
 diag("Create a legit Billing Profile");
 $d->find_element('//*[@id="mod_close"]')->click();
-$c->create_billing_profile($billingname, $resellername);
 
 diag("Search Billing Profile");
 $d->fill_element('//*[@id="billing_profile_table_filter"]//input', 'xpath', 'thisshouldnotexist');

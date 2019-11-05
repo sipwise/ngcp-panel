@@ -20,10 +20,7 @@ my $run_ok = 0;
 
 $c->login_ok();
 $c->create_reseller_contract($contractid);
-
-diag("Go to 'Resellers' page");
-$d->find_element('//*[@class="brand"]')->click();
-$d->find_element('//*[@id="content"]//div[contains(text(), "Resellers")]/../../div/a')->click();
+$c->create_reseller($resellername, $contractid);
 
 diag("Try to create an empty Reseller");
 $d->find_element('Create Reseller', 'link_text')->click();
@@ -33,10 +30,7 @@ $d->find_element('//*[@id="save"]')->click();
 diag("Check error messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Contract field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Name field is required")]'));
-
-diag("Create a legit Reseller");
 $d->find_element('#mod_close', 'css')->click();
-$c->create_reseller($resellername, $contractid);
 
 diag("Search Reseller");
 $d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');

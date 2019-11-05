@@ -25,6 +25,7 @@ my $run_ok = 0;
 $c->login_ok();
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
+$c->create_ncos($resellername, $ncosname);
 
 diag("Go to 'Number Porting' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -84,9 +85,6 @@ diag("Check Error Messages");
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Reseller field is required")]'));
 ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Level Name field is required")]'));
 $d->find_element('//*[@id="mod_close"]')->click();
-
-diag("Create a normal NCOS");
-$c->create_ncos($resellername, $ncosname);
 
 diag("Search our new NCOS");
 $d->fill_element('//*[@id="ncos_level_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
