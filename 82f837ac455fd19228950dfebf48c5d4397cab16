@@ -22,6 +22,30 @@
       "revId": "82f837ac455fd19228950dfebf48c5d4397cab16",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d95189c_56d4581f",
+        "filename": "lib/NGCP/Panel/Form/TimeSet/EventAdvanced.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-11-05T15:22:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3dd91245_d18e894c",
+      "range": {
+        "startLine": 698,
+        "startChar": 54,
+        "endLine": 698,
+        "endChar": 61
+      },
+      "revId": "82f837ac455fd19228950dfebf48c5d4397cab16",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
