@@ -25,9 +25,9 @@ my $custnum;
 my $compstring;
 
 $c->login_ok();
-$c->create_domain($domainstring);
 $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
+$c->create_domain($domainstring, $resellername);
 $c->create_contact($contactmail, $resellername);
 $c->create_billing_profile($billingname, $resellername);
 $c->create_customer($customerid, $contactmail, $billingname);
@@ -45,6 +45,7 @@ $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(t
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Subscribers")]'));
 $d->find_element('Create Subscriber', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Create Subscriber")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#domainidtable tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="domainidtable_filter"]/label/input', 'xpath', $domainstring);
@@ -85,7 +86,7 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Found customer');
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]/label/input');
-ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Customer")]'), 'Edit Dialog has been opened');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Customer")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="status"]/option[@value="locked"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -101,6 +102,7 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $com
 
 diag("Edit Customer status to 'terminated'");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Customer")]'), 'Edit window has been opened');
 $d->scroll_to_element($d->find_element('//*[@id="status"]'));
 $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('#save', 'css')->click();
@@ -140,6 +142,7 @@ ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text()
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "TestCompany")]'), 'Company was edited');
 
 $c->delete_contact($contactmail);
+$c->delete_domain($domainstring);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 
@@ -160,6 +163,7 @@ $contractid = ("contract" . int(rand(100000)) . "term");
 sleep 1;
 $d->find_element('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Contract")]')->click();
 $d->move_and_click('//*[@id="Contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="masthead"]//div//h2[contains(text(), "Reseller Details")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contract")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="external_id"]', 'xpath', $contractid);
 $d->find_element('//*[@id="save"]')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contract successfully changed!',  'Correct Alert was shown');
@@ -176,6 +180,7 @@ ok($d->find_element_by_xpath('//*[@id="contract_table"]//tr[1]/td[contains(text(
 
 diag("Terminate Reseller Contract");
 $d->move_and_click('//*[@id="contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="contract_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contract")]'), 'Edit window has been opened');
 $d->scroll_to_element($d->find_element('//*[@id="status"]'));
 $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
@@ -197,6 +202,7 @@ ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr[1]/td[contains(text
 
 diag("Terminate Reseller");
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Reseller")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -221,6 +227,7 @@ $contractid = ("contract" . int(rand(100000)) . "term");
 sleep 1;
 $d->find_element('//*[@id="reseller_details"]//div//a[contains(text(), "Reseller Contract")]')->click();
 $d->move_and_click('//*[@id="Contract_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="masthead"]//div//h2[contains(text(), "Reseller Details")]');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contract")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="external_id"]', 'xpath', $contractid);
 $d->find_element('//*[@id="save"]')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contract successfully changed!',  'Correct Alert was shown');
@@ -237,6 +244,7 @@ ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr[1]/td[contains(text
 
 diag("Terminate Reseller");
 $d->move_and_click('//*[@id="Resellers_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Resellers_table_filter"]//input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Reseller")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
@@ -254,7 +262,6 @@ $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contr
 ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Reseller Contract has been terminated');
 
 $c->delete_billing_profile($billingname);
-$c->delete_domain($domainstring);
 
 diag("This test run was successfull");
 $run_ok = 1;
