@@ -1,3 +1,12 @@
+ngcp-panel (8.0.1.5+0~mr8.0.1.5) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [c3323e4] TT#69360 - Fix 500 errors when issuing POST to HeaderRule(Actions|Conditions)
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Nov 2019 12:50:57 +0100
+
 ngcp-panel (8.0.1.4+0~mr8.0.1.4) unstable; urgency=medium
 
   [ Flaviu Mates ]
