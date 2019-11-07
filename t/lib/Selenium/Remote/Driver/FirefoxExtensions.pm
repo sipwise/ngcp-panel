@@ -48,25 +48,27 @@ sub find_text {
 sub select_if_unselected {
     my ($self, $query, $scheme) = @_;
     $scheme //= "xpath";
-    my $elem = $self->find_element($query, $scheme);
-    return 0 unless $elem;
-    return 0 unless $elem->is_displayed;
-    if (! $elem->is_selected() ) {
-        $elem->click;
-    }
-    return 1;
+    try {
+        my $elem = $self->find_element($query, $scheme);
+        if (! $elem->is_selected() ) {
+            $elem->click;
+        }
+        return 1;
+    };
+    return 0;
 }
 
 sub unselect_if_selected {
     my ($self, $query, $scheme) = @_;
     $scheme //= "xpath";
-    my $elem = $self->find_element($query, $scheme);
-    return 0 unless $elem;
-    return 0 unless $elem->is_displayed;
-    if ($elem->is_selected() ) {
-        $elem->click;
-    }
-    return 1;
+    try {
+        my $elem = $self->find_element($query, $scheme);
+        if ($elem->is_selected() ) {
+            $elem->click;
+        }
+        return 1;
+    };
+    return 0;
 }
 
 sub fill_element {
