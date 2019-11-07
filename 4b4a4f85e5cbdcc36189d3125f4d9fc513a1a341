@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "845e936a_ed26eed7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-11-07T10:20:29Z",
+      "side": 1,
+      "message": "is it normal if required element is not found?\nas I can see in this case you are just continue further due to \"return 0\" after try section.",
+      "range": {
+        "startLine": 7,
+        "startChar": 37,
+        "endLine": 7,
+        "endChar": 75
+      },
+      "revId": "4b4a4f85e5cbdcc36189d3125f4d9fc513a1a341",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
