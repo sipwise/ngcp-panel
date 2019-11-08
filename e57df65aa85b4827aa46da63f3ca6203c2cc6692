@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca35184b_31d15d7b",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-11-08T14:50:35Z",
+      "side": 1,
+      "message": "how does this behave with lots of subscribers?",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 51
+      },
+      "revId": "e57df65aa85b4827aa46da63f3ca6203c2cc6692",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
