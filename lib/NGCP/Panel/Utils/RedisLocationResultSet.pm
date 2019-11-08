@@ -46,23 +46,6 @@ has current_source_alias => (
     default => 'me',
 );
 
-has _domain_resellers => (
-    is => 'rw',
-    isa => sub { die "$_[0] must be HASHREF" unless $_[0] && ref $_[0] eq 'HASH' },
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        my $h = {};
-        my $domres_rs = $self->_c->model('DB')->resultset('domain_resellers')->search(undef, {
-            join => 'domain'
-        });
-        while ((my $res = $domres_rs->next)) {
-            $h->{$res->domain->domain} = $res->reseller_id;
-        }
-        return $h;
-    },
-);
-
 sub count {
     my ($self) = @_;
 
@@ -96,7 +79,12 @@ sub find {
 
     my %entry = $self->_redis->hgetall("location:entry::$id");
     $entry{id} = $entry{ruid};
-    if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_domain_resellers->{$entry{domain}}) {
+    my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
+        join => { 'contract' => { 'contact' => 'reseller' } },
+        '+select' => ['reseller.id'],
+        '+as' => ['reseller_id']
+    })->first;
+    if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
         return;
     }
     return NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
@@ -165,7 +153,12 @@ sub _rows_from_mapkey {
     foreach my $key (@{ $keys }) {
         my %entry = $self->_redis->hgetall($key);
         $entry{id} = $entry{ruid};
-        if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_domain_resellers->{$entry{domain}}) {
+        my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
+            join => { 'contract' => { 'contact' => 'reseller' } },
+            '+select' => ['reseller.id'],
+            '+as' => ['reseller_id']
+        })->first;
+        if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
             next;
         }
         my $res = NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
@@ -189,7 +182,7 @@ sub _filter {
             next if ($colname =~ /\./); # we don't support joined table columns
             $filter_applied = 1;
             if (ref $condition eq "") {
-                if (lc($row->$colname) ne lc($condition)) {
+                if ($row->$colname && lc($row->$colname) ne lc($condition)) {
                     $match = 0;
                     last;
                 } else {
