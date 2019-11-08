@@ -188,7 +188,7 @@ sub _filter {
             next if ($colname =~ /\./); # we don't support joined table columns
             $filter_applied = 1;
             if (defined $condition && ref $condition eq "") {
-                if (lc($row->$colname) ne lc($condition)) {
+                if ($row->$colname && lc($row->$colname) ne lc($condition)) {
                     $match = 0;
                     last;
                 } else {
