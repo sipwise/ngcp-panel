@@ -52,18 +52,20 @@ has current_source_alias => (
     default => 'me',
 );
 
-has _domain_resellers => (
+has _subscriber_reseller => (
     is => 'rw',
     isa => sub { die "$_[0] must be HASHREF" unless $_[0] && ref $_[0] eq 'HASH' },
     lazy => 1,
     default => sub {
         my $self = shift;
         my $h = {};
-        my $domres_rs = $self->_c->model('DB')->resultset('domain_resellers')->search(undef, {
-            join => 'domain'
+        my $subscribers_rs = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search(undef, {
+            join => { 'contract' => { 'contact' => 'reseller' } },
+            '+select' => ['reseller.id'],
+            '+as' => ['reseller_id']
         });
-        while ((my $res = $domres_rs->next)) {
-            $h->{$res->domain->domain} = $res->reseller_id;
+        while ((my $res = $subscribers_rs->next)) {
+            $h->{$res->get_column('username')} = $res->get_column('reseller_id');
         }
         return $h;
     },
@@ -108,7 +110,7 @@ sub find {
     } else {
         $entry{expires} = "1970-01-01 00:00:00";
     }
-    if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_domain_resellers->{$entry{domain}}) {
+    if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_subscriber_reseller->{$entry{username}}) {
         return;
     }
     return NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
@@ -184,7 +186,7 @@ sub _rows_from_mapkey {
             $entry{expires} = "1970-01-01 00:00:00";
         }
 
-        if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_domain_resellers->{$entry{domain}}) {
+        if (exists $filter->{reseller_id} && $filter->{reseller_id} != $self->_subscriber_reseller->{$entry{username}}) {
             next;
         }
         my $res = NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
@@ -209,7 +211,7 @@ sub _filter {
             next if ($colname =~ /\./); # we don't support joined table columns
             $filter_applied = 1;
             if (defined $condition && ref $condition eq "") {
-                if (lc($row->$colname) ne lc($condition)) {
+                if ($row->$colname && lc($row->$colname) ne lc($condition)) {
                     $match = 0;
                     last;
                 } else {
