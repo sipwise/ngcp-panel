@@ -22,6 +22,29 @@
       "revId": "e57df65aa85b4827aa46da63f3ca6203c2cc6692",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e388355_9a86e309",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-11-09T00:55:15Z",
+      "side": 1,
+      "message": "lookup in precached list is not effective for this size of items, better to triiger query here",
+      "range": {
+        "startLine": 113,
+        "startChar": 74,
+        "endLine": 113,
+        "endChar": 94
+      },
+      "revId": "e57df65aa85b4827aa46da63f3ca6203c2cc6692",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
