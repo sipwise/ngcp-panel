@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f218cc1f_a753c0b5",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-11-11T17:35:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ca35184b_31d15d7b",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 51
+      },
+      "revId": "e57df65aa85b4827aa46da63f3ca6203c2cc6692",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4e388355_9a86e309",
         "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "e57df65aa85b4827aa46da63f3ca6203c2cc6692",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "718b4ad9_01bb3af7",
+        "filename": "lib/NGCP/Panel/Utils/RedisLocationResultSet.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2019-11-11T17:35:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e388355_9a86e309",
+      "range": {
+        "startLine": 113,
+        "startChar": 74,
+        "endLine": 113,
+        "endChar": 94
+      },
+      "revId": "e57df65aa85b4827aa46da63f3ca6203c2cc6692",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
