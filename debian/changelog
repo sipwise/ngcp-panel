@@ -1,3 +1,12 @@
+ngcp-panel (7.4.2.2+0~mr7.4.2.2) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [65742a9] TT#68016 selenium: dont crash script if select_if_unselected cant find elem
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 Nov 2019 08:51:34 +0100
+
 ngcp-panel (7.4.2.1+0~mr7.4.2.1) unstable; urgency=medium
 
   [ Rene Krenn ]
