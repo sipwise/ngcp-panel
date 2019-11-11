@@ -106,11 +106,20 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
 
     if($form->validated) {
         try {
-            my $reseller = $c->model('DB')->resultset('resellers')->create({
+            my $reseller = $c->model('DB')->resultset('resellers')->search({name => $form->values->{name}})->first;
+            if ($reseller && $reseller->status eq 'terminated' ){
+                $reseller->update({
+                    contract_id => $form->values->{contract}{id},
+                    status => $form->values->{status},
+                });
+            }
+            else {
+                $reseller = $c->model('DB')->resultset('resellers')->create({
                     contract_id => $form->values->{contract}{id},
                     name => $form->values->{name},
                     status => $form->values->{status},
                 });
+            }
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
             my $resource = $form->values;
             $resource->{rtc_networks} = [qw/sip xmpp webrtc conference/];
@@ -493,10 +502,19 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                 %{ $defaults{contracts} },  ## no critic (ProhibitCommaSeparatedStatements)
                 contact_id => $r{contacts}->id,
             });
-            $r{resellers} = $billing->resultset('resellers')->create({
-                %{ $defaults{resellers} },  ## no critic (ProhibitCommaSeparatedStatements)
-                contract_id => $r{contracts}->id,
-            });
+            $r{resellers} = $billing->resultset('resellers')->search({name => $defaults{resellers}->{name}})->first;
+            if ($r{resellers} && $r{resellers}->status eq 'terminated' ){
+                $r{resellers}->update({
+                    %{ $defaults{resellers} },  ## no critic (ProhibitCommaSeparatedStatements)
+                    contract_id => $r{contracts}->id,
+                });
+            }
+            else {
+                $r{resellers} = $billing->resultset('resellers')->create({
+                    %{ $defaults{resellers} },  ## no critic (ProhibitCommaSeparatedStatements)
+                    contract_id => $r{contracts}->id,
+                });
+            }
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $r{resellers} );
             #TODO: do we need also to call NGCP::Panel::Utils::Rtc::modify_reseller_rtc ???
             my $mappings_to_create = [];
@@ -534,6 +552,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             error => $e,
             desc  => $c->loc('Failed to create reseller'),
         );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     };
     NGCP::Panel::Utils::Message::info(
         c    => $c,

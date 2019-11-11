@@ -127,9 +127,10 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contract_id', reseller with this contract already exists");
             last;
         }
-        if($schema->resultset('resellers')->find({
+        if($schema->resultset('resellers')->search({
                 name => $resource->{name},
-        })) {
+                status => 'active'
+        })->first) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'name', reseller with this name already exists");
             last;
         }
@@ -145,11 +146,16 @@ sub POST :Allow {
 
         my $reseller;
         try {
-            $reseller = $schema->resultset('resellers')->create({
-                name => $resource->{name},
-                status => $resource->{status},
-                contract_id => $resource->{contract_id},
-            });
+            $reseller = $schema->resultset('resellers')->update_or_create(
+                {
+                    name => $resource->{name},
+                    status => $resource->{status},
+                    contract_id => $resource->{contract_id},
+                },
+                {
+                    key => 'name_idx'
+                }
+            );
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
             NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
                 resource => $resource,
