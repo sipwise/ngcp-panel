@@ -162,8 +162,8 @@ $d->fill_element('#fraud_interval_notify', 'css', 'mymail@example.org');
 $d->find_element('#save', 'css')->click();
 
 diag("Check Fraud Limit details");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Fraud settings successfully changed!',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Fraud settings successfully changed!',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[contains(text(), "100")]'), 'Limit is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[4][contains(text(), "' . 'mymail@example.org' . '")]'), 'Mail is correct');
@@ -194,10 +194,10 @@ diag("Set valid Cash Balance");
 $d->fill_element('//*[@id="cash_balance"]', 'xpath', '200');
 $d->fill_element('//*[@id="free_time_balance"]', 'xpath', '300');
 $d->find_element('//*[@id="save"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  'Correct Alert was shown');
 
 diag("Check if Cash Balance was set correctly");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "200.00")]'), 'Cash Balance is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), 'Free-Time Balance is correct');
@@ -217,10 +217,10 @@ ok($d->find_element_by_xpath('//form//div//span[contains(text(), "Amount field i
 diag("Top-up Cash");
 $d->fill_element('//*[@id="amount"]', 'xpath', '200');
 $d->find_element('//*[@id="save"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Top-up using cash performed successfully!',  'Correct Alert was shown');
 
 diag("Check if Top-up was successful");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Top-up using cash performed successfully!',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "400.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), "Free-Time Balance is correct");
@@ -242,8 +242,8 @@ $d->fill_element('//*[@id="number"]', 'xpath', '0123456789');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Phonebook entry");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully created',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully created',  'Correct Alert was shown');
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#phonebook_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="phonebook_table_filter"]/label/input', 'xpath', 'Tester');
@@ -260,8 +260,8 @@ $d->fill_element('//*[@id="number"]', 'xpath', '987654321');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check Phonebook entry details");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Phonebook entry successfully updated',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Phonebook")]'));
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "TesterTester")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="phonebook_table"]//tr[1]/td[contains(text(), "987654321")]'), 'Number is correct');
@@ -312,8 +312,8 @@ $d->fill_element('//*[@id="blocks.0.row.mask"]', 'xpath', '16');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Location");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully created',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully created',  'Correct Alert was shown');
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#locations_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="locations_table_filter"]/label/input', 'xpath', 'Test Location');
@@ -337,8 +337,8 @@ $d->find_element('//*[@id="save"]')->click();
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully updated',  'Correct Alert was shown');
 
 diag("Check Location details");
-$d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]')->click();
-$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->find_element('//*[@id="toggle-accordions"]')->click();#
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Location successfully updated',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//div//a[contains(text(),"Locations")]'));
 ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "TestTest Location")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="locations_table"]//tr[1]/td[contains(text(), "This is a very Test Location")]'), 'Description is correct');
