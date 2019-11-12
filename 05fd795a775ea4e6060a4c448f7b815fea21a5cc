@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb6caa2e_fae51595",
+        "filename": "lib/NGCP/Panel/Controller/API/Resellers.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-11-12T01:31:54Z",
+      "side": 1,
+      "message": "seems your plan is to revieve the existing one; good point; but problem is if the reseller has dependent items, you would automatically have them back as well.\n\nthat is usually solved differently, by directly addressing the duplicatekey error nico reported. this can be done by including adding a terminate timestamp (if not present yet), and include it in the unique key.",
+      "revId": "05fd795a775ea4e6060a4c448f7b815fea21a5cc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
