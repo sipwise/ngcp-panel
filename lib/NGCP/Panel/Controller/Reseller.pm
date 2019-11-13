@@ -106,6 +106,15 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
 
     if($form->validated) {
         try {
+            my $terminated_reseller = $c->model('DB')->resultset('resellers')->search({
+                name => $form->values->{name},
+                status => 'terminated'
+            })->first;
+            if ($terminated_reseller){
+                $terminated_reseller->update({
+                    name => "old_" . $terminated_reseller->id . "_" . $terminated_reseller->name
+                });
+            }
             my $reseller = $c->model('DB')->resultset('resellers')->create({
                     contract_id => $form->values->{contract}{id},
                     name => $form->values->{name},
@@ -493,6 +502,16 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                 %{ $defaults{contracts} },  ## no critic (ProhibitCommaSeparatedStatements)
                 contact_id => $r{contacts}->id,
             });
+
+            my $terminated_reseller = $billing->resultset('resellers')->search({
+                name => $defaults{resellers}->{name},
+                status => 'terminated'
+            })->first;
+            if ($terminated_reseller){
+                $terminated_reseller->update({
+                    name => "old_" . $terminated_reseller->id . "_" . $terminated_reseller->name
+                });
+            }
             $r{resellers} = $billing->resultset('resellers')->create({
                 %{ $defaults{resellers} },  ## no critic (ProhibitCommaSeparatedStatements)
                 contract_id => $r{contracts}->id,
@@ -534,6 +553,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             error => $e,
             desc  => $c->loc('Failed to create reseller'),
         );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     };
     NGCP::Panel::Utils::Message::info(
         c    => $c,
