@@ -127,11 +127,18 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contract_id', reseller with this contract already exists");
             last;
         }
-        if($schema->resultset('resellers')->find({
+        if(my $existent_reseller = $schema->resultset('resellers')->find({
                 name => $resource->{name},
         })) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'name', reseller with this name already exists");
-            last;
+            if ($existent_reseller->status eq 'terminated') {
+                $existent_reseller->update({
+                    name => "old_" . $existent_reseller->id . "_" . $existent_reseller->name
+                });
+            }
+            else {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'name', reseller with this name already exists");
+                last;
+            }
         }
         my $contract = $schema->resultset('contracts')->find($resource->{contract_id});
         unless($contract) {
