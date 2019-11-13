@@ -1,3 +1,12 @@
+ngcp-panel (6.5.6.7+0~mr6.5.6.7) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [33fff22] TT#69405 - Allow reseller to view subscriberregistrations
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 13 Nov 2019 14:09:40 +0100
+
 ngcp-panel (6.5.6.6+0~mr6.5.6.6) unstable; urgency=medium
 
   [ Flaviu Mates ]
