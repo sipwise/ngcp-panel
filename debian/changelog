@@ -1,3 +1,12 @@
+ngcp-panel (8.0.1.7+0~mr8.0.1.7) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [5a8dc2b] TT#68016 selenium: check customer alerts after expanding all columns
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 13 Nov 2019 09:54:46 +0100
+
 ngcp-panel (8.0.1.6+0~mr8.0.1.6) unstable; urgency=medium
 
   [ Nico Schedel ]
