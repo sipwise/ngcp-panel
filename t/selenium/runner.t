@@ -40,6 +40,7 @@ if($testplan eq $dir . 'runner.t') {
         $dir . 'controller_rw_ruleset.t',
         $dir . 'controller_soundset.t',
         $dir . 'controller_subscriber.t',
+        $dir . 'controller_terminate.t',
         $dir . 'controller_timeset.t',
         );
 
