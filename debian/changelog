@@ -1,3 +1,12 @@
+ngcp-panel (8.0.1.8+0~mr8.0.1.8) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [758d853] TT#68016 selenium: more improvements to controller_terminate
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 15 Nov 2019 15:22:22 +0100
+
 ngcp-panel (8.0.1.7+0~mr8.0.1.7) unstable; urgency=medium
 
   [ Nico Schedel ]
