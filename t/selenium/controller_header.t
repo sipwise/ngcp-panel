@@ -115,6 +115,7 @@ $d->find_element('//*[@id="priority"]')->click();
 sleep 1;
 $d->fill_element('//*[@id="priority"]', 'xpath', '1');
 $d->fill_element('//*[@id="name"]', 'xpath', $headerrule);
+$d->move_and_click('//*[@id="direction"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rules")]');
 $d->find_element('//*[@id="direction"]/option[@value="outbound"]')->click();
 $d->fill_element('//*[@id="description"]', 'xpath', 'this is a very nice description');
 $d->select_if_unselected('//*[@id="stopper"]');
