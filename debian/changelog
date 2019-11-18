@@ -1,3 +1,39 @@
+ngcp-panel (7.5.3.0+0~mr7.5.3.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [2a96f6a] TT#56376 selenium: workaround for subscriber tests going to wrong menu
+  * [6851262] TT#56376 selenium: workaround for customer tests going to wrong menu
+  * [7aba25e] TT#56376 selenium: workaround for header popup blocking items
+  * [9d6758a] TT#56376 selenium: workaround for call list suppression popup blocking items
+  * [23c04be] TT#56376 selenium: add function get_text_safe()
+  * [2c445f2] TT#68016 selenium: workaround for selenium crashing on select list elements
+  * [4e8b09a] TT#68016 selenium: dont crash script if select_if_unselected cant find elem
+  * [c8c58f3] TT#68016 selenium: check customer alerts after expanding all columns
+  * [32020dd] TT#68016 selenium: another "crash on select list elements" workaround
+
+  [ Kirill Solomko ]
+  * [caf3864] TT#63875 faxsend relies on config.faxserver.number_rewrite_enable
+  * [b611c4e] TT#67120 fix domains access for ccareadmin/ccare roles
+  * [4ab17fc] Revert "TT#67120 fix domains access for ccareadmin/ccare roles"
+
+  [ Flaviu Mates ]
+  * [ee11cf9] TT#64751 - Allow subscribers to change their password
+  * [4563118] TT#64751 - Allow subscribers to change their password
+  * [7e35193] TT#69370 - Remove validation of SIP URI type for banned users id's
+  * [d8e5d8e] TT#69423 - Implement yaml support for API swagger
+  * [b388d20] TT#69360 - Fix 500 errors when issuing POST to HeaderRule(Actions|Conditions)
+
+  [ Alexander Lutay ]
+  * [23cb63f] TT#68019 Remove JS hint: sourceMappingURL=rrule.js.map from rrule.js and luxon.js
+
+  [ Rene Krenn ]
+  * [bb921cd] TT#68703 workaround slow contract_cnt queries of profiles
+  * [336537a] TT#68703 fix workaround slow contract_cnt queries of networks
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Nov 2019 14:45:41 +0100
+
 ngcp-panel (7.5.2.0+0~mr7.5.2.0) unstable; urgency=medium
 
   [ Nico Schedel ]
