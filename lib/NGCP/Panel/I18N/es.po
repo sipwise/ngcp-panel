@@ -7012,6 +7012,10 @@ msgstr "Regla de reescritura modificada con éxito"
 msgid "Ring Timeout for CFT"
 msgstr "Tiempo de ring para CFT"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Ring Timeout of each single contact"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Routing Number"
 msgstr ""
@@ -7587,6 +7591,13 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Special offpeak entry successfully updated"
 msgstr "Special offpeak entry successfully updated"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Specifies how many seconds each single contact should ring before the calls "
+"goes to the next one. It is considered only in case of forking based on Q "
+"value."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
