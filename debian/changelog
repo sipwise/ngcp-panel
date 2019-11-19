@@ -1,3 +1,12 @@
+ngcp-panel (7.5.2.2+0~mr7.5.2.2) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [377af88] TT#68016 selenium: simplify get_text_safe()
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Nov 2019 13:50:32 +0100
+
 ngcp-panel (7.5.2.1+0~mr7.5.2.1) unstable; urgency=medium
 
   [ Nico Schedel ]
