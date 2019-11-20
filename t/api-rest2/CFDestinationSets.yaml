@@ -38,6 +38,37 @@
         ok:
             '${subscriber}.id': defined
 
+#get a subscriber for testingannouncement id
+-
+    name: get a announcement id
+    type: item
+    method: GET
+    path: '/api/soundhandles/?page=1&rows=1&group=custom_announcements'
+    retain:
+        soundhandle: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $soundhandle = $retained->{soundhandle}->{'_embedded'}->{'ngcp:soundhandles'}->[0];
+            $retained->{soundhandle} = $soundhandle;
+            $retained->{destinations} = [{
+                                            destination => 'customhours',
+                                            priority => 1,
+                                            timeout => 300,
+                                            announcement_id => $soundhandle->{id}
+                                        },
+                                        {
+                                            destination => 'customhours',
+                                            priority => 1,
+                                            timeout => 300
+                                        }];
+        }
+    conditions:
+        is:
+            code: 200
+        ok:
+            '${announcement}.id': defined
+
 #create cfdestinationsets
 -
     name: create cfdestinationsets
@@ -49,16 +80,7 @@
     content:
         subscriber_id: ${subscriber_id}
         name: Weekend days 1
-        destinations:
-            -
-                destination: customhours
-                priority: 1
-                timeout: 300
-                announcement_id: 255
-            -
-                destination: customhours
-                priority: 1
-                timeout: 300
+        destinations: ${destinations}
     retain:
         cfdestinationsets_path1: header.location
     conditions:
@@ -76,16 +98,7 @@
     content:
         subscriber_id: ${subscriber_id}
         name: Weekend days 2
-        destinations:
-            -
-                destination: customhours
-                priority: 1
-                timeout: 300
-                announcement_id: 255
-            -
-                destination: customhours
-                priority: 1
-                timeout: 300
+        destinations: ${destinations}
     retain:
         cfdestinationsets_path2: header.location
     conditions:
@@ -103,16 +116,7 @@
     content:
         subscriber_id: ${subscriber_id}
         name: Weekend days 2
-        destinations:
-            -
-                destination: customhours
-                priority: 1
-                timeout: 300
-                announcement_id: 255
-            -
-                destination: customhours
-                priority: 1
-                timeout: 300
+        destinations: ${destinations}
     retain:
         cfdestinationsets_path3: header.location
     conditions:
