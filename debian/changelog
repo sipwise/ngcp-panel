@@ -1,3 +1,13 @@
+ngcp-panel (5.5.11.1+0~mr5.5.11.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [fbbc00d] TT#57900 scenario in balanceintervals.t fails on fast hardware
+  * [171d18d] TT#69375 fix DBlocation joins in case of reseller users
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 20 Nov 2019 15:05:35 +0100
+
 ngcp-panel (5.5.11.0+0~mr5.5.11.0) unstable; urgency=medium
 
   [ Rene Krenn ]
