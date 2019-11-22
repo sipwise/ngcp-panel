@@ -12,6 +12,10 @@ use HTTP::Status qw(:constants);
 sub _item_rs {
     my ($self, $c) = @_;
 
+    unless ($c->model('DB')->resultset('contracts_billing_profile_network_schedule')->search(undef,undef)->first()) {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Malformed database views.");
+    }
+
     my $item_rs = $c->model('DB')->resultset('contract_fraud_events')->search(
         undef,
         {
