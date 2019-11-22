@@ -1,3 +1,14 @@
+ngcp-panel (8.0.1.10+0~mr8.0.1.10) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [14f59d1] TT#68016 selenium: simplify get_text_safe()
+  * [e33f57b] TT#68016 selenium: add controller_terminate to default test plan
+  * [9d523bc] TT#68016 selenium: more improvements to  get_text_safe()
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 22 Nov 2019 12:39:17 +0100
+
 ngcp-panel (8.0.1.9+0~mr8.0.1.9) unstable; urgency=medium
 
   [ Nico Schedel ]
