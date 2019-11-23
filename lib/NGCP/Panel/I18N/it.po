@@ -1627,6 +1627,16 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Contains a list of SIP codes that is matched with the response code received "
+"in reply from the subscriber's contacts in case of call failure. In case of "
+"match, the forking based on Q value is stopped and the code is transparently "
+"signaled back to the caller, whereas also an announcement can be played if "
+"configured in the existing sound set. Response codes 600, 603, 604, 606 are "
+"implicitly included in the list."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Contains a list of numbers used in the \"Manager Secretary\" call forwardings"
 msgstr ""
 
@@ -5304,6 +5314,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "List of error codes and respective announcements"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "List of response codes for which the forking is stopped"
 msgstr ""
 
 #: share/templates/sound/handles_list.tt
