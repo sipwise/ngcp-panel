@@ -2567,6 +2567,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "user_agent", search => 1, title => $c->loc('User Agent') },
         { name => "contact", search => 1, title => $c->loc('Contact') },
         { name => "expires", search => 1, title => $c->loc('Expires') },
+        { name => "q", search => 1, title => $c->loc('Q-Value') },
     ]);
     $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "timestamp", search => 1, title => $c->loc('Timestamp') },
