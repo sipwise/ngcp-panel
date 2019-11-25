@@ -93,7 +93,7 @@ sub get_parent_info {
                 if ($type eq 'subscriber') {
                     $tz_owner_parent_type = 'contract';
                     #billing subscriber
-                    $tz_owner_parent_id = $owner_tz->contract->id;
+                    $tz_owner_parent_id = $owner_tz->voip_subscriber->contract->id;
                 } elsif ($type eq 'contract') {
                     $tz_owner_parent_type = 'reseller';
                     #billing subscriber
