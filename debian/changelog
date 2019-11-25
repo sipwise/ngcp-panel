@@ -1,3 +1,68 @@
+ngcp-panel (8.2.0.0+0~mr8.2.0.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [38da351] TT#4166 I18N dump: snapshot 2019.10.08-02.19.49
+  * [924fe2d] TT#4166 I18N dump: snapshot 2019.10.12-01.23.25
+  * [179e35b] TT#4166 I18N dump: snapshot 2019.11.19-01.23.40
+
+  [ Flaviu Mates ]
+  * [90fc11b] TT#67104 - Change callist ?customer_id= parameter query OR to UNION ALL
+  * [6d50571] TT#66754 - Implement panel statistics
+  * [2052c46] TT#68752 - Implement translation handling of 'Select' form field
+  * [5c3da62] TT#66754 - Improve NGCP Panel Statistics UI
+  * [16d34fa] TT#69304 - Fix typo that broke '/api/speeddials'
+  * [c280b17] TT#56467 - Migrate api-journals and api-topupvoucher
+  * [a87b41c] TT#69423 - Implement yaml support for API swagger
+  * [5493545] TT#69370 - Remove validation of SIP URI type for banned users id's
+  * [a4265a9] TT#69503 - Change subscriber's domain assignation logic
+  * [467321e] TT#69360 - Fix 500 errors when issuing POST to HeaderRule(Actions|Conditions)
+  * [ffce52b] TT#69063 - Fix stuck timeset event list
+  * [71e950d] TT#69405 - Allow reseller to view subscriberregistrations
+  * [f65fcf1] TT#65450 - Permit creation of reseller with same name as terminated one
+  * [469423e] TT#71203 - Fix CFDestinationsets test case
+
+  [ Nico Schedel ]
+  * [5c55b1f] TT#68016 selenium: add more checks for contract balance
+  * [871dcee] TT#68016 selenium: better checks for header priority
+  * [db8a230] TT#68016 selenium: text and formatting updates
+  * [6b0da60] TT#68016 selenium: more little cleanups
+  * [c8c706c] TT#68016 selenium: remove wait_for_text and wait_for_attribute
+  * [d4a9887] TT#68016 selenium: simplify get_text_safe()
+  * [27a4fa6] TT#68016 selenium: check admin information in proper spots now
+  * [83e1f22] TT#68016 selenium: small timeset events test improvements
+  * [956bf2f] TT#68016 selenium: workaround for selenium crashing on select list elements
+  * [9e245aa] TT#68016 selenium: more improvements to  get_text_safe()
+  * [f9c0153] TT#68016 selenium: more cleanups in controller_admin
+  * [4b1d697] TT#68016 selenium: add new tests to controller_admin
+  * [b23b031] TT#68016 selenium: create domain with proper reseller now
+  * [08eb407] TT#68016 selenium: remove find_text() and scroll_to_id()
+  * [fa3feb5] TT#68016 selenium: improve some test startups
+  * [ba3a2b1] TT#68016 selenium: check if edit windows are opened
+  * [14b0b28] TT#68016 selenium: more improvements to controller_terminate
+  * [24408a1] TT#68016 selenium: dont crash script if select_if_unselected cant find elem
+  * [a2d22e1] TT#68016 selenium: check customer alerts after expanding all columns
+  * [9b5501d] TT#68016 selenium: add proper value to timeset event.byweekdaynumber
+  * [68d9d87] TT#68016 selenium: add controller_terminate to default test plan
+  * [2a38a14] TT#68016 selenium: another "crash on select list elements" workaround
+
+  [ Alexander Lutay ]
+  * [8b2516d] TT#68019 Remove JS hint: sourceMappingURL=rrule.js.map from rrule.js and luxon.js
+  * [16356cb] TT#68023 Migrate ngcp-panel from /etc/mysql/sipwise.cnf to /etc/mysql/sipwise_extra.cnf
+
+  [ Rene Krenn ]
+  * [838cd09] TT#68703 workaround slow contract_cnt queries of profiles
+  * [3498943] TT#68703 fix workaround slow contract_cnt queries of networks
+
+  [ Guillem Jover ]
+  * [9bc77dc] TT#69150 Switch to use IO::Prompt::Tiny
+  * [922d035] TT#51701 Switch from deprecated /var/run to /run
+  * [34d8db1] TT#66754 Refactor status gatherer program check into a function
+  * [284f3b0] TT#66754 Use a hash to map the ngcp status into the different structures
+  * [11eeb92] TT#66754 Rename the ngcp status JSON key from data to checks
+  * [993f9ce] TT#69900 Unbundle Catalyst::Plugin::Session::Store::Redis modules
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Nov 2019 14:56:47 +0100
+
 ngcp-panel (8.1.0.0+0~mr8.1.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
