@@ -1,3 +1,15 @@
+ngcp-panel (6.5.5.12+0~mr6.5.5.12) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2cc52a0] TT#71313 fix tz selector field for subscribers
+
+  [ Flaviu Mates ]
+  * [2d2b45e] TT#65503 - Introduce time picker
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 26 Nov 2019 16:50:19 +0100
+
 ngcp-panel (6.5.5.11+0~mr6.5.5.11) unstable; urgency=medium
 
   [ Flaviu Mates ]
