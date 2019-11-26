@@ -238,8 +238,9 @@ $(document).ready(function() {
                         [% IF col.search_from_epoch && !has_from -%]
                             var f = '<label>From Date: <input type="text" id="[% helper.id_from_name %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
                             $('#[% helper.id_from_name %]_table_filter').prepend(f);
-                            $('#[% helper.id_from_name %]_datepicker_start').datepicker({
+                            $('#[% helper.id_from_name %]_datepicker_start').datetimepicker({
                                 "dateFormat": "yy-mm-dd",
+                                showTimepicker: [% IF col.search_datetime %] true [% ELSE %] false [% END %],
                                 "onSelect": function(date) {
                                     [% helper.id_from_name %]_table.fnFilter(date, 0);
                                 }
@@ -255,8 +256,9 @@ $(document).ready(function() {
                             } else {
                                 $('#[% helper.id_from_name %]_table_filter').prepend(t);
                             }
-                            $('#[% helper.id_from_name %]_datepicker_end').datepicker({
+                            $('#[% helper.id_from_name %]_datepicker_end').datetimepicker({
                                 "dateFormat": "yy-mm-dd",
+                                showTimepicker: [% IF col.search_datetime %] true [% ELSE %] false [% END %],
                                 "onSelect": function(date) {
                                     [% helper.id_from_name %]_table.fnFilter(date, 1);
                                 }

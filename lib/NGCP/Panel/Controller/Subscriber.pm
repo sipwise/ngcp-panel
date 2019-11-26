@@ -2644,7 +2644,7 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) {
         { name => "clir", search => 0, title => $c->loc('CLIR') },
         { name => "source_customer_billing_zones_history.detail", search => 0, title => $c->loc('Billing zone'), }, #index required...
         { name => "call_status", search => 0, title => $c->loc('Status') },
-        { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
+        { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, search_datetime => 1, title => $c->loc('Start Time') },
         { name => "duration", search => 0, title => $c->loc('Duration'), show_total => 'sum' },
         { name => "cdr_mos_data.mos_average", search => 0, title => $c->loc('MOS avg') },
         { name => "cdr_mos_data.mos_average_packetloss", search => 0, title => $c->loc('MOS packetloss') },
