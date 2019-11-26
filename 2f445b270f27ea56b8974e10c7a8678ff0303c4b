@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99e3db34_9681c02a",
+        "filename": "share/templates/helpers/datatables.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2019-11-26T12:37:08Z",
+      "side": 1,
+      "message": "ah, nice!",
+      "revId": "2f445b270f27ea56b8974e10c7a8678ff0303c4b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
