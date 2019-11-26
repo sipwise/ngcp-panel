@@ -1,3 +1,12 @@
+ngcp-panel (8.0.1.11+0~mr8.0.1.11) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [641f064] TT#65503 - Introduce time picker
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 26 Nov 2019 16:51:46 +0100
+
 ngcp-panel (8.0.1.10+0~mr8.0.1.10) unstable; urgency=medium
 
   [ Nico Schedel ]
