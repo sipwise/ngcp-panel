@@ -1676,7 +1676,9 @@ msgid "Contracts"
 msgstr "Verträge"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Controls whether to enable/disable NAT pings for a given domain/user"
+msgid ""
+"Controls whether to enable/disable NAT pings for a given domain/user. "
+"Requires re-registrations for the change in settings to take effect"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2750,6 +2752,10 @@ msgstr "Aktiviere Peer-Authentifizierung"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Prepaid"
 msgstr "Aktiviere Prepaid"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable SIP OPTIONS ping"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP Session Timers."
@@ -5570,10 +5576,6 @@ msgstr "Großbuchstaben müssen enthalten sein"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "NAT and Media Flow Control"
 msgstr "NAT und Medienfluss-Kontrolle"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "NAT pinger"
-msgstr ""
 
 #: share/templates/ncos/pattern_list.tt
 msgid "NCOS LNP Carriers"

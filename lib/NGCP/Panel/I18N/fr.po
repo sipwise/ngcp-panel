@@ -1762,10 +1762,10 @@ msgid "Contracts"
 msgstr "Contrats"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Controls whether to enable/disable NAT pings for a given domain/user"
+msgid ""
+"Controls whether to enable/disable NAT pings for a given domain/user. "
+"Requires re-registrations for the change in settings to take effect"
 msgstr ""
-"Contrôle s'il faut activer ou désactiver les pings NAT pour un domaine/"
-"utilisateur donné"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Convert DTMF INFO to RFC DTMF events"
@@ -2870,6 +2870,10 @@ msgstr "Activer l'authentification"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Prepaid"
 msgstr "Activer le prépayé"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable SIP OPTIONS ping"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP Session Timers."
@@ -5787,10 +5791,6 @@ msgstr "Doit contenir des caractères majuscules"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "NAT and Media Flow Control"
 msgstr "NAT et contrôle de média"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "NAT pinger"
-msgstr "Pinger NAT"
 
 #: share/templates/ncos/pattern_list.tt
 msgid "NCOS LNP Carriers"
@@ -9694,6 +9694,14 @@ msgstr "années"
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "oui"
+
+#~ msgid "Controls whether to enable/disable NAT pings for a given domain/user"
+#~ msgstr ""
+#~ "Contrôle s'il faut activer ou désactiver les pings NAT pour un domaine/"
+#~ "utilisateur donné"
+
+#~ msgid "NAT pinger"
+#~ msgstr "Pinger NAT"
 
 #~ msgid "Hardware"
 #~ msgstr "Hardware"
