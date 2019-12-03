@@ -46,10 +46,20 @@ has_field 'ratio' => (
     },
 );
 
+has_field 'external_id' => (
+    type => 'Text',
+    label => 'External ID',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A non-unique external ID e.g., provided by a 3rd party provisioning']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/cash_balance cash_debit free_time_balance free_time_spent ratio/],
+    render_list => [qw/cash_balance cash_debit free_time_balance free_time_spent ratio external_id/],
 );
 
 1;
