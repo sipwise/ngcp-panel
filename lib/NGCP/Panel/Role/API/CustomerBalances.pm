@@ -83,6 +83,7 @@ sub resource_from_item{
     my %resource = $item->get_inflated_columns;
     #$resource{cash_balance} /= 100.0;
     ##$resource{cash_balance_interval} /= 100.0;
+    $resource{external_id} = $item->contract->external_id if $item->contract->external_id;
     $resource{cash_balance} /= 100.0;
     $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
     $resource{free_time_spent} = delete $resource{free_time_balance_interval};
