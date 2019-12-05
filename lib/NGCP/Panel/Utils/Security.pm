@@ -76,7 +76,17 @@ EOF
         }
     }
     my $config_failed_auth_attempts = $c->config->{security}->{failed_auth_attempts} // 3;
-    for my $key (keys %{ $usr }) {
+    #in case we requested to filter by username, we will use it as the only possible key
+    my @user_ids;
+    if (defined $params{id}) {
+        if (exists $usr->{$params{id}}) {
+            @user_ids = ($params{id});
+        }
+    }
+    else {
+        @user_ids = (keys %{ $usr });
+    }
+    for my $key (@user_ids) {
         my $last_auth = $usr->{$key}->{last_auth} ? NGCP::Panel::Utils::DateTime::epoch_local($usr->{$key}->{last_auth}) : undef;
         if($last_auth && $params{data_for_json}){
             $last_auth =  $last_auth->ymd.' '. $last_auth->hms;
