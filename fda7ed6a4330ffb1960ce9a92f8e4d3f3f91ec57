@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7b54d1a_158a14a1",
+        "filename": "t/api-rest/api-billingfees.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-12-05T15:01:45Z",
+      "side": 1,
+      "message": "nitpicking, formatting to match the above",
+      "range": {
+        "startLine": 26,
+        "startChar": 12,
+        "endLine": 29,
+        "endChar": 41
+      },
+      "revId": "fda7ed6a4330ffb1960ce9a92f8e4d3f3f91ec57",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
