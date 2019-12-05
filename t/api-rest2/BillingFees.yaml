@@ -38,6 +38,10 @@
         offpeak_init_interval: 60
         offpeak_follow_rate: 0.5
         offpeak_follow_interval: 30
+        onpeak_extra_rate: 1
+        onpeak_extra_second: 30
+        offpeak_extra_rate: 0.5
+        offpeak_extra_second: 60
     retain:
         billingfees_path1: header.location
     conditions:
@@ -65,6 +69,10 @@
         offpeak_init_interval: 60
         offpeak_follow_rate: 0.5
         offpeak_follow_interval: 30
+        onpeak_extra_rate: 1
+        onpeak_extra_second: 30
+        offpeak_extra_rate: 0.5
+        offpeak_extra_second: 60
     retain:
         billingfees_path2: header.location
     conditions:
@@ -92,6 +100,10 @@
         offpeak_init_interval: 60
         offpeak_follow_rate: 0.5
         offpeak_follow_interval: 30
+        onpeak_extra_rate: 1
+        onpeak_extra_second: 30
+        offpeak_extra_rate: 0.5
+        offpeak_extra_second: 60
     retain:
         billingfees_path3: header.location
     conditions:
