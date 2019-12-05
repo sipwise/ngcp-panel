@@ -164,6 +164,48 @@ has_field 'use_free_time' => (
     default => 0,
 );
 
+has_field 'onpeak_extra_rate' => (
+    type => 'Float',
+    size => 15,
+    precision => 14,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The cost per second of each extra interval during onpeak hours in cents (e.g. 0.70 cents).']
+    },
+    default => 0,
+);
+
+has_field 'onpeak_extra_second' => (
+    type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The length of each extra interval during onpeak hours in seconds (e.g. 30).']
+    },
+    default => undef,
+    required => 0,
+);
+
+has_field 'offpeak_extra_rate' => (
+    type => 'Float',
+    size => 15,
+    precision => 14,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The cost per second of each extra interval during offpeak hours in cents (e.g. 0.70 cents).']
+    },
+    default => 0,
+);
+
+has_field 'offpeak_extra_second' => (
+    type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The length of each extra interval during offpeak hours in seconds (e.g. 30).']
+    },
+    default => undef,
+    required => 0,
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -178,6 +220,7 @@ has_block 'fields' => (
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval use_free_time
+        onpeak_extra_rate onpeak_extra_second offpeak_extra_rate offpeak_extra_second
         /],
 );
 

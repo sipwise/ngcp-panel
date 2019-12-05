@@ -251,6 +251,8 @@ sub process_billing_fees{
             push @fails, $linenum;
             next;
         }
+        $row->{onpeak_extra_second} = undef if $row->{onpeak_extra_second} eq '';
+        $row->{offpeak_extra_second} = undef if $row->{offpeak_extra_second} eq '';
         my $k = $row->{zone}.'__NGCP__'.$row->{zone_detail};
         unless(exists $zones{$k}) {
             my $zone = $profile->billing_zones->find_or_create({
