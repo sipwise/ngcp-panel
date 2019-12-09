@@ -224,7 +224,6 @@ $d->find_element('//*[@id="rewrite_rule_set"]/option[contains(text(), "' . $rule
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if correct Ruleset has been selected");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference rewrite_rule_set successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table/tbody/tr/td[contains(text(), "rewrite_rule_set")]/../td[4]/select/option[contains(text(), "' . $rulesetname . '")][@selected="selected"]'), 'rewrite_rule_set value has been set');
 
