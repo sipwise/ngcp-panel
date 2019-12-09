@@ -138,7 +138,6 @@ $d->find_element('//*[@id="ncos"]//option[contains(text(), "'. $ncosname .'")]')
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS was applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Preference ncos successfully updated",  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "ncos")]//..//td//select//option[contains(text(), "'. $ncosname .'")][@selected="selected"]'), 'NCOS was applied');
 $d->find_element('//*[@id="content"]//div//a[contains(text(), "Back")]')->click();
 if($d->find_element_by_xpath('//*[@id="masthead"]//div//h2')->get_text() eq 'Subscriber Profile Sets') { #workaround for back button opening wrong page

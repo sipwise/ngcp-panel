@@ -70,7 +70,6 @@ $d->find_element('//*[@id="subscriber_data"]//div//a[contains(text(), "Master Da
 $d->find_element('//*[@id="collapse_master"]/div/a[contains(text(), "Edit")]')->click();
 $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")][contains(text(), "Subscriber does not exist")]'), 'Correct Alert was shown');
 
 diag("Check if Subscriber has been terminated");
 $d->fill_element('//*[@id="subscriber_table_filter"]/label/input', 'xpath', $username);
@@ -96,9 +95,6 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Found customer');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "locked")]'), 'Status was changed');
-$custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
-$compstring = "Customer #" . $custnum . " successfully updated";
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  'Correct Alert was shown');
 
 diag("Edit Customer status to 'terminated'");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
@@ -108,8 +104,6 @@ $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('#save', 'css')->click();
 
 diag("Check if Customer was terminated");
-$compstring = "Customer #" . $custnum . " successfully updated";
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  'Correct Alert was shown');
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was terminated');
 
@@ -166,7 +160,6 @@ $d->move_and_click('//*[@id="Contract_table"]//tr[1]//td//a[contains(text(), "Ed
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contract")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="external_id"]', 'xpath', $contractid);
 $d->find_element('//*[@id="save"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contract successfully changed!',  'Correct Alert was shown');
 
 diag("Go to 'Reseller Contracts' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -186,7 +179,6 @@ $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Reseller Contract was terminated");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contract successfully changed!',  'Correct Alert was shown');
 $d->fill_element('//*[@id="contract_table_filter"]/label/input', 'xpath', $contractid);
 ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), 'Reseller Contract was terminated');
 
@@ -230,7 +222,6 @@ $d->move_and_click('//*[@id="Contract_table"]//tr[1]//td//a[contains(text(), "Ed
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Contract")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="external_id"]', 'xpath', $contractid);
 $d->find_element('//*[@id="save"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contract successfully changed!',  'Correct Alert was shown');
 
 diag("Go to 'Resellers' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();

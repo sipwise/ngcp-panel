@@ -241,7 +241,6 @@ $d->find_element('#save', 'css')->click();
 diag("Check if value has been applied");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('Number Manipulations', 'link_text'));
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference inbound_upn successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//table//td[contains(text(), "inbound_upn")]/../td/select/option[@selected="selected"][contains(text(), "P-Asserted-Identity")]'), "Value has been applied");
 
 diag("Go to 'Remote Authentication'");
@@ -254,7 +253,6 @@ $d->fill_element('//*[@id="peer_auth_user"]', 'xpath', 'peeruser1');
 $d->find_element('#save', 'css')->click();
 
 diag("Check if 'peer_auth_user' value has been set");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference peer_auth_user successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('Remote Authentication', 'link_text'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "peer_auth_user")]/../td[4][contains(text(), "peeruser1")]'), 'peer_auth_user value has been set');
@@ -266,7 +264,6 @@ $d->fill_element('//*[@id="peer_auth_pass"]', 'xpath', 'peerpass1');
 $d->find_element('#save', 'css')->click();
 
 diag("Check if 'peer_auth_pass' value has been set");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference peer_auth_pass successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('Remote Authentication', 'link_text'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "peer_auth_pass")]/../td[4][contains(text(), "peerpass1")]'), 'peer_auth_pass value has been set');
@@ -278,7 +275,6 @@ $d->fill_element('//*[@id="peer_auth_realm"]', 'xpath', 'testpeering.com');
 $d->find_element('#save', 'css')->click();
 
 diag("Check if 'peer_auth_realm' value has been set");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference peer_auth_realm successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('Remote Authentication', 'link_text'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "peer_auth_realm")]/../td[4][contains(text(), "testpeering.com")]'), 'peer_auth_realm value has been set');
@@ -348,7 +344,6 @@ $d->move_and_click('//*[@id="PeeringRules_table"]/tbody/tr[1]//td//div//a[contai
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if Outbound Peering Rule has been deleted");
-#is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Peering rule successfully deleted',  'Correct Alert was shown');
 ok($d->find_element_by_css('#PeeringRules_table tr > td.dataTables_empty', 'css'), 'Outbound peering rule has been deleted');
 
 diag("Go back to 'SIP Peering Groups'");
