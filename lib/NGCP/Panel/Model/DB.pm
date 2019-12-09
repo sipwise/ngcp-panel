@@ -20,6 +20,17 @@ sub set_transaction_isolation {
     );
 }
 
+sub set_wait_timeout {
+    my ($self,$timeout) = @_;
+    return $self->storage->dbh_do(
+        sub {
+          my ($storage, $dbh, @args) = @_;
+          $dbh->do("SET SESSION wait_timeout = " . $args[0]);
+        },
+        $timeout,
+    );
+}
+
 1;
 
 __END__
