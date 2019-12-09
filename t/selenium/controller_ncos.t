@@ -192,7 +192,6 @@ $d->select_if_unselected('//*[@id="local_ac"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS settings have been applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'NCOS level setting successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="local_ac"][@checked="checked"]'), 'Setting "Include local area code" was applied');
 
 diag("Creating Domain to add NCOS Level");
@@ -217,7 +216,6 @@ $d->find_element('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]'
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS Level was applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference ncos successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "ncos")]/../td/select/option[contains(text(), "' . $ncosname . '")][@selected="selected"]'), 'NCOS Level was applied');
 

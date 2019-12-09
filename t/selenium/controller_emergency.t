@@ -146,7 +146,6 @@ $d->find_element('//*[@id="emergency_mapping_container"]/option[contains(text(),
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if setting 'emergency_mapping_container' was applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference emergency_mapping_container successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "emergency_mapping_container")]/../td/select/option[contains(text(), "' . $containername . '")][@selected="selected"]'), 'NCOS Level was applied');
 
@@ -158,7 +157,6 @@ $d->select_if_unselected('//*[@id="emergency_mode_enabled"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if setting 'emergency_mode_enabled' was enabled");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference emergency_mode_enabled successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "emergency_mode_enabled")]/../td//input[@checked="checked"]'), 'Setting was enabled');
 

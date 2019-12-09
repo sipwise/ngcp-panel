@@ -200,7 +200,6 @@ $d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(te
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Administrator is still here");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")][contains(text(), "Cannot delete myself")]'),  'Correct Alert was shown');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
