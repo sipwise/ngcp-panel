@@ -94,7 +94,6 @@ $d->fill_element('//*[@id="prefix"]', 'xpath', "E1_133_");
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Emergency Mapping");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Emergency mapping successfully created',  'Correct Alert was shown');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
@@ -113,7 +112,6 @@ $d->fill_element('//*[@id="prefix"]', 'xpath', "E2_144_");
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Emergency Mapping");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Emergency mapping successfully updated',  'Correct Alert was shown');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
@@ -146,7 +144,6 @@ $d->find_element('//*[@id="emergency_mapping_container"]/option[contains(text(),
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if setting 'emergency_mapping_container' was applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference emergency_mapping_container successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "emergency_mapping_container")]/../td/select/option[contains(text(), "' . $containername . '")][@selected="selected"]'), 'NCOS Level was applied');
 
@@ -158,7 +155,6 @@ $d->select_if_unselected('//*[@id="emergency_mode_enabled"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if setting 'emergency_mode_enabled' was enabled");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference emergency_mode_enabled successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "emergency_mode_enabled")]/../td//input[@checked="checked"]'), 'Setting was enabled');
 
@@ -185,7 +181,6 @@ $d->move_and_click('//*[@id="emergency_mappings_table"]/tbody/tr/td[6]/div/a[con
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Emergency Mapping has been deleted");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Emergency mapping successfully deleted',  'Correct Alert was shown');
 $d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
 ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Emergency Mapping has been deleted');
 

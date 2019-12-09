@@ -46,7 +46,6 @@ $d->fill_element('//*[@id="prefix"]', 'xpath', $prefix);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search LNP Carrier");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'LNP carrier successfully created',  'Correct Alert was shown');
 $d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
@@ -65,7 +64,6 @@ $d->fill_element('//*[@id="prefix"]', 'xpath', $prefix);
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search LNP Carrier");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'LNP carrier successfully updated',  'Correct Alert was shown');
 $d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
@@ -192,7 +190,6 @@ $d->select_if_unselected('//*[@id="local_ac"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS settings have been applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'NCOS level setting successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="local_ac"][@checked="checked"]'), 'Setting "Include local area code" was applied');
 
 diag("Creating Domain to add NCOS Level");
@@ -217,7 +214,6 @@ $d->find_element('//*[@id="ncos"]/option[contains(text(), "' . $ncosname . '")]'
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if NCOS Level was applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference ncos successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "ncos")]/../td/select/option[contains(text(), "' . $ncosname . '")][@selected="selected"]'), 'NCOS Level was applied');
 
@@ -289,7 +285,6 @@ $d->move_and_click('//*[@id="lnp_carriers_table"]//tr[1]//td//a[contains(text(),
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if LNP Carrier has been deleted");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "LNP carrier successfully deleted",  'Correct Alert was shown');
 $d->fill_element('//*[@id="lnp_carriers_table_filter"]/label/input', 'xpath', $lnpcarrier);
 $d->move_and_click('//*[@id="lnp_numbers_table_filter"]//label//input', 'xpath', '//*[@id="content"]/div/h3[contains(text(), "LNP Numbers")]');
 ok($d->find_element_by_css('#lnp_carriers_table tr > td.dataTables_empty', 'css'), 'LNP Carrier has been deleted');
