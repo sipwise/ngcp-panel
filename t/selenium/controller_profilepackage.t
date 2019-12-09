@@ -77,7 +77,6 @@ $d->fill_element('//*[@id="balance_interval.value"]', 'xpath', '300');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Profile Package");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Profile package successfully created',  'Correct Alert was shown');
 $d->fill_element('//*[@id="packages_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#packages_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="packages_table_filter"]/label/input', 'xpath', $profilename);
@@ -95,7 +94,6 @@ $d->fill_element('//*[@id="description"]', 'xpath', 'nice desc');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Profile Package");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Profile package successfully updated',  'Correct Alert was shown');
 $d->fill_element('//*[@id="packages_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#packages_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="packages_table_filter"]/label/input', 'xpath', $profilename);
@@ -126,7 +124,6 @@ ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit 
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check values");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "0.00")]'), 'Cash Balance is correct');
@@ -141,7 +138,6 @@ $d->fill_element('//*[@id="free_time_balance"]', 'xpath', '50');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check values");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "300.00")]'), 'Cash Balance is correct');
@@ -168,7 +164,6 @@ $d->find_element('//*[@id="packageidtable"]/tbody/tr[1]/td[4]/input')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check details");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Top-up using cash performed successfully!',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//div//table//tr//td//b[contains(text(), "500.00")]'), 'Cash Balance is correct');
@@ -203,7 +198,6 @@ $d->move_and_click('//*[@id="packages_table"]//tr[1]//td//a[contains(text(), "De
 $d->find_element('//*[@id="dataConfirmOK"]')->click();
 
 diag("Check if Profile Package has been deleted");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Profile package successfully deleted',  'Correct Alert was shown');
 $d->fill_element('//*[@id="packages_table_filter"]/label/input', 'xpath', $profilename);
 ok($d->find_element_by_css('#packages_table tr > td.dataTables_empty', 'css'), 'Profile Package has been deleted');
 

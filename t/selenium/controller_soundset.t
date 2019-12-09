@@ -87,7 +87,6 @@ $d->select_if_unselected('//*[@id="loopplay"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if loop setting was enabled");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Sound handle successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr//td[contains(text(), "conference_first")]/..//td//input[@checked="checked"]'), 'loop for conference_first was activated');
 

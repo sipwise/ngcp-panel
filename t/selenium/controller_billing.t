@@ -329,7 +329,6 @@ diag("Fill in valid values");
 $d->fill_element('#start', 'css', "2008-02-28 04:20:00");
 $d->fill_element('#end', 'css', "2008-02-28 13:37:00");
 $d->find_element('#save', 'css')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully created',  'Correct Alert was shown');
 
 diag("Check if Date Definition is correct");
 $d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
@@ -346,7 +345,6 @@ $d->fill_element('#end', 'css', "2019-01-01 23:59:59");
 $d->find_element('#save', 'css')->click();
 
 diag("Check if Date Definition is correct");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2018-01-01 00:00:00")]'), 'Start Date Definition is correct');
 ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2019-01-01 23:59:59")]'), 'End Date Definition is correct');
 
@@ -356,7 +354,6 @@ $d->move_and_click('//*[@id="date_definition_table"]/tbody//tr//td//div//a[conta
 $d->find_element('#dataConfirmOK', 'css')->click();
 
 diag("Check if Date Definition has been deleted");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully deleted',  'Correct Alert was shown');
 ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty'), 'Date Definition has been deleted');
 
 diag("Try to NOT delete Billing Profile");
