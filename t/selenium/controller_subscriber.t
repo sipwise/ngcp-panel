@@ -231,7 +231,6 @@ $d->find_element('//*[@id="language"]/option[contains(text(), "German")]')->clic
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Language has been applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference language successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('//*[@id="preference_groups"]//div//a[contains(text(),"Internals")]'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "language")]/../td/select/option[contains(text(), "German") and @selected="selected"]'), '"German" has been selected');
@@ -246,7 +245,6 @@ $d->select_if_unselected('//*[@id="record_call"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Call Recording was enabled");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference record_call successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "record_call")]/../td//input[@checked="checked"]'), 'Call recording was enabled');
 
 diag("Try to add a Call Forward");
@@ -327,7 +325,6 @@ $d->find_element('//*[@id="save"]')->click();
 diag("Check details");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('Call Blockings', 'link_text'));
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference block_in_mode successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_mode")]/../td/input[@checked="checked"]'), 'Setting is correct');
 
 diag("Edit 'block_in_list'");
@@ -341,7 +338,6 @@ $d->find_element('//*[@id="mod_close"]')->click();
 
 diag("Check details");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
-#is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference block_in_list successfully created',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('Call Blockings', 'link_text'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td[contains(text(), "1337")]'), 'Number 1 is correct');
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_list")]/../td[text()[contains(., "42")]]'), 'Number 2 is correct');
@@ -364,7 +360,6 @@ $d->find_element('//*[@id="block_in_clir"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if value was set");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference block_in_clir successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "block_in_clir")]/../td/input[@checked="checked"]'), 'Setting is correct');
 
 diag("Go to 'Subscribers' page");
