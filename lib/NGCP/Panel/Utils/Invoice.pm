@@ -53,6 +53,7 @@ sub create_invoice{
     my $invoice;
 
     my $schema = $c->model('DB');
+    $schema->set_wait_timeout(900);
     #this has to be refactored  - select a contract balance instead of a "period"
     my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(
         c => $c,
