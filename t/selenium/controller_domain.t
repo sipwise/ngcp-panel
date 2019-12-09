@@ -61,7 +61,6 @@ $d->fill_element('#concurrent_max', 'css', '789');
 $d->find_element('#save', 'css')->click();
 
 diag("Check if value has been applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference concurrent_max successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 $d->scroll_to_element($d->find_element('Access Restrictions', 'link_text'));
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "concurrent_max")]/../td[contains(text(), "789")]'), 'Value has been applied');
@@ -119,7 +118,6 @@ $d->select_if_unselected('//*[@id="transcode_opus_mono"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Opus Mono was enabled");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference transcode_opus_mono successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_mono")]/../td//input[@checked="checked"]'), 'Opus Mono was enabled');
 
@@ -132,7 +130,6 @@ $d->find_element('//*[@id="opus_mono_bitrate"]/option[contains(text(), "32")]')-
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Bitrate was applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference opus_mono_bitrate successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_mono_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), 'Correct bitrate was selected');
 
@@ -144,7 +141,6 @@ $d->select_if_unselected('//*[@id="transcode_opus_stereo"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Opus Stereo was enabled");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference transcode_opus_stereo successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "transcode_opus_stereo")]/../td//input[@checked="checked"]'), 'Opus Stereo was enabled');
 
@@ -157,7 +153,6 @@ $d->find_element('//*[@id="opus_stereo_bitrate"]/option[contains(text(), "32")]'
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Bitrate was applied");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Preference opus_stereo_bitrate successfully updated',  'Correct Alert was shown');
 $d->find_element('//*[@id="toggle-accordions"]')->click();
 ok($d->find_element_by_xpath('//table//tr/td[contains(text(), "opus_stereo_bitrate")]/../td/select/option[text()[contains(., "32")]][@selected="selected"]'), 'Correct bitrate was selected');
 
