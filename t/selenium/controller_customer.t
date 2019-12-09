@@ -163,7 +163,6 @@ $d->find_element('#save', 'css')->click();
 
 diag("Check Fraud Limit details");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Fraud settings successfully changed!',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(),"Fraud Limits")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[contains(text(), "100")]'), 'Limit is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_fraud"]//table//tr//td[contains(text(), "Monthly Settings")]/../td[4][contains(text(), "' . 'mymail@example.org' . '")]'), 'Mail is correct');
@@ -197,7 +196,6 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Cash Balance was set correctly");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Account balance successfully changed!',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "200.00")]'), 'Cash Balance is correct');
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), 'Free-Time Balance is correct');
@@ -220,7 +218,6 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Top-up was successful");
 $d->find_element('//*[@id="toggle-accordions"]')->click();
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Top-up using cash performed successfully!',  'Correct Alert was shown');
 $d->scroll_to_element($d->find_element('//*[@id="customer_details"]//div//a[contains(text(), "Contract Balance")]'));
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "400.00")]'), "Cash Balance is correct");
 ok($d->find_element_by_xpath('//*[@id="collapse_balance"]//table//tr//td//b[contains(text(), "300")]'), "Free-Time Balance is correct");

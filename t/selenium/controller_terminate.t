@@ -96,9 +96,6 @@ ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage
 $d->fill_element('#Customer_table_filter input', 'css', $customerid);
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Found customer');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "locked")]'), 'Status was changed');
-$custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
-$compstring = "Customer #" . $custnum . " successfully updated";
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  'Correct Alert was shown');
 
 diag("Edit Customer status to 'terminated'");
 $d->move_and_click('//*[@id="Customer_table"]/tbody/tr[1]//td//div//a[contains(text(),"Edit")]', 'xpath', '//*[@id="Customer_table_filter"]//input');
@@ -108,8 +105,6 @@ $d->find_element('//*[@id="status"]/option[@value="terminated"]')->click();
 $d->find_element('#save', 'css')->click();
 
 diag("Check if Customer was terminated");
-$compstring = "Customer #" . $custnum . " successfully updated";
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), $compstring,  'Correct Alert was shown');
 $d->fill_element('//*[@id="Customer_table_filter"]/label/input', 'xpath', $customerid);
 ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty', 'css'), 'Customer was terminated');
 
