@@ -89,7 +89,10 @@ $(document).ready(function() {
                 FOR f IN helper.column_fields;
                     IF helper.column_sort == f;
             -%]
-                [ [% loop.index %], "asc" ],
+                [
+                    [% loop.index %],
+                    '[% helper.column_sort_order || "asc" %]'
+                ],
             [%
                     END;
                 END;
