@@ -32,13 +32,13 @@ has_field 'q' => (
     type => 'Float',
     label => 'Priority (q-value)',
     required => 1,
-    range_start => -1,
+    range_start => 0,
     range_end => 1,
     decimal_symbol => '.',
     default => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The contact priority for serial forking (float value, higher is stronger) between -1.00 to 1.00']
+        title => ['The contact priority for serial forking (float value, higher is stronger) between 0 and 1.00']
     },
     #validate_method => \&validate_q,
 );
@@ -76,8 +76,8 @@ sub build_socket_options {
 
 sub validate_q {
     my ($self,$field) = @_;
-    if(($field->value < -1) || ($field->value > 1)){
-        $field->add_error('Value of "q" must be a float value between -1 and 1'); 
+    if(($field->value < 0) || ($field->value > 1)){
+        $field->add_error('Value of "q" must be a float value between 0 and 1');
         return;
     }
     return 1;
