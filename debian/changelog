@@ -1,3 +1,16 @@
+ngcp-panel (8.1.1.1+0~mr8.1.1.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [33bde6c] TT#71313 fix tz selector field for subscribers
+  * [d881688] TT#71908 increase wait timeout when rendering invoicepdf
+
+  [ Flaviu Mates ]
+  * [19bc41f] TT#65503 - Introduce time picker
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 10 Dec 2019 17:44:58 +0100
+
 ngcp-panel (8.1.1.0+0~mr8.1.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
