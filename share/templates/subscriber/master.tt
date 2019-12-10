@@ -285,7 +285,9 @@ function process_pbx_items(moveId,direction){
 [%
     helper.name = c.loc('Registered Devices');
     helper.identifier = 'registered_devices';
-    #helper.column_sort = 'origtime';
+    helper.column_sort = 'q';
+    helper.column_sort_order = 'desc';
+
     helper.dt_columns = reg_dt_columns;
 
     helper.close_target = close_target;
