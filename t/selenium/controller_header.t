@@ -107,24 +107,23 @@ ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), "Enabl
 diag('Edit Header Rule');
 $headerrule = ("header" . int(rand(100000)) . "rule");
 $d->move_and_click('//*[@id="header_rules_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="header_rules_table_filter"]/label/input');
-$d->find_element('//*[@id="priority"]')->click();
-sleep 1;
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rule")]'), 'Edit window has been opened');
 $d->fill_element('//*[@id="priority"]', 'xpath', '1');
 $d->fill_element('//*[@id="name"]', 'xpath', $headerrule);
-$d->move_and_click('//*[@id="direction"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rules")]');
-$d->find_element('//*[@id="direction"]/option[@value="outbound"]')->click();
+#$d->move_and_click('//*[@id="direction"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rules")]');
+#$d->find_element('//*[@id="direction"]/option[@value="outbound"]')->click();
 $d->fill_element('//*[@id="description"]', 'xpath', 'this is a very nice description');
 $d->select_if_unselected('//*[@id="stopper"]');
 $d->find_element('//*[@id="save"]')->click();
 
-diag('Check Details');
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully updated',  "Correct Alert was shown");
-ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[1]', '1'), "Priority is correct");
-ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[3]', $headerrule), "Name is correct");
-ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[4]', 'this is a very nice description'), "Description is correct");
-ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[5]', 'outbound'), "Direction is correct");
-ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[6][contains(text(), "1")]'), "Stopper is correct");
-ok($d->wait_for_text('//*[@id="header_rules_table"]//tr[1]//td[7]', '1'), "Enabled is correct");
+diag("Check details");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Header rule successfully updated',  'Correct Alert was shown');
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "1")]'), 'Priority is correct');
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "' . $headerrule . '")]'), 'Name is correct');
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "this is a very nice description")]'), 'Description is correct');
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "inbound")]'), 'Direction is correct');
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "1")]'), 'Stopper is correct');
+ok($d->find_element_by_xpath('//*[@id="header_rules_table"]//tr[1]//td[contains(text(), "1")]'), 'Enabled is correct');
 
 diag('Create a Second Header Rule');
 $d->find_element("Create Header Rule", 'link_text')->click();
