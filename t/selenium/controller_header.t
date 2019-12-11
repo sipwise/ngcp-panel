@@ -112,7 +112,7 @@ $headerrule = ("header" . int(rand(100000)) . "rule");
 $d->move_and_click('//*[@id="header_rules_table"]//tr[1]//td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="header_rules_table_filter"]/label/input');
 ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rule")]'), 'Edit window has been opened');
 $d->find_element('//*[@id="priority"]')->click();
-sleep 1;
+$d->refresh();
 $d->fill_element('//*[@id="priority"]', 'xpath', '1');
 $d->fill_element('//*[@id="name"]', 'xpath', $headerrule);
 $d->move_and_click('//*[@id="direction"]', 'xpath', '//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Header Rules")]');
