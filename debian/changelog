@@ -1,3 +1,23 @@
+ngcp-panel (6.5.7.1+0~mr6.5.7.1) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [df51c38] TT#68016 selenium: fix controller_billing crashing issues
+
+  [ Rene Krenn ]
+  * [1753e94] TT#68703 workaround slow contract_cnt queries of profiles
+  * [ab1f057] TT#68703 fix workaround slow contract_cnt queries of networks
+  * [1d8d779] TT#62866 find created reg. if domain is NULL
+  * [0bf7005] TT#71210 fraud: check for malformed database views
+  * [59a0bea] TT#71313 fix tz selector field for subscribers
+  * [6f5fcba] TT#71908 increase wait timeout when rendering invoicepdf
+
+  [ Flaviu Mates ]
+  * [7addc9a] TT#69370 - Remove validation of SIP URI type for banned users id's
+  * [e80a9cc] TT#69405 - Allow reseller to view subscriberregistrations
+  * [49895cf] TT#65503 - Introduce time picker
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 Dec 2019 12:01:57 +0100
+
 ngcp-panel (6.5.7.0+0~mr6.5.7.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
