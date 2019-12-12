@@ -267,6 +267,19 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Con
 $d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Contact has been deleted');
 
+diag("Go to 'Security Bans' page");
+$d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
+$d->find_element('Security Bans', 'link_text')->click();
+
+diag("Try to refresh Banned IPs");
+$d->find_element('//*[@id="toggle-accordions"]')->click();
+$d->find_element('Refresh banned IPs data', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="banned_ips_table_processing"][@style="display: none;"]'), "Processing is done");
+
+diag("Try to refresh banned users");
+$d->find_element('Refresh banned users data', 'link_text')->click();
+ok($d->find_element_by_xpath('//*[@id="banned_users_table_processing"][@style="display: none;"]'), "Processing is done");
+
 diag("Go to homepage");
 $d->find_element('//*[@id="main-nav"]/li[1]/a')->click();
 
