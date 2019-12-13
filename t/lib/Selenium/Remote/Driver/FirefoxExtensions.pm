@@ -113,7 +113,7 @@ sub get_text_safe {
         my $element = $self->find_element($path, $type);
         return $element->get_text();
     } catch {
-        $self->capture_screenshot('alert' . int(rand(1000)));
+        $self->capture_screenshot('/results/alert' . int(rand(1000)));
         return 'Element not found';
     };
 }
