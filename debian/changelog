@@ -1,3 +1,10 @@
+ngcp-panel (8.1.1.2+0~mr8.1.1.2) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [9ed171d] TT#68016 selenium: dont change direction when editing header rule
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Dec 2019 08:50:23 +0100
+
 ngcp-panel (8.1.1.1+0~mr8.1.1.1) unstable; urgency=medium
 
   [ Rene Krenn ]
