@@ -156,12 +156,17 @@ has_field 'offpeak_follow_interval' => (
 );
 
 has_field 'use_free_time' => (
-    type => 'Boolean',
+    type => 'Select',
+    options => [
+        { label => 'On Peak', value => 'onpeak'},
+        { label => 'Off Peak', value => 'offpeak'},
+        { label => 'Both On and Off Peak', value => 'both'},
+        { label => 'None', value => 'none'},
+    ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Whether free minutes may be used when calling this destination.']
+        title => ['Wether free minutes may be used and the period in which they are used when calling this destination.']
     },
-    default => 0,
 );
 
 has_field 'onpeak_extra_rate' => (
