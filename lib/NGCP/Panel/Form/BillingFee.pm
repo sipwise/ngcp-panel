@@ -164,6 +164,19 @@ has_field 'use_free_time' => (
     default => 0,
 );
 
+has_field 'free_time_period' => (
+    type => 'Select',
+    options => [
+        { label => 'On Peak', value => 'onpeak'},
+        { label => 'Off Peak', value => 'offpeak'},
+        { label => 'Both On and Off Peak', value => 'both'},
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The period in which free minutes are used when calling this destination.']
+    },
+);
+
 has_field 'onpeak_extra_rate' => (
     type => 'Float',
     size => 15,
@@ -219,7 +232,7 @@ has_block 'fields' => (
     render_list => [qw/billing_zone match_mode source destination direction
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
-        offpeak_follow_rate offpeak_follow_interval use_free_time
+        offpeak_follow_rate offpeak_follow_interval use_free_time free_time_period
         onpeak_extra_rate onpeak_extra_second offpeak_extra_rate offpeak_extra_second
         /],
 );
