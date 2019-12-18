@@ -155,11 +155,20 @@ has_field 'offpeak_follow_interval' => (
     required => 1,
 );
 
-has_field 'use_free_time' => (
+has_field 'onpeak_use_free_time' => (
     type => 'Boolean',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Whether free minutes may be used when calling this destination.']
+        title => ['Whether free minutes may be used during onpeak hours when calling this destination.']
+    },
+    default => 0,
+);
+
+has_field 'offpeak_use_free_time' => (
+    type => 'Boolean',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether free minutes may be used during offpeak hours when calling this destination.']
     },
     default => 0,
 );
@@ -219,7 +228,7 @@ has_block 'fields' => (
     render_list => [qw/billing_zone match_mode source destination direction
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
-        offpeak_follow_rate offpeak_follow_interval use_free_time
+        offpeak_follow_rate offpeak_follow_interval onpeak_use_free_time offpeak_use_free_time
         onpeak_extra_rate onpeak_extra_second offpeak_extra_rate offpeak_extra_second
         /],
 );
