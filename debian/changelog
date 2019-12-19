@@ -1,3 +1,10 @@
+ngcp-panel (8.0.1.13+0~mr8.0.1.13) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [281f394] TT#68016 selenium: take screenshot when alert check fails
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Dec 2019 10:24:40 +0100
+
 ngcp-panel (8.0.1.12+0~mr8.0.1.12) unstable; urgency=medium
 
   [ Nico Schedel ]
