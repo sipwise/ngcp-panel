@@ -1,3 +1,10 @@
+ngcp-panel (7.5.2.8+0~mr7.5.2.8) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [f3d4910] TT#71871 - Fix /api/bannedusers arbitrary result
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Dec 2019 10:57:43 +0100
+
 ngcp-panel (7.5.2.7+0~mr7.5.2.7) unstable; urgency=medium
 
   [ Flaviu Mates ]
