@@ -1371,12 +1371,6 @@ msgid "Chat Status:"
 msgstr "Chat-Status:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"Check the box if you want to perform serial forking based on q-value instead "
-"of parallel forking for registered contacts"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Choose the logic of IPv4/IPv6 autodetection for the RTP relay"
 msgstr "Logik für IPv4/IPv6 Auto-Erkennung für das RTP-Relay"
 
@@ -6542,6 +6536,10 @@ msgid ""
 "interconnect specification"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Q-Value"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "RTC"
 msgstr ""
@@ -7305,6 +7303,17 @@ msgstr ""
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Security Bans"
 msgstr "Sicherheits-Sperren"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Select which type of forking based on q-value you want to perform. Select "
+"'Standard' for the serial forking defined by q-value priority: the higher "
+"the q value number the more priority is given, same values mean parallel "
+"ringing. Select 'Probability' for a serial forking based on probability: "
+"higher q-value means higher probability to be contacted as first, contacts "
+"with q-value 0 have the lowest priority and they are tried after all the "
+"others."
+msgstr ""
 
 #: share/templates/subscriber/webfax.tt
 msgid "Send Fax"
