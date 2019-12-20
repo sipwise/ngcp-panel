@@ -1,3 +1,10 @@
+ngcp-panel (8.0.1.14+0~mr8.0.1.14) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [092fffa] TT#70478 - Enable stateSave for datatables
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Dec 2019 10:38:02 +0100
+
 ngcp-panel (8.0.1.13+0~mr8.0.1.13) unstable; urgency=medium
 
   [ Nico Schedel ]
