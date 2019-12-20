@@ -1,3 +1,10 @@
+ngcp-panel (8.0.1.16+0~mr8.0.1.16) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [58751b0] TT#69407 - Add customer external_id to /api/customerbalances
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Dec 2019 11:14:06 +0100
+
 ngcp-panel (8.0.1.15+0~mr8.0.1.15) unstable; urgency=medium
 
   [ Flaviu Mates ]
