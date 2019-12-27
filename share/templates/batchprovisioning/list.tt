@@ -1,0 +1,15 @@
+[% site_config.title = c.loc('Provisioning Templates')  -%]
+
+[%
+    helper.name = c.loc('Provisioning templates');
+    helper.identifier = 'provisioning_templates';
+    helper.length_change = 1;
+    helper.dt_columns = template_dt_columns;
+    helper.data_static = 1;
+    helper.ajax_uri = c.uri_for_action('/batchprovisioning/ajax');
+
+    helper.dt_buttons = [
+        { name = c.loc('Unban'), uri = "/security/ip/'+encodeURI(full.ip)+'/unban", class = 'btn-small btn-primary', icon = 'icon-removet' },
+    ];
+    PROCESS 'helpers/datatables.tt';
+%]
