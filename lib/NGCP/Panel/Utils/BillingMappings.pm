@@ -134,7 +134,29 @@ EOS
 sub prepare_billing_mappings {
     my (%params) = @_;
 
-    my ($c,$resource,$old_resource,$mappings_to_create,$now,$delete_mappings,$err_code,$billing_profile_field,$billing_profiles_field,$profile_package_field,$billing_profile_definition_field) = @params{qw/c resource old_resource mappings_to_create now delete_mappings err_code billing_profile_field billing_profiles_field profile_package_field billing_profile_definition_field/};
+    my ($c,
+        $resource,
+        $old_resource,
+        $mappings_to_create,
+        $now,
+        $delete_mappings,
+        $err_code,
+        $billing_profile_field,
+        $billing_profiles_field,
+        $profile_package_field,
+        $billing_profile_definition_field) = @params{qw/
+        c
+        resource
+        old_resource
+        mappings_to_create
+        now
+        delete_mappings
+        err_code
+        billing_profile_field
+        billing_profiles_field
+        profile_package_field
+        billing_profile_definition_field
+        /};
 
     my $schema = $c->model('DB');
     if (!defined $err_code || ref $err_code ne 'CODE') {
@@ -445,7 +467,22 @@ sub check_prepaid_profiles_exist {
 
 sub _check_profile_network {
     my (%params) = @_;
-    my ($c,$res,$profile_id_field,$network_id_field,$field,$reseller_id,$err_code,$entities) = @params{qw/c resource profile_id_field network_id_field field reseller_id err_code entities/};
+    my ($c,
+        $res,
+        $profile_id_field,
+        $network_id_field,
+        $field,
+        $reseller_id,
+        $err_code,
+        $entities) = @params{qw/
+        c
+        resource
+        profile_id_field
+        network_id_field
+        field
+        reseller_id
+        err_code entities
+    /};
 
     my $schema = $c->model('DB');
     if (!defined $err_code || ref $err_code ne 'CODE') {

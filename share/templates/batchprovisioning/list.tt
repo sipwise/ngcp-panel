@@ -1,0 +1,21 @@
+[% site_config.title = c.loc('Batch Provisioning')  -%]
+
+[%
+    helper.name = c.loc("Subscriber from Provisioning Template '[_1]'", provisioning_template_name);
+    helper.identifier = 'provisioning_templates';
+    helper.length_change = 1;
+    helper.dt_columns = template_dt_columns;
+    helper.data_static = 1;
+    helper.messages = messages;
+    helper.ajax_uri = c.uri_for_action('/batchprovisioning/ajax');
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+
+    helper.dt_buttons = [
+        { name = c.loc('form'), uri = "/batchprovisioning/'+encodeURI(full.name)+'/form", class = 'btn-small btn-primary', icon = 'icon-edit' },
+    ];
+    PROCESS 'helpers/datatables.tt';
+%]
