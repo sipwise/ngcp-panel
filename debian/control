@@ -60,6 +60,7 @@ Depends:
  libemail-mime-perl,
  libemail-sender-perl,
  libemail-valid-perl,
+ libeval-closure-perl,
  libfcgi-procmanager-perl,
  libfile-fnmatch-perl,
  libfile-slurp-perl,
