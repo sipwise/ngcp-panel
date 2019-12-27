@@ -251,8 +251,7 @@ sub process_billing_fees{
             push @fails, $linenum;
             next;
         }
-        $row->{onpeak_extra_second} = undef if $row->{onpeak_extra_second} eq '';
-        $row->{offpeak_extra_second} = undef if $row->{offpeak_extra_second} eq '';
+
         my $k = $row->{zone}.'__NGCP__'.$row->{zone_detail};
         unless(exists $zones{$k}) {
             my $zone = $profile->billing_zones->find_or_create({
@@ -265,6 +264,11 @@ sub process_billing_fees{
         delete $row->{zone};
         delete $row->{zone_detail};
         $row->{match_mode} = 'regex_longest_pattern' unless $row->{match_mode};
+        $row->{onpeak_extra_rate} = 0 unless $row->{onpeak_extra_rate};
+        $row->{offpeak_extra_rate} = 0 unless $row->{offpeak_extra_rate};
+        $row->{onpeak_extra_second} = undef if (defined $row->{onpeak_extra_second} and $row->{onpeak_extra_second} eq '');
+        $row->{offpeak_extra_second} = undef if (defined $row->{offpeak_extra_second} and $row->{offpeak_extra_second} eq '');
+        $row->{offpeak_use_free_time} = $row->{onpeak_use_free_time} if (not defined $row->{offpeak_use_free_time} or $row->{offpeak_use_free_time} eq '');
         unless (validate_billing_fee($row,
             sub {
                 my ($field,$error,$error_detail) = @_;
