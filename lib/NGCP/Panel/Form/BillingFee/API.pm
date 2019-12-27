@@ -28,7 +28,7 @@ has_block 'fields' => (
     render_list => [qw/purge_existing billing_zone billing_profile_id match_mode source destination direction
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
-        offpeak_follow_rate offpeak_follow_interval use_free_time
+        offpeak_follow_rate offpeak_follow_interval onpeak_use_free_time offpeak_use_free_time
         /],
 );
 
