@@ -265,6 +265,7 @@ sub process_billing_fees{
         delete $row->{zone};
         delete $row->{zone_detail};
         $row->{match_mode} = 'regex_longest_pattern' unless $row->{match_mode};
+        $row->{offnet_use_free_time} = $row->{onnet_use_free_time} unless $row->{offnet_use_free_time} eq '';
         unless (validate_billing_fee($row,
             sub {
                 my ($field,$error,$error_detail) = @_;
