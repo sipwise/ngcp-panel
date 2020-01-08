@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "174a2cba_11574fb6",
+        "filename": "lib/NGCP/Panel/Form/TimeSet/EventAdvanced.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-01-08T12:07:43Z",
+      "side": 1,
+      "message": "\"unless\" + negation is the hard to read style :)\n\nI would change it to\n\nif ($weekdaynumber-\u003evalue \u0026\u0026 $weekdaynumber-\u003evalue !~ ...)",
+      "range": {
+        "startLine": 698,
+        "startChar": 8,
+        "endLine": 698,
+        "endChar": 17
+      },
+      "revId": "d386647095581b96da7dcaffd480fdb4771501bb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
