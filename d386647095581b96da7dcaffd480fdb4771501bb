@@ -22,6 +22,30 @@
       "revId": "d386647095581b96da7dcaffd480fdb4771501bb",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03c7562c_8eb69d3d",
+        "filename": "lib/NGCP/Panel/Form/TimeSet/EventAdvanced.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-01-08T12:14:37Z",
+      "side": 1,
+      "message": "Good point. Done.",
+      "parentUuid": "174a2cba_11574fb6",
+      "range": {
+        "startLine": 698,
+        "startChar": 8,
+        "endLine": 698,
+        "endChar": 17
+      },
+      "revId": "d386647095581b96da7dcaffd480fdb4771501bb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
