@@ -695,7 +695,7 @@ sub validate_byday {
     my ($self, $field) = @_;
 
     if (my $weekdaynumber = $field->field('weekdaynumber')) {
-        unless ($weekdaynumber->value =~ /^([+-]?\d)(MO|TU|WE|TH|FR|SA|SO)$/) {
+        if ($weekdaynumber->value && $weekdaynumber->value !~ /^([+-]?\d)(MO|TU|WE|TH|FR|SA|SO)$/) {
             $weekdaynumber->add_error($weekdaynumber->label . ' should be like (\+|-)?\d*(MO|TU|WE|TH|FR|SA|SO) (e.g. 5FR)');
             return 0;
         }
