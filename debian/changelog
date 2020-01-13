@@ -1,3 +1,28 @@
+ngcp-panel (8.0.3.0+0~mr8.0.3.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [14f2605] TT#69304 - Fix typo that broke '/api/speeddials'
+  * [e9f383d] TT#69370 - Remove validation of SIP URI type for banned users id's
+  * [1337ae7] TT#69360 - Fix 500 errors when issuing POST to HeaderRule(Actions|Conditions)
+  * [d1aa1fa] TT#65503 - Introduce time picker
+  * [39af862] TT#70478 - Enable stateSave for datatables
+  * [0515792] TT#71871 - Fix /api/bannedusers arbitrary result
+  * [9999d26] TT#69407 - Add customer external_id to /api/customerbalances
+
+  [ Nico Schedel ]
+  * [0a7b8b7] TT#68016 selenium: workaround for selenium crashing on select list elements
+  * [043199c] TT#68016 selenium: dont crash script if select_if_unselected cant find elem
+  * [4c25bb2] TT#68016 selenium: check customer alerts after expanding all columns
+  * [7c82beb] TT#68016 selenium: more improvements to controller_terminate
+  * [2a35391] TT#68016 selenium: another "crash on select list elements" workaround
+  * [ffe4802] TT#68016 selenium: add controller_terminate to default test plan
+  * [8dacbbf] TT#68016 selenium: simplify get_text_safe()
+  * [cb5279e] TT#68016 selenium: more improvements to  get_text_safe()
+  * [e860884] TT#68016 selenium: dont change direction when editing header rule
+  * [dcfbac0] TT#68016 selenium: take screenshot when alert check fails
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Jan 2020 15:19:27 +0100
+
 ngcp-panel (8.0.2.0+0~mr8.0.2.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
