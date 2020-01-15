@@ -6090,6 +6090,10 @@ msgid "Outbound History-Info Field"
 msgstr "Campo History-Info in Uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Outbound PAI Display-Name Field"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Outbound PAI-Username Field"
 msgstr "Campo PAI-Username in Uscita"
 
@@ -8500,6 +8504,10 @@ msgstr ""
 "Il contenuto da inserire nello username dell´header P-Preferred-Identity per "
 "chiamate in uscita dalla piattaforma all´abbonato (usare \"None\" per non "
 "settare questo header"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The content to put into the PAI display-name for outbound calls"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""

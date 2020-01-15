@@ -5319,6 +5319,10 @@ msgid "Outbound History-Info Field"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Outbound PAI Display-Name Field"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Outbound PAI-Username Field"
 msgstr ""
 
@@ -7352,6 +7356,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The content to put into the P-Preferred-Identity username for outbound calls from the platform to the subscriber (use \"None\" to not set header at all)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The content to put into the PAI display-name for outbound calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
