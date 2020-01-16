@@ -892,7 +892,10 @@ sub update_subscriber_numbers {
         });
 
         if(defined $acli_pref) {
-            $acli_pref->delete;
+            if (defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
+                my @formatted_alias_numbers = map { $_->{e164}->{cc} . ($_->{e164}->{ac} // '') . $_->{e164}->{sn} } @$alias_numbers;
+                $acli_pref->search({ value => { -in => \@formatted_alias_numbers } })->delete;
+            }
         }
         my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
@@ -1159,9 +1162,6 @@ sub update_subscriber_numbers {
         $prov_subs->voip_dbaliases->search({
             username => { 'not in' => \@dbnums },
         })->delete;
-        if(defined $acli_pref) {
-            $acli_pref->search({ value => { 'not in' => \@dbnums }})->delete;
-        }
     }
 
     return;
