@@ -2769,6 +2769,10 @@ msgstr "Priorisation de numéros d'urgence"
 msgid "Emergency Suffix variable"
 msgstr "Variable suffixe de numéros d'urgence"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency User-Provided-Number Field"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency code already defined for emergency mapping container!"
 msgstr ""
@@ -7559,6 +7563,12 @@ msgstr "Notifier le renouvellement de la Clé Secrète"
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "Security Bans"
 msgstr "Interdictions de sécurité"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Select if, in case of emergency calls, the subscriber's User-Provided-Number "
+"is ovewritten with the Network-Provided-Number (default) or not."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""

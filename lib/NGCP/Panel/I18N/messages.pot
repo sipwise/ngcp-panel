@@ -2211,6 +2211,10 @@ msgstr ""
 msgid "Emergency Suffix variable"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency User-Provided-Number Field"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency code already defined for emergency mapping container!"
 msgstr ""
@@ -6507,6 +6511,10 @@ msgstr ""
 
 #: share/templates/security/list.tt share/templates/widgets/admin_topmenu_settings.tt
 msgid "Security Bans"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Select if, in case of emergency calls, the subscriber's User-Provided-Number is ovewritten with the Network-Provided-Number (default) or not."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
