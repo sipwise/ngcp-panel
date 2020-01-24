@@ -153,7 +153,7 @@ sub _rows_from_mapkey {
     foreach my $key (@{ $keys }) {
         my %entry = $self->_redis->hgetall($key);
         $entry{id} = $entry{ruid};
-	next unless $entry{id};
+	    next unless $entry{id};
         my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
             join => { 'contract' => { 'contact' => 'reseller' } },
             '+select' => ['reseller.id'],
