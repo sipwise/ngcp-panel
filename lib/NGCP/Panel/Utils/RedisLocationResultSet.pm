@@ -177,6 +177,7 @@ sub _rows_from_mapkey {
     foreach my $key (@{ $keys }) {
         my %entry = $self->_redis->hgetall($key);
         $entry{id} = $entry{ruid};
+	next unless $entry{id};
         # deflate expires column
         if ($entry{expires}) {
             $entry{expires} = strftime("%Y-%m-%d %H:%M:%S", localtime($entry{expires}));
