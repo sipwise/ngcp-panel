@@ -51,56 +51,30 @@ sub _replace_vars {
 
     # substitute variables in content
     if ( $args->{content} ) {
-        if ( ref $args->{content} eq 'HASH' ) {
-            foreach my $content_key (keys %{$args->{content}}) {
-                if ( $args->{content}->{$content_key} && $args->{content}->{$content_key} =~ /\$\{(.*)\}/ ) {
-                    if ( ref $args->{retain}->{$1} eq 'ARRAY' || ref $args->{retain}->{$1} eq 'HASH' ) {
-                        $args->{content}->{$content_key} = $args->{retain}->{$1};
-                    }
-                    else {
-                        $args->{content}->{$content_key} =~ s/\$\{(.*)\}/$args->{retain}->{$1}/;
-                    }
-                }
-                elsif ( $args->{content}->{$content_key} && $args->{content}->{$content_key} =~ /^\$\{(.*)\}\..+/ ) {
-                    my @splitted_values = split (/\./, $args->{content}->{$content_key});
-                    $args->{content}->{$content_key} = $self->_retrieve_from_composed_key( \@splitted_values, $args->{retain} );
-                }
-            }
-        }
-        elsif ( ref $args->{content} eq 'ARRAY' ) {
-            foreach my $content ( @{$args->{content}} ) {
-                foreach my $content_key (keys %$content) {
-                    if ( $content->{$content_key} && $content->{$content_key} =~ /\$\{(.*)\}$/ ) {
-                        if ( ref $args->{retain}->{$1} eq 'ARRAY' || ref $args->{retain}->{$1} eq 'HASH' ) {
-                            $content->{$content_key} = $args->{retain}->{$1};
-                        }
-                        else {
-                            $content->{$content_key} =~ s/\$\{(.*)\}/$args->{retain}->{$1}/;
-                        }
-                    }
-                    elsif ( $content->{$content_key} && $content->{$content_key} =~ /^\$\{(.*)\}\..+/ ) {
-                        my @splitted_values = split (/\./, $content->{$content_key});
-                        $content->{$content_key} = $self->_retrieve_from_composed_key( \@splitted_values, $args->{retain} );
-                    }
-                }
-            }
-        }
-        else {
-            if ( $args->{content} =~ /\$\{(.*)\}/ ) {
-                $args->{content} = $args->{retain}->{$1};
-            }
-        }
+        $args->{content} = $self->_replace_vars_recursion($args->{content}, $args->{retain});
     }
 }
 
-sub _retrieve_from_composed_key {
-    my ( $self, $splitted_values, $retained ) = @_;
+sub _replace_vars_recursion {
+    my ( $self, $elem, $retain ) = @_;
 
-    if ( $splitted_values->[0] =~ /\$\{(.*)\}/ ) {
-        my $value = $retained->{$1};
-        grep { $value = $value->{$splitted_values->[$_]} } (1..(scalar @$splitted_values - 1));
-        return $value;
+    if ( ref $elem eq 'HASH' ) {
+        foreach my $k (keys %{$elem}) {
+            $elem->{$k} = $self->_replace_vars_recursion($elem->{$k}, $retain);
+        }
+    } elsif ( ref $elem eq 'ARRAY' ) {
+        foreach my $e ( @{$elem} ) {
+            $e = $self->_replace_vars_recursion($e, $retain);
+        }
+    } elsif ( ref $elem eq '' and defined $elem and $elem =~ /\$\{(.*)\}/ ) {
+        if ( ref $retain->{$1} eq '' ) {
+            $elem =~ s/\$\{(.*)\}/$retain->{$1}/;
+        } else {
+            $elem = $retain->{$1};
+        }
     }
+
+    return $elem;
 }
 
 1;

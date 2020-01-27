@@ -44,7 +44,7 @@ sub run_tests {
                         INFO ( "Check ok." );
                     }
                     else {
-                        ERROR ( "NOT OK. Expected: ".$result->code.". Got: $check_value" );
+                        ERROR ( "NOT OK. Expected: $check_value. Got: ".$result->code);
                         $tests_result->{success} = 0;
                         push @{$tests_result->{errors}}, "Error at 'is' condition for test '$test_name'";
                     }
