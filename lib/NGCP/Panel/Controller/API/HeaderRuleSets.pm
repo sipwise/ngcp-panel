@@ -51,7 +51,48 @@ sub create_item {
     my $item;
     my $schema = $c->model('DB');
     try {
+        my $header_rules = delete $resource->{rules};
         $item = $schema->resultset('voip_header_rule_sets')->create($resource);
+        if ($header_rules) {
+            foreach my $rule (@$header_rules) {
+                my $header_actions = delete $rule->{actions};
+                my $header_conditions = delete $rule->{conditions};
+                $rule->{set_id} = $item->id;
+                last unless $self->validate_form(
+                    c => $c,
+                    resource => $rule,
+                    form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::RuleAPI", $c)),
+                );
+                my $rule_result = $schema->resultset('voip_header_rules')->create($rule);
+                if ($header_actions) {
+                    foreach my $action (@$header_actions) {
+                        $action->{rule_id} = $rule_result->id;
+                        last unless $self->validate_form(
+                            c => $c,
+                            resource => $action,
+                            form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::ActionAPI", $c)),
+                        );
+                        last unless NGCP::Panel::Role::API::HeaderRuleActions->check_resource($c, undef, undef, $action, undef, undef);
+                        my $action_result = $schema->resultset('voip_header_rule_actions')->create($action);
+                    }
+                }
+                if ($header_conditions) {
+                    foreach my $condition (@$header_conditions) {
+                        $condition->{rule_id} = $rule_result->id;
+                        last unless $self->validate_form(
+                            c => $c,
+                            resource => $condition,
+                            form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::ConditionAPI", $c)),
+                        );
+                        last unless NGCP::Panel::Role::API::HeaderRuleConditions->check_resource($c, undef, undef, $condition, undef, undef);
+                        my $condition_result = $schema->resultset('voip_header_rule_conditions')->create($condition);
+                    }
+                }
+            }
+            NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
+                c => $c, set_id => $item->id
+            );
+        }
     } catch($e) {
         $c->log->error("failed to create a header rule set: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule set.");
