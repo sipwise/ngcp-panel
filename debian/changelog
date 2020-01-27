@@ -1,3 +1,40 @@
+ngcp-panel (8.2.1.0+0~mr8.2.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [287a5f4] TT#4166 I18N dump: snapshot 2019.11.23-01.23.44
+  * [31a0245] TT#4166 I18N dump: snapshot 2019.11.27-01.23.41
+  * [16a6f1d] TT#4166 I18N dump: snapshot 2019.12.20-01.47.12
+  * [e727807] TT#4166 I18N dump: snapshot 2020.01.15-01.30.29
+  * [2d0a48e] TT#4166 I18N dump: snapshot 2020.01.17-01.21.17
+
+  [ Flaviu Mates ]
+  * [7a61d76] TT#65503 - Introduce time picker
+  * [782539c] TT#70857 - Implement UI and API support for one time fees
+  * [b0baf12] TT#69407 - Add customer external_id to /api/customerbalances
+  * [374a42c] TT#70478 - Enable stateSave for datatables
+  * [2d9d9a8] TT#71871 - Fix /api/bannedusers arbitrary result
+  * [b76e462] TT#72750 - Allow empty value for week day number in timeset event
+  * [ea1e40b] TT#73550 - Fix deletion of allowed_cli when patching alias_numbers
+
+  [ Rene Krenn ]
+  * [e3c87a1] TT#71313 fix tz selector field for subscribers
+  * [312d9e7] TT#71908 increase wait timeout when rendering invoicepdf
+  * [2bc84bd] TT#72900 fee onoffpeak usefreetime
+  * [8d19c6d] TT#74809 ignore ghost registrations
+
+  [ Nico Schedel ]
+  * [0d462c8] TT#68016 selenium: dont change direction when editing header rule
+  * [339dcbb] TT#68016 selenium: take screenshot when alert check fails
+  * [d48699f] TT#68016 selenium: add test: check if security bans are working
+  * [ee17dcc] TT#68016 selenium: actually use correct path for saving screenshots
+  * [58ff2d1] TT#68016 selenium: add proper file type to alert screenshots
+
+  [ Marco Capetta ]
+  * [6b56047] TT#71356 Add Q-Value column in Registered Devices table
+  * [3eb52a3] TT#72408 Don't allow permanent reg with negative q-value
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Jan 2020 12:23:16 +0100
+
 ngcp-panel (8.2.0.0+0~mr8.2.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
