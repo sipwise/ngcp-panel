@@ -116,13 +116,71 @@ sub check_duplicate {
 sub update_item_model {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    $item = $self->SUPER::update_item_model($c, $item, $old_resource, $resource, $form);
+    my $header_rules = delete $resource->{rules};
+    $item->update($resource);
+    if ($header_rules) {
+        $item->voip_header_rules->delete;
+        foreach my $rule (@$header_rules) {
+            my $header_actions = delete $rule->{actions};
+            my $header_conditions = delete $rule->{conditions};
+            $rule->{set_id} = $item->id;
+            last unless $self->validate_form(
+                c => $c,
+                resource => $rule,
+                form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::RuleAPI", $c)),
+            );
+            my $rule_result = $item->voip_header_rules->create($rule);
+            if ($header_actions) {
+                foreach my $action (@$header_actions) {
+                    $action->{rule_id} = $rule_result->id;
+                    last unless $self->validate_form(
+                        c => $c,
+                        resource => $action,
+                        form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::ActionAPI", $c)),
+                    );
+                    last unless NGCP::Panel::Role::API::HeaderRuleActions->check_resource($c, undef, undef, $action, undef, undef);
+                    my $action_result = $rule_result->actions->create($action);
+                }
+            }
+            if ($header_conditions) {
+                foreach my $condition (@$header_conditions) {
+                    $condition->{rule_id} = $rule_result->id;
+                    last unless $self->validate_form(
+                        c => $c,
+                        resource => $condition,
+                        form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::ConditionAPI", $c)),
+                    );
+                    last unless NGCP::Panel::Role::API::HeaderRuleConditions->check_resource($c, undef, undef, $condition, undef, undef);
+                    my $condition_result = $rule_result->conditions->create($condition);
+                }
+            }
+        }
+    }
 
     NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
         c => $c, set_id => $item->id
     );
 
     return $item;
+}
+
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my %resource = $item->get_inflated_columns;
+    my @rules = ();
+
+    foreach my $r ($item->voip_header_rules->all) {
+        my @conditions = map { {$_->get_inflated_columns} } $r->conditions->all;
+        my @actions = map { {$_->get_inflated_columns} } $r->actions->all;
+        push @rules, { $r->get_inflated_columns,
+                       conditions => \@conditions,
+                       actions => \@actions
+                     };
+    }
+    $resource{rules} = \@rules;
+
+    return \%resource;
 }
 
 1;
