@@ -12,10 +12,19 @@ has_field 'reseller_id' => (
     },
 );
 
+has_field 'rules' => (
+    type => 'Compound',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The list of rules in the set.'],
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller_id subscriber_id name description/],
+    render_list => [qw/reseller_id subscriber_id name description rules/],
 );
 
 1;
