@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fdc9344b_dd72fa3a",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-28T13:48:53Z",
+      "side": 1,
+      "message": "you could avoid the exists check, as length will do a defined check by itself.",
+      "revId": "e879cb244f07afe8b007502c60effdca48156566",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
