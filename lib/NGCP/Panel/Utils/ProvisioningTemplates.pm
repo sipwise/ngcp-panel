@@ -350,6 +350,7 @@ sub provision_commit_row {
         );
         if ($purge) {
             if ($subscriber) {
+                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
                 NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
                 _create_subscriber(
                     $c,
@@ -372,6 +373,7 @@ sub provision_commit_row {
         );
         if ($purge) {
             if ($subscriber) {
+                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
                 NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
                 _init_subscriber_context(
                     $c,
@@ -514,7 +516,7 @@ sub _init_contract_context {
 
     if (exists $template->{contract_contact}) {
         my %contract_contact = ();
-        my $identifier = (exists $template->{contract_contact}->{$IDENTIFIER_FNAME} ? $template->{contract_contact}->{$IDENTIFIER_FNAME} : undef);
+        my @identifiers = _get_identifiers($template->{contract_contact});
         foreach my $col (keys %{$template->{contract_contact}}) { #no inter-field dependecy
             next if $col eq $IDENTIFIER_FNAME;
             my ($k,$v) = _calculate($context,$col, $template->{contract_contact}->{$col});
@@ -535,9 +537,9 @@ sub _init_contract_context {
             delete $contract_contact{reseller};
         }
         $context->{contract_contact} = \%contract_contact;
-        if ($identifier) {
+        if (scalar @identifiers) {
             if (my $e = $schema->resultset('contacts')->search_rs({
-                    $identifier => $contract_contact{$identifier},
+                    map { $_ => $contract_contact{$_}; } @identifiers
                 })->first) {
                 $contract_contact{id} = $e->id;
             } else {
@@ -557,7 +559,7 @@ sub _init_contract_context {
 
     {
         my %contract = ();
-        my $identifier = (exists $template->{contract}->{$IDENTIFIER_FNAME} ? $template->{contract}->{$IDENTIFIER_FNAME} : undef);
+        my @identifiers = _get_identifiers($template->{contract});
         foreach my $col (keys %{$template->{contract}}) {
             next if $col eq $IDENTIFIER_FNAME;
             my ($k,$v) = _calculate($context,$col, $template->{contract}->{$col});
@@ -612,9 +614,9 @@ sub _init_contract_context {
         #todo: invoice_template_id
 
         $context->{contract} = \%contract;
-        if ($identifier) {
+        if (scalar @identifiers) {
             if (my $e = $schema->resultset('contracts')->search_rs({
-                    $identifier => $contract{$identifier},
+                    map { $_ => $contract{$_}; } @identifiers
                 })->first) {
                 $contract{id} = $e->id;
             } else {
@@ -1125,6 +1127,18 @@ sub _get_duplicate_subs {
     }
 
     return ($msg, $subscriber);
+
+}
+
+sub _get_identifiers {
+
+    my ($template_item) = @_;
+    my $identifier = (exists $template_item->{$IDENTIFIER_FNAME} ? $template_item->{$IDENTIFIER_FNAME} : undef);
+    my @identifiers = ();
+    if (length($identifier)) {
+        @identifiers = map { $_ =~ s/^\s|\s$//gr; } split(/[,; \t]+/,$identifier);
+    }
+    return @identifiers;
 
 }
 
