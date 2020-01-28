@@ -16,6 +16,24 @@
       "revId": "e879cb244f07afe8b007502c60effdca48156566",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6cab32b2_147c2bd6",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-01-28T13:51:30Z",
+      "side": 1,
+      "message": "\u003eas length will do a defined check by itself.\nyes - the \"if\" below relies on this.\n\nbut the exists here is intentional (imho good practive in general), to prevent auto-vivification.",
+      "parentUuid": "fdc9344b_dd72fa3a",
+      "revId": "e879cb244f07afe8b007502c60effdca48156566",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
