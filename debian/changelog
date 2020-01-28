@@ -1,3 +1,11 @@
+ngcp-panel (8.1.1.7+0~mr8.1.1.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f6190b2] TT#73364 batch provisioning
+  * [960e317] TT#75110 support multiple identifier fields
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Jan 2020 15:43:43 +0100
+
 ngcp-panel (8.1.1.6+0~mr8.1.1.6) unstable; urgency=medium
 
   [ Flaviu Mates ]
