@@ -799,6 +799,12 @@ msgstr "Заблокированные IP"
 msgid "Banned Users"
 msgstr "Заблокированные пользователи"
 
+#: share/templates/batchprovisioning/list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
+msgid "Batch Provisioning"
+msgstr ""
+
 #: share/templates/widgets/admin_billing_overview.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/reseller_billing_overview.tt
@@ -1055,6 +1061,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CSTA Controller"
+msgstr ""
+
+#. ($linecount, scalar @$errors)
+#. ($linecount, 0)
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "CSV file (%1 lines) processed, %2 error(s)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2181,6 +2193,7 @@ msgstr "Развернутые устройства"
 msgid "Deprecated, no longer used by the system."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Header.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
@@ -3480,6 +3493,10 @@ msgstr "Не удалось переместить правило перезап
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to preview template"
 msgstr "Не удалось создать предварительный просмотр шаблона"
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Failed to process CSV file."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to recover web password"
@@ -5680,6 +5697,7 @@ msgstr ""
 msgid "NTP server sync interval"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
@@ -5753,6 +5771,10 @@ msgstr "Не указан файл с ценами!"
 
 #: lib/NGCP/Panel/Controller/Voucher.pm
 msgid "No Billing Voucher file specified!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "No CSV file specified!"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
@@ -5907,6 +5929,10 @@ msgstr "Недоступен"
 #: share/templates/notfound_page.tt
 msgid "Oops!"
 msgstr "Бабах!"
+
+#: share/templates/batchprovisioning/list.tt
+msgid "Open Form"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
 msgid "Openvpn connection closed."
@@ -6546,6 +6572,16 @@ msgstr ""
 "SDP как объект MIME с типом \"application/vnd.cirpack.isdn-ext\" и \"content-"
 "disposition: signal;handling=required\" в соответствии с Немецкой  "
 "спецификацией по коммуникации NGN"
+
+#. ($template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain})
+#: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
+msgid "Provisioning template '%1' done: subscriber %2 created"
+msgstr ""
+
+#. ($template, $e)
+#: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
+msgid "Provisioning template '%1' failed: %2"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Q-Value"
@@ -7857,6 +7893,11 @@ msgstr "Настройки абонента"
 msgid "Subscriber does not exist"
 msgstr "Абонент не существует"
 
+#. (provisioning_template_name)
+#: share/templates/batchprovisioning/list.tt
+msgid "Subscriber from Provisioning Template '%1'"
+msgstr ""
+
 #. (prov_lock_string)
 #: share/templates/subscriber/master.tt
 msgid "Subscriber is locked for <b>%1</b>"
@@ -8590,6 +8631,7 @@ msgid "To (B-Numbers)"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
 msgid "Tools"
 msgstr ""
 
@@ -8783,6 +8825,7 @@ msgstr ""
 msgid "Upload"
 msgstr "Загрузить"
 
+#: share/templates/batchprovisioning/list.tt
 #: share/templates/calllistsuppression/list.tt
 #: share/templates/customer/details.tt share/templates/emergencymapping/list.tt
 #: share/templates/lnp/list.tt share/templates/phonebook/list.tt

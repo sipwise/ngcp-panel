@@ -867,6 +867,12 @@ msgstr "IP bannies"
 msgid "Banned Users"
 msgstr "Utilisateurs bannis"
 
+#: share/templates/batchprovisioning/list.tt
+#: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
+msgid "Batch Provisioning"
+msgstr ""
+
 #: share/templates/widgets/admin_billing_overview.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/reseller_billing_overview.tt
@@ -1126,6 +1132,12 @@ msgstr "Client CSTA"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CSTA Controller"
 msgstr "Controlleur CSTA"
+
+#. ($linecount, scalar @$errors)
+#. ($linecount, 0)
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "CSV file (%1 lines) processed, %2 error(s)."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Call Blockings"
@@ -2285,6 +2297,7 @@ msgstr "Postes déployés"
 msgid "Deprecated, no longer used by the system."
 msgstr "Obsolète, n'est plus utilisé par le système."
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Header.pm
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
@@ -3609,6 +3622,10 @@ msgstr "Echec lors du déplacement de la règle de reformulation."
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to preview template"
 msgstr "Echec lors de la prévisualisation du modèle"
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Failed to process CSV file."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to recover web password"
@@ -5895,6 +5912,7 @@ msgstr "URL du derveur NTP."
 msgid "NTP server sync interval"
 msgstr "Intervalle de synchro du serveur NTP"
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Customer.pm
 #: lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
@@ -5969,6 +5987,10 @@ msgstr "Aucun fichier de facturation spécifié!"
 #: lib/NGCP/Panel/Controller/Voucher.pm
 msgid "No Billing Voucher file specified!"
 msgstr "Aucun fichier de bon de facturation spécifié!"
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "No CSV file specified!"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "No LNP number file specified!"
@@ -6122,6 +6144,10 @@ msgstr "Hors ligne"
 #: share/templates/notfound_page.tt
 msgid "Oops!"
 msgstr "Oups!"
+
+#: share/templates/batchprovisioning/list.tt
+msgid "Open Form"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
 msgid "Openvpn connection closed."
@@ -6768,6 +6794,16 @@ msgstr ""
 "qu'objet MIME avec le type de contenu \"application/vnd.cirpack.isdn-ext\" "
 "et \"content-disposition: signal;handling=required;\" en accord avec la "
 "spécification d'interconnexion NGN allemande"
+
+#. ($template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain})
+#: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
+msgid "Provisioning template '%1' done: subscriber %2 created"
+msgstr ""
+
+#. ($template, $e)
+#: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
+msgid "Provisioning template '%1' failed: %2"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Q-Value"
@@ -8118,6 +8154,11 @@ msgstr "Paramètres de l'abonné"
 msgid "Subscriber does not exist"
 msgstr "L'abonné n'existe pas"
 
+#. (provisioning_template_name)
+#: share/templates/batchprovisioning/list.tt
+msgid "Subscriber from Provisioning Template '%1'"
+msgstr ""
+
 #. (prov_lock_string)
 #: share/templates/subscriber/master.tt
 msgid "Subscriber is locked for <b>%1</b>"
@@ -8875,6 +8916,7 @@ msgid "To (B-Numbers)"
 msgstr "Vers (numéro distant)"
 
 #: share/templates/widgets/admin_topmenu_settings.tt
+#: share/templates/widgets/ccareadmin_topmenu_settings.tt
 msgid "Tools"
 msgstr "Outils"
 
@@ -9068,6 +9110,7 @@ msgstr "Haut"
 msgid "Upload"
 msgstr "Télécharger"
 
+#: share/templates/batchprovisioning/list.tt
 #: share/templates/calllistsuppression/list.tt
 #: share/templates/customer/details.tt share/templates/emergencymapping/list.tt
 #: share/templates/lnp/list.tt share/templates/phonebook/list.tt
