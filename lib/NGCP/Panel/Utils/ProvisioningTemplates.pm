@@ -28,6 +28,14 @@ use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::Kamailio qw();
 
+our $DISABLE_EXIT = 0;
+*CORE::GLOBAL::exit = sub (;$) {
+    ## no critic (TestingAndDebugging::ProhibitNoWarnings)
+    no warnings 'exiting';
+    die('exit() called') if $DISABLE_EXIT;
+    CORE::exit($_[0] // 0);
+};
+
 my $IDENTIFIER_FNAME = 'identifier';
 my $CODE_SUFFIX_FNAME = '_code';
 my $FIELD_TYPE_ATTRIBUTE = 'type';
@@ -997,6 +1005,7 @@ sub _calculate {
     $context->{cr_c} //= {};
     if ($f =~ /^([a-z0-9_]+)$CODE_SUFFIX_FNAME$/) {
         my $cl;
+        local $DISABLE_EXIT = 1;
         if ($strict_closure) {
             $cl = eval_closure(
                 source      => $c,
