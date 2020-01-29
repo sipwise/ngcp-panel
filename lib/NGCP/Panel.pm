@@ -121,6 +121,7 @@ __PACKAGE__->config(
     'Plugin::Session' => {
         flash_to_stash => 1,
         expires => 3600,
+        cookie_secure => 1,
     },
 
     'Plugin::Authentication' => {
