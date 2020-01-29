@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c484820_5ccfcc78",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-29T18:13:23Z",
+      "side": 1,
+      "message": "Doesn\u0027t this need to be within a BEGIN block?",
+      "revId": "2aa40a42268ff00318185a916405b121615ff822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e5d28e0_9dbe352a",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-29T18:13:23Z",
+      "side": 1,
+      "message": "Who is calling exit?",
+      "revId": "2aa40a42268ff00318185a916405b121615ff822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
