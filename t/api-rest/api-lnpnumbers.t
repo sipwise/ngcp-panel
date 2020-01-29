@@ -40,7 +40,7 @@ $test_machine->DATA_ITEM_STORE($data);
     $test_machine->check_create_correct( 3, sub{ $_[0]->{number} .= $_[1]->{i}; } );
     $test_machine->check_get2put();
     $test_machine->check_bundle();
-    #we need to delete existing, if we want to check downloded content later
+    #we need to delete existing, if we want to check downloaded content later
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.
 }
 {

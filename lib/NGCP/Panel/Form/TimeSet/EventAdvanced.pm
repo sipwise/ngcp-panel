@@ -13,7 +13,7 @@ sub build_form_element_class { [qw/form-horizontal/] }
 
 my $switch_labeled_fields = [qw/byday bysetpos byyearday bymonthday byminute byweekno bysecond bymonth byhour/];
 
-#check irka existance
+#check irka existence
 #switch of the active field for the week days
 #input for month days, because +1,-1 is valid input, the same switch as for week days 
 

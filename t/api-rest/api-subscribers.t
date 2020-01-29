@@ -264,7 +264,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{alias_numbers} = [];#@{$alias_numbers}[2,3]
         } )->[0];
         my ($aliases) = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
-        ok(((scalar @$aliases) == 4),"50802: aliases of ".$pilot_local->{content}->{id}." arent empty:".(scalar @$aliases ));
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$pilot_local->{content}->{id}." are not empty:".(scalar @$aliases ));
         diag("50802: assign all aliases to member_to_terminate");
         foreach my $alias (@$aliases) {
             !$alias->{location} && next;
@@ -273,7 +273,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $test_machine->check_patch2get([ { op => 'replace', path => '/subscriber_id', value => $member_to_terminate->{content}->{id} } ] , $alias->{location});
         }
         $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$member_to_terminate->{content}->{id}, 1)->{collection};
-        ok(((scalar @$aliases) == 4),"50802: aliases of ".$member_to_terminate->{content}->{id}." arent empty:".(scalar @$aliases));
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$member_to_terminate->{content}->{id}." are not empty:".(scalar @$aliases));
         diag("50802: assign all aliases to member_to_get_number");
         foreach my $alias (@$aliases) {
             !$alias->{location} && next;
@@ -282,7 +282,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $test_machine->check_patch2get([ { op => 'replace', path => '/subscriber_id', value => $member_to_get_number->{content}->{id} } ] , $alias->{location});
         }
         $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$member_to_get_number->{content}->{id}, 1)->{collection};
-        ok(((scalar @$aliases) == 4),"50802: aliases of ".$member_to_get_number->{content}->{id}." arent empty:".(scalar @$aliases ));
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$member_to_get_number->{content}->{id}." are not empty:".(scalar @$aliases ));
         diag("50802: assign all aliases to member_to_terminate again");
         foreach my $alias (@$aliases) {
             diag("50802: check 'before' ownership, subscriber_id should be a member_to_get_number id:".$member_to_get_number->{content}->{id});
@@ -299,7 +299,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
         #print Dumper $aliases;
-        ok(((scalar @$aliases) == 4),"50802: aliases of ".$pilot_local->{content}->{id}." arent empty:".(scalar @$aliases ).". We returned aliases to pilot.");
+        ok(((scalar @$aliases) == 4),"50802: aliases of ".$pilot_local->{content}->{id}." are not empty:".(scalar @$aliases ).". We returned aliases to pilot.");
 
         $pilot_local = $test_machine->get_item_hal('subscribers', '/api/subscribers/'.$pilot_local->{content}->{id}, 1);
 
@@ -310,7 +310,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
         #print Dumper $aliases;
-        ok(((scalar @$aliases) == 5),"50802: aliases of ".$pilot_local->{content}->{id}." arent empty:".(scalar @$aliases ).". We added ex-primary number as an alias.");
+        ok(((scalar @$aliases) == 5),"50802: aliases of ".$pilot_local->{content}->{id}." are not empty:".(scalar @$aliases ).". We added ex-primary number as an alias.");
 
         diag("50802: steal numbers of terminated subscriber");
         foreach my $alias (@$aliases) {
@@ -322,7 +322,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
         $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$member_to_get_number->{content}->{id}, 1)->{collection};
         #print Dumper $aliases;
-        ok(((scalar @$aliases) == 5),"50802: aliases of ".$member_to_get_number->{content}->{id}." arent empty:".(scalar @$aliases ).". We added ex-primary number as an alias.");
+        ok(((scalar @$aliases) == 5),"50802: aliases of ".$member_to_get_number->{content}->{id}." are not empty:".(scalar @$aliases ).". We added ex-primary number as an alias.");
 
         $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
         $test_machine->request_delete($member_to_get_number->{location});
@@ -461,7 +461,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
     }
     {#TT#34021
         my ($res,$content,$req);
-        diag("34021: check subscriberadmin PUT and PATCH. Possible only for pbx subscriberadmin. Access priveleges:".Dumper($remote_config->{config}->{acl}).";\n");
+        diag("34021: check subscriberadmin PUT and PATCH. Possible only for pbx subscriberadmin. Access privileges:".Dumper($remote_config->{config}->{acl}).";\n");
 
         $test_machine->runas('admin');
 
@@ -916,7 +916,7 @@ $test_machine->runas('admin');
     $data = clone $test_machine->DATA_ITEM;
     $data->{alias_numbers} = ["49221222899813", "49221222899814", "49221222899814"];
     ($res,$content) = $test_machine->request_post( $data);
-    $test_machine->http_code_msg(422, "Alias numbers should be the hashs", $res, $content);
+    $test_machine->http_code_msg(422, "Alias numbers should be the hashes", $res, $content);
 }
 
 $test_machine->init_ssl_cert();

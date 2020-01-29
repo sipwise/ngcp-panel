@@ -202,7 +202,7 @@ ok($d->find_element_by_css('#timeset_table tr > td.dataTables_empty', 'css'), 'T
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

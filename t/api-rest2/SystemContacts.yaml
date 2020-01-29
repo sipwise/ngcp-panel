@@ -243,9 +243,9 @@
         is:
             code: 415
 
-#put system_contact with unsuported content type
+#put system_contact with unsupported content type
 -
-    name: PUT system_contact with unsuported content type
+    name: PUT system_contact with unsupported content type
     type: item
     method: PUT
     path: '/${system_contact_path3}'

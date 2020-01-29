@@ -328,7 +328,7 @@ $c->delete_rw_ruleset($rulesetname);
 $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

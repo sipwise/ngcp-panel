@@ -59,7 +59,7 @@ sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     unless($c->user->billing_data) {
         $c->log->error("user does not have billing data rights");
-        $self->error($c, HTTP_FORBIDDEN, "Unsufficient rights to edit voucher");
+        $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to edit voucher");
         return;
     }
     my $guard = $c->model('DB')->txn_scope_guard;
@@ -95,7 +95,7 @@ sub PUT :Allow {
     my ($self, $c, $id) = @_;
     unless($c->user->billing_data) {
         $c->log->error("user does not have billing data rights");
-        $self->error($c, HTTP_FORBIDDEN, "Unsufficient rights to edit voucher");
+        $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to edit voucher");
         return;
     }
     my $guard = $c->model('DB')->txn_scope_guard;
@@ -128,7 +128,7 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     unless($c->user->billing_data) {
         $c->log->error("user does not have billing data rights");
-        $self->error($c, HTTP_FORBIDDEN, "Unsufficient rights to delete voucher");
+        $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to delete voucher");
         return;
     }
     my $guard = $c->model('DB')->txn_scope_guard;

@@ -2352,7 +2352,7 @@ sub _create_gantt {
     #    $layer->setDataWidth(int(400 * 4 / 5 / scalar(@labels)));
     #
     #    # Add a legend box at (140, 265) - bottom of the plot area. Use 8pt Arial Bold as the font with
-    #    # auto-grid layout. Set the width to the same width as the plot area. Set the backgorund to grey
+    #    # auto-grid layout. Set the width to the same width as the plot area. Set the background to grey
     #    # (dddddd).
     #    #my $legendBox = $c->addLegend2(180, 265, $perlchartdir::AutoGrid, "arialbd.ttf", 8);
     #    #my $legendBox = $c->addLegend2(180, 265, $perlchartdir::AutoGrid, "arialbd.ttf", 8);

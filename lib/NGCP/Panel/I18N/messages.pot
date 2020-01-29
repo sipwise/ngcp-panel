@@ -4586,7 +4586,7 @@ msgid "Language for voicemail and app server"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Security.pm
-msgid "Last Attemp"
+msgid "Last Attempt"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
@@ -5313,7 +5313,7 @@ msgid "Openvpn details"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
-msgid "Openvpn service is not avaialbe on the system."
+msgid "Openvpn service is not available on the system."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm

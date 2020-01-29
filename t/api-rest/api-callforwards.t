@@ -75,7 +75,7 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('callforwards'));
 $test_machine->form_data_item( );
 
 my $announcement_id = $test_machine->DATA_ITEM->{cfb}->{destinations}->[2]->{announcement_id};
-ok($announcement_id =~/^\d+$/,"announcement_id should be a positiv integer: $announcement_id");
+ok($announcement_id =~/^\d+$/,"announcement_id should be a positive integer: $announcement_id");
 
 
 SKIP:{

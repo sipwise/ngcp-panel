@@ -360,7 +360,7 @@
 
 #Check Event History
 -
-    name: include Chech Event History
+    name: include Check Event History
     type: include
     file: CheckEventHistory.yaml
     perl_code: !!perl/code |

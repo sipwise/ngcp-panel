@@ -3395,7 +3395,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
 
                         if($form->validated) {
                             if('edit' eq $action){
-                                my $resoure = {
+                                my $resource = {
                                     'recording'      => $$greeting_converted_ref,
                                     'dir'            => $dir,
                                     'origtime'       => time(),#just to make inflate possible. Really we don't need this value
@@ -3406,9 +3406,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                                     'dir' => $dir,
                                 });
                                 if($vm && $vm->first) {
-                                    $vm->update($resoure);
+                                    $vm->update($resource);
                                 } else {
-                                    $vm_user->create_related('voicemail_spools', $resoure);
+                                    $vm_user->create_related('voicemail_spools', $resource);
                                 }
                             }
                         }

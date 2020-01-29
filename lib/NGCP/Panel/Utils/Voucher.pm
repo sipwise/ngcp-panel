@@ -19,8 +19,8 @@ sub encrypt_code {
         Crypt::Rijndael::MODE_CBC()
     );
     $cipher->set_iv($iv);
-    my $crypted = $cipher->encrypt($plain);
-    my $b64 = encode_base64($crypted, '');
+    my $encrypted = $cipher->encrypt($plain);
+    my $b64 = encode_base64($encrypted, '');
     return $b64;
 }
 
@@ -35,8 +35,8 @@ sub decrypt_code {
         Crypt::Rijndael::MODE_CBC()
     );
     $cipher->set_iv($iv);
-    my $crypted = decode_base64($code);
-    my $plain = $cipher->decrypt($crypted) . "";
+    my $encrypted = decode_base64($code);
+    my $plain = $cipher->decrypt($encrypted) . "";
     # remove padding
     $plain =~ s/[\x01-\x1e]*$//;
     return $plain;

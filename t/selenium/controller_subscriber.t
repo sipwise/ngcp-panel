@@ -70,7 +70,7 @@ $d->find_element('//*[@id="webusername"]')->send_keys($username);
 $d->find_element('//*[@id="webpassword"]')->send_keys('testing1234'); #workaround for misclicking on ok button
 $d->find_element('//*[@id="gen_password"]')->click();
 $d->find_element('//*[@id="username"]')->send_keys($username);
-$d->find_element('//*[@id="password"]')->send_keys('testing1234'); #using normal pwd, cant easily seperate both generate buttons
+$d->find_element('//*[@id="password"]')->send_keys('testing1234'); #using normal pwd, cannot easily separate both generate buttons
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Subscriber");
@@ -429,7 +429,7 @@ $c->delete_reseller($resellername);
 $c->delete_contact($contactmail);
 $c->delete_billing_profile($billingname);
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

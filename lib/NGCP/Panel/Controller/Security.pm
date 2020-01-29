@@ -31,7 +31,7 @@ sub base :Chained('/') :PathPart('security') :CaptureArgs(0) {
     $c->stash->{bannedusers_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "username", search => 1, title => $c->loc("User") },
         { name => "auth_count", title => $c->loc("Fail Count") },
-        { name => "last_auth", search => 1, title => $c->loc("Last Attemp") },
+        { name => "last_auth", search => 1, title => $c->loc("Last Attempt") },
     ]);
     $c->stash(
         template => 'security/list.tt',

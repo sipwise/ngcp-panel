@@ -72,7 +72,7 @@ EOF
                 $username = $+{user};
                 $key = $+{key};
             } elsif ($name eq 'value' && $username && $key) {
-                # there souldn't be any other keys
+                # there should not be any other keys
                 $key eq 'auth_count' and $usr->{$username}->{auth_count} = $value;
                 $key eq 'last_auth' and $usr->{$username}->{last_auth} = $value;
             }

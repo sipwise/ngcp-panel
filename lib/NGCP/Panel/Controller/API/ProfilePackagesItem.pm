@@ -162,11 +162,11 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, profilepackage => $package);
 
         unless($package->get_column('contract_cnt') == 0) {
-            $self->error($c, HTTP_LOCKED, "Cannnot delete profile package that is still assigned to contracts");
+            $self->error($c, HTTP_LOCKED, "Cannot delete profile package that is still assigned to contracts");
             last;
         }
         unless($package->get_column('voucher_cnt') == 0) {
-            $self->error($c, HTTP_LOCKED, "Cannnot delete profile package that is assigned to vouchers");
+            $self->error($c, HTTP_LOCKED, "Cannot delete profile package that is assigned to vouchers");
             last;
         }
         

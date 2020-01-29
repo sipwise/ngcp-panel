@@ -176,7 +176,7 @@ $d->fill_element('//*[@id="Domain_table_filter"]/label/input', 'xpath', $domains
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Domain successfully deleted!',  'Correct Alert was shown');
 ok($d->find_element_by_css('#Domain_table tr > td.dataTables_empty', 'css'), 'Domain has been deleted');
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

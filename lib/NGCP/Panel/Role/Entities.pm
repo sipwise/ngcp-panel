@@ -285,7 +285,7 @@ sub post {
                     process_extras => $process_extras,
                 );
             } catch($e) {
-                $c->log->error("failed to proces non json data: $e");
+                $c->log->error("failed to process non json data: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
             };

@@ -59,7 +59,7 @@ sub POST :Allow {
     {
         unless($c->user->billing_data) {
             $c->log->error("user does not have billing data rights");
-            $self->error($c, HTTP_FORBIDDEN, "Unsufficient rights to create voucher");
+            $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to create voucher");
             last;
         }
         $resource = $self->get_valid_post_data(

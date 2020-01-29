@@ -16,7 +16,7 @@ has_field 'force_delete' => (
     label => 'Force delete',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Call recording infromation will be removed from database even in case of recording files absence or other impossibility to remove recording files.']
+        title => ['Call recording information will be removed from database even in case of recording files absence or other impossibility to remove recording files.']
     },
 
 );

@@ -40,7 +40,7 @@ has_field 'is_regex' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['A flag indicating, whether the numbers in this set are regular expressions. ' .
-            'If true, all sources will be interepreted as perl compatible regular expressions and ' .
+            'If true, all sources will be interpreted as perl compatible regular expressions and ' .
             'matched against the calling party number (in E164 format) of the calls. If false, the whole numbers ' .
             'are plainly matched while shell patterns like 431* or 49123~[1-5~]67 are possible. ' .
             'If true, capturing groups can be formed using parentheses and referenced in the ' .

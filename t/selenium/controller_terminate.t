@@ -263,7 +263,7 @@ ok($d->find_element_by_css('#contract_table tr > td.dataTables_empty', 'css'), '
 
 $c->delete_billing_profile($billingname);
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

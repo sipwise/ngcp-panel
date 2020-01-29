@@ -110,7 +110,7 @@ sub apply_owner_timezone {
                 contract_id => $owner->{customer}->id
             })->first;
         } else {
-            # shouldnt go here.
+            # should not go here.
         }
         $result->set_time_zone(NGCP::Panel::Utils::DateTime::normalize_db_tz_name($tz->name)) if $tz;
     }

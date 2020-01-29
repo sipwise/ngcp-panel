@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: I 18N\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2016-10-15 12:00+0100\n"
+"PO-Revision-Date: 2020-01-29 23:12+0100\n"
 "Last-Translator: Marco Capetta <mcapetta@sipwise.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -5280,8 +5280,8 @@ msgid "Language for voicemail and app server"
 msgstr "Lingua per casella vocale e per application server"
 
 #: lib/NGCP/Panel/Controller/Security.pm
-msgid "Last Attemp"
-msgstr ""
+msgid "Last Attempt"
+msgstr "Ultimo Tentativo"
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Last Name"
@@ -6088,7 +6088,7 @@ msgid "Openvpn details"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
-msgid "Openvpn service is not avaialbe on the system."
+msgid "Openvpn service is not available on the system."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
@@ -9662,9 +9662,6 @@ msgstr "si"
 
 #~ msgid "Match Direction"
 #~ msgstr "Direzione Match"
-
-#~ msgid "Last Attempt"
-#~ msgstr "Ultimo Tentativo"
 
 #~ msgid ""
 #~ "The prepaid billing interface for customer with prepaid billing profile."

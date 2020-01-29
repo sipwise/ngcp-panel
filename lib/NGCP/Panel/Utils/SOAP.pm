@@ -125,7 +125,7 @@ sub dotype {
       $tresponse = SOAP::Data->name($resnam => $tresponse)->type("$cns:$restyp");
     }
   } else {
-    # fix some types for trasport via XMLRPC
+    # fix some types for transport via XMLRPC
     # (because defaults are the SOAP types)
     if ($transport eq 'XMLRPC') {
         $restyp =~ s/^base64Binary$/base64/;
