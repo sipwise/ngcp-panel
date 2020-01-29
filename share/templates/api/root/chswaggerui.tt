@@ -102,24 +102,45 @@ function HideTopbarPlugin() {
 window.onload = function() {
   
   // Build a system
-  const ui = SwaggerUIBundle({
-    url: "/api?swagger=1",
-    dom_id: '#swagger-ui',
-    deepLinking: true,
-    presets: [
-      SwaggerUIBundle.presets.apis,
-      SwaggerUIStandalonePreset
-    ],
-    plugins: [
-      SwaggerUIBundle.plugins.DownloadUrl,
-      HideTopbarPlugin
-    ],
-    layout: "StandaloneLayout",
-    //layout: "BaseLayout",
-    docExpansion: "none",
-    defaultModelsExpandDepth: 0,
-    validatorUrl: null
-  })
+  if (window.matchMedia("print").matches) {
+    const ui = SwaggerUIBundle({
+      url: "/api?swagger=1",
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl,
+        HideTopbarPlugin
+      ],
+      layout: "StandaloneLayout",
+      //layout: "BaseLayout",
+      docExpansion: "full",
+      defaultModelsExpandDepth: 0,
+      validatorUrl: null
+    })
+  } else {
+    const ui = SwaggerUIBundle({
+      url: "/api?swagger=1",
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl,
+        HideTopbarPlugin
+      ],
+      layout: "StandaloneLayout",
+      //layout: "BaseLayout",
+      docExpansion: "none",
+      defaultModelsExpandDepth: 0,
+      validatorUrl: null
+    })
+  }
 
   window.ui = ui
 };
