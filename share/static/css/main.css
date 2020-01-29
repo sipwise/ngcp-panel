@@ -24,7 +24,7 @@ body {
     display: none;
 }
 
-/* add horizontally scrollable pre (to boostrap stlyes) */
+/* add horizontally scrollable pre (to bootstrap styles) */
 pre.pre-x-scrollable {
     overflow: auto;
     -ms-word-wrap: normal;
@@ -373,7 +373,7 @@ div.ngcp_dt_top_elements input,
 div.ngcp_dt_top_elements button,
 div.ngcp_dt_top_elements select,
 div.ngcp_dt_top_elements textarea {
-    font-size: 12px;  /* boostrap standard size */
+    font-size: 12px;  /* bootstrap standard size */
 }
 
 div.ngcp_dt_top_elements input {

@@ -21,7 +21,7 @@ __PACKAGE__->set_config({
         'Uploads'     => ['calendarfile'],
     },
     GET => {
-        #first element of array is default, if no accept header was recieved.
+        #first element of array is default, if no accept header was received.
         'ReturnContentType' => [ NGCP::Panel::Utils::TimeSet::CALENDAR_MIME_TYPE, 'application/json' ],
     },
 });

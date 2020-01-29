@@ -382,9 +382,9 @@
         is:
             code: 415
 
-#put reseller with unsuported content type
+#put reseller with unsupported content type
 -
-    name: PUT reseller with unsuported content type
+    name: PUT reseller with unsupported content type
     type: item
     method: PUT
     path: '/${reseller_path3}'

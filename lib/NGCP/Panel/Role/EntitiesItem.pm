@@ -197,7 +197,7 @@ sub get {
 
         my $mime_type_from_accept_header;
         if( ( defined $header_accept
-        #apllication/json is default,  so we will not consider it in the Accept header, until our default in config is different from 'application/json'
+        #application/json is default,  so we will not consider it in the Accept header, until our default in config is different from 'application/json'
         #*/* allows us everything, so we will first try query parameter or default configured default mime-type
             && ($header_accept !~ m#(?<![^\s;,])\*/\*(?![^\s;,])#) #*/*
         )) {
@@ -339,7 +339,7 @@ sub put {
                     process_extras => $process_extras,
                 );
             } catch($e) {
-                $c->log->error("failed to proces non json data: $e");
+                $c->log->error("failed to process non json data: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
             };

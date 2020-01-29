@@ -428,7 +428,7 @@ sub popup_confirm_cancel {
 sub crash_handler {
     my($self, $filename) = @_;
     my $jenkins = $ENV{JENKINS};
-    is("tests", "failed", "This test wasnt successful, check complete test logs for more info");
+    is("tests", "failed", "This test was not successful, check complete test logs for more info");
     diag("--------------------------------SCRIPT HAS CRASHED---------------------------------");
     my $url = $self->driver->get_current_url();
     my $title = $self->driver->get_title();
@@ -439,7 +439,7 @@ sub crash_handler {
     diag("Perl localtime(): $realtime");
     if($jenkins) {
         $self->driver->capture_screenshot($filename);
-        diag("Screenshot has been taken and is avalible in " . $filename);
+        diag("Screenshot has been taken and is available in " . $filename);
     };
     diag("------------------------------------------------------------------------------------");
 }

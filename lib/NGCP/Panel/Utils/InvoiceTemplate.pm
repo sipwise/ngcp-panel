@@ -172,9 +172,10 @@ sub svg_content{
         }
     }
 
-    # some part of the chain doesn't like content being encoded as utf8 at that poing
-    # already; decode here, and umlauts etc will be fine througout the chain.
-    # TODO: doesn't work when loaded from db?
+    # some part of the chain does npt like content being encoded as utf8 at
+    # that point already; decode here, and umlauts etc will be fine throughout
+    # the chain.
+    # TODO: does not work when loaded from db?
     use utf8;
     utf8::decode($content);
     return $content;

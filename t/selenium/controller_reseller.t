@@ -245,7 +245,7 @@ is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Suc
 $d->fill_element('//*[@id="Resellers_table_filter"]/label/input', 'xpath', $resellername);
 ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty'), 'Reseller has been deleted');
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

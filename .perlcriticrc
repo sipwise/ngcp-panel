@@ -1,5 +1,5 @@
 verbose = %f line %l col %c\n    [%s] %p (%e) = %m\n    %r\n
-    # the ouput format, another nice one is 8, the [%s] is the severity
+    # the output format, another nice one is 8, the [%s] is the severity
 severity  = 3
 theme = security || (pbp && bugs) || cosmetic || sipwise
 
@@ -26,7 +26,7 @@ functions = :builtins
 exclude_functions = print
 
 [-Modules::RequireExplicitInclusion]
-# we dont want this
+# we do not want this
 
 [BuiltinFunctions::ProhibitStringyEval]
 allow_includes = 0

@@ -365,7 +365,7 @@ $c->delete_reseller_contract($contractid);
 $c->delete_reseller($resellername);
 $c->delete_billing_profile($billingname);
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

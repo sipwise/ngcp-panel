@@ -90,7 +90,7 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
     $test_machine->DATA_ITEM->{json}->{subscriber_id} = $subscriber_other_customer->{content}->{id};
     $test_machine->form_data_item();
     my($res,$content) = $test_machine->check_item_post();
-    $test_machine->http_code_msg(422, "Check that we cant send a fax in a name of other customers subscriber",$res,$content);
+    $test_machine->http_code_msg(422, "Check that we cannot send a fax in a name of other customers subscriber",$res,$content);
     diag("check that we can create as a subscriberadmin role");
     $test_machine->check_create_correct( 1, sub { $_[0]->{json}->{subscriber_id} = $subscriberadmin->{content}->{id};} );
 
@@ -99,7 +99,7 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
     diag("\n\n\nSUBSCRIBER ".$subscriber->{content}->{id}.":");
 
     ($res,$content) = $test_machine->check_item_post();
-    $test_machine->http_code_msg(422, "Check that we cant send a fax in a name of other customers subscriber",$res,$content);
+    $test_machine->http_code_msg(422, "Check that we cannot send a fax in a name of other customers subscriber",$res,$content);
     diag("check that we can create as a subscriber role");
     $test_machine->check_create_correct( 1, sub { $_[0]->{json}->{subscriber_id} = $subscriber->{content}->{id};} );
 

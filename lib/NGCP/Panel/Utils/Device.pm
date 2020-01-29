@@ -260,7 +260,7 @@ sub denwaip_encrypt{
 
 =pod
 sub denwaip_decrypt{
-    my ($crypted, $mac) = @_;
+    my ($encrypted, $mac) = @_;
 
     my $plain_data = IO::String->new();
 
@@ -270,11 +270,11 @@ sub denwaip_decrypt{
     my $key = $mac . $denwaip_masterkey;
 
     # file starts with a hard coded magic
-    my $magic = substr($crypted, 0, 16, '');
-    $denwaip_magic_head eq "\x40\x40\x40\x24\x24\x40\x40\x40\x40\x40\x40\x24\x24\x40\x40\x40" or die "Wrong denwaip crypted data format.";
+    my $magic = substr($encrypted, 0, 16, '');
+    $denwaip_magic_head eq "\x40\x40\x40\x24\x24\x40\x40\x40\x40\x40\x40\x24\x24\x40\x40\x40" or die "Wrong denwaip encrypted data format.";
 
     # "random" seed taken from file
-    my $seed = substr($crypted, 0, 16, '');
+    my $seed = substr($encrypted, 0, 16, '');
 
     # 256 iterations of sha256
     my $keybuf = $seed . ("\0" x 16);
@@ -294,17 +294,17 @@ sub denwaip_decrypt{
     substr($xor2, 0, 32) = substr($xor2, 0, 32) ^ substr($keybuf, 0, 32);
 
     # remove trailing checksum from buffer
-    my $final_checksum = substr($crypted, -32, 32, '');
+    my $final_checksum = substr($encrypted, -32, 32, '');
 
     # initialize checksum SHA context
     my $checksum_sha = Digest::SHA->new('sha256');
     $checksum_sha->add($xor1);
 
     # decrypt routine
-    while ($crypted ne '') {
+    while ($encrypted ne '') {
         # each plaintext block is xor'd with the current "seed", then run through AES, then written to file
 
-        my $block = substr($crypted, 0, 16, '');
+        my $block = substr($encrypted, 0, 16, '');
         $checksum_sha->add($block);
 
         my $dec_block = $cipher->decrypt($block);

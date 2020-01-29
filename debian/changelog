@@ -23,7 +23,7 @@ ngcp-panel (8.3.0.0+0~mr8.3.0.0) unstable; urgency=medium
   * [8d19c6d] TT#74809 ignore ghost registrations
 
   [ Nico Schedel ]
-  * [0d462c8] TT#68016 selenium: dont change direction when editing header rule
+  * [0d462c8] TT#68016 selenium: do not change direction when editing header rule
   * [339dcbb] TT#68016 selenium: take screenshot when alert check fails
   * [d48699f] TT#68016 selenium: add test: check if security bans are working
   * [ee17dcc] TT#68016 selenium: actually use correct path for saving screenshots
@@ -76,7 +76,7 @@ ngcp-panel (8.2.0.0+0~mr8.2.0.0) unstable; urgency=medium
   * [fa3feb5] TT#68016 selenium: improve some test startups
   * [ba3a2b1] TT#68016 selenium: check if edit windows are opened
   * [14b0b28] TT#68016 selenium: more improvements to controller_terminate
-  * [24408a1] TT#68016 selenium: dont crash script if select_if_unselected cant find elem
+  * [24408a1] TT#68016 selenium: do not crash script if select_if_unselected cannot find elem
   * [a2d22e1] TT#68016 selenium: check customer alerts after expanding all columns
   * [9b5501d] TT#68016 selenium: add proper value to timeset event.byweekdaynumber
   * [68d9d87] TT#68016 selenium: add controller_terminate to default test plan
@@ -143,8 +143,8 @@ ngcp-panel (8.1.0.0+0~mr8.1.0.0) unstable; urgency=medium
   * [3b544b9] TT#56376 selenium: create default reseller + contract for termination test
   * [0d9719a] TT#56376 selenium: refresh call list suppression box to clear tooltips
   * [9242d92] TT#56376 selenium: workaround for customer tests going to wrong menu
-  * [f912a09] TT#56376 selenium: re-add old workaround on edit call list supression
-  * [407c95c] TT#56376 selenium: change clickable element on call list supression window
+  * [f912a09] TT#56376 selenium: re-add old workaround on edit call list suppression
+  * [407c95c] TT#56376 selenium: change clickable element on call list suppression window
   * [a801fc7] TT#56376 selenium: add function get_text_safe()
   * [1af4601] TT#56376 selenium: add unique external id to termination reseller contract
   * [604ca57] TT#56376 selenium: edit invalid fallback element which caused issues
@@ -282,7 +282,7 @@ ngcp-panel (8.0.0.0+0~mr8.0.0.0) unstable; urgency=medium
   * [63a6d8b] TT#56376 selenium: fix for crashes in controller_billing
   * [2ab123a] TT#56376 selenium: improved label checks for controller_admin.t
   * [eaad5ca] TT#56376 selenium: improved label checks for controller_customer.t
-  * [5438b95] TT#56376 selenium: temporarly disable a check for network blocks
+  * [5438b95] TT#56376 selenium: temporarily disable a check for network blocks
   * [d179497] TT#56376 selenium: fix for buttons not visible in browser window
   * [2ce4f9b] TT#56376 selenium: some fixes for controller_subscriber
   * [ed09166] TT#56376 selenium: improved label checks for controller_domain.t
@@ -298,7 +298,7 @@ ngcp-panel (8.0.0.0+0~mr8.0.0.0) unstable; urgency=medium
   * [5da733f] TT#56376 selenium: remove checks for labels in crash handler
   * [0fcaddd] TT#56376 selenium: cleaned up Common.pm
   * [6aa7cf9] TT#56376 selenium: unlock reseller after changing status to locked
-  * [3489a3d] TT#56376 selenium: improvments when creating billing profile
+  * [3489a3d] TT#56376 selenium: improvements when creating billing profile
   * [e0df16d] TT#56376 selenium: re-write billing zones and billing fee tests
   * [007b1a4] TT#56376 selenium: little cleanups for controller_admin
   * [2237af7] TT#56376 selenium: add test: create locked customer and unlock them
@@ -421,11 +421,11 @@ ngcp-panel (7.5.0.0+0~mr7.5.0.0) unstable; urgency=medium
   * [f9ced2f] TT#56376 selenium: Multithread tests
   * [25d2982] TT#56376 selenium: add test: check admin details
   * [33a0477] TT#56376 selenium: add file controller_ncos.t
-  * [11cbf10] TT#56376 selenium: dont execute every .t file in directory by default
+  * [11cbf10] TT#56376 selenium: do not execute every .t file in directory by default
   * [395a9ab] TT#56376 selenium: fix crash when creating domain
   * [0463e2a] TT#56376 selenium: add test: add ncos level to domain
   * [ed54429] TT#56376 selenium: add file controller_emergency.t
-  * [f85efa0] TT#56376 selenium: minor improvment to text output
+  * [f85efa0] TT#56376 selenium: minor improvement to text output
   * [2758bf8] TT#56376 selenium: fix crash: enter LNP details
   * [4766b58] TT#56376 selenium: fix test: Check if Template Email was deleted
   * [19f8032] TT#56376 selenium: add tests: subscriber profile sets
@@ -632,7 +632,7 @@ ngcp-panel (7.4.0.0+0~mr7.4.0.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
   * [7282fa6] TT#56376 Remove unnecessary PERL5LIB= from t/selenium/jenkins_docker_run
-  * [f0e1f74] TT#56376 Restore exit code propogation in t/selenium/testrunner
+  * [f0e1f74] TT#56376 Restore exit code propagation in t/selenium/testrunner
   * [7dbe4a1] TT#56376 Show selenium/rest-api tests execution time on Jenkins
 
  -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 25 Apr 2019 14:30:10 +0200
@@ -653,7 +653,7 @@ ngcp-panel (7.3.0.0+0~mr7.3.0.0) unstable; urgency=medium
   * [4099adf] TT#49689 Implement web UI for ical events
   * [92ac694] TT#49689 Rename method *_timesets to *_timeset
   * [0162f70] TT#49688 Implement human readable rrule in ical events list
-  * [345f89d] TT#47534 Add configured defailt mime-type to Entities FW
+  * [345f89d] TT#47534 Add configured default mime-type to Entities FW
   * [9adf470] TT#47534 Add iCalendar download/upload web ui
   * [ec178cd] TT#47534 Implement api timesets upload/download
   * [80b0cf0] TT#47534 Remove unnecessary debug from timesets api
@@ -890,7 +890,7 @@ ngcp-panel (7.0.0.0+0~mr7.0.0.0) unstable; urgency=medium
   * [3ddfd48] TT#42565 api-journals.t: derive/fix test start time
   * [2b7a1a3] TT#41553 TT#41554 billing fee match_mode
   * [b6c4129] TT#43555 fix sql error from /callists/?call_id=456
-  * [ad0fade] TT#43755 fix miliseconds presentation
+  * [ad0fade] TT#43755 fix milliseconds presentation
   * [29a8ca6] TT#43654 datatable rowcount clipping
   * [7b5c9d9] TT#44095 set isolation level when creating contracts
   * [f5117d3] TT#44451 change e164 elements from PosInteger to Text
@@ -1101,7 +1101,7 @@ ngcp-panel (6.3.0.0+0~mr6.3.0.0) unstable; urgency=medium
   * [00633d1] TT#30376 filter interception numbers from log
   * [985d433] TT#29909 fix perlcritic RequireUseStrict
   * [4a37138] TT#29909 fix missing warnings on tests
-  * [56b6067] TT#30375 make IP addres optional for peering servers
+  * [56b6067] TT#30375 make IP address optional for peering servers
   * [9fd0260] TT#29909 fix remaining "use warnings" perlcritic errors
   * [196ddd7] TT#31504 restructure OpenAPI tags
   * [c9e0723] TT#32600 block grep, block map percritic fixes
@@ -1109,7 +1109,7 @@ ngcp-panel (6.3.0.0+0~mr6.3.0.0) unstable; urgency=medium
   * [6e93a25] TT#32600 fix accidental debug statement data printer
   * [38aa85d] TT#32986 remove remaining parts of kibana
   * [20d6c7b] TT#33107 Revert "TT#32990 validate if hostname or ip is set for peers"
-  * [b5f0192] TT#33107 Revert "TT#30375 make IP addres optional for peering servers"
+  * [b5f0192] TT#33107 Revert "TT#30375 make IP address optional for peering servers"
 
   [ Irina Peshinskaya ]
   * [fa7705d] TT#28460 Fix emergencymappings upload
@@ -1245,7 +1245,7 @@ ngcp-panel (6.2.0.0+0~mr6.2.0.0) unstable; urgency=medium
   * [fc57ea6] TT#30379 billing profile currency for call conversations
 
   [ Gerhard Jungwirth ]
-  * [248e5c8] TT#27154 make timezone ajax acessible to subadmin
+  * [248e5c8] TT#27154 make timezone ajax accessible to subadmin
   * [0a8c92f] TT#28827 fix profile_id documentation for PbxDevices
   * [c7021aa] TT#28827 implement initial OpenAPI documentation
   * [df9438b] TT#28827 fix OpenAPI documentation add schema
@@ -1622,7 +1622,7 @@ ngcp-panel (5.4.0.0+0~mr5.4.0.0) unstable; urgency=medium
   * [fc95931] TT#7332 add "Peering Overview"
   * [b831d2f] TT#14510 fix Peering Rules form "group" field processing
   * [24ffcb6] TT#7818 add CallLists own_cli parameter
-  * [7db5632] TT#12661 FaxRecordings add fax retreival from DB
+  * [7db5632] TT#12661 FaxRecordings add fax retrieval from DB
   * [5b3bfba] TT#12593 add Fax preferences: t38, ecm
   * [0b5f7c4] TT#12593 add Faxserver T38 and ECM forms
 
@@ -1663,7 +1663,7 @@ ngcp-panel (5.3.0.0+0~mr5.3.0.0) unstable; urgency=medium
   * [b4ce615] TT#13249 Fix api client ssl cert test
 
   [ Jozef Kenyeres ]
-  * [9c91836] TT#9212 Grandstream redirection paramteres included
+  * [9c91836] TT#9212 Grandstream redirection parameters included
 
   [ Gerhard Jungwirth ]
   * [41fe448] TT#9829 calllist call direction out if intra
@@ -2026,7 +2026,7 @@ ngcp-panel (1.15.0.0+0~mr5.0.0.0) unstable; urgency=medium
   * [25792a1] MT#19795 rtc api consider app id for sessions
 
   [ Rene Krenn ]
-  * [e8ab903] MT#19821 subsciber profile edit drops random voip_usr_prefs
+  * [e8ab903] MT#19821 subscriber profile edit drops random voip_usr_prefs
   * [10af05a] MT#19783 set lock level when creating subscriber
   * [2912808] MT#20023 MT#20027 lnp unique number and lnp provider delete checks
   * [400d038] MT#20257 filter subscriber collection by subscriber's external_id
@@ -2258,7 +2258,7 @@ ngcp-panel (1.13.0.0+0~mr4.4.0.0) unstable; urgency=medium
   * [1782648] MT#5349 Fix typo in profile preferences metadata
   * [db2c16c] MT#15633 Unify preferences defs
   * [21b9b96] MT#17199 Add user_agent field into subscriberregistrations GET output
-  * [5623471] MT#17137 Rewrite rules documentation enchancement
+  * [5623471] MT#17137 Rewrite rules documentation enhancement
   * [71118be] MT#10199 Fix typo in profiles preferences
   * [81bb050] MT#15633 API for peering groups, servers, rules
   * [36c08c6] MT#11731 Consider different content types for API actions
@@ -2371,7 +2371,7 @@ ngcp-panel (1.12.0.0+0~mr4.3.0.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
   * [b15fa6b] MT#12347 Test environment requires perl package String::ShellQuote.
-  * [aecc110] MT#12347 Fix too early distruction of the local test_machine
+  * [aecc110] MT#12347 Fix too early destruction of the local test_machine
   * [9a4f1b5] MT#12347 Disable faxes tests if fax feature is not active
   * [c54c24a] MT#12347 Fix catalyst config getting for tests
   * [8261f0e] MT#14477 Response about faxserver feature unavailability from API
@@ -2411,7 +2411,7 @@ ngcp-panel (1.12.0.0+0~mr4.3.0.0) unstable; urgency=medium
   * [59ec368] MT#16109 update "prepaid" pref correctly
   * [fa2c02e] MT#16045 notopup expiry for balance intervals output
   * [59339ff] MT#16171 useless joins for source_subs = OR dest_subs =
-  * [1297bdf] MT#16309 supress notopup balance discard when switching packages
+  * [1297bdf] MT#16309 suppress notopup balance discard when switching packages
   * [b9a6ecd] MT#16171 revert to prior callist direction filter behaviour
   * [64ee5ec] MT#16309 correctly apply changed carry_over modes
   * [997bdc0] MT#16309 fix deaf logic due to is_create_next typo
@@ -2484,7 +2484,7 @@ ngcp-panel (1.11.0.0+0~mr4.2.0.0) unstable; urgency=medium
   * [dd9365f] MT#14739 Get newly created kamailio user location after flush
   * [a529ec7] MT#12347 Simple tests for cfdestinations
   * [1a3e7dd] MT#14477 Fax API (list, send fax, get meta, get content)
-  * [1ff49c1] MT#14477 Documentation enchancement for asynchronous API collections
+  * [1ff49c1] MT#14477 Documentation enhancement for asynchronous API collections
   * [91a6aeb] MT#12347 Safe decode json content
   * [a8c7990] MT#15441 Don't synchronize cli and primary number if they already differ
   * [026aed8] MT#15489 Work with utf8 in json input
@@ -2588,7 +2588,7 @@ ngcp-panel (1.11.0.0+0~mr4.2.0.0) unstable; urgency=medium
   * [b9271ec] MT#13903 generate melita user story transcript
   * [f3b711a] MT#13903 disable applying profile package
   * [ca90840] MT#13903 enable applying profile package
-  * [6489a0d] MT#13903 more detailled debugging info
+  * [6489a0d] MT#13903 more detailed debugging info
   * [bef06dc] MT#14301 deleting prof packages instead of terminating
   * [5a182d0] MT#14631 topupcash didn't process package id
   * [ff75e75] MT#14317 add debug info of panel interval catchups
@@ -2677,7 +2677,7 @@ ngcp-panel (1.10.0.0+0~mr4.1.0.0) unstable; urgency=low
   * [ae43bec] MT#5879 Document resend and regenerate options in the inv. gen. script
   * [03aaaa2] MT#11549 Fix API search by aliases, broken after optimization
   * [1538654] MT#11667 Some features to calllist
-  * [34c05da] MT#12813 Dont set direction to in for empty destination_user_id
+  * [34c05da] MT#12813 Do not set direction to in for empty destination_user_id
   * [2e2c008] MT#7227 Upload billing_fees into 2 stages, for speed and unique records
   * [003e717] MT#12937 Replace groups managements different code parts with common methods
   * [7c9f65a] MT#13369 Add annotate possibility for narrowly positioned buttons
@@ -2764,7 +2764,7 @@ ngcp-panel (1.10.0.0+0~mr4.1.0.0) unstable; urgency=low
   * [bcb6f1e] MT#11917 CFTimeSets
   * [c411ece] MT#11917 'must-have' api resources complete
   * [de347c6] MT#11917 non-empty 'description' fields
-  * [bce0058] MT#11917 test enviroment json boolean conversion
+  * [bce0058] MT#11917 test environment json boolean conversion
   * [4c8d82a] MT#11917 testcase json conversion
   * [6803ce7] MT#11917 remove billingzones
   * [5cab4a0] MT#11917 force JSON::PP for tests
@@ -2980,7 +2980,7 @@ ngcp-panel (1.8.0.0+0~mr3.8.0.0) unstable; urgency=low
   * [f311ea6] MT#8299 Only show supported options in dev config
   * [a16c98a] MT#10199 Add subscriber profile preferences.
   * [f9d954a] MT#10199 Add prof prefs to test.
-  * [7ae4eb5] MT#10199 Exlude profile prefs def.
+  * [7ae4eb5] MT#10199 Exclude profile prefs def.
   * [a431f6b] MT#10309 Allow passwords with less than chars.
   * [1505d81] MT#10301 Keep admin flag as is on pilot edit.
   * [e28726c] MT#10537 API: Add calllists call.
@@ -3051,7 +3051,7 @@ ngcp-panel (1.7.0.0+0~mr3.7.0.0) unstable; urgency=low
 
   [ Irina Peshinskaya ]
   * [29b9884] MT#9431 Update usr_preference cloud_pbx_hunt_policy in Subscriber API.
-  * [806820e] MT#9447 Add external_id query parametere for customers.
+  * [806820e] MT#9447 Add external_id query parameter for customers.
   * [a2b4c62] MT#9671 Add search of subscribers by customer external_id too.
   * [c520403] Revert "MT#9671 Add search of subscribers by customer external_id too."
   * [64e0428] MT#9671 Add search of subscribers by customer external_id too. Again.
@@ -3320,7 +3320,7 @@ ngcp-panel (1.6.0.0+0~mr3.6.0.0) unstable; urgency=low
 
   [ Irka ]
   * [b2f21dd] MT#7861 Use pixels as main unit to be in accordance with svg-edit.
-  * [bcc0101] MT#7867 Return scale 0.8 untill other options tested with real printing
+  * [bcc0101] MT#7867 Return scale 0.8 until other options tested with real printing
   * [93bee5b] MT#5879 Fix multi-undo functionality.
   * [47696b5] MT#5879 Make possible to restart generate_invoices.
   * [4d7f2ff] MT#5879 Deny to create  invoice templates with duplicated names
@@ -3364,12 +3364,12 @@ ngcp-panel (1.6.0.0+0~mr3.6.0.0) unstable; urgency=low
   * [6299743] MT#8371 Additional changes for actual billing_mapping optimisation.
   * [e313eb7] MT#8371 Remove duplicate joins contracts_rs with billing_mapping.
   * [52cc853] MT#5879 Fix for contacts without contract.
-  * [8128089] MT#5879 Inital config and cron files for invoice generation script
+  * [8128089] MT#5879 Initial config and cron files for invoice generation script
   * [a96fbdb] MT#5879 Save own parsing of config.
   * [b0247da] MT#5879 Fix manual page and fix using centralised config in generator
 
   [ Irina Peshinskaya ]
-  * [7f14a3e] MT#5879 Make email invoices query simplier.
+  * [7f14a3e] MT#5879 Make email invoices query simpler.
   * [95bfec3] MT#5879 Default content on template creation and x- mimetype.
   * [8066f9f] MT#7867 Api changes for invoice template per customer. For review.
   * [3b281f6] MT#7867 InvoiceTemplate API draft.
@@ -3419,7 +3419,7 @@ ngcp-panel (1.6.0.0+0~mr3.6.0.0) unstable; urgency=low
   * [8e0157b] MT#8613 Add basic CRUD for LI X-1 provisioning
   * [4f76fda] MT#8633 Properly set is_primary on sub creation
   * [b860218] MT#8449 Fix clearing unused alias numbers
-  * [30384f3] MT#8723 Provid direct pbx fw link for version
+  * [30384f3] MT#8723 Provide direct pbx fw link for version
   * [71acba7] MT#7705 Fix undef check in logger
   * [cf93f0b] MT#8873 Fix showing number of recent calls.
   * [fbdd04a] MT#8279 Properly fill enums.
@@ -3474,7 +3474,7 @@ ngcp-panel (1.6.0.0+0~mr3.6.0.0) unstable; urgency=low
   * [2bebc00] MT#7705 - Add logging for the rest of Controller/* modules. Message.pm: add data size check and trim the value if > 500 length
   * [f05f921] MT#7705 - Add logging for Subsriber preferences set/get
   * [0fdf9f8] MT#7705 - Preference set/get add logging messages for different types 'customer/domain/susbcrber/peer'
-  * [799d95b] MT#7705 - Subscriber.pm: add logging for destination sets/time sets, password recovery and internal errrors
+  * [799d95b] MT#7705 - Subscriber.pm: add logging for destination sets/time sets, password recovery and internal errors
   * [c1c72dd] MT#8547 - replaced experimental "smartmatch" code with the sane if/else custom SWITCH blocks
   * [e4ecca7] MT#8547 - Fix smartmatch ~~ usage
   * [c2fb0c6] MT#7705 - added doc for Utils/Message.pm
@@ -3553,7 +3553,7 @@ ngcp-panel (1.5.0.0+0~mr3.5.0.0) unstable; urgency=low
   * [9965197] MT#5879 Fix invoice date insertion in DB
   * [a72adae] MT#5879 Invoice generation fixes.
   * [1ab3500] MT#5879 Us common invoice logic for invoice amouns. Add country name.
-  * [3ee4f3e] MT#5879 Implement countr name in controller.
+  * [3ee4f3e] MT#5879 Implement country name in controller.
   * [3a33437] MT#5879 Don't regenerate invoices. Just create new.
   * [17d6ed5] MT#5879 Send one email per contract.
   * [a743cbe] MT#5879 Change test email contact to real.
@@ -3564,7 +3564,7 @@ ngcp-panel (1.5.0.0+0~mr3.5.0.0) unstable; urgency=low
   * [76b059f] MT#5879 Email templates buttons for contract forms.
   * [2f67a94] MT#5879 Contract buttons and generate_invoice.
   * [33d3d45] MT#5879 Add prevmonth option to ease prev month invoices generation.
-  * [ee06143] MT#5879 Make email invoices query simplier.
+  * [ee06143] MT#5879 Make email invoices query simpler.
   * [29edbf2] MT#5879 Tspan replaced with text
   * [d8fe511] MT#5879 Use log4perl for logging.
   * [9ca0ddc] MT#5879 Return utf usage for mysql after merge.
@@ -3610,7 +3610,7 @@ ngcp-panel (1.5.0.0+0~mr3.5.0.0) unstable; urgency=low
   * [1b08f6e] MT#7395 API: implement NCOS level and pattern
   * [d3bdce9] MT#7415 Clear usr_prefs when deleting ncos levels.
   * [e0bb62f] MT#7323 API: fetch sound handles via REST
-  * [5471f91] MT#7271 API: Explicitely set cf pref on update
+  * [5471f91] MT#7271 API: Explicitly set cf pref on update
   * [9679565] MT#5879 Fetch call list for invoices. WIP.
   * [c857539] MT#5879 Remove obsolete vat fields from billprof
   * [69e20a8] MT#7377 API: fix alias_numbers and pbx_extension
@@ -3630,7 +3630,7 @@ ngcp-panel (1.5.0.0+0~mr3.5.0.0) unstable; urgency=low
   * [51640b7] MT#7377 API: check for pilot primary_number.
   * [5931995] MT#7377 API: check if alias_numbers is array.
   * [2fece89] MT#7495 Add customer prefs to test.
-  * [ed61363] MT#7037 Explicitely set packet size to 20ms
+  * [ed61363] MT#7037 Explicitly set packet size to 20ms
   * [2f06618] MT#4019 Implement C2D in api via /api/callcontrols
   * [1d26af6] MT#7177 Implement callee normalization. WIP.
   * [7c8e355] MT#7177 API: add /api/applyrewrites/ for rwr.
@@ -3667,7 +3667,7 @@ ngcp-panel (1.5.0.0+0~mr3.5.0.0) unstable; urgency=low
   * [915cf77] MT#7555 Properly terminate subscribers.
   * [3f8f488] MT#7555 API: Terminate instead of delete subs
   * [9c4dc3d] MT#7793 Insert start_huntgroup event on new group
-  * [22fb753] MT#7793 Explicitely set all event fields on insert
+  * [22fb753] MT#7793 Explicitly set all event fields on insert
   * [dfd4f66] MT#5879 Make generate_invoices.pl executable.
   * [c229863] MT#7803 Fix fetching invoice svg data.
   * [cbce5d0] MT#7803 Fix UTF8 handling in invoice generation
@@ -3952,7 +3952,7 @@ ngcp-panel (1.4.0.0+0~mr3.4.0.0) unstable; urgency=low
   * [cd98d27] MT#6909 API: implement email template management.
   * [954367a] MT#6827 Update api description for pbxdevices
   * [f47c7d1] MT#6909 API: add reseller rel to emailtemplates
-  * [3ec2d88] MT#6909 API Check for existance of email tmpl name
+  * [3ec2d88] MT#6909 API Check for existence of email tmpl name
   * [427bd2e] MT#6913 API: Basic management of profile sets.
   * [19d6b47] MT#6913 API: implement profile handling.
   * [84cc7c3] MT#6913 API: fix profile(_set) deletion.
@@ -4038,8 +4038,8 @@ ngcp-panel (1.4.0.0+0~mr3.4.0.0) unstable; urgency=low
   * [5649552] MT#5879 Change work with root element so now after moving rows block columns stay on correct position.
   * [ed6861b] MT#5879 Use identifier for datatables helper initialization.
   * [5869b32] MT#5879 Detailes with renamed zonecalls.
-  * [c966c84] MT#5879 Some drafts: 1. Configure embeding bit-map images in svg-edit 2. Remove zooming on mousewheel in svg-edit 3. Configure svg-edit a little to make interface not such full of features. Added main-button - not hided now. maybe should be? 4. Found lost </iframe> - fixed styling and javascript in invoice interface 5. Separate templates list in new template to enable ajax loading after deletion and active selection. Added different buttons ) And other small fixes and changes
-  * [db24de1] MT#5879 1. Complete embedding bitmap images 2. Change Work with layers - always show currently selecetd, apply initial display to others. Select first on start automatically. 3. Change preview work to fetch from server scheme, to enable preview in Explorer. Maybe should be applied only to Explorer?
+  * [c966c84] MT#5879 Some drafts: 1. Configure embeding bit-map images in svg-edit 2. Remove zooming on mousewheel in svg-edit 3. Configure svg-edit a little to make interface not such full of features. Added main-button - not hidden now. maybe should be? 4. Found lost </iframe> - fixed styling and javascript in invoice interface 5. Separate templates list in new template to enable ajax loading after deletion and active selection. Added different buttons ) And other small fixes and changes
+  * [db24de1] MT#5879 1. Complete embedding bitmap images 2. Change Work with layers - always show currently selected, apply initial display to others. Select first on start automatically. 3. Change preview work to fetch from server scheme, to enable preview in Explorer. Maybe should be applied only to Explorer?
   * [eab4aa6] MT#5879 Fix total location
   * [805e9ee] MT#5879 Save a lot of commented rows related to initial zoom before delete them
   * [bf5d8cc] MT#5879 Save intermediate state with solutions which are going to be removed.
@@ -4053,15 +4053,15 @@ ngcp-panel (1.4.0.0+0~mr3.4.0.0) unstable; urgency=low
   * [26142a1] MT#5879 Prevent add back link again and again on applying onload method after ajax tables reload
   * [f6fe84d] MT#5879 Datatables is shown now for invoice data but search doesn't work. Anyway switch now to invoices generation and will return to datatables later. Done: 1.Form separated for future possible load through ajax. 2.Activity switch in invoice templates table
   * [89e6533] MT#5879 Remove artefacts from datatables vars and make possible deactivate all invoice templates.
-  * [135dad0] MT#5879 Draft of invoice template movement to reseller. 1.Remove curly brackets from svg template 2.Move invoice template templates to their own folder and change pathes accordingly. 3.Move invoice_template functionality to Reseller. maybe should be separated in new Controller. 4.Move InvoiceTemplate form to its own sppace from Customer
+  * [135dad0] MT#5879 Draft of invoice template movement to reseller. 1.Remove curly brackets from svg template 2.Move invoice template templates to their own folder and change paths accordingly. 3.Move invoice_template functionality to Reseller. maybe should be separated in new Controller. 4.Move InvoiceTemplate form to its own sppace from Customer
   * [3c85a2e] MT#5879 Rename invoce template tables to s suffices.
   * [59b1d7f] MT#5879 Intermediate state. Template changes not saved. Separated info form is working, axcept applying renamed fields as form values.
   * [66376a9] MT#5879 Well, seems like all template relative info is working now again. What need n this area: 1. How about form "partial" validation - I need different fields checking of the item data for different actions. 2. To make it really DRY I need somehow alias columns in resultset data. Accessors don't work.
-  * [9aa35ef] MT#5879 Save state before new default template. Template form shown on click. Fix accordion intialization after ajax list refresh Add confirmation on default template applying
-  * [f877c90] MT#5879 Save wokring interface, but with alerts.
+  * [9aa35ef] MT#5879 Save state before new default template. Template form shown on click. Fix accordion initialization after ajax list refresh Add confirmation on default template applying
+  * [f877c90] MT#5879 Save working interface, but with alerts.
   * [760e07c] MT#5879 Clear Alerts Attempt to enable edit spans or grouped texts. Seems like all texts should be ungrouped, to be ditable
   * [6a63b84] MT#5879 Template. Fix datatables for invoice.
-  * [e9083ac] MT#5879 Fix datatables (wasn't commited, default template
+  * [e9083ac] MT#5879 Fix datatables (wasn't committed, default template
   * [5e30919] MT#5879 Draft of calls pages in template
   * [dbf2b54] MT#5879 Templates alignments.
   * [e9a88a5] MT#5879 Save templates state. Total isn't shown.
@@ -4091,7 +4091,7 @@ ngcp-panel (1.4.0.0+0~mr3.4.0.0) unstable; urgency=low
   * [c39d6a9] MT#5879 View invoices
   * [ebd4a41] MT#5879 Format invoice list. Just save state.
   * [2fbc3dd] MT#5879 Save state before adding from-to search to invoices.
-  * [90cf448] MT#5879 Fix commited error with remove pageStart.
+  * [90cf448] MT#5879 Fix committed error with remove pageStart.
   * [f1faaea] MT#5879 Commit doesn't work. Half of form rename.
   * [103d763] MT#5879 Complete rename invoice forms.
   * [280b4f3] MT#5879 Complete rename invoice forms.

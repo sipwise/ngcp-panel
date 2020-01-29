@@ -485,7 +485,7 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
             error => $e,
             desc  => $c->loc('Failed to flash dialogic'),
         );
-        $c->write("Faild to flash dialogic. Probably couldn't log in.");
+        $c->write("Failed to flash dialogic. Probably couldn't log in.");
     };
     #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;

@@ -155,13 +155,13 @@ sub validate {
         $self->field('match_pattern')->add_error("Ambiguous escape of non special characters");
     }
 
-    my @acount;
-    @acount = $s =~ /(\@\{\w+\})/g;
-    if(@acount > 1) {
+    my @account;
+    @account = $s =~ /(\@\{\w+\})/g;
+    if(@account > 1) {
         $self->field('match_pattern')->add_error("Cannot use more than one array variable in match pattern");
     }
-    @acount = $r =~ /(\@\{\w+\})/g;
-    if(@acount > 0) {
+    @account = $r =~ /(\@\{\w+\})/g;
+    if(@account > 0) {
         $self->field('match_pattern')->add_error("Cannot use array variable in replacement pattern");
     }
 }

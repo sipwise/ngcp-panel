@@ -209,7 +209,7 @@ $c->delete_reseller($resellername);
 $c->delete_contact($contactmail);
 $c->delete_billing_profile($billingname);
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

@@ -517,7 +517,7 @@ sub _init_contract_context {
     if (exists $template->{contract_contact}) {
         my %contract_contact = ();
         my @identifiers = _get_identifiers($template->{contract_contact});
-        foreach my $col (keys %{$template->{contract_contact}}) { #no inter-field dependecy
+        foreach my $col (keys %{$template->{contract_contact}}) { #no inter-field dependency
             next if $col eq $IDENTIFIER_FNAME;
             my ($k,$v) = _calculate($context,$col, $template->{contract_contact}->{$col});
             $contract_contact{$k} = $v;

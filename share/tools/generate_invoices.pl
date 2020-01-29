@@ -390,7 +390,7 @@ sub generate_invoice_data{
     my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
     if((@{$invoice_data->{invoice_details_calls}} < 1) && $billing_profile->{interval_charge} == 0 ){
         if($opt->{no_empty}){
-            $logger->debug("Contract_id=$client_contract->{id}. No_empty invoice generation requested - skiped.");
+            $logger->debug("Contract_id=$client_contract->{id}. No_empty invoice generation requested - skipped.");
             return;
         }
     }

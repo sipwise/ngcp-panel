@@ -102,7 +102,7 @@ sub auto :Private {
             my $tz_row = $c->model('DB')->resultset('reseller_timezone')->find({reseller_id => $reseller_id});
             _set_session_tz_from_row($c, $tz_row, 'reseller', $reseller_id);
         } else {
-            # this shouldnt happen
+            # this should not happen
         }
         $NGCP::Schema::CURRENT_USER_TZ = $c->session->{user_tz};
     } else {
@@ -528,7 +528,7 @@ sub _set_session_tz_from_row {
     $tz_name =~ s/^localtime$/local/ if $tz_name;
     eval { $c->session->{user_tz} = DateTime::TimeZone->new( name => $tz_name ); };
     if ($@) {
-        $c->log->warn("couldnt set timezone. error in creation probably caused by invalid timezone name. role $role ($identifier) to $tz_name");
+        $c->log->warn("could not set timezone. error in creation probably caused by invalid timezone name. role $role ($identifier) to $tz_name");
     } else {
         $c->session->{user_tz_name} = $tz_name;
         $c->log->debug("timezone set for $role ($identifier) to $tz_name");

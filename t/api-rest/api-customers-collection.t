@@ -35,7 +35,7 @@ $fake_data->set_data_from_script({
 
 SKIP:{
     my ($res,$req,$content);
-    #ew don't have POST fro the invoice templates 
+    #we do not have POST from the invoice templates
     my $invoicetemplate = $test_machine->get_item_hal('invoicetemplates','/api/invoicetemplates/?name=api_test');
 
     if(!$invoicetemplate->{total_count} ){

@@ -40,7 +40,7 @@ has_field 'is_regex' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['A flag indicating, whether the numbers in this set are regular expressions. ' .
-            'If true, all bnumbers will be interepreted as perl compatible regular expressions and ' .
+            'If true, all bnumbers will be interpreted as perl compatible regular expressions and ' .
             'matched against the B-Number of the calls. If false, shell pattern the whole numbers ' .
             'are matched while shell patterns like 431* or 49123~[1-5~]67 are possible.'],
     },

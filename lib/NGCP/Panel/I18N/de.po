@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2014-07-17 11:47+0200\n"
+"PO-Revision-Date: 2020-01-29 23:12+0100\n"
 "Last-Translator: Gerhard Jungwirth <gjungwirth@sipwise.com>\n"
 "Language-Team: German <>\n"
 "Language: de\n"
@@ -5167,8 +5167,8 @@ msgid "Language for voicemail and app server"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Security.pm
-msgid "Last Attemp"
-msgstr ""
+msgid "Last Attempt"
+msgstr "Letzter Versuch"
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Last Name"
@@ -5957,7 +5957,7 @@ msgid "Openvpn details"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
-msgid "Openvpn service is not avaialbe on the system."
+msgid "Openvpn service is not available on the system."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
@@ -9465,9 +9465,6 @@ msgstr "ja"
 
 #~ msgid "Match Direction"
 #~ msgstr "Vergleichts-Richtung"
-
-#~ msgid "Last Attempt"
-#~ msgstr "Letzter Versuch"
 
 #~ msgid "Cash"
 #~ msgstr "Guthaben"

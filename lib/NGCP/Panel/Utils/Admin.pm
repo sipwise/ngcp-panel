@@ -219,7 +219,7 @@ sub toggle_openvpn {
     if (!$status_in->{allowed}) {
         $error = $c->loc('Openvpn service is not enabled or host role is not allowed.');
     } elsif (!$status_in->{available}) {
-        $error = $c->loc('Openvpn service is not avaialbe on the system.');
+        $error = $c->loc('Openvpn service is not available on the system.');
     } else {
         if ($set_active) {
             if ( $status_in->{active} ) {

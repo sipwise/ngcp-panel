@@ -52,7 +52,7 @@ sub delete_item {
     return 1;
 }
 
-#we don't use update_item for the admins now, as we dont allo PUT and PATCH
+#we do not use update_item for the admins now, as we do not allo PUT and PATCH
 sub update_item_model {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 

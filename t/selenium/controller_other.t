@@ -357,7 +357,7 @@ $d->find_element('//*[@id="toc-root-item-2"]//a[contains(text(), "Architecture")
 diag("Check if page was successfully changed");
 ok($d->find_element_by_xpath('/html/body//div//h2/a[@name="architecture"]'), "We are on the right page");
 
-diag("This test run was successfull");
+diag("This test run was successful");
 $run_ok = 1;
 
 END {

@@ -938,7 +938,7 @@ sub json_false {
 __END__
 
 Further improvements:
-Really it would be much more correct to use collection clases with ALL their own test machine initialization for data creation. just will call proper collection class. It will allow to keep data near releveant tests, and don't duplicate test_machine params in the FakeData.
+Really it would be much more correct to use collection clases with ALL their own test machine initialization for data creation. just will call proper collection class. It will allow to keep data near relevant tests, and not duplicate test_machine params in the FakeData.
 
 Optimizations:
 1.make wrapper for data creation/deletion for all tests.

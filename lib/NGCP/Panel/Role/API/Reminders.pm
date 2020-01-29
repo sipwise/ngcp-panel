@@ -165,7 +165,7 @@ sub get_subscriber_by_id {
             join => 'contract',
         });
     } elsif ($c->user->roles eq "subscriber") {
-        # quitely override any given subscriber_id, we don't need it
+        # quietly override any given subscriber_id, we don't need it
         $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
             'me.uuid' => $c->user->uuid,
         });
