@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "c0009946_089a89c6",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-01-30T12:33:22Z",
+      "side": 1,
+      "message": "hm, there seems to be different behaviour when overriding CORE subs.\n\nthis prints \"test\" as expected:\n\n*main::test \u003d sub { print \"test\" };\ntest();\n\nbut this not:\n\n*CORE::GLOBAL::exit \u003d sub {  print \u0027test\u0027; }\nexit();",
+      "parentUuid": "d2f4e041_beda7b49",
+      "revId": "2aa40a42268ff00318185a916405b121615ff822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e5d28e0_9dbe352a",
         "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
         "patchSetId": 2
