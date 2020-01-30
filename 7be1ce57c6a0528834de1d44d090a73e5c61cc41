@@ -2,6 +2,235 @@
   "comments": [
     {
       "key": {
+        "uuid": "7ec413c3_88c3a137",
+        "filename": "lib/NGCP/Panel/Controller/API/TopupCash.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "permissions maybe -- yeah, not a typo, but still...",
+      "range": {
+        "startLine": 62,
+        "startChar": 46,
+        "endLine": 62,
+        "endChar": 65
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8584696e_061d0b50",
+        "filename": "lib/NGCP/Panel/Controller/API/TopupVouchers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "again",
+      "range": {
+        "startLine": 62,
+        "startChar": 59,
+        "endLine": 62,
+        "endChar": 65
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8ac7956_d1263e11",
+        "filename": "lib/NGCP/Panel/Controller/API/Vouchers.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "again",
+      "range": {
+        "startLine": 115,
+        "startChar": 55,
+        "endLine": 115,
+        "endChar": 61
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1295b7b2_80281297",
+        "filename": "lib/NGCP/Panel/Controller/API/VouchersItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "again",
+      "range": {
+        "startLine": 62,
+        "startChar": 55,
+        "endLine": 62,
+        "endChar": 61
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95ba1a5a_8c086a6e",
+        "filename": "lib/NGCP/Panel/Controller/API/VouchersItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "again",
+      "range": {
+        "startLine": 98,
+        "startChar": 55,
+        "endLine": 98,
+        "endChar": 61
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee0320d0_07d9ca9b",
+        "filename": "lib/NGCP/Panel/Controller/API/VouchersItem.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "and again\n\n(at some point, the string could be extracted and reused maybe...)",
+      "range": {
+        "startLine": 131,
+        "startChar": 55,
+        "endLine": 131,
+        "endChar": 61
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df3134a2_3c66df09",
+        "filename": "lib/NGCP/Panel/Controller/Peering.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "does your tool miss the expansion of these?",
+      "range": {
+        "startLine": 488,
+        "startChar": 54,
+        "endLine": 488,
+        "endChar": 62
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcafd0d1_efd2661e",
+        "filename": "lib/NGCP/Panel/I18N/de.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 5171,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "this is due to refreshing the translation with msgmerge or similar? not a typo per se, but filling in the translation...",
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47b56d7d_f6fca430",
+        "filename": "lib/NGCP/Panel/I18N/es.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 5169,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "again",
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d63310df_3e73d691",
+        "filename": "lib/NGCP/Panel/I18N/it.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 5284,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "mamma mia, again!",
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c600585_6d833d5d",
+        "filename": "lib/NGCP/Panel/I18N/ru.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 5173,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "again",
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dae67a26_1c293459",
         "filename": "lib/NGCP/Panel/Utils/Device.pm",
         "patchSetId": 1
@@ -18,6 +247,29 @@
         "startChar": 1,
         "endLine": 261,
         "endChar": 4
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0960bb94_8fd5bf11",
+        "filename": "lib/NGCP/Panel/Utils/InvoiceTemplate.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-01-30T10:39:20Z",
+      "side": 1,
+      "message": "not",
+      "range": {
+        "startLine": 175,
+        "startChar": 34,
+        "endLine": 175,
+        "endChar": 37
       },
       "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
