@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "08e49b00_7e789e7e",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-01-30T08:32:55Z",
+      "side": 1,
+      "message": "BEGIN is some sort of bad habit imho.\nthere are only rare cases where BEGIN is mandatory (compile-time calculations for other compile-time stmts, eg. manipulating inc path)\n\nso BEGIN here would be needed only if exit() should be protected for the imports too.\nbut in such case the $DISABLE_EXIT global could not be used either, since it is initialized afterwards.",
+      "parentUuid": "3c484820_5ccfcc78",
+      "revId": "2aa40a42268ff00318185a916405b121615ff822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e5d28e0_9dbe352a",
         "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2020-01-29T18:13:23Z",
       "side": 1,
       "message": "Who is calling exit?",
+      "revId": "2aa40a42268ff00318185a916405b121615ff822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d0ae204_26812cda",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-01-30T08:32:55Z",
+      "side": 1,
+      "message": "a somewhat paranoid example like this: https://paste.mgm.sipwise.com/show/6697/",
+      "parentUuid": "9e5d28e0_9dbe352a",
       "revId": "2aa40a42268ff00318185a916405b121615ff822",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
