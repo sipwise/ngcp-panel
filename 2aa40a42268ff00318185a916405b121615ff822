@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "cd0319fc_89ee1cb7",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-30T11:15:58Z",
+      "side": 1,
+      "message": "Well that\u0027s what the man for CORE says, and a test here seems to indicate it does not work otherwise, which is what I\u0027d have expected:\n\n  $ cat core.pl \n  #!/usr/bin/perl\n  use strict;\n  use warnings;\n  *CORE::GLOBAL::exit \u003d sub { CORE::exit(10) };\n  exit(2);\n  $ perl core.pl ; echo $?\n  Name \"CORE::GLOBAL::exit\" used only once: possible typo at core.pl  line 4.\n  2\n\n  $ cat core.pl \n  #!/usr/bin/perl\n  use strict;\n  use warnings;\n  BEGIN { *CORE::GLOBAL::exit \u003d sub { CORE::exit(10) }; }\n  exit(2);\n  $ perl core.pl ; echo $?\n  10\n\nNot to mention that otherwise it produces perl warnings. :D\n\nAlso the our is already being done at compile time, so that\u0027s not a problem here.\n\n\nIt would be nice to add the reason for this override, with a comment, f.ex.:\n\n  The function foo evaluates perl code provided via a configuration\n  by the user, so we must make sure no such code will call exit() by \n  accident or we would terminate the entire program.",
+      "parentUuid": "08e49b00_7e789e7e",
+      "revId": "2aa40a42268ff00318185a916405b121615ff822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e5d28e0_9dbe352a",
         "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
         "patchSetId": 2
