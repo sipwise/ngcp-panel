@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8fd5c930_c8261583",
+        "filename": "lib/NGCP/Panel/Controller/API/AdminsItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2020-01-30T14:36:03Z",
+      "side": 0,
+      "message": "Is there a way to disable flagging these? I\u0027m sure there will be more added in the future since it\u0027s not wrong.",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 9
+      },
+      "revId": "0168628b6ed0a357b58324006ee4021eed4a92f8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
