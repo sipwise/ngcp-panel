@@ -258,69 +258,6 @@ sub denwaip_encrypt{
     return $encrypted_data->string_ref;
 }
 
-=pod
-sub denwaip_decrypt{
-    my ($crypted, $mac) = @_;
-
-    my $plain_data = IO::String->new();
-
-    $mac = lc($mac);
-
-    # hard coded master key
-    my $key = $mac . $denwaip_masterkey;
-
-    # file starts with a hard coded magic
-    my $magic = substr($crypted, 0, 16, '');
-    $denwaip_magic_head eq "\x40\x40\x40\x24\x24\x40\x40\x40\x40\x40\x40\x24\x24\x40\x40\x40" or die "Wrong denwaip crypted data format.";
-
-    # "random" seed taken from file
-    my $seed = substr($crypted, 0, 16, '');
-
-    # 256 iterations of sha256
-    my $keybuf = $seed . ("\0" x 16);
-    for (1 .. 256) {
-        my $hash = sha256($keybuf . $key);
-        $keybuf = $hash;
-    }
-
-    # got our AES key
-    my $cipher = Crypt::Rijndael->new($keybuf, Crypt::Rijndael::MODE_ECB());
-
-    # for final checksum
-    my $xor1 = (chr(54) x 64);
-    my $xor2 = (chr(92) x 64);
-
-    substr($xor1, 0, 32) = substr($xor1, 0, 32) ^ substr($keybuf, 0, 32);
-    substr($xor2, 0, 32) = substr($xor2, 0, 32) ^ substr($keybuf, 0, 32);
-
-    # remove trailing checksum from buffer
-    my $final_checksum = substr($crypted, -32, 32, '');
-
-    # initialize checksum SHA context
-    my $checksum_sha = Digest::SHA->new('sha256');
-    $checksum_sha->add($xor1);
-
-    # decrypt routine
-    while ($crypted ne '') {
-        # each plaintext block is xor'd with the current "seed", then run through AES, then written to file
-
-        my $block = substr($crypted, 0, 16, '');
-        $checksum_sha->add($block);
-
-        my $dec_block = $cipher->decrypt($block);
-        substr($dec_block, 0, 16) = substr($dec_block, 0, 16) ^ substr($seed, 0, 16);
-        print $plain_data ($dec_block);
-
-        # "seed" for the next block is the previous encrypted block
-        $seed = $block;
-    }
-
-    my $interim_sha = $checksum_sha->digest();
-    my $checksum = sha256($xor2 . $interim_sha);
-    $final_checksum eq $checksum or die "Denwaip checksum failed.";
-    return $plain_data->string_ref;
-}
-=cut
 1;
 
 =head1 NAME
