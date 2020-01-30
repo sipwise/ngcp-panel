@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dae67a26_1c293459",
+        "filename": "lib/NGCP/Panel/Utils/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-01-30T10:33:57Z",
+      "side": 1,
+      "message": "would remove that whole thing",
+      "range": {
+        "startLine": 261,
+        "startChar": 1,
+        "endLine": 261,
+        "endChar": 4
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
