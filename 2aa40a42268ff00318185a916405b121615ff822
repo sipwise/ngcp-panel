@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "d2f4e041_beda7b49",
+        "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-01-30T12:16:54Z",
+      "side": 1,
+      "message": "code works in panel as is, does not emit any warning.\n\n*\u003cname\u003e \u003d ... is the regular way to redefine a sub with an overload, no matter what namespace.\n\nBEGIN blocks -\u003e avoid them unless there is no other option. only use case i remember can be manual manipulation of @ISA (to preset @ISAs of child classes in correct order) or @INC (impacts any other \"use\"). \n\nBEGIN could ensure that exit() overrides is in place before any module code gets executed. but this exit() override is not needed when panel is started. it\u0027s relevant not earlier than a http request finally invokes this _calculate() method, which therefor arms the override by setting $DISABLE_EXIT.\n\n\u003eAlso the our is already being done at compile time, so that\u0027s not a problem here.\nonly the var is registered, expression to initialize is not executed.\nconvince yourself, eg. the snippet bellow prints \"undefined\".\n\nour $test \u003d 1;\nBEGIN {\n    print \u0027undefined\u0027 unless $test;\n}",
+      "parentUuid": "cd0319fc_89ee1cb7",
+      "revId": "2aa40a42268ff00318185a916405b121615ff822",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e5d28e0_9dbe352a",
         "filename": "lib/NGCP/Panel/Utils/ProvisioningTemplates.pm",
         "patchSetId": 2
