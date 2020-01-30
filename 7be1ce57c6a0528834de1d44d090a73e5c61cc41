@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1bf23ef3_9cd74aa9",
+        "filename": "lib/NGCP/Panel/Controller/API/TopupCash.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-30T13:39:07Z",
+      "side": 1,
+      "message": "I think rights is also correct. Also this might require changing tons of other references, such as the one above.",
+      "parentUuid": "7ec413c3_88c3a137",
+      "range": {
+        "startLine": 62,
+        "startChar": 46,
+        "endLine": 62,
+        "endChar": 65
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8584696e_061d0b50",
         "filename": "lib/NGCP/Panel/Controller/API/TopupVouchers.pm",
         "patchSetId": 1
@@ -163,6 +187,30 @@
     },
     {
       "key": {
+        "uuid": "0c6bfc83_e7986b97",
+        "filename": "lib/NGCP/Panel/Controller/Peering.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-30T13:39:07Z",
+      "side": 1,
+      "message": "It does not consider these errors, I just change them if I have to change the line, but missed this one. :)",
+      "parentUuid": "df3134a2_3c66df09",
+      "range": {
+        "startLine": 488,
+        "startChar": 54,
+        "endLine": 488,
+        "endChar": 62
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fcafd0d1_efd2661e",
         "filename": "lib/NGCP/Panel/I18N/de.po",
         "patchSetId": 1
@@ -174,6 +222,24 @@
       "writtenOn": "2020-01-30T10:39:20Z",
       "side": 1,
       "message": "this is due to refreshing the translation with msgmerge or similar? not a typo per se, but filling in the translation...",
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6aa86d08_49492d2b",
+        "filename": "lib/NGCP/Panel/I18N/de.po",
+        "patchSetId": 1
+      },
+      "lineNbr": 5171,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-30T13:39:07Z",
+      "side": 1,
+      "message": "I could leave it as is, but I think it\u0027s good practice to either unfuzz translations so that they do not go to waste on typo fixes for the original, or update them from previously correct ones, which apparently got regressed, in this case the latter.",
+      "parentUuid": "fcafd0d1_efd2661e",
       "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
@@ -254,6 +320,30 @@
     },
     {
       "key": {
+        "uuid": "0dc2438d_e0dc6d61",
+        "filename": "lib/NGCP/Panel/Utils/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-30T13:39:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dae67a26_1c293459",
+      "range": {
+        "startLine": 261,
+        "startChar": 1,
+        "endLine": 261,
+        "endChar": 4
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0960bb94_8fd5bf11",
         "filename": "lib/NGCP/Panel/Utils/InvoiceTemplate.pm",
         "patchSetId": 1
@@ -265,6 +355,30 @@
       "writtenOn": "2020-01-30T10:39:20Z",
       "side": 1,
       "message": "not",
+      "range": {
+        "startLine": 175,
+        "startChar": 34,
+        "endLine": 175,
+        "endChar": 37
+      },
+      "revId": "7be1ce57c6a0528834de1d44d090a73e5c61cc41",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5eb1a46_a4982ffd",
+        "filename": "lib/NGCP/Panel/Utils/InvoiceTemplate.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-01-30T13:39:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0960bb94_8fd5bf11",
       "range": {
         "startLine": 175,
         "startChar": 34,
