@@ -28,19 +28,6 @@ use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::Kamailio qw();
 
-#The function _calculate() evaluates perl code provided via a configuration
-#by the user, so we must make sure no such code will call exit() by
-#accident or we would terminate the entire program.
-our $DISABLE_EXIT = 0;
-BEGIN {
-    *CORE::GLOBAL::exit = sub (;$) {
-        ## no critic (TestingAndDebugging::ProhibitNoWarnings)
-        no warnings 'exiting';
-        die('exit() called') if $DISABLE_EXIT;
-        CORE::exit($_[0] // 0);
-    };
-}
-
 my $IDENTIFIER_FNAME = 'identifier';
 my $CODE_SUFFIX_FNAME = '_code';
 my $FIELD_TYPE_ATTRIBUTE = 'type';
@@ -49,6 +36,32 @@ my @INIT_FIELD_NAMES = qw(cc_ac_map default_cc);
 my $PURGE_FIELD_NAME = 'purge';
 
 my $strict_closure = 1;
+
+my @DISABLED_CORE_FUNCTIONS = qw(
+    binmode close closedir dbmclose dbmopen eof fileno flock format getc read
+    readdir rewinddir say seek seekdir select syscall sysread sysseek
+    syswrite tell telldir truncate write print printf
+
+    chdir chmod chown chroot fcntl glob ioctl link lstat mkdir open opendir readlink
+    rename rmdir stat symlink sysopen umask unlink utime
+
+    alarm exec fork getpgrp getppid getpriority kill pipe setpgrp setpriority sleep
+    system times wait waitpid
+
+    accept bind connect getpeername getsockname getsockopt listen recv send setsockopt
+    shutdown socket socketpair
+
+    msgctl msgget msgrcv msgsnd semctl semget semop shmctl shmget shmread shmwrite
+
+    endgrent endhostent endnetent endpwent getgrent getgrgid getgrnam getlogin getpwent
+    getpwnam getpwuid setgrent setpwent
+
+    endprotoent endservent gethostbyaddr gethostbyname gethostent getnetbyaddr
+    getnetbyname getnetent getprotobyname getprotobynumber getprotoent getservbyname
+    getservbyport getservent sethostent setnetent setprotoent setservent
+
+    exit goto
+);
 
 sub create_provisioning_template_form {
 
@@ -1010,10 +1023,13 @@ sub _calculate {
     $context->{cr_c} //= {};
     if ($f =~ /^([a-z0-9_]+)$CODE_SUFFIX_FNAME$/) {
         my $cl;
-        local $DISABLE_EXIT = 1;
+        my $env = 'use subs qw(' . join(' ', @DISABLED_CORE_FUNCTIONS) . ");\n";
+        foreach my $sub (@DISABLED_CORE_FUNCTIONS) {
+            $env .= 'sub ' . $sub . " { die('$sub called'); }\n";
+        }
         if ($strict_closure) {
             $cl = eval_closure(
-                source      => $c,
+                source      => ($env . $c),
                 environment => {
                     map { if ('ARRAY' eq ref $context->{$_}) {
                             ('@' . $_) => $context->{$_};
@@ -1037,7 +1053,7 @@ sub _calculate {
             } else {
                 ## no critic (BuiltinFunctions::ProhibitStringyEval)
                 #$context->{cr_c}->{$c} = eval(decode_base64($c));
-                $cl = eval($c);
+                $cl = eval($env . $c);
                 $context->{cr_c}->{$c} = $cl;
             }
         }
