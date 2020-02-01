@@ -1,0 +1,24 @@
+---
+# Create CSTA test environment (Domain, Customer and 4 Subscribers)
+-
+    name: include create Customer
+    type: include
+    file: CreateCSTATestsEnv.yaml
+
+#set Call Forwards
+-
+    name: set Call Forwards
+    type: item
+    method: PUT
+    path: '/api/callforwards/${subscriber_bob_id}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        cfu:
+            destinations:
+                -
+                  destination: 431${unique_id}3
+    conditions:
+        is:
+            code: 200

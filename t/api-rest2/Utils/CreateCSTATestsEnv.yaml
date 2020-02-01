@@ -1,0 +1,168 @@
+---
+# Create Domain
+-
+    name: create domain
+    type: item
+    method: POST
+    path: '/api/domains/'
+    header:
+        Content-Type: application/json
+    content:
+        domain: csta.test${unique_id}
+        reseller_id: 1
+    retain:
+        domain_path: header.location
+        domain_id: header.location
+    conditions:
+        is:
+            code: 201
+
+# Create Customer
+-
+    name: create Customer
+    type: item
+    method: POST
+    path: '/api/customers/'
+    header:
+        Content-Type: application/json
+    content:
+        status: active
+        contact_id: 1
+        billing_profile_id: 1
+        type: pbxaccount
+        max_subscribers: null
+        external_id: ${unique_id}
+    retain:
+        customer_path: header.location
+        customer_id: header.location
+    conditions:
+        is:
+            code: 201
+
+# Create Pilot Subscriber
+-
+    name: create Subscriber - Pilot
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        administrative: 1
+        customer_id: ${customer_id}
+        primary_number:
+            cc: 43
+            ac: 1
+            sn: ${unique_id}
+        username: pilot_${unique_id}
+        password: test_pass${unique_id}
+        domain_id: ${domain_id}
+        is_pbx_pilot: 1
+    retain:
+        subscriber_pilot_path: header.location
+        subscriber_pilot_id: header.location
+    conditions:
+        is:
+            code: 201
+
+# Create Subscribers
+-
+    name: create Subscriber - Alice
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        pbx_extension: 101
+        username: alice_${unique_id}
+        password: test_pass${unique_id}
+        customer_id: ${customer_id}
+        domain_id: ${domain_id}
+        alias_numbers:
+            -
+                cc: 43
+                ac: 1
+                sn: ${unique_id}1
+                is_devid: 1
+    retain:
+        subscriber_alice_path: header.location
+        subscriber_alice_id: header.location
+    conditions:
+        is:
+            code: 201
+-
+    name: create Subscriber - Bob
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        pbx_extension: 102
+        username: bob_${unique_id}
+        password: test_pass${unique_id}
+        customer_id: ${customer_id}
+        domain_id: ${domain_id}
+        alias_numbers:
+            -
+                cc: 43
+                ac: 1
+                sn: ${unique_id}2
+                is_devid: 1
+    retain:
+        subscriber_bob_path: header.location
+        subscriber_bob_id: header.location
+    conditions:
+        is:
+            code: 201
+-
+    name: create Subscriber - Carol
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        pbx_extension: 103
+        username: carol_${unique_id}
+        password: test_pass${unique_id}
+        customer_id: ${customer_id}
+        domain_id: ${domain_id}
+        alias_numbers:
+            -
+                cc: 43
+                ac: 1
+                sn: ${unique_id}3
+                is_devid: 1
+    retain:
+        subscriber_carol_path: header.location
+        subscriber_carol_id: header.location
+    conditions:
+        is:
+            code: 201
+-
+    name: create Subscriber - Dan
+    type: item
+    method: POST
+    path: '/api/subscribers/'
+    header:
+        Content-Type: application/json
+    content:
+        pbx_extension: 104
+        username: dan_${unique_id}
+        password: test_pass${unique_id}
+        customer_id: ${customer_id}
+        domain_id: ${domain_id}
+        alias_numbers:
+            -
+                cc: 43
+                ac: 1
+                sn: ${unique_id}4
+                is_devid: 1
+    retain:
+        subscriber_dan_path: header.location
+        subscriber_dan_id: header.location
+    conditions:
+        is:
+            code: 201
