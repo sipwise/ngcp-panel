@@ -27,6 +27,11 @@ has 'file_path' => (
     is => 'ro'
 );
 
+has 'unique_id' => (
+    isa => 'Str',
+    is => 'ro'
+);
+
 sub run {
     my ( $self ) = @_;
 
@@ -72,7 +77,7 @@ sub run {
     my $test_executor = TestFramework::TestExecutor->new();
 
     # initializing time to add to fields which need to be unique
-    my $retained = { unique_id => int(rand(100000)) };
+    my $retained = { unique_id => $self->unique_id };
 
     my $test_case_result = { success => 1, error_count => 0 };
 

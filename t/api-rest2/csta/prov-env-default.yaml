@@ -1,0 +1,6 @@
+---
+# Create CSTA test environment (Domain, Customer and 4 Subscribers)
+-
+    name: include create Customer
+    type: include
+    file: CreateCSTATestsEnv.yaml

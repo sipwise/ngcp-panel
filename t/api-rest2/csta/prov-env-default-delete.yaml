@@ -1,0 +1,36 @@
+---
+# Create CSTA test environment (Domain, Customer and 4 Subscribers)
+-
+    name: include create Customer
+    type: include
+    file: CreateCSTATestsEnv.yaml
+
+# Delete Subscribers - are deleted automatically with their Customer termination
+
+# Terminate Customer
+-
+    name: 'terminate customer'
+    type: item
+    method: PATCH
+    path: '/${customer_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /status
+            value: terminated
+    conditions:
+        is:
+            code: 200
+
+# Delete Domain
+-
+    name: delete domain
+    type: item
+    method: DELETE
+    path: '/${domain_path}'
+    conditions:
+        is:
+            code: 204

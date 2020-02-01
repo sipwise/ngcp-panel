@@ -7,12 +7,18 @@ use TestFramework;
 use threads;
 use Thread::Queue;
 use Data::Dumper;
+use Getopt::Long qw(GetOptions);
+
+my ($unique_id, $help);
+
+# TODO: Support 'help' argument. Consider using Pod::Usage
+GetOptions( 'unique_id=s' => \$unique_id );
 
 my $server = $ARGV[0] || undef;
 my $selected = $ARGV[1] || 'all';
 
 if ( !$server ){
-    print "Usage: \$ perl testrunner.pl [<testsystem>] [<testset>]\n";
+    print "Usage: \$ perl testrunner.pl [<testsystem>] [<testset>] [--unique_id <string>]\n";
     print "Usage example: \$ perl testrunner.pl 192.168.88.162\n";
     print "Usage example: \$ perl testrunner.pl 192.168.88.162 fast\n";
     print "Possible test set: all, stable, fast, t/api-rest2/tests-directory, t/api-rest2/Contracts.yaml\n";
@@ -39,6 +45,10 @@ elsif ( -d $selected ) {
 else {
     print "Test selection: $selected\n";
     push @test_files, $selected;
+}
+
+if ( scalar @test_files > 1 and defined $unique_id ) {
+    print "Attention: the same '$unique_id' unique_id will be used for all test files!\n";
 }
 
 print "################################################################################\n";
@@ -73,7 +83,10 @@ sub worker {
         chomp $test_file;
         my $start_time = time;
         print "Running tests from $test_file\n";
-        my $test_framework = TestFramework->new( {file_path => $test_file} );
+        my $test_framework = TestFramework->new( {
+            file_path => $test_file,
+            unique_id => $unique_id  // int(rand(100000)),
+        } );
 
         my $result = $test_framework->run();
 
