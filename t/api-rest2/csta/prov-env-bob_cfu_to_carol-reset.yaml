@@ -1,0 +1,35 @@
+---
+---
+# Create CSTA test environment (Domain, Customer and Subscribers)
+-
+    name: include create Customer
+    type: include
+    file: CreateCSTATestsEnv.yaml
+
+# set Call Forwards
+-
+    name: set Call Forwards
+    type: item
+    method: PUT
+    path: '/api/callforwards/${subscriber_bob_id}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        cfu:
+            destinations:
+                -
+                  destination: ${unique_id}3
+    conditions:
+        is:
+            code: 200
+
+# delete Call Forwards
+-
+    name: Delete Call Forwards
+    type: item
+    method: DELETE
+    path: '/api/callforwards/${subscriber_bob_id}'
+    conditions:
+        is:
+            code: 204
