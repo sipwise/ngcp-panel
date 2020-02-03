@@ -4,7 +4,6 @@ use Sipwise::Base;
 
 use NGCP::Panel::Form::ProvisioningTemplate qw();
 use DateTime::TimeZone qw();
-#use MIME::Base64 qw(decode_base64);
 use String::MkPasswd qw();
 use Eval::Closure qw(eval_closure);
 use Tie::IxHash;
@@ -28,6 +27,11 @@ use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::Kamailio qw();
 
+use JE::Destroyer qw();
+use JE qw();
+use JSON qw();
+use NGCP::Panel::Utils::Generic qw(escape_js);
+
 my $IDENTIFIER_FNAME = 'identifier';
 my $CODE_SUFFIX_FNAME = '_code';
 my $FIELD_TYPE_ATTRIBUTE = 'type';
@@ -35,7 +39,12 @@ my $FIELD_VALUE_ATTRIBUTE = 'value';
 my @INIT_FIELD_NAMES = qw(cc_ac_map default_cc);
 my $PURGE_FIELD_NAME = 'purge';
 
-my $strict_closure = 1;
+my $JE_ANON_CLASS = 'je_anon';
+sub je_anon::TO_JSON {
+    my $obj = shift;
+    return { %$obj }; #unbless
+};
+my $STRICT_CLOSURE = 1;
 
 my @DISABLED_CORE_FUNCTIONS = qw(
     binmode close closedir dbmclose dbmopen eof fileno flock format getc read
@@ -62,6 +71,15 @@ my @DISABLED_CORE_FUNCTIONS = qw(
 
     exit goto
 );
+
+my @SUPPORTED_LANGS = qw(perl js);
+
+my $PERL_ENV = 'use subs qw(' . join(' ', @DISABLED_CORE_FUNCTIONS) . ");\n";
+foreach my $sub (@DISABLED_CORE_FUNCTIONS) {
+    $PERL_ENV .= 'sub ' . $sub . " { die('$sub called'); }\n";
+}
+
+my $JS_ENV = '';
 
 sub create_provisioning_template_form {
 
@@ -110,8 +128,9 @@ sub create_provisioning_template_form {
 
     if($posted && $form->validated) {
         my %log_data = %{$c->request->params};
+        my $context;
         try {
-            my $context = provision_begin(
+            $context = provision_begin(
                 c => $c,
             );
             provision_commit_row(
@@ -129,6 +148,7 @@ sub create_provisioning_template_form {
                 desc => $c->loc("Provisioning template '[_1]' done: subscriber [_2] created", $template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}),
             );
         } catch($e) {
+            _provision_cleanup($c, $context);
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -216,14 +236,13 @@ sub provision_begin {
             purge
         /};
 
+    my $template = $c->stash->{provisioning_template_name};
     my $schema = $c->model('DB');
     $schema->set_transaction_isolation('READ COMMITTED');
 
     my $context = {};
-    $context->{dfrd} = {};
-    $context->{now} = NGCP::Panel::Utils::DateTime::current_local();
-    $context->{schema} = $schema;
-    $context->{purge} = $purge // 0;
+    $context->{_dfrd} = {};
+    $context->{_purge} = $purge // 0;
 
     my $fields = _get_fields($c,1);
     my $init_values = {};
@@ -232,6 +251,8 @@ sub provision_begin {
         my ($k,$v) = _calculate_field($init_values, $fname, $fields);
         $init_values->{$k} = $v;
     }
+
+    my %subs = ();
 
     if (exists $init_values->{cc_ac_map} and not exists $context->{split_number}) {
         my $cc_ac_map = $init_values->{cc_ac_map};
@@ -258,8 +279,10 @@ sub provision_begin {
                 }
             }
         }
-        $context->{split_number} = sub {
+        $subs{split_number} = sub {
             my ($dn) = @_;
+            $dn //= '';
+            $dn = '' . $dn; #force JE:: unboxing
             my ($cc,$ac,$sn) = ('','',$dn);
 
             if ($default_cc) {
@@ -290,15 +313,36 @@ sub provision_begin {
                 }
             }
 
-            return {cc => $cc, ac => $ac, sn => $sn};
+            return bless { ac => $ac, cc => $cc, sn => $sn, }, $JE_ANON_CLASS;
         };
     }
 
     foreach my $sub (qw(debug info warn error)) {
-        $context->{$sub} = sub {
+        $subs{$sub} = sub {
             return $c->log->$sub(@_);
         };
     }
+
+    _switch_lang(
+        $context,
+        $context->{_lang} = $c->stash->{provisioning_templates}->{$template}->{lang},
+        perl => sub {
+            $context->{now} = NGCP::Panel::Utils::DateTime::current_local();
+            $context->{schema} = $schema;
+            @{$context}{keys %subs} = values %subs;
+        },
+        js => sub {
+            $context->{_je} = JE->new();
+            $context->{_je}->eval($JS_ENV . "\nvar _func;\nvar now = new Date('" .
+                NGCP::Panel::Utils::DateTime::current_local() . "');\n");
+            $subs{'quotemeta'} = \&quotemeta;
+            $subs{'sprintf'} = \&sprintf;
+            while (each %subs) {
+                $context->{_je}->new_function($_ => $subs{$_});
+            }
+            $context->{_je_env} = {};
+        }
+    );
 
     return $context;
 
@@ -353,7 +397,7 @@ sub provision_commit_row {
         $schema,
     );
 
-    my $purge = $context->{purge} || $values->{$PURGE_FIELD_NAME};
+    my $purge = $context->{_purge} || $values->{$PURGE_FIELD_NAME};
     try {
         _init_subscriber_context(
             $c,
@@ -470,16 +514,32 @@ sub provision_finish {
             context
         /};
 
-    if (exists $context->{dfrd}->{kamailio_trusted_reload}
-        and $context->{dfrd}->{kamailio_trusted_reload} > 0) {
+    _provision_cleanup($c, $context);
+
+    if (exists $context->{_dfrd}->{kamailio_trusted_reload}
+        and $context->{_dfrd}->{kamailio_trusted_reload} > 0) {
         my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
-        delete $context->{dfrd}->{kamailio_trusted_reload};
+        delete $context->{_dfrd}->{kamailio_trusted_reload};
     }
 
-    if (exists $context->{dfrd}->{kamailio_flush}
-        and $context->{dfrd}->{kamailio_flush} > 0) {
+    if (exists $context->{_dfrd}->{kamailio_flush}
+        and $context->{_dfrd}->{kamailio_flush} > 0) {
         NGCP::Panel::Utils::Kamailio::flush($c);
-        delete $context->{dfrd}->{kamailio_flush};
+        delete $context->{_dfrd}->{kamailio_flush};
+    }
+
+}
+
+sub _provision_cleanup {
+
+    my ($c, $context) = @_;
+
+    return unless $context;
+
+    if ($context->{_je}) {
+        JE::Destroyer::destroy($context->{_je}); # break circular refs
+        undef $context->{_je};
+        undef $context->{_je_env};
     }
 
 }
@@ -491,7 +551,6 @@ sub _init_row_context {
     delete $context->{contract_contact};
     delete $context->{contract};
     delete $context->{contract_preferences};
-    delete $context->{billing_mappings};
     delete $context->{subscriber};
     delete $context->{subscriber_preferences};
 
@@ -505,8 +564,9 @@ sub _init_row_context {
     delete $context->{provisioning_domain};
     delete $context->{product};
 
-    delete $context->{cp};
-    delete $context->{cs};
+    delete $context->{_bm};
+    delete $context->{_cp};
+    delete $context->{_cs};
 
     delete $context->{row};
 
@@ -549,14 +609,14 @@ sub _init_contract_context {
             $contract_contact{$k} = $v;
         }
         if (exists $contract_contact{reseller}) {
-            $context->{r_c} //= {};
-            if (exists $context->{r_c}->{$contract_contact{reseller}}
-                or ($context->{r_c}->{$contract_contact{reseller}} = $schema->resultset('resellers')->search_rs({
+            $context->{_r_c} //= {};
+            if (exists $context->{_r_c}->{$contract_contact{reseller}}
+                or ($context->{_r_c}->{$contract_contact{reseller}} = $schema->resultset('resellers')->search_rs({
                 name => $contract_contact{reseller},
                 status => { '!=' => 'terminated' },
             })->first)) {
-                $contract_contact{reseller_id} = $context->{r_c}->{$contract_contact{reseller}}->id;
-                $context->{reseller} = { $context->{r_c}->{$contract_contact{reseller}}->get_inflated_columns };
+                $contract_contact{reseller_id} = $context->{_r_c}->{$contract_contact{reseller}}->id;
+                $context->{reseller} = { $context->{_r_c}->{$contract_contact{reseller}}->get_inflated_columns };
             } else {
                 die("unknown reseller $contract_contact{reseller}");
             }
@@ -592,43 +652,43 @@ sub _init_contract_context {
             $contract{$k} = $v;
         }
         if (exists $contract{profile_package}) {
-            $context->{pp_c} //= {};
-            if (exists $context->{pp_c}->{$contract{profile_package}}
-                or ($context->{pp_c}->{$contract{profile_package}} = $schema->resultset('profile_packages')->search_rs({
+            $context->{_pp_c} //= {};
+            if (exists $context->{_pp_c}->{$contract{profile_package}}
+                or ($context->{_pp_c}->{$contract{profile_package}} = $schema->resultset('profile_packages')->search_rs({
                 name => $contract{profile_package},
                 #reseller_id
                 #status => { '!=' => 'terminated' },
             })->first)) {
-                $contract{profile_package_id} = $context->{pp_c}->{$contract{profile_package}}->id;
-                $context->{profile_package} = { $context->{pp_c}->{$contract{profile_package}}->get_inflated_columns };
+                $contract{profile_package_id} = $context->{_pp_c}->{$contract{profile_package}}->id;
+                $context->{profile_package} = { $context->{_pp_c}->{$contract{profile_package}}->get_inflated_columns };
             } else {
                 die("unknown profile package $contract{profile_package}");
             }
             delete $contract{profile_package};
         }
         if (exists $contract{billing_profile}) {
-            $context->{bp_c} //= {};
-            if (exists $context->{bp_c}->{$contract{billing_profile}}
-                or ($context->{bp_c}->{$contract{billing_profile}} = $schema->resultset('billing_profiles')->search_rs({
+            $context->{_bp_c} //= {};
+            if (exists $context->{_bp_c}->{$contract{billing_profile}}
+                or ($context->{_bp_c}->{$contract{billing_profile}} = $schema->resultset('billing_profiles')->search_rs({
                 name => $contract{billing_profile},
                 #todo: reseller_id
                 status => { '!=' => 'terminated' },
             })->first)) {
-                $contract{billing_profile_id} = $context->{bp_c}->{$contract{billing_profile}}->id;
-                $context->{billing_profile} = { $context->{bp_c}->{$contract{billing_profile}}->get_inflated_columns };
+                $contract{billing_profile_id} = $context->{_bp_c}->{$contract{billing_profile}}->id;
+                $context->{billing_profile} = { $context->{_bp_c}->{$contract{billing_profile}}->get_inflated_columns };
             } else {
                 die("unknown billing profile $contract{billing_profile}");
             }
             delete $contract{billing_profile};
         }
         if (exists $contract{product}) {
-            $context->{pr_c} //= {};
-            if (exists $context->{pr_c}->{$contract{product}}
-                or ($context->{pr_c}->{$contract{product}} = $schema->resultset('products')->search_rs({
+            $context->{_pr_c} //= {};
+            if (exists $context->{_pr_c}->{$contract{product}}
+                or ($context->{_pr_c}->{$contract{product}} = $schema->resultset('products')->search_rs({
                 name => $contract{product},
             })->first)) {
-                $contract{product_id} = $context->{pr_c}->{$contract{product}}->id;
-                $context->{product} = { $context->{pr_c}->{$contract{product}}->get_inflated_columns };
+                $contract{product_id} = $context->{_pr_c}->{$contract{product}}->id;
+                $context->{product} = { $context->{_pr_c}->{$contract{product}}->get_inflated_columns };
             } else {
                 die("unknown product $contract{product}");
             }
@@ -654,12 +714,12 @@ sub _init_contract_context {
         $contract{create_timestamp} //= $context->{now};
         $contract{modify_timestamp} //= $context->{now};
 
-        $context->{billing_mappings} = [];
+        $context->{_bm} = [];
         NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
             c => $c,
             resource => $context->{contract},
             old_resource => undef,
-            mappings_to_create => $context->{billing_mappings},
+            mappings_to_create => $context->{_bm},
             err_code => sub {
                 my ($err) = @_;
                 die($err);
@@ -682,15 +742,15 @@ sub _init_subscriber_context {
             $subscriber{$k} = $v;
         }
         if (exists $subscriber{domain}) {
-            $context->{bd_c} //= {};
-            if (exists $context->{bd_c}->{$subscriber{domain}}
-                or ($context->{bd_c}->{$subscriber{domain}} = $schema->resultset('domains')->search_rs({
+            $context->{_bd_c} //= {};
+            if (exists $context->{_bd_c}->{$subscriber{domain}}
+                or ($context->{_bd_c}->{$subscriber{domain}} = $schema->resultset('domains')->search_rs({
                     domain => $subscriber{domain},
                     #todo: reseller_id
                     #status => { '!=' => 'terminated' },
             })->first)) {
-                $subscriber{domain_id} = $context->{bd_c}->{$subscriber{domain}}->id;
-                $context->{domain} = { $context->{bd_c}->{$subscriber{domain}}->get_inflated_columns };
+                $subscriber{domain_id} = $context->{_bd_c}->{$subscriber{domain}}->id;
+                $context->{domain} = { $context->{_bd_c}->{$subscriber{domain}}->get_inflated_columns };
                 $context->{provisioning_domain} = { $schema->resultset('voip_domains')->find(
                     {domain => $subscriber{domain}})->get_inflated_columns };
             } else {
@@ -705,7 +765,7 @@ sub _init_subscriber_context {
 
         $context->{subscriber}->{customer_id} //= $context->{contract}->{id};
 
-        $context->{cs} = NGCP::Panel::Utils::Subscriber::prepare_resource(
+        $context->{_cs} = NGCP::Panel::Utils::Subscriber::prepare_resource(
             c => $c,
             schema => $schema,
             resource => $context->{subscriber},
@@ -732,7 +792,7 @@ sub _init_subscriber_preferences_context {
     my ($c, $context, $schema, $template) = @_;
 
     if (exists $template->{subscriber_preferences}) {
-        $context->{cp} = NGCP::Panel::Utils::Preferences::prepare_resource(
+        $context->{_cp} = NGCP::Panel::Utils::Preferences::prepare_resource(
             c => $c,
             schema => $schema,
             item => $schema->resultset('voip_subscribers')->find({
@@ -741,7 +801,7 @@ sub _init_subscriber_preferences_context {
             type => 'subscribers',
         );
 
-        my %subscriber_preferences = %{$context->{cp}}; #merge
+        my %subscriber_preferences = %{$context->{_cp}}; #merge
         foreach my $col (keys %{$template->{subscriber_preferences}}) {
             my ($k,$v) = _calculate($context,$col, $template->{subscriber_preferences}->{$col});
             $subscriber_preferences{$k} = $v;
@@ -760,7 +820,7 @@ sub _init_contract_preferences_context {
     my ($c, $context, $schema, $template) = @_;
 
     if (exists $template->{contract_preferences}) {
-        $context->{cp} = NGCP::Panel::Utils::Preferences::prepare_resource(
+        $context->{_cp} = NGCP::Panel::Utils::Preferences::prepare_resource(
             c => $c,
             schema => $schema,
             item => $schema->resultset('contracts')->find({
@@ -769,7 +829,7 @@ sub _init_contract_preferences_context {
             type => 'contracts',
         );
 
-        my %contract_preferences = %{$context->{cp}}; #merge
+        my %contract_preferences = %{$context->{_cp}}; #merge
         foreach my $col (keys %{$template->{contract_preferences}}) {
             my ($k,$v) = _calculate($context,$col, $template->{contract_preferences}->{$col});
             $contract_preferences{$k} = $v;
@@ -862,7 +922,7 @@ sub _create_contract {
         $context->{contract}->{id} = $contract->id;
         NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
             contract => $contract,
-            mappings_to_create => $context->{billing_mappings},
+            mappings_to_create => $context->{_bm},
         );
         NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
              contract => $contract,
@@ -883,19 +943,19 @@ sub _create_subscriber {
     my $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
         c             => $c,
         schema        => $schema,
-        contract      => $context->{cs}->{customer},
-        params        => $context->{cs}->{resource},
-        preferences   => $context->{cs}->{preferences},
+        contract      => $context->{_cs}->{customer},
+        params        => $context->{_cs}->{resource},
+        preferences   => $context->{_cs}->{preferences},
         admin_default => 0,
         event_context => $event_context,
         error         => $error_info,
     );
     $context->{subscriber}->{id} = $subscriber->id;
-    if($context->{cs}->{resource}->{status} eq 'locked') {
+    if($context->{_cs}->{resource}->{status} eq 'locked') {
         NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
             c => $c,
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
-            level => $context->{cs}->{resource}->{lock} || 4,
+            level => $context->{_cs}->{resource}->{lock} || 4,
         );
     } else {
         NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
@@ -903,17 +963,17 @@ sub _create_subscriber {
     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
         c              => $c,
         schema         => $schema,
-        alias_numbers  => $context->{cs}->{alias_numbers},
-        reseller_id    => $context->{cs}->{customer}->contact->reseller_id,
+        alias_numbers  => $context->{_cs}->{alias_numbers},
+        reseller_id    => $context->{_cs}->{customer}->contact->reseller_id,
         subscriber_id  => $subscriber->id,
     );
     $subscriber->discard_changes; # reload row because of new number
     NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
         c            => $c,
         schema       => $schema,
-        groups       => $context->{cs}->{groups},
-        groupmembers => $context->{cs}->{groupmembers},
-        customer     => $context->{cs}->{customer},
+        groups       => $context->{_cs}->{groups},
+        groupmembers => $context->{_cs}->{groupmembers},
+        customer     => $context->{_cs}->{customer},
         subscriber   => $subscriber,
     );
     NGCP::Panel::Utils::Events::insert_deferred(
@@ -936,7 +996,7 @@ sub _create_subscriber_preferences {
             item => $schema->resultset('voip_subscribers')->find({
                 id => $context->{subscriber}->{id},
             }),
-            old_resource => $context->{cp},
+            old_resource => $context->{_cp},
             resource => $context->{subscriber_preferences},
             type => 'subscribers',
             replace => 0,
@@ -960,7 +1020,7 @@ sub _create_contract_preferences {
             item => $schema->resultset('contracts')->find({
                 id => $context->{contract}->{id},
             }),
-            old_resource => $context->{cp},
+            old_resource => $context->{_cp},
             resource => $context->{contract_preferences},
             type => 'contracts',
             replace => 0,
@@ -987,8 +1047,8 @@ sub _create_registrations {
             $registration
         );
         die("failed to create registration") unless $ret->[0]->[1];
-        $context->{dfrd}->{kamailio_flush} //= 0;
-        $context->{dfrd}->{kamailio_flush} += 1;
+        $context->{_dfrd}->{kamailio_flush} //= 0;
+        $context->{_dfrd}->{kamailio_flush} += 1;
     }
 
 }
@@ -999,8 +1059,8 @@ sub _create_trusted_sources {
 
     foreach my $trusted_source (@{$context->{trusted_sources}}) {
         $schema->resultset('voip_trusted_sources')->create($trusted_source);
-        $context->{dfrd}->{kamailio_trusted_reload} //= 0;
-        $context->{dfrd}->{kamailio_trusted_reload} += 1;
+        $context->{_dfrd}->{kamailio_trusted_reload} //= 0;
+        $context->{_dfrd}->{kamailio_trusted_reload} += 1;
     }
 
 }
@@ -1020,52 +1080,86 @@ sub _calculate_field {
 sub _calculate {
 
     my ($context,$f,$c) = @_;
-    $context->{cr_c} //= {};
     if ($f =~ /^([a-z0-9_]+)$CODE_SUFFIX_FNAME$/) {
-        my $cl;
-        my $env = 'use subs qw(' . join(' ', @DISABLED_CORE_FUNCTIONS) . ");\n";
-        foreach my $sub (@DISABLED_CORE_FUNCTIONS) {
-            $env .= 'sub ' . $sub . " { die('$sub called'); }\n";
-        }
-        if ($strict_closure) {
-            $cl = eval_closure(
-                source      => ($env . $c),
-                environment => {
-                    map { if ('ARRAY' eq ref $context->{$_}) {
-                            ('@' . $_) => $context->{$_};
-                          } elsif ('HASH' eq ref $context->{$_}) {
-                            ('%' . $_) => $context->{$_};
-                          } elsif ('CODE' eq ref $context->{$_}) {
-                            ('&' . $_) => $context->{$_};
-                          } elsif (ref $context->{$_}) {
-                            ('$' . $_) => \$context->{$_};
-                          } else {
-                            ('$' . $_) => \$context->{$_};
-                          } } keys %$context
-                },
-                terse_error => 0,
-                description => $f,
-                alias => 0,
-            );
-        } else {
-            if (exists $context->{cr_c}->{$c}) {
-                $cl = $context->{cr_c}->{$c};
-            } else {
-                ## no critic (BuiltinFunctions::ProhibitStringyEval)
-                #$context->{cr_c}->{$c} = eval(decode_base64($c));
-                $cl = eval($env . $c);
-                $context->{cr_c}->{$c} = $cl;
+        return _switch_lang(
+            $context,
+            $context->{_lang},
+            perl => sub {
+                my $cl;
+                if ($STRICT_CLOSURE) {
+                    $cl = eval_closure(
+                        source      => ($PERL_ENV . $c),
+                        environment => {
+                            map { if ('ARRAY' eq ref $context->{$_}) {
+                                    ('@' . $_) => $context->{$_};
+                                  } elsif ('HASH' eq ref $context->{$_}) {
+                                    ('%' . $_) => $context->{$_};
+                                  } elsif ($JE_ANON_CLASS eq ref $context->{$_}) {
+                                    ('%' . $_) => { %{$context->{$_}} };
+                                  } elsif ('CODE' eq ref $context->{$_}) {
+                                    ('&' . $_) => $context->{$_};
+                                  } elsif (ref $context->{$_}) {
+                                    ('$' . $_) => \$context->{$_};
+                                  } else {
+                                    ('$' . $_) => \$context->{$_};
+                                  } } grep { substr($_,0,1) ne '_'; } keys %$context
+                        },
+                        terse_error => 0,
+                        description => $f,
+                        alias => 0,
+                    );
+                } else {
+                    $context->{_cr_c} //= {};
+                    if (exists $context->{_cr_c}->{$c}) {
+                        $cl = $context->{_cr_c}->{$c};
+                    } else {
+                        ## no critic (BuiltinFunctions::ProhibitStringyEval)
+                        $cl = eval($PERL_ENV . $c);
+                        $context->{_cr_c}->{$c} = $cl;
+                    }
+                }
+                die("$f: " . $@) if $@;
+                my $v;
+                eval {
+                    $v = $cl->($context);
+                };
+                if ($@) {
+                    die("$f: " . $@);
+                }
+                return ($1 => $v);
+            },
+            js => sub {
+
+                $context->{_je}->eval(join (";\n",
+                    map { if ('CODE' eq ref $context->{$_}) {
+                        die('no coderefs allowed');
+                    } elsif (('ARRAY' eq ref $context->{$_})
+                        or ('HASH' eq ref $context->{$_})
+                        or ($JE_ANON_CLASS eq ref $context->{$_})) {
+                    if ($context->{_je_env}->{$_}) {
+                        $_ . ' = ' . _to_json($context->{$_});
+                    } else { $context->{_je_env}->{$_} = 1;
+                        'var ' . $_ . ' = ' . _to_json($context->{$_}); }
+                    } elsif (ref $context->{$_}) {
+                        die('no refs allowed');
+                    } else { if ($context->{_je_env}->{$_}) {
+                        $_ . " = '" . escape_js($context->{$_}) . "'";
+                    } else { $context->{_je_env}->{$_} = 1;
+                        'var ' . $_ . " = '" . escape_js($context->{$_}) . "'"; }
+                    } } grep { substr($_,0,1) ne '_'; } keys %$context) .
+                    ";\n_func = $c;");
+                die("$f: " . $@) if $@;
+                my $v;
+                eval {
+                    $v = _unbox_je_value($context->{_je}->eval('_func();'));
+                };
+                if ($@) {
+                    die("$f: " . $@);
+                }
+                return ($1 => $v);
+
             }
-        }
-        die("$f: " . $@) if $@;
-        my $v;
-        eval {
-            $v = $cl->($context);
-        };
-        if ($@) {
-            die("$f: " . $@);
-        }
-        return ($1 => $v);
+        );
     } elsif ('HASH' eq ref $c) {
         my %data = ();
         foreach my $col (keys %$c) {
@@ -1086,6 +1180,29 @@ sub _calculate {
         return ($f => $c);
     }
 
+}
+
+sub _unbox_je_value {
+
+    my $v = shift;
+    return unless defined $v;
+    if ((ref $v) =~ /^JE::/) {
+        $v = $v->value;
+    }
+    if ('ARRAY' eq ref $v) {
+        return [ map { _unbox_je_value($_); } @$v ];
+    } elsif ('HASH' eq ref $v) {
+        return { map { $_ => _unbox_je_value($v->{$_}); } keys %$v };
+    } else {
+        return $v;
+    }
+
+}
+
+sub _to_json {
+    return JSON::to_json(shift, {
+        allow_nonref => 1, allow_blessed => 1,
+        convert_blessed => 1, pretty => 0 });
 }
 
 sub _generate_username {
@@ -1169,6 +1286,17 @@ sub _get_identifiers {
         @identifiers = map { $_ =~ s/^\s|\s$//gr; } split(/[,; \t]+/,$identifier);
     }
     return @identifiers;
+
+}
+
+sub _switch_lang {
+
+    my ($context, $lang, %code) = @_;
+
+    die('template lang not defined') unless $lang;
+    die("unknown template lang '$lang'") unless exists $code{$lang};
+    die("template lang '$lang' not supported") unless grep { $_ eq $lang} @SUPPORTED_LANGS;
+    return &{$code{$lang}}($context);
 
 }
 
