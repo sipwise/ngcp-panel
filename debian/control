@@ -77,6 +77,7 @@ Depends:
  libio-socket-ip-perl,
  libipc-run3-perl,
  libipc-system-simple-perl,
+ libje-perl,
  libjson-multivalueordered-perl,
  libjson-perl,
  libjson-pointer-perl,
