@@ -3,14 +3,11 @@ use warnings;
 use strict;
 use MRO::Compat;
 
+use NGCP::Panel::Utils::Generic qw();
+
 sub escape_js {
     my $c = shift;
-    my $str = shift;
-    my $quote_char = shift;
-    $quote_char //= "'";
-    $str =~ s/\\/\\\\/g;
-    $str =~ s/$quote_char/\\$quote_char/g;
-    return $str;
+    return NGCP::Panel::Utils::Generic::escape_js(@_);
 }
 
 1;

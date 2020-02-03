@@ -7,9 +7,9 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type);
-%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type)],
-    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type)]);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type array_to_map escape_js);
+%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js)],
+    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js)]);
 
 use Hash::Merge;
 use Data::Compare qw//;
@@ -211,6 +211,15 @@ sub array_to_map {
     }
     return ($map,\@keys,\@values);
 
+}
+
+sub escape_js {
+    my $str = shift // '';
+    my $quote_char = shift;
+    $quote_char //= "'";
+    $str =~ s/\\/\\\\/g;
+    $str =~ s/$quote_char/\\$quote_char/g;
+    return $str;
 }
 
 1;
