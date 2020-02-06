@@ -1,0 +1,2 @@
+lib/NGCP/API/TestFramework.pm		usr/share/perl5/NGCP/API/
+lib/NGCP/API/TestFramework/*		usr/share/perl5/NGCP/API/TestFramework/
