@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 
-use lib 't/api-rest2/lib';
+use lib 'lib';
 use strict;
 use warnings;
-use TestFramework;
+use NGCP::API::TestFramework;
 use threads;
 use Thread::Queue;
 use Data::Dumper;
@@ -73,7 +73,7 @@ sub worker {
         chomp $test_file;
         my $start_time = time;
         print "Running tests from $test_file\n";
-        my $test_framework = TestFramework->new( {file_path => $test_file} );
+        my $test_framework = NGCP::API::TestFramework->new( {file_path => $test_file} );
 
         my $result = $test_framework->run();
 
