@@ -8,4 +8,5 @@ share/*				usr/share/ngcp-panel/
 
 usr/share/man/man3/NGCP::*
 usr/share/perl5/Catalyst/Plugin/NGCP
-usr/share/perl5/NGCP
+usr/share/perl5/NGCP/Panel.pm
+usr/share/perl5/NGCP/Panel

@@ -1,4 +1,4 @@
-package TestFramework::TestExecutor;
+package NGCP::API::TestFramework::TestExecutor;
 
 use strict;
 use warnings;
