@@ -1,6 +1,9 @@
 etc/logging.conf		etc/ngcp-panel/
 etc/ngcp_panel.conf		etc/ngcp-panel/
 lib/NGCP/Panel/I18N/*		usr/share/perl5/NGCP/Panel/I18N
+lib/NGCP/Panel.pm		usr/share/perl5/NGCP
+lib/NGCP/Panel/*		usr/share/perl5/NGCP/Panel
+lib/Catalyst/*		usr/share/perl5/Catalyst
 ngcp_panel.psgi			usr/share/ngcp-panel/
 script/*			usr/share/ngcp-panel/script
 script/ngcp_panel_fastcgi.pl	usr/share/ngcp-panel/
@@ -8,4 +11,4 @@ share/*				usr/share/ngcp-panel/
 
 usr/share/man/man3/NGCP::*
 usr/share/perl5/Catalyst/Plugin/NGCP
-usr/share/perl5/NGCP
+# usr/share/perl5/NGCP

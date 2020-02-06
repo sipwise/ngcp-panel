@@ -1,4 +1,4 @@
-package TestFramework;
+package NGCP::API::TestFramework;
 
 use strict;
 use warnings;
@@ -18,9 +18,9 @@ use URI;
 use YAML::XS qw(LoadFile);
 use Data::Dumper;
 
-use TestFramework::RequestBuilder;
-use TestFramework::Client;
-use TestFramework::TestExecutor;
+use NGCP::API::TestFramework::RequestBuilder;
+use NGCP::API::TestFramework::Client;
+use NGCP::API::TestFramework::TestExecutor;
 
 has 'file_path' => (
     isa => 'Str',
@@ -35,15 +35,15 @@ sub run {
     chomp $test_case_name;
     Log::Log4perl->easy_init( { level    => $DEBUG,
                                 file     => ">>/results/$test_case_name.log",
-                                category => "TestFramework::Client",
+                                category => "NGCP::API::TestFramework::Client",
                                 layout   => '%d - %F{1} line %L - %M: %m%n' },
                               { level    => $DEBUG,
                                 file     => ">>/results/$test_case_name.log",
-                                category => "TestFramework::RequestBuilder",
+                                category => "NGCP::API::TestFramework::RequestBuilder",
                                 layout   => '%d - %F{1} line %L - %M: %m%n' },
                               { level    => $DEBUG,
                                 file     => ">>/results/$test_case_name.log",
-                                category => "TestFramework::TestExecutor",
+                                category => "NGCP::API::TestFramework::TestExecutor",
                                 layout   => '%d - %F{1} line %L - %M: %m%n' },
                               { level    => $DEBUG,
                                 file     => ">/results/$test_case_name.log",
@@ -65,11 +65,11 @@ sub run {
     INFO( "Setting up the base URI." );
     my $base_uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
     INFO( "Setting up the RequestBuilder." );
-    my $request_builder = TestFramework::RequestBuilder->new({ base_uri => $base_uri });
+    my $request_builder = NGCP::API::TestFramework::RequestBuilder->new({ base_uri => $base_uri });
     INFO( "Setting up the Client." );
-    my $client = TestFramework::Client->new( { uri => $base_uri } );
+    my $client = NGCP::API::TestFramework::Client->new( { uri => $base_uri } );
     INFO( "Setting up the Test Executor." );
-    my $test_executor = TestFramework::TestExecutor->new();
+    my $test_executor = NGCP::API::TestFramework::TestExecutor->new();
 
     # initializing time to add to fields which need to be unique
     my $retained = { unique_id => int(rand(100000)) };
