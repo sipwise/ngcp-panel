@@ -1,4 +1,4 @@
-package TestFramework::Client;
+package NGCP::API::TestFramework::Client;
 
 use strict;
 use warnings;
@@ -170,4 +170,3 @@ sub perform_request {
 }
 
 1;
-
