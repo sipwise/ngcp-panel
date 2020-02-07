@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6847fe6_123ecae5",
+        "filename": "debian/ngcp-panel.install",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000042
+      },
+      "writtenOn": "2020-02-07T13:51:05Z",
+      "side": 1,
+      "message": "why to disable this line?",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
