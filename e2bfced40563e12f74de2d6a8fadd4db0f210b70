@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7786dde6_9591d41c",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-07T15:12:58Z",
+      "side": 1,
+      "message": "fully agreed with the convention in general, however it may contain not only perl modules in the future, also it is not a general use library but rather fully dependent on ngcp-panel (REST API part).\nas for Test::NGCP usage. it is very convenient from the everyday use perspective when code that belong to NGCP reside under NGCP::. Otherwise one may need to know that there will be NGCP/Panel , NGCP/API, NGCP::Schema, etc. but Test/NGCP, which is not convenient. so the purpose it to keep it under our NGCP/... sandbox.",
+      "parentUuid": "c15224b0_9b750b05",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c347756d_f61c1a74",
         "filename": "debian/control",
         "patchSetId": 5
