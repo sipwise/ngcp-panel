@@ -2,6 +2,91 @@
   "comments": [
     {
       "key": {
+        "uuid": "c15224b0_9b750b05",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-07T14:08:22Z",
+      "side": 1,
+      "message": "If this package is intended to contain just perl modules, then the convention is to normalize the package name to lib\u003cmodules-root\u003e-perl where modules in the hierarchy root are lowercased and :: mapped to -. In addition if this module hierarchy is intended to be used for unit tests, as you\u0027d use something like Test::More, then the convention I guess is also to use the Test namespace, so I\u0027d use Test::NGCP::\u003c...\u003e.",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c347756d_f61c1a74",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-07T14:08:22Z",
+      "side": 1,
+      "message": "For perl module package, Section: perl",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "316a7cac_c5171320",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-07T14:08:22Z",
+      "side": 1,
+      "message": "Are some of these listed in the main package that are not depended on directly by the code in that package anymore, so that they can be removed from there?",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4455c7b_e7a90b82",
+        "filename": "debian/ngcp-api-testframework.install",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-07T14:08:22Z",
+      "side": 1,
+      "message": "Better to install from usr/share in here too (see my comment on the next file review).",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc42e672_739c8d91",
+        "filename": "debian/ngcp-panel.install",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-07T14:08:22Z",
+      "side": 1,
+      "message": "Remove these, and see below.",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e6847fe6_123ecae5",
         "filename": "debian/ngcp-panel.install",
         "patchSetId": 5
@@ -13,6 +98,24 @@
       "writtenOn": "2020-02-07T13:51:05Z",
       "side": 1,
       "message": "why to disable this line?",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01acc7e2_aa24e87d",
+        "filename": "debian/ngcp-panel.install",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-07T14:08:22Z",
+      "side": 1,
+      "message": "To avoid installing the messages.pot file you should keep installing from usr/share/perl5 as is the case here with the Catalyst plugin, which BTW would mean duplicate installation.",
+      "parentUuid": "e6847fe6_123ecae5",
       "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
