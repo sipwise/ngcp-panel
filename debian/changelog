@@ -1,3 +1,10 @@
+ngcp-panel (6.5.6.9+0~mr6.5.6.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [edf7161] TT#67108 peer rule unique check
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Feb 2020 12:02:02 +0100
+
 ngcp-panel (6.5.6.8+0~mr6.5.6.8) unstable; urgency=medium
 
   [ Rene Krenn ]
