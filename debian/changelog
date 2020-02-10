@@ -1,3 +1,15 @@
+ngcp-panel (8.2.2.0+0~mr8.2.2.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [776a7c0] TT#73364 batch provisioning
+  * [db7459f] TT#75110 support multiple identifier fields
+
+  [ Kirill Solomko ]
+  * [9b774da] TT#74005 add print support to the swagger doc
+  * [de82899] TT#73752 use cookie_secure=1 for sessions
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Feb 2020 08:47:20 +0100
+
 ngcp-panel (8.2.1.0+0~mr8.2.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
