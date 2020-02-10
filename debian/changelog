@@ -1,3 +1,25 @@
+ngcp-panel (7.5.3.1+0~mr7.5.3.1) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [58deed9] TT#68016 selenium: simplify get_text_safe()
+  * [4c8db2b] TT#68016 selenium: more improvements to  get_text_safe()
+  * [e74c1fa] TT#68016 selenium: dont change direction when editing header rule
+  * [a8b60e6] TT#68016 selenium: take screenshot when alert check fails
+
+  [ Rene Krenn ]
+  * [abeecad] TT#71313 fix tz selector field for subscribers
+  * [1a835f3] TT#71908 increase wait timeout when rendering invoicepdf
+  * [82cecf2] TT#74809 ignore ghost registrations
+  * [0582dc2] TT#67108 peer rule unique check
+
+  [ Flaviu Mates ]
+  * [f08c6a1] TT#65503 - Introduce time picker
+  * [703a1cc] TT#70478 - Enable stateSave for datatables
+  * [06c1927] TT#71871 - Fix /api/bannedusers arbitrary result
+  * [98e55b0] TT#69407 - Add customer external_id to /api/customerbalances
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Feb 2020 16:35:23 +0100
+
 ngcp-panel (7.5.3.0+0~mr7.5.3.0) unstable; urgency=medium
 
   [ Nico Schedel ]
