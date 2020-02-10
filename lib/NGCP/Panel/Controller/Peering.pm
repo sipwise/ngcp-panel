@@ -620,6 +620,13 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             $form->values->{callee_prefix} //= '';
+            my $dup_item = $c->model('DB')->resultset('voip_peer_rules')->find({
+                group_id => $c->stash->{group_result}->id,
+                callee_pattern => $form->values->{callee_pattern},
+                caller_pattern => $form->values->{caller_pattern},
+                callee_prefix => $form->values->{callee_prefix},
+            });
+            die("peering rule already exists") if $dup_item;
             $c->stash->{group_result}->voip_peer_rules->create($form->values);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
@@ -695,6 +702,13 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
         try {
             $form->values->{callee_prefix} //= '';
             $form->values->{group_id} = $form->values->{group}{id};
+            my $dup_item = $c->model('DB')->resultset('voip_peer_rules')->find({
+                group_id => $form->values->{group_id},
+                callee_pattern => $form->values->{callee_pattern},
+                caller_pattern => $form->values->{caller_pattern},
+                callee_prefix => $form->values->{callee_prefix},
+            });
+            die("peering rule already exists") if ($dup_item && $dup_item->id != $item->id);
             $c->stash->{rule_result}->update($form->values);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
