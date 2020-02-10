@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "dbec6148_03fa86d1",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-10T21:37:39Z",
+      "side": 1,
+      "message": "IMO, if there\u0027s need for some binaries, we can always create a new separate package, or similar, I don\u0027t think we do generally worry about the number of binary packages we create (which is pretty tiny anyway :).\n\nAbout the namespace, I\u0027ve also had similar concerns for example with dpkg, but ended up using a Test::Dpkg hierarchy anyway as that seemed more correct, and we already do need to use other namespaces due to requirements from frameworks, such as to hook into the Catalyst one. So I think using conventions that are prevalent within perl development is more important here, as to look for perl modules you\u0027d need to grep just for NGCP, instead of looking into specific directories, where you\u0027d need to also look under /usr/share/perl5 or /usr/lib/*/perl*/, etc. Or just run something like «apropos NGCP::». :)",
+      "parentUuid": "7786dde6_9591d41c",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c347756d_f61c1a74",
         "filename": "debian/control",
         "patchSetId": 5
