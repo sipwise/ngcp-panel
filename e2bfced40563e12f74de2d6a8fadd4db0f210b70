@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "284718e4_164a9e07",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-02-11T10:28:46Z",
+      "side": 1,
+      "message": "So, I am leaving as is for now.",
+      "parentUuid": "0054142f_5afbe824",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c347756d_f61c1a74",
         "filename": "debian/control",
         "patchSetId": 5
@@ -102,6 +120,24 @@
       "writtenOn": "2020-02-07T14:08:22Z",
       "side": 1,
       "message": "For perl module package, Section: perl",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "718f6078_60e558af",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-02-11T10:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c347756d_f61c1a74",
       "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -125,6 +161,24 @@
     },
     {
       "key": {
+        "uuid": "cfdf0d76_d3d8c7f0",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-02-11T10:28:46Z",
+      "side": 1,
+      "message": "All these packages are in use by the new package. It will not run without them.",
+      "parentUuid": "316a7cac_c5171320",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b4455c7b_e7a90b82",
         "filename": "debian/ngcp-api-testframework.install",
         "patchSetId": 5
@@ -142,6 +196,24 @@
     },
     {
       "key": {
+        "uuid": "d97537b3_631c0f43",
+        "filename": "debian/ngcp-api-testframework.install",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-02-11T10:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4455c7b_e7a90b82",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc42e672_739c8d91",
         "filename": "debian/ngcp-panel.install",
         "patchSetId": 5
@@ -153,6 +225,24 @@
       "writtenOn": "2020-02-07T14:08:22Z",
       "side": 1,
       "message": "Remove these, and see below.",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab8e5c7b_c8a0fcac",
+        "filename": "debian/ngcp-panel.install",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-02-11T10:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc42e672_739c8d91",
       "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -191,6 +281,24 @@
       "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28174e74_17e64277",
+        "filename": "debian/ngcp-panel.install",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-02-11T10:28:46Z",
+      "side": 1,
+      "message": "Guillem, thank you for explaining me how this works in a private chat.",
+      "parentUuid": "01acc7e2_aa24e87d",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
