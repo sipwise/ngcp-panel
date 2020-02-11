@@ -1,3 +1,13 @@
+ngcp-panel (8.1.1.9+0~mr8.1.1.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [1d74012] TT#75114 prevent exit() invocations
+  * [c0f5218] TT#75114 prevent perl core function invocations
+  * [31b8a0e] TT#75105 translate perl VAA gpp1 calc to javascript
+  * [858a21f] TT#75114 javascript support for prov templates
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 Feb 2020 15:03:43 +0100
+
 ngcp-panel (8.1.1.8+0~mr8.1.1.8) unstable; urgency=medium
 
   [ Rene Krenn ]
