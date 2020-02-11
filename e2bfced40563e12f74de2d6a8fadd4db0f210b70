@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "c462a982_15b8ed06",
+        "filename": "debian/control",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-11T09:32:25Z",
+      "side": 1,
+      "message": "We are the ones (at least the dev-backend team) who use them in the every day work and it is very convenient to have them all under /usr/share/perl5/NGCP so far :)\n\nI would say, lets keep it simple for now if possible as \n\nngcp-api-testframework \nand under NGCP::TestFramework namespace\n\nthe rest of deb packaging comments are going to be addressed /cc vtsvetov",
+      "parentUuid": "dbec6148_03fa86d1",
+      "revId": "e2bfced40563e12f74de2d6a8fadd4db0f210b70",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c347756d_f61c1a74",
         "filename": "debian/control",
         "patchSetId": 5
