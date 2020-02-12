@@ -115,8 +115,8 @@ sub DELETE :Allow {
             $p->delete;
         }
         $item->delete;
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         $guard->commit;
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
