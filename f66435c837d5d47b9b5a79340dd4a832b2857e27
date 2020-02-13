@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e1d4561_96f7f946",
+        "filename": "debian/ngcp-panel.install",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-02-13T22:29:09Z",
+      "side": 0,
+      "message": "This one should not go, or we\u0027ll end up with no translations in the installed package.",
+      "revId": "f66435c837d5d47b9b5a79340dd4a832b2857e27",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
