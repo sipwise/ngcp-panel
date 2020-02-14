@@ -32,7 +32,7 @@ sub set_list :Chained('/') :PathPart('rewrite') :CaptureArgs(0) {
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'description', search => 1, title => $c->loc('Description') },
     ]);
-    
+
     $c->stash(template => 'rewrite/set_list.tt');
 }
 
@@ -125,7 +125,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
 
 sub set_delete :Chained('set_base') :PathPart('delete') {
     my ($self, $c) = @_;
-    
+
     try {
         $c->stash->{set_result}->delete;
         NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
@@ -258,7 +258,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
 
 sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    
+
     my $rules_rs = $c->stash->{set_result}->voip_rewrite_rules;
     $c->stash(rules_rs => $rules_rs);
     $c->stash(rules_uri => $c->uri_for_action("/rewrite/rules_root", [$c->req->captures->[0]]));
@@ -269,11 +269,11 @@ sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
 
 sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $rules_rs    = $c->stash->{rules_rs};
     my $param_move  = $c->req->params->{move};
     my $param_where = $c->req->params->{where};
-    
+
     if ($param_move && is_int($param_move) && $param_where &&
             (my $elem = $rules_rs->find($param_move))) {
 
@@ -287,11 +287,18 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
         })->first;
         try {
             if ($swap_elem) {
-                my $tmp_priority = $swap_elem->priority;
-                $swap_elem->priority($elem->priority);
-                $elem->priority($tmp_priority);
+                #3way swap required because trigger relies on natural key of kamailio.dialplan.
+                my @tmp_priority = (
+                    $c->stash->{rules_rs}->get_column('priority')->max() + 1,
+                    $swap_elem->priority,
+                    $elem->priority
+                );
+                $swap_elem->priority($tmp_priority[0]);
                 $swap_elem->update;
+                $elem->priority($tmp_priority[1]);
                 $elem->update;
+                $swap_elem->priority($tmp_priority[2]);
+                $swap_elem->update;
             } elsif($use_next) {
                 my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 49;
                 $elem->priority(int($last_priority) + 1);
@@ -310,28 +317,28 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
             );
         }
     }
-    
+
     my @caller_in = $rules_rs->search({
         field => 'caller',
         direction => 'in',
     },{
         order_by => { -asc => 'priority' },
     })->all;
-    
+
     my @callee_in = $rules_rs->search({
         field => 'callee',
         direction => 'in',
     },{
         order_by => { -asc => 'priority' },
     })->all;
-    
+
     my @caller_out = $rules_rs->search({
         field => 'caller',
         direction => 'out',
     },{
         order_by => { -asc => 'priority' },
     })->all;
-    
+
     my @callee_out = $rules_rs->search({
         field => 'callee',
         direction => 'out',
@@ -352,7 +359,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
     },{
         order_by => { -asc => 'priority' },
     })->all;
-    
+
     for my $row (@caller_in, @callee_in, @caller_out, @callee_out, @caller_lnp, @callee_lnp) {
         my $mp = $row->match_pattern;
         my $rp = $row->replace_pattern;
@@ -362,7 +369,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
         $row->match_pattern($mp);
         $row->replace_pattern($rp);
     }
-    
+
     $c->stash(rules => {
         caller_in  => \@caller_in,
         callee_in  => \@callee_in,
@@ -439,7 +446,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
 
 sub rules_delete :Chained('rules_base') :PathPart('delete') {
     my ($self, $c) = @_;
-    
+
     try {
         $c->stash->{rule_result}->delete;
         NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
