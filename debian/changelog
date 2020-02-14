@@ -1,3 +1,10 @@
+ngcp-panel (8.0.2.2+0~mr8.0.2.2) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [21fcb2d] TT#75911 Execute kamailio lcr.reload after the gw removal
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 14 Feb 2020 17:10:31 +0100
+
 ngcp-panel (8.0.2.1+0~mr8.0.2.1) unstable; urgency=medium
 
   [ Flaviu Mates ]
