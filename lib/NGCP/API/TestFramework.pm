@@ -24,6 +24,11 @@ use NGCP::API::TestFramework::TestExecutor;
 
 has 'file_path' => (
     isa => 'Str',
+    is => 'rw'
+);
+
+has 'unique_id' => (
+    isa => 'Str',
     is => 'ro'
 );
 
@@ -71,8 +76,9 @@ sub run {
     INFO( "Setting up the Test Executor." );
     my $test_executor = NGCP::API::TestFramework::TestExecutor->new();
 
-    # initializing time to add to fields which need to be unique
-    my $retained = { unique_id => int(rand(100000)) };
+    # If $self->{retained} is already defined, use its previously collected variables.
+    # Otherwise, initialize it with received "unique_id" for fields that need to be unique.
+    my $retained = $self->{retained} //= { unique_id => $self->unique_id };
 
     my $test_case_result = { success => 1, error_count => 0 };
 
