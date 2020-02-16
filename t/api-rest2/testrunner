@@ -73,7 +73,10 @@ sub worker {
         chomp $test_file;
         my $start_time = time;
         print "Running tests from $test_file\n";
-        my $test_framework = NGCP::API::TestFramework->new( {file_path => $test_file} );
+        my $test_framework = NGCP::API::TestFramework->new( {
+            file_path => $test_file,
+            unique_id => int(rand(100000)),
+        } );
 
         my $result = $test_framework->run();
 
