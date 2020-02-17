@@ -1,3 +1,11 @@
+ngcp-panel (7.5.3.3+0~mr7.5.3.3) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [e5147be] TT#69063 - Fix stuck timeset event list
+  * [e70acfe] TT#72750 - Allow empty value for week day number in timeset event
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Feb 2020 13:42:35 +0100
+
 ngcp-panel (7.5.3.2+0~mr7.5.3.2) unstable; urgency=medium
 
   [ Marco Capetta ]
