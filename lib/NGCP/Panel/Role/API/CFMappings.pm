@@ -62,6 +62,7 @@ sub hal_from_item {
                     bnumberset => undef,
                     bnumberset_id => undef,
                 ),
+                ( enabled => $mapping->enabled ),
             };
     }
 
@@ -247,6 +248,7 @@ sub update_item {
                     source_set_id => $sset ? $sset->id : undef,
                     bnumber_set_id => $bset ? $bset->id : undef,
                     type => $type,
+                    enabled => $mapping->{enabled},
                 });
         }
     }

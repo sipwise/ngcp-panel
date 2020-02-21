@@ -691,6 +691,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
                 bset_name => $bset_name,
                 bset_mode => $bset_mode,
                 bnumbers => \@bnumbers,
+                enabled => $map->enabled,
             };
         }
     }
@@ -1045,7 +1046,11 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                         type => $cf_type,
                         destination_set_id => $dest_set->id,
                         time_set_id => undef, #$time_set_id,
+                        enabled => $cf_form->field('enabled')->value
                     });
+                }
+                else {
+                    $map->update({enabled => $cf_form->field('enabled')->value});
                 }
                 foreach my $pref($cf_preference->all) {
                     $pref->delete;
@@ -1171,6 +1176,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             time_set => $map->time_set ? $map->time_set->id : undef,
             source_set => $map->source_set ? $map->source_set->id : undef,
             bnumber_set => $map->bnumber_set ? $map->bnumber_set->id : undef,
+            enabled => $map->enabled || undef,
         };
     }
     my $params = {
@@ -1246,6 +1252,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         time_set_id => $map->field('time_set')->value,
                         source_set_id => $map->field('source_set')->value,
                         bnumber_set_id => $map->field('bnumber_set')->value,
+                        enabled => $map->field('enabled')->value,
                     });
                     $cf_preference->create({ value => $m->id });
                     $autoattendant_count -= NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($m->destination_set);

@@ -32,6 +32,15 @@ has_field 'destination.destination' => (
     default => 'uri',
 );
 
+has_field 'enabled' => (
+    type => 'Boolean',
+    default => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Enables or disables the Call Forward rule from beign used.'],
+    },
+);
+
 sub build_destinations {
     my ($self) = @_;
 
@@ -118,7 +127,7 @@ has_field 'cf_actions.advanced' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(destination)],
+    render_list => [qw(destination enabled)],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(cf_actions)],);
 sub validate_destination{

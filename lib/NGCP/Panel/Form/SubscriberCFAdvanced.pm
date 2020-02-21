@@ -54,6 +54,15 @@ has_field 'active_callforward.rm' => (
 #    },
 );
 
+has_field 'active_callforward.enabled' => (
+    type => 'Boolean',
+    default => 1,
+    wrapper_class => [qw/hfh-rep-field/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Enables or disables the Call Forward rule from beign used.'],
+    },
+);
 
 has_field 'callforward_controls_add' => (
     type => 'AddElement',
