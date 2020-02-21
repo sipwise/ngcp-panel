@@ -154,6 +154,11 @@ has_field 'cfb.destinationset_id' => (
     do_label => 0,
 );
 
+has_field 'cfu.enabled' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cfb.timeset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -184,6 +189,11 @@ has_field 'cfb.bnumberset' => (
 
 has_field 'cfb.bnumberset_id' => (
     type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfb.enabled' => (
+    type => 'Boolean',
     do_label => 0,
 );
 
@@ -231,6 +241,11 @@ has_field 'cft.bnumberset_id' => (
     do_label => 0,
 );
 
+has_field 'cft.enabled' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cfna.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -275,6 +290,11 @@ has_field 'cfna.bnumberset_id' => (
     do_label => 0,
 );
 
+has_field 'cfna.enabled' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cfs.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -316,6 +336,11 @@ has_field 'cfs.bnumberset' => (
 
 has_field 'cfs.bnumberset_id' => (
     type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfs.enabled' => (
+    type => 'Boolean',
     do_label => 0,
 );
 
@@ -369,6 +394,11 @@ has_field 'cfr.bnumberset_id' => (
     do_label => 0,
 );
 
+has_field 'cfr.enabled' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cfo.destinationset' => (
     type => 'Text',
     do_wrapper => 1,
@@ -410,6 +440,11 @@ has_field 'cfo.bnumberset' => (
 
 has_field 'cfo.bnumberset_id' => (
     type => 'PosInteger',
+    do_label => 0,
+);
+
+has_field 'cfo.enabled' => (
+    type => 'Boolean',
     do_label => 0,
 );
 

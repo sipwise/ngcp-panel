@@ -110,6 +110,7 @@ $( document ).ready(function() {
                             <th>[% c.loc('Sources') %]</th>
                             <th>[% c.loc('To (B-Numbers)') %]</th>
                             <th>[% c.loc('New Destinations') %]</th>
+                            <th>[% c.loc('Enabled') %]</th>
 
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
@@ -229,6 +230,12 @@ $( document ).ready(function() {
 
                                         [% idx = idx + 1 -%]
                                     [% END %]
+                                    <br/>
+                                [% END -%]
+                            </td>
+                            <td>
+                                [% FOR maps IN cf_destinations.${cf.type} -%]
+                                    [% IF maps.enabled == 1 %] yes [% ELSE %] no [% END %]
                                     <br/>
                                 [% END -%]
                             </td>
