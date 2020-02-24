@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fe0dcbd_aa946c41",
+        "filename": "share/templates/subscriber/preferences.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-24T13:12:07Z",
+      "side": 1,
+      "message": "if you use language \"strings\" then you must to enclose them into c.loc() so they are translated. but also for Enable/Disable in the UI/API we use just 1/0 there, so perhaps we can use 1/0 there as well for consistency.",
+      "range": {
+        "startLine": 238,
+        "startChar": 63,
+        "endLine": 238,
+        "endChar": 66
+      },
+      "revId": "7972355265d1e004640fbf3bc4922ff627dccc19",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
