@@ -107,6 +107,34 @@ has_field 'bnumbers_is_regex' => (
     default => 0,
 );
 
+has_field 'source_set' => (
+    type => 'Compound',
+    required => 0,
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'bnumber_set' => (
+    type => 'Compound',
+    required => 0,
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'destination_set' => (
+    type => 'Compound',
+    required => 0,
+    do_wrapper => 1,
+    do_label => 0,
+);
+
+has_field 'time_set' => (
+    type => 'Compound',
+    required => 0,
+    do_wrapper => 1,
+    do_label => 0,
+);
+
 no Moose;
 1;
 

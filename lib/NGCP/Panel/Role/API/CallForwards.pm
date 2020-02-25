@@ -189,6 +189,42 @@ sub update_item {
                 type => $type,
             });
             $mapping->discard_changes; # get our row
+
+            my $sets_forms = {
+                source_set => "NGCP::Panel::Form::CallForward::CFSourceSetAPI",
+                bnumber_set => "NGCP::Panel::Form::CallForward::CFBNumberSetAPI",
+                destination_set => "NGCP::Panel::Form::CallForward::CFDestinationSetAPI",
+                time_set => "NGCP::Panel::Form::CallForward::CFTimeSetAPI"
+            };
+            foreach my $set (keys %$sets_forms) {
+                my $req_set = delete $resource->{$type}->{$set};
+                if ($req_set) {
+                    $req_set->{subscriber_id} = $prov_subs->id;
+                    my $form = $sets_forms->{$set};
+                    last unless $self->validate_form(
+                        c => $c,
+                        resource => $req_set,
+                        form => (NGCP::Panel::Form::get("$form", $c)),
+                    );
+                    if ($set eq 'source_set') {
+                        $sset = $mapping->create_related('source_set', $req_set);
+                        $mapping->update({source_set_id => $sset->id});
+
+                    }
+                    if ($set eq 'destination_set') {
+                        $dset = $mapping->create_related('destination_set', $req_set);
+                        $mapping->update({destination_set_id => $dset->id});
+                    }
+                    if ($set eq 'bnumber_set') {
+                        $bset = $mapping->create_related('bnumber_set', $req_set);
+                        $mapping->update({bnumber_set_id => $bset->id});
+                    }
+                    if ($set eq 'time_set') {
+                        $tset = $mapping->create_related('time_set', $req_set);
+                        $mapping->update({time_set_id => $tset->id});
+                    }
+                }
+            }
         } elsif ($mapping_count > 1) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Not a simple cf. Multiple $type-s configured.");
             return;
@@ -367,6 +403,10 @@ sub _contents_from_cfm {
     my $bnumberset_item = $cfm_item->bnumber_set;
     my $bnumberset_mode = $bnumberset_item ? $bnumberset_item->mode : 'whitelist';
     my $bnumberset_is_regex = $bnumberset_item ? $bnumberset_item->is_regex : 0;
+    my $sourceset = $sourceset_item ? { $sourceset_item->get_inflated_columns } : undef;
+    my $dset = $dset_item ? { $dset_item->get_inflated_columns } : undef;
+    my $bnumberset = $bnumberset_item ? { $bnumberset_item->get_inflated_columns } : undef;
+    my $timeset = $timeset_item ? { $timeset_item->get_inflated_columns } : undef;
     for my $time ($timeset_item ? $timeset_item->voip_cf_periods->all : () ) {
         push @times, {$time->get_inflated_columns};
         delete @{$times[-1]}{'time_set_id', 'id'};
@@ -394,7 +434,9 @@ sub _contents_from_cfm {
     }
     return {times => \@times, destinations => \@destinations,
             sources => \@sources, sources_mode => $sourceset_mode, sources_is_regex => $sourceset_is_regex,
-            bnumbers => \@bnumbers, bnumbers_mode => $bnumberset_mode, bnumbers_is_regex => $bnumberset_is_regex};
+            bnumbers => \@bnumbers, bnumbers_mode => $bnumberset_mode, bnumbers_is_regex => $bnumberset_is_regex,
+            destination_set => $dset, source_set => $sourceset,
+            bnumber_set => $bnumberset, time_set => $timeset};
 }
 
 1;
