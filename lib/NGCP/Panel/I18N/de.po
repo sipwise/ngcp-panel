@@ -1077,7 +1077,8 @@ msgid ""
 "Call Deflection allows a called endpoint to redirect the unanswered call to "
 "another destination during the call setup phase by sending 302 redirect "
 "message in ringing phase. Disabling the preference will make the platform "
-"ignore the redirect message."
+"ignore the redirect message. Setting Immediate the redirection will be "
+"immediately executed cancelling the other active brances."
 msgstr ""
 
 #: share/templates/subscriber/calllist.tt share/templates/subscriber/master.tt
