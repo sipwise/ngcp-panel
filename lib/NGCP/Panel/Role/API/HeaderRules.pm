@@ -79,13 +79,55 @@ sub check_resource {
 sub update_item_model {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    $item = $self->SUPER::update_item_model($c, $item, $old_resource, $resource, $form);
+    my $header_actions = delete $resource->{actions};
+    my $header_conditions = delete $resource->{conditions};
+    $item->update($resource);
+    if ($header_actions) {
+        $item->actions->delete;
+        foreach my $action (@$header_actions) {
+            $action->{rule_id} = $item->id;
+            last unless $self->validate_form(
+                c => $c,
+                resource => $action,
+                form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::ActionAPI", $c)),
+            );
+            last unless NGCP::Panel::Role::API::HeaderRuleActions->check_resource($c, undef, undef, $action, undef, undef);
+            my $action_result = $item->actions->create($action);
+        }
+    }
+    if ($header_conditions) {
+        $item->conditions->delete;
+        foreach my $condition (@$header_conditions) {
+            $condition->{rule_id} = $item->id;
+            last unless $self->validate_form(
+                c => $c,
+                resource => $condition,
+                form => (NGCP::Panel::Form::get("NGCP::Panel::Form::Header::ConditionAPI", $c)),
+            );
+            last unless NGCP::Panel::Role::API::HeaderRuleConditions->check_resource($c, undef, undef, $condition, undef, undef);
+            my $condition_result = $item->conditions->create($condition);
+        }
+    }
 
     NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
         c => $c, set_id => $item->ruleset->id
     );
 
     return $item;
+}
+
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my %resource = $item->get_inflated_columns;
+
+    my @actions = map { {$_->get_inflated_columns} } $item->actions->all;
+    my @conditions = map { {$_->get_inflated_columns} } $item->conditions->all;
+
+    $resource{actions} = \@actions;
+    $resource{conditions} = \@conditions;
+
+    return \%resource;
 }
 
 1;

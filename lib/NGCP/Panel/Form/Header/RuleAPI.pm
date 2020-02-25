@@ -12,6 +12,24 @@ has_field 'set_id' => (
     },
 );
 
+has_field 'conditions' => (
+    type => 'Compound',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The list of conditions in the rule.'],
+    },
+);
+
+has_field 'actions' => (
+    type => 'Compound',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The list of actions in the rule.'],
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
