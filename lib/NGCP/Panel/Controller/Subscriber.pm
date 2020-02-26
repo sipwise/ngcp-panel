@@ -4189,6 +4189,16 @@ sub play_stream :Chained('recording_stream') :PathPart('play') :Args(0) {
 
     # TODO: fix to be able to select certain stream
     my $stream = $c->stash->{stream};
+    unless (-e $stream->full_filename) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            log   => "no such recording file for stream with id ".$stream->id,
+            desc  => $c->loc('No such recording file'),
+        );
+        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+        $c->detach;
+        return;
+    }
     my $data = read_file($stream->full_filename);
     my $mime_type;
     if($stream->file_format eq "wav") {
