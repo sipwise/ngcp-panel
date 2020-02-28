@@ -2799,6 +2799,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Peering.pm
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 #: share/templates/rewrite/rules_list.tt
+#: share/templates/subscriber/preferences.tt
 msgid "Enabled"
 msgstr ""
 

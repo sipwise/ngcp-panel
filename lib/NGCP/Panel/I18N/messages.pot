@@ -2333,7 +2333,7 @@ msgstr ""
 msgid "Enable the Vertical Service Code to redial latest dialed number for this subscriber/domain."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm share/templates/rewrite/rules_list.tt
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt
 msgid "Enabled"
 msgstr ""
 
