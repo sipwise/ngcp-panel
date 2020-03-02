@@ -946,19 +946,19 @@ sub test_cfmapping {
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
         cfb => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}],
+                 timeset => $cftimeset->{name}, enabled => 1}],
         cfna => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}],
+                 timeset => $cftimeset->{name}, enabled => 1}],
         cft => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}],
+                 timeset => $cftimeset->{name}, enabled => 1}],
         cfu => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}],
+                 timeset => $cftimeset->{name}, enabled => 1}],
         cfs => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}],
+                 timeset => $cftimeset->{name}, enabled => 1}],
         cfr => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}],
+                 timeset => $cftimeset->{name}, enabled => 1}],
         cfo => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}],
+                 timeset => $cftimeset->{name}, enabled => 1}],
         }));
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("PUT test cfmappings"));
@@ -978,7 +978,7 @@ sub test_cfmapping {
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/cfb', value => [{ destinationset => $cfdestinationset->{name},
-                 timeset => $cftimeset->{name}}] } ]
+                 timeset => $cftimeset->{name}, enabled => 1}] } ]
     ));
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("PATCH test cfmappings"));
