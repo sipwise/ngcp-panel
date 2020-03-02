@@ -94,7 +94,7 @@ sub _item_rs {
                 join => 'profile_set',
             });
         }
-    } elsif($type eq "subscribers") {
+    } elsif($type eq "subscribers" || $type eq "active") {
         if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
             $item_rs = $c->model('DB')->resultset('voip_subscribers')->search({
                 'me.status' => { '!=' => 'terminated' }

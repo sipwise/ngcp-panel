@@ -110,6 +110,44 @@ sub prepare_resource {
         $prefs = $item->voip_devprof_preferences;
     } elsif($type eq "pbxdevices") {
         $prefs = $item->voip_fielddev_preferences;
+    } elsif($type eq "active") {
+        my $sub_prefs = $item->provisioning_voip_subscriber->voip_usr_preferences->search(undef, {columns => ['id', 'value', 'attribute_id']});
+        my $profile = $item->provisioning_voip_subscriber->voip_subscriber_profile;
+        if ($profile) {
+            $has_profile = 1;
+            %profile_allowed_attrs = map { $_ => 1 } $profile->profile_attributes->get_column('attribute_id')->all;
+        }
+        my $dom_prefs = $item->domain->provisioning_voip_domain->voip_dom_preferences->search(
+            undef,
+            {
+                columns => ['id', 'value', 'attribute_id'],
+                result_class => $sub_prefs->result_class
+            }
+        );
+        #search for location if IP is provided
+        my $location_id;
+        if ($c->request->param('location_ip')) {
+            my $location = $schema->resultset('voip_contract_locations')->search(
+                {
+                    'voip_contract_location_blocks.ip' => $c->request->param('location_ip')
+                },
+                {
+                    join => 'voip_contract_location_blocks'
+                }
+            )->first;
+            $location_id = $location->id if ($location);
+        }
+        my $ct_prefs = $item->contract->voip_contract_preferences->search(
+            {
+                location_id => $location_id || undef
+            },
+            {
+                columns => ['id', 'value', 'attribute_id'],
+                result_class => $sub_prefs->result_class
+            }
+        );
+
+        $prefs = $sub_prefs->union_all($dom_prefs, $ct_prefs);
     }
     $prefs = $prefs->search({
     }, {
