@@ -1,3 +1,10 @@
+ngcp-panel (7.5.3.5+0~mr7.5.3.5) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [c267520] TT#64500 - Fix date format for SubscriberRegistrations.yaml
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Mar 2020 11:46:55 +0100
+
 ngcp-panel (7.5.3.4+0~mr7.5.3.4) unstable; urgency=medium
 
   [ Flaviu Mates ]
