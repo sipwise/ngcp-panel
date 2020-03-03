@@ -1,3 +1,11 @@
+ngcp-panel (7.5.3.6+0~mr7.5.3.6) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [ef97e88] TT#56467 - Fixes for Test Framework
+  * [1860f53] TT#56467 - Migrate api-journals and api-topupvoucher
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Mar 2020 12:52:21 +0100
+
 ngcp-panel (7.5.3.5+0~mr7.5.3.5) unstable; urgency=medium
 
   [ Flaviu Mates ]
