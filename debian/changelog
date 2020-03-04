@@ -1,3 +1,10 @@
+ngcp-panel (5.5.11.3+0~mr5.5.11.3) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [3337d8b] TT#72163 - Fix 500 error on recorded streams
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 04 Mar 2020 17:39:41 +0100
+
 ngcp-panel (5.5.11.2+0~mr5.5.11.2) unstable; urgency=medium
 
   [ Rene Krenn ]
