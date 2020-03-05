@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46b98df4_74099d81",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-03-05T14:14:16Z",
+      "side": 1,
+      "message": "missing customer preferences ?",
+      "revId": "79f71c546c4f777ad2f72fbbcf941335edc9ba82",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
