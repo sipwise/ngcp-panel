@@ -91,7 +91,7 @@ sub create_provisioning_template_form {
 
     my $template = $c->stash->{provisioning_template_name};
 
-    my $fields = _get_fields($c,0);
+    my $fields = get_fields($c,0);
     my $form;
 
     try {
@@ -187,7 +187,7 @@ sub process_csv {
         binary => 1,
         keep_meta_info => 1
     });
-    my $fields = _get_fields($c,0);
+    my $fields = get_fields($c,0);
     my @cols = keys %$fields;
     my @fails = ();
     my $linenum = 0;
@@ -243,7 +243,7 @@ sub provision_begin {
     $context->{_dfrd} = {};
     $context->{_purge} = $purge // 0;
 
-    my $fields = _get_fields($c,1);
+    my $fields = get_fields($c,1);
     my $init_values = {};
     foreach my $fname (@INIT_FIELD_NAMES) {
         next unless exists $fields->{$fname};
@@ -575,7 +575,7 @@ sub _init_row_context {
 
     delete $context->{row};
 
-    my $fields = _get_fields($c,1);
+    my $fields = get_fields($c,1);
     my %row = ();
     $row{sip_username} = _generate_username(10);
     $row{sip_password} = String::MkPasswd::mkpasswd(
@@ -816,9 +816,7 @@ sub _init_subscriber_preferences_context {
         $c->log->debug("provisioning template - subscriber preferences: " . Dumper($context->{subscriber_preferences}));
     }
 
-
 }
-
 
 sub _init_contract_preferences_context {
 
@@ -1229,7 +1227,7 @@ sub _generate_username {
 
 }
 
-sub _get_fields {
+sub get_fields {
 
     my ($c, $calculated) = @_;
     my $template = $c->stash->{provisioning_template_name};
