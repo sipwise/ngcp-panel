@@ -1,0 +1,387 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Long qw(:config posix_default no_ignorecase);
+use Pod::Usage qw(pod2usage);
+use Config::General qw();
+use File::Slurp qw();
+use XML::Simple qw();
+
+use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
+use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
+use lib "/usr/local/devel/ngcp-schema/lib";
+use lib "/usr/local/devel/sipwise-base/lib";
+use NGCP::Schema qw();
+use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
+use lib "/usr/local/devel/ngcp-panel/lib";
+use NGCP::Panel::Utils::ProvisioningTemplates qw();
+
+my @panel_configs = qw(
+   /etc/ngcp-panel/ngcp_panel.conf
+   /etc/ngcp_panel.conf
+   /ngcp_panel.conf
+   /home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
+   /usr/local/devel/vagrant-ngcp/ngcp_panel.conf
+);
+my @provisioning_configs = qw(
+   /etc/ngcp-panel/provisioning.conf
+   /home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
+   /usr/local/devel/vagrant-ngcp/provisioning.conf
+);
+my %db = (
+    host => undef, #'192.168.0.29',
+    port => 3306,
+    user => 'root',
+    password => undef,
+);
+#my $csv_file = '/home/rkrenn/temp/provisioning_templates/CCS_ICM_Nummern.csv';
+#my $template_name = 'My First Provisioning Template'; #'vaa_test';
+#my $template_name = 'vaa_test_js';
+
+my $template_name = shift @ARGV;
+pod2usage(2) unless $template_name;
+my $help;
+my $log_level;
+GetOptions(
+    ( map { ('db_' . $_ . ':s') => \$db{$_}; } keys %db ),
+    'log_level:s' => \$log_level,
+    "help|?" => \$help,
+) or pod2usage(2);
+pod2usage(1) if $help;
+my %mock_objs = ();
+my $c = _create_c();
+my $templates = ($c->config->{provisioning_templates} // {});
+if (exists $templates->{$template_name}) {
+    $c->stash->{'provisioning_template_name'} = $template_name;
+    $c->stash->{'provisioning_templates'} = $templates;
+    map { $templates->{$_}->{name} = $_; } keys %$templates;
+
+    my $fields = NGCP::Panel::Utils::ProvisioningTemplates::get_fields($c,0);
+    my $values = { map { $_ => undef; } grep { $_ ne 'purge'; } keys %$fields };
+    my $csv_file;
+    my $purge;
+    GetOptions(
+        ( map { ($_ . ($fields->{$_}->{required} ? '=' : ':') . 's') => \$values->{$_}; } keys %$values ),
+        "purge" => \$purge,
+        "file:s" => \$csv_file,
+    ) or pod2usage(2);
+
+    if ($csv_file) {
+        my $csv_data = File::Slurp::read_file($csv_file);
+        my ($linecount,$errors) = NGCP::Panel::Utils::ProvisioningTemplates::process_csv(
+            c => $c,
+            data => \$csv_data,
+            purge => $purge,
+        );
+        if (scalar @$errors) {
+            die("CSV file ($linecount lines) processed, " . scalar @$errors . " error(s)\n");
+        } else {
+            print("CSV file ($linecount lines) processed, 0 error(s)\n");
+        }
+    } else {
+        $values->{purge} = $purge;
+        eval {
+            my $context = NGCP::Panel::Utils::ProvisioningTemplates::provision_begin(
+                c => $c,
+            );
+            NGCP::Panel::Utils::ProvisioningTemplates::provision_commit_row(
+                c => $c,
+                context => $context,
+                'values' => $values,
+                #'values' => {
+                #    first_name => 'John',
+                #    last_name => 'Doe',
+                #    cc => "43",
+                #    ac => "316",
+                #    sn => "1234567",
+                #    purge => 1,
+                #}
+                #'values' => {
+                #    service_number => '800010144',
+                #    switch3_number => '19768988',
+                #    company => "test12",
+                #    purge => 1,
+                #}
+            );
+            NGCP::Panel::Utils::ProvisioningTemplates::provision_finish(
+                c => $c,
+                context => $context,
+            );
+            print ("Provisioning template '$template_name' done: subscriber " . $context->{subscriber}->{username} . '@' . $context->{domain}->{domain} . " created\n");
+        };
+        if ($@) {
+            die("Provisioning template '$template_name' failed: " . $@ . "\n");
+        }
+    }
+} else {
+    die("Unknown provisioning template '$template_name'\n");
+}
+
+exit(0);
+
+sub _create_c {
+
+    my $config = _get_panel_config();
+
+    {
+        no strict "refs";  ## no critic (ProhibitNoStrict)
+        *{'NGCP::Schema::set_transaction_isolation'} = sub {
+            my ($self,$level) = @_;
+            return $self->storage->dbh_do(
+                sub {
+                  my ($storage, $dbh, @args) = @_;
+                  $dbh->do("SET TRANSACTION ISOLATION LEVEL " . $args[0]);
+                },
+                $level,
+            );
+        };
+        *{'NGCP::Schema::set_wait_timeout'} = sub {
+            my ($self,$timeout) = @_;
+            return $self->storage->dbh_do(
+                sub {
+                  my ($storage, $dbh, @args) = @_;
+                  $dbh->do("SET SESSION wait_timeout = " . $args[0]);
+                },
+                $timeout,
+            );
+        };
+    }
+    my $db = _get_schema();
+
+    $c = _create_mock('c',
+        _stash => {
+
+        },
+        stash => sub {
+            my $self = shift;
+            my $key = shift;
+            return $self->{stash}->{$key} if $key;
+            return $self->{stash};
+        },
+        _model => {
+            DB => $db,
+        },
+        model => sub {
+            my $self = shift;
+            my $key = shift;
+            return $self->{model}->{$key} if $key;
+            return $self->{model};
+        },
+        log => sub {
+            my $self = shift;
+            return _create_mock('log',
+                debug => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(debug));
+                },
+                info => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(info debug));
+                },
+                error => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(error info debug));
+                },
+            );
+        },
+        config => sub {
+            my $self = shift;
+            return $config;
+        },
+        user => sub {
+            my $self = shift;
+            return _create_mock('user',
+                roles => sub {
+                    my $self = shift;
+                    return 'admin';
+                },
+                #webusername => sub {
+                #    my $self = shift;
+                #    return '$c->user->webusername';
+                #},
+                #domain => sub {
+                #    my $self = shift;
+                #    return _create_mock('_domain',
+                #        domain => sub {
+                #            my $self = shift;
+                #            return '$c->user->domain->domain';
+                #        },
+                #    );
+                #},
+            );
+        },
+        request => sub {
+            my $self = shift;
+            return _create_mock('_request',
+                _param => {
+                #    '$c->request->params' => undef,
+                },
+                param => sub {
+                    my $self = shift;
+                    my $key = shift;
+                    return $self->{param}->{$key} if $key;
+                    return $self->{param};
+                },
+            );
+        },
+
+    );
+
+}
+
+sub _create_mock {
+    my $class = shift;
+    return $mock_objs{$class} if exists $mock_objs{$class};
+    my %members = @_;
+    my $obj = bless({},$class);
+    foreach my $member (keys %members) {
+        if ('CODE' eq ref $members{$member}) {
+            no strict "refs";  ## no critic (ProhibitNoStrict)
+            *{$class.'::'.$member} = $members{$member};
+        } else {
+            $obj->{substr($member,1)} = $members{$member};
+        }
+    }
+    $mock_objs{$class} = $obj;
+    return $obj;
+}
+
+sub _get_schema {
+
+    my $schema;
+    if ($db{host}) {
+        $schema = NGCP::Schema->connect({
+            dsn                 => "DBI:mysql:database=provisioning;host=$db{host};port=$db{port}",
+            user                => $db{user},
+            ( exists $db{password} ? (password => $db{password}) : ()),
+            mysql_enable_utf8   => "1",
+            on_connect_do       => "SET NAMES utf8mb4",
+            quote_char          => "`",
+        });
+        $schema->set_wait_timeout(3600);
+        return $schema;
+    } else {
+        foreach my $provisioning_config (@provisioning_configs) {
+            if (-f $provisioning_config) {
+                my $conf = XML::Simple->new->XMLin($provisioning_config, ForceArray => 1);
+                if ($conf && $conf->{ngcp_storage_info}) {
+                    my $connectors = $conf->{ngcp_storage_info}->[0]->{connectors} // [];
+                    $schema = NGCP::Schema->connect($connectors->[0]);
+                    $schema->set_wait_timeout(3600);
+                    return $schema;
+                }
+            }
+        }
+    }
+
+}
+
+sub _get_panel_config {
+
+    my $config;
+    foreach my $panel_config (@panel_configs) {
+        if( -f $panel_config ){
+            my $catalyst_config = Config::General->new($panel_config);
+            my %config = $catalyst_config->getall();
+            $config = \%config;
+            last;
+        }
+    }
+    return $config;
+
+}
+
+__END__
+
+=head1 NAME
+
+ngcp-provisioning-template - Create subscribers with detailed settings according to provisioning templates
+
+=head1 SYNOPSIS
+
+ngcp-provisioning-template <provisioning template name> [options]
+
+=head1 DESCRIPTION
+
+B<This program> This program allows to run a 'provisioning template' defined in config.yml. This will produce a
+subscriber setup including required billing contact, contract, preferences, etc. from an input form defined by that
+template. The form fields can be passed as command line options.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--db_host>
+
+The host of the ngcp database to connect to. If omitted, the database connection settings of ngcp-panel will be used.
+
+=item B<--db_port>
+
+The port of the ngcp database to connect to. Only relevant if --db_host is specified.
+
+=item B<--db_user>
+
+The database user for the ngcp database to connect to. Only relevant if --db_host is specified.
+
+=item B<--db_password>
+
+The the database user passowrd (if any) for the ngcp database to connect to. Only relevant if --db_host is specified.
+
+=item B<--file>
+
+Specify a .csv file to process. Each row repesent form values for one subscriber to create.
+
+=item B<--first_name>
+
+Provide the value for a form field "first_name" (if you have such in your provisioning template). Only relevant if no --file is specified.
+
+=item B<--purge>
+
+Terminate an existing subscriber with duplicate number/aliases first.
+
+=item B<--log_level>
+
+Verbosity of printed messages while processing (degug, info, error).
+
+=back
+
+=head1 EXAMPLES
+
+ngcp-provisioning-template "My First Provisioning Template" --first_name="John" --last_name="Doe" --cc="43" --ac="316" --sn="123456" --purge
+
+ngcp-provisioning-template "My First Provisioning Template" --file="subscriberdata.csv" --purge
+
+=head1 AUTHOR
+
+Sipwise Development Team C<< <support@sipwise.com> >>
+
+=head1 LICENSE
+
+This software is Copyright © 2020 by Sipwise GmbH, Austria.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this package.  If not, see <https://www.gnu.org/licenses/>.
+
+=cut
