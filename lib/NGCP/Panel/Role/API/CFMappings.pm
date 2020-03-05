@@ -248,7 +248,7 @@ sub update_item {
                     source_set_id => $sset ? $sset->id : undef,
                     bnumber_set_id => $bset ? $bset->id : undef,
                     type => $type,
-                    enabled => $mapping->{enabled},
+                    enabled => defined $mapping->{enabled} ? $mapping->{enabled} : 1,
                 });
         }
     }

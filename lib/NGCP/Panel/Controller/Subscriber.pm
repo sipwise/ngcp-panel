@@ -913,7 +913,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
     my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
-    my $destination;
+    my ($destination, $enabled);
 
     if($cf_mapping->count > 1) {
         # there is more than one mapping,
@@ -943,6 +943,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
            return;
         }
         $destination = $cf_mapping->first->destination_set->voip_cf_destinations->first;
+        $enabled = $cf_mapping->first->enabled;
     }
 
     my $params = {};
@@ -983,6 +984,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
         $params->{destination}->{announcement_id} = $destination ? $destination->announcement_id : '';
+        $params->{enabled} = $enabled // 0;
     }
 
     my $cf_form;
