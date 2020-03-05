@@ -5,6 +5,7 @@ case "$1" in
   configure)
     addgroup --force-badname --system _ngcp-api
     adduser www-data _ngcp-api
+    adduser faxserver _ngcp-api
   ;;
 
   abort-upgrade|abort-remove|abort-deconfigure)
