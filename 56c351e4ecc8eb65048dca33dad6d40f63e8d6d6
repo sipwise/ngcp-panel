@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ec35fd7_09da74df",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000024
+      },
+      "writtenOn": "2020-03-06T09:15:18Z",
+      "side": 1,
+      "message": "I don\u0027t know whether that matters or not, but these lines seem to be related to development and testing only, should not be there for the final code...",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 52
+      },
+      "revId": "56c351e4ecc8eb65048dca33dad6d40f63e8d6d6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72fa8fed_7c2b0a07",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000024
+      },
+      "writtenOn": "2020-03-06T09:15:18Z",
+      "side": 1,
+      "message": "Same as above.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 50
+      },
+      "revId": "56c351e4ecc8eb65048dca33dad6d40f63e8d6d6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
