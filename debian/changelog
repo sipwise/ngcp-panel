@@ -1,3 +1,32 @@
+ngcp-panel (8.1.2.1+0~mr8.1.2.1) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [5dd8689] TT#68016 selenium: dont change direction when editing header rule
+  * [aba096e] TT#68016 selenium: take screenshot when alert check fails
+
+  [ Flaviu Mates ]
+  * [e7f42c6] TT#70478 - Enable stateSave for datatables
+  * [8f0f236] TT#71871 - Fix /api/bannedusers arbitrary result
+  * [0bcb85a] TT#69407 - Add customer external_id to /api/customerbalances
+  * [92aa4a8] TT#72750 - Allow empty value for week day number in timeset event
+  * [1fd47ee] TT#72163 - Fix 500 error on recorded streams
+
+  [ Rene Krenn ]
+  * [7cce156] TT#74809 ignore ghost registrations
+  * [d531f07] TT#73364 batch provisioning
+  * [2d3ef7a] TT#75110 support multiple identifier fields
+  * [9dda77c] TT#67108 peer rule unique check
+  * [5548ae7] TT#75114 prevent exit() invocations
+  * [50e2870] TT#75114 prevent perl core function invocations
+  * [f2b56db] TT#75105 translate perl VAA gpp1 calc to javascript
+  * [650001f] TT#75114 javascript support for prov templates
+  * [8007b1c] TT#75000 fix rewrite rule move in replicated table
+
+  [ Marco Capetta ]
+  * [579068b] TT#75911 Execute kamailio lcr.reload after the gw removal
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Mar 2020 11:05:23 +0100
+
 ngcp-panel (8.1.2.0+0~mr8.1.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
