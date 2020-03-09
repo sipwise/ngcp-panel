@@ -1,3 +1,10 @@
+ngcp-panel (8.2.1.7+0~mr8.2.1.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [943542c] TT#75951 ngcp-provisioning-template cmdline tool
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Mar 2020 16:35:17 +0100
+
 ngcp-panel (8.2.1.6+0~mr8.2.1.6) unstable; urgency=medium
 
   [ Flaviu Mates ]
