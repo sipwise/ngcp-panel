@@ -46,6 +46,30 @@
       "revId": "66d4f908e4639158a651cc39e1faecb375dc5983",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cabf24e8_276842c3",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2020-03-10T13:20:31Z",
+      "side": 1,
+      "message": "What I mean is something like\n\nif (ref($value) \u0026\u0026 ref($value) \u003d~ /JSON/) {\n  $err \u003d 1 unless JSON::is_bool($value);\n} elsif (is_int ...\n\nto eliminate the requirement to pass down $is_json all the time. AFAICS that would have the side effect of allowing both \"1\" and \"true\" in JSON contexts. Not sure if that is desirable or not.",
+      "parentUuid": "56f6910b_7a1682c1",
+      "range": {
+        "startLine": 893,
+        "startChar": 9,
+        "endLine": 893,
+        "endChar": 26
+      },
+      "revId": "66d4f908e4639158a651cc39e1faecb375dc5983",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
