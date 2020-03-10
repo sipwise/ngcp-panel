@@ -22,6 +22,30 @@
       "revId": "66d4f908e4639158a651cc39e1faecb375dc5983",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56f6910b_7a1682c1",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-03-10T13:10:48Z",
+      "side": 1,
+      "message": "well it was used to throw an error with JSON like\n  \"my_boolean_preference\": 1\ninstead of \n  \"my_boolean_preference\": true\nso tried to stick with that with the input check (allthough remaining code in fact is tolerant). some customers are known to check for api response messages.",
+      "parentUuid": "ce0cb816_e80807be",
+      "range": {
+        "startLine": 893,
+        "startChar": 9,
+        "endLine": 893,
+        "endChar": 26
+      },
+      "revId": "66d4f908e4639158a651cc39e1faecb375dc5983",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
