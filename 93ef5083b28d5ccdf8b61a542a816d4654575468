@@ -16,6 +16,24 @@
       "revId": "93ef5083b28d5ccdf8b61a542a816d4654575468",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f738b27_71a00707",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-03-10T15:19:20Z",
+      "side": 1,
+      "message": "https://paste.mgm.sipwise.com/show/6870/",
+      "parentUuid": "620a98c8_fdffd4d0",
+      "revId": "93ef5083b28d5ccdf8b61a542a816d4654575468",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
