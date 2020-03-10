@@ -337,6 +337,7 @@ sub update_preferences {
         $resource,
         $type,
         $replace,
+        $is_json,
         $err_code) = @params{qw/
         c
         schema
@@ -345,9 +346,11 @@ sub update_preferences {
         resource
         type
         replace
+        is_json
         err_code
     /};
 
+    $is_json //= 1;
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { };
     }
@@ -796,7 +799,7 @@ sub update_preferences {
                 };
                 /^lock$/ && do {
                     my $v = $resource->{$pref};
-                    return unless _check_pref_value($c, $meta, $v, $pref_type, $err_code);
+                    return unless _check_pref_value($c, $meta, $v, $pref_type, $is_json, $err_code);
                     NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                         c => $c,
                         prov_subscriber => $elem,
@@ -808,20 +811,20 @@ sub update_preferences {
                 if($meta->max_occur != 1) {
                     $pref_rs->delete;
                     foreach my $v(@{ $resource->{$pref} }) {
-                        return unless _check_pref_value($c, $meta, $v, $pref_type, $err_code);
+                        return unless _check_pref_value($c, $meta, $v, $pref_type, $is_json, $err_code);
 						if(JSON::is_bool($v)){
 							$v =  $v ? 1 : 0 ;
 						}
                         $pref_rs->create({ value => $v });
                     }
                 } elsif($pref_rs->first) {
-                    return unless _check_pref_value($c, $meta, $resource->{$pref}, $pref_type, $err_code);
+                    return unless _check_pref_value($c, $meta, $resource->{$pref}, $pref_type, $is_json, $err_code);
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
                     $pref_rs->first->update({ value => $resource->{$pref} });
                 } else {
-                    return unless _check_pref_value($c, $meta, $resource->{$pref}, $pref_type, $err_code);
+                    return unless _check_pref_value($c, $meta, $resource->{$pref}, $pref_type, $is_json, $err_code);
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
@@ -863,7 +866,7 @@ sub update_preferences {
 }
 
 sub _check_pref_value {
-    my ($c, $meta, $value, $pref_type, $err_code) = @_;
+    my ($c, $meta, $value, $pref_type, $is_json, $err_code) = @_;
 
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { };
@@ -887,7 +890,13 @@ sub _check_pref_value {
             last SWITCH;
         };
         /^boolean$/ && do {
-            $err = 1 unless JSON::is_bool($value);
+            if ($is_json) {
+                $err = 1 unless JSON::is_bool($value);
+            } elsif (is_int($value)) {
+                $err = 1 unless ($value == 0 or $value == 1);
+            } else {
+                $err = 1;
+            }
             last SWITCH;
         };
         # default
