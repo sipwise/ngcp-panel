@@ -1003,6 +1003,7 @@ sub _create_subscriber_preferences {
             resource => $context->{subscriber_preferences},
             type => 'subscribers',
             replace => 0,
+            is_json => 0,
             err_code => sub {
                 my ($code, $msg) = @_;
                 die($msg);
@@ -1027,6 +1028,7 @@ sub _create_contract_preferences {
             resource => $context->{contract_preferences},
             type => 'contracts',
             replace => 0,
+            is_json => 0,
             err_code => sub {
                 my ($code, $msg) = @_;
                 die($msg);

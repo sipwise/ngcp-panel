@@ -280,6 +280,7 @@ sub _get_schema {
                 }
             }
         }
+        die("no provisioning.conf found\n") unless $schema;
     }
 
 }
@@ -295,6 +296,7 @@ sub _get_panel_config {
             last;
         }
     }
+    die("no ngcp_panel.conf found\n") unless $config;
     return $config;
 
 }
