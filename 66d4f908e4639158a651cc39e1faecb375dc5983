@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce0cb816_e80807be",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2020-03-10T12:54:32Z",
+      "side": 1,
+      "message": "Would it also work to use ref($value) to see whether this is a JSON bool or not? Would it make the whole thing simpler? Or better to have it explicit and strict?",
+      "range": {
+        "startLine": 893,
+        "startChar": 9,
+        "endLine": 893,
+        "endChar": 26
+      },
+      "revId": "66d4f908e4639158a651cc39e1faecb375dc5983",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
