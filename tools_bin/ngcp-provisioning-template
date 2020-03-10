@@ -9,19 +9,20 @@ use Config::General qw();
 use File::Slurp qw();
 use XML::Simple qw();
 
-#use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
-#use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
-#use lib "/usr/local/devel/ngcp-schema/lib";
-#use lib "/usr/local/devel/sipwise-base/lib";
+use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
+use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
+use lib "/usr/local/devel/ngcp-schema/lib";
+use lib "/usr/local/devel/sipwise-base/lib";
 use NGCP::Schema qw();
-#use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
-#use lib "/usr/local/devel/ngcp-panel/lib";
+use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
+use lib "/usr/local/devel/ngcp-panel/lib";
 use NGCP::Panel::Utils::ProvisioningTemplates qw();
 
 my @panel_configs = qw(
    /etc/ngcp-panel/ngcp_panel.conf
    /etc/ngcp_panel.conf
    /ngcp_panel.conf
+   /home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf.vaa
 );
 #   /home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
 #   /usr/local/devel/vagrant-ngcp/ngcp_panel.conf
