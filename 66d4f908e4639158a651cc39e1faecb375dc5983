@@ -70,6 +70,30 @@
       "revId": "66d4f908e4639158a651cc39e1faecb375dc5983",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9856bef2_fa4da4fb",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-03-10T14:32:51Z",
+      "side": 1,
+      "message": "\u003eAFAICS that would have the side effect of allowing both \"1\" and \"true\" in JSON contexts. \nexactly - i tried to avoid it.\n\nmodified it now, api now also accepts 0/1 for json values.",
+      "parentUuid": "cabf24e8_276842c3",
+      "range": {
+        "startLine": 893,
+        "startChar": 9,
+        "endLine": 893,
+        "endChar": 26
+      },
+      "revId": "66d4f908e4639158a651cc39e1faecb375dc5983",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
