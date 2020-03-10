@@ -1,3 +1,10 @@
+ngcp-panel (8.2.1.8+0~mr8.2.1.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f640fd6] TT#77206 adjust check for boolean preferences unless json
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 10 Mar 2020 10:24:05 +0100
+
 ngcp-panel (8.2.1.7+0~mr8.2.1.7) unstable; urgency=medium
 
   [ Rene Krenn ]
