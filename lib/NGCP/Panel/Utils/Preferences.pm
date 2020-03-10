@@ -887,7 +887,10 @@ sub _check_pref_value {
             last SWITCH;
         };
         /^boolean$/ && do {
-            $err = 1 unless JSON::is_bool($value);
+            unless (JSON::is_bool($value)
+                    or (is_int($value) and ($value == 0 or $value == 1))) {
+                $err = 1;
+            }
             last SWITCH;
         };
         # default
