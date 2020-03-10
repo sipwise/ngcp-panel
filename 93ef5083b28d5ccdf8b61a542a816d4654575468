@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "620a98c8_fdffd4d0",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-03-10T14:46:19Z",
+      "side": 1,
+      "message": "Are these changes related to the bool one? Are perhaps this due to the code now returning undef on parse errors or similar, even though I see the modified function was already returning that in the past?",
+      "revId": "93ef5083b28d5ccdf8b61a542a816d4654575468",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
