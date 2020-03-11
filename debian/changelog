@@ -1,3 +1,23 @@
+ngcp-panel (6.5.8.1+0~mr6.5.8.1) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [3c30060] TT#71871 - Fix /api/bannedusers arbitrary result
+  * [c633673] TT#69407 - Add customer external_id to /api/customerbalances
+  * [9b8bca5] TT#72163 - Fix 500 error on recorded streams
+
+  [ Kirill Solomko ]
+  * [d271189] TT#63542 API/SubscriberRegistrations respect redis usrloc
+
+  [ Rene Krenn ]
+  * [29d0283] TT#74809 ignore ghost registrations
+  * [e6bd053] TT#67108 peer rule unique check
+  * [93faf5e] TT#75000 fix rewrite rule move in replicated table
+
+  [ Marco Capetta ]
+  * [e5f3b79] TT#75911 Execute kamailio lcr.reload after the gw removal
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Mar 2020 09:15:09 +0100
+
 ngcp-panel (6.5.8.0+0~mr6.5.8.0) unstable; urgency=medium
 
   [ Nico Schedel ]
