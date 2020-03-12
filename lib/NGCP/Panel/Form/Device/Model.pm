@@ -269,11 +269,12 @@ has_field 'bootstrap_method' => (
         { label => 'Grandstream', value => 'redirect_grandstream' },
         { label => 'Sipwise Redirect', value => 'redirect_sipwise' },
         { label => 'Sipwise Profile', value => 'profile_sipwise' },
+        { label => 'ALE', value => 'redirect_ale' },
     ],
     default => 'http',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom, redirect_grandstream, redirect_sipwise, profile_sipwise.'],
+        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom, redirect_snom, redirect_grandstream, redirect_sipwise, profile_sipwise, redirect_ale.'],
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
 );
@@ -283,7 +284,7 @@ has_field 'bootstrap_uri' => (
     label => 'Bootstrap URI',
     default => '',
     #we don't show this field for polycom, because polycom doesn't support now any possibility to configure provisioning url via API
-    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http ngcp-bootstrap-config-redirect_panasonic ngcp-bootstrap-config-redirect_yealink ngcp-bootstrap-config-redirect_snom ngcp-bootstrap-config-redirect_grandstream/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http ngcp-bootstrap-config-redirect_panasonic ngcp-bootstrap-config-redirect_yealink ngcp-bootstrap-config-redirect_snom ngcp-bootstrap-config-redirect_grandstream ngcp-bootstrap-config-redirect_ale/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Custom provisioning server URI.'],
@@ -497,6 +498,28 @@ has_field 'bootstrap_config_profile_sipwise_password' => (
         title => ['Password used to configure device on Sipwise EDS.'],
     },
 );
+has_field 'bootstrap_config_redirect_ale_user' => (
+    type => 'Text',
+    required => 0,
+    label => 'ALE username',
+    default => '',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_ale/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Username used to configure bootstrap url on ALE redirect server. Obtained from ALE.'],
+    },
+);
+has_field 'bootstrap_config_redirect_ale_password' => (
+    type => 'Text',
+    required => 0,
+    label => 'ALE password',
+    default => '',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_ale/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Password used to configure bootstrap url on ALE redirect server. Obtained from ALE.'],
+    },
+);
 
 has_field 'save' => (
     type => 'Submit',
@@ -508,7 +531,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model type extensions_num connectable_models linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile bootstrap_config_redirect_grandstream_cid bootstrap_config_redirect_grandstream_key bootstrap_config_redirect_sipwise_user bootstrap_config_redirect_sipwise_password bootstrap_config_profile_sipwise_user bootstrap_config_profile_sipwise_password front_image front_thumbnail mac_image/],
+    render_list => [qw/vendor model type extensions_num connectable_models linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile bootstrap_config_redirect_grandstream_cid bootstrap_config_redirect_grandstream_key bootstrap_config_redirect_sipwise_user bootstrap_config_redirect_sipwise_password bootstrap_config_profile_sipwise_user bootstrap_config_profile_sipwise_password bootstrap_config_redirect_ale_user bootstrap_config_redirect_ale_password front_image front_thumbnail mac_image/],
 );
 
 has_block 'actions' => (
