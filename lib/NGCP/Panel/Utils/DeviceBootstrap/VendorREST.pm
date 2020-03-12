@@ -23,7 +23,12 @@ sub redirect_server_call {
     }
 
     my $req = HTTP::Request->new($data->{method} => $data->{url});
-    $req->header(%{$self->get_basic_authorization($self->params->{credentials})});
+    if ($data->{token}) {
+        $req->header(token => $data->{token});
+    }
+    else {
+        $req->header(%{$self->get_basic_authorization($self->params->{credentials})});
+    }
     if (defined $data->{body}) {
         $req->content(encode_json($data->{body}));
         $req->content_type('application/json');

@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::DeviceBootstrap::Snom;
 use NGCP::Panel::Utils::DeviceBootstrap::Grandstream;
 use NGCP::Panel::Utils::DeviceBootstrap::SipwiseRedirect;
 use NGCP::Panel::Utils::DeviceBootstrap::SipwiseProfile;
+use NGCP::Panel::Utils::DeviceBootstrap::ALE;
 
 my $redirect_processor;
 
@@ -116,6 +117,8 @@ sub get_redirect_processor{
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::SipwiseRedirect->new( params => $params );
     }elsif('profile_sipwise' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::SipwiseProfile->new( params => $params );
+    }elsif('redirect_ale' eq $bootstrap_method){
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::ALE->new( params => $params );
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
