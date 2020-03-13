@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b6e55ef_608e88bc",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-03-13T14:10:44Z",
+      "side": 1,
+      "message": "we also need customer location voip_contract_location_preferences",
+      "revId": "f6c787b304ff16601070ca8e0ec97e25b9b76ca0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
