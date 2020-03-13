@@ -1,3 +1,10 @@
+ngcp-panel (6.5.6.10+0~mr6.5.6.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [c2bfe39] TT#74809 ignore ghost registrations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 13 Mar 2020 12:37:26 +0100
+
 ngcp-panel (6.5.6.9+0~mr6.5.6.9) unstable; urgency=medium
 
   [ Rene Krenn ]
