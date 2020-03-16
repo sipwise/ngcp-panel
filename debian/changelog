@@ -1,3 +1,38 @@
+ngcp-panel (8.4.0.0+0~mr8.4.0.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [58bd2fc] TT#75114 prevent perl core function invocations
+  * [f4da841] TT#75105 translate perl VAA gpp1 calc to javascript
+  * [b12b5d1] TT#67108 peer rule unique check
+  * [f66435c] TT#75114 javascript support for prov templates
+  * [c64a645] TT#75000 fix rewrite rule move in replicated table
+  * [6c538c2] TT#75951 ngcp-provisioning-template cmdline tool
+  * [93ef508] TT#77206 accept 0/1 for boolean preferences
+
+  [ Marco Capetta ]
+  * [7327cf0] TT#75911 Execute kamailio lcr.reload after the gw removal
+
+  [ Victor Tsvetov ]
+  * [77b3834] TT#74160 Make package ngcp-api-testframework
+  * [8655f07] TT#74160 Allow reuse of API TestFramework object
+
+  [ Sipwise Jenkins Builder ]
+  * [ac540dd] TT#4166 I18N dump: snapshot 2020.02.25-01.22.10
+  * [7b1ca6a] TT#4166 I18N dump: snapshot 2020.02.28-01.32.23
+  * [fac975f] TT#4166 I18N dump: snapshot 2020.03.04-01.23.59
+
+  [ Flaviu Mates ]
+  * [8a7b6f7] TT#75751 - Add enable/disable feature for Call Forwards
+  * [1e7762e] TT#74525 - Updgrade /api/headerrulesets
+  * [727af5d] TT#74527 - Upgrade /api/callforwards
+  * [d0926cf] TT#74526 - Updgrade /api/headerrules
+  * [52f1024] TT#75751 - Fix API tests after adding 'enabled' setting for CFs
+  * [574857c] TT#72163 - Fix 500 error on recorded streams
+  * [a51a756] TT#76751 - Fix CF creation when not sending 'enabled' param
+  * [16365fb] TT#76783 - Implemend ALE RPS devices auto provisioning
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Mar 2020 11:15:29 +0100
+
 ngcp-panel (8.3.0.0+0~mr8.3.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
