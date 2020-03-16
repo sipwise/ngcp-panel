@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0528efec_8061c6bc",
+        "filename": "share/templates/helpers/datatables.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-03-16T12:56:44Z",
+      "side": 1,
+      "message": "please test that the expected value indeed needs to be the localised one.",
+      "range": {
+        "startLine": 70,
+        "startChar": 29,
+        "endLine": 70,
+        "endChar": 43
+      },
+      "revId": "c8f9b7e903336e95f5fbd0324dd156a24cf6bd4c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
