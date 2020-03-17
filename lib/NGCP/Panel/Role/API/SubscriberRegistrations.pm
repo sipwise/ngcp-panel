@@ -175,14 +175,25 @@ sub subscriber_from_id {
 sub _item_by_aor {
     my ($self, $c, $sub, $contact) = @_;
 
-    return $self->item_rs($c)->search({
+    my $filter = {
         'me.contact'  => $contact,
         'me.username' => $sub->provisioning_voip_subscriber->username,
         '-or' => [
                 'me.domain'   => $sub->provisioning_voip_subscriber->domain->domain,
                 'me.domain'   => undef,
             ],
-    })->first;
+    };
+
+    if ($c->config->{redis}->{usrloc}) {
+        if ($c->user->roles eq "admin") {
+        } elsif ($c->user->roles eq "reseller") {
+            $filter->{reseller_id} = $c->user->reseller_id;
+        }
+        return NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter)->first;
+    } else {
+        return $self->item_rs($c)->search($filter)->first;
+    }
+
 }
 
 sub update_item {
