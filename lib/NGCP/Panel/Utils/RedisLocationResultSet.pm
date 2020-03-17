@@ -73,6 +73,7 @@ sub find {
     my ($self, $filter) = @_;
     my $id;
 
+    $filter = $self->_unalias($filter);
     if (ref $filter eq "") {
         $id = $filter;
         $filter = { id => $id };
@@ -85,6 +86,7 @@ sub find {
 
     my %entry = $self->_redis->hgetall($self->usrloc_path.":entry::$id");
     $entry{id} = $entry{ruid};
+    return unless $entry{id};
     # deflate expires column
     if ($entry{expires}) {
         $entry{expires} = strftime("%Y-%m-%d %H:%M:%S", localtime($entry{expires}));
@@ -96,6 +98,7 @@ sub find {
         '+select' => ['reseller.id'],
         '+as' => ['reseller_id']
     })->first;
+    return unless $subscribers_reseller;
     if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
         return;
     }
@@ -106,6 +109,7 @@ sub search {
     my ($self, $filter, $opt) = @_;
     $filter //= {};
 
+    $filter = $self->_unalias($filter // {});
     my $new_rs = $self->meta->clone_object($self);
     unless ($new_rs->_query_done) {
         if ($filter->{id}) {
@@ -165,19 +169,19 @@ sub _rows_from_mapkey {
     foreach my $key (@{ $keys }) {
         my %entry = $self->_redis->hgetall($key);
         $entry{id} = $entry{ruid};
-	next unless $entry{id};
+        next unless $entry{id};
         # deflate expires column
         if ($entry{expires}) {
             $entry{expires} = strftime("%Y-%m-%d %H:%M:%S", localtime($entry{expires}));
         } else {
             $entry{expires} = "1970-01-01 00:00:00";
         }
-
         my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
             join => { 'contract' => { 'contact' => 'reseller' } },
             '+select' => ['reseller.id'],
             '+as' => ['reseller_id']
         })->first;
+        return unless $subscribers_reseller;
         if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
             next;
         }
@@ -249,6 +253,21 @@ sub _scan {
     } while ($cursor);
 
     return 1;
+}
+
+sub _unalias {
+    my ($self,$filter) = @_;
+    if ('HASH' eq ref $filter) {
+        my %unaliased_filter = ();
+        my $source_alias = $self->current_source_alias();
+        foreach my $key (keys %$filter) {
+            my $k = $key;
+            $k =~ s/^$source_alias\.//;
+            $unaliased_filter{$k} = $filter->{$key};
+        }
+        $filter = \%unaliased_filter;
+    }
+    return $filter;
 }
 
 1;

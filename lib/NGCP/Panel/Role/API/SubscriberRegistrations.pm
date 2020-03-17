@@ -44,13 +44,13 @@ sub _item_rs {
         $item_rs = $c->model('DB')->resultset('location');
         if($c->user->roles eq "admin") {
             $item_rs = $item_rs->search({
-            
+
             },{
                 join => [@joins,'subscriber'],
             });
         } elsif($c->user->roles eq "reseller") {
-            $item_rs = $item_rs->search({ 
-                'contact.reseller_id' => $c->user->reseller_id 
+            $item_rs = $item_rs->search({
+                'contact.reseller_id' => $c->user->reseller_id
             },{
                 join => [@joins, { 'subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}} ],
             });
@@ -122,7 +122,7 @@ sub resource_from_item {
 
 sub item_by_id {
     my ($self, $c, $id) = @_;
-    
+
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
 }
@@ -177,7 +177,7 @@ sub _item_by_aor {
 
     my $domain = $sub->provisioning_voip_subscriber->domain->domain;
 
-    return $self->item_rs($c)->search({
+    my $filter = {
         'me.contact'  => $contact,
         'me.username' => $sub->provisioning_voip_subscriber->username,
         $c->config->{redis}->{usrloc}
@@ -187,7 +187,17 @@ sub _item_by_aor {
             : ($c->config->{features}->{multidomain}
                 ? ('me.domain' => $domain)
                 : ('me.domain' => undef))
-    })->first;
+    };
+
+    if ($c->config->{redis}->{usrloc}) {
+        if ($c->user->roles eq "admin") {
+        } elsif ($c->user->roles eq "reseller") {
+            $filter->{reseller_id} = $c->user->reseller_id;
+        }
+        return NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter)->first;
+    } else {
+        return $self->item_rs($c)->search($filter)->first;
+    }
 }
 
 sub update_item {
@@ -214,7 +224,7 @@ sub update_item {
     $values->{flags} = 0;
     $values->{cflags} = 0;
     $values->{cflags} |= 64 if($values->{nat});
-    
+
     NGCP::Panel::Utils::Kamailio::create_location($c,
         $sub->provisioning_voip_subscriber,
         $values
