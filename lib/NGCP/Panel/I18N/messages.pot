@@ -218,6 +218,10 @@ msgid "A realm (hostname) used to identify and for authentication against a peer
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A user defined quota for concurrent calls, does not block calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A username used for authentication against the peer host."
 msgstr ""
 
@@ -1320,6 +1324,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains a list of the announcements that will be played to the caller in case the respective error code is returned back from the callee. Each entry of the list has to be a string composed in the following way: <error_code>;<announcement_name>, where error_code is the SIP return code and the announcement_name is name of the announcement taken from the sound_set list. '*', '?' and 'x-y' with 'x' and 'y' representing numbers from 0 to 9 may be used as wildcards like in shell patterns. For example, to play callee_unknown message in case of 404 returned from the callee: 404;callee_unknown"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Contains a user defined quota for concurrent calls, the preference does not have an impact on ongoing calls and used mostly for reporting reasons, when a soft limit for calls needs to defined, based on which the subscriber/customer/peer is reported or charged for making too many calls."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

@@ -358,6 +358,10 @@ msgstr ""
 "l'hôte pair."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A user defined quota for concurrent calls, does not block calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A username used for authentication against the peer host."
 msgstr "Un nom d'utilisateur utilisé pour l'authentification de l'opérateur."
 
@@ -1673,6 +1677,14 @@ msgid ""
 "used as wildcards like in shell patterns. For example, to play "
 "callee_unknown message in case of 404 returned from the callee: 404;"
 "callee_unknown"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Contains a user defined quota for concurrent calls, the preference does not "
+"have an impact on ongoing calls and used mostly for reporting reasons, when "
+"a soft limit for calls needs to defined, based on which the subscriber/"
+"customer/peer is reported or charged for making too many calls."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
