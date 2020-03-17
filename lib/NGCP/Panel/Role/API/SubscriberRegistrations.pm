@@ -177,7 +177,7 @@ sub _item_by_aor {
 
     my $domain = $sub->provisioning_voip_subscriber->domain->domain;
 
-    return $self->item_rs($c)->search({
+    my $filter = {
         'me.contact'  => $contact,
         'me.username' => $sub->provisioning_voip_subscriber->username,
         $c->config->{redis}->{usrloc}
@@ -187,7 +187,17 @@ sub _item_by_aor {
             : ($c->config->{features}->{multidomain}
                 ? ('me.domain' => $domain)
                 : ('me.domain' => undef))
-    })->first;
+    };
+
+    if ($c->config->{redis}->{usrloc}) {
+        if ($c->user->roles eq "admin") {
+        } elsif ($c->user->roles eq "reseller") {
+            $filter->{reseller_id} = $c->user->reseller_id;
+        }
+        return NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter)->first;
+    } else {
+        return $self->item_rs($c)->search($filter)->first;
+    }
 }
 
 sub update_item {
