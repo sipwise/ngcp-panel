@@ -1,3 +1,10 @@
+ngcp-panel (7.5.3.9+0~mr7.5.3.9) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [7f6ec58] TT#69380 - Disable search field caching only for Calls
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Mar 2020 08:37:35 +0100
+
 ngcp-panel (7.5.3.8+0~mr7.5.3.8) unstable; urgency=medium
 
   [ Flaviu Mates ]
