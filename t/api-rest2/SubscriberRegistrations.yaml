@@ -330,7 +330,7 @@
     name: DELETE subscriberregistrations
     type: item
     method: DELETE
-    path: '/${subscriberregistrations_path4}'
+    path: '/${subscriberregistrations_path_updated}'
     conditions:
         is:
             code: 204
