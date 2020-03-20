@@ -42,6 +42,7 @@ $ua = Test::Collection->new()->ua();
 
     my @links = $res->header('Link');
     my $rels = {
+        activesubscriberpreferences => 1,
         admincerts => 1,
         admins => 1,
         applyrewrites => 1,
