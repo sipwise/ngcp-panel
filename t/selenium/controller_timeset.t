@@ -129,6 +129,12 @@ $d->unselect_if_selected('//*[@id="byday.weekdays.4"]');
 $d->fill_element('//*[@id="byday.weekdaynumber"]', 'xpath', '+2FR');
 $d->find_element('//*[@id="save"]')->click();
 
+diag("Search Event");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Event entry successfully created',  'Correct Alert was shown');
+$d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#event_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="event_table_filter"]/label/input', 'xpath', 'Very important event');
+
 diag("Check details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Event entry successfully created',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="event_table"]//tr[1]/td[contains(text(), "Very important event")]'), "Description is correct");
