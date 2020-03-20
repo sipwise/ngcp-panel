@@ -134,9 +134,6 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check Administrator details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  'Correct Alert was shown');
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[6][contains(text(), "0")]'), 'Active value is correct');
@@ -174,9 +171,6 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check Administrator details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  'Correct Alert was shown');
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[4][contains(text(), "1")]'), 'Master value is correct');
