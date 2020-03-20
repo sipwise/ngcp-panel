@@ -346,6 +346,9 @@ $d->fill_element('#end', 'css', "2019-01-01 23:59:59");
 $d->find_element('#save', 'css')->click();
 
 diag("Check if Date Definition is correct");
+$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#date_definition_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//div[contains(@class, "dataTables_filter")]//input', 'xpath', '2018-01-01 00:00:00');
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Special offpeak entry successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2018-01-01 00:00:00")]'), 'Start Date Definition is correct');
 ok($d->find_element_by_xpath('//*[@id="date_definition_table"]//tr[1]/td[contains(text(), "2019-01-01 23:59:59")]'), 'End Date Definition is correct');
