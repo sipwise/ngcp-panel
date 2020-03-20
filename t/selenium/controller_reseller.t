@@ -79,9 +79,6 @@ $d->find_element('#save', 'css')->click();
 
 diag("Check Reseller details");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Reseller successfully updated',  'Correct Alert was shown');
-$d->fill_element('#Resellers_table_filter label input', 'css', 'thisshouldnotexist');
-ok($d->find_element_by_css('#Resellers_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('#Resellers_table_filter label input', 'css', $resellername);
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller name is correct');
 ok($d->find_element_by_xpath('//*[@id="Resellers_table"]//tr[1]/td[contains(text(), "active")]'), 'Status is correct');
 

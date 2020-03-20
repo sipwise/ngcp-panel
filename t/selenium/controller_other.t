@@ -70,13 +70,8 @@ $d->find_element('//*[@id="mode"]/option[@value="obfuscate"]')->click();
 $d->fill_element('//*[@id="label"]', 'xpath', 'text');
 $d->find_element('//*[@id="save"]')->click();
 
-diag("Search Call List Suppression");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Call list suppression successfully updated',  'Correct Alert was shown');
-$d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#call_list_suppression_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="call_list_suppression_table_filter"]/label/input', 'xpath', $domainstring);
-
 diag("Check details");
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Call list suppression successfully updated',  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "' . $domainstring . '")]'), "Domain is correct");
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "incoming")]'), 'Direction is correct');
 ok($d->find_element_by_xpath('//*[@id="call_list_suppression_table"]//tr[1]/td[contains(text(), "testing")]'), 'Pattern is correct');
