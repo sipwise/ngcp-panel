@@ -6,6 +6,7 @@ use Test::More import => [qw(done_testing is ok diag todo_skip)];
 use Selenium::Remote::Driver::FirefoxExtensions;
 use Selenium::Collection::Common;
 use Selenium::Collection::Functions;
+use Selenium::Remote::WDKeys;
 
 my ($port) = @_;
 my $d = Selenium::Collection::Functions::create_driver($port);
@@ -108,7 +109,7 @@ $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpat
 ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty'), 'Table is empty');
 $d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
 
-diag("Check profile details");
+diag("Check Profile details");
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $profilename . '")]', $profilename), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "This is a description. It describes things")]'), 'Description is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $setname . '")]', $setname), 'Profile Set is correct');
@@ -121,7 +122,12 @@ $d->fill_element('//*[@id="name"]', 'xpath', $profilename);
 $d->fill_element('//*[@id="description"]', 'xpath', 'Very very useful description');
 $d->find_element('//*[@id="save"]')->click();
 
-diag("Check profile details");
+diag("Search Profile");
+$d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#subscriber_profile_table tr > td.dataTables_empty'), 'Table is empty');
+$d->fill_element('//*[@id="subscriber_profile_table_filter"]/label/input', 'xpath', $profilename);
+
+diag("Check Profile details");
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $profilename . '")]', $profilename), 'Name is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "Very very useful description")]'), 'Description is correct');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr[1]/td[contains(text(), "' . $setname . '")]', $setname), 'Profile Set is correct');
@@ -168,6 +174,8 @@ $d->select_if_unselected('//*[@id="set_default"]', 'xpath');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if cloned Profile is now default");
+$d->find_element_by_xpath('//*[@id="subscriber_profile_table_filter"]/label/input')->clear();
+$d->find_element_by_xpath('//*[@id="subscriber_profile_table_filter"]/label/input')->send_keys(KEYS->{'return'});
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), "Subscriber profile successfully updated",  'Correct Alert was shown');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr/td[contains(text(), "' . $cloneprofilename . '")]//..//td[contains(text(), "1")]'), 'Cloned Profile is now default');
 ok($d->find_element_by_xpath('//*[@id="subscriber_profile_table"]//tr/td[contains(text(), "' . $profilename . '")]//..//td[contains(text(), "0")]'), 'Original Profile is no longer default');
