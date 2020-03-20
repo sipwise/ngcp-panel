@@ -302,9 +302,6 @@ $d->fill_element('#description', 'css', 'see if stuff changes');
 $d->find_element('#save', 'css')->click();
 
 diag("Check if Peering rule was edited");
-$d->fill_element('//*[@id="PeeringOverview_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#PeeringOverview_table tr > td.dataTables_empty', 'css'), 'Inbound Peering Rule was not created');
-$d->fill_element('//*[@id="PeeringOverview_table_filter"]/label/input', 'xpath', $groupname);
 ok($d->find_element_by_xpath('//*[@id="PeeringOverview_table"]//tr[1]/td[contains(text(), "' . $groupname . '")]'), 'Peering Rule was found');
 ok($d->find_element_by_xpath('//*[@id="PeeringOverview_table"]//tr[1]/td[contains(text(), "see if stuff changes")]'), 'Description is correct');
 
