@@ -79,7 +79,48 @@ sub process_cdr_item {
         $resource->{direction} = "out";
     }
 
-    my $anonymize = $c->user->roles ne "admin" && !$intra && $item->source_clir;
+    my $anonymize;
+    my $prefs;
+    my $sub_pref = $item->source_subscriber->provisioning_voip_subscriber->voip_usr_preferences->search(
+                    {
+                        'attribute.attribute' => 'calllist_clir_scope',
+                    },
+                    {
+                        join => 'attribute',
+                    }
+                )->first;
+    if ($sub_pref) {
+        $prefs = $sub_pref;
+    }
+    else {
+        my $ct_pref = $item->source_subscriber->contract->voip_contract_preferences->search(
+                    {
+                        'attribute.attribute' => 'calllist_clir_scope',
+                    },
+                    {
+                        join => 'attribute',
+                    }
+                )->first;
+        if ($ct_pref) {
+            $prefs = $ct_pref;
+        }
+        else {
+            my $dom_pref = $item->source_subscriber->domain->provisioning_voip_domain->voip_dom_preferences->search(
+                    {
+                        'attribute.attribute' => 'calllist_clir_scope',
+                    },
+                    {
+                        join => 'attribute',
+                    }
+                )->first;
+            if ($dom_pref) {
+                $prefs = $dom_pref;
+            }
+        }
+    }
+    $anonymize = 1 if ($c->user->roles ne "admin" && !$intra && $item->source_clir);
+    $anonymize = 1 if ($c->user->roles ne "admin" && $intra && $item->source_clir && $prefs && $prefs->value eq 'all');
+
     # try to use source_cli first and if it is "anonymous" fall-back to
     # source_user@source_domain + mask the domain for non-admins
     my $source_cli = $item->source_cli !~ /anonymous/i
