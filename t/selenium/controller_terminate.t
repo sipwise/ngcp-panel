@@ -91,9 +91,6 @@ $d->find_element('//*[@id="status"]/option[@value="locked"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Customer was edited");
-$d->fill_element('#Customer_table_filter input', 'css', 'thisshouldnotexist');
-ok($d->find_element_by_css('#Customer_table tr > td.dataTables_empty'), 'Garbage text was not found');
-$d->fill_element('#Customer_table_filter input', 'css', $customerid);
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "' . $customerid . '")]'), 'Found customer');
 ok($d->find_element_by_xpath('//*[@id="Customer_table"]//tr[1]/td[contains(text(), "locked")]'), 'Status was changed');
 $custnum = $d->get_text('//*[@id="Customer_table"]//tr[1]//td[1]');
@@ -133,9 +130,6 @@ $d->find_element('//*[@id="save"]')->click();
 
 diag("Check if Contact was edited");
 is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Contact successfully changed',  'Correct Alert was shown');
-$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#contact_table tr > td.dataTables_empty', 'css'), 'Garbage test not found');
-$d->fill_element('//*[@id="contact_table_filter"]/label/input', 'xpath', $contactmail);
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "' . $contactmail . '")]'), 'Contact found');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "TestFistName")]'), 'First Name was edited');
 ok($d->find_element_by_xpath('//*[@id="contact_table"]//tr[1]/td[contains(text(), "TestLastName")]'), 'Last Name was edited');

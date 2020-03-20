@@ -112,12 +112,6 @@ $d->fill_element('//*[@id="code"]', 'xpath', "144");
 $d->fill_element('//*[@id="prefix"]', 'xpath', "E2_144_");
 $d->find_element('//*[@id="save"]')->click();
 
-diag("Search Emergency Mapping");
-is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Emergency mapping successfully updated',  'Correct Alert was shown');
-$d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#emergency_mappings_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="emergency_mappings_table_filter"]/label/input', 'xpath', $containername);
-
 diag("Check Emergency Mapping details");
 ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), ' . $containername . ')]'), 'Container name is correct');
 ok($d->find_element_by_xpath('//*[@id="emergency_mappings_table"]//tr[1]/td[contains(text(), ' . $resellername . ')]'), 'Reseller is correct');
