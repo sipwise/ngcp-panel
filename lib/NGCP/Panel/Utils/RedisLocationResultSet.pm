@@ -163,7 +163,7 @@ sub _rows_from_mapkey {
             '+select' => ['reseller.id'],
             '+as' => ['reseller_id']
         })->first;
-        return unless $subscribers_reseller;
+        next unless $subscribers_reseller;
         if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
             next;
         }
