@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "888a8a05_a37c9a07",
+        "filename": "t/selenium/controller_profileset.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-03-20T11:21:49Z",
+      "side": 1,
+      "message": "Is it available inside Docker container? Do we need new dependency here?",
+      "revId": "8195bb7068a5ce09d5b66397085175438a69397c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
