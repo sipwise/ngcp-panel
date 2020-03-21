@@ -1611,6 +1611,13 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Contains options for defining the scope in which CLIR is applied in the call "
+"lists: External(default; hide caller in clir enabled calls, except calls "
+"within the same customer) or All(hide caller for clir enabled calls)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Contains wildcard list of allowed or denied SIP User-Agents matched against "
 "the User-Agent header."
 msgstr ""
@@ -5974,6 +5981,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/Admin.pm
 msgid "Openvpn service is not enabled or host role is not allowed."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Option for defining when CLIR should be used"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
