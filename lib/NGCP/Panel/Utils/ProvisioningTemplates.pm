@@ -22,6 +22,7 @@ $Data::Dumper::Sortkeys = sub {
 use Text::CSV_XS qw();
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::BillingMappings qw();
+use NGCP::Panel::Utils::Contract qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
@@ -784,7 +785,10 @@ sub _init_subscriber_context {
             },
             getcustomer_code => sub {
                 my ($cid) = @_;
-                return $schema->resultset('contracts')->find($cid);
+                my $contract = $schema->resultset('contracts')->find($cid);
+                NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
+                    schema => $schema, contract_id => $contract->id) if $contract;
+                return $contract;
             },
         );
 
