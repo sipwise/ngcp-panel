@@ -1,3 +1,10 @@
+ngcp-panel (8.2.1.10+0~mr8.2.1.10) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [581c96e] TT#78161 selenium: fix search calls to work better with search field caching
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 23 Mar 2020 09:16:04 +0100
+
 ngcp-panel (8.2.1.9+0~mr8.2.1.9) unstable; urgency=medium
 
   [ Flaviu Mates ]
