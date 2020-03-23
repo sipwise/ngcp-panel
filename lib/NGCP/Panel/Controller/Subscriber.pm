@@ -984,7 +984,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
         $params->{destination}->{announcement_id} = $destination ? $destination->announcement_id : '';
-        $params->{enabled} = $enabled // 0;
+        $params->{enabled} = $enabled // 1;
     }
 
     my $cf_form;
