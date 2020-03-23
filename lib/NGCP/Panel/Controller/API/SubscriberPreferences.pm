@@ -13,6 +13,7 @@ use HTTP::Status qw(:constants);
 
 use JSON qw();
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Contract qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 
 __PACKAGE__->set_config({
@@ -91,9 +92,9 @@ sub GET :Allow {
     {
         my $subscribers_rs = $self->item_rs($c, "subscribers");
         (my $total_count, $subscribers_rs, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers_rs);
-        my $subscribers = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
+        my $subscribers = NGCP::Panel::Utils::Contract::rowlock_contracts(c => $c,
             rs => $subscribers_rs,
-            contract_id_field => 'contract_id');          
+            contract_id_field => 'contract_id');
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links, %contract_map);
         for my $subscriber (@$subscribers) {
@@ -127,7 +128,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);

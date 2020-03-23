@@ -9,6 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
+use NGCP::Panel::Utils::Contract qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::DateTime;
 
@@ -98,7 +99,7 @@ sub GET :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $contracts_rs = $self->item_rs($c,0,$now);
         (my $total_count, $contracts_rs, my $contracts_rows) = $self->paginate_order_collection($c, $contracts_rs);
-        my $contracts = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
+        my $contracts = NGCP::Panel::Utils::Contract::rowlock_contracts(c => $c,
             rs => $contracts_rs,
             contract_id_field => 'id');
         my (@embedded, @links);
@@ -134,7 +135,7 @@ sub GET :Allow {
         $hal->resource({
             total_count => $total_count,
         });
-        my $response = HTTP::Response->new(HTTP_OK, undef, 
+        my $response = HTTP::Response->new(HTTP_OK, undef,
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);

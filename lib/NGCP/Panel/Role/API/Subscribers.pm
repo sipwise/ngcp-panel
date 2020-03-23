@@ -17,6 +17,7 @@ use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Contract qw();
 
 sub resource_name{
     return 'subscribers';
@@ -325,7 +326,10 @@ sub prepare_resource {
         },
         getcustomer_code => sub {
             my ($cid) = @_;
-            return $self->get_customer($c, $cid);
+            my $contract = $self->get_customer($c, $cid);
+            NGCP::Panel::Utils::Contract::rowlock_contracts(
+                schema => $c->model('DB'), contract_id => $contract->id) if $contract;
+            return $contract;
         },
     );
 

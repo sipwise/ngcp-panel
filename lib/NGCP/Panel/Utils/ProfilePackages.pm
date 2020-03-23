@@ -5,6 +5,7 @@ use Scalar::Util qw(looks_like_number);
 
 #use TryCatch;
 use NGCP::Panel::Utils::DateTime qw();
+use NGCP::Panel::Utils::Contract qw();
 use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::BillingMappings qw();
 use Data::Dumper;
@@ -76,7 +77,7 @@ sub resize_actual_contract_balance {
     my($c,$contract,$old_package,$actual_balance,$is_topup,$topup_amount,$now,$schema,$profiles_added) = @params{qw/c contract old_package balance is_topup topup_amount now schema profiles_added/};
 
     $schema //= $c->model('DB');
-    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::rowlock_contracts(schema => $schema, contract_id => $contract->id);
     $is_topup //= 0;
     $topup_amount //= 0.0;
     $profiles_added //= 0;
@@ -216,7 +217,7 @@ sub catchup_contract_balances {
     my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun is_create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added/};
 
     my $schema = $c->model('DB');
-    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::rowlock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
     $old_package = $contract->profile_package if !exists $params{old_package};
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
@@ -439,7 +440,7 @@ sub topup_contract_balance {
     my($c,$contract,$package,$voucher,$amount,$now,$request_token,$schema,$log_vals,$subscriber) = @params{qw/c contract package voucher amount now request_token schema log_vals subscriber/};
 
     $schema //= $c->model('DB');
-    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::rowlock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::current_local;
 
     my $voucher_package = ($voucher ? $voucher->profile_package : $package);
@@ -584,7 +585,7 @@ sub create_initial_contract_balances {
     my($c,$contract,$now) = @params{qw/c contract now/};
 
     my $schema = $c->model('DB');
-    $contract = lock_contracts(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::rowlock_contracts(schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
 
     my ($start_mode,$interval_unit,$interval_value,$initial_balance,$underrun_profile_threshold,$underrun_lock_threshold);
@@ -1077,57 +1078,6 @@ sub add_profile_mappings {
         return scalar @profiles;
     }
     return 0;
-}
-
-sub lock_contracts {
-    my %params = @_;
-    my($c,$schema,$rs,$contract_id_field,$contract_ids,$contract_id) = @params{qw/c schema rs contract_id_field contract_ids contract_id/};
-
-    $schema //= $c->model('DB');
-
-    my %contract_id_map = ();
-    my $rs_result = undef;
-    if (defined $rs and defined $contract_id_field) {
-        $rs_result = [ $rs->all ];
-        foreach my $item (@$rs_result) {
-            $contract_id_map{$item->$contract_id_field} = 1;
-        }
-    }
-    if (defined $contract_ids) {
-        foreach my $id (@$contract_ids) {
-            $contract_id_map{$id} = 1;
-        }
-    }
-    if (defined $contract_id) {
-        $contract_id_map{$contract_id} = 1;
-    }
-    my @contract_ids_to_lock = keys %contract_id_map;
-    my ($t1,$t2) = (time,undef);
-    if (defined $contract_id && !defined $rs_result && !defined $contract_ids) {
-        $c->log->debug('contract ID to be locked: ' . $contract_id) if $c;
-        my $contract = $schema->resultset('contracts')->find({
-                id => $contract_id
-                },{for => 'update'});
-        $t2 = time;
-        $c->log->debug('contract ID ' . $contract_id . ' locked (' . ($t2 - $t1) . ' secs)') if $c;
-        return $contract;
-    } elsif ((scalar @contract_ids_to_lock) > 0) {
-        @contract_ids_to_lock = sort { $a <=> $b } @contract_ids_to_lock; #"Access your tables and rows in a fixed order."
-        my $contract_ids_label = join(', ',@contract_ids_to_lock);
-        $c->log->debug('contract IDs to be locked: ' . $contract_ids_label) if $c;
-        my @contracts = $schema->resultset('contracts')->search({
-                id => { -in => [ @contract_ids_to_lock ] }
-                },{for => 'update'})->all;
-        $t2 = time;
-        $c->log->debug('contract IDs ' . $contract_ids_label . ' locked (' . ($t2 - $t1) . ' secs)') if $c;
-        if (defined $contract_ids || defined $contract_id) {
-            return [ @contracts ];
-        } else {
-            return $rs_result;
-        }
-    }
-    $c->log->debug('no contract IDs to be locked!') if $c;
-    return [];
 }
 
 sub _dump_contract_balance {

@@ -15,6 +15,7 @@ use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::License;
 use NGCP::Panel::Utils::Generic;
+use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::RedisLocationResultSet;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
@@ -1633,6 +1634,9 @@ sub terminate {
 
     my $schema = $c->model('DB');
     $schema->txn_do(sub {
+
+        NGCP::Panel::Utils::Contract::rowlock_contracts(
+            schema => $schema, contract_id => $subscriber->contract->id);
 
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 

@@ -5,7 +5,6 @@ use warnings;
 use Sipwise::Base;
 use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
-#use DateTime::Format::Strptime qw();
 use NGCP::Panel::Utils::CallList qw();
 
 sub recursively_lock_contract {
@@ -341,6 +340,58 @@ sub is_peering_reseller_product {
     }
     return 0;
 }
+
+sub rowlock_contracts {
+    my %params = @_;
+    my($c,$schema,$rs,$contract_id_field,$contract_ids,$contract_id) = @params{qw/c schema rs contract_id_field contract_ids contract_id/};
+
+    $schema //= $c->model('DB');
+
+    my %contract_id_map = ();
+    my $rs_result = undef;
+    if (defined $rs and defined $contract_id_field) {
+        $rs_result = [ $rs->all ];
+        foreach my $item (@$rs_result) {
+            $contract_id_map{$item->$contract_id_field} = 1;
+        }
+    }
+    if (defined $contract_ids) {
+        foreach my $id (@$contract_ids) {
+            $contract_id_map{$id} = 1;
+        }
+    }
+    if (defined $contract_id) {
+        $contract_id_map{$contract_id} = 1;
+    }
+    my @contract_ids_to_lock = keys %contract_id_map;
+    my ($t1,$t2) = (time,undef);
+    if (defined $contract_id && !defined $rs_result && !defined $contract_ids) {
+        $c->log->debug('contract ID to be locked: ' . $contract_id) if $c;
+        my $contract = $schema->resultset('contracts')->find({
+                id => $contract_id
+                },{for => 'update'});
+        $t2 = time;
+        $c->log->debug('contract ID ' . $contract_id . ' locked (' . ($t2 - $t1) . ' secs)') if $c;
+        return $contract;
+    } elsif ((scalar @contract_ids_to_lock) > 0) {
+        @contract_ids_to_lock = sort { $a <=> $b } @contract_ids_to_lock; #"Access your tables and rows in a fixed order."
+        my $contract_ids_label = join(', ',@contract_ids_to_lock);
+        $c->log->debug('contract IDs to be locked: ' . $contract_ids_label) if $c;
+        my @contracts = $schema->resultset('contracts')->search({
+                id => { -in => [ @contract_ids_to_lock ] }
+                },{for => 'update'})->all;
+        $t2 = time;
+        $c->log->debug('contract IDs ' . $contract_ids_label . ' locked (' . ($t2 - $t1) . ' secs)') if $c;
+        if (defined $contract_ids || defined $contract_id) {
+            return [ @contracts ];
+        } else {
+            return $rs_result;
+        }
+    }
+    $c->log->debug('no contract IDs to be locked!') if $c;
+    return [];
+}
+
 1;
 
 __END__
