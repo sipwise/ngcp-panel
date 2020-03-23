@@ -10,7 +10,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::Contract qw();
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD/];
@@ -130,7 +130,7 @@ sub GET :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $items_rs = $self->item_rs($c,0,$now);
         (my $total_count, $items_rs, my $items_rows) = $self->paginate_order_collection($c, $items_rs);
-        my $items = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
+        my $items = NGCP::Panel::Utils::Contract::rowlock_contracts(c => $c,
             rs => $items_rs,
             contract_id_field => 'id');
         my (@embedded, @links);

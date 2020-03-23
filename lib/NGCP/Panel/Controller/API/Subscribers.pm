@@ -13,6 +13,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::Contract qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Events qw();
 use UUID;
@@ -289,7 +290,7 @@ sub GET :Allow {
     {
         my $subscribers_rs = $self->item_rs($c);
         (my $total_count, $subscribers_rs, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers_rs);
-        my $subscribers = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
+        my $subscribers = NGCP::Panel::Utils::Contract::rowlock_contracts(c => $c,
             rs => $subscribers_rs,
             contract_id_field => 'contract_id');
         my $now = NGCP::Panel::Utils::DateTime::current_local;
