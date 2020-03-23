@@ -813,6 +813,10 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
+
+                NGCP::Panel::Utils::ProfilePackages::lock_contracts(
+                    schema => $schema, contract_id => $contract->id) if $contract;
+
                 my $preferences = {};
                 my $pbx_group_ids = [];
                 if($pbx && !$pbxadmin) {
@@ -1403,6 +1407,10 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do( sub {
+
+                NGCP::Panel::Utils::ProfilePackages::lock_contracts(
+                    schema => $schema, contract_id => $contract->id) if $contract;
+
                 my $preferences = {};
 
                 my $base_number = $pilot->primary_number;
