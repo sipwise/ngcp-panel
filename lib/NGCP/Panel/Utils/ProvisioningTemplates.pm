@@ -784,7 +784,10 @@ sub _init_subscriber_context {
             },
             getcustomer_code => sub {
                 my ($cid) = @_;
-                return $schema->resultset('contracts')->find($cid);
+                my $contract = $schema->resultset('contracts')->find($cid);
+                NGCP::Panel::Utils::ProfilePackages::lock_contracts(
+                    schema => $schema, contract_id => $contract->id) if $contract;
+                return $contract;
             },
         );
 
