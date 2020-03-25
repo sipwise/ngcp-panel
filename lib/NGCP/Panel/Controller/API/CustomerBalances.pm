@@ -130,7 +130,7 @@ sub GET :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $items_rs = $self->item_rs($c,0,$now);
         (my $total_count, $items_rs, my $items_rows) = $self->paginate_order_collection($c, $items_rs);
-        my $items = NGCP::Panel::Utils::Contract::rowlock_contracts(c => $c,
+        my $items = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c,
             rs => $items_rs,
             contract_id_field => 'id');
         my (@embedded, @links);
