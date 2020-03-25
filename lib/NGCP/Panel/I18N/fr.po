@@ -726,6 +726,18 @@ msgid "Answer Timeout"
 msgstr "Expiration de réponse"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Any T.38 fax media that is offered to this subscriber or peer will be "
+"translated into audio media carrying T.30 fax data."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Any audio media that is offered to this subscriber or peer will be "
+"translated into T.38 fax media."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 #: share/templates/widgets/admin_system_overview.tt
 msgid "Applications"
 msgstr "Applications"
@@ -4199,6 +4211,10 @@ msgstr ""
 "Forcer le système à résoudre le nom d'hôte de l'opérateur en utilisant le "
 "DNS afin d'obtenir l'IP de destination. Si configuré, l'IP définie dans le "
 "système n'est utilisée que pour les appels entrants."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Force translation of audio media to T.38 offer"
+msgstr ""
 
 #: share/templates/login/login.tt
 msgid "Forgot your password?"
@@ -9056,6 +9072,10 @@ msgstr "Transcoder en Speex 8 kHz"
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
 msgstr "Le transcodage de fichier audio a échoué"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Translate T.38 offer into T.30 audio"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Translate inband PCM DTMF tones to RFC DTMF events."

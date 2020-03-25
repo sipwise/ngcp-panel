@@ -505,6 +505,14 @@ msgstr ""
 msgid "Answer Timeout"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Any T.38 fax media that is offered to this subscriber or peer will be translated into audio media carrying T.30 fax data."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Any audio media that is offered to this subscriber or peer will be translated into T.38 fax media."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/widgets/admin_system_overview.tt
 msgid "Applications"
 msgstr ""
@@ -3544,6 +3552,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Force the system to resolve the peer hostname using DNS to get the destination IP. If activated the peer IP configured in the systed is used for inbound calls only."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Force translation of audio media to T.38 offer"
 msgstr ""
 
 #: share/templates/login/login.tt
@@ -7715,6 +7727,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Translate T.38 offer into T.30 audio"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
