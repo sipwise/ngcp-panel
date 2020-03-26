@@ -275,8 +275,8 @@ sub _get_schema {
         foreach my $provisioning_config (@provisioning_configs) {
             if (-f $provisioning_config) {
                 my $conf = XML::Simple->new->XMLin($provisioning_config, ForceArray => 1);
-                if ($conf && $conf->{ngcp_storage_info}) {
-                    my $connectors = $conf->{ngcp_storage_info}->[0]->{connectors} // [];
+                if ($conf && $conf->{ngcp_connect_info}) {
+                    my $connectors = $conf->{ngcp_connect_info}->[0]->{connectors} // [];
                     $schema = NGCP::Schema->connect($connectors->[0]);
                     $schema->set_wait_timeout(3600);
                     return $schema;
