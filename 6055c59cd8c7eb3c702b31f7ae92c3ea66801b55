@@ -16,6 +16,24 @@
       "revId": "6055c59cd8c7eb3c702b31f7ae92c3ea66801b55",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "670d3e90_80e328c1",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-03-26T15:11:07Z",
+      "side": 1,
+      "message": "well yes, sacrificed for now..",
+      "parentUuid": "7debbb87_e84dfeee",
+      "revId": "6055c59cd8c7eb3c702b31f7ae92c3ea66801b55",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
