@@ -111,6 +111,14 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, peeringgroup => $item);
 
         foreach my $p ($item->voip_peer_hosts->all) {
+            if($p->probe) {
+                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                    c => $c,
+                    ip => $p->ip,
+                    port => $p->port,
+                    transport => $p->transport,
+                );
+            }
             $p->voip_peer_preferences->delete_all;
             $p->delete;
         }
