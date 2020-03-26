@@ -31,6 +31,24 @@ EOF
     return ref $res ? @{ $res } : ();
 }
 
+sub _sip_delete_probe {
+    my (%params) = @_;
+    my ($c, $ip, $port, $transport) = @params{qw/c ip port transport/};
+    my $string_transport = {'1' => 'UDP', '2' => 'TCP', '3' => 'TLS'};
+    NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+    <methodName>htable.delete</methodName>
+    <params>
+        <param><value><string>peer_probe</string></value></param>
+        <param><value><string>$ip:$port;transport=$string_transport->{$transport}</string></value></param>
+    </params>
+</methodCall>
+EOF
+
+    return 1;
+}
+
 sub apply_rewrite {
     my (%params) = @_;
 
