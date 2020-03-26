@@ -83,6 +83,14 @@ sub PATCH :Allow {
 
         try {
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            if ($item->probe && $old_resource->{enabled} && !$item->enabled) {
+                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                    c => $c,
+                    ip => $item->ip,
+                    port => $item->port,
+                    transport => $item->transport,
+                );
+            }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
         } catch($e) {
             $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
@@ -131,6 +139,14 @@ sub PUT :Allow {
         $guard->commit; 
         try {
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            if ($item->probe && $old_resource->{enabled} && !$item->enabled) {
+                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                    c => $c,
+                    ip => $item->ip,
+                    port => $item->port,
+                    transport => $item->transport,
+                );
+            }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
         } catch($e) {
             $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
@@ -168,6 +184,12 @@ sub DELETE :Allow {
         try {
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             if($probe) {
+                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                    c => $c,
+                    ip => $item->ip,
+                    port => $item->port,
+                    transport => $item->transport,
+                );
                 NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             }
         } catch($e) {
