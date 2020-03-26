@@ -163,6 +163,14 @@ sub delete_peering :Chained('base') :PathPart('delete') {
     try {
         # manually delete hosts in group to let triggers hit in
         foreach my $p ($c->stash->{group_result}->voip_peer_hosts->all) {
+            if($p->probe) {
+                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                    c => $c,
+                    ip => $p->ip,
+                    port => $p->port,
+                    transport => $p->transport,
+                );
+            }
             $p->voip_peer_preferences->delete_all;
             $p->delete;
         }
@@ -354,8 +362,18 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            my $enabled_before = $c->stash->{server_result}->enabled;
+            my $probing_before = $c->stash->{server_result}->probe;
             $c->stash->{server_result}->update($form->values);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            if (($c->stash->{server_result}->probe && $enabled_before && !$c->stash->{server_result}->enabled) || ($probing_before && !$c->stash->{server_result}->probe)) {
+                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                    c => $c,
+                    ip => $c->stash->{server_result}->ip,
+                    port => $c->stash->{server_result}->port,
+                    transport => $c->stash->{server_result}->transport,
+                );
+            }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -386,6 +404,12 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
         $c->stash->{server_result}->delete;
         NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         if($probe) {
+            NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                c => $c,
+                ip => $c->stash->{server_result}->ip,
+                port => $c->stash->{server_result}->port,
+                transport => $c->stash->{server_result}->transport,
+            );
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
         }
         NGCP::Panel::Utils::Message::info(
