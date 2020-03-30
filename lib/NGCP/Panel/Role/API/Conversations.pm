@@ -151,6 +151,14 @@ my $cdr_proto = NGCP::Panel::Utils::Generic::hash2obj(
             my $self = shift;
             return $self->{c}->model('DB')->resultset('voip_subscribers')->find({ uuid => $self->destination_user_id() });
         },
+        source_account => sub {
+            my $self = shift;
+            return $self->{c}->model('DB')->resultset('contracts')->find($self->source_account_id());
+        },
+        destination_account => sub {
+            my $self = shift;
+            return $self->{c}->model('DB')->resultset('contracts')->find($self->destination_account_id());
+        },
     },
 );
 my $fax_proto = NGCP::Panel::Utils::Generic::hash2obj(
@@ -926,4 +934,3 @@ sub hal_links {
 
 
 1;
-
