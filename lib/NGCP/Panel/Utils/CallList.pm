@@ -329,15 +329,21 @@ sub process_cdr_item {
     $resource->{init_time} = $item->init_time;
     $resource->{start_time} = $item->start_time;
     $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$item->duration,3);
-    $resource->{customer_cost} = $resource->{direction} eq "out" ?
-        $item->source_customer_cost : $item->destination_customer_cost;
-    if (defined $cust && $cust->add_vat) {
-        $resource->{total_customer_cost} = $resource->{customer_cost} * (1 + $cust->vat_rate / 100);
+    my $customer;
+    if ($resource->{direction} eq "out") {
+        $resource->{customer_cost} = $item->source_customer_cost;
+        $resource->{customer_free_time} = $item->source_customer_free_time;
+        $customer = $item->source_account;
+    } else {
+        $resource->{customer_cost} = $item->destination_customer_cost;
+        $resource->{customer_free_time} = 0;
+        $customer = $item->destination_account;
+    }
+    if (defined $customer && $customer->add_vat) {
+        $resource->{total_customer_cost} = $resource->{customer_cost} * (1.0 + $customer->vat_rate / 100.0);
     } else {
         $resource->{total_customer_cost} = $resource->{customer_cost};
     }
-    $resource->{customer_free_time} = $resource->{direction} eq "out" ?
-        $item->source_customer_free_time : 0;
 
     return $resource;
 
