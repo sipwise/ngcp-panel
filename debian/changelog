@@ -1,3 +1,20 @@
+ngcp-panel (8.3.2.0+0~mr8.3.2.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [216bcfd] TT#69380 - Disable search field caching only for Calls
+  * [8c04f38] TT#78166 - Fix SubscriberRegistrations test case
+  * [9ed2fd1] TT#75753 - Change default value to '1' for 'enabled' in Call Forwards
+
+  [ Rene Krenn ]
+  * [60d1e0e] TT#78153 fix _item_by_aor for redis
+  * [6755991] TT#78153 fix redis location resultset filtering
+
+  [ Nico Schedel ]
+  * [5c58ec0] TT#78161 selenium: fix search calls to work better with search field caching
+  * [615fccb] TT#78161 selenium: remove unnecessary search calls for cached search fields
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 30 Mar 2020 11:18:49 +0200
+
 ngcp-panel (8.3.1.0+0~mr8.3.1.0) unstable; urgency=medium
 
   [ Rene Krenn ]
