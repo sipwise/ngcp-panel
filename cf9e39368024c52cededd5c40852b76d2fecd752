@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0ad1b29c_e2e2217f",
+        "filename": "lib/NGCP/Panel/Utils/CallList.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2020-03-31T12:15:42Z",
+      "side": 1,
+      "message": "nit: might be a bit confusing to have the var declaration so far before it\u0027s actually being used, especially since there\u0027s another var $cust in the same scope",
+      "revId": "cf9e39368024c52cededd5c40852b76d2fecd752",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
