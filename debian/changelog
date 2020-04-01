@@ -1,3 +1,10 @@
+ngcp-panel (8.1.1.15+0~mr8.1.1.15) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [090a74f] TT#78569 provide tools menu for reseller admins
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 01 Apr 2020 16:12:15 +0200
+
 ngcp-panel (8.1.1.14+0~mr8.1.1.14) unstable; urgency=medium
 
   [ Rene Krenn ]
