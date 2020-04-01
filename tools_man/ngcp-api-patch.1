@@ -1,6 +1,6 @@
-.TH NGCP-API 1
+.TH NGCP-API-PATCH 1
 .SH NAME
-sends a patch request to NGCP REST API
+ngcp-api-patch \- sends a patch request to NGCP REST API
 .SH SYNOPSIS
 .B ngcp-api-patch
 [\fB\-f\fR \fIFILEPATH\fR]
@@ -13,28 +13,34 @@ sends a patch request to NGCP REST API
 sends a patch request to NGCP REST API.
 .SH OPTIONS
 .TP
-.BR \-f " " \fIFILEPATH\fR
-use input file instead of stdin.
+.BI \-f " FILEPATH"
+Use
+.I FILEPATH
+as input file instead of stdin.
 .TP
-.BR \-m
-Use Header 'Refer: return=minimal'. Default is 'Refer: return=representation'
+.B \-m
+Use the Header 'Refer: return=minimal'.
+Default is 'Refer: return=representation'
 .TP
-.BR \-v
-verbose mode.
+.B \-v
+Verbose mode.
 .TP
-.BR \-h
-print usage.
+.B \-h
+Print usage.
 .TP
-URL
-Url for the request
+.I URL
+URL for the request.
 .SH EXAMPLES
-.TP
-echo '[ { "op" : "remove", "path" : "/active" } ]'|\\
-ngcp-api-patch 'https://example.org:1443/api/faxserversettings/2'
+.EX
+$ echo '[ { "op" : "remove", "path" : "/active" } ]'\\
+| ngcp-api-patch 'https://example.org:1443/api/faxserversettings/2'
+.EE
 .SH SEE ALSO
-.TP
-ngcp-api-put(1), ngcp-api-post(1), ngcp-api-delete(1), ngcp-api-get(1)
-.TP
+.BR ngcp-api-put (1),
+.BR ngcp-api-post (1),
+.BR ngcp-api-delete (1),
+.BR ngcp-api-get (1).
+.PP
 https://ngcp-server.domain:1443/api
 .SH COPYRIGHT
 2014 Sipwise Development Team <support@sipwise.com>

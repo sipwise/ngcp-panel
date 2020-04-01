@@ -1,6 +1,6 @@
-.TH NGCP-API 1
+.TH NGCP-API-GET 1
 .SH NAME
-sends a get request to NGCP REST API
+ngcp-api-get \- sends a get request to NGCP REST API
 .SH SYNOPSIS
 .B ngcp-api-get
 [\fB\-v\fR]
@@ -11,21 +11,24 @@ sends a get request to NGCP REST API
 sends a get request to NGCP REST API.
 .SH OPTIONS
 .TP
-.BR \-v
-verbose mode.
+.B \-v
+Verbose mode.
 .TP
-.BR \-h
-print usage.
+.B \-h
+Print usage.
 .TP
-URL
-Url for the request
+.I URL
+URL for the request.
 .SH EXAMPLES
-.TP
-ngcp-api-get 'https://example.org:1443/api/domains/'
+.EX
+$ ngcp-api-get 'https://example.org:1443/api/domains/'
+.EE
 .SH SEE ALSO
-.TP
-ngcp-api-put(1), ngcp-api-post(1), ngcp-api-patch(1), ngcp-api-delete(1)
-.TP
+.BR ngcp-api-put (1),
+.BR ngcp-api-post (1),
+.BR ngcp-api-patch (1),
+.BR ngcp-api-delete (1).
+.PP
 https://ngcp-server.domain:1443/api
 .SH COPYRIGHT
 2014 Sipwise Development Team <support@sipwise.com>
