@@ -22,6 +22,30 @@
       "revId": "a12aa04bfa02848d4698b8ecc69197a912dbc189",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92beca0d_00b6efa0",
+        "filename": "tools_bin/ngcp-api-delete",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-04-02T13:46:06Z",
+      "side": 1,
+      "message": "Ah, good point, I guess we could yes, will do that.",
+      "parentUuid": "276dcbc4_6a8c9ab8",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 41
+      },
+      "revId": "a12aa04bfa02848d4698b8ecc69197a912dbc189",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
