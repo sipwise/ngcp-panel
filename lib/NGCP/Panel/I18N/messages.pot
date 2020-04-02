@@ -630,7 +630,7 @@ msgstr ""
 msgid "Banned Users"
 msgstr ""
 
-#: share/templates/batchprovisioning/list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt
+#: share/templates/batchprovisioning/list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Batch Provisioning"
 msgstr ""
 
@@ -7609,7 +7609,7 @@ msgstr ""
 msgid "To (B-Numbers)"
 msgstr ""
 
-#: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt
+#: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Tools"
 msgstr ""
 
