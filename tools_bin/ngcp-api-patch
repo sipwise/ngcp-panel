@@ -1,6 +1,7 @@
 #!/bin/bash
 CURL="/usr/bin/curl"
-CREDS="${HOME}/.ngcp-api"
+SYSCREDS="/etc/default/ngcp-api"
+USERCREDS="${HOME}/.ngcp-api"
 TOOLS="/usr/share/ngcp-panel-tools/ngcp-api.inc"
 
 usage () {
@@ -21,9 +22,16 @@ EOF
 if [ -z "${APIUSER}" ]; then
   if [ -f "${TOOLS}" ]; then
     source "${TOOLS}"
-    importcreds "${CREDS}"
-  else
-    APIUSER="administrator:administrator"
+
+    importcreds "${USERCREDS}" 0600
+    if [ -z "${APIUSER}" ]; then
+      importcreds "${SYSCREDS}" 0660
+      APIUSER="${AUTH_SYSTEM_LOGIN}:${AUTH_SYSTEM_PASSWORD}"
+    fi
+  fi
+  if [ -z "${APIUSER}" ]; then
+    echo "Error: no authentication credentials found" >&2
+    exit 1
   fi
 fi
 INPUT=(-T -)
