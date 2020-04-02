@@ -5176,6 +5176,7 @@ sub get_uas_json :Chained('callflow_base') :PathPart('uas_json') :Args(0) {
     $int_uas->{$c->config->{callflow}->{sbc}} = 'sbc' if ($c->config->{callflow}->{sbc});
     $int_uas->{$c->config->{callflow}->{app}} = 'app' if ($c->config->{callflow}->{app});
     $int_uas->{$c->config->{callflow}->{pbx}} = 'pbx' if ($c->config->{callflow}->{pbx});
+    $int_uas->{$c->config->{callflow}->{b2b}} = 'b2b' if ($c->config->{callflow}->{b2b});
 
     $c->response->content_type('application/json');
     $c->response->body(encode_json($int_uas));
