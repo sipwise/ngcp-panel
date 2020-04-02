@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "276dcbc4_6a8c9ab8",
+        "filename": "tools_bin/ngcp-api-delete",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-04-02T13:38:02Z",
+      "side": 1,
+      "message": "shall we remove it perhaps, also to avoid plain text passwords like that.\nas we always have /default/ngcp-api and the internal \"system\" role auth",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 41
+      },
+      "revId": "a12aa04bfa02848d4698b8ecc69197a912dbc189",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
