@@ -1,6 +1,7 @@
 #!/bin/bash
 CURL="/usr/bin/curl"
-CREDS="${HOME}/.ngcp-api"
+SYSCREDS="/etc/default/ngcp-api"
+USERCREDS="${HOME}/.ngcp-api"
 TOOLS="/usr/share/ngcp-panel-tools/ngcp-api.inc"
 
 usage () {
@@ -20,8 +21,14 @@ EOF
 if [ -z "${APIUSER}" ]; then
   if [ -f "${TOOLS}" ]; then
     source "${TOOLS}"
-    importcreds "${CREDS}"
-  else
+
+    importcreds "${USERCREDS}"
+    if [ -z "${APIUSER}" ]; then
+      importcreds "${SYSCREDS}"
+      APIUSER="${AUTH_SYSTEM_LOGIN}:${AUTH_SYSTEM_PASSWORD}"
+    fi
+  fi
+  if [ -z "${APIUSER}" ]; then
     APIUSER="administrator:administrator"
   fi
 fi
