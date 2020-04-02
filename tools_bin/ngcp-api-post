@@ -1,10 +1,10 @@
 #!/bin/bash
 CURL="/usr/bin/curl"
-CREDS="$HOME/.ngcp-api"
+CREDS="${HOME}/.ngcp-api"
 TOOLS="/usr/share/ngcp-panel-tools/ngcp-api.inc"
 
 usage () {
-	cat << EOF
+  cat << EOF
 Usage: $0 [OPTIONS] <url> [content-type]
 
 sends a post request to NGCP REST API
@@ -14,50 +14,50 @@ OPTIONS:
   -v verbose mode
   -f read the input info from a file instead of read stdin
 EOF
-	exit 1
+  exit 1
 }
 
-if [ -z "$APIUSER" ] ; then
-	if [ -f "$TOOLS" ] ; then
-		source "$TOOLS"
-		importcreds "$CREDS"
-	else
-		APIUSER="administrator:administrator"
-	fi
+if [ -z "${APIUSER}" ]; then
+  if [ -f "${TOOLS}" ]; then
+    source "${TOOLS}"
+    importcreds "${CREDS}"
+  else
+    APIUSER="administrator:administrator"
+  fi
 fi
 INPUT=(-T -)
 
 while getopts "f:hv" OPTION
 do
-	case $OPTION in
-		h)
-			usage
-			;;
-		f)
-			INPUT=()
-			FILE_INPUT=(--data-binary @$OPTARG)
-			if [ ! -f "$OPTARG" ]; then
-				echo "No '$OPTARG' file found"
-				usage
-			fi
-			;;
-		v)
-			VERBOSE="--verbose"
-			;;
-		?)
-			usage
-			;;
-	esac
+  case ${OPTION} in
+    h)
+      usage
+      ;;
+    f)
+      INPUT=()
+      FILE_INPUT=(--data-binary @${OPTARG})
+      if [ ! -f "${OPTARG}" ]; then
+        echo "No '{$OPTARG}' file found"
+        usage
+      fi
+      ;;
+    v)
+      VERBOSE="--verbose"
+      ;;
+    ?)
+      usage
+      ;;
+  esac
 done
 shift $((OPTIND - 1))
 
 URL="$1"
-if [ -z "$URL" ] ; then
-	usage
+if [ -z "${URL}" ]; then
+  usage
 fi
 CTYPE=${2:-application/json}
 
 ${CURL} -i ${VERBOSE} -X POST \
-	-H 'Connection: close' -H 'Prefer: return=representation' \
-	-H "Content-Type: $CTYPE" \
-	--user "$APIUSER" --insecure "${FILE_INPUT[@]}" "$URL" "${INPUT[@]}"
+  -H 'Connection: close' -H 'Prefer: return=representation' \
+  -H "Content-Type: ${CTYPE}" \
+  --user "${APIUSER}" --insecure "${FILE_INPUT[@]}" "${URL}" "${INPUT[@]}"
