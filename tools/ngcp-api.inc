@@ -4,6 +4,7 @@ set -e
 
 importcreds () {
   local CREDS=$1
+  local PERMS=${2:-0600}
 
   if [ -z "${CREDS}" ]; then
     echo "Error: missing mandatory file name to read" >&2
@@ -20,11 +21,11 @@ importcreds () {
   fi
 
   echo "${CREDS} present, checking perms"
-  if stat "${CREDS}" | grep -q 'Access: (0600' 1>/dev/null ; then
+  if stat "${CREDS}" | grep -q "Access: (${PERMS}" 1>/dev/null ; then
     echo "${CREDS} permissions ok"
     . "${CREDS}"
   else
-    echo "Error: ${CREDS} must have permissions 600" >&2
+    echo "Error: ${CREDS} must have permissions ${PERMS}" >&2
     exit 1
   fi
 }
