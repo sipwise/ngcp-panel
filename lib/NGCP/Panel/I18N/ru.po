@@ -8297,6 +8297,34 @@ msgstr "Статистика системы"
 msgid "System Status"
 msgstr "Состояние системы"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "T.38: Disable ECM support"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "T.38: Disable IAF support"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "T.38: Disable V.17 support"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "T.38: Disable V.27ter support"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "T.38: Disable V.29 support"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "T.38: Disable V.34 support"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "T.38: Use FEC"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "T38"
 msgstr ""
@@ -9189,6 +9217,50 @@ msgstr ""
 msgid ""
 "When set to true, use the optical link instead of the ISDN ports. This only "
 "has an effect in the SS7 or ISDN mode."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When using the T.38 gateway, do not advertise support for, and do not "
+"negotiate, T.30 ECM (error correction mode). Support for ECM is enabled by "
+"default."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When using the T.38 gateway, do not support the IAF fax protocol (Internet-"
+"Aware Fax). Support for IAF is enabled by default."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When using the T.38 gateway, do not support the V.17 fax modem protocol "
+"(12.0 and 14.4 kbit/s). Support for V.17 is enabled by default."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When using the T.38 gateway, do not support the V.27ter fax modem protocol "
+"(2.4 and 4.8 kbit/s half-duplex). Support for V.27ter is enabled by default."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When using the T.38 gateway, do not support the V.29 fax modem protocol "
+"(between 4.8 and 9.6 kbit/s). Support for V.29 is enabled by default."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When using the T.38 gateway, do not support the V.34 fax modem protocol (up "
+"to 33.8 kbit/s). Support for V.34 is enabled by default."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When using the T.38 gateway, use UDPTL FEC (forward error correction) "
+"instead of the default UDPTL redundancy protocol. This is only useful in "
+"combination with T38_force as this is a negotiated parameter."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
