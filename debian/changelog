@@ -1,3 +1,10 @@
+ngcp-panel (6.5.8.2+0~mr6.5.8.2) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [edaf24c] TT#68217 - Delete htable peer_probe when deleting/disabling peer
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 06 Apr 2020 19:02:14 +0200
+
 ngcp-panel (6.5.8.1+0~mr6.5.8.1) unstable; urgency=medium
 
   [ Flaviu Mates ]
