@@ -1,3 +1,10 @@
+ngcp-panel (7.5.3.12+0~mr7.5.3.12) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [11b7fd1] TT#78467 apply VAT in calllist/conversations when requested as susbcriber
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Apr 2020 11:44:19 +0200
+
 ngcp-panel (7.5.3.11+0~mr7.5.3.11) unstable; urgency=medium
 
   [ Flaviu Mates ]
