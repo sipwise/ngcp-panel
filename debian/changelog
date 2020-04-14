@@ -1,3 +1,10 @@
+ngcp-panel (7.5.3.15+0~mr7.5.3.15) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [bdba8c6] TT#78467 calllists: back to using owner VAT settings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Apr 2020 11:17:59 +0200
+
 ngcp-panel (7.5.3.14+0~mr7.5.3.14) unstable; urgency=medium
 
   [ Rene Krenn ]
