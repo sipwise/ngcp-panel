@@ -10,6 +10,8 @@ use NGCP::Panel::Utils::MySQL;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 
+use constant OWNER_VAT_SETTINGS => 1;
+
 use constant SUPPRESS_OUT => 1;
 use constant SUPPRESS_IN => 2;
 use constant SUPPRESS_INOUT => 3;
@@ -288,15 +290,15 @@ sub process_cdr_item {
     $resource->{init_time} = $item->init_time;
     $resource->{start_time} = $item->start_time;
     $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms($c,$item->duration,3);
-    my $customer;
+    my $customer = $cust;
     if ($resource->{direction} eq "out") {
         $resource->{customer_cost} = $item->source_customer_cost;
         $resource->{customer_free_time} = $item->source_customer_free_time;
-        $customer = $item->source_account;
+        $customer = $item->source_account unless OWNER_VAT_SETTINGS;
     } else {
         $resource->{customer_cost} = $item->destination_customer_cost;
         $resource->{customer_free_time} = 0;
-        $customer = $item->destination_account;
+        $customer = $item->destination_account unless OWNER_VAT_SETTINGS;
     }
     if (defined $customer && $customer->add_vat) {
         $resource->{total_customer_cost} = $resource->{customer_cost} * (1.0 + $customer->vat_rate / 100.0);
