@@ -2,7 +2,7 @@ package NGCP::Panel::Utils::ProvisioningTemplates;
 
 use Sipwise::Base;
 
-use NGCP::Panel::Form::ProvisioningTemplate qw();
+use NGCP::Panel::Form::ProvisioningTemplate::ProvisioningTemplate qw();
 use DateTime::TimeZone qw();
 use String::MkPasswd qw();
 use Eval::Closure qw(eval_closure);
@@ -96,7 +96,7 @@ sub create_provisioning_template_form {
     my $form;
 
     try {
-        $form = NGCP::Panel::Form::ProvisioningTemplate->new({
+        $form = NGCP::Panel::Form::ProvisioningTemplate::ProvisioningTemplate->new({
             ctx => $c,
             fields_config => [ values %$fields ],
         });

@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::ProvisioningTemplate;
+package NGCP::Panel::Form::ProvisioningTemplate::ProvisioningTemplate;
 
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
