@@ -29,7 +29,7 @@ has 'file_path' => (
 
 has 'unique_id' => (
     isa => 'Str',
-    is => 'ro'
+    is => 'rw'
 );
 
 sub run {
@@ -77,8 +77,10 @@ sub run {
     my $test_executor = NGCP::API::TestFramework::TestExecutor->new();
 
     # If $self->{retained} is already defined, use its previously collected variables.
-    # Otherwise, initialize it with received "unique_id" for fields that need to be unique.
-    my $retained = $self->{retained} //= { unique_id => $self->unique_id };
+    # Otherwise, initialize it.
+    # In any case, update with received "unique_id" for fields that need to be unique.
+    my $retained = $self->{retained} //= {};
+    $retained->{unique_id} = $self->unique_id;
 
     my $test_case_result = { success => 1, error_count => 0 };
 
