@@ -1,7 +1,23 @@
+<script src="/js/codemirror/codemirror.min.js"></script>
+<link rel="stylesheet" href="/css/codemirror/codemirror.min.css">
+<script src="/js/codemirror/mode/yaml.min.js"></script>
+
+<script>
+$( document ).ready(function() {
+    var area = document.getElementById('yaml');
+    if (area) {
+        var editor = CodeMirror.fromTextArea(area, {
+            lineNumbers: true,
+            mode:  "yaml"
+        });
+    }
+});
+</script>
+
 [% site_config.title = c.loc('Batch Provisioning')  -%]
 
 [%
-    helper.name = c.loc("Subscriber from Provisioning Template '[_1]'", provisioning_template_name);
+    helper.name = modal_title;
     helper.identifier = 'provisioning_templates';
     helper.length_change = 1;
     helper.dt_columns = template_dt_columns;
@@ -15,8 +31,11 @@
     helper.form_object = form;
 
     helper.dt_buttons = [
-        { name = c.loc('Open Form'), uri = "/batchprovisioning/'+encodeURI(full.name)+'/form", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = c.loc('Upload CSV'), uri = "/batchprovisioning/'+encodeURI(full.name)+'/upload", class = 'btn-small btn-primary', icon = 'icon-star' },
+        { name = c.loc('Open Form'), uri = "/batchprovisioning/templates/'+encodeURI(full.name)+'/form", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = c.loc('Upload CSV'), uri = "/batchprovisioning/templates/'+encodeURI(full.name)+'/upload", class = 'btn-small btn-primary', icon = 'icon-star' },
+    ];
+    helper.top_buttons = [
+        { name = c.loc('Create Provisioning Template'), uri = c.uri_for_action('/batchprovisioning/create'), icon = 'icon-star' },
     ];
     PROCESS 'helpers/datatables.tt';
 %]
