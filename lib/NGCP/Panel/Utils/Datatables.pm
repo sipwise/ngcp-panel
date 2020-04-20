@@ -459,7 +459,7 @@ sub set_columns {
 sub _prune_row {
     my ($user_tz, $columns, %row) = @_;
     while (my ($k,$v) = each %row) {
-        unless (first { $_->{accessor} eq $k && $_->{title} } @{ $columns }) {
+        unless (first { $_->{accessor} eq $k && ($_->{title} || $_->{field}) } @{ $columns }) {
             delete $row{$k};
             next;
         }
