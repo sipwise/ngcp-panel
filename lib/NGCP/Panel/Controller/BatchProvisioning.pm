@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::ProvisioningTemplates qw();
 use URI::Encode qw();
+use YAML::XS qw();
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
@@ -24,13 +25,48 @@ sub template_list :Chained('/') :PathPart('batchprovisioning') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     my $templates = { %{$c->config->{provisioning_templates} // {}} };
-    map { $templates->{$_}->{name} = $_; } keys %$templates;
+    map {
+        $templates->{$_}->{name} = $_;
+        $templates->{$_}->{static} = 1;
+        $templates->{$_}->{id} = undef;
+    } keys %$templates;
+
+    my $rs = $c->model('DB')->resultset('provisioning_templates')->search_rs();
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
+        $rs = $rs->search_rs({ -or => [
+                                reseller_id => $c->user->reseller_id,
+                                reseller_id => undef
+                             ], },);
+    } else {
+        $rs = $rs->search_rs({ -or => [
+                                reseller_id => $c->user->contract->contact->reseller_id,
+                                reseller_id => undef
+                             ], },);
+    }
+    foreach my $db_template ($rs->all) {
+        my $template = { $db_template->get_inflated_columns };
+        eval {
+            %$template = ( %{YAML::XS::Load($template->{yaml})}, %$template );
+            #use Data::Dumper;
+            #$c->log->error(Dumper($template));
+            delete $template->{yaml};
+        };
+        if ($@) {
+            $c->log->error("error parsing provisioning_template id $template->{id} '$template->{name}': " . $@);
+            next;
+        }
+        $template->{static} = 0;
+        $templates->{$template->{name}} = $template;
+    }
 
     $c->stash->{provisioning_templates} = $templates;
 
     $c->stash->{template_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc('#') },
         { name => "name", search => 1, title => $c->loc('Name') },
         { name => "description", search => 1, title => $c->loc('Description') },
+        { name => "static", search => 0, },
     ]);
 
     $c->stash(template => 'batchprovisioning/list.tt');
