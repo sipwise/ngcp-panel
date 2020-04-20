@@ -1,8 +1,8 @@
-package NGCP::Panel::Utils::ProvisioningTemplates;
+package NGCP::Panel::Utils::ProvisioningTemplate::ProvisioningTemplates;
 
 use Sipwise::Base;
 
-use NGCP::Panel::Form::ProvisioningTemplate qw();
+use NGCP::Panel::Form::ProvisioningTemplate::ProvisioningTemplate qw();
 use DateTime::TimeZone qw();
 use String::MkPasswd qw();
 use Eval::Closure qw(eval_closure);
