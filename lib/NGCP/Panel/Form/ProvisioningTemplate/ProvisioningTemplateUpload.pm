@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::ProvisioningTemplateUpload;
+package NGCP::Panel::Form::ProvisioningTemplate::ProvisioningTemplateUpload;
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -40,4 +40,3 @@ has_block 'actions' => (
 );
 
 1;
-
