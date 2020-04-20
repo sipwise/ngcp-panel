@@ -1,1 +1,3 @@
 ngcp-panel: init.d-script-not-included-in-package etc/init.d/ngcp-panel
+ngcp-panel source: source-is-missing share/static/js/libs/codemirror/codemirror.js
+ngcp-panel source: very-long-line-length-in-source-file share/static/js/libs/codemirror/codemirror.js
