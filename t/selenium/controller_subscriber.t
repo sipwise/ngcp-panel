@@ -68,9 +68,10 @@ $d->find_element('//*[@id="e164.sn"]')->send_keys(int(rand(99999999)));
 $d->find_element('//*[@id="email"]')->send_keys($emailstring);
 $d->find_element('//*[@id="webusername"]')->send_keys($username);
 $d->find_element('//*[@id="webpassword"]')->send_keys('testing1234'); #workaround for misclicking on ok button
-$d->find_element('//*[@id="gen_password"]')->click();
+$d->find_element('//*[@id="webpassword"]/../div[@id="gen_password"]')->click();
 $d->find_element('//*[@id="username"]')->send_keys($username);
-$d->find_element('//*[@id="password"]')->send_keys('testing1234'); #using normal pwd, cant easily seperate both generate buttons
+$d->find_element('//*[@id="password"]')->send_keys('testing1234'); #workaround for misclicking on ok button
+$d->find_element('//*[@id="password"]/../div[@id="gen_password"]')->click();
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Search Subscriber");
