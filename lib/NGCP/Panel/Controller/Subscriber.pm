@@ -58,6 +58,8 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
 
     $c->stash->{subscribers_rs} = $c->model('DB')->resultset('voip_subscribers')->search({
         'me.status' => { '!=' => 'terminated' },
+    },{
+        distinct => 1,
     });
     if($c->user->roles eq 'reseller') {
         $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
@@ -94,8 +96,8 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "domain.domain", search => 1, title => $c->loc('Domain') },
         { name => "uuid", search => 1, title => $c->loc('UUID') },
         { name => "status", search => 1, title => $c->loc('Status') },
-        { name => "number", search => 1, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)",'join' => 'primary_number'},
-        { name => "alias", search => 1, literal_sql => { format => " exists ( select subscriber_id, group_concat(concat(cc,ac,sn)) as aliases from billing.voip_numbers voip_subscriber_aliases_csv where voip_subscriber_aliases_csv.`subscriber_id` = `me`.`id` group by subscriber_id having aliases %s )" } ,'no_column' => 1 },
+        { name => "number", search => 0, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)",'join' => 'primary_number'},
+        { name => "provisioning_voip_subscriber.voip_dbaliases.username", search => 1, 'no_column' => 1 },
         { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 1, title => $c->loc('Profile') },
     ]);
 }
