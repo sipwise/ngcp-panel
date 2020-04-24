@@ -184,6 +184,19 @@ sub auto :Private {
             $self->api_apply_fake_time($c);
             return 1;
         } elsif ($c->req->headers->header("Authorization") &&
+                 $c->req->headers->header("Authorization") =~ m/^Bearer(\s+)a=/) {
+            $c->log->debug("++++++ Root::auto API request with admin JWT");
+            my $realm = "api_admin_jwt";
+            my $res = $c->authenticate({}, $realm);
+
+            unless ($c->user_exists) {
+                $c->log->debug("+++++ invalid api admin JWT login");
+                # $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
+            }
+
+            $self->api_apply_fake_time($c);
+            return 1;
+        } elsif ($c->req->headers->header("Authorization") &&
                  $c->req->headers->header("Authorization") =~ m/^Bearer /) {
             $c->log->debug("++++++ Root::auto API request with JWT");
             my $realm = "api_subscriber_jwt";
@@ -483,6 +496,78 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
             $relative_exp ? (relative_exp => $relative_exp) : (),
         );
         $result->{subscriber_id} = int($auth_user->voip_subscriber->id // 0);
+    } else {
+        $c->response->status(HTTP_FORBIDDEN);
+        $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+            message => "User not found" })."\n");
+        $c->log->error("User not found");
+        return;
+    }
+
+    $c->res->body(encode_json($result));
+    $c->res->code(HTTP_OK);  # 200
+
+    return;
+}
+
+sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method('POST') {
+    my ($self, $c) = @_;
+
+    use JSON qw/encode_json decode_json/;
+    use Crypt::JWT qw/encode_jwt/;
+
+    my $user = $c->req->body_data->{username} // '';
+    my $pass = $c->req->body_data->{password} // '';
+
+    my $key = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{jwt_key};
+    my $relative_exp = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{relative_exp};
+    my $alg = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{alg};
+
+    $c->response->content_type('application/json');
+
+    unless ($key) {
+        $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
+        $c->response->body(encode_json({ code => HTTP_INTERNAL_SERVER_ERROR,
+            message => "No JWT key has been configured" })."\n");
+        $c->log->error("No JWT key has been configured");
+        return;
+    }
+
+    my $raw_key = pack('H*', $key);
+
+    unless ($user && $pass) {
+        $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
+        $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+            message => "No username or password given" })."\n");
+        $c->log->error("No username or password given");
+        return;
+    }
+
+    my $authrs = $c->model('DB')->resultset('admins')->search({
+        login => $user,
+        is_active => 1,
+    });
+
+    my $usr_salted_pass;
+    my $auth_user = $authrs->first;
+    my $result = {};
+
+    if ($auth_user && $auth_user->id) {
+        $usr_salted_pass = NGCP::Panel::Utils::Admin::get_usr_salted_pass($auth_user->saltedpass, $pass);
+    }
+
+    if ($usr_salted_pass && $usr_salted_pass eq $auth_user->saltedpass) {
+        my $jwt_data = {
+            id => $auth_user->id,
+            username => $auth_user->login,
+        };
+        $result->{jwt} = 'a='.encode_jwt(
+            payload => $jwt_data,
+            key => $raw_key,
+            alg => $alg,
+            $relative_exp ? (relative_exp => $relative_exp) : (),
+        );
+        $result->{id} = int($auth_user->id // 0);
     } else {
         $c->response->status(HTTP_FORBIDDEN);
         $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
