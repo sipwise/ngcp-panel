@@ -171,7 +171,13 @@ sub resource_from_item {
     my @rules = ();
 
     foreach my $r ($item->voip_header_rules->all) {
-        my @conditions = map { {$_->get_inflated_columns} } $r->conditions->all;
+        my @conditions = $r->conditions->search(
+            undef,
+            {
+                prefetch => 'values',
+                result_class => 'DBIx::Class::ResultClass::HashRefInflator'
+            }
+        )->all;
         my @actions = map { {$_->get_inflated_columns} } $r->actions->all;
         push @rules, { $r->get_inflated_columns,
                        conditions => \@conditions,
