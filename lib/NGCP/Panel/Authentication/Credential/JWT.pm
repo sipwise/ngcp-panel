@@ -46,7 +46,12 @@ sub authenticate {
     my ($token) = $auth_header =~ m/Bearer\s+(.*)/;
     return unless ($token);
 
-    $c->log->debug("Found token: $token") if $self->debug;
+    if ($token =~ /^a=(.+)$/) {
+        $c->log->debug("Found admin token: $token") if $self->debug;
+        $token = $1;
+    } else {
+        $c->log->debug("Found token: $token") if $self->debug;
+    }
 
     my $jwt_data;
     try {

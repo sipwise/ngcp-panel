@@ -28,6 +28,18 @@ sub generate_salted_hash {
     return $b64salt . '$' . $b64hash;
 }
 
+sub get_usr_salted_pass {
+    my ($saltedpass, $pass) = @_;
+    my ($db_b64salt, $db_b64hash) = split /\$/, $saltedpass;
+    my $salt = de_base64($db_b64salt);
+    my $usr_b64hash = en_base64(bcrypt_hash({
+        key_nul => 1,
+        cost => get_bcrypt_cost(),
+        salt => $salt,
+    }, $pass));
+    return $db_b64salt . '$' . $usr_b64hash;
+}
+
 sub perform_auth {
     my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
     my $res;
@@ -39,19 +51,14 @@ sub perform_auth {
     }) if $user;
     if(defined $dbadmin && defined $dbadmin->saltedpass) {
         $c->log->debug("login via bcrypt");
-        my ($db_b64salt, $db_b64hash) = split /\$/, $dbadmin->saltedpass;
-        my $salt = de_base64($db_b64salt);
-        my $usr_b64hash = en_base64(bcrypt_hash({
-            key_nul => 1,
-            cost => get_bcrypt_cost(),
-            salt => $salt,
-        }, $pass));
+        my $saltedpass = $dbadmin->saltedpass;
+        my $usr_salted_pass = get_usr_salted_pass($saltedpass, $pass);
         # fetch again to load user into session etc (otherwise we could
         # simply compare the two hashes here :(
         $res = $c->authenticate(
             {
                 login => $user,
-                saltedpass => $db_b64salt . '$' . $usr_b64hash,
+                saltedpass => $usr_salted_pass,
                 'dbix_class' => {
                     searchargs => [{
                         -and => [

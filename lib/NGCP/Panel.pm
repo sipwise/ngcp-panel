@@ -256,6 +256,24 @@ __PACKAGE__->config(
             },
             use_session => 0,
         },
+        api_admin_jwt => {
+            credential => {
+                class => '+NGCP::Panel::Authentication::Credential::JWT',
+                username_jwt => 'username',
+                username_field => 'login',
+                id_jwt => 'id',
+                id_field => 'id',
+                jwt_key => _get_jwt_key(),
+                debug => 1,
+                alg => 'HS256',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::admins',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
+            },
+            use_session => 0,
+        },
         api_admin_system => {
             credential => {
                 class => 'HTTP',
