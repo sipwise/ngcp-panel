@@ -5956,6 +5956,15 @@ msgstr ""
 msgid "Off-peak-times for %1"
 msgstr "Horas valle para %1"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Offer OSRTP"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Offer optional opportunistic SRTP (OSRTP, RFC 8643) to the called party."
+msgstr ""
+
 #: share/templates/subscriber/webphone.tt
 msgid "Offline"
 msgstr "Desconectado"
