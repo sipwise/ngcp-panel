@@ -1,3 +1,33 @@
+ngcp-panel (8.2.3.0+0~mr8.2.3.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ca4fe75] TT#67108 peer rule unique check
+  * [05f40be] TT#75114 prevent exit() invocations
+  * [fb9aff2] TT#75114 prevent perl core function invocations
+  * [b24290e] TT#75105 translate perl VAA gpp1 calc to javascript
+  * [06c42d5] TT#75114 javascript support for prov templates
+  * [b86884b] TT#75000 fix rewrite rule move in replicated table
+  * [3c484a2] TT#75951 ngcp-provisioning-template cmdline tool
+  * [4c2760e] TT#77206 adjust check for boolean preferences unless json
+  * [20bfcac] TT#78153 fix _item_by_aor for redis
+  * [a627c15] TT#78153 fix redis location resultset filtering
+  * [71c5af8] TT#78569 provide tools menu for reseller admins
+
+  [ Marco Capetta ]
+  * [3b54e75] TT#75911 Execute kamailio lcr.reload after the gw removal
+
+  [ Flaviu Mates ]
+  * [57ba0f5] TT#72163 - Fix 500 error on recorded streams
+  * [cc998c8] TT#69380 - Disable search field caching only for Calls
+  * [c1c6250] TT#78166 - Fix SubscriberRegistrations test case
+  * [a41f61d] TT#68217 - Delete htable peer_probe when deleting/disabling peer
+
+  [ Nico Schedel ]
+  * [5897155] TT#78161 selenium: fix search calls to work better with search field caching
+  * [05f7e14] TT#80128 selenium: generate both subscriber passwords with generate button
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Apr 2020 21:28:41 +0200
+
 ngcp-panel (8.2.2.0+0~mr8.2.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
