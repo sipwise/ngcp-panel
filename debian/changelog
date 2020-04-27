@@ -1,3 +1,29 @@
+ngcp-panel (7.5.5.0+0~mr7.5.5.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [6f20154] TT#75911 Execute kamailio lcr.reload after the gw removal
+
+  [ Rene Krenn ]
+  * [be93e3a] TT#75000 fix rewrite rule move in replicated table
+  * [5cef5c3] TT#78153 fix _item_by_aor for redis
+  * [99d9b42] TT#78153 fix redis location resultset filtering
+
+  [ Flaviu Mates ]
+  * [85619ef] TT#69063 - Fix stuck timeset event list
+  * [29e477b] TT#72750 - Allow empty value for week day number in timeset event
+  * [2d995f2] TT#56467 - Migrate all basic test cases
+  * [9121426] TT#64500 - Fix date format for SubscriberRegistrations.yaml
+  * [27b40b2] TT#56467 - Fixes for Test Framework
+  * [7b221d4] TT#56467 - Migrate api-journals and api-topupvoucher
+  * [d7a4ec5] TT#71203 - Fix CFDestinationsets test case
+  * [a178911] TT#72163 - Fix 500 error on recorded streams
+  * [c63a446] TT#69380 - Disable search field caching only for Calls
+  * [59c0ccb] TT#69405 - Allow reseller to view subscriberregistrations
+  * [efd87f1] TT#78166 - Fix SubscriberRegistrations test case
+  * [647a794] TT#68217 - Delete htable peer_probe when deleting/disabling peer
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Apr 2020 18:40:56 +0200
+
 ngcp-panel (7.5.4.0+0~mr7.5.4.0) unstable; urgency=medium
 
   [ Nico Schedel ]
