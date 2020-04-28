@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b23c7dc_03fccd4f",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleSets.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-04-28T08:36:45Z",
+      "side": 1,
+      "message": "what does it fix ?",
+      "range": {
+        "startLine": 175,
+        "startChar": 6,
+        "endLine": 179,
+        "endChar": 13
+      },
+      "revId": "ac32985d6ebe4cb5c270e7b1cc2abe4a5a78ea56",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
