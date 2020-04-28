@@ -22,6 +22,30 @@
       "revId": "ac32985d6ebe4cb5c270e7b1cc2abe4a5a78ea56",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0f075ec_9b670a77",
+        "filename": "lib/NGCP/Panel/Role/API/HeaderRuleSets.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-04-28T12:01:57Z",
+      "side": 1,
+      "message": "Showing conditions values in returned resource. For actions, it\u0027s a field in the DB table, but for conditions there\u0027s a separate table for values, hence the join.",
+      "parentUuid": "1b23c7dc_03fccd4f",
+      "range": {
+        "startLine": 175,
+        "startChar": 6,
+        "endLine": 179,
+        "endChar": 13
+      },
+      "revId": "ac32985d6ebe4cb5c270e7b1cc2abe4a5a78ea56",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
