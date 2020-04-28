@@ -72,8 +72,9 @@ sub get_form {
 }
 
 sub resource_from_item {
-    my ($self, $c, $item, $owner, $form) = @_;
+    my ($self, $c, $item, $form, $owner) = @_;
 
+    $owner = $owner->{owner} if ('HASH' eq ref $owner and exists $owner->{owner});
     my $resource = NGCP::Panel::Utils::CallList::process_cdr_item($c, $item, $owner);
 
     my $datetime_fmt = DateTime::Format::Strptime->new(
