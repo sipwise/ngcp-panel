@@ -60,7 +60,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     $c->stash->{subscribers_rs} = $c->model('DB')->resultset('voip_subscribers')->search({
         'me.status' => { '!=' => 'terminated' },
     },{
-        distinct => 1,
+        group_by => [ qw/me.id/ ],
     });
     if($c->user->roles eq 'reseller') {
         $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
