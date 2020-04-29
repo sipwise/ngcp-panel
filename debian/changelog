@@ -1,3 +1,10 @@
+ngcp-panel (6.5.6.16+0~mr6.5.6.16) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e28d9ee] TT#80161 properly avoid dupes in subscriber datatable
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Apr 2020 14:41:15 +0200
+
 ngcp-panel (6.5.6.15+0~mr6.5.6.15) unstable; urgency=medium
 
   [ Rene Krenn ]
