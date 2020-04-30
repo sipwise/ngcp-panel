@@ -98,6 +98,25 @@ sub password_reset {
 
     return send_template($c, $vars, $subject, $body, $template->from_email, $email);
 }
+
+sub admin_password_reset {
+    my ($c, $admin, $url) = @_;
+
+    my $template = $admin->reseller->contract->passreset_email_template;
+    return unless($template);
+    my $email = $admin->email;
+
+    my $vars = {
+        url => $url,
+        admin => $admin->login,
+    };
+
+    my $body = $template->body;
+    my $subject = $template->subject;
+
+    return send_template($c, $vars, $subject, $body, $template->from_email, $email);
+}
+
 sub process_template{
     my ($c, $tmpl, $vars) = @_;
     my $t = Template->new;
