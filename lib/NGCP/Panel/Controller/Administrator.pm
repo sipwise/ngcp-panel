@@ -32,6 +32,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     }
     @{ $cols } =  (@{ $cols },
         { name => "login", search => 1, title => $c->loc("Login") },
+        { name => "email", search => 1, title => $c->loc("Email") },
         { name => "is_master", title => $c->loc("Master") },
         { name => "is_ccare", title => $c->loc("Customer Care") },
         { name => "is_active", title => $c->loc("Active") },
@@ -39,6 +40,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         { name => "show_passwords", title => $c->loc("Show Passwords") },
         { name => "call_data", title => $c->loc("Show CDRs") },
         { name => "billing_data", title => $c->loc("Show Billing Info") },
+        { name => "can_reset_password", title => $c->loc("Can Reset Password") },
     );
     if($c->user->is_superuser) {
         @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => $c->loc("Lawful Intercept") });
@@ -136,7 +138,7 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $administrator_id) = @_;
 
     $c->detach('/denied_page')
-        unless($c->user->is_master);
+        unless($c->user->is_master || $administrator_id == $c->user->id);
 
     unless ($administrator_id && is_int($administrator_id)) {
         NGCP::Panel::Utils::Message::error(
@@ -178,6 +180,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         posted => $posted,
         params => $c->request->params,
         item => $params,
+        inactive => $c->stash->{administrator}->id != $c->user->id ? ['password']  : [],
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -287,6 +290,9 @@ sub delete_admin :Chained('base') :PathPart('delete') :Args(0) {
 
 sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        unless($c->stash->{administrator}->id == $c->user->id);
 
     my $special_user_login = NGCP::Panel::Utils::Auth::get_special_admin_login();
     if($c->stash->{administrator}->login eq $special_user_login) {
