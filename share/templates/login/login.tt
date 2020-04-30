@@ -19,8 +19,10 @@
     <div class="login-extra">
         [% IF realm == 'subscriber' && c.config.security.password_allow_recovery -%]
         [% c.loc('Forgot your password?') %] <a href="[% c.uri_for_action('/subscriber/reset_webpassword_nosubscriber') %]">[% c.loc('Reset Password') %]</a>.
-        <br/>
+        [% ELSIF realm == 'admin' -%]
+        [% c.loc('Forgot your password?') %] <a href="[% c.uri_for_action('/login/reset_password') %]">[% c.loc('Reset Password') %]</a>.
         [% END -%]
+        <br/>
     </div>
 
 [%#
