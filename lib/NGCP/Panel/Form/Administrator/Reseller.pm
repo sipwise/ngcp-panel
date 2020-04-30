@@ -11,10 +11,11 @@ sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'login' => (type => 'Text', required => 1, minlength => 5, maxlength => 31);
 has_field 'password' => (type => 'Password', required => 1, label => 'Password');
+has_field 'email' => (type => 'Email', required => 0, label => 'Email', maxlength => 255);
 for (qw(is_active show_passwords call_data billing_data)) {
     has_field $_ => (type => 'Boolean', default => 1);
 }
-for (qw(is_master is_ccare read_only)) {
+for (qw(is_master is_ccare read_only can_reset_password)) {
     has_field $_ => (type => 'Boolean',);
 }
 has_field 'save' => (type => 'Submit', element_class => [qw(btn btn-primary)],);
@@ -22,7 +23,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        login password is_master is_active read_only show_passwords call_data billing_data
+        login password email is_master is_active read_only show_passwords call_data billing_data can_reset_password
     )],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);
