@@ -18,7 +18,7 @@
         helper.dt_buttons = [
             { name = c.loc('Edit'), uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Delete'), uri = "/administrator/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash', condition = 'full[\'login\'] != \'' _ special_admin_login _ '\'' },
-            { name = c.loc('API key'), uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock', condition = 'full[\'login\'] != \'' _ special_admin_login _ '\'' },
+            { name = c.loc('API key'), uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock', condition = 'full[\'login\'] != \'' _ special_admin_login _ '\' && full[\'id\'] == \'' _ c.user.id _ '\'' },
         ];
 
         helper.top_buttons = [
@@ -26,7 +26,8 @@
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = c.loc('API key'), uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock' },
+            { name = c.loc('Edit'), uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit', condition = 'full[\'id\'] == \'' _ c.user.id _ '\'' },
+            { name = c.loc('API key'), uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock', condition = 'full[\'id\'] == \'' _ c.user.id _ '\'' },
         ];
     END;
 
