@@ -98,9 +98,17 @@ sub check_duplicate{
     my $existing_item = $schema->resultset('admins')->find({
         login => $resource->{login},
     });
+    my $existing_email = $schema->resultset('admins')->find({
+        email => $resource->{email},
+    });
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {
         $c->log->error("admin with login '$$resource{login}' already exists");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this login already exists");
+        return;
+    }
+    elsif ($existing_email && (!$item || $item->id != $existing_item->id)) {
+        $c->log->error("admin with email '$$resource{email}' already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this email already exists");
         return;
     }
     return 1;
