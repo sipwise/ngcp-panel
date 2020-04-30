@@ -1310,15 +1310,15 @@ msgstr ""
 msgid "Callthrough CLIs"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Can not close openvpn connection."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Can not enable openvpn."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Can not open openvpn connection."
 msgstr ""
 
@@ -5983,19 +5983,19 @@ msgstr "Ups!"
 msgid "Open Form"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection closed."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection is already closed."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection is already opened."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection open."
 msgstr ""
 
@@ -6003,11 +6003,11 @@ msgstr ""
 msgid "Openvpn details"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn service is not available on the system."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Admin.pm
+#: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn service is not enabled or host role is not allowed."
 msgstr ""
 
@@ -9168,8 +9168,6 @@ msgstr "Wir bitten um Verzeihung, ein schwerer Fehler ist aufgetreten:"
 msgid "Web Fax"
 msgstr "Web-Fax"
 
-#: share/templates/subscriber/edit_webpass.tt
-#: share/templates/subscriber/master.tt
 #: share/templates/subscriber/recoverpassword.tt
 msgid "Web Password"
 msgstr "Web Passwort"
