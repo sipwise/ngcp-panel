@@ -279,15 +279,14 @@ sub auto :Private {
         }
     } elsif (!$c->user_exists &&
             $c->req->headers->header("Authorization") &&
-            $c->req->headers->header("Authorization") =~ m/^Bearer(\s+)a=/ &&
-            $c->request->path =~ /ajax/) {
+            $c->req->headers->header("Authorization") =~ m/^Bearer(\s+)a=/) {
 
-        $c->log->debug("++++++ Root::auto ajax request with admin JWT");
-        my $realm = "api_admin_jwt";
+        $c->log->debug("++++++ Root::auto UI request with admin JWT");
+        my $realm = "admin_jwt";
         my $res = $c->authenticate({}, $realm);
 
         unless ($c->user_exists) {
-            $c->log->debug("+++++ invalid ajax admin JWT login");
+            $c->log->debug("+++++ invalid UI admin JWT login");
         }
 
         $self->api_apply_fake_time($c);
