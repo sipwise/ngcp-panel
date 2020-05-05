@@ -611,7 +611,7 @@ sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method(
     my $result = {};
 
     if ($auth_user && $auth_user->id) {
-        $usr_salted_pass = NGCP::Panel::Utils::Auth::get_usr_salted_pass($auth_user->saltedpass, $pass);
+        $usr_salted_pass = NGCP::Panel::Utils::Admin::get_usr_salted_pass($auth_user->saltedpass, $pass);
     }
 
     if ($usr_salted_pass && $usr_salted_pass eq $auth_user->saltedpass) {
