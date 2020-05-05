@@ -120,6 +120,7 @@ msgstr ""
 "usato."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 #: lib/NGCP/Panel/Controller/Billing.pm
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Contract.pm
@@ -1976,6 +1977,10 @@ msgstr "Crea Numero Portato"
 msgid "Create Profile Package"
 msgstr "Crea Profilo del Pacchetto"
 
+#: share/templates/batchprovisioning/list.tt
+msgid "Create Provisioning Template"
+msgstr ""
+
 #: share/templates/reseller/list.tt
 msgid "Create Reseller"
 msgstr "Crea Rivenditore"
@@ -2240,7 +2245,8 @@ msgid ""
 "signalled via an IMS S-CSCF instead"
 msgstr ""
 
-#: share/templates/administrator/list.tt share/templates/billing/fees.tt
+#: share/templates/administrator/list.tt
+#: share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt
 #: share/templates/billing/peaktimes.tt share/templates/billing/zones.tt
 #: share/templates/calllistsuppression/list.tt share/templates/contact/list.tt
 #: share/templates/customer/details.tt share/templates/device/list.tt
@@ -2627,7 +2633,8 @@ msgstr "Durata"
 msgid "ECM"
 msgstr ""
 
-#: share/templates/administrator/list.tt share/templates/billing/fees.tt
+#: share/templates/administrator/list.tt
+#: share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt
 #: share/templates/billing/list.tt share/templates/billing/peaktimes.tt
 #: share/templates/calllistsuppression/list.tt share/templates/contact/list.tt
 #: share/templates/contract/list.tt share/templates/customer/details.tt
@@ -3266,6 +3273,10 @@ msgstr "Creazione della preferenza %1 fallita"
 msgid "Failed to create profile package."
 msgstr "Creazione del profilo di pacchetto fallita"
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Failed to create provisioning template"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Failed to create reseller"
 msgstr "Creazione del rivenditore fallita"
@@ -3621,6 +3632,10 @@ msgstr ""
 msgid "Failed to reload proxy. Domain was modified."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Failed to remove provisioning template"
+msgstr ""
+
 #. ($error->type . ', info is ' . $error->info)
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to render template. Type is "
@@ -3885,6 +3900,10 @@ msgstr "Aggiornamento preferenza %1 fallito"
 #: lib/NGCP/Panel/Controller/Package.pm
 msgid "Failed to update profile package"
 msgstr "Aggiornamento del profilo di pacchetto fallito"
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Failed to update provisioning template"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update reminder setting."
@@ -6756,6 +6775,10 @@ msgstr ""
 "\"content-disposition: signal;handling=required\", in accordo con le "
 "specifiche di interconnessione NGN tedesche."
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning Template"
+msgstr ""
+
 #. ($template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain})
 #: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
 msgid "Provisioning template '%1' done: subscriber %2 created"
@@ -6764,6 +6787,30 @@ msgstr ""
 #. ($template, $e)
 #: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
 msgid "Provisioning template '%1' failed: %2"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning template cannot be edited."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning template cannot be removed."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning template successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning template successfully removed"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning template successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning templates does not exist!"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -7072,6 +7119,7 @@ msgid "Reported at"
 msgstr "Segnalato il"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Contact.pm
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Device.pm
 #: lib/NGCP/Panel/Controller/Domain.pm
@@ -8090,11 +8138,6 @@ msgstr "Configurazioni Abbonato"
 msgid "Subscriber does not exist"
 msgstr "Abbonato non esistente"
 
-#. (provisioning_template_name)
-#: share/templates/batchprovisioning/list.tt
-msgid "Subscriber from Provisioning Template '%1'"
-msgstr ""
-
 #. (prov_lock_string)
 #: share/templates/subscriber/master.tt
 msgid "Subscriber is locked for <b>%1</b>"
@@ -8155,6 +8198,11 @@ msgstr "Lo stato dell´abbonato è <b>%1</b>"
 msgid "Subscriber successfully created"
 msgstr "Abbonato creato con successo"
 
+#. ($c->stash->{provisioning_template_name})
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Subscriber with Provisioning Template '%1'"
+msgstr ""
+
 #: share/templates/customer/details.tt share/templates/subscriber/list.tt
 #: share/templates/widgets/admin_reseller_overview.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -8165,6 +8213,11 @@ msgstr "Abbonato creato con successo"
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Subscribers"
 msgstr "Abbonati"
+
+#. ($c->stash->{provisioning_template_name})
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Subscribers with Provisioning Template '%1' from CSV"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully added registered device"
