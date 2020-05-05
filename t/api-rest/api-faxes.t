@@ -63,10 +63,14 @@ if( !$remote_config->{config}->{features}->{faxserver} ){
 
     $fake_data->{data}->{subscribers}->{data}->{administrative} = 1;
     my $subscriberadmin = $fake_data->create('subscribers')->[0];
+    #manually add webpassword to content since it's not returned from TT#78557
+    $subscriberadmin->{content}->{webpassword} = $fake_data->{data}->{subscribers}->{data}->{webpassword};
     set_faxes_preferences($subscriberadmin->{content}->{id});
 
     $fake_data->{data}->{subscribers}->{data}->{administrative} = 0;
     my $subscriber = $fake_data->create('subscribers')->[0];
+    #manually add webpassword to content since it's not returned from TT#78557
+    $subscriber->{content}->{webpassword} = $fake_data->{data}->{subscribers}->{data}->{webpassword};
     set_faxes_preferences($subscriber->{content}->{id});
 
 
