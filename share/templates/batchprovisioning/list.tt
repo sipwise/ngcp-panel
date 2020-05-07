@@ -12,6 +12,13 @@ $( document ).ready(function() {
         });
     }
 });
+  function toHex(str) {
+    var result = '';
+    for (var i=0; i<str.length; i++) {
+      result += str.charCodeAt(i).toString(16);
+    }
+    return result;
+  }
 </script>
 
 [% site_config.title = c.loc('Batch Provisioning')  -%]
@@ -32,10 +39,10 @@ $( document ).ready(function() {
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = c.loc('Delete'), condition = "full.static == 0", uri = "/batchprovisioning/templates/'+encodeURI(full.name)+'/remove", class = 'btn-small btn-secondary', icon = 'icon-remove' },
-            { name = c.loc('Edit'), condition = "full.static == 0", uri = "/batchprovisioning/templates/'+encodeURI(full.name)+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Open Form'), uri = "/batchprovisioning/templates/'+encodeURI(full.name)+'/form", class = 'btn-small btn-tertiary', icon = 'icon-list' },
-            { name = c.loc('Upload CSV'), uri = "/batchprovisioning/templates/'+encodeURI(full.name)+'/upload", class = 'btn-small btn-tertiary', icon = 'icon-star' },
+            { name = c.loc('Delete'), condition = "full.static == 0", uri = "/batchprovisioning/templates/'+toHex((full.reseller ? full.reseller + '/' : '') + full.name)+'/remove", no_back = 1, class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Edit'), condition = "full.static == 0", uri = "/batchprovisioning/templates/'+toHex((full.reseller ? full.reseller + '/' : '') + full.name)+'/edit", no_back = 1, class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Open Form'), uri = "/batchprovisioning/templates/'+toHex((full.reseller ? full.reseller + '/' : '') + full.name)+'/form", no_back = 1, class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Upload CSV'), uri = "/batchprovisioning/templates/'+toHex((full.reseller ? full.reseller + '/' : '') + full.name)+'/upload", no_back = 1, class = 'btn-small btn-tertiary', icon = 'icon-star' },
         ];
         helper.top_buttons = [
             { name = c.loc('Create Provisioning Template'), uri = c.uri_for_action('/batchprovisioning/create'), icon = 'icon-star' },
