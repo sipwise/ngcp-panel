@@ -150,7 +150,7 @@ $(document).ready(function() {
                             IF button.uri.search('\?');
                                 separator = '&';
                             END;
-                            IF !( button.uri.search('[\?\&]back=|^javascript:') );
+                            IF !( button.no_back or button.uri.search('[\?\&]back=|^javascript:') );
                                 button.uri = button.uri _ separator _ 'back=' _ backuri;
                             END;
                             IF button.condition;

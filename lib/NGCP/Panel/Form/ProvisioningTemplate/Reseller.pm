@@ -61,7 +61,7 @@ has_field 'yaml' => (
     element_class => [qw/ngcp-provtemplate-area/],
     default => <<'EOS_DEFAULT_YAML',
 fields:
-  - name: fields
+  - name: first_name
     label: "First Name:"
     type: Text
     required: 1
@@ -147,16 +147,30 @@ sub validate_yaml {
 
 }
 
-sub validate_name {
-    my ($self, $field) = @_;
+sub validate {
+    my ($self) = @_;
 
     my $c = $self->ctx;
     return unless $c;
 
+    my $field = $self->field('name');
+    my $resource = Storable::dclone($self->values);
+    if (defined $resource->{reseller}) {
+        $resource->{reseller_id} = $resource->{reseller}{id};
+        delete $resource->{reseller};
+    } else {
+        $resource->{reseller_id} = ($c->user->is_superuser ? undef : $c->user->reseller_id);
+    }
+    my $reseller;
+    $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id}) if $resource->{reseller_id};
+
+    my $template = $field->value;
+    $template = ($reseller->name . '/' . $template) if $reseller;
+    #$c->log->warn("test: ".$template);
     if (not defined $c->stash->{old_name}
-        or $c->stash->{old_name} ne $field->value) {
+        or $c->stash->{old_name} ne $template) {
         $field->add_error("a provisioning template with name '" . $field->value . "' already exists")
-            if exists $c->stash->{provisioning_templates}->{$field->value};
+            if exists $c->stash->{provisioning_templates}->{$template};
     }
 
 }
