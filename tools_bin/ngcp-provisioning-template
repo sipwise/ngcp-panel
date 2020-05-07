@@ -53,11 +53,9 @@ GetOptions(
 pod2usage(1) if $help;
 my %mock_objs = ();
 my $c = _create_c();
-my $templates = ($c->config->{provisioning_templates} // {});
-if (exists $templates->{$template_name}) {
+NGCP::Panel::Utils::ProvisioningTemplates::load_template_map($c);
+if (exists $c->stash->{'provisioning_templates'}->{$template_name}) {
     $c->stash->{'provisioning_template_name'} = $template_name;
-    $c->stash->{'provisioning_templates'} = $templates;
-    map { $templates->{$_}->{name} = $_; } keys %$templates;
 
     my $fields = NGCP::Panel::Utils::ProvisioningTemplates::get_fields($c,0);
     my $values = { map { $_ => undef; } grep { $_ ne 'purge'; } keys %$fields };
@@ -314,9 +312,11 @@ ngcp-provisioning-template - Create subscribers with detailed settings according
 
 ngcp-provisioning-template <provisioning template name> [options]
 
+ngcp-provisioning-template <reseller name>/<provisioning template name> [options]
+
 =head1 DESCRIPTION
 
-B<This program> This program allows to run a 'provisioning template' defined in config.yml. This will produce a
+B<This program> This program allows to run a 'provisioning template' from database or config.yml. This will produce a
 subscriber setup including required billing contact, contract, preferences, etc. from an input form defined by that
 template. The form fields can be passed as command line options.
 
@@ -342,7 +342,7 @@ The database user for the ngcp database to connect to. Only relevant if --db_hos
 
 =item B<--db_password>
 
-The the database user passowrd (if any) for the ngcp database to connect to. Only relevant if --db_host is specified.
+The the database user password (if any) for the ngcp database to connect to. Only relevant if --db_host is specified.
 
 =item B<--file>
 
@@ -366,7 +366,11 @@ Verbosity of printed messages while processing (degug, info, error).
 
 ngcp-provisioning-template "My First Provisioning Template" --first_name="John" --last_name="Doe" --cc="43" --ac="316" --sn="123456" --purge
 
-ngcp-provisioning-template "My First Provisioning Template" --file="subscriberdata.csv" --purge
+... runs "My First Provisioning Template" from config.yml using first_name "John", last_name "Doe" etc.
+
+ngcp-provisioning-template "Reseller1/Provisioning Template 1" --file="subscriberdata.csv" --purge
+
+... runs "Provisioning Template 1" of "Reseller1" for each row in "subscriberdata.csv"
 
 =head1 AUTHOR
 
