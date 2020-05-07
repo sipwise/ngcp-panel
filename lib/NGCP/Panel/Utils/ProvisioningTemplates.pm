@@ -20,6 +20,7 @@ $Data::Dumper::Sortkeys = sub {
     return \@keys;
 };
 use Text::CSV_XS qw();
+use YAML::XS qw();
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::BillingMappings qw();
 use NGCP::Panel::Utils::Contract qw();
@@ -80,6 +81,55 @@ foreach my $sub (@DISABLED_CORE_FUNCTIONS) {
 }
 
 my $JS_ENV = '';
+
+sub load_template_map {
+
+    my $c = shift;
+    my $templates = { %{$c->config->{provisioning_templates} // {}} };
+    map {
+        $templates->{$_}->{name} = $_;
+        $templates->{$_}->{static} = 1;
+        $templates->{$_}->{id} = undef;
+        $templates->{$_}->{reseller} = undef;
+    } keys %$templates;
+
+    my $rs = $c->model('DB')->resultset('provisioning_templates')->search_rs();
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
+        $rs = $rs->search_rs({ -or => [
+                                reseller_id => $c->user->reseller_id,
+                                reseller_id => undef
+                             ], },);
+    } else {
+        $rs = $rs->search_rs({ -or => [
+                                reseller_id => $c->user->contract->contact->reseller_id,
+                                reseller_id => undef
+                             ], },);
+    }
+    $c->stash->{template_rs} = $rs;
+    foreach my $db_template ($rs->all) {
+        my $template = { $db_template->get_inflated_columns };
+        eval {
+            %$template = ( %{YAML::XS::Load($template->{yaml})}, %$template );
+            #use Data::Dumper;
+            #$c->log->error(Dumper($template));
+            delete $template->{yaml};
+        };
+        if ($@) {
+            $c->log->error("error parsing provisioning_template id $template->{id} '$template->{name}': " . $@);
+            next;
+        }
+        $template->{static} = 0;
+        if ($db_template->reseller) {
+            $template->{reseller} = $db_template->reseller->name;
+            $templates->{$template->{reseller} . '/' . $template->{name}} = $template;
+        } else {
+            $templates->{$template->{name}} = $template;
+        }
+    }
+    $c->stash->{provisioning_templates} = $templates;
+
+}
 
 sub create_provisioning_template_form {
 
