@@ -12,8 +12,6 @@ use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::ProvisioningTemplates qw();
 use NGCP::Panel::Form::ProvisioningTemplate::Admin qw();
 use NGCP::Panel::Form::ProvisioningTemplate::Reseller qw();
-use URI::Encode qw();
-use YAML::XS qw();
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
@@ -27,48 +25,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub template_list :Chained('/') :PathPart('batchprovisioning') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my $templates = { %{$c->config->{provisioning_templates} // {}} };
-    map {
-        $templates->{$_}->{name} = $_;
-        $templates->{$_}->{static} = 1;
-        $templates->{$_}->{id} = undef;
-        $templates->{$_}->{reseller} = undef;
-    } keys %$templates;
-
-    my $rs = $c->model('DB')->resultset('provisioning_templates')->search_rs();
-    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
-    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
-        $rs = $rs->search_rs({ -or => [
-                                reseller_id => $c->user->reseller_id,
-                                reseller_id => undef
-                             ], },);
-    } else {
-        $rs = $rs->search_rs({ -or => [
-                                reseller_id => $c->user->contract->contact->reseller_id,
-                                reseller_id => undef
-                             ], },);
-    }
-    $c->stash->{template_rs} = $rs;
-    foreach my $db_template ($rs->all) {
-        my $template = { $db_template->get_inflated_columns };
-        eval {
-            %$template = ( %{YAML::XS::Load($template->{yaml})}, %$template );
-            #use Data::Dumper;
-            #$c->log->error(Dumper($template));
-            delete $template->{yaml};
-        };
-        if ($@) {
-            $c->log->error("error parsing provisioning_template id $template->{id} '$template->{name}': " . $@);
-            next;
-        }
-        $template->{static} = 0;
-        if ($db_template->reseller) {
-            $template->{reseller} = $db_template->reseller->name;
-        }
-        $templates->{$template->{name}} = $template;
-    }
-
-    $c->stash->{provisioning_templates} = $templates;
+    NGCP::Panel::Utils::ProvisioningTemplates::load_template_map($c);
 
     $c->stash->{template_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
@@ -96,8 +53,7 @@ sub ajax :Chained('template_list') :PathPart('ajax') :Args(0) {
 
 sub template_base :Chained('template_list') :PathPart('templates') :CaptureArgs(1) {
     my ( $self, $c, $template ) = @_;
-    my $decoder = URI::Encode->new;
-    $template = $decoder->decode($template);
+    $template = pack('H*',$template);
     $c->stash->{provisioning_template_name} = $template;
     if (exists $c->stash->{provisioning_templates}->{$template}) {
         if ($c->stash->{provisioning_templates}->{$template}->{id}) {
@@ -108,7 +64,7 @@ sub template_base :Chained('template_list') :PathPart('templates') :CaptureArgs(
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     data => { id => $c->stash->{provisioning_templates}->{$template}->{id} },
-                    desc  => $c->loc('Provisioning templates does not exist!'),
+                    desc  => $c->loc('Provisioning template does not exist!'),
                 );
                 $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
                 return;
@@ -118,7 +74,7 @@ sub template_base :Chained('template_list') :PathPart('templates') :CaptureArgs(
         NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { name => $template },
-            desc  => $c->loc('Provisioning templates does not exist!'),
+            desc  => $c->loc('Provisioning template does not exist!'),
         );
         $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
         return;
@@ -129,7 +85,7 @@ sub do_template_form :Chained('template_base') :PathPart('form') :Args(0) {
     my ($self, $c) = @_;
 
     $c->stash(create_flag => 1);
-    $c->stash(modal_title => $c->loc("Subscriber with Provisioning Template '[_1]'", $c->stash->{provisioning_template_name}));
+    $c->stash(modal_title => $c->loc("Subscriber using Provisioning Template '[_1]'", $c->stash->{provisioning_template_name}));
 
     $c->log->debug($c->stash->{provisioning_template_name});
     $c->log->debug($c->uri_for_action('/batchprovisioning/root'));
@@ -199,7 +155,7 @@ sub do_template_upload :Chained('template_base') :PathPart('upload') :Args(0) {
     }
 
     $c->stash(create_flag => 1);
-    $c->stash(modal_title => $c->loc("Subscribers with Provisioning Template '[_1]' from CSV", $c->stash->{provisioning_template_name}));
+    $c->stash(modal_title => $c->loc("Subscribers using Provisioning Template '[_1]' from CSV", $c->stash->{provisioning_template_name}));
     $c->stash(form => $form);
 }
 
@@ -259,7 +215,8 @@ sub create :Chained('template_list') :PathPart('create') :Args(0) {
                 desc  => $c->loc('Failed to create provisioning template'),
             );
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
+        #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
+        $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
     }
 
     $c->stash(create_flag => 1);
@@ -334,7 +291,8 @@ sub edit :Chained('template_base') :PathPart('edit') :Args(0) {
                 desc  => $c->loc('Failed to update provisioning template'),
             );
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
+        #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
+        $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
     }
     $c->stash(edit_flag => 1 );
     $c->stash(modal_title => $c->loc("Provisioning Template"));
@@ -372,7 +330,8 @@ sub remove :Chained('template_base') :PathPart('remove') :Args(0) {
             desc  => $c->loc('Failed to remove provisioning template'),
         );
     };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
+    #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
+    $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
 }
 
 1;
