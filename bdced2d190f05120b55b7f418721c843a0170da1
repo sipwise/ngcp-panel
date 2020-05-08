@@ -34,6 +34,75 @@
       "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4c935c2_062f4626",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-05-08T22:43:29Z",
+      "side": 1,
+      "message": "If this is a single argument it\u0027s always more clear to use - instead of spaces, also make it italic to make it clear it\u0027s variable text. So \"I\u003cprovisioning-template-name\u003e\".",
+      "range": {
+        "startLine": 313,
+        "startChar": 30,
+        "endLine": 313,
+        "endChar": 58
+      },
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e27c38d3_5e0632da",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-05-08T22:43:29Z",
+      "side": 1,
+      "message": "Here too. But in this case I\u0027m not sure what\u0027s the expected thing to pass. Is this a literal / required there or is that supposed to be an ORed relationship?\n\nIf the former I\u0027d use B\u003c/\u003e to denote a literal. if it\u0027s an ORed, then I\u0027d use \"I\u003creseller-name\u003e|I\u003cprovisioning-template-name\u003e\", but then I\u0027d merge it with the one above. I guess from the EXAMPLES section it would be the former. :)",
+      "range": {
+        "startLine": 315,
+        "startChar": 30,
+        "endLine": 315,
+        "endChar": 74
+      },
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c942ba5_147800f9",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-05-08T22:43:29Z",
+      "side": 1,
+      "message": "Same here and all other ones below, with replaceable text.",
+      "range": {
+        "startLine": 331,
+        "startChar": 21,
+        "endLine": 331,
+        "endChar": 39
+      },
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
