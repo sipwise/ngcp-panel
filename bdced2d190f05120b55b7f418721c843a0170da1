@@ -16,6 +16,24 @@
       "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb48b429_d853bc44",
+        "filename": "lib/NGCP/Panel/Controller/BatchProvisioning.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-05-08T12:41:12Z",
+      "side": 1,
+      "message": "yes this was bit tricky: trying to have an encoded \"/\" in the url (ie. to not form an actual url path element) is somewaht nasty with the catalyst url path resolver - it survives even multiple urlComponentEncode() calls -\u003e ie. urlComponentEncode(urlComponentEncode(urlComponentEncode(\"bla/blah\"))) so it recognizes another path..\n\nbase64 also caused issues.\nencoding hex works reliably. will change it to use unpack().",
+      "parentUuid": "b85f2e63_70b158eb",
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
