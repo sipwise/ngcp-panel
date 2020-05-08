@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b85f2e63_70b158eb",
+        "filename": "lib/NGCP/Panel/Controller/BatchProvisioning.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2020-05-08T12:32:27Z",
+      "side": 1,
+      "message": "Curious about this change as it seems an unrelated behaviour change? If it\u0027s indeed a hex string, you can use unpack.",
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
