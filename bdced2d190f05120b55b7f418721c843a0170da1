@@ -78,6 +78,30 @@
     },
     {
       "key": {
+        "uuid": "fb920ea5_6cec2a39",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-05-11T22:14:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4c935c2_062f4626",
+      "range": {
+        "startLine": 313,
+        "startChar": 30,
+        "endLine": 313,
+        "endChar": 58
+      },
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e27c38d3_5e0632da",
         "filename": "tools_bin/ngcp-provisioning-template",
         "patchSetId": 3
@@ -101,6 +125,30 @@
     },
     {
       "key": {
+        "uuid": "4273f639_8357e3a1",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-05-11T22:14:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e27c38d3_5e0632da",
+      "range": {
+        "startLine": 315,
+        "startChar": 30,
+        "endLine": 315,
+        "endChar": 74
+      },
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6c942ba5_147800f9",
         "filename": "tools_bin/ngcp-provisioning-template",
         "patchSetId": 3
@@ -112,6 +160,30 @@
       "writtenOn": "2020-05-08T22:43:29Z",
       "side": 1,
       "message": "Same here and all other ones below, with replaceable text.",
+      "range": {
+        "startLine": 331,
+        "startChar": 21,
+        "endLine": 331,
+        "endChar": 39
+      },
+      "revId": "bdced2d190f05120b55b7f418721c843a0170da1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "375f991a_404b9379",
+        "filename": "tools_bin/ngcp-provisioning-template",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-05-11T22:14:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c942ba5_147800f9",
       "range": {
         "startLine": 331,
         "startChar": 21,
