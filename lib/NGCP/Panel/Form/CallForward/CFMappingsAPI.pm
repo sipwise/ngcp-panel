@@ -87,7 +87,7 @@ has_field 'cfr' => (
 );
 
 has_field 'cfu.destinationset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -98,7 +98,7 @@ has_field 'cfu.destinationset_id' => (
 );
 
 has_field 'cfu.timeset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -109,7 +109,7 @@ has_field 'cfu.timeset_id' => (
 );
 
 has_field 'cfu.sourceset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -120,7 +120,7 @@ has_field 'cfu.sourceset_id' => (
 );
 
 has_field 'cfu.bnumberset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -131,7 +131,7 @@ has_field 'cfu.bnumberset_id' => (
 );
 
 has_field 'cfb.destinationset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -142,7 +142,7 @@ has_field 'cfb.destinationset_id' => (
 );
 
 has_field 'cfb.timeset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -153,7 +153,7 @@ has_field 'cfb.timeset_id' => (
 );
 
 has_field 'cfb.sourceset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -164,7 +164,7 @@ has_field 'cfb.sourceset_id' => (
 );
 
 has_field 'cfb.bnumberset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -175,7 +175,7 @@ has_field 'cfb.bnumberset_id' => (
 );
 
 has_field 'cft.destinationset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -186,7 +186,7 @@ has_field 'cft.destinationset_id' => (
 );
 
 has_field 'cft.timeset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -197,7 +197,7 @@ has_field 'cft.timeset_id' => (
 );
 
 has_field 'cft.sourceset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -208,7 +208,7 @@ has_field 'cft.sourceset_id' => (
 );
 
 has_field 'cft.bnumberset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -219,7 +219,7 @@ has_field 'cft.bnumberset_id' => (
 );
 
 has_field 'cfna.destinationset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -230,7 +230,7 @@ has_field 'cfna.destinationset_id' => (
 );
 
 has_field 'cfna.timeset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -241,7 +241,7 @@ has_field 'cfna.timeset_id' => (
 );
 
 has_field 'cfna.sourceset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -252,7 +252,7 @@ has_field 'cfna.sourceset_id' => (
 );
 
 has_field 'cfna.bnumberset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -263,7 +263,7 @@ has_field 'cfna.bnumberset_id' => (
 );
 
 has_field 'cfs.destinationset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -274,7 +274,7 @@ has_field 'cfs.destinationset_id' => (
 );
 
 has_field 'cfs.timeset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -285,7 +285,7 @@ has_field 'cfs.timeset_id' => (
 );
 
 has_field 'cfs.sourceset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -296,7 +296,7 @@ has_field 'cfs.sourceset_id' => (
 );
 
 has_field 'cfs.bnumberset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -313,7 +313,7 @@ has_field 'cft_ringtimeout' => (
 );
 
 has_field 'cfr.destinationset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -324,7 +324,7 @@ has_field 'cfr.destinationset_id' => (
 );
 
 has_field 'cfr.timeset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -335,7 +335,7 @@ has_field 'cfr.timeset_id' => (
 );
 
 has_field 'cfr.sourceset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
@@ -346,7 +346,7 @@ has_field 'cfr.sourceset_id' => (
 );
 
 has_field 'cfr.bnumberset' => (
-    type => 'Text',
+    type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
 );
