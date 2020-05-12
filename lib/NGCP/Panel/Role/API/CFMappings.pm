@@ -169,11 +169,49 @@ sub update_item {
                     subscriber_id => $p_subs_id,
                     id => $mapping->{destinationset_id},
                 });
-            } elsif($mapping->{destinationset}) {
+            } elsif ($mapping->{destinationset} && !ref $mapping->{destinationset}) {
                 $dset = $dsets_rs->find({
                     subscriber_id => $p_subs_id,
                     name => $mapping->{destinationset},
                 });
+            } elsif ($mapping->{destinationset} && ref $mapping->{destinationset} eq 'HASH') {
+                $mapping->{destinationset}->{subscriber_id} = $p_subs_id;
+                $form = NGCP::Panel::Role::API::CFDestinationSets->get_form($c);
+                return unless $self->validate_form(
+                    c => $c,
+                    resource => $mapping->{destinationset},
+                    form => $form,
+                );
+                if (! exists $mapping->{destinationset}->{destinations} ) {
+                    $mapping->{destinationset}->{destinations} = [];
+                }
+                if (!NGCP::Panel::Role::API::CFDestinationSets->check_destinations($c, $mapping->{destinationset})) {
+                    return;
+                }
+                my $primary_nr_rs = $item->primary_number;
+                my $number;
+                if ($primary_nr_rs) {
+                    $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
+                } else {
+                    $number = ''
+                }
+                my $domain = $item->provisioning_voip_subscriber->domain->domain // '';
+
+                $dset = $dsets_rs->create({
+                        name => $mapping->{destinationset}->{name},
+                        subscriber_id => $p_subs_id,
+                    });
+                for my $d ( @{$mapping->{destinationset}->{destinations}} ) {
+                    delete $d->{destination_set_id};
+                    delete $d->{simple_destination};
+                    $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
+                            destination => $d->{destination},
+                            number => $number,
+                            domain => $domain,
+                            uri => $d->{destination},
+                        );
+                    $dset->create_related("voip_cf_destinations", $d);
+                }
             } else {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing field 'destinationset' or 'destinationset_id' in '$type'.");
                 return;
@@ -190,12 +228,35 @@ sub update_item {
                     id => $mapping->{timeset_id},
                 });
                 $has_tset = 1;
-            } elsif (defined $mapping->{timeset}) {
+            } elsif (defined $mapping->{timeset} && !ref $mapping->{timeset}) {
                 $tset = $tsets_rs->find({
                     subscriber_id => $p_subs_id,
                     name => $mapping->{timeset},
                 });
                 $has_tset = 1;
+            } elsif ($mapping->{timeset} && ref $mapping->{timeset} eq 'HASH') {
+                $mapping->{timeset}->{subscriber_id} = $p_subs_id;
+                $form = NGCP::Panel::Role::API::CFTimeSets->get_form($c);
+                return unless $self->validate_form(
+                    c => $c,
+                    resource => $mapping->{timeset},
+                    form => $form,
+                );
+                if (! exists $mapping->{timeset}->{times} ) {
+                    $mapping->{timeset}->{times} = [];
+                }
+                if (ref $mapping->{timeset}->{times} ne "ARRAY") {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
+                    return;
+                }
+                $tset = $tsets_rs->create({
+                    name => $mapping->{timeset}->{name},
+                    subscriber_id => $p_subs_id,
+                });
+                for my $t ( @{$mapping->{timeset}->{times}} ) {
+                    delete $t->{time_set_id};
+                    $tset->create_related("voip_cf_periods", $t);
+                }
             }
             if($has_tset && !$tset) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'timeset'. Could not be found.");
@@ -209,12 +270,40 @@ sub update_item {
                     id => $mapping->{sourceset_id},
                 });
                 $has_sset = 1;
-            } elsif (defined $mapping->{sourceset}) {
+            } elsif (defined $mapping->{sourceset} && !ref $mapping->{sourceset}) {
                 $sset = $ssets_rs->find({
                     subscriber_id => $p_subs_id,
                     name => $mapping->{sourceset},
                 });
                 $has_sset = 1;
+            } elsif ($mapping->{sourceset} && ref $mapping->{sourceset} eq 'HASH') {
+                $mapping->{sourceset}->{subscriber_id} = $p_subs_id;
+                $form = NGCP::Panel::Role::API::CFSourceSets->get_form($c);
+                return unless $self->validate_form(
+                    c => $c,
+                    resource => $mapping->{sourceset},
+                    form => $form,
+                );
+                if (! exists $mapping->{sourceset}->{sources} ) {
+                    $mapping->{sourceset}->{sources} = [];
+                }
+                if (ref $mapping->{sourceset}->{sources} ne "ARRAY") {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'sources'. Must be an array.");
+                    return;
+                }
+                my $domain = $item->provisioning_voip_subscriber->domain->domain // '';
+
+                $sset = $ssets_rs->create({
+                        name => $mapping->{sourceset}->{name},
+                        mode => $mapping->{sourceset}->{mode},
+                        is_regex => $mapping->{sourceset}->{is_regex} // 0,
+                        subscriber_id => $p_subs_id,
+                    });
+                for my $s ( @{$mapping->{sourceset}->{sources}} ) {
+                    $sset->create_related("voip_cf_sources", {
+                        source => $s->{source},
+                    });
+                }
             }
             if($has_sset && !$sset) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'sourceset'. Could not be found.");
@@ -228,12 +317,39 @@ sub update_item {
                     id => $mapping->{bnumberset_id},
                 });
                 $has_bset = 1;
-            } elsif (defined $mapping->{bnumberset}) {
+            } elsif (defined $mapping->{bnumberset} && !ref $mapping->{bnumberset}) {
                 $bset = $bsets_rs->find({
                     subscriber_id => $p_subs_id,
                     name => $mapping->{bnumberset},
                 });
                 $has_bset = 1;
+            } elsif ($mapping->{bnumberset} && ref $mapping->{bnumberset} eq 'HASH') {
+                $mapping->{bnumberset}->{subscriber_id} = $p_subs_id;
+                $form = NGCP::Panel::Role::API::CFBNumberSets->get_form($c);
+                return unless $self->validate_form(
+                    c => $c,
+                    resource => $mapping->{bnumberset},
+                    form => $form,
+                );
+                if (! exists $mapping->{bnumberset}->{bnumbers} ) {
+                    $mapping->{bnumberset}->{bnumbers} = [];
+                }
+                if (ref $mapping->{bnumberset}->{bnumbers} ne "ARRAY") {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'bnumbers'. Must be an array.");
+                    return;
+                }
+
+                $bset = $bsets_rs->create({
+                    name => $mapping->{bnumberset}->{name},
+                    mode => $mapping->{bnumberset}->{mode},
+                    is_regex => $mapping->{bnumberset}->{is_regex} // 0,
+                    subscriber_id => $p_subs_id,
+                });
+                for my $b ( @{$mapping->{bnumberset}->{bnumbers}} ) {
+                    $bset->create_related("voip_cf_bnumbers", {
+                        bnumber => $b->{bnumber},
+                    });
+                }
             }
             if($has_bset && !$bset) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'bnumberset'. Could not be found.");
