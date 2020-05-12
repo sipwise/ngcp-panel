@@ -344,6 +344,9 @@ sub auto :Private {
     }
     $c->stash(topmenu => $topmenu_templates);
 
+    $c->session->{framed} = 1 if ($c->req->params->{framed} && $c->req->params->{framed} == 1);
+    $c->session->{framed} = 0 if (defined $c->req->params->{framed} && $c->req->params->{framed} == 0);
+    $c->stash(framed => $c->session->{framed}) if ($c->session->{framed} && $c->session->{framed} == 1);
 
     $c->session->{created_objects} = {} unless(defined $c->session->{created_objects});
 

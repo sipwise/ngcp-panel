@@ -44,6 +44,12 @@
         [% END -%]
 
     </head>
+    [% IF framed -%]
+        <div style="padding: 24px 24px 24px">
+    [% END -%]
     [% content %]
+    [% IF framed -%]
+        </div>
+    [% END -%]
 </html>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
