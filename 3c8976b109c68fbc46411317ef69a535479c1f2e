@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6fb1d78b_39f0bdd6",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-12T12:42:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "293e9864_5ef2b737",
+      "range": {
+        "startLine": 174,
+        "startChar": 19,
+        "endLine": 174,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a4dbec6_41c9591d",
         "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-05-12T12:17:18Z",
       "side": 1,
       "message": "space",
+      "range": {
+        "startLine": 179,
+        "startChar": 19,
+        "endLine": 179,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a42ee86_e72f25dd",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-12T12:42:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a4dbec6_41c9591d",
       "range": {
         "startLine": 179,
         "startChar": 19,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d1c8a0cf_e3361641",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-12T12:42:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "618f1195_2e0c5952",
+      "range": {
+        "startLine": 239,
+        "startChar": 18,
+        "endLine": 239,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "58afda43_9d7eb7ab",
         "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "76dc5f39_93e47a69",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-12T12:42:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "58afda43_9d7eb7ab",
+      "range": {
+        "startLine": 281,
+        "startChar": 18,
+        "endLine": 281,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec585dd5_5d174fea",
         "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
         "patchSetId": 1
@@ -105,6 +201,30 @@
       "writtenOn": "2020-05-12T12:17:18Z",
       "side": 1,
       "message": "space",
+      "range": {
+        "startLine": 328,
+        "startChar": 19,
+        "endLine": 328,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1333e5f4_7da11c9b",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-12T12:42:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec585dd5_5d174fea",
       "range": {
         "startLine": 328,
         "startChar": 19,
