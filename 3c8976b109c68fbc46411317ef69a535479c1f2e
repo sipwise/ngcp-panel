@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "293e9864_5ef2b737",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-12T12:17:18Z",
+      "side": 1,
+      "message": "space",
+      "range": {
+        "startLine": 174,
+        "startChar": 19,
+        "endLine": 174,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a4dbec6_41c9591d",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-12T12:17:18Z",
+      "side": 1,
+      "message": "space",
+      "range": {
+        "startLine": 179,
+        "startChar": 19,
+        "endLine": 179,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "618f1195_2e0c5952",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-12T12:17:18Z",
+      "side": 1,
+      "message": "space",
+      "range": {
+        "startLine": 239,
+        "startChar": 18,
+        "endLine": 239,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "58afda43_9d7eb7ab",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-12T12:17:18Z",
+      "side": 1,
+      "message": "space",
+      "range": {
+        "startLine": 281,
+        "startChar": 18,
+        "endLine": 281,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ec585dd5_5d174fea",
+        "filename": "lib/NGCP/Panel/Role/API/CFMappings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-12T12:17:18Z",
+      "side": 1,
+      "message": "space",
+      "range": {
+        "startLine": 328,
+        "startChar": 19,
+        "endLine": 328,
+        "endChar": 20
+      },
+      "revId": "3c8976b109c68fbc46411317ef69a535479c1f2e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
