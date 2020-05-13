@@ -117,5 +117,39 @@ sub check_duplicate{
     return 1;
 }
 
+sub update_item {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    if($form->field('password')){
+        $form->field('password')->{required} = 0;
+    }
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+    );
+
+    my $pass = $resource->{password};
+    delete $resource->{password};
+    if(defined $pass && $pass ne $old_resource->{saltedpass}) {
+        unless($c->user->id == $item->id) {
+            $self->error($c, HTTP_FORBIDDEN, "Only own user can change password");
+            return;
+        }
+        $resource->{md5pass} = undef;
+        $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
+    }
+
+    if($old_resource->{login} eq NGCP::Panel::Utils::Auth::get_special_admin_login()) {
+        my $active = $resource->{is_active};
+        $resource = $old_resource;
+        $resource->{is_active} = $active;
+    }
+    $item->update($resource);
+
+    return $item;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
