@@ -5953,6 +5953,10 @@ msgstr ""
 msgid "Provisioning template cannot be removed."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/BatchProvisioning.pm lib/NGCP/Panel/Controller/BatchProvisioning.pm
+msgid "Provisioning template does not exist!"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template successfully created"
 msgstr ""
@@ -5963,10 +5967,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template successfully updated"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/BatchProvisioning.pm lib/NGCP/Panel/Controller/BatchProvisioning.pm
-msgid "Provisioning templates does not exist!"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -7103,7 +7103,7 @@ msgstr ""
 
 #. ($c->stash->{provisioning_template_name})
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
-msgid "Subscriber with Provisioning Template '%1'"
+msgid "Subscriber using Provisioning Template '%1'"
 msgstr ""
 
 #: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/subscriber/list.tt share/templates/widgets/admin_reseller_overview.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccare_customer_overview.tt share/templates/widgets/ccare_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_customer_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
@@ -7112,7 +7112,7 @@ msgstr ""
 
 #. ($c->stash->{provisioning_template_name})
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
-msgid "Subscribers with Provisioning Template '%1' from CSV"
+msgid "Subscribers using Provisioning Template '%1' from CSV"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
