@@ -20,8 +20,9 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     my $dispatch_to = '_admin_resultset_' . $c->user->roles;
+    my $is_li_admin = $c->user->lawful_intercept;
     $c->stash(
-        admins => $self->$dispatch_to($c),
+        admins => $self->$dispatch_to($c, $is_li_admin),
         template => 'administrator/list.tt',
     );
     my $cols = [
@@ -42,23 +43,23 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         { name => "billing_data", title => $c->loc("Show Billing Info") },
         { name => "can_reset_password", title => $c->loc("Can Reset Password") },
     );
-    if($c->user->is_superuser) {
-        @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => $c->loc("Lawful Intercept") });
-    }
     $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
     $c->stash->{special_admin_login} = NGCP::Panel::Utils::Auth::get_special_admin_login();
     return;
 }
 
 sub _admin_resultset_admin {
-    my ($self, $c) = @_;
-    return $c->model('DB')->resultset('admins');
+    my ($self, $c, $is_li_admin) = @_;
+    my $condition = $is_li_admin ? {'me.id' => $c->user->id} : {lawful_intercept => 0};
+    return $c->model('DB')->resultset('admins')->search($condition);
 }
 
 sub _admin_resultset_reseller {
-    my ($self, $c) = @_;
+    my ($self, $c, $is_li_admin) = @_;
+    my $condition = $is_li_admin ? {'me.id' => $c->user->id} : {lawful_intercept => 0};
     return $c->model('DB')->resultset('admins')->search({
         reseller_id => $c->user->reseller_id,
+        %$condition
     });
 }
 
@@ -148,8 +149,8 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
-    $c->stash(administrator => $c->stash->{admins}->find($administrator_id));
-    unless($c->stash->{administrator}) {
+    $c->stash(administrator => $c->stash->{admins}->find({id => $administrator_id}));
+    if(!$c->stash->{administrator} || ($c->stash->{administrator} && $c->stash->{administrator}->lawful_intercept && $administrator_id != $c->user->id)) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
             desc  => $c->loc('Administrator not found'),
@@ -180,7 +181,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         posted => $posted,
         params => $c->request->params,
         item => $params,
-        inactive => $c->stash->{administrator}->id != $c->user->id ? ['password']  : [],
+        inactive => $c->stash->{administrator}->id != $c->user->id ? ['password']  :
+                    $c->user->lawful_intercept ? ['login', 'is_superuser', 'is_ccare', 'is_master', 'is_active', 'read_only', 'show_passwords', 'call_data', 'billing_data', 'can_reset_password'] : [],
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
