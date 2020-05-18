@@ -34,16 +34,21 @@ sub _item_rs {
     my $item_rs = $c->model('DB')->resultset('admins');
     if($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
-            reseller_id => $c->user->reseller_id
+            reseller_id => $c->user->reseller_id,
+            lawful_intercept => 0
         });
     }
 
     if($c->user->is_master || $c->user->is_superuser) {
-        # return all (or all of reseller) admins
+        # return all (or all of reseller) admins except lawful intercept admin
+        $item_rs = $item_rs->search({
+            lawful_intercept => 0
+        });
     } else {
         # otherwise, only return the own admin if master is not set
         $item_rs = $item_rs->search({
             id => $c->user->id,
+            lawful_intercept => 0
         });
     }
     return $item_rs;
@@ -79,7 +84,7 @@ sub process_form_resource{
         $resource->{md5pass} = undef;
         $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
     }
-    foreach my $f(qw/billing_data call_data is_active is_master is_superuser is_ccare lawful_intercept read_only show_passwords/) {
+    foreach my $f(qw/billing_data call_data is_active is_master is_superuser is_ccare read_only show_passwords/) {
         $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' || ( defined $resource->{$f} && ( $resource->{$f} eq 'true' || $resource->{$f} eq '1' ) ) ) ? 1 : 0;
     }
     return $resource;
