@@ -1,3 +1,73 @@
+ngcp-panel (8.4.1.0+0~mr8.4.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [dd85123] TT#4166 I18N dump: snapshot 2020.03.17-01.23.57
+  * [51a44cc] TT#4166 I18N dump: snapshot 2020.03.21-01.23.33
+  * [c753a28] TT#4166 I18N dump: snapshot 2020.03.25-01.23.40
+  * [da1f0c2] TT#4166 I18N dump: snapshot 2020.04.03-01.22.42
+  * [00e9425] TT#4166 I18N dump: snapshot 2020.04.07-01.40.04
+  * [2fa2974] TT#4166 I18N dump: snapshot 2020.04.25-01.23.19
+  * [88a67ea] TT#4166 I18N dump: snapshot 2020.05.01-01.27.46
+  * [d99a482] TT#4166 I18N dump: snapshot 2020.05.06-01.22.25
+  * [498d925] TT#4166 I18N dump: snapshot 2020.05.18-01.25.16
+
+  [ Flaviu Mates ]
+  * [4041763] TT#69380 - Disable search field caching only for Calls
+  * [445197d] TT#76360 - Implement /api/activesubscriberpreferences endpoint
+  * [a535270] TT#74752 - Anonymize CLIR numbers according to calllist_clir_scope
+  * [853b8b2] TT#78166 - Fix SubscriberRegistrations test case
+  * [23ed430] TT#75753 - Change default value to '1' for 'enabled' in Call Forwards
+  * [a975f79] TT#68217 - Delete htable peer_probe when deleting/disabling peer
+  * [707067d] TT#80305 - Change Utils::Admin to Utils::Auth
+  * [251b95e] TT#74220 - Return condition values on /api/headerrulesets GET
+  * [8c04b91] TT#80997 - Manually add webpassword to subscriber content in tests
+  * [10415a5] TT#74220 - Upgrade '/api/cfmappings'
+  * [d31797c] TT#81185 - Return only body when parameter 'framed' is sent
+
+  [ Rene Krenn ]
+  * [adabbf0] TT#78153 fix _item_by_aor for redis
+  * [433fcf5] TT#78153 fix redis location resultset filtering
+  * [a11f2be] TT#77452 properly synchronize subscriber create/update
+  * [f9690f0] TT#77452 rename rowlock_contract
+  * [6055c59] TT#75951 fix ngcp-provisioning-template --help option
+  * [354a25d] TT#75951 ngcp-provisioning-template use ngcp_connect_info
+  * [1fffc52] TT#78569 provide tools menu for reseller admins
+  * [f5459af] TT#78467 OWNER_VAT_SETTINGS option for calllist/conversations
+  * [74bc82c] TT#80161 refactor subscriber datatable search
+  * [a30a360] TT#80552 fix /api/calllist owner logic
+  * [330eac9] TT#80161 properly avoid dupes in subscriber datatable
+  * [36db816] TT#80605 prov templates: create/update/delete (panel UI)
+  * [722d3ad] TT#81012 ngcp-provisioning-template: allow templates from DB
+
+  [ Nico Schedel ]
+  * [3093562] TT#78161 selenium: fix search calls to work better with search field caching
+  * [8de1bd5] TT#78161 selenium: remove unnecessary search calls for cached search fields
+  * [70b9992] TT#80128 selenium: generate both subscriber passwords with generate button
+
+  [ Alexander Lutay ]
+  * [ac61975] TT#76360 Fix 445197df5: add activesubscriberpreferences to api-root.t
+
+  [ Guillem Jover ]
+  * [624139f] TT#78502 Fix man pages formatting
+  * [29d5761] TT#77256 ngcp-api-tools: Normalize coding style
+  * [f729ec0] TT#77256 ngcp-api-tools: Use /etc/default/ngcp-api if no user cred file exists
+
+  [ Victor Tsvetov ]
+  * [52feebe] TT#79955 Allow rewriting 'unique_id" in API TestFramework
+
+  [ Kirill Solomko ]
+  * [2c8a110] TT#80305 add JWT authentication for admin users
+  * [ac7c503] TT#80550 enable admin JWT auth for ajax requests
+  * [cf51166] TT#80550 enable admin jwt token for the whole UI
+
+  [ Andreas Granig ]
+  * [8f8e1d5] TT#78557 - Use bcrypt to hash webpassword
+
+  [ Marco Capetta ]
+  * [f964090] TT#78301 Add b2b service to callflow
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 May 2020 11:10:13 +0200
+
 ngcp-panel (8.4.0.0+0~mr8.4.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
