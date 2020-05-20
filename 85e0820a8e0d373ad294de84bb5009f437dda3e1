@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "2a83e953_38460be1",
+        "filename": "lib/NGCP/Panel/Controller/Login.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-20T12:49:49Z",
+      "side": 1,
+      "message": "change the query param name to \"token\" as it is more generic :)",
+      "range": {
+        "startLine": 140,
+        "startChar": 99,
+        "endLine": 140,
+        "endChar": 103
+      },
+      "revId": "85e0820a8e0d373ad294de84bb5009f437dda3e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "582fe8e3_1bed8b85",
         "filename": "lib/NGCP/Panel/Controller/Login.pm",
         "patchSetId": 4
