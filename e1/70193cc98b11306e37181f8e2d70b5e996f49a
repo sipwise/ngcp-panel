@@ -1,0 +1,8 @@
+Verified+1: Jenkins Jenkins
+Code-Review+2: Kirill Solomko <ksolomko@sipwise.com>
+Code-Review+1: Hans-Peter Herzog <hherzog@sipwise.com>
+Submitted-by: Flaviu Mates <fmates@sipwise.com>
+Submitted-at: Wed, 20 May 2020 16:11:33 +0200
+Reviewed-on: http://gerrit.mgm.sipwise.com/c/ngcp-panel/+/40019
+Project: ngcp-panel
+Branch: refs/heads/master
