@@ -1,3 +1,18 @@
+ngcp-panel (6.5.9.1+0~mr6.5.9.1) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [411cf23] TT#69380 - Disable search field caching only for Calls
+  * [2f50a7d] TT#68217 - Delete htable peer_probe when deleting/disabling peer
+  * [5fccd20] TT#70478 - Enable stateSave for datatables
+
+  [ Rene Krenn ]
+  * [2762c32] TT#78153 fix _item_by_aor for redis
+  * [dbd2c4b] TT#78153 fix redis location resultset filtering
+  * [0d5307f] TT#80161 refactor subscriber datatable search
+  * [7618c07] TT#80161 properly avoid dupes in subscriber datatable
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 21 May 2020 16:12:41 +0200
+
 ngcp-panel (6.5.9.0+0~mr6.5.9.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
