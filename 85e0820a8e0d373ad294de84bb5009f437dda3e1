@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b668b175_00cf7c54",
+        "filename": "lib/NGCP/Panel/Controller/Login.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-21T17:21:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a83e953_38460be1",
+      "range": {
+        "startLine": 140,
+        "startChar": 99,
+        "endLine": 140,
+        "endChar": 103
+      },
+      "revId": "85e0820a8e0d373ad294de84bb5009f437dda3e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "582fe8e3_1bed8b85",
         "filename": "lib/NGCP/Panel/Controller/Login.pm",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2020-05-19T16:25:29Z",
       "side": 1,
       "message": "This user",
+      "range": {
+        "startLine": 152,
+        "startChar": 45,
+        "endLine": 152,
+        "endChar": 50
+      },
+      "revId": "85e0820a8e0d373ad294de84bb5009f437dda3e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "81fc1df4_316c0625",
+        "filename": "lib/NGCP/Panel/Controller/Login.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-21T17:21:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "582fe8e3_1bed8b85",
       "range": {
         "startLine": 152,
         "startChar": 45,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "05c63c76_3d87043c",
+        "filename": "lib/NGCP/Panel/Controller/Login.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-21T17:21:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "798fc278_f9cd4654",
+      "range": {
+        "startLine": 199,
+        "startChar": 23,
+        "endLine": 199,
+        "endChar": 55
+      },
+      "revId": "85e0820a8e0d373ad294de84bb5009f437dda3e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a1dcec36_bb004bad",
         "filename": "lib/NGCP/Panel/Controller/Login.pm",
         "patchSetId": 4
@@ -82,6 +154,30 @@
       "writtenOn": "2020-05-19T16:25:29Z",
       "side": 1,
       "message": "no need to grep anything here as you fetch the data belonging to the admin user.",
+      "range": {
+        "startLine": 200,
+        "startChar": 19,
+        "endLine": 200,
+        "endChar": 50
+      },
+      "revId": "85e0820a8e0d373ad294de84bb5009f437dda3e1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a4079d3_5950045c",
+        "filename": "lib/NGCP/Panel/Controller/Login.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-05-21T17:21:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1dcec36_bb004bad",
       "range": {
         "startLine": 200,
         "startChar": 19,
