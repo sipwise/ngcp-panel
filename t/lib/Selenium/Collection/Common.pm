@@ -222,6 +222,13 @@ sub create_customer {
     return unless $customerid && $contactmail && $billingname;
     $special = 'empty' unless $special;
 
+    diag("Check if CE or PRO is used");
+    $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(), "Documentation")]')->click();
+    $self->driver->find_element("Handbook", 'link_text')->click();
+    my $TRUNKTYPE = $self->driver->get_text_safe('//*[@id="header"]/div/div/h2');
+    $self->driver->go_back();
+    $self->driver->go_back();
+
     diag("Go to 'Customers' page");
     $self->driver->scroll_to_element($self->driver->find_element('//*[@id="main-nav"]'));
     $self->driver->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
@@ -233,6 +240,12 @@ sub create_customer {
     $self->driver->find_element('#contactidtable tr > td.dataTables_empty', 'css');
     $self->driver->fill_element('#contactidtable_filter input', 'css', $contactmail);
     $self->driver->select_if_unselected('//table[@id="contactidtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
+    if(index($TRUNKTYPE, 'PRO/CARRIER') != -1) {
+        $self->driver->fill_element('#productidtable_filter input', 'css', 'thisshouldnotexist');
+        $self->driver->find_element('#productidtable tr > td.dataTables_empty', 'css');
+        $self->driver->fill_element('#productidtable_filter input', 'css', 'Basic');
+        $self->driver->find_element_by_xpath('//*[@id="productidtable"]//tr[1]//td/input')->click()
+    }
     $self->driver->fill_element('#billing_profileidtable_filter input', 'css', 'thisshouldnotexist');
     $self->driver->find_element('#billing_profileidtable tr > td.dataTables_empty', 'css');
     $self->driver->fill_element('#billing_profileidtable_filter input', 'css', $billingname);
@@ -243,10 +256,6 @@ sub create_customer {
         $self->driver->find_element('//*[@id="status"]/option[contains(text(), "locked")]')->click();
     }
     $self->driver->fill_element('#external_id', 'css', $customerid);
-    if(index($special, 'pbx') != -1) {
-        diag("Creating Customer for PBX testing");
-        $self->driver->select_if_unselected('//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
-    }
     $self->driver->find_element('#save', 'css')->click();
     ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "successfully created")]'), 'Correct Alert was shown');
 }
