@@ -116,9 +116,9 @@ sub resource_from_item {
     $resource{'type'} = 'profile_limit' if $resource{'type'} eq 'billing_profile';
 
     if ($billing_profile->fraud_use_reseller_rates) {
-        $resource{'interval_cost'} = $cpc{'customer_cost'};
-    } else {
         $resource{'interval_cost'} = $cpc{'reseller_cost'};
+    } else {
+        $resource{'interval_cost'} = $cpc{'customer_cost'};
     }
     if ('month' eq $cpc{'period'}) {
         if ('contract' eq $cpc{'fraud_limit_type'}) {
