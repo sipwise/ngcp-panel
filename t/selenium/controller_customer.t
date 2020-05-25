@@ -6,6 +6,7 @@ use Test::More import => [qw(done_testing is ok diag todo_skip)];
 use Selenium::Remote::Driver::FirefoxExtensions;
 use Selenium::Collection::Common;
 use Selenium::Collection::Functions;
+use TryCatch;
 
 my ($port) = @_;
 my $d = Selenium::Collection::Functions::create_driver($port);
@@ -35,12 +36,8 @@ $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
 $c->create_contact($contactmail, $resellername);
 $c->create_billing_profile($billingname, $resellername);
+$c->create_customer($customerid, $contactmail, $billingname, 'locked');
 
-if($pbx == 1){
-    $c->create_customer($customerid, $contactmail, $billingname, 'pbx locked');
-} else {
-    $c->create_customer($customerid, $contactmail, $billingname, 'locked');
-}
 
 diag("Try to create an empty Customer");
 $d->find_element('Create Customer', 'link_text')->click();
