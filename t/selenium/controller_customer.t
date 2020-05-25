@@ -35,12 +35,8 @@ $c->create_reseller_contract($contractid);
 $c->create_reseller($resellername, $contractid);
 $c->create_contact($contactmail, $resellername);
 $c->create_billing_profile($billingname, $resellername);
+$c->create_customer($customerid, $contactmail, $billingname, 'locked');
 
-if($pbx == 1){
-    $c->create_customer($customerid, $contactmail, $billingname, 'pbx locked');
-} else {
-    $c->create_customer($customerid, $contactmail, $billingname, 'locked');
-}
 
 diag("Try to create an empty Customer");
 $d->find_element('Create Customer', 'link_text')->click();
