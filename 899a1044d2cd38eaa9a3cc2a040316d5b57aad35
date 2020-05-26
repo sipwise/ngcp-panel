@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4aa8bb52_aac12fc0",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-05-26T16:58:55Z",
+      "side": 1,
+      "message": "BTW in new perl versions length also does an implicit defined check.",
+      "revId": "899a1044d2cd38eaa9a3cc2a040316d5b57aad35",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
