@@ -1,3 +1,10 @@
+ngcp-panel (8.3.1.5+0~mr8.3.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [3b80df0] TT#82260 limit fraud interval costs to 2 fractional digits
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 26 May 2020 11:14:47 +0200
+
 ngcp-panel (8.3.1.4+0~mr8.3.1.4) unstable; urgency=medium
 
   [ Rene Krenn ]
