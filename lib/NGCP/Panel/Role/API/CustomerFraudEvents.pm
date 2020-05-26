@@ -120,6 +120,8 @@ sub resource_from_item {
     } else {
         $resource{'interval_cost'} = $cpc{'customer_cost'};
     }
+    $resource{'interval_cost'} = sprintf("%.2f",$resource{'interval_cost'})
+        if (defined $resource{'interval_cost'} and length($resource{'interval_cost'}) > 0);
     if ('month' eq $cpc{'period'}) {
         if ('contract' eq $cpc{'fraud_limit_type'}) {
             if ($contract_fraud_preference) {
