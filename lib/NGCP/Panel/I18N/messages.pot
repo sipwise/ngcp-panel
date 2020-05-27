@@ -205,6 +205,10 @@ msgstr ""
 msgid "A numeric string intended to be used in rewrite rules for emergency numbers."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "A password reset attempt has been made already recently, please check your email"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A password used for authentication against the peer host."
 msgstr ""
@@ -283,6 +287,10 @@ msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Address"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Admin does not have an email set"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1074,6 +1082,10 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "Callthrough CLIs"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Can Reset Password"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Auth.pm
@@ -2128,7 +2140,7 @@ msgstr ""
 msgid "ECM"
 msgstr ""
 
-#: share/templates/administrator/list.tt share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt share/templates/billing/list.tt share/templates/billing/peaktimes.tt share/templates/billing/peaktimes.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/contract/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/header/actions_list.tt share/templates/header/conditions_list.tt share/templates/header/rules_list.tt share/templates/header/set_list.tt share/templates/helpers/pref_table.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/ncos/list.tt share/templates/ncos/lnp_pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/network/list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/list.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/header_rule_actions_list.tt share/templates/subscriber/header_rule_conditions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/timeset/event_list.tt share/templates/timeset/list.tt share/templates/voucher/list.tt
+#: share/templates/administrator/list.tt share/templates/administrator/list.tt share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt share/templates/billing/list.tt share/templates/billing/peaktimes.tt share/templates/billing/peaktimes.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/contract/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/header/actions_list.tt share/templates/header/conditions_list.tt share/templates/header/rules_list.tt share/templates/header/set_list.tt share/templates/helpers/pref_table.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/ncos/list.tt share/templates/ncos/lnp_pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/network/list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/list.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/header_rule_actions_list.tt share/templates/subscriber/header_rule_conditions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/timeset/event_list.tt share/templates/timeset/list.tt share/templates/voucher/list.tt
 msgid "Edit"
 msgstr ""
 
@@ -2161,7 +2173,7 @@ msgstr ""
 msgid "Edit Zones"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm share/templates/customer/details.tt share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/Administrator.pm lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm share/templates/customer/details.tt share/templates/subscriber/preferences.tt
 msgid "Email"
 msgstr ""
 
@@ -3055,6 +3067,10 @@ msgstr ""
 msgid "Failed to process CSV file."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Failed to recover password"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to recover web password"
 msgstr ""
@@ -3079,6 +3095,10 @@ msgstr ""
 #. ($error->type, $error->info)
 #: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to render template. Type is %1, info is %2."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Failed to reset password"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm
@@ -3574,7 +3594,7 @@ msgstr ""
 msgid "Force translation of audio media to T.38 offer"
 msgstr ""
 
-#: share/templates/login/login.tt
+#: share/templates/login/login.tt share/templates/login/login.tt
 msgid "Forgot your password?"
 msgstr ""
 
@@ -4448,6 +4468,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Invalid timeset id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Invalid token"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Login.pm
@@ -5554,6 +5578,10 @@ msgstr ""
 msgid "Party Call Control"
 msgstr ""
 
+#: share/templates/administrator/reset_password.tt
+msgid "Password"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/Form.pm
 msgid "Password is too weak"
 msgstr ""
@@ -5564,6 +5592,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password of the phone administrator."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Password successfully recovered, please re-login."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
@@ -6347,7 +6379,7 @@ msgstr ""
 msgid "Reserved for Customer"
 msgstr ""
 
-#: share/templates/login/login.tt
+#: share/templates/administrator/reset_password.tt share/templates/login/login.tt share/templates/login/login.tt
 msgid "Reset Password"
 msgstr ""
 
@@ -7231,6 +7263,10 @@ msgstr ""
 msgid "Successfully redirected request to device"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Successfully reset password, please check your email"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully reset web password, please check your email"
 msgstr ""
@@ -7610,6 +7646,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Form/EmailTemplate/Reseller.pm lib/NGCP/Panel/Form/TimeSet/Reseller.pm
 msgid "This name already exists"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "This user is not allowed to reset password"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
