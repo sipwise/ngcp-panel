@@ -34,6 +34,24 @@
       "revId": "899a1044d2cd38eaa9a3cc2a040316d5b57aad35",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee8fe295_23252370",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-05-27T13:58:11Z",
+      "side": 1,
+      "message": "Right it would need to be evaluated in a pure boolean context, so «if length $var», or «if not length $var», but these can be less readable. In any case more of a style nit than anything else, and it depends on whether you consider the repetition to be more annoying than the possible less readable code. :)",
+      "parentUuid": "190320f3_8134fd2d",
+      "revId": "899a1044d2cd38eaa9a3cc2a040316d5b57aad35",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
