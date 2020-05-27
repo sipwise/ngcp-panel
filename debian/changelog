@@ -1,3 +1,11 @@
+ngcp-panel (8.4.2.0+0~mr8.4.2.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [af67019] TT#82304 fix fraud reseller<->customer costs in mails
+  * [0856223] TT#82260 fix updating fraud notification status
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 27 May 2020 15:02:03 +0200
+
 ngcp-panel (8.4.1.0+0~mr8.4.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
