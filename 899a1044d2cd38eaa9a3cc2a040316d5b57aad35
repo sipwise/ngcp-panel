@@ -16,6 +16,24 @@
       "revId": "899a1044d2cd38eaa9a3cc2a040316d5b57aad35",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "190320f3_8134fd2d",
+        "filename": "lib/NGCP/Panel/Role/API/CustomerFraudEvents.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-05-27T10:09:08Z",
+      "side": 1,
+      "message": "seems it accepts undef imput, but then also returns undef. then the subsequent comparison emits the warning:\n\n[sipwise-lab-trunk] sipwise@spce:~$ perl -e \"use warnings; print \u0027test\u0027 if length(undef) \u003e 0;\"\nUse of uninitialized value in numeric gt (\u003e) at -e line 1.",
+      "parentUuid": "4aa8bb52_aac12fc0",
+      "revId": "899a1044d2cd38eaa9a3cc2a040316d5b57aad35",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
