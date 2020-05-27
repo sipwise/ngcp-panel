@@ -296,6 +296,12 @@ msgstr ""
 "Una cadena numérica para ser usada en las rewrite-rules para llamadas de "
 "emergencia."
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid ""
+"A password reset attempt has been made already recently, please check your "
+"email"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A password used for authentication against the peer host."
 msgstr "Contraseña usada para autenticación contra el peer host."
@@ -391,6 +397,10 @@ msgstr ""
 #: share/templates/customer/details.tt
 msgid "Address"
 msgstr "Dirección"
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Admin does not have an email set"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Admin name"
@@ -1301,6 +1311,10 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "Callthrough CLIs"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Can Reset Password"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Auth.pm
@@ -2620,6 +2634,7 @@ msgstr "Editar Slots"
 msgid "Edit Zones"
 msgstr "Editar Zonas"
 
+#: lib/NGCP/Panel/Controller/Administrator.pm
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm
 #: share/templates/customer/details.tt
 #: share/templates/subscriber/preferences.tt
@@ -3541,6 +3556,10 @@ msgstr ""
 msgid "Failed to process CSV file."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Failed to recover password"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to recover web password"
 msgstr ""
@@ -3565,6 +3584,10 @@ msgstr ""
 #. ($error->type, $error->info)
 #: lib/NGCP/Panel/Utils/Invoice.pm
 msgid "Failed to render template. Type is %1, info is %2."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Failed to reset password"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -5043,6 +5066,10 @@ msgid "Invalid timeset id detected"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Login.pm
+msgid "Invalid token"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
 msgid "Invalid username/password"
 msgstr "Nombre o contraseña inválidos"
 
@@ -6211,6 +6238,10 @@ msgstr ""
 msgid "Party Call Control"
 msgstr ""
 
+#: share/templates/administrator/reset_password.tt
+msgid "Password"
+msgstr "Contraseña"
+
 #: lib/NGCP/Panel/Utils/Form.pm
 msgid "Password is too weak"
 msgstr ""
@@ -6221,6 +6252,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password of the phone administrator."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Password successfully recovered, please re-login."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
@@ -7082,6 +7117,7 @@ msgstr "Resellers"
 msgid "Reserved for Customer"
 msgstr ""
 
+#: share/templates/administrator/reset_password.tt
 #: share/templates/login/login.tt
 msgid "Reset Password"
 msgstr ""
@@ -8189,6 +8225,10 @@ msgstr "Buzón eliminado con éxito"
 msgid "Successfully redirected request to device"
 msgstr "Petición redireccionada al dispositivo"
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Successfully reset password, please check your email"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully reset web password, please check your email"
 msgstr ""
@@ -8674,6 +8714,10 @@ msgstr ""
 #: lib/NGCP/Panel/Form/EmailTemplate/Reseller.pm
 #: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
 msgid "This name already exists"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "This user is not allowed to reset password"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
@@ -10170,9 +10214,6 @@ msgstr "sí"
 
 #~ msgid "Parallel Ringing"
 #~ msgstr "Parallel Ringing"
-
-#~ msgid "Password"
-#~ msgstr "Contraseña"
 
 #~ msgid "Period"
 #~ msgstr "Periodo"
