@@ -301,13 +301,14 @@ sub dial_out {
     my $caller_username = $prov_subscriber->username;
     my $caller_domain = $prov_subscriber->domain->domain;
     my $caller_password = $prov_subscriber->password;
+    my $click2dial = $c->config->{click2dial}->{version};
 
     my $ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", 0, 1, <<EOF );
 <?xml version="1.0"?>
 <methodCall>
   <methodName>dial_auth_b2b</methodName>
   <params>
-    <param><value><string>click2dial</string></value></param>
+    <param><value><string>$click2dial</string></value></param>
     <param><value><string>$announcement</string></value></param>
     <param><value><string>sip:$caller_username\@$caller_domain</string></value></param>
     <param><value><string>sip:$callee_user\@$callee_domain</string></value></param>
