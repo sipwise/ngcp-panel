@@ -2,13 +2,14 @@
 
 <div class="row">
     <span>
+        [% UNLESS framed -%]
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        [% back_created = 1 -%]
+        [% END -%]
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/calllistsuppression/download') %]"><i class="icon-star"></i> [% c.loc('Download CSV') %]</a>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/calllistsuppression/upload') %]"><i class="icon-star"></i> [% c.loc('Upload CSV') %]</a>
     </span>
 </div>
-
-[% back_created = 1 -%]
 
 [%
     helper.name = c.loc('Call List Suppression');

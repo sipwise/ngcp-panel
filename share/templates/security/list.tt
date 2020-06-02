@@ -1,11 +1,12 @@
 [% site_config.title = c.loc('Security Bans')  -%]
-
+[% UNLESS framed -%]
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
+[% END -%]
 
 <div class="row">
     [% FOREACH m IN messages -%]

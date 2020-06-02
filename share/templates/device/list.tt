@@ -1,11 +1,12 @@
 [%site_config.title = c.loc('Device Management') -%]
-
+[% UNLESS framed -%]
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
+[% END -%]
 
 <script>
 function typeDynamicFields(selectedValue){
