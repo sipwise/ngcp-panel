@@ -1,4 +1,5 @@
 [% USE date %]
+[% UNLESS framed -%]
 <body>
 <div id="wrapper">
     <div id="topbar">
@@ -57,7 +58,7 @@
             </div> <!-- /#top-nav -->
         </div> <!-- /.container -->
     </div> <!-- /#topbar -->
-
+[% END -%]
     <div id="header">
         <div class="container">
             <a href="[% c.uri_for('/dashboard') %]" class="brand">[% c.loc("Dashboard") %]</a>
@@ -273,6 +274,7 @@ $( document ).ready(function() {
 
 
 [%PROCESS 'administrator/openvpn_wrapper.tt' %]
-
+[% UNLESS framed -%]
 </body>
+[% END -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
