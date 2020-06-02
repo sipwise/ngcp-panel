@@ -1,16 +1,4 @@
 [% site_config.title = c.loc('Global Call List Suppressions') -%]
-
-<div class="row">
-    <span>
-        [% UNLESS framed -%]
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
-        [% back_created = 1 -%]
-        [% END -%]
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/calllistsuppression/download') %]"><i class="icon-star"></i> [% c.loc('Download CSV') %]</a>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/calllistsuppression/upload') %]"><i class="icon-star"></i> [% c.loc('Upload CSV') %]</a>
-    </span>
-</div>
-
 [%
     helper.name = c.loc('Call List Suppression');
     helper.identifier = "call_list_suppression";
@@ -32,6 +20,8 @@
         ];
         helper.top_buttons = [
             { name = c.loc('Create call list suppression'), uri = c.uri_for_action('/calllistsuppression/create'), icon = 'icon-star' },
+            { name = c.loc('Download CSV'), uri = c.uri_for('/calllistsuppression/download'), icon = 'icon-star' },
+            { name = c.loc('Upload CSV'), uri = c.uri_for('/calllistsuppression/upload'), icon = 'icon-star' },
         ];
     END;
 
