@@ -46,6 +46,11 @@
     </head>
     [% IF framed -%]
         <div style="padding: 24px 24px 24px">
+        <style>
+          @media (min-width: 1200px) {
+            .row { margin-left: 0px; }
+          }
+        </style>
     [% END -%]
     [% content %]
     [% IF framed -%]
