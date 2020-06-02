@@ -122,6 +122,11 @@
                 [% END; -%]
                 © 2013 - [% date.format(date.now, '%Y') -%] <a href="http://www.sipwise.com">Sipwise GmbH</a>, [% c.loc('all rights reserved') %].
             </div>
+            [% IF c.config.general.ui_enable -%]
+              <div class="nav pull-right">
+                <b><a href="/v2/#/[% c.req.path -%]">[% c.loc('GO TO NEW ADMIN PANEL') -%]</a></b>
+              </div>
+            [% END -%]
         </div>
     </div>
 </div>
