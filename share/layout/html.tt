@@ -45,10 +45,18 @@
 
     </head>
     [% IF framed -%]
-        <div style="padding: 24px 24px 24px">
+        <div style="padding: 14px 24px 24px">
         <style>
           @media (min-width: 1200px) {
             .row { margin-left: 0px; }
+          }
+          #content {
+            margin-top: 0;
+            margin-bottom: 0;
+          }
+          h2 {
+            margin-bottom: 0;
+            line-height: 24px;
           }
         </style>
     [% END -%]

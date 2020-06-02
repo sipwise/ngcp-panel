@@ -1,4 +1,16 @@
 [% USE date %]
+[% IF framed -%]
+
+<div id="wrapper">
+  <h2>[% template.title or site_config.title %]</h2>
+
+  <div id="content">
+    [% content %]
+  </div>
+</div>
+
+[% ELSE -%]
+
 <body>
 <div id="wrapper">
     <div id="topbar">
@@ -26,17 +38,17 @@
                     <li>
                         [% IF c.user && c.session.user_tz_name; '(' _ c.session.user_tz.name _ ' ' _ c.loc('time') _ ')'; END; %]
                     </li>
-[%- IF ( c.user && ( c.user.roles == 'admin' || c.user.is_superuser ) ) && openvpn_info.allowed -%]
-[%- IF !openvpn_info.active %]
+[%-   IF ( c.user && ( c.user.roles == 'admin' || c.user.is_superuser ) ) && openvpn_info.allowed -%]
+[%-     IF !openvpn_info.active %]
                     <li>
                         <a class="btn btn-small btn-secondary" href="javascript:toggleOpenvpn('confirm');void(0);"><i class="icon-off"></i>Openvpn</a>
                     </li>
-[%ELSE-%]
+[%      ELSE -%]
                     <li>
                         <a class="btn btn-small btn-success" href="javascript:toggleOpenvpn('confirm');void(0);"><i class="icon-ok"></i>Openvpn</a>
                     </li>
-[%END-%]
-[%END-%]
+[%      END -%]
+[%   END -%]
                     <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="icon-globe"></i> [% c.loc('Language') %]
@@ -113,6 +125,7 @@
         </div>
     </div>
 </div>
+[% END -%] <!-- framed=0 -->
 
 <script src="/js/Theme.js"></script>
 
@@ -216,7 +229,11 @@ var mainWrapperInit = function () {
 
     if($('.accordion-body').length) {
         if(!$('#toggle-accordions').length){
+          [% IF framed -%]
+            $('#content').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
+          [% ELSE -%]
             $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
+          [% END -%]
         }
         $('#toggle-accordions').click(function() {
             if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {
@@ -273,6 +290,7 @@ $( document ).ready(function() {
 
 
 [%PROCESS 'administrator/openvpn_wrapper.tt' %]
-
+[% UNLESS framed -%]
 </body>
+[% END -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
