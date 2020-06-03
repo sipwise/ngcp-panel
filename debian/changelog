@@ -1,3 +1,10 @@
+ngcp-panel (8.4.1.2+0~mr8.4.1.2) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [fa1c538] TT#80994 - Get click2dial version from config
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 03 Jun 2020 15:59:32 +0200
+
 ngcp-panel (8.4.1.1+0~mr8.4.1.1) unstable; urgency=medium
 
   [ Rene Krenn ]
