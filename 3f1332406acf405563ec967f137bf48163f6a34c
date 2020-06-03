@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3f87521_c585cba9",
+        "filename": "share/layout/body.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-06-03T08:11:10Z",
+      "side": 1,
+      "message": "This way will work only if \u0027js_ui_enable\u0027 is stashed. If you want to get it from config, you can do \u0027c.config.js_ui_enable\u0027 assuming you already modified added it to ngcp_panel.conf.",
+      "range": {
+        "startLine": 125,
+        "startChar": 15,
+        "endLine": 125,
+        "endChar": 30
+      },
+      "revId": "3f1332406acf405563ec967f137bf48163f6a34c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
