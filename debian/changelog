@@ -1,3 +1,10 @@
+ngcp-panel (8.4.1.4+0~mr8.4.1.4) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [b402056] TT#76109 - Fix duplicate administrator email check
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Jun 2020 16:31:10 +0200
+
 ngcp-panel (8.4.1.3+0~mr8.4.1.3) unstable; urgency=medium
 
   [ Flaviu Mates ]
