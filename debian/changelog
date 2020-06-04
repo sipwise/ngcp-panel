@@ -1,3 +1,11 @@
+ngcp-panel (8.4.1.5+0~mr8.4.1.5) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [2267cb5] TT#81184 - Add PATCH/PUT endpoints for '/api/admins'
+  * [2620112] TT#76111 - Hide LI Admins from NGCP Panel
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Jun 2020 16:46:42 +0200
+
 ngcp-panel (8.4.1.4+0~mr8.4.1.4) unstable; urgency=medium
 
   [ Flaviu Mates ]
