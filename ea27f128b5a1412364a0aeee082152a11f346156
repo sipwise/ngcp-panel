@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "371badc9_4f72f863",
+        "filename": "share/templates/calllistsuppression/list.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-06-04T10:36:51Z",
+      "side": 0,
+      "message": "You can leave the back button here surrounded by \u0027UNLESS FRAMED...\u0027 or else it will disappear on the old admin ui as well.",
+      "range": {
+        "startLine": 6,
+        "startChar": 8,
+        "endLine": 6,
+        "endChar": 132
+      },
+      "revId": "ea27f128b5a1412364a0aeee082152a11f346156",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
