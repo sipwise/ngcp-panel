@@ -46,6 +46,30 @@
       "revId": "ea27f128b5a1412364a0aeee082152a11f346156",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aefe9b58_b4b3ea12",
+        "filename": "share/templates/calllistsuppression/list.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-06-04T11:26:39Z",
+      "side": 0,
+      "message": "Correct! Tnx for spotting ;-)",
+      "parentUuid": "5dc286c0_f61f05c4",
+      "range": {
+        "startLine": 6,
+        "startChar": 8,
+        "endLine": 6,
+        "endChar": 132
+      },
+      "revId": "ea27f128b5a1412364a0aeee082152a11f346156",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
