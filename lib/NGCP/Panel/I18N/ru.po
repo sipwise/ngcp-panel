@@ -765,7 +765,6 @@ msgid "BLF Key"
 msgstr "BLF ключ"
 
 #: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt
-#: share/templates/calllistsuppression/list.tt
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
 #: share/templates/customer/pbx_fdev_preferences.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
@@ -5272,10 +5271,6 @@ msgstr ""
 msgid "Last Underrun (Profiles)"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm
-msgid "Lawful Intercept"
-msgstr "Законный перехват"
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Lawful Interception"
 msgstr ""
@@ -9682,6 +9677,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "да"
+
+#~ msgid "Lawful Intercept"
+#~ msgstr "Законный перехват"
 
 #~ msgid ""
 #~ "Check the box if you want to perform serial forking based on q-value "

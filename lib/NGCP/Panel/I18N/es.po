@@ -755,7 +755,6 @@ msgid "BLF Key"
 msgstr "Botón BLF"
 
 #: share/templates/billing/peaktimes.tt share/templates/callflow/callmap.tt
-#: share/templates/calllistsuppression/list.tt
 #: share/templates/callrouting/verify.tt share/templates/customer/details.tt
 #: share/templates/customer/pbx_fdev_preferences.tt
 #: share/templates/customer/preferences.tt share/templates/denied_page.tt
@@ -5268,10 +5267,6 @@ msgstr ""
 msgid "Last Underrun (Profiles)"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm
-msgid "Lawful Intercept"
-msgstr "Intercepción Legal"
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Lawful Interception"
 msgstr ""
@@ -9684,6 +9679,9 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Lawful Intercept"
+#~ msgstr "Intercepción Legal"
 
 #~ msgid "Match Direction"
 #~ msgstr "Coincidir dirección"
