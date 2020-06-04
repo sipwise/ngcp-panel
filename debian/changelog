@@ -1,3 +1,10 @@
+ngcp-panel (8.4.1.3+0~mr8.4.1.3) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [09e7d88] TT#76108 - Implement password reset mechanism for admins
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Jun 2020 16:04:00 +0200
+
 ngcp-panel (8.4.1.2+0~mr8.4.1.2) unstable; urgency=medium
 
   [ Flaviu Mates ]
