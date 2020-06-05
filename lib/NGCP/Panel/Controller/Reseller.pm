@@ -64,7 +64,7 @@ sub root :Chained('list_reseller') :PathPart('') :Args(0) :Does(ACL) :ACLDetachT
     my ($self, $c) = @_;
 }
 
-sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(ccareadmin) {
     my ($self, $c) = @_;
     my $resellers = $c->stash->{resellers};
     NGCP::Panel::Utils::Datatables::process($c, $resellers, $c->stash->{reseller_dt_columns}, sub {
