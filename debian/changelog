@@ -1,3 +1,10 @@
+ngcp-panel (8.4.1.7+0~mr8.4.1.7) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [112bec5] TT#82263 fix admin tests in trunk
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 05 Jun 2020 23:01:12 +0200
+
 ngcp-panel (8.4.1.6+0~mr8.4.1.6) unstable; urgency=medium
 
   [ Flaviu Mates ]
