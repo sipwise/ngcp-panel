@@ -36,6 +36,8 @@ sub apply_resource_reseller_id {
          }
     } elsif($c->user->roles eq "reseller") {
         $reseller_id = $c->user->reseller_id;
+    } elsif($c->user->roles eq "lintercept") {
+        $reseller_id = $c->user->reseller_id;
     }
     $resource->{reseller_id} = $reseller_id;
     return $resource;

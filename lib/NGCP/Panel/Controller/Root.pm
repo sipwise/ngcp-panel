@@ -101,6 +101,10 @@ sub auto :Private {
             my $reseller_id = $c->user->reseller_id;
             my $tz_row = $c->model('DB')->resultset('reseller_timezone')->find({reseller_id => $reseller_id});
             _set_session_tz_from_row($c, $tz_row, 'reseller', $reseller_id);
+        } elsif($c->user->roles eq 'lintercept') {
+            my $reseller_id = $c->user->reseller_id;
+            my $tz_row = $c->model('DB')->resultset('reseller_timezone')->find({reseller_id => $reseller_id});
+            _set_session_tz_from_row($c, $tz_row, 'reseller', $reseller_id);
         } else {
             # this shouldnt happen
         }
