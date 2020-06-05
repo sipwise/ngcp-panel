@@ -9,7 +9,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Auth;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(lintercept) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -27,22 +27,24 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my $cols = [
         { name => "id", search => 1, title => $c->loc("#") },
     ];
-    if($c->user->is_superuser) {
+    if($c->user->is_superuser && $c->user->roles ne 'lintercept') {
         @{ $cols } =  (@{ $cols }, { name => "reseller.name", search => 1, title => $c->loc("Reseller") });
     }
     @{ $cols } =  (@{ $cols },
         { name => "login", search => 1, title => $c->loc("Login") },
         { name => "email", search => 1, title => $c->loc("Email") },
-        { name => "is_master", title => $c->loc("Master") },
-        { name => "is_ccare", title => $c->loc("Customer Care") },
-        { name => "is_active", title => $c->loc("Active") },
-        { name => "read_only", title => $c->loc("Read Only") },
-        { name => "show_passwords", title => $c->loc("Show Passwords") },
-        { name => "call_data", title => $c->loc("Show CDRs") },
-        { name => "billing_data", title => $c->loc("Show Billing Info") },
-        { name => "can_reset_password", title => $c->loc("Can Reset Password") },
+        $c->user->roles eq 'admin' || $c->user->roles eq 'reseller' ?
+        ({ name => "is_master", title => $c->loc("Master") },
+         { name => "is_ccare", title => $c->loc("Customer Care") },
+         { name => "is_active", title => $c->loc("Active") },
+         { name => "read_only", title => $c->loc("Read Only") },
+         { name => "show_passwords", title => $c->loc("Show Passwords") },
+         { name => "call_data", title => $c->loc("Show CDRs") },
+         { name => "billing_data", title => $c->loc("Show Billing Info") },
+         { name => "can_reset_password", title => $c->loc("Can Reset Password") },
+        ) : ()
     );
-    if($c->user->is_superuser) {
+    if($c->user->is_superuser && $c->user->roles ne 'lintercept') {
         @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => $c->loc("Lawful Intercept") });
     }
     $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
@@ -62,6 +64,13 @@ sub _admin_resultset_reseller {
     });
 }
 
+sub _admin_resultset_lintercept {
+    my ($self, $c) = @_;
+    return $c->model('DB')->resultset('admins')->search({
+        login => $c->user->login
+    });
+}
+
 sub root :Chained('list_admin') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
     return;
@@ -75,7 +84,7 @@ sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
     return;
 }
 
-sub create :Chained('list_admin') :PathPart('create') :Args(0) {
+sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
@@ -165,9 +174,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{administrator}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
-    if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Auth::get_special_admin_login()){
+    if ($c->user->roles eq 'lintercept') {
+       $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::LIntercept", $c);
+    } elsif ($c->stash->{administrator}->login eq NGCP::Panel::Utils::Auth::get_special_admin_login()){
        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::AdminSpecial", $c);
-    }elsif($c->user->is_superuser) {
+    } elsif($c->user->is_superuser) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Reseller", $c);
@@ -241,7 +252,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
 }
 
-sub delete_admin :Chained('base') :PathPart('delete') :Args(0) {
+sub delete_admin :Chained('base') :PathPart('delete') :Args(0) :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     if($c->stash->{administrator}->id == $c->user->id) {

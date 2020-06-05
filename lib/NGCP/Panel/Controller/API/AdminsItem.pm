@@ -21,7 +21,9 @@ sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }   
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    allowed_roles => [qw/admin reseller lintercept/],
+});
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
