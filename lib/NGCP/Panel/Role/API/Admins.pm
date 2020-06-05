@@ -38,7 +38,7 @@ sub _item_rs {
         });
     }
 
-    if($c->user->is_master || $c->user->is_superuser) {
+    if ($c->user->roles ne 'lintercept' && ($c->user->is_master || $c->user->is_superuser)) {
         # return all (or all of reseller) admins
     } else {
         # otherwise, only return the own admin if master is not set
@@ -52,7 +52,9 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     my $form;
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "lintercept") {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::LIntercept", $c);
+    } elsif ($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Reseller", $c);

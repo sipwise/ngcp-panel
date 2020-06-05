@@ -8,7 +8,9 @@ sub roles {
     if ($self->auth_realm) {
         for my $auth_type (qw/admin_bcrypt admin api_admin_cert api_admin_http api_admin api_admin_bcrypt/) {
             if ($auth_type eq $self->auth_realm) {
-                if ($self->_user->is_ccare) {
+                if ($self->_user->lawful_intercept) {
+                    return "lintercept";
+                } elsif ($self->_user->is_ccare) {
                     $self->_user->is_superuser ? return "ccareadmin"
                                                : return "ccare";
                 } else {
