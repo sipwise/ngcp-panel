@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "be56872e_4bc35349",
+        "filename": "lib/NGCP/Panel/Form/Administrator/System.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-06-08T16:41:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "118e72f7_ba496c09",
+      "range": {
+        "startLine": 4,
+        "startChar": 43,
+        "endLine": 4,
+        "endChar": 51
+      },
+      "revId": "06fe9f7f9cc467c598f02ab5611c115e7d0b958f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "45e2799a_50f079e0",
         "filename": "lib/NGCP/Panel/Form/Administrator/System.pm",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-06-08T16:27:05Z",
       "side": 1,
       "message": "wrong, is_superuser belongs to Admin",
+      "range": {
+        "startLine": 8,
+        "startChar": 8,
+        "endLine": 8,
+        "endChar": 21
+      },
+      "revId": "06fe9f7f9cc467c598f02ab5611c115e7d0b958f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f851c7a0_2eea19ab",
+        "filename": "lib/NGCP/Panel/Form/Administrator/System.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-06-08T16:41:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45e2799a_50f079e0",
       "range": {
         "startLine": 8,
         "startChar": 8,
