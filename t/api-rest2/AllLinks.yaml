@@ -119,26 +119,6 @@
         is:
             code: 200
 
-#check options for /api/interceptions/
--
-    name: check OPTIONS for /api/interceptions/
-    type: item
-    method: OPTIONS
-    path: /api/interceptions/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/interceptions/
--
-    name: GET /api/interceptions/
-    type: item
-    method: GET
-    path: /api/interceptions/
-    conditions:
-        is:
-            code: 200
-
 #check options for /api/reminders/
 -
     name: check OPTIONS for /api/reminders/

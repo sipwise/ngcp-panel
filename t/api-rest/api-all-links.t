@@ -39,6 +39,8 @@ $ua = Test::Collection->new()->ua();
     my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash|managersecretary)"$!;
     foreach my $link(@links) {
         (my ($relname)) = ($link =~ $rex);
+        # skip interceptions since there is no longer an LI admin by default
+        next if $relname eq "interceptions";
         # now get this rel
         $req = HTTP::Request->new('OPTIONS', "$uri/api/$relname/");
         $res = $ua->request($req);
