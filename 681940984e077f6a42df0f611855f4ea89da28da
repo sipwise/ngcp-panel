@@ -45,6 +45,29 @@
       "revId": "681940984e077f6a42df0f611855f4ea89da28da",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6480cb8_f65fffc7",
+        "filename": "lib/NGCP/Panel/Form/Administrator/System.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-08T16:51:46Z",
+      "side": 1,
+      "message": "please remove this. we discussed it with Alex and it will break the v2 UI with the 1click buttons.\nit\u0027s implemented that as soon as the admin is lawful_intercept, it takes precedence.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 1
+      },
+      "revId": "681940984e077f6a42df0f611855f4ea89da28da",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
