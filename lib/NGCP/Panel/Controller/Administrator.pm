@@ -44,8 +44,11 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
          { name => "can_reset_password", title => $c->loc("Can Reset Password") },
         ) : ()
     );
-    if($c->user->is_superuser && $c->user->roles ne 'lintercept') {
-        @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => $c->loc("Lawful Intercept") });
+    if($c->user->is_system && $c->user->roles ne 'lintercept') {
+        @{ $cols } =  (@{ $cols },
+            { name => "lawful_intercept", title => $c->loc("Lawful Intercept") },
+            { name => "is_system", title => $c->loc("System") },
+        );
     }
     $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
     $c->stash->{special_admin_login} = NGCP::Panel::Utils::Auth::get_special_admin_login();
@@ -54,13 +57,16 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
 
 sub _admin_resultset_admin {
     my ($self, $c) = @_;
-    return $c->model('DB')->resultset('admins');
+    my $condition = $c->user->is_system ? {} : {lawful_intercept => 0, is_system => 0};
+    return $c->model('DB')->resultset('admins')->search($condition);
 }
 
 sub _admin_resultset_reseller {
     my ($self, $c) = @_;
     return $c->model('DB')->resultset('admins')->search({
         reseller_id => $c->user->reseller_id,
+        lawful_intercept => 0,
+        is_system => 0
     });
 }
 
@@ -93,7 +99,10 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
     my $form;
     my $params = {};
     $params = merge($params, $c->session->{created_objects});
-    if($c->user->is_superuser) {
+    if ($c->user->is_system) {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::System", $c);
+    }
+    elsif ($c->user->is_superuser) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Reseller", $c);
@@ -174,7 +183,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{administrator}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
-    if ($c->user->roles eq 'lintercept') {
+    if ($c->user->is_system) {
+       $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::System", $c);
+    } elsif ($c->user->roles eq 'lintercept') {
        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::LIntercept", $c);
     } elsif ($c->stash->{administrator}->login eq NGCP::Panel::Utils::Auth::get_special_admin_login()){
        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::AdminSpecial", $c);
