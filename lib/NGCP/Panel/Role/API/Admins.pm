@@ -40,13 +40,16 @@ sub _item_rs {
     }
 
     if($c->user->is_system) {
+        $c->log->debug("HERE!\n");
         # return all (or all of reseller) admins
     } elsif ($c->user->roles ne 'lintercept' && ($c->user->is_master || $c->user->is_superuser)) {
+        $c->log->debug("HERE??n");
         $item_rs = $item_rs->search({
             lawful_intercept => 0,
             is_system => 0
         });
     } else {
+        $c->log->debug("WHAT");
         # otherwise, only return the own admin if master is not set
         $item_rs = $item_rs->search({
             id => $c->user->id,
