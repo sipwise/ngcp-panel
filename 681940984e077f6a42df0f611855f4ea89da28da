@@ -92,6 +92,30 @@
       "revId": "681940984e077f6a42df0f611855f4ea89da28da",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8de3f266_060176c8",
+        "filename": "lib/NGCP/Panel/Form/Administrator/System.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-08T16:55:44Z",
+      "side": 1,
+      "message": "well, on the second thought, lets keep it, if there will be issues with the v2 panel, we sort it out, but I think that leaving the check out will do more harm of unintentional use/expectations.",
+      "parentUuid": "3d530577_6d12fbd0",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 1
+      },
+      "revId": "681940984e077f6a42df0f611855f4ea89da28da",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
