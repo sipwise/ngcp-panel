@@ -34,12 +34,18 @@ sub _item_rs {
     my $item_rs = $c->model('DB')->resultset('admins');
     if($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
-            reseller_id => $c->user->reseller_id
+            reseller_id => $c->user->reseller_id,
+            is_system => 0
         });
     }
 
-    if ($c->user->roles ne 'lintercept' && ($c->user->is_master || $c->user->is_superuser)) {
+    if($c->user->is_system) {
         # return all (or all of reseller) admins
+    } elsif ($c->user->roles ne 'lintercept' && ($c->user->is_master || $c->user->is_superuser)) {
+        $item_rs = $item_rs->search({
+            lawful_intercept => 0,
+            is_system => 0
+        });
     } else {
         # otherwise, only return the own admin if master is not set
         $item_rs = $item_rs->search({
@@ -52,7 +58,9 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     my $form;
-    if ($c->user->roles eq "lintercept") {
+    if ($c->user->is_system) {
+       $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::System", $c);
+    } elsif ($c->user->roles eq "lintercept") {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::LIntercept", $c);
     } elsif ($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
