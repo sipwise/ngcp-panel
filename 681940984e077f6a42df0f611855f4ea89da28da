@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "75379f94_ed744ef1",
+        "filename": "lib/NGCP/Panel/Form/Administrator/System.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-08T16:44:33Z",
+      "side": 1,
+      "message": "it belongs to the Admin too and duplicated here, no ?",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 2
+      },
+      "revId": "681940984e077f6a42df0f611855f4ea89da28da",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
