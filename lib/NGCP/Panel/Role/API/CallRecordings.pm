@@ -91,6 +91,13 @@ sub _item_rs {
             join => 'recording_metakeys',
         });
     }
+
+    if($c->req->params->{call_id}) {
+        $item_rs = $item_rs->search({
+            call_id => { like => $c->req->params->{call_id}.'%' }
+        });
+    }
+
     return $item_rs;
 }
 
