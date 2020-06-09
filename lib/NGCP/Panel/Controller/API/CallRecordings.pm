@@ -53,6 +53,11 @@ sub query_params {
             apply_to  => {'item' => {DELETE => 1}},
             description => 'Force callrecording info deletion from database despite callrecording files deletion errors.',
         },
+        {
+            # we handle that separately/manually in the role
+            param => 'call_id',
+            description => 'Filter for callrecordings where the call-id with the given string is involved.',
+        },
     ];
 }
 
