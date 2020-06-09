@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6e8a1ec9_c082bf1c",
+        "filename": "lib/NGCP/Panel/Controller/API/CallRecordings.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-06-09T15:43:00Z",
+      "side": 1,
+      "message": "since this is not a special query param, impl should be better added here (not in Role), using \"query\" config (eg. see reseller_id param).",
+      "revId": "50cc503ff6a36d2d384438d594c03626cc53d95b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
