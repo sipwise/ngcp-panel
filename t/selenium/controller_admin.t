@@ -182,26 +182,13 @@ $c->login_ok($adminname, $adminpwd);
 
 diag("Go to 'Administrators' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element('Administrators', 'link_text')->click();
-
-diag("New Administrator tries to delete himself");
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
-ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
-$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
-ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Name is correct');
-$d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(text(), "Delete")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
-$d->find_element('//*[@id="dataConfirmOK"]')->click();
+$d->find_element('Administrator', 'link_text')->click();
 
 diag("Check if Administrator is still here");
-ok($d->find_element_by_xpath('//*[@id="content"]//div[contains(@class, "alert")][contains(text(), "Cannot delete myself")]'),  'Correct Alert was shown');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
 ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Administrator is still here');
-
-diag("Create and delete test domain to see if Administrator has permission to do so");
-$c->create_domain($domainstring);
-$c->delete_domain($domainstring, 0);
 
 diag("Switch over to default Administrator");
 $c->login_ok();
