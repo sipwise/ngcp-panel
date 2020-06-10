@@ -1380,6 +1380,8 @@ sub terminate {
         }
         $subscriber->update({ status => 'terminated' });
     });
+
+    NGCP::Panel::Utils::Kamailio::trusted_reload($c);
 }
 
 sub field_to_destination {
