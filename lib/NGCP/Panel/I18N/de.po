@@ -458,6 +458,7 @@ msgid "Administratively block anonymous inbound calls"
 msgstr "Blockiere administrativ eingehende Anrufe mit unterdrückter Rufnummer"
 
 #: share/templates/administrator/list.tt share/templates/reseller/details.tt
+#: share/templates/widgets/lintercept_topmenu_settings.tt
 msgid "Administrator"
 msgstr "Administrator"
 
@@ -2479,6 +2480,7 @@ msgstr ""
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/ccare_topmenu_settings.tt
 #: share/templates/widgets/ccareadmin_topmenu_settings.tt
+#: share/templates/widgets/lintercept_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Documentation"
 msgstr ""
@@ -4238,6 +4240,7 @@ msgstr "Gruppen"
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/ccare_topmenu_settings.tt
 #: share/templates/widgets/ccareadmin_topmenu_settings.tt
+#: share/templates/widgets/lintercept_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Handbook"
 msgstr ""
@@ -7605,6 +7608,7 @@ msgstr "Einstellung"
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/ccare_topmenu_settings.tt
 #: share/templates/widgets/ccareadmin_topmenu_settings.tt
+#: share/templates/widgets/lintercept_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt
@@ -8379,6 +8383,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Syslog server URL."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "System"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
