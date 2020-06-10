@@ -10,8 +10,11 @@ has_field 'id' => (
     required => 1,
     template => 'helpers/datatables_field.tt',
     ajax_src => '/contact/ajax',
-    table_titles => ['#', 'Reseller', 'First Name', 'Last Name', 'Email'],
-    table_fields => ['id', 'reseller_name', 'firstname', 'lastname', 'email'],
+    table_titles => ['#', 'Reseller', 'Name', 'Email'],
+    table_fields => ['id', 'reseller_name', 'firstname', 'email'],
+    custom_renderers => {
+        firstname => 'function ( data, type, full ) { console.log(full);var sep = (full.firstname && full.lastname) ? " " : ""; return (full.firstname || "") + sep + (full.lastname || ""); }',
+    },
 );
 
 has_field 'create' => (
