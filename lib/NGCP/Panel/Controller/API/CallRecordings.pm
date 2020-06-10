@@ -53,6 +53,16 @@ sub query_params {
             apply_to  => {'item' => {DELETE => 1}},
             description => 'Force callrecording info deletion from database despite callrecording files deletion errors.',
         },
+        {
+            param => 'call_id',
+            description => 'Filter for callrecordings belonging to a specific call',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.call_id' => $q };
+                }
+            },
+        },
     ];
 }
 
