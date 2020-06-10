@@ -413,6 +413,18 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
             desc  => $c->loc('Failed to terminate subscriber'),
         );
     }
+    try {
+        my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
+        if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+            die "XMLRPC failed";
+        }
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            error => "failed to reload kamailio: $e. Subscriber was terminated.",
+            desc  => $c->loc('Failed to reload kamailio. Subscriber was terminated.'),
+        );
+    }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
 }
 
