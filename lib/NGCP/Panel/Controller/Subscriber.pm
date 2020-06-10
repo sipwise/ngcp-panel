@@ -401,6 +401,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
 
     try {
         NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+        NGCP::Panel::Utils::Kamailio::trusted_reload($c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $subscriber->get_inflated_columns },

@@ -224,6 +224,8 @@ sub DELETE :Allow {
 
         $guard->commit;
 
+        NGCP::Panel::Utils::Kamailio::trusted_reload($c);
+
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
     }
