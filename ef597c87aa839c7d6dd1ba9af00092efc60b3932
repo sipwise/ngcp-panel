@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5badb280_994281b7",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscribersItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-06-11T09:43:28Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we catch errors here?",
+      "range": {
+        "startLine": 227,
+        "startChar": 8,
+        "endLine": 227,
+        "endChar": 57
+      },
+      "revId": "ef597c87aa839c7d6dd1ba9af00092efc60b3932",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c616c7c_7d8fe0c6",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2020-06-11T09:43:28Z",
+      "side": 1,
+      "message": "Is this message good enough for a case that subscriber was terminated, but Kamailio cash memory failed to reload?\nIn NGCP::Panel::Controller::API::TrustedSources there are two separate try-catch for these operations and an error message is: \"Failed to reload kamailio. Trusted source was created\".",
+      "range": {
+        "startLine": 414,
+        "startChar": 29,
+        "endLine": 414,
+        "endChar": 61
+      },
+      "revId": "ef597c87aa839c7d6dd1ba9af00092efc60b3932",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
