@@ -16,6 +16,24 @@
       "revId": "a621bd59207c07aa9ce79a4b2f05bafc3a02994d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e23c71b_5793a782",
+        "filename": "tools_bin/ngcp-api-get",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-12T16:26:59Z",
+      "side": 1,
+      "message": "we cannot force a hardcoded port because these come from the cfg-schema stuff, and can be changed in the local system, that\u0027s why the validator takes the values from the default file.",
+      "parentUuid": "a80b5335_3cd80e0b",
+      "revId": "a621bd59207c07aa9ce79a4b2f05bafc3a02994d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
