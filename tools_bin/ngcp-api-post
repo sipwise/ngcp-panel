@@ -26,6 +26,7 @@ if [ -z "${APIUSER}" ]; then
     if [ -z "${APIUSER}" ]; then
       importcreds "${SYSCREDS}" 0440
       APIUSER="${AUTH_SYSTEM_LOGIN}:${AUTH_SYSTEM_PASSWORD}"
+      APIREALM=(-H 'NGCP-UserAgent: NGCP::API::Client')
     fi
   fi
   if [ -z "${APIUSER}" ]; then
@@ -63,9 +64,11 @@ URL="$1"
 if [ -z "${URL}" ]; then
   usage
 fi
+validateurl "$URL"
 CTYPE=${2:-application/json}
 
 ${CURL} -i ${VERBOSE} -X POST \
+  "${APIREALM[@]}" \
   -H 'Connection: close' -H 'Prefer: return=representation' \
   -H "Content-Type: ${CTYPE}" \
   --user "${APIUSER}" --insecure "${FILE_INPUT[@]}" "${URL}" "${INPUT[@]}"
