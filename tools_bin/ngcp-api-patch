@@ -27,6 +27,7 @@ if [ -z "${APIUSER}" ]; then
     if [ -z "${APIUSER}" ]; then
       importcreds "${SYSCREDS}" 0440
       APIUSER="${AUTH_SYSTEM_LOGIN}:${AUTH_SYSTEM_PASSWORD}"
+      APIREALM=(-H 'NGCP-UserAgent: NGCP::API::Client')
     fi
   fi
   if [ -z "${APIUSER}" ]; then
@@ -69,8 +70,10 @@ URL="$1"
 if [ -z "${URL}" ] ; then
   usage
 fi
+validateurl "$URL"
 
 ${CURL} -i ${VERBOSE} -X PATCH \
+  "${APIREALM[@]}"
   -H 'Connection: close' -H "Prefer: return=${PREFER}" \
   -H "Content-Type: ${CTYPE}" \
   --user "${APIUSER}" --insecure "${FILE_INPUT[@]}" "${URL}" "${INPUT[@]}"
