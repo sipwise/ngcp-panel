@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "7f55d901_161a062a",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscribersItem.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-06-12T09:26:11Z",
+      "side": 1,
+      "message": "ok i see it seems trustedReload seem to only have effect after db was committed.\n\ni would enclose it with a trycatch here then.",
+      "parentUuid": "21360622_97e4b3b0",
+      "range": {
+        "startLine": 227,
+        "startChar": 8,
+        "endLine": 227,
+        "endChar": 57
+      },
+      "revId": "ef597c87aa839c7d6dd1ba9af00092efc60b3932",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8c616c7c_7d8fe0c6",
         "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
         "patchSetId": 2
