@@ -136,6 +136,7 @@ sub upload_csv {
             push @fails, $linenum;
             next;
         }
+        $row->{routing_number} = undef if (defined $row->{routing_number} and $row->{routing_number} eq '');
         push @numbers, [$carriers{$k}, $row->{number}, $row->{routing_number}, $row->{start}, $row->{end}, $row->{type}];
 
         if($linenum % $chunk_size == 0) {
