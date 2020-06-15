@@ -1074,9 +1074,14 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                 $cf_preference->create({ value => $map->id });
                 if($cf_type eq 'cft') {
                     if($ringtimeout_preference->first) {
-                        $ringtimeout_preference->first->update({
-                            value => $c->request->params->{ringtimeout}
-                        });
+                        if (!$cf_form->field('enabled')->value) {
+                            $ringtimeout_preference->first->delete;
+                        }
+                        else {
+                            $ringtimeout_preference->first->update({
+                                value => $c->request->params->{ringtimeout}
+                            });
+                        }
                     } else {
                         $ringtimeout_preference->create({
                             value => $c->request->params->{ringtimeout},
@@ -1298,6 +1303,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                     } else {
                         $ringtimeout_preference->create({ value => $cf_form->field('ringtimeout')->value });
                     }
+                }
+                if ($prov_subscriber->voip_cf_mappings->search_rs({ type => "cft", enabled => 1 })->count == 0) {
+                    $ringtimeout_preference->delete;
                 }
             });
             NGCP::Panel::Utils::Message::info(
@@ -2479,6 +2487,15 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
             my $autoattendant_count = 0;
             foreach my $map($mapping_rs->all) {
                 $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
+            }
+            if($cf_type eq 'cft') {
+                my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, prov_subscriber => $prov_subscriber,
+                    attribute => 'ringtimeout'
+                );
+                if($ringtimeout_preference->first) {
+                    $ringtimeout_preference->delete;
+                }
             }
             $mapping_rs->delete_all;
             my $cf_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
