@@ -417,6 +417,14 @@ sub update_item {
                     value => $resource->{cft_ringtimeout},
                 });
             }
+        } elsif ($c->model('DB')->resultset('voip_cf_mappings')->search_rs({
+                subscriber_id => $item->provisioning_voip_subscriber->id,
+                type => 'cft',
+            })->count == 0) {
+            NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c,
+                attribute => 'ringtimeout',
+                prov_subscriber => $item->provisioning_voip_subscriber)->delete;
         }
 
     } catch($e) {
