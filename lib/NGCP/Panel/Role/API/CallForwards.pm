@@ -366,6 +366,7 @@ sub update_item {
                 $mapping->delete;
                 $cf_preference->delete;
             }
+            
         } catch($e) {
             $c->log->error("Error Updating '$type': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$type' could not be updated.");
@@ -386,6 +387,15 @@ sub update_item {
                 value => $resource->{cft}{ringtimeout},
             });
         }
+    } elsif ($c->model('DB')->resultset('voip_cf_mappings')->search_rs({
+            subscriber_id => $prov_subs->id,
+            type => 'cft',
+            enabled => 1,
+        })->count == 0) {
+        NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c,
+            attribute => 'ringtimeout',
+            prov_subscriber => $prov_subs)->delete;
     }
 
     $item->discard_changes;
