@@ -366,6 +366,18 @@ sub update_item {
                 $mapping->delete;
                 $cf_preference->delete;
             }
+            
+            unless ($c->model('DB')->resultset('voip_cf_mappings')->search_rs({
+                    subscriber_id => $prov_subs->id,
+                    type => 'cft',
+                    enabled => 1,
+                })->count > 0) {
+                NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c,
+                    attribute => 'ringtimeout',
+                    prov_subscriber => $prov_subs)->delete;
+            }
+            
         } catch($e) {
             $c->log->error("Error Updating '$type': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$type' could not be updated.");
