@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "89a3db79_749dacb5",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1290,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-06-15T09:08:40Z",
+      "side": 1,
+      "message": "better to put that count check outside \"cf_type eq \u0027cft\u0027\"",
+      "revId": "feecc50426b74902d85156473c12b3825cbd51a6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a3ae161_8b4aad5c",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-06-15T09:08:40Z",
+      "side": 1,
+      "message": "would delete any, in case",
+      "range": {
+        "startLine": 1291,
+        "startChar": 53,
+        "endLine": 1291,
+        "endChar": 60
+      },
+      "revId": "feecc50426b74902d85156473c12b3825cbd51a6",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
