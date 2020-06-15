@@ -1,3 +1,10 @@
+ngcp-panel (6.5.9.2+0~mr6.5.9.2) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [1b03af6] TT#71240 - Issue permission.trustedReload when terminating subscribers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jun 2020 16:48:25 +0200
+
 ngcp-panel (6.5.9.1+0~mr6.5.9.1) unstable; urgency=medium
 
   [ Flaviu Mates ]
