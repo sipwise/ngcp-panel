@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e2fea57_6b024fc7",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 2485,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-06-15T09:28:22Z",
+      "side": 1,
+      "message": "would also drop this",
+      "range": {
+        "startLine": 2485,
+        "startChar": 45,
+        "endLine": 2485,
+        "endChar": 52
+      },
+      "revId": "b1d6fff8d46338fdc4cd9482536026a2fa75c334",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
