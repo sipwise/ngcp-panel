@@ -48,7 +48,7 @@ sub create_domain {
     ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $reseller);
     ok($self->driver->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $reseller . '")]'), 'Reseller found');
-    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]//td//input');
     $self->driver->fill_element('//*[@id="domain"]', 'xpath', $name);
     $self->driver->find_element('//*[@id="save"]')->click();
     is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Domain successfully created',  'Correct Alert was shown');
@@ -92,7 +92,7 @@ sub create_reseller {
     ok($self->driver->find_element_by_css('#contractidtable tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="contractidtable_filter"]/label/input', 'xpath', $resellerid);
     ok($self->driver->find_element_by_xpath('//*[@id="contractidtable"]//tr[1]/td[contains(text(), "' . $resellerid . '")]'), 'Default Contact found');
-    $self->driver->select_if_unselected('//*[@id="contractidtable"]/tbody/tr/td[5]/input');
+    $self->driver->select_if_unselected('//*[@id="contractidtable"]/tbody/tr//td//input');
     $self->driver->fill_element('//*[@id="name"]', 'xpath', $name);
     $self->driver->find_element('//*[@id="save"]')->click();
     is($self->driver->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Reseller successfully created.',  'Correct Alert was shown');
@@ -113,13 +113,13 @@ sub create_reseller_contract {
     ok($self->driver->find_element_by_css('#contactidtable tr > td.dataTables_empty'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="contactidtable_filter"]/label/input', 'xpath', 'default-system@default.invalid');
     ok($self->driver->find_element_by_xpath('//*[@id="contactidtable"]//tr[1]/td[contains(text(), "default-system@default.invalid")]'), "Default Contact found");
-    $self->driver->select_if_unselected('//*[@id="contactidtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->select_if_unselected('//*[@id="contactidtable"]/tbody/tr[1]//td//input');
     $self->driver->scroll_to_element($self->driver->find_element('//*[@id="external_id"]'));
     $self->driver->fill_element('//*[@id="billing_profileidtable_filter"]/label/input', 'xpath', 'thisshouldnotexist');
     ok($self->driver->find_element_by_css('#billing_profileidtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="billing_profileidtable_filter"]/label/input', 'xpath', 'Default Billing Profile');
     ok($self->driver->find_element_by_xpath('//*[@id="billing_profileidtable"]//tr[1]/td[contains(text(), "Default Billing Profile")]'), 'Default Billing Profile found');
-    $self->driver->select_if_unselected('//*[@id="billing_profileidtable"]/tbody/tr[1]/td[4]/input');
+    $self->driver->select_if_unselected('//*[@id="billing_profileidtable"]/tbody/tr[1]//td//input');
     $self->driver->fill_element('//*[@id="external_id"]', 'xpath', $resellerid);
     $self->driver->find_element('//*[@id="save"]')->click();
     ok($self->driver->find_element_by_xpath('//*[@id="content"]//div[contains(text(), "successfully created")]'), 'Correct Alert was shown');
@@ -187,7 +187,7 @@ sub create_rw_ruleset {
     ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
     ok($self->driver->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller was found');
-    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]//td//input');
     $self->driver->fill_element('//*[@id="name"]', 'xpath', $rulesetname);
     $self->driver->fill_element('//*[@id="description"]', 'xpath', 'For testing purposes');
     $self->driver->find_element('//*[@id="save"]')->click();
@@ -289,7 +289,7 @@ sub create_contact {
     ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $reseller);
     ok($self->driver->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $reseller . '")]'), 'Reseller was found');
-    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]//td//input');
     $self->driver->fill_element('//*[@id="firstname"]', 'xpath', 'Test');
     $self->driver->fill_element('//*[@id="lastname"]', 'xpath', 'User');
     $self->driver->fill_element('//*[@id="email"]', 'xpath', $contactmail);
@@ -336,7 +336,7 @@ sub create_billing_profile {
     ok($self->driver->find_element_by_css('#reselleridtable tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
     $self->driver->fill_element('//*[@id="reselleridtable_filter"]/label/input', 'xpath', $resellername);
     ok($self->driver->find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller was found');
-    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]/td[5]/input');
+    $self->driver->select_if_unselected('//*[@id="reselleridtable"]/tbody/tr[1]//td//input');
     $self->driver->fill_element('#name', 'css', $billingname);
     $self->driver->fill_element('[name=handle]', 'css', $billingname);
     $self->driver->find_element('//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]')->click();
