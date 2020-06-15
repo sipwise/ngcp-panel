@@ -1,3 +1,10 @@
+ngcp-panel (7.5.3.17+0~mr7.5.3.17) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ce5adff] TT#83313 lnp rounting_number csv NULL values
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jun 2020 14:33:20 +0200
+
 ngcp-panel (7.5.3.16+0~mr7.5.3.16) unstable; urgency=medium
 
   [ Flaviu Mates ]
