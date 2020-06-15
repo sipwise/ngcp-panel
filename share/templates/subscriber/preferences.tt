@@ -130,7 +130,7 @@ $( document ).ready(function() {
                         <tr class="sw_action_row">
                             <td>[% cf.desc %]</td> <!--- Type -->
                             <td> <!--- Answer Timeout (only cft) -->
-                                [% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]
+                                [% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size && cf_ringtimeout %]
                             </td>
                             <td> <!--- Timeset -->
                                 [% idx = 0 -%]
