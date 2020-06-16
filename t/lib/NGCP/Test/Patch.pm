@@ -15,8 +15,8 @@ sub apply_patch {
         for my $op (@{ $patch }) {
             my $coderef = JSON::Pointer->can($op->{op});
             die "invalid op '".$op->{op}."' despite schema validation" unless $coderef;
-            for ($op->{op}) {
-                if ('add' eq $_ or 'replace' eq $_) {
+            for my $op_name ($op->{op}) {
+                if ('add' eq $op_name or 'replace' eq $op_name) {
                     try {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                     } catch($pe) {
@@ -29,7 +29,7 @@ sub apply_patch {
                             die($pe); #->rethrow;
                         }
                     }
-                } elsif ('remove' eq $_) {
+                } elsif ('remove' eq $op_name) {
                     try {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{path});
                     } catch($pe) {
@@ -42,7 +42,7 @@ sub apply_patch {
                             die($pe); #->rethrow;
                         }
                     }
-                } elsif ('move' eq $_ or 'copy' eq $_) {
+                } elsif ('move' eq $op_name or 'copy' eq $op_name) {
                     try {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
                     } catch($pe) {
@@ -55,7 +55,7 @@ sub apply_patch {
                             die($pe); #->rethrow;
                         }
                     }
-                } elsif ('test' eq $_) {
+                } elsif ('test' eq $op_name) {
                     try {
                         die "test failed - path: $op->{path} value: $op->{value}\n"
                             unless $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
