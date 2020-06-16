@@ -3570,6 +3570,11 @@ msgstr ""
 msgid "Failed to recover web password"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/API/SubscribersItem.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to reload kamailio. Subscriber was terminated."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Domain.pm
 msgid "Failed to reload proxy. Domain was deleted."
 msgstr ""
