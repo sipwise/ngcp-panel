@@ -1,3 +1,13 @@
+ngcp-panel (8.4.1.10+0~mr8.4.1.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [25fb81c] TT#83502 api: drop ringtimeout pref when deleting last CFT
+
+  [ Flaviu Mates ]
+  * [e5fc137] TT#83502 - UI: drop ringtimeout pref when deleting last CFT
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 16 Jun 2020 16:39:22 +0200
+
 ngcp-panel (8.4.1.9+0~mr8.4.1.9) unstable; urgency=medium
 
   [ Flaviu Mates ]
