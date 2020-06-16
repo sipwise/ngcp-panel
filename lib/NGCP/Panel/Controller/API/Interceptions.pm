@@ -190,11 +190,12 @@ sub POST :Allow {
                 cc_delivery_port => $resource->{x3_port},
             });
             die "Failed to populate capture agents\n" unless($res);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create interception: " . $c->qs($e)); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create interception");
             last;
-        }
+        };
 
         $guard->commit;
         $cguard->commit;

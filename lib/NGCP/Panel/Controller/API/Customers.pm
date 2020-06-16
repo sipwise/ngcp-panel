@@ -258,11 +258,12 @@ sub POST :Allow {
         try {
             $customer = $schema->resultset('contracts')->create($resource);
             $c->log->debug("customer id " . $customer->id . " created");
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
             last;
-        }
+        };
 
         unless($customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:customercontacts item, but an ngcp:systemcontacts item");
@@ -288,11 +289,12 @@ sub POST :Allow {
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                 contract => $customer,
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

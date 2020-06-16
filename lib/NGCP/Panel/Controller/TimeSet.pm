@@ -129,13 +129,14 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Timeset entry successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create timeset entry'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/timeset'));
     }
 
@@ -192,7 +193,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Timeset entry successfully updated'),
             );
-        } catch($e) {
+        } catch {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -216,13 +217,14 @@ sub delete_timeset :Chained('base') :PathPart('delete') {
             data => $c->stash->{timeset},
             desc => $c->loc('Timeset entry successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete timeset entry'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/timeset'));
 }
 
@@ -309,13 +311,14 @@ sub event_create :Chained('event_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Event entry successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create event entry'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
     }
 
@@ -371,13 +374,14 @@ sub event_edit :Chained('event_base') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Event entry successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update event entry'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
     }
 
@@ -395,13 +399,14 @@ sub event_delete :Chained('event_base') :PathPart('delete') :Args(0) {
             data => $c->stash->{timeset},
             desc => $c->loc('Event entry successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete event entry'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/event'));
 }
 
@@ -446,13 +451,14 @@ sub event_upload :Chained('event_list') :PathPart('upload') :Args(0) {
                 c    => $c,
                 desc => $text_success,
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to upload iCalendar events'),
             );
-        }
+        };
 
         $c->response->redirect($c->uri_for($c->stash->{timeset}->{id}, 'event'));
         return;

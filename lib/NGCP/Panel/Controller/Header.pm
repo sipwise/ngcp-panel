@@ -115,13 +115,14 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Header rule set successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update header rule set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/header'));
     }
 
@@ -143,13 +144,14 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
             data => { $c->stash->{hm_set_result}->get_inflated_columns },
             desc => $c->loc('Header rule set successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete header rule set'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/header'));
 }
 
@@ -196,13 +198,14 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                 c    => $c,
                 desc => $c->loc('Header rule set successfully cloned'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clone header rule set.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/header'));
     }
 
@@ -250,13 +253,14 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Header rule set successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create header rule set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/header'));
     }
 

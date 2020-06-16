@@ -141,11 +141,12 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, customerlocation => $cl);
         try {
             $cl->delete;
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to delete customre location with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
-        }
+        };
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);

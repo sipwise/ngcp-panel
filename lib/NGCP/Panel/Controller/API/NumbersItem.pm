@@ -190,11 +190,12 @@ sub update_item_model {
             %$aliases_before,
         );
 
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to update number: " . $c->qs($e));
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update number.");
         return;
-    }
+    };
 
     $item = $self->_item_rs($c)->find({
         cc => $item->cc, ac => $item->ac, sn => $item->sn,

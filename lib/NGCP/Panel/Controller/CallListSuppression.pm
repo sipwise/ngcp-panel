@@ -116,14 +116,15 @@ sub edit :Chained('base') :PathPart('edit') {
                 desc  => $c->loc('Call list suppression successfully updated'),
             );
             $c->flash(messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update call list suppression'),
             );
             $c->flash(messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/calllistsuppression'));
     }
     $c->stash(edit_flag => 1);
@@ -167,14 +168,15 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
                 desc  => $c->loc('Call list suppression successfully created'),
             );
             $c->flash(messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create call list suppression'),
             );
             $c->flash(messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/calllistsuppression'));
     }
 
@@ -195,13 +197,14 @@ sub delete_suppression :Chained('base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{sup}->get_inflated_columns },
             desc => $c->loc('Call list suppression successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete call list suppression.'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/calllistsuppression'));
 }
 
@@ -260,14 +263,15 @@ sub upload :Chained('list') :PathPart('upload') :Args(0) {
                 desc => $$text_success,
             );
             $c->flash(messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to upload call list suppressions'),
             );
             $c->flash(messages => delete $c->flash->{messages});
-        }
+        };
 
         $c->response->redirect($c->uri_for('/calllistsuppression'));
         return;

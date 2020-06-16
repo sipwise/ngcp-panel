@@ -160,11 +160,12 @@ sub POST :Allow {
 
         try {
             $item = $config->autoprov_profiles->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create pbx device profile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbx device profile.");
             last;
-        }
+        };
 
         $guard->commit;
 

@@ -162,11 +162,12 @@ sub POST :Allow {
                     c => $c, fw_id => $item->id, data_ref => \$binary
                 );
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create pbxdevicefirmware: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdevicefirmware.");
             last;
-        }
+        };
 
         $guard->commit;
 

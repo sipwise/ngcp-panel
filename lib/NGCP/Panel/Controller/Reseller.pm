@@ -141,13 +141,14 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
                 c    => $c,
                 desc => $c->loc('Reseller successfully created.'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create reseller'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
 
@@ -358,13 +359,14 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
                 c    => $c,
                 desc => $c->loc('Reseller successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update reseller'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
 
@@ -415,13 +417,14 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
             data => { $reseller->get_inflated_columns },
             desc => $c->loc('Successfully terminated reseller'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to terminate reseller'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
 }
 
@@ -547,7 +550,8 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                 contract => $r{contracts},
             );
         });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -637,13 +641,14 @@ sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL)
                 c    => $c,
                 desc => $c->loc('Reseller branding successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update reseller branding'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $back);
     }
 
@@ -833,13 +838,14 @@ sub phonebook_create :Chained('base_details') :PathPart('phonebook/create') :Arg
                 c => $c,
                 desc => $c->loc('Phonebook entry successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create phonebook entry.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
     }
 
@@ -905,13 +911,14 @@ sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) :Does(A
                 c => $c,
                 desc  => $c->loc('Phonebook entry successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update phonebook entry'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
 
@@ -937,7 +944,8 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) :Do
             data => $c->stash->{phonebook},
             desc => $c->loc('Phonebook entry successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -1032,13 +1040,14 @@ sub timeset_create :Chained('base_details') :PathPart('timeset/create') :Args(0)
                 c => $c,
                 desc => $c->loc('Timeset entry successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create timeset entry.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
     }
 
@@ -1120,13 +1129,14 @@ sub timeset_edit :Chained('timeset_base') :PathPart('edit') :Args(0) :Does(ACL) 
                 c => $c,
                 desc  => $c->loc('Timeset entry successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update timeset entry'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
 
@@ -1152,7 +1162,8 @@ sub timeset_delete :Chained('timeset_base') :PathPart('delete') :Args(0) :Does(A
             data => $c->stash->{timeset},
             desc => $c->loc('Timeset entry successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

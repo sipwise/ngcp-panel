@@ -139,13 +139,14 @@ sub ui_upload_csv {
                 c    => $c,
                 desc => $$text,
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to upload Phonebook entries'),
             );
-        }
+        };
 
         $c->response->redirect($back);
     }

@@ -136,11 +136,12 @@ sub POST :Allow {
         my $item;
         try {
             $item = $schema->resultset('lnp_providers')->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create lnp carrier: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create lnp carrier.");
             last;
-        }
+        };
         
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

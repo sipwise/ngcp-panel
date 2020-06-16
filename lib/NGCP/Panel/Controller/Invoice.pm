@@ -191,13 +191,14 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 });
             });
 
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create invoice'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
     }
 
@@ -218,13 +219,14 @@ sub delete_invoice :Chained('base') :PathPart('delete') {
             data => { $c->stash->{inv}->get_inflated_columns },
             desc => $c->loc('Invoice successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete invoice .'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
 }
 
@@ -235,13 +237,14 @@ sub download :Chained('base') :PathPart('download') {
         $c->response->content_type('application/pdf');
         $c->response->body($c->stash->{inv}->data);
         return;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete invoice .'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
 }
 

@@ -136,13 +136,14 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
                 c => $c,
                 desc  => $c->loc('Administrator successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create administrator'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
 
@@ -246,7 +247,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 data => { $c->stash->{administrator}->get_inflated_columns },
                 desc => $c->loc('Administrator successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -299,7 +301,8 @@ sub delete_admin :Chained('base') :PathPart('delete') :Args(0) :AllowedRole(admi
             data => { $c->stash->{administrator}->get_inflated_columns },
             desc => $c->loc('Administrator successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

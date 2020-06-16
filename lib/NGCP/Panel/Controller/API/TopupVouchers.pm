@@ -103,11 +103,12 @@ sub POST :Allow {
                 used_by_subscriber_id => $resource->{subscriber_id},
                 used_at => $now,
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create voucher topup: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher topup.");
             last;
-        }
+        };
 
         $guard->commit;
         $success = 1;
@@ -128,10 +129,11 @@ sub POST :Allow {
                 resource => $resource,
                 is_success => $success
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create topup log record: $e");
             last;
-        }
+        };
         $guard->commit;
     }
     return;

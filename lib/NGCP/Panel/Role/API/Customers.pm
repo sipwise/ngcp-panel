@@ -263,7 +263,8 @@ sub update_customer {
         }
         return $customer;
         # TODO: what about changed product, do we allow it?
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("Failed to update customer contract id '".$customer->id."': $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
     };

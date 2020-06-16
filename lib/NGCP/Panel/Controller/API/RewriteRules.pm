@@ -54,11 +54,12 @@ sub create_item {
 
     try {
         $item = $schema->resultset('voip_rewrite_rules')->create($resource);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create rewriterule: $e"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriterule.");
         return;
-    }
+    };
     $guard->commit;
     NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
     

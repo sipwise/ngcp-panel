@@ -233,10 +233,11 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
                             $c->log->error("failed to dispatch pcc request");
                             $fwd_item->update({ pcc_status => "failed" });
                         }
-                    } catch($e) {
+                    } catch {
+                        my $e = $_;
                         $c->log->error("failed to dispatch pcc request: $e");
                         $fwd_item->update({ pcc_status => "failed" });
-                    }
+                    };
                 } else {
                     # no 3rd party call control, feed back into kannel
                     my $error_msg;
@@ -253,10 +254,11 @@ sub receive :Chained('list') :PathPart('receive') :Args(0) {
 
             }
         });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("Failed to handle received SMS message.");
         $c->log->debug($e);
-    }
+    };
 
     $c->response->code(200);
     $c->response->body("");

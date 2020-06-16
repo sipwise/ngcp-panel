@@ -145,7 +145,8 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Peering group successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -184,7 +185,8 @@ sub delete_peering :Chained('base') :PathPart('delete') {
             data => { $c->stash->{group_result}->get_inflated_columns },
             desc => $c->loc('Peering Group successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -226,7 +228,8 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering group successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -300,7 +303,8 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering server successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -383,7 +387,8 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering server successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -421,7 +426,8 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{server_result}->get_inflated_columns },
             desc => $c->loc('Peering server successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -503,7 +509,8 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
             data => { $c->stash->{server_result}->get_inflated_columns },
             desc => $c->loc('Dialogic successfully flashed.'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -659,7 +666,8 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Peering rule successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -743,7 +751,8 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Peering rule successfully changed'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -771,7 +780,8 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{rule_result}->get_inflated_columns },
             desc => $c->loc('Peering rule successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -828,7 +838,8 @@ sub inbound_rules_create :Chained('inbound_rules_list') :PathPart('create') :Arg
                 c => $c,
                 desc  => $c->loc('Inbound peering rule successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -901,7 +912,8 @@ sub inbound_rules_edit :Chained('inbound_rules_base') :PathPart('edit') :Args(0)
                 c    => $c,
                 desc => $c->loc('Inbound peering rule successfully changed'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -932,7 +944,8 @@ sub inbound_rules_delete :Chained('inbound_rules_base') :PathPart('delete') :Arg
             data => { $c->stash->{inbound_rule_result}->get_inflated_columns },
             desc => $c->loc('Inbound peering rule successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -965,13 +978,14 @@ sub inbound_rules_up :Chained('inbound_rules_base') :PathPart('up') :Args(0) {
             $elem->priority(int($last_priority) - 1);
             $elem->update;
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to move inbound peering rule up.'),
         );
-    }
+    };
     #to clear $c->stash->{close_target} that was set in the Navigation::check_redirect_chain from the back parameter
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;
@@ -999,13 +1013,14 @@ sub inbound_rules_down :Chained('inbound_rules_base') :PathPart('down') :Args(0)
             $elem->priority(int($last_priority) + 1);
             $elem->update;
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to move inbound peering rule down.'),
         );
-    }
+    };
     #to clear $c->stash->{close_target} that was set in the Navigation::check_redirect_chain from the back parameter
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;

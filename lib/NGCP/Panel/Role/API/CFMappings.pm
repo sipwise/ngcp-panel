@@ -428,7 +428,8 @@ sub update_item {
                 prov_subscriber => $item->provisioning_voip_subscriber)->delete;
         }
 
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create cfmapping: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfmapping.");
         return;

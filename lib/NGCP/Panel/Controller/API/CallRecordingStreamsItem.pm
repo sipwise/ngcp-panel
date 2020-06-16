@@ -64,11 +64,12 @@ sub DELETE :Allow {
         try {
             unlink($item->full_filename);
             $item->delete;
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to delete stream: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete stream.");
             last;
-        }
+        };
         $guard->commit;
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

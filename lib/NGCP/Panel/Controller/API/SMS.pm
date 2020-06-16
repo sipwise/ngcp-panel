@@ -168,7 +168,8 @@ sub create_item {
             die $session->{reason}."\n";
         }
 
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error($e);
         unless ($pp_billing_performed) {
             NGCP::Panel::Utils::SMS::cancel_prepaid_billing(c => $c,
@@ -181,7 +182,7 @@ sub create_item {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
                 "An internal error has occurred when sending the sms, please contact the platform administrator or try again later");
         }
-    }
+    };
 
     # TODO: agranig: we need to return an item here, otherwise it fails
     #if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {

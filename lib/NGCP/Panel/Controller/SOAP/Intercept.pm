@@ -106,7 +106,8 @@ sub _auth {
             });
         }
 
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die SOAP::Fault
             ->faultcode('Client.Auth.Refused')
             ->faultstring("admin may not access LI data (wrong credentials or lawful_intercept flag not set)");
@@ -131,7 +132,8 @@ sub create_interception {
         });
         $sip_username = NGCP::Panel::Utils::Interception::username_to_regexp_pattern($c,$voip_number,$sub->username);
         $sip_domain = $sub->domain->domain;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die $e if 'SOAP::Fault' eq ref $e;
         die SOAP::Fault
             ->faultcode('Server.Internal')
@@ -178,11 +180,12 @@ sub create_interception {
                 cc_delivery_host => $i->cc_delivery_host,
                 cc_delivery_port => $i->cc_delivery_port,
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             die SOAP::Fault
                 ->faultcode('Server.Internal')
                 ->faultstring($e);
-        }
+        };
     }
     return typed($c, $i->id);
 }
@@ -200,11 +203,12 @@ sub update_interception {
             id => $params->{id},
             deleted => 0,
         })->first;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die SOAP::Fault
             ->faultcode('Server.Internal')
             ->faultstring($e);
-    }
+    };
 
     unless($i) {
         die SOAP::Fault
@@ -245,11 +249,12 @@ sub update_interception {
                 cc_delivery_host => $i->cc_delivery_host,
                 cc_delivery_port => $i->cc_delivery_port,
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             die SOAP::Fault
                 ->faultcode('Server.Internal')
                 ->faultstring($e);
-        }
+        };
     }
     return;
 }
@@ -267,11 +272,12 @@ sub delete_interception {
             id => $params->{id},
             deleted => 0,
         })->first;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die SOAP::Fault
             ->faultcode('Server.Internal')
             ->faultstring($e);
-    }
+    };
 
     unless($i) {
         die SOAP::Fault
@@ -302,11 +308,12 @@ sub delete_interception {
             $guard->commit;
 
             NGCP::Panel::Utils::Interception::request($c, 'DELETE', $uuid);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             die SOAP::Fault
                 ->faultcode('Server.Internal')
                 ->faultstring($e);
-        }
+        };
     }
     return;
 }
@@ -323,11 +330,12 @@ sub get_interception_by_id {
             id => $params->{id},
             deleted => 0,
         })->first;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die SOAP::Fault
             ->faultcode('Server.Internal')
             ->faultstring($e);
-    }
+    };
 
     unless($i) {
         die SOAP::Fault
@@ -383,11 +391,12 @@ sub get_interceptions_by_liid {
                 }
             };
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die SOAP::Fault
             ->faultcode('Server.Internal')
             ->faultstring($e);
-    }
+    };
     return typed($c, \@interceptions);
 }
 
@@ -421,11 +430,12 @@ sub get_interceptions_by_number {
                 }
             };
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die SOAP::Fault
             ->faultcode('Server.Internal')
             ->faultstring($e);
-    }
+    };
     return typed($c, \@interceptions);
 }
 
@@ -458,11 +468,12 @@ sub get_interceptions {
                 }
             };
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die SOAP::Fault
             ->faultcode('Server.Internal')
             ->faultstring($e);
-    }
+    };
     return typed($c, \@interceptions);
 }
 

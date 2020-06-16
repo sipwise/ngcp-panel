@@ -157,7 +157,8 @@ sub update_item {
                 });
         }
         $item->discard_changes;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create cfsourceset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfsourceset.");
         return;

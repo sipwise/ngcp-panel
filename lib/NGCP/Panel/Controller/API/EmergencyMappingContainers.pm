@@ -140,11 +140,12 @@ sub POST :Allow {
         my $item;
         try {
             $item = $schema->resultset('emergency_containers')->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create emergency mapping container: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create emergency mapping container.");
             last;
-        }
+        };
         
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

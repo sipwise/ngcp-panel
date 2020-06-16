@@ -211,13 +211,14 @@ sub ui_rules_root {
             NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
                 c => $c, set_id => $c->stash->{hm_set_result}->id
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to move header rule.'),
             );
-        }
+        };
     }
 
     $c->stash(hm_rules => [ $rules_rs->all ]);
@@ -286,13 +287,14 @@ sub ui_rules_edit {
                 c    => $c,
                 desc => $c->loc('Header rule successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update header rule'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{hm_rules_uri});
     }
 
@@ -327,7 +329,8 @@ sub ui_rules_delete {
             data => \%hm_rule_columns,
             desc => $c->loc('Header rule successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -375,13 +378,14 @@ sub ui_rules_create {
                 c    => $c,
                 desc => $c->loc('Header rule successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create a header rule'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{hm_rules_uri});
     }
 
@@ -548,13 +552,14 @@ sub ui_conditions_edit {
                 c    => $c,
                 desc => $c->loc('Header rule condition successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update header rule condition'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{hm_conditions_uri});
     }
 
@@ -576,7 +581,8 @@ sub ui_conditions_delete {
             data => { $c->stash->{hm_condition_result}->get_inflated_columns },
             desc => $c->loc('Header rule condition successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -638,13 +644,14 @@ sub ui_conditions_create {
                 c    => $c,
                 desc => $c->loc('Header rule condition successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create a header rule condition'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{hm_conditions_uri});
     }
 
@@ -712,13 +719,14 @@ sub ui_actions_root {
             NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
                 c => $c, set_id => $c->stash->{hm_set_result}->id
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to move action.'),
             );
-        }
+        };
     }
 
     $c->stash(hm_actions => [ $actions_rs->all ]);
@@ -845,13 +853,14 @@ sub ui_actions_edit {
                 c    => $c,
                 desc => $c->loc('Header rule action successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update header rule action'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{hm_actions_uri});
     }
 
@@ -873,7 +882,8 @@ sub ui_actions_delete {
             data => { $c->stash->{hm_action_result}->get_inflated_columns },
             desc => $c->loc('Header rule action successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -938,13 +948,14 @@ sub ui_actions_create {
                 c    => $c,
                 desc => $c->loc('Header rule action successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create a header rule action'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{hm_actions_uri});
     }
 

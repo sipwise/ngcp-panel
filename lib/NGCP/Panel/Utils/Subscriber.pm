@@ -52,10 +52,11 @@ sub get_subscriber_location_rs {
             my $rs = NGCP::Panel::Utils::RedisLocationResultSet->new(_redis => $redis, _c => $c);
             $rs = $rs->search($filter) if $filter;
             return $rs;
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to fetch location information from redis: $e");
             return;
-        }
+        };
     } else {
         return $c->model('DB')->resultset('location')->search($filter);
     }

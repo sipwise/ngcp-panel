@@ -109,13 +109,14 @@ sub delete_mcall :Chained('base') :PathPart('delete') {
             c => $c,
             desc  => $c->loc('Malicious call successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $c->stash->{mcid_res}->id },
             desc  => $c->loc('Failed to delete Malicious call'),
         );
-    }
+    };
     $c->response->redirect($c->uri_for());
 }
 

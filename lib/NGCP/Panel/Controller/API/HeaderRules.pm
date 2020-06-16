@@ -75,11 +75,12 @@ sub create_item {
         NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
             c => $c, set_id => $item->ruleset->id
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create a header rule: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule.");
         return;
-    }
+    };
 
     return $item;
 }

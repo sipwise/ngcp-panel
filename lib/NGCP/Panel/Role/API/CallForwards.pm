@@ -367,11 +367,12 @@ sub update_item {
                 $cf_preference->delete;
             }
             
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Error Updating '$type': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$type' could not be updated.");
             return;
-        }
+        };
     }
 
     if ($allowed_prefs->{cft} && $resource->{cft}{ringtimeout} && $resource->{cft}{ringtimeout} > 0) {

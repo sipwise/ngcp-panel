@@ -372,11 +372,12 @@ sub update_item {
             try {
                 NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
                 return $subscriber;
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to terminate subscriber id ".$subscriber->id . ": $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber");
                 return;
-            }
+            };
         }
     }
     try {
@@ -385,7 +386,7 @@ sub update_item {
             prov_subscriber => $prov_subscriber,
             level => $resource->{lock} || 0,
         );
-    } catch($e) {
+    } catch {
         $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
         return;
@@ -420,9 +421,10 @@ sub update_item {
         try {
             $c->log->debug("delete contact id ".$subscriber->contact->id);
             $subscriber->contact->delete;
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->debug("contact still in use: ".$e);
-        }
+        };
         $resource->{contact_id} = undef; # mark for clearance
     }
     delete $resource->{email};
@@ -443,8 +445,10 @@ sub update_item {
             reseller_id => $customer->contact->reseller_id,
             subscriber_id => $subscriber->id,
         );
-    } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
-        $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
+    } catch {
+        my $e = $_;
+        die $e unless $e->isa('DBIx::Class::Exception');
+        die $e unless $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
         $c->log->error("failed to update subscriber, number " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
         return;

@@ -177,11 +177,12 @@ sub POST :Allow {
                     source => $s->{source},
                 });
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create cfsourceset: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfsourceset.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

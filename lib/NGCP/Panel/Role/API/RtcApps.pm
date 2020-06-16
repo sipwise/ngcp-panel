@@ -129,7 +129,8 @@ sub update_item {
 
     try {
 
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to update rtcapps: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update rtcapps.");
         return;

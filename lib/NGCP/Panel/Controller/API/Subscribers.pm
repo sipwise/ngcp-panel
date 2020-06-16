@@ -395,32 +395,35 @@ sub POST :Allow {
                 c => $c, schema => $schema,
                 events_to_create => \@events_to_create,
             );
-        } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key ('number_idx'|'webuser_dom_idx')/ }) {
-            $e =~ /Duplicate entry '([^']+)' for key ('number_idx'|'webuser_dom_idx')/;
-            my $log_error;
-            my @http_errors;
-            if ($2 eq '\'number_idx\'') {
-                $log_error = "failed to create subscriber, number " . $c->qs($1) . " already exists";
-                @http_errors = ("Number '" . $1 . "' already exists.", "Number already exists.");
-            }
-            elsif ($2 eq '\'webuser_dom_idx\'') {
-                $log_error = "failed to create subscriber, webusername-domain combination " . $c->qs($1) . " already exists";
-                @http_errors = ("Webusername-Domain combination '" . $1 . "' already exists.", "Webusername-Domain combination already exists.");
-            }
-            $c->log->error($log_error); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $http_errors[0], $http_errors[1]);
-            last;
-        } catch($e) {
-            if (ref $error_info->{extended} eq 'HASH' && $error_info->{extended}->{response_code}) {
-                $c->log->error($error_info->{extended}->{error}); # TODO: user, message, trace, ...
-                $self->error($c, $error_info->{extended}->{response_code}, $error_info->{extended}->{description});
+        } catch {
+            my $e = $_;
+
+            if ($e->isa('DBIx::Class::Exception') &&
+                $e =~ /Duplicate entry '([^']+)' for key ('number_idx'|'webuser_dom_idx')/) {
+                my $log_error;
+                my @http_errors;
+                if ($2 eq '\'number_idx\'') {
+                    $log_error = "failed to create subscriber, number " . $c->qs($1) . " already exists";
+                    @http_errors = ("Number '" . $1 . "' already exists.", "Number already exists.");
+                } elsif ($2 eq '\'webuser_dom_idx\'') {
+                    $log_error = "failed to create subscriber, webusername-domain combination " . $c->qs($1) . " already exists";
+                    @http_errors = ("Webusername-Domain combination '" . $1 . "' already exists.", "Webusername-Domain combination already exists.");
+                }
+                $c->log->error($log_error); # TODO: user, message, trace, ...
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $http_errors[0], $http_errors[1]);
                 last;
             } else {
-                $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber: $e");
-                last;
+                if (ref $error_info->{extended} eq 'HASH' && $error_info->{extended}->{response_code}) {
+                    $c->log->error($error_info->{extended}->{error}); # TODO: user, message, trace, ...
+                    $self->error($c, $error_info->{extended}->{response_code}, $error_info->{extended}->{description});
+                    last;
+                } else {
+                    $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber: $e");
+                    last;
+                }
             }
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

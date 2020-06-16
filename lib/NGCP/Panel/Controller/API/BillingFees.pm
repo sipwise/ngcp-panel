@@ -175,7 +175,8 @@ sub POST :Allow {
                 $c->response->status(HTTP_CREATED);
                 $c->response->body(q());
 
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to upload csv: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
@@ -206,11 +207,12 @@ sub POST :Allow {
                     fees => [$resource],
                     return_created => 1,
                 )->[0];
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
                 last;
-            }
+            };
             $guard->commit;
 
             $c->response->status(HTTP_CREATED);

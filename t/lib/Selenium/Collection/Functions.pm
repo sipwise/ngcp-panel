@@ -3,7 +3,7 @@ package Selenium::Collection::Functions;
 use warnings;
 use strict;
 use Moo;
-use TryCatch;
+use Try::Tiny;
 
 use Selenium::Remote::Driver::FirefoxExtensions;
 $Selenium::Remote::Driver::FORCE_WD3=1;
@@ -32,7 +32,7 @@ sub create_driver {
                 port => '4444'
             );
             return $d;
-        }
+        };
         try {
             my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
                 browser_name => $browsername,
@@ -43,7 +43,7 @@ sub create_driver {
                 port => '5555'
             );
             return $d;
-        }
+        };
         try {
             my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
                 browser_name => $browsername,
@@ -54,7 +54,7 @@ sub create_driver {
                 port => '6666'
             );
             return $d;
-        }
+        };
         try {
             my $d = Selenium::Remote::Driver::FirefoxExtensions->new(
                 browser_name => $browsername,
@@ -65,7 +65,7 @@ sub create_driver {
                 port => '7777'
             );
             return $d;
-        }
+        };
     };
     return;
 }

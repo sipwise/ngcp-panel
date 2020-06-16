@@ -2,8 +2,8 @@ package Selenium::Remote::Driver::FirefoxExtensions;
 
 use warnings;
 use strict;
-use TryCatch;
 use Moo;
+use Try::Tiny;
 use Selenium::Remote::WDKeys;
 use Selenium::ActionChains;
 use Test::More import => [qw(diag ok is)];

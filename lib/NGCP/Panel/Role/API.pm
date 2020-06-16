@@ -466,10 +466,11 @@ sub require_wellformed_json {
     try {
         NGCP::Panel::Utils::ValidateJSON->new($patch);
         $ret = 1;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         chomp $e;
         $self->error($c, HTTP_BAD_REQUEST, "The entity is not a well-formed '$media_type' document. $e");
-    }
+    };
     return $ret;
 }
 
@@ -926,7 +927,8 @@ sub apply_patch {
                 if ('add' eq $_ or 'replace' eq $_) {
                     try {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
-                    } catch($pe) {
+                    } catch {
+                        my $pe = $_;
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed($pe) && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity,$op);
@@ -935,11 +937,12 @@ sub apply_patch {
                         } else {
                             die($pe); #->rethrow;
                         }
-                    }
+                    };
                 } elsif ('remove' eq $_) {
                     try {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{path});
-                    } catch($pe) {
+                    } catch {
+                        my $pe = $_;
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity);
@@ -948,11 +951,12 @@ sub apply_patch {
                         } else {
                             die($pe); #->rethrow;
                         }
-                    }
+                    };
                 } elsif ('move' eq $_ or 'copy' eq $_) {
                     try {
                         $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
-                    } catch($pe) {
+                    } catch {
+                        my $pe = $_;
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity);
@@ -961,12 +965,13 @@ sub apply_patch {
                         } else {
                             die($pe); #->rethrow;
                         }
-                    }
+                    };
                 } elsif ('test' eq $_) {
                     try {
                         die "test failed - path: $op->{path} value: $op->{value}\n"
                             unless $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
-                    } catch($pe) {
+                    } catch {
+                        my $pe = $_;
                         if (defined $optional_field_code_ref && ref $optional_field_code_ref eq 'CODE') {
                             if (blessed $pe && $pe->isa('JSON::Pointer::Exception') && $pe->code == JSON::Pointer::Exception->ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE) {
                                 &$optional_field_code_ref(substr($op->{path},1),$entity);
@@ -976,14 +981,15 @@ sub apply_patch {
                         } else {
                             die($pe); #->rethrow;
                         }
-                    }
+                    };
                 }
             }
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: $e");
         return;
-    }
+    };
     return $entity;
 }
 
@@ -1621,9 +1627,10 @@ sub return_csv{
         $c->response->status(200);
         $self->create_csv($c);
         $c->response->body(q());
-    }catch($e){
+    } catch {
+        my $e = $_;
         $self->error($c, HTTP_BAD_REQUEST, $e);
-    }
+    };
 }
 
 sub check_return_type {
@@ -1693,7 +1700,7 @@ sub supported_mime_types_extensions {
 
 sub return_requested_type {
     my ($self, $c, $id, $item, $return_type) = @_;
-    try{
+    try {
         if($return_type eq 'text/csv') {
             $self->return_csv($c);
             return;
@@ -1712,9 +1719,10 @@ sub return_requested_type {
         $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename  . '"');
         $c->response->content_type( $mime_type );
         $c->response->body($$data_ref);
-    }catch($e){
+    } catch {
+        my $e = $_;
         $self->error($c, HTTP_BAD_REQUEST, $e);
-    }
+    };
 }
 
 1;

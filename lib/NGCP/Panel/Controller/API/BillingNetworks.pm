@@ -162,7 +162,8 @@ sub POST :Allow {
             for my $block (@$blocks) {
                 $bn->create_related("billing_network_blocks", $block);
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create billingnetwork: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billingnetwork.");
             return;

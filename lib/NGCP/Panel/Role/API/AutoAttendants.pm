@@ -116,7 +116,8 @@ sub update_item {
                 uuid => $prov_subs->uuid,
             });
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to update autoattendants: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update autoattendants.");
         return;

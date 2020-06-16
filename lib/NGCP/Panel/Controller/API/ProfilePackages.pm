@@ -181,11 +181,12 @@ sub POST :Allow {
             foreach my $mapping (@$mappings_to_create) {
                 $profile_package->profiles->create($mapping); 
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create profile package: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create profile package.");
             last;
-        }
+        };
         
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

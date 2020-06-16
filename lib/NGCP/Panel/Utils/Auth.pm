@@ -201,18 +201,24 @@ sub generate_client_cert {
         try {
             $pem = $c->model('CA')->make_client($c, $serial);
             $p12 = $c->model('CA')->make_pkcs12($c, $serial, $pem, 'sipwise');
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             $error_cb->($e);
             return;
-        }
+        };
         try {
             $admin->update({
                 ssl_client_m_serial => $serial,
                 ssl_client_certificate => undef, # not used anymore, clear it just in case
             });
             $updated = 1;
-        } catch(DBIx::Class::Exception $e where { "$_" =~ qr'Duplicate entry' }) {
-            $serial++;
+        } catch {
+            my $e = $_;
+
+            if ($e->isa('DBIx::Class::Exception' &&
+                $e =~ qr'Duplicate entry') {
+                $serial++;
+            }
         }
     }
 
@@ -378,10 +384,11 @@ sub cmd {
         $output = capturex([0..1,3], $cmd, @cmd_args);
         $output =~s/^\s+|\s+$//g;
         $c->log->debug( "output=$output;" ) unless $params->{no_debug_output};
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         $c->log->debug( "error=$e;" );
         return $e;
-    }
+    };
     return $output;
 }
 

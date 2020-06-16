@@ -37,10 +37,11 @@ sub _get_redis {
             }
             $redis->select($select) if defined $select;
             $c->stash($stash_key => $redis);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to fetch callqueue information from redis: $e");
             return;
-        }
+        };
     }
     return $redis;
 }

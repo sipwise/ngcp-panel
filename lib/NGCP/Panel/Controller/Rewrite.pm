@@ -109,13 +109,14 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update rewrite rule set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
     }
 
@@ -134,13 +135,14 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
             data => { $c->stash->{set_result}->get_inflated_columns },
             desc => $c->loc('Rewrite rule set successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete rewrite rule set'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
 }
 
@@ -188,13 +190,14 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully cloned'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clone rewrite rule set.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
     }
 
@@ -242,13 +245,14 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Rewrite rule set successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create rewrite rule set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
     }
 
@@ -309,13 +313,14 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
                 $elem->update;
             }
             NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to move rewrite rule.'),
             );
-        }
+        };
     }
 
     my @caller_in = $rules_rs->search({
@@ -430,13 +435,14 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update rewrite rule'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
     }
 
@@ -455,7 +461,8 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
             data => { $c->stash->{rule_result}->get_inflated_columns },
             desc => $c->loc('Rewrite rule successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -490,13 +497,14 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Rewrite rule successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create rewrite rule'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
     }
 

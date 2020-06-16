@@ -43,11 +43,12 @@ sub GET :Allow {
         my $data;
         try {
             $data = read_file($item->full_filename);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to read stream file: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to read stream file.");
             last;
-        }
+        };
         my $mime_type;
         if($item->file_format eq "wav") {
             $mime_type = 'audio/x-wav';

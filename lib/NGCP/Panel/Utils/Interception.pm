@@ -5,7 +5,7 @@ use strict;
 
 use Data::Dumper;
 use LWP::UserAgent;
-use TryCatch;
+use Try::Tiny;
 use JSON;
 
 sub request {
@@ -28,9 +28,9 @@ sub request {
         $c->log->debug("performing $method for interception at $url");
         try {
             _request($c, $ua, $url, $method, $data);
-        } catch($e) {
+        } catch {
             # skip errors
-        }
+        };
     }
     return 1;
 }

@@ -5,7 +5,7 @@ use strict;
 
 use parent 'Catalyst::Controller';
 use Redis;
-use TryCatch;
+use Try::Tiny;
 use UUID;
 
 use NGCP::Panel::Form;
@@ -157,13 +157,14 @@ sub reset_password :Chained('/') :PathPart('resetpassword') :Args(0) {
                     }
                 }
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to reset password'),
             );
-        }
+        };
         $c->res->redirect($c->uri_for('/login/admin'));
     }
 
@@ -243,7 +244,8 @@ sub recover_password :Chained('/') :PathPart('recoverpassword') :Args(0) {
                 });
                 $redis->del("password_reset:admin::$uuid_string");
                 $redis->del("password_reset:admin::$admin");
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
@@ -251,7 +253,7 @@ sub recover_password :Chained('/') :PathPart('recoverpassword') :Args(0) {
                 desc  => $c->loc('Failed to recover password'),
             );
             $c->detach('/denied_page');
-        }
+        };
 
         NGCP::Panel::Utils::Message::info(
             c    => $c,

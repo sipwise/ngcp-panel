@@ -66,7 +66,8 @@ sub update_item_model {
         for my $dest (@{ $resource->{destinations} }) {
             $destinations_rs->create($dest);
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("Error Updating faxserversettings: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "faxserversettings could not be updated.");
         return;

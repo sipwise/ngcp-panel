@@ -23,11 +23,12 @@ sub delete_item {
         try {
             $item->voip_rewrite_rules->delete;
             $item->delete;
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to delete rewriteruleset with id '".$item->id."': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
-        }
+        };
         $guard->commit;
         NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
     }
@@ -47,11 +48,12 @@ sub update_item_model {
             if ($rewriterules) {
                 $self->update_rewriterules( $c, $item, $form, $rewriterules );
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to update rewriterule with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             die;
-        }
+        };
         $guard->commit;
         NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
     }

@@ -84,11 +84,12 @@ sub POST :Allow {
                 c => $c, subscriber => $subscriber, 
                 number => $resource->{number}, direction => $resource->{direction},
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to rewrite number: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to rewrite number.");
             last;
-        }
+        };
 
         $guard->commit;
 

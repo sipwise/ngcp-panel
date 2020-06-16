@@ -152,11 +152,12 @@ sub POST :Allow {
 
         try {
             $item = $c->model('DB')->resultset('vouchers')->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create voucher: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher.");
             last;
-        }
+        };
 
         $guard->commit;
 

@@ -149,11 +149,12 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('voip_peer_rules')->create($resource);
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create peering rule: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering rule.");
             last;
-        }
+        };
 
         $guard->commit;
 

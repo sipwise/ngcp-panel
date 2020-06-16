@@ -128,7 +128,8 @@ sub update_item {
                 $c->log->warn($msg);
                 return;
             });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to update rtcnetworks: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update rtcnetworks.");
         return;

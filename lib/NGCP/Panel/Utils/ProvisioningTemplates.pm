@@ -151,7 +151,8 @@ sub create_provisioning_template_form {
             fields_config => [ values %$fields ],
         });
         $form->create_structure([ keys %$fields ]);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -160,7 +161,7 @@ sub create_provisioning_template_form {
         );
         $c->response->redirect($base_uri);
         return 1;
-    }
+    };
 
     my $params = {};
     my $posted = ($c->request->method eq 'POST');
@@ -197,7 +198,8 @@ sub create_provisioning_template_form {
                 data => \%log_data,
                 desc => $c->loc("Provisioning template '[_1]' done: subscriber [_2] created", $template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             _provision_cleanup($c, $context);
             NGCP::Panel::Utils::Message::error(
                 c => $c,
@@ -207,7 +209,7 @@ sub create_provisioning_template_form {
             );
             $c->response->redirect($base_uri);
             return 1;
-        }
+        };
         $c->response->redirect($base_uri);
         return 1;
 
@@ -262,9 +264,10 @@ sub process_csv {
                 context => $context,
                 'values' => $row,
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             push(@fails,{ linenum => $linenum, msg => $e });
-        }
+        };
     }
 
     provision_finish(
@@ -466,51 +469,59 @@ sub provision_commit_row {
             $context,
             $schema,
         );
-    } catch(DBIx::Class::Exception $e where { /Duplicate entry/ }) {
-        my ($msg, $subscriber) = _get_duplicate_subs(
-            $c,
-            $context,
-            $schema,
-            $e,
-            $purge,
-        );
-        if ($purge && $subscriber) {
-            $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
-            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-            _create_subscriber(
+    } catch {
+        my $e = $_;
+
+        if ($e->isa('DBIx::Class::Exception' &&
+            $e =~ /Duplicate entry/) {
+            my ($msg, $subscriber) = _get_duplicate_subs(
                 $c,
                 $context,
                 $schema,
+                $e,
+                $purge,
             );
+            if ($purge && $subscriber) {
+                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
+                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+                _create_subscriber(
+                    $c,
+                    $context,
+                    $schema,
+                );
+            } else {
+                die $msg;
+            }
+        } elsif ($e =~ /Subscriber already exists/) {
+            my ($msg, $subscriber) = _get_duplicate_subs(
+                $c,
+                $context,
+                $schema,
+                $e,
+                $purge,
+            );
+            if ($purge && $subscriber) {
+                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
+                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+                _init_subscriber_context(
+                    $c,
+                    $context,
+                    $schema,
+                    $c->stash->{provisioning_templates}->{$template},
+                );
+                _create_subscriber(
+                    $c,
+                    $context,
+                    $schema,
+                );
+            } else {
+                die $msg;
+            }
         } else {
-            die $msg;
+            # Rethrow
+            die $e;
         }
-    } catch($e where { /Subscriber already exists/ }) {
-        my ($msg, $subscriber) = _get_duplicate_subs(
-            $c,
-            $context,
-            $schema,
-            $e,
-            $purge,
-        );
-        if ($purge && $subscriber) {
-            $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
-            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-            _init_subscriber_context(
-                $c,
-                $context,
-                $schema,
-                $c->stash->{provisioning_templates}->{$template},
-            );
-            _create_subscriber(
-                $c,
-                $context,
-                $schema,
-            );
-        } else {
-            die $msg;
-        }
-    }
+    };
 
     _init_subscriber_preferences_context(
         $c,

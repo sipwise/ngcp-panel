@@ -87,10 +87,11 @@ sub process_form_resource{
             upload => $resource->{greetingfile},
             converted_data_ref => \$process_extras->{binary_ref},
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $e);
         return;
-    }
+    };
     return 1;
 }
 

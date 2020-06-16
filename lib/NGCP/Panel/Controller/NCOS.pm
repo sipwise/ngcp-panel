@@ -121,13 +121,14 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('NCOS level successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update NCOS level'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/ncos'));
     }
 
@@ -160,7 +161,8 @@ sub delete_ncos :Chained('base') :PathPart('delete') {
             c    => $c,
             desc => $c->loc('NCOS level successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -207,13 +209,14 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('NCOS level successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create NCOS level'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/ncos'));
     }
 
@@ -327,13 +330,14 @@ sub pattern_edit :Chained('pattern_base') :PathPart('edit') {
                 data => { $c->stash->{pattern_result}->get_inflated_columns },
                 desc => $c->loc('NCOS pattern successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update NCOS pattern'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
@@ -354,7 +358,8 @@ sub pattern_delete :Chained('pattern_base') :PathPart('delete') {
             data => { $c->stash->{pattern_result}->get_inflated_columns },
             desc => $c->loc('NCOS pattern successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -386,13 +391,14 @@ sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('NCOS pattern successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create NCOS pattern'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
@@ -426,13 +432,14 @@ sub pattern_edit_extra :Chained('pattern_list') :PathPart('edit_extra') :Args(0)
                 c    => $c,
                 desc => $c->loc('NCOS level setting successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update NCOS level setting'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
@@ -499,13 +506,14 @@ sub lnp_edit :Chained('lnp_base') :PathPart('edit') {
                 data => { $c->stash->{lnp_result}->get_inflated_columns },
                 desc => $c->loc('NCOS lnp entry successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update NCOS lnp entry'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
@@ -526,7 +534,8 @@ sub lnp_delete :Chained('lnp_base') :PathPart('delete') {
             data => { $c->stash->{lnp_result}->get_inflated_columns },
             desc => $c->loc('NCOS lnp entry successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -562,13 +571,14 @@ sub lnp_create :Chained('pattern_list') :PathPart('lnp/create') :Args(0) :Allowe
                 c    => $c,
                 desc => $c->loc('NCOS lnp entry successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create NCOS lnp entry'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
@@ -639,13 +649,14 @@ sub lnp_pattern_create :Chained('lnp_pattern_list') :PathPart('create') :Args(0)
                 c    => $c,
                 desc => $c->loc('NCOS pattern successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create NCOS pattern'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{lnp_pattern_base_uri});
     }
 
@@ -704,13 +715,14 @@ sub lnp_pattern_edit :Chained('lnp_pattern_base') :PathPart('edit') {
                 data => { $c->stash->{lnp_pattern_result}->get_inflated_columns },
                 desc => $c->loc('NCOS pattern successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update NCOS pattern'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{lnp_pattern_base_uri});
     }
 
@@ -731,7 +743,8 @@ sub lnp_pattern_delete :Chained('lnp_pattern_base') :PathPart('delete') {
             data => { $c->stash->{lnp_pattern_result}->get_inflated_columns },
             desc => $c->loc('NCOS pattern successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

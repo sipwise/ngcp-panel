@@ -97,11 +97,12 @@ sub create_item {
             tmpl         => $tmpl,
             invoice_data => $invoice_data,
         });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         my $http_code = 'HASH' eq ref $e && $e->{httpcode} ? $e->{httpcode} : HTTP_INTERNAL_SERVER_ERROR;
         $self->error($c, $http_code, $e);
         return;
-    }
+    };
     return $item;
 }
 

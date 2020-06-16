@@ -112,13 +112,14 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Phonebook entry successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create phonebook entry'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/phonebook'));
     }
 
@@ -164,13 +165,14 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Phonebook entry successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update phonebook entry'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/phonebook'));
     }
 
@@ -188,13 +190,14 @@ sub delete_phonebook :Chained('base') :PathPart('delete') {
             data => { $c->stash->{phonebook_result}->get_inflated_columns },
             desc => $c->loc('Phonebook entry successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete phonebook entry'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/phonebook'));
 }
 

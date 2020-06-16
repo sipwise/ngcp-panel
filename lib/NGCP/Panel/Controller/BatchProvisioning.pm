@@ -143,13 +143,14 @@ sub do_template_upload :Chained('template_base') :PathPart('upload') :Args(0) {
                     desc => $c->loc('CSV file ([_1] lines) processed, [_2] error(s).', $linecount, 0),
                 );
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to process CSV file.'),
             );
-        }
+        };
 
         $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
         return;
@@ -209,13 +210,14 @@ sub create :Chained('template_list') :PathPart('create') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Provisioning template successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create provisioning template'),
             );
-        }
+        };
         #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
         $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
     }
@@ -285,13 +287,14 @@ sub edit :Chained('template_base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Provisioning template successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update provisioning template'),
             );
-        }
+        };
         #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
         $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
     }
@@ -325,7 +328,8 @@ sub remove :Chained('template_base') :PathPart('remove') :Args(0) {
             data => $template,
             desc => $c->loc('Provisioning template successfully removed'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
