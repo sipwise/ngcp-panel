@@ -6,7 +6,7 @@ Build-Depends:
  debhelper-compat (= 12),
  libmodule-build-perl,
  libngcp-schema-perl,
- libtrycatch-perl,
+ libtry-tiny-perl,
  libwww-perl,
 Standards-Version: 3.9.8
 Homepage: https://www.sipwise.com/
@@ -115,7 +115,7 @@ Depends:
  libtie-ixhash-perl,
  libtime-period-perl,
  libtime-warp-perl,
- libtrycatch-perl,
+ libtry-tiny-perl,
  libtype-tiny-perl,
  liburi-encode-perl,
  liburi-perl,
@@ -143,7 +143,7 @@ Depends:
  libmoose-perl,
  libngcp-api-client-perl,
  libredis-perl,
- libtrycatch-perl,
+ libtry-tiny-perl,
  liburi-perl,
  openssl,
  ${misc:Depends},

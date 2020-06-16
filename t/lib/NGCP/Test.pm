@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Moose;
-use TryCatch;
+use Try::Tiny;
 use NGCP::Test::Client;
 use NGCP::Test::ReferenceData;
 use NGCP::Test::Resource;
@@ -35,9 +35,9 @@ sub reference_data {
     my $err;
     try {
         $ref = NGCP::Test::ReferenceData->new(%args);
-    } catch($e) {
-        $err = $e;
-    }
+    } catch {
+        $err = $_;
+    };
     ok($ref, "building reference data");
     $self->inc_test_count;
     $self->fatal($err) if $err;

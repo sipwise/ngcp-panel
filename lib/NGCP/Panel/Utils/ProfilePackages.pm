@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use Scalar::Util qw(looks_like_number);
 
-#use TryCatch;
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Contract qw();
 use NGCP::Panel::Utils::Subscriber qw();

@@ -6,7 +6,6 @@ use Test::More import => [qw(done_testing is ok diag todo_skip)];
 use Selenium::Remote::Driver::FirefoxExtensions;
 use Selenium::Collection::Common;
 use Selenium::Collection::Functions;
-use TryCatch;
 
 my ($port) = @_;
 my $d = Selenium::Collection::Functions::create_driver($port);

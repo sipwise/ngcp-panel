@@ -2,7 +2,6 @@ package NGCP::Panel::Utils::RedisLocationResultSet;
 
 use Moo;
 
-use TryCatch;
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::RedisLocationResultSource;
 

@@ -14,7 +14,7 @@ use Data::HAL::Link qw();
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
-use TryCatch;
+use Try::Tiny;
 ##### --------- common part
 
 sub auto :Private {
@@ -338,8 +338,8 @@ sub put {
                     form     => $form,
                     process_extras => $process_extras,
                 );
-            } catch($e) {
-                $c->log->error("failed to process non json data: $e");
+            } catch {
+                $c->log->error("failed to process non json data: $_");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
             };

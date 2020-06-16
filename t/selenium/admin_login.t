@@ -5,7 +5,7 @@ use lib 't/lib';
 use Test::More import => [qw(done_testing is diag ok)];
 use Selenium::Remote::Driver::FirefoxExtensions;
 use Selenium::Collection::Common;
-use TryCatch;
+use Try::Tiny;
 
 sub admin_login {
     my ($port) = @_;
@@ -31,8 +31,7 @@ sub admin_login {
         $d->find_element('#submit', 'css')->click();
         $d->quit();
         return 1;
-    }
-    catch {
+    } catch {
         $d->quit();
         return 0;
     };

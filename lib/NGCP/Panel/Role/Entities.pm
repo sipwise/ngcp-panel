@@ -9,7 +9,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use Data::HAL qw();
 use Data::HAL::Link qw();
-use TryCatch;
+use Try::Tiny;
 
 ##### --------- common part
 
@@ -284,8 +284,8 @@ sub post {
                     form     => $form,
                     process_extras => $process_extras,
                 );
-            } catch($e) {
-                $c->log->error("failed to process non json data: $e");
+            } catch {
+                $c->log->error("failed to process non json data: $_");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
             };
