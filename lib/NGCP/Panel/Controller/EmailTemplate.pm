@@ -215,13 +215,14 @@ sub tmpl_sync :Chained('tmpl_list_restricted') :PathPart('sync') :Args(0) {
                     c    => $c,
                     desc => $c->loc('Email template successfully synced'),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,
                     error => $e,
                     desc  => $c->loc('Failed to sync email template'),
                 );
-            }
+            };
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emailtemplate'));
         }
     }
@@ -273,7 +274,8 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
             data => { $c->stash->{tmpl}->get_inflated_columns },
             desc => $c->loc('Email template successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -305,7 +307,8 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Email template successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
@@ -410,13 +413,14 @@ sub create_email_template :Private {
                 c    => $c,
                 desc => $c->loc('Email template successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create email template'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emailtemplate'));
     }
 }

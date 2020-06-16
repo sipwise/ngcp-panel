@@ -138,13 +138,14 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
                 c    => $c,
                 desc => $c->loc('Number block successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create number block'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/numberblock'));
     }
 
@@ -212,13 +213,14 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
                 c    => $c,
                 desc => $c->loc('Number block successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update number block'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/numberblock'));
     }
 
@@ -241,13 +243,14 @@ sub block_delete :Chained('block_base') :PathPart('delete') :Does(ACL) :ACLDetac
             data => { $c->stash->{block}->get_inflated_columns },
             desc  => $c->loc('Number block successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete number block'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/numberblock'));
 }
 

@@ -229,13 +229,14 @@ sub DELETE :Allow {
             if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
                 die "XMLRPC failed";
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => "failed to reload kamailio: $e. Subscriber was terminated.",
                 desc  => $c->loc('Failed to reload kamailio. Subscriber was terminated.'),
             );
-        }
+        };
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

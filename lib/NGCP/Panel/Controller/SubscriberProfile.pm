@@ -138,13 +138,14 @@ sub set_create :Chained('set_list_restricted') :PathPart('create') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Subscriber profile set successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create subscriber profile set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriberprofile'));
     }
 
@@ -201,13 +202,14 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Subscriber profile set successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber profile set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriberprofile'));
     }
 
@@ -238,13 +240,14 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
             data => { $c->stash->{set}->get_inflated_columns },
             desc => $c->loc('Subscriber profile set successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete subscriber profile set'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriberprofile'));
 }
 
@@ -308,13 +311,14 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully cloned'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clone subscriber profile'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriberprofile'));
     }
 
@@ -434,13 +438,14 @@ sub profile_create :Chained('profile_list_restricted') :PathPart('create') :Args
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create subscriber profile'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriberprofile/profile_root', [$c->stash->{set}->id]));
     }
 
@@ -571,13 +576,14 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber profile'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriberprofile/profile_root', [$c->stash->{set}->id]));
     }
 
@@ -616,13 +622,14 @@ sub profile_delete :Chained('profile_base') :PathPart('delete') {
             data => { $c->stash->{profile}->get_inflated_columns },
             desc => $c->loc('Subscriber profile successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete subscriber profile'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriberprofile/profile_root', [$c->stash->{set}->id]));
 }
 
@@ -665,13 +672,14 @@ sub profile_clone :Chained('profile_base') :PathPart('clone') {
                 c    => $c,
                 desc => $c->loc('Subscriber profile successfully cloned'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clone subscriber profile'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriberprofile/profile_root', [$c->stash->{set}->id]));
     }
 

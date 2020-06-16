@@ -97,11 +97,12 @@ sub PATCH :Allow {
             if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
                 die "XMLRPC failed";
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to reload kamailio: $e. Trusted source modified.");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.");
             last;
-        }
+        };
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -151,12 +152,13 @@ sub PUT :Allow {
             if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
                 die "XMLRPC failed";
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to reload kamailio: $e. Trusted source modified.");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.");
             # TODO: do we still want to return the modified item here?
             last;
-        }
+        };
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -198,11 +200,12 @@ sub DELETE :Allow {
             if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
                 die "XMLRPC failed";
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to reload kamailio: $e. Trusted source deleted.");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was deleted.");
             last;
-        }
+        };
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

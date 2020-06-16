@@ -117,11 +117,12 @@ sub create_item {
         }
 
         $item = $lnp_list->ncos_lnp_pattern_lists->create($resource);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create a ncos lnp carrier pattern: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a ncos lnp carrier pattern.");
         return;
-    }
+    };
 
     return $item;
 }

@@ -145,14 +145,15 @@ sub carrier_edit :Chained('carrier_base') :PathPart('edit') {
                 desc  => $c->loc('LNP carrier successfully updated'),
             );
             $c->flash(carrier_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update LNP carrier'),
             );
             $c->flash(carrier_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
     }
     $c->stash( 'carrier_edit_flag'      => 1 );
@@ -189,14 +190,15 @@ sub carrier_create :Chained('list') :PathPart('carrier_create') :Args(0) {
                 desc  => $c->loc('LNP carrier successfully created'),
             );
             $c->flash(carrier_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create LNP carrier'),
             );
             $c->flash(carrier_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
     }
 
@@ -230,7 +232,8 @@ sub carrier_delete :Chained('carrier_base') :PathPart('delete') :Args(0) {
             desc => $c->loc('LNP carrier successfully deleted'),
         );
         $c->flash(carrier_messages => delete $c->flash->{messages});
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -340,14 +343,15 @@ sub number_edit :Chained('number_base') :PathPart('edit') {
                 desc  => $c->loc('LNP number successfully updated'),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update LNP number'),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
     }
     $c->stash( 'number_edit_flag'      => 1 );
@@ -406,14 +410,15 @@ sub number_create :Chained('list') :PathPart('number_create') :Args(0) {
                 desc  => $c->loc('LNP number successfully created'),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create LNP number'),
             );
             $c->flash(number_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/lnp'));
     }
 
@@ -433,7 +438,8 @@ sub number_delete :Chained('number_base') :PathPart('delete') :Args(0) {
             desc => $c->loc('LNP number successfully deleted'),
         );
         $c->flash(number_messages => delete $c->flash->{messages});
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -501,14 +507,15 @@ sub numbers_upload :Chained('list') :PathPart('upload') :Args(0) {
                 desc => $$text_success,
             );
             $c->flash(carrier_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to upload LNP numbers'),
             );
             $c->flash(carrier_messages => delete $c->flash->{messages});
-        }
+        };
 
         $c->response->redirect($c->uri_for('/lnp'));
         return;

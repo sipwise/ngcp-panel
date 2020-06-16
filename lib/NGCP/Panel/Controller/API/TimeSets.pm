@@ -54,11 +54,12 @@ sub create_item {
             c => $c,
             resource => $resource,
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create timeset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create timeset.");
         return;
-    }
+    };
 
     return $timeset;
 }

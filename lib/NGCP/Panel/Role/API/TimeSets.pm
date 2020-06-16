@@ -133,7 +133,8 @@ sub update_item_model {
             resource => $resource,
         );
         $item->discard_changes;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to update timeset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update timesets.");
         return;

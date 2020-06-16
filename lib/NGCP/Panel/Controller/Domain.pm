@@ -146,25 +146,27 @@ sub create :Chained('dom_list_restricted') :PathPart('create') :Args() {
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create domain.'),
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
-        }
+        };
 
         try {
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $form->value->{domain});
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 desc  => $c->loc('Failed to activate domain. Domain was created.'),
                 error => $e,
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
-        }
+        };
 
         NGCP::Panel::Utils::Message::info(
             c => $c,
@@ -235,7 +237,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     domain => $form->value->{domain},
                 });
             });
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -243,11 +246,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             );
             $c->response->redirect($c->uri_for());
             return;
-        }
+        };
 
         try {
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $form->value->{domain});
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 desc  => $c->loc('Failed to reload proxy. Domain was modified.'),
@@ -255,7 +259,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
             return;
-        }
+        };
         NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Domain successfully updated'),
@@ -284,7 +288,8 @@ sub delete_domain :Chained('base') :PathPart('delete') :Args(0) {
             NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain)
                 unless($c->config->{features}->{debug});
         });
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -292,11 +297,12 @@ sub delete_domain :Chained('base') :PathPart('delete') :Args(0) {
         );
         $c->response->redirect($c->uri_for());
         return;
-    }
+    };
 
     try {
         NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c);
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             desc  => $c->loc('Failed to reload proxy. Domain was deleted.'),
@@ -304,7 +310,7 @@ sub delete_domain :Chained('base') :PathPart('delete') :Args(0) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         return;
-    }
+    };
     NGCP::Panel::Utils::Message::info(
         c => $c,
         data => { $c->stash->{domain_result}->get_inflated_columns },

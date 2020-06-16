@@ -6,7 +6,6 @@ use strict;
 use English;
 use File::Temp qw/tempfile/;
 use File::Slurp;
-use TryCatch;
 use IPC::System::Simple qw/capture/;
 use Data::Dumper;
 use Net::Ping;

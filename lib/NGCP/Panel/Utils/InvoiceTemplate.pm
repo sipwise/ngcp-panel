@@ -165,11 +165,12 @@ sub svg_content{
 
         try {
             $content = $t->context->insert($default);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             # TODO: handle error!
             $c and $c->log->error("failed to load default invoice template: $e");
             return;
-        }
+        };
     }
 
     # some part of the chain does not like content being encoded as utf8 at

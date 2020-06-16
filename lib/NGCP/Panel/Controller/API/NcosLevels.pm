@@ -142,11 +142,12 @@ sub POST :Allow {
 
         try {
             $item = $c->model('DB')->resultset('ncos_levels')->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create ncos level: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos level.");
             last;
-        }
+        };
 
         $guard->commit;
 

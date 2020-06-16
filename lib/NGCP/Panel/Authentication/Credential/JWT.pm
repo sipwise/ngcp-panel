@@ -14,7 +14,7 @@ __PACKAGE__->mk_accessors(qw/
 /);
 
 use Crypt::JWT qw/decode_jwt/;
-use TryCatch;
+use Try::Tiny;
 use Catalyst::Exception ();
 
 sub new {
@@ -57,11 +57,12 @@ sub authenticate {
     try {
         my $raw_key = pack('H*', $self->jwt_key);
         $jwt_data = decode_jwt(token=>$token, key=>$raw_key, accepted_alg => $self->alg);
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         # something happened
         $c->log->debug("Error decoding token: $e") if $self->debug;
         return;
-    }
+    };
 
     my $user_data = {
         %{ $authinfo // {} },

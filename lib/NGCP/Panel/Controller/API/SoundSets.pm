@@ -74,11 +74,12 @@ sub create_item {
                 error_ref  => \$error,
             );
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create soundset: $e"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundset.");
         return;
-    }
+    };
 
     return $item;
 }

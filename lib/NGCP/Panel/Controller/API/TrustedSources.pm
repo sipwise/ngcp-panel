@@ -139,11 +139,12 @@ sub POST :Allow {
         my $item;
         try {
             $item = $c->model('DB')->resultset('voip_trusted_sources')->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create trusted source: " . $c->qs($e)); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create trusted source.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
@@ -158,12 +159,13 @@ sub POST :Allow {
             if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
                 die "XMLRPC failed";
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to reload kamailio: $e. Trusted source created");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was created");
             $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
             last;
-        }
+        };
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));

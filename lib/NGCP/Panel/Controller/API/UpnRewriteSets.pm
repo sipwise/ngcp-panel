@@ -148,11 +148,12 @@ sub POST :Allow {
                 c => $c, attribute => 'upn_rewrite_id',
                 prov_subscriber => $sub->provisioning_voip_subscriber);
             $upnr_pref_rs->create({ value => $item->id });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create UPN rewrite set: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create UPN rewrite set.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

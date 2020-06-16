@@ -168,11 +168,12 @@ sub POST :Allow {
                     $c->log->warn($msg);
                     die "failed to create rtcengine reseller";
                 });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create reseller: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.");
             last;
-        }
+        };
         
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

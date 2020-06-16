@@ -89,11 +89,12 @@ sub create_item {
             my $_bset = $self->item_by_id($c, $bset->id);
             return $self->hal_from_item($c, $_bset); });
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create cfbnumberset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfbnumberset.");
         return;
-    }
+    };
 
     return $bset;
 }

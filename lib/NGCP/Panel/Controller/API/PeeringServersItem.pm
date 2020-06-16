@@ -92,11 +92,12 @@ sub PATCH :Allow {
                 );
             }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
             last;
-        }
+        };
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -148,11 +149,12 @@ sub PUT :Allow {
                 );
             }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
             last;
-        }
+        };
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -192,11 +194,12 @@ sub DELETE :Allow {
                 );
                 NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             }
-        } catch($e) {
+        } catch {
+             my $e = $_;
             $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
             last;
-        }
+        };
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

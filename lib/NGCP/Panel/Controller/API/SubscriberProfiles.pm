@@ -190,11 +190,12 @@ sub POST :Allow {
                 next unless $meta;
                 $item->profile_attributes->create({ attribute_id => $meta->id });
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create subscriber profile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

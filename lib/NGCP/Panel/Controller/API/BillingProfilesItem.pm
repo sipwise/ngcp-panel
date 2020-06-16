@@ -166,11 +166,12 @@ sub DELETE :Allow {
                 status => 'terminated',
                 terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local
             });
-       } catch($e) {
+       } catch {
+           my $e = $_;
            $c->log->error("Failed to terminate billingprofile with id '$id': $e");
            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
            last;
-       }
+       };
        $guard->commit;
 
        $c->response->status(HTTP_NO_CONTENT);

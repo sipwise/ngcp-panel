@@ -141,7 +141,8 @@ sub update_item {
             key => 'contract_id'
         });
         $customer = $item->contract;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to set customer fraud preference: $e");
         return;
     };

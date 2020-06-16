@@ -67,7 +67,7 @@ sub resource_from_item{
         try {
             $fax_preference = $prov_subs->create_related('voip_fax_preference', {});
             $fax_preference->discard_changes; # reload
-        } catch($e) {
+        } catch {
             $c->log->error("Error creating empty fax_preference on get");
         };
     }

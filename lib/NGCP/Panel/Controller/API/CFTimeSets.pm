@@ -167,11 +167,12 @@ sub POST :Allow {
                 delete $t->{time_set_id};
                 $tset->create_related("voip_cf_periods", $t);
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create cftimeset: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cftimeset.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

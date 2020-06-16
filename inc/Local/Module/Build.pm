@@ -3,7 +3,7 @@ package Local::Module::Build;
 use strict;
 use warnings;
 
-use TryCatch;
+use Try::Tiny;
 use LWP::UserAgent;
 
 use parent qw(Module::Build);

@@ -164,7 +164,8 @@ sub DELETE :Allow {
                         terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
                     });
                     $contact->discard_changes();
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     $c->log->error("Failed to terminate contact id '".$contact->id."': $e");
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
                     last;

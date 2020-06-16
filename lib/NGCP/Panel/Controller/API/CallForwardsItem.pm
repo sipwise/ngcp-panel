@@ -155,11 +155,12 @@ sub DELETE :Allow {
 
         try {
             $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("Failed to delete callforward with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
-        }
+        };
 
         $guard->commit;
 

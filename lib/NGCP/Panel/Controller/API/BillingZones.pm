@@ -145,11 +145,12 @@ sub POST :Allow {
         my $zone;
         try {
             $zone = $profile->billing_zones->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create billing zone: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing zone.");
             last;
-        }
+        };
         
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

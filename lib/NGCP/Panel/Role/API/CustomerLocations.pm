@@ -113,7 +113,8 @@ sub update_item {
             $item->create_related("voip_contract_location_blocks", $block);
         }
         $item->discard_changes;
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer location.");
         return;
     };

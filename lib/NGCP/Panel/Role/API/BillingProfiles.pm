@@ -168,7 +168,8 @@ sub update_profile {
             old_prepaid => $old_prepaid,
             new_prepaid => $profile->prepaid,
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("Failed to update billing profile '".$profile->id."': $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
         return;

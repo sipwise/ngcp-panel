@@ -66,12 +66,13 @@ sub POST :Allow {
         if ($resource->{type} eq "pcc") {
             try {
                 NGCP::Panel::Utils::Sems::party_call_control($c, $resource);
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to handle a party call control request: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
                     "Failed to handle a party call control request.");
                 last;
-            }
+            };
         } elsif ($resource->{type} eq "sms") {
             my $error_msg;
             my $callid = $resource->{callid};
@@ -95,12 +96,13 @@ sub POST :Allow {
                         'pcc_status' => 'pending',
                     })->first;
                 }
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to handle a party call control request: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
                     "Failed to handle a party call control request.");
                 last;
-            }
+            };
             unless($sms) {
                 $c->log->error("failed to find sms with id " . $c->qs($callid) . " and token $token");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
@@ -128,22 +130,24 @@ sub POST :Allow {
                         err_code => sub {$error_msg = shift;},
                     );
                     $sms->update({ pcc_status => "complete" });
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     $c->log->error("failed to handle a party call control request: $e");
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
                         "Failed to handle a party call control request.");
                     last;
-                }
+                };
             } else {
                 $c->log->info("status for pcc sms of " . $c->qs($callid) . " is $status, don't forward sms");
                 try {
                     $sms->update({ pcc_status => "complete" });
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     $c->log->error("failed to handle a party call control request: $e");
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
                         "Failed to handle a party call control request.");
                     last;
-                }
+                };
             }
         } else {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,

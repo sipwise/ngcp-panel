@@ -248,13 +248,14 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                     desc  => $c->loc('Customer #[_1] successfully created', $contract->id) . ' - <a href="' . $uri . '">' . $c->loc('Details') . '</a>',
                 );
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create customer contract'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer')); #/contract?
     }
 
@@ -323,7 +324,8 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                         contract => $contract_rs->first,
                         now => $now);
         });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -331,7 +333,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         );
         $c->response->redirect($c->uri_for());
         return;
-    }
+    };
 
     $c->stash->{balanceinterval_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         NGCP::Panel::Utils::ProfilePackages::get_balanceinterval_datatable_cols($c),
@@ -650,14 +652,15 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 data => { $contract->get_inflated_columns },
                 desc => $c->loc('Customer #[_1] successfully updated', $contract->id),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 data  => { $contract->get_inflated_columns },
                 desc  => $c->loc('Failed to update customer contract'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
     }
 
@@ -702,7 +705,8 @@ sub terminate :Chained('base_restricted') :PathPart('terminate') :Args(0) {
             data => { $contract->get_inflated_columns },
             desc => $c->loc('Customer successfully terminated'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -925,13 +929,14 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 c => $c,
                 desc => $c->loc('Subscriber successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create subscriber'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
@@ -1010,7 +1015,8 @@ sub delete_fraud :Chained('base_restricted') :PathPart('fraud/delete') :Args(1) 
                 "fraud_${type}_lock" => undef,
                 "fraud_${type}_notify" => undef,
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -1019,7 +1025,7 @@ sub delete_fraud :Chained('base_restricted') :PathPart('fraud/delete') :Args(1) 
             );
             $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
             return;
-        }
+        };
     }
     NGCP::Panel::Utils::Message::info(
         c => $c,
@@ -1084,13 +1090,14 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
                 c => $c,
                 desc => $c->loc('Account balance successfully changed!'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to change account balance!'),
             );
-        }
+        };
         $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
         return;
     }
@@ -1160,13 +1167,13 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                 c => $c,
                 desc => $c->loc('Top-up using cash performed successfully!'),
             );
-        } catch($e) {
+        } catch {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to top-up using cash!'),
             );
-        }
+        };
 
         try {
             $c->model('DB')->txn_do(sub {
@@ -1181,9 +1188,10 @@ sub topup_cash :Chained('base_restricted') :PathPart('balance/topupcash') :Args(
                     request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
                 );
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create topup log record: $e");
-        }
+        };
 
         $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
         return;
@@ -1257,13 +1265,14 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                 c => $c,
                 desc => $c->loc('Top-up using voucher performed successfully!'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to top-up using voucher!'),
             );
-        }
+        };
 
         try {
             $c->model('DB')->txn_do(sub {
@@ -1278,9 +1287,10 @@ sub topup_voucher :Chained('base_restricted') :PathPart('balance/topupvoucher') 
                     request_token => NGCP::Panel::Utils::ProfilePackages::PANEL_TOPUP_REQUEST_TOKEN,
                 );
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create topup log record: $e");
-        }
+        };
 
         $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
         return;
@@ -1454,13 +1464,14 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 c => $c,
                 desc => $c->loc('PBX group successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create PBX group'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
@@ -1584,13 +1595,14 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('PBX group successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update PBX group'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
@@ -1668,13 +1680,14 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
             } else {
                 die $err;
             }
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create PBX device'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
@@ -1790,13 +1803,14 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
             } else {
                 die $err;
             }
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update PBX device'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
@@ -1861,14 +1875,15 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{pbx_device}->get_inflated_columns },
             desc => $c->loc('PBX Device successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete PBX device with id '".$c->stash->{pbx_device}->id."': $e",
             data => { $c->stash->{pbx_device}->get_inflated_columns },
             desc => $c->loc('Failed to delete PBX device'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
@@ -2174,13 +2189,14 @@ sub location_create :Chained('base_restricted') :PathPart('location/create') :Ar
                 c => $c,
                 desc => $c->loc('Location successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create location.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
     }
 
@@ -2255,13 +2271,14 @@ sub location_edit :Chained('location_base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Location successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update location'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
 
@@ -2287,7 +2304,8 @@ sub location_delete :Chained('location_base') :PathPart('delete') :Args(0) {
             data => $c->stash->{location},
             desc => $c->loc('Location successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -2500,13 +2518,14 @@ sub phonebook_create :Chained('base_restricted') :PathPart('phonebook/create') :
                 c => $c,
                 desc => $c->loc('Phonebook entry successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create phonebook entry.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
     }
 
@@ -2572,13 +2591,14 @@ sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Phonebook entry successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update phonebook entry'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
 
@@ -2604,7 +2624,8 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) {
             data => $c->stash->{phonebook},
             desc => $c->loc('Phonebook entry successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

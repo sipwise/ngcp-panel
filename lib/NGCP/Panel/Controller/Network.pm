@@ -120,13 +120,14 @@ sub create :Chained('network_list_restricted') :PathPart('create') :Args(0) {
                 c => $c,
                 desc => $c->loc('Billing Network successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create billing network.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/network'));
     }
 
@@ -200,13 +201,14 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Billing network successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update billing network'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/network'));
 
@@ -240,7 +242,8 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             data => $c->stash->{network},
             desc => $c->loc('Billing network successfully terminated'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

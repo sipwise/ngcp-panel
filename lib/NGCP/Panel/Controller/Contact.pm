@@ -103,13 +103,14 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Contact successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create contact'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
 
@@ -195,13 +196,14 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 desc  => $c->loc('Contact successfully changed'),
             );
             delete $c->session->{created_objects}->{reseller};
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update contact'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
 
@@ -266,14 +268,15 @@ sub delete_contact :Chained('base') :PathPart('delete') :Args(0) {
                 }
             }
         });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data => { $c->stash->{contact}->get_inflated_columns },
             desc  => $c->loc('Failed to delete contact'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
 }
 

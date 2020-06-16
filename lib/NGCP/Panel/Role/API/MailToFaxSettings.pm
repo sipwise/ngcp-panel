@@ -33,7 +33,7 @@ sub hal_from_item {
         try {
             $mtf_preference = $prov_subs->create_related('voip_mail_to_fax_preference', {});
             $mtf_preference->discard_changes; # reload
-        } catch($e) {
+        } catch {
             $c->log->error("Error creating empty mail_to_fax_preference on get");
         };
     }
@@ -162,7 +162,8 @@ sub update_item {
         for my $acl (@{ $resource->{acl} }) {
             $acl_rs->create($acl);
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("Error Updating mailtofaxsettings: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "mailtofaxsettings could not be updated.");
         return;

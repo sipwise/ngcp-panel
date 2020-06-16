@@ -47,11 +47,12 @@ sub create_item {
     my $item;
     try {
         $item = $c->model('DB')->resultset('admins')->create($resource);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create admin: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create admin.");
         return;
-    }
+    };
     return $item;
 }
 

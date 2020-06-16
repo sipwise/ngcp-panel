@@ -542,7 +542,8 @@ sub update_preferences {
         # in case of PUT, we remove all old entries
         try {
             $full_rs->delete_all;
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to clear preferences for '$accessor': $e");
             &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
@@ -615,7 +616,8 @@ sub update_preferences {
                     }
                 } # SWITCH
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to clear preference for '$accessor': $e");
             &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
@@ -871,11 +873,12 @@ sub update_preferences {
                 NGCP::Panel::Utils::Subscriber::update_voicemail_number(
                     schema => $c->model('DB'), subscriber => $item);
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to update preference for '$accessor': $e");
             &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
-        }
+        };
     }
 
     if($type eq "subscribers") {
@@ -889,11 +892,12 @@ sub update_preferences {
                 try {
                     update_sems_peer_auth(
                         $c, $prov_subscriber, $old_auth_prefs, $new_auth_prefs);
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     $c->log->error("Failed to set peer registration: $e");
                     &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
                     return;
-                }
+                };
             }
         }
     }
@@ -1410,7 +1414,8 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('ip group sequence successfully generated'),
                     );
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -1419,7 +1424,7 @@ sub create_preference_form {
                     );
                     $c->response->redirect($base_uri);
                     return 1;
-                }
+                };
             }
             try {
                 $aip_grp_rs->create({
@@ -1432,7 +1437,8 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('allowed_ip_grp successfully created'),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -1441,7 +1447,7 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
-            }
+            };
         } elsif ($attribute eq "man_allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
@@ -1470,7 +1476,8 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('Manual ip group sequence successfully generated'),
                     );
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -1479,7 +1486,7 @@ sub create_preference_form {
                     );
                     $c->response->redirect($base_uri);
                     return 1;
-                }
+                };
             }
             try {
                 $man_aip_grp_rs->create({
@@ -1492,7 +1499,8 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('man_allowed_ip_grp successfully created'),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -1501,7 +1509,7 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
-            }
+            };
         } elsif ($c->stash->{preference_meta}->max_occur != 1) {
             if($c->stash->{subscriber} &&
                ($c->stash->{preference_meta}->attribute eq "block_in_list" || $c->stash->{preference_meta}->attribute eq "block_out_list")) {
@@ -1536,7 +1544,8 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully created', $attribute),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -1545,7 +1554,7 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
-            }
+            };
         } elsif ($attribute eq "rewrite_rule_set") {
             my $selected_rwrs = $c->stash->{rwr_sets_rs}->find(
                 $form->field($attribute)->value
@@ -1600,7 +1609,8 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -1609,7 +1619,7 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
-            }
+            };
             $c->response->redirect($base_uri);
             return 1;
         } elsif ($attribute eq "emergency_mapping_container") {
@@ -1633,7 +1643,8 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -1642,7 +1653,7 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
-            }
+            };
             $c->response->redirect($base_uri);
             return 1;
         } elsif ($attribute eq "sound_set") {
@@ -1665,7 +1676,8 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -1674,7 +1686,7 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
-            }
+            };
             $c->response->redirect($base_uri);
             return 1;
         } elsif ($attribute eq "contract_sound_set") {
@@ -1697,7 +1709,8 @@ sub create_preference_form {
                     data => \%log_data,
                     desc => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => $e,
@@ -1706,7 +1719,7 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
-            }
+            };
             $c->response->redirect($base_uri);
             return 1;
         } elsif ($attribute eq "lock") {
@@ -1723,7 +1736,8 @@ sub create_preference_form {
                     data  => \%log_data,
                     desc  => $c->loc('Preference [_1] successfully updated', $attribute),
                 );
-            } catch($e) {
+            } catch {
+                   my $e = $_;
                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -1732,7 +1746,7 @@ sub create_preference_form {
                     );
                     $c->response->redirect($base_uri);
                     return 1;
-            }
+            };
             $c->response->redirect($base_uri);
             return 1;
         } else {
@@ -1749,7 +1763,8 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('Preference [_1] successfully deleted', $attribute),
                     );
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -1769,7 +1784,8 @@ sub create_preference_form {
                         data => \%log_data,
                         desc => $c->loc('Preference [_1] successfully deleted', $attribute),
                     );
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -1778,7 +1794,7 @@ sub create_preference_form {
                     );
                     $c->response->redirect($base_uri);
                     return 1;
-                }
+                };
             } else {
                 try {
                     $pref_rs->update_or_create({
@@ -1791,7 +1807,8 @@ sub create_preference_form {
                         data  => \%log_data,
                         desc  => $c->loc('Preference [_1] successfully updated', $attribute),
                     );
-                } catch($e) {
+                } catch {
+                   my $e = $_;
                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
@@ -1800,7 +1817,7 @@ sub create_preference_form {
                     );
                     $c->response->redirect($base_uri);
                     return 1;
-                }
+                };
             }
             $c->response->redirect($base_uri);
             return 1;
@@ -2332,10 +2349,11 @@ sub set_provisoning_voip_subscriber_first_int_attr_value {
         } elsif(($new_value // 0) > 0) {
             $rs->create({ value => $new_value });
         } # nothing to do for level 0, if no lock is set yet
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to set provisioning_voip_subscriber attribute '$attribute': $e");
         $e->rethrow;
-    }
+    };
 }
 
 sub get_provisoning_voip_subscriber_first_int_attr_value {
@@ -2354,10 +2372,11 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
     );
     try {
         return ($rs->first ? $rs->first->value : undef);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to get provisioning_voip_subscriber attribute '$attribute': $e");
         $e->rethrow;
-    }
+    };
 }
 
 sub api_preferences_defs{

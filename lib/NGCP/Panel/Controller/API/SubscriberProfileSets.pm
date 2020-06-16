@@ -154,11 +154,12 @@ sub POST :Allow {
 
         try {
             $item = $c->model('DB')->resultset('voip_subscriber_profile_sets')->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create subscriber profile set: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile set.");
             last;
-        }
+        };
         
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

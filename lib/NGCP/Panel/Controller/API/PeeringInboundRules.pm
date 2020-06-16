@@ -170,11 +170,12 @@ sub POST :Allow {
             $item->group->update({
                 has_inbound_rules => 1
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create peering rule: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering rule.");
             last;
-        }
+        };
 
         $guard->commit;
 

@@ -157,14 +157,15 @@ sub emergency_container_edit :Chained('emergency_container_base') :PathPart('edi
                 desc  => $c->loc('Emergency mapping container successfully updated'),
             );
             $c->flash(emergency_container_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update emergency mapping container'),
             );
             $c->flash(emergency_container_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emergencymapping'));
     }
     $c->stash( 'emergency_container_edit_flag'      => 1 );
@@ -224,14 +225,15 @@ sub emergency_container_create :Chained('list') :PathPart('emergency_container_c
                 desc  => $c->loc('Emergency mapping container successfully created'),
             );
             $c->flash(emergency_container_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create emergency mapping container'),
             );
             $c->flash(emergency_container_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emergencymapping'));
     }
 
@@ -265,7 +267,8 @@ sub emergency_container_delete :Chained('emergency_container_base') :PathPart('d
             desc => $c->loc('Emergency mapping container successfully deleted'),
         );
         $c->flash(emergency_container_messages => delete $c->flash->{messages});
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -365,14 +368,15 @@ sub emergency_mapping_edit :Chained('emergency_mapping_base') :PathPart('edit') 
                 desc  => $c->loc('Emergency mapping successfully updated'),
             );
             $c->flash(emergency_mapping_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update emergency mapping'),
             );
             $c->flash(emergency_mapping_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emergencymapping'));
     }
     $c->stash( 'emergency_mapping_edit_flag'      => 1 );
@@ -434,14 +438,15 @@ sub emergency_mapping_create :Chained('list') :PathPart('emergency_mapping_creat
                 desc  => $c->loc('Emergency mapping successfully created'),
             );
             $c->flash(emergency_mapping_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create emergency mapping'),
             );
             $c->flash(emergency_mapping_messages => delete $c->flash->{messages});
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/emergencymapping'));
     }
 
@@ -461,7 +466,8 @@ sub emergency_mapping_delete :Chained('emergency_mapping_base') :PathPart('delet
             desc => $c->loc('Emergency mapping successfully deleted'),
         );
         $c->flash(emergency_mapping_messages => delete $c->flash->{messages});
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
@@ -533,14 +539,15 @@ sub emergency_mappings_upload :Chained('list') :PathPart('upload') :Args(0) {
                 desc => $$text_success,
             );
             $c->flash(emergency_container_messages => delete $c->flash->{messages});
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to upload emergency mappings'),
             );
             $c->flash(emergency_container_messages => delete $c->flash->{messages});
-        }
+        };
 
         $c->response->redirect($c->uri_for('/emergencymapping'));
         return;

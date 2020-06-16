@@ -153,7 +153,8 @@ sub update_item {
             my ($self, $c) = @_;
             return $self->hal_from_item($c, $item);
         });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to create cfbnumberset: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfbnumberset.");
         return;

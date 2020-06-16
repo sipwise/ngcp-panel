@@ -269,13 +269,14 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
                 upload => $form->values->{faxfile},
                 data => $form->values->{data},
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => "failed to send fax: $e",
                 desc  => $c->loc('Error while sending fax (have the fax settings been configured properly?)'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/webfax', $c->req->captures));
         return;
     }
@@ -406,25 +407,27 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
             data => { $subscriber->get_inflated_columns },
             desc => $c->loc('Successfully terminated subscriber'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to terminate subscriber'),
         );
-    }
+    };
     try {
         my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
         if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
             die "XMLRPC failed";
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => "failed to reload kamailio: $e. Subscriber was terminated.",
             desc  => $c->loc('Failed to reload kamailio. Subscriber was terminated.'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
 }
 
@@ -467,13 +470,14 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
             c    => $c,
             desc => $c->loc('Successfully reset web password, please check your email at [_1]', $subscriber->contact ? $subscriber->contact->email : $subscriber->contract->contact->email),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to reset web password'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
 }
 
@@ -529,13 +533,14 @@ sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :
                 c    => $c,
                 desc => $c->loc('Successfully reset web password, please check your email'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to reset web password'),
             );
-        }
+        };
         $c->res->redirect($c->uri_for('/login/subscriber'));
     }
 
@@ -610,7 +615,8 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
                 });
                 $rs->delete;
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
@@ -618,7 +624,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
                 desc  => $c->loc('Failed to recover web password'),
             );
             $c->detach('/denied_page');
-        }
+        };
 
         NGCP::Panel::Utils::Message::info(
             c    => $c,
@@ -841,7 +847,8 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             NGCP::Panel::Utils::Subscriber::update_voicemail_number(
                 schema => $c->model('DB'), subscriber => $c->stash->{subscriber});
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => "Failed to handle preference: $e",
@@ -851,7 +858,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
         return;
-    }
+    };
 
     if(keys %{ $old_auth_prefs }) {
         my $new_auth_prefs = {};
@@ -861,13 +868,14 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             try {
                 NGCP::Panel::Utils::Preferences::update_sems_peer_auth(
                     $c, $prov_subscriber, $old_auth_prefs, $new_auth_prefs);
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,
                     log   => "Failed to set peer registration: $e",
                     desc  => $c->loc('Peer registration error'),
                 );
-            }
+            };
         }
     }
 }
@@ -1093,13 +1101,14 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                 c    => $c,
                 desc => $c->loc('Successfully saved Call Forward'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to save Call Forward'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -1312,13 +1321,14 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 c    => $c,
                 desc => $c->loc('Successfully saved Call Forward'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to save Call Forward'),
             );
-        }
+        };
         # we don't use back_or, as we might end up in the simple view again
         $c->res->redirect(
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -1416,14 +1426,15 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                 type => 'internal',
                 desc => $c->loc('Successfully created new destination set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to create new destination set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences_callforward_destinationset',
                     [$c->req->captures->[0]], $cf_type)
@@ -1569,14 +1580,15 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 type => 'internal',
                 desc => $c->loc('Successfully updated destination set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to update destination set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $fallback);
     }
 
@@ -1630,7 +1642,8 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
             type => 'internal',
             desc => $c->loc('Successfully deleted destination set'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -1638,7 +1651,7 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
             type  => 'internal',
             desc  => $c->loc('Failed to delete destination set'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences_callforward_destinationset',
@@ -1725,14 +1738,15 @@ sub preferences_callforward_sourceset_create :Chained('base') :PathPart('prefere
                 type => 'internal',
                 desc => $c->loc('Successfully created new source set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to create new source set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences_callforward_sourceset',
                     [$c->req->captures->[0]], $cf_type)
@@ -1852,14 +1866,15 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
                 type => 'internal',
                 desc => $c->loc('Successfully updated source set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to update source set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $fallback);
     }
 
@@ -1905,7 +1920,8 @@ sub preferences_callforward_sourceset_delete :Chained('preferences_callforward_s
             type => 'internal',
             desc => $c->loc('Successfully deleted source set'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -1913,7 +1929,7 @@ sub preferences_callforward_sourceset_delete :Chained('preferences_callforward_s
             type  => 'internal',
             desc  => $c->loc('Failed to delete source set'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences_callforward_sourceset',
@@ -2000,14 +2016,15 @@ sub preferences_callforward_bnumberset_create :Chained('base') :PathPart('prefer
                 type => 'internal',
                 desc => $c->loc('Successfully created new source set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to create new source set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences_callforward_bnumberset',
                     [$c->req->captures->[0]], $cf_type)
@@ -2128,14 +2145,15 @@ sub preferences_callforward_bnumberset_edit :Chained('preferences_callforward_bn
                 type => 'internal',
                 desc => $c->loc('Successfully updated bnumber set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to update bnumber set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $fallback);
     }
 
@@ -2181,7 +2199,8 @@ sub preferences_callforward_bnumberset_delete :Chained('preferences_callforward_
             type => 'internal',
             desc => $c->loc('Successfully deleted bnumber set'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -2189,7 +2208,7 @@ sub preferences_callforward_bnumberset_delete :Chained('preferences_callforward_
             type  => 'internal',
             desc  => $c->loc('Failed to delete bnumber set'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences_callforward_bnumberset',
@@ -2289,14 +2308,15 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
                 type => 'internal',
                 desc => $c->loc('Successfully created new time set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to create new time set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences_callforward_timeset',
                     [$c->req->captures->[0]], $cf_type)
@@ -2416,14 +2436,15 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
                 type => 'internal',
                 desc => $c->loc('Successfully updated time set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
                 desc  => $c->loc('Failed to update time set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
                 $c->uri_for_action('/subscriber/preferences_callforward_timeset',
                     [$c->req->captures->[0]], $cf_type)
@@ -2457,7 +2478,8 @@ sub preferences_callforward_timeset_delete :Chained('preferences_callforward_tim
             type => 'internal',
             desc => $c->loc('Successfully deleted time set'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -2465,7 +2487,7 @@ sub preferences_callforward_timeset_delete :Chained('preferences_callforward_tim
             type  => 'internal',
             desc  => $c->loc('Failed to delete time set'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences_callforward_timeset',
@@ -2517,13 +2539,14 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
             c    => $c,
             desc => $c->loc('Successfully deleted Call Forward'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete Call Forward.'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -2537,7 +2560,8 @@ sub underrun_catchup :Private {
         $schema->txn_do(sub {
             NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c, contract => $c->stash->{subscriber}->contract);
         });
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -2546,7 +2570,7 @@ sub underrun_catchup :Private {
         );
         $c->response->redirect($c->uri_for());
         #return;
-    }
+    };
 }
 
 sub load_preference_list :Private {
@@ -3114,13 +3138,14 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 c    => $c,
                 desc => $c->loc('Successfully updated subscriber'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber'),
             );
-        }
+        };
 
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
@@ -3259,13 +3284,14 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Successfully updated password'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber (webpassword)'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/webpass', [$c->req->captures->[0]]));
     }
@@ -3425,7 +3451,8 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                                 upload => $greetingfile,
                                 filepath => $greetingfile->tempname,
                                 converted_data_ref => \$greeting_converted_ref );
-                        } catch($e) {
+                        } catch {
+                            my $e = $_;
                             NGCP::Panel::Utils::Message::error(
                                 c    => $c,
                                 log  => $e,
@@ -3434,7 +3461,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                             NGCP::Panel::Utils::Navigation::back_or($c,
                                 $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
                             $return = 1;
-                        }
+                        };
                         $c->log->debug("voicemailgreetings return=".$return.";");
                         return if ($return);
 
@@ -3458,7 +3485,8 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                             }
                         }
                     }
-                } catch($e) {
+                } catch {
+                    my $e = $_;
                     NGCP::Panel::Utils::Message::error(
                         c     => $c,
                         log   => $e,
@@ -3467,7 +3495,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     NGCP::Panel::Utils::Navigation::back_or($c,
                         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
                     $return = 1;
-                }
+                };
                 return if ($return);
                 last SWITCH;
             };
@@ -3490,7 +3518,8 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
             return;
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -3498,7 +3527,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-    }
+    };
 
     $c->stash(
         template => 'subscriber/preferences.tt',
@@ -3631,7 +3660,8 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
             return;
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -3639,7 +3669,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-    }
+    };
 
     $c->stash(
         template => 'subscriber/preferences.tt',
@@ -3790,7 +3820,8 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
                 $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
             return;
         }
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -3798,7 +3829,7 @@ sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') 
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-    }
+    };
 
     $c->stash(
         template => 'subscriber/preferences.tt',
@@ -3863,13 +3894,14 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
                 c    => $c,
                 desc => $c->loc('Successfully updated reminder setting'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update reminder setting.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -3898,13 +3930,14 @@ sub delete_reminder :Chained('base') :PathPart('preferences/reminder/delete') {
                 c    => $c,
                 desc => $c->loc('Successfully cleared reminder setting'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to clear reminder setting.'),
             );
-        }
+        };
     }
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -4132,7 +4165,8 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
     try {
         $data_ref = NGCP::Panel::Utils::Sounds::transcode_data(
             \$file->recording, 'WAV', 'WAV');
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -4140,7 +4174,7 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
-    }
+    };
 
     NGCP::Panel::Utils::Subscriber::mark_voicemail_read( 'c' => $c, 'voicemail' => $c->stash->{voicemail} );
     NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $c->stash->{voicemail} );
@@ -4164,13 +4198,14 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
             data => { $c->stash->{voicemail}->get_inflated_columns },
             desc => $c->loc('Successfully deleted voicemail'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete voicemail message'),
         );
-    }
+    };
     NGCP::Panel::Utils::Subscriber::vmnotify( c => $c, voicemail => $c->stash->{voicemail} );
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
@@ -4281,13 +4316,14 @@ sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
                 data => $data,
                 desc => $c->loc('Successfully deleted recording'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to delete recording'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
@@ -4334,13 +4370,14 @@ sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
         NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
             $c->stash->{subscriber}->provisioning_voip_subscriber,
             $c->stash->{registered}->contact);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete registered device'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Message::info(
         c    => $c,
@@ -4383,13 +4420,14 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
                 c    => $c,
                 desc => $c->loc('Successfully added registered device'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to add registered device'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
@@ -4433,13 +4471,14 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
                 c    => $c,
                 desc => $c->loc('Successfully created trusted source'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create trusted source'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -4511,13 +4550,14 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Successfully updated trusted source'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update trusted source'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -4545,13 +4585,14 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
             data => { $c->stash->{trusted}->get_inflated_columns },
             desc => $c->loc('Successfully deleted trusted source'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete trusted source.'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -4592,13 +4633,14 @@ sub create_upn_rewrite :Chained('base') :PathPart('preferences/upnrewrite/create
                 c    => $c,
                 desc => $c->loc('Successfully created UPN rewrite set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create UPN rewrite set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -4670,13 +4712,14 @@ sub edit_upn_rewrite :Chained('upn_rewrite_base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Successfully updated UPN rewrite set'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update UPN rewrite set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -4713,13 +4756,14 @@ sub delete_upn_rewrite :Chained('upn_rewrite_base') :PathPart('delete') :Args(0)
             data => { $c->stash->{upn_rws} ? $c->stash->{upn_rws}->get_inflated_columns : () },
             desc => $c->loc('Successfully deleted UPN rewrite set'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete UPN rewrite set.'),
         );
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -4793,13 +4837,14 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
                 c    => $c,
                 desc => $c->loc('Successfully created speed dial slot'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create speed dial slot'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -4844,13 +4889,14 @@ sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
             data => { $c->stash->{speeddial}->get_inflated_columns },
             desc => $c->loc('Successfully deleted speed dial slot'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete speed dial slot'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
@@ -4900,13 +4946,14 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
                 c    => $c,
                 desc => $c->loc('Successfully updated speed dial slot'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update speed dial slot'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -4961,13 +5008,14 @@ sub delete_autoattendant :Chained('autoattendant') :PathPart('delete') :Args(0) 
             data => { $c->stash->{autoattendant}->get_inflated_columns },
             desc => $c->loc('Successfully deleted auto attendant slot'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete auto attendant slot'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
@@ -5028,13 +5076,14 @@ sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') 
                 c    => $c,
                 desc => $c->loc('Successfully updated auto attendant slots'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update autoattendant slots'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -5090,13 +5139,14 @@ sub delete_ccmapping :Chained('ccmappings') :PathPart('delete') :Args(0) {
             data => { $c->stash->{ccmapping}->get_inflated_columns },
             desc => $c->loc('Successfully deleted ccmapping'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete ccmapping'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     return;
@@ -5150,13 +5200,14 @@ sub edit_ccmapping :Chained('base') :PathPart('preferences/ccmappings/edit') :Ar
                 c    => $c,
                 desc => $c->loc('Successfully updated ccmappings'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update ccmappings'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -5358,13 +5409,14 @@ sub phonebook_create :Chained('master') :PathPart('phonebook/create') :Args(0) {
                 c => $c,
                 desc => $c->loc('Phonebook entry successfully created'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create phonebook entry.'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/subscriber/details", [$subscriber->id]));
     }
 
@@ -5431,13 +5483,14 @@ sub phonebook_edit :Chained('phonebook_base') :PathPart('edit') :Args(0) {
                 c => $c,
                 desc  => $c->loc('Phonebook entry successfully updated'),
             );
-        } catch ($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update phonebook entry'),
             );
-        }
+        };
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/subscriber/details", [$subscriber->id]));
 
@@ -5463,7 +5516,8 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) {
             data => $c->stash->{phonebook},
             desc => $c->loc('Phonebook entry successfully deleted'),
         );
-    } catch ($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,

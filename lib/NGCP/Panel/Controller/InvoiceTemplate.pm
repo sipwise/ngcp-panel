@@ -161,13 +161,14 @@ sub create :Chained('template_list_restricted') :PathPart('create') :Args() {
                 c    => $c,
                 desc => $c->loc('Invoice template successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create invoice template'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
     }
 
@@ -230,13 +231,14 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
                 c    => $c,
                 desc => $c->loc('Invoice template successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update invoice template'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
     }
 
@@ -257,13 +259,14 @@ sub delete_invoicetemplate :Chained('base') :PathPart('delete') {
             data => { $c->stash->{tmpl}->get_inflated_columns },
             desc => $c->loc('Invoice template successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete invoice template.'),
         );
-    }
+    };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
 }
 
@@ -314,14 +317,15 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
             data => $content,
         });
 
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc => $c->loc('Failed to store invoice template'),
         );
         return;
-    }
+    };
     $c->flash(messages => [{type => 'success', text => $c->loc('Invoice template successfully saved')}]);
 
     $c->response->content_type('application/json');
@@ -369,7 +373,8 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
         };
 
         NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => $e,
@@ -377,7 +382,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
         return;
-    }
+    };
     if($out_type eq 'svg'){
         $out = join('', @{NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg_pdf($c, \$out)});
         $c->response->body($out);

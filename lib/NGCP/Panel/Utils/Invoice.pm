@@ -101,14 +101,15 @@ sub create_invoice{
     #               stime => $stime,
     #               etime => $etime
     #   );
-    #} catch($e) {
+    #} catch {
+    #    my $e = $_;
     #    NGCP::Panel::Utils::Message::error(
     #        c => $c,
     #        error => $e,
     #        desc  => $c->loc('Failed to get contract balance.'),
     #    );
     #    die;
-    #}
+    #};
 
     my $invoice_amounts = get_invoice_amounts(
         customer_contract => {$customer->get_inflated_columns},
@@ -125,13 +126,14 @@ sub create_invoice{
     $invoice_data->{period_end} = $etime->ymd.' '. $etime->hms;
     try {
         $invoice = $schema->resultset('invoices')->create($invoice_data);
-    } catch($e) {
+    } catch {
+        my $e = $_;
         die {
             showdetails => $c->loc('Failed to save invoice meta data.'),
             error => $e,
             httpcode => HTTP_UNPROCESSABLE_ENTITY,
         };
-    }
+    };
     #sprintf("INV%04d%02d%07d", $stime->year, $stime->month, $invoice->id);
     #to make it unified for web and cron script
     my $serial = NGCP::Panel::Utils::Invoice::get_invoice_serial($c,{

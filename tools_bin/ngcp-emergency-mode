@@ -35,7 +35,7 @@ use URI;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::API::Client;
 use Config::Simple;
-use TryCatch;
+use Try::Tiny;
 use Sys::Syslog qw(:standard :macros);
 use IO::Prompt:Tiny qw(prompt);
 
@@ -158,9 +158,9 @@ foreach my $redis_host(@redis_hosts) {
             my ($redis) = @_;
             $redis->select($redis_db);
         });
-    } catch($e) {
+    } catch {
         DEBUG "Failed to connect to redis at $redis_host:$redis_port, skipping...";
-    }
+    };
     next unless(defined $redis);
 
     DEBUG "Fetching role of redis instance...";

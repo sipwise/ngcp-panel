@@ -209,7 +209,8 @@ sub POST :Allow {
                 $c->response->status(HTTP_CREATED);
                 $c->response->body(q());
 
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to upload csv: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
@@ -242,11 +243,12 @@ sub POST :Allow {
             my $item;
             try {
                 $item = $c->model('DB')->resultset('emergency_mappings')->create($resource);
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to create emergency mapping: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create emergency mapping.");
                 last;
-            }
+            };
 
             $guard->commit;
 

@@ -101,11 +101,12 @@ sub POST :Allow {
                 request_token => $resource->{request_token},
                 subscriber => $entities->{subscriber},
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to perform cash topup: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to perform cash topup.");
             last;
-        }
+        };
         
         $guard->commit;
         $success = 1;
@@ -126,10 +127,11 @@ sub POST :Allow {
                 resource => $resource,
                 is_success => $success
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create topup log record: $e");
             last;
-        }
+        };
         $guard->commit;
     }
     return;

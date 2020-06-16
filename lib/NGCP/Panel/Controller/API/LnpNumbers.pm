@@ -188,7 +188,8 @@ sub POST :Allow {
                 $c->response->status(HTTP_CREATED);
                 $c->response->body(q());
 
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to upload csv: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
@@ -223,11 +224,12 @@ sub POST :Allow {
             my $item;
             try {
                 $item = $c->model('DB')->resultset('lnp_numbers')->create($resource);
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 $c->log->error("failed to create lnp number: $e"); # TODO: user, message, trace, ...
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create lnp number.");
                 last;
-            }
+            };
 
             $guard->commit;
 

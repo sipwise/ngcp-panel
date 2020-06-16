@@ -248,7 +248,8 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Sound set successfully updated'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
@@ -296,7 +297,8 @@ sub delete_sound :Chained('base') :PathPart('delete') {
             data => { $c->stash->{set_result}->get_inflated_columns },
             desc => $c->loc('Sound set successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -413,13 +415,14 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
                 c    => $c,
                 desc => $c->loc('Sound set successfully created'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create sound set'),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
 
@@ -542,26 +545,28 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             my $group_name = $file_result->handle->group->name;
             try {
                 NGCP::Panel::Utils::Sems::clear_audio_cache($c, $file_result->set_id, $file_result->handle->name, $group_name);
-            } catch ($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c => $c,
                     error => "Failed to clear audio cache for " . $group_name . " at appserver",
                     desc  => $c->loc('Failed to clear audio cache.'),
                 );
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-            }
+            };
 
             try {
                 $soundfile = NGCP::Panel::Utils::Sounds::transcode_file(
                     $upload->tempname, 'WAV', $target_codec);
-            } catch ($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,
                     log   => 'Transcoding audio file failed',
                     desc  => $c->loc('Transcoding audio file failed'),
                 );
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-            }
+            };
 
             try {
                 $file_result->update({
@@ -574,13 +579,14 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                     c    => $c,
                     desc => $c->loc('Sound handle successfully uploaded'),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,
                     error => $e,
                     desc  => $c->loc('Failed to update uploaded sound handle'),
                 );
-            }
+            };
         } else {
             try {
                 $file_result->update({
@@ -590,13 +596,14 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                     c    => $c,
                     desc => $c->loc('Sound handle successfully updated'),
                 );
-            } catch($e) {
+            } catch {
+                my $e = $_;
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,
                     error => $e,
                     desc  => $c->loc('Failed to update sound handle'),
                 );
-            }
+            };
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
@@ -616,7 +623,8 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
             data => { $c->stash->{file_result}->get_inflated_columns },
             desc => $c->loc('Sound handle successfully deleted'),
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
@@ -629,9 +637,9 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
     my $group_name = $handle->group->name;
     try {
         NGCP::Panel::Utils::Sems::clear_audio_cache($c, $c->stash->{file_result}->set_id, $handle->name, $group_name);
-    } catch ($e) {
+    } catch {
         $c->log->warn("Failed to clear audio cache for group " . $group_name);
-    }
+    };
 
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     return;
@@ -649,14 +657,15 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
         try {
             $data_ref = NGCP::Panel::Utils::Sounds::transcode_data(
                 \$file->data, $file->codec, 'WAV');
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to transcode audio file'),
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-        }
+        };
     } else {
         $data_ref = \$file->data;
     }
@@ -702,7 +711,8 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                 c    => $c,
                 desc => $c->loc('Sound set successfully loaded with default files.'),
             );
-        } catch($e) {
+        } catch {
+            my $e = $_;
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 $error
@@ -710,7 +720,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                     : (error => $e,
                        desc  => $c->loc('Failed to load default sound files.')),
             );
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
         return;
     }

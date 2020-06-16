@@ -49,11 +49,12 @@ sub create_item {
         my $rewriterules = delete $resource->{rewriterules};
         try {
             $item = $schema->resultset('voip_rewrite_rule_sets')->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create rewriteruleset: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriteruleset.");
             return;
-        }
+        };
         if ($rewriterules) {
             $self->update_rewriterules( $c, $item, $form, $rewriterules );
         }

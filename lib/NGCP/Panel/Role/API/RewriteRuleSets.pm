@@ -122,11 +122,12 @@ sub update_rewriterules{
                 priority => $priority++,
                 %{ $rule },
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create rewriterules: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewrite rules.");
             die;
-        }
+        };
     }
 
 }

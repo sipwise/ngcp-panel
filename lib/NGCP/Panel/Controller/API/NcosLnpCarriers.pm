@@ -145,11 +145,12 @@ sub POST :Allow {
         my $item;
         try {
             $item = $level->ncos_lnp_lists->create($resource);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create ncos lnp entry: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos lnp entry.");
             last;
-        }
+        };
 
         $guard->commit;
 

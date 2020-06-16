@@ -171,11 +171,12 @@ sub POST :Allow {
             foreach my $special_peaktime (@$special_peaktimes_to_create) {
                 $billing_profile->billing_peaktime_specials->create($special_peaktime);
             }
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create billing profile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;

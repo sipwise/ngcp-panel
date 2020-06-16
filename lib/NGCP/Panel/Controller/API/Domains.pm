@@ -169,11 +169,12 @@ sub POST :Allow {
             $billing_domain->create_related('domain_resellers', {
                 reseller_id => $reseller_id,
             });
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to create domain: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create domain.");
             last;
-        }
+        };
 
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
@@ -186,12 +187,13 @@ sub POST :Allow {
         try {
             $self->xmpp_domain_reload($c, $resource->{domain}) if $xmpp_reload;
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $resource->{domain}) if ($sip_reload);
-        } catch($e) {
+        } catch {
+            my $e = $_;
             $c->log->error("failed to activate domain: $e. Domain created"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created");
             $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));
             last;
-        }
+        };
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));

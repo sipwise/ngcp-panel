@@ -25,11 +25,12 @@ sub delete_item {
             #TODO: Now we don't use any way to document such parameters, need to be created
             force_delete => $c->request->params->{force_delete},
         );
-    } catch($e) {
+    } catch {
+        my $e = $_;
         $c->log->error("failed to delete callrecording: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete callrecording.");
         return;
-    }
+    };
     return 1;
 }
 
