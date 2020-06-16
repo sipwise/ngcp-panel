@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3547dd39_e53fe634",
+        "filename": "share/templates/subscriber/preferences.tt",
+        "patchSetId": 4
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-06-16T09:29:14Z",
+      "side": 1,
+      "message": "should be a pure \"defined\" check",
+      "revId": "4d1017e12eab59d6aa71b430f1f16862ce7adf59",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
