@@ -116,20 +116,18 @@ sub update_item {
         resource => $resource,
     );
 
-    NGCP::Panel::Utils::Rtc::modify_rtc_networks(
-        old_resource => $old_resource,
-        resource => $resource,
-        config => $c->config,
-        reseller_item => $reseller,
-        err_code => sub {
-            my ($msg, $debug) = @_;
-            $c->log->debug($debug) if $debug;
-            $c->log->warn($msg);
-            return;
-        });
-
     try {
-
+        NGCP::Panel::Utils::Rtc::modify_rtc_networks(
+            old_resource => $old_resource,
+            resource => $resource,
+            config => $c->config,
+            reseller_item => $reseller,
+            err_code => sub {
+                my ($msg, $debug) = @_;
+                $c->log->debug($debug) if $debug;
+                $c->log->warn($msg);
+                return;
+            });
     } catch($e) {
         $c->log->error("failed to update rtcnetworks: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update rtcnetworks.");
