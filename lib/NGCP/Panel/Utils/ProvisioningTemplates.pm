@@ -474,18 +474,14 @@ sub provision_commit_row {
             $e,
             $purge,
         );
-        if ($purge) {
-            if ($subscriber) {
-                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
-                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-                _create_subscriber(
-                    $c,
-                    $context,
-                    $schema,
-                );
-            } else {
-                die $msg;
-            }
+        if ($purge && $subscriber) {
+            $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
+            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+            _create_subscriber(
+                $c,
+                $context,
+                $schema,
+            );
         } else {
             die $msg;
         }
@@ -497,24 +493,20 @@ sub provision_commit_row {
             $e,
             $purge,
         );
-        if ($purge) {
-            if ($subscriber) {
-                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
-                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-                _init_subscriber_context(
-                    $c,
-                    $context,
-                    $schema,
-                    $c->stash->{provisioning_templates}->{$template},
-                );
-                _create_subscriber(
-                    $c,
-                    $context,
-                    $schema,
-                );
-            } else {
-                die $msg;
-            }
+        if ($purge && $subscriber) {
+            $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
+            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+            _init_subscriber_context(
+                $c,
+                $context,
+                $schema,
+                $c->stash->{provisioning_templates}->{$template},
+            );
+            _create_subscriber(
+                $c,
+                $context,
+                $schema,
+            );
         } else {
             die $msg;
         }
