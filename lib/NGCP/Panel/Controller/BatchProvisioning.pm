@@ -84,6 +84,7 @@ sub template_base :Chained('template_list') :PathPart('templates') :CaptureArgs(
 sub do_template_form :Chained('template_base') :PathPart('form') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->stash{close_target} = $c->uri_for_action('/batchprovisioning/root');
     $c->stash(create_flag => 1);
     $c->stash(modal_title => $c->loc("Subscriber using Provisioning Template '[_1]'", $c->stash->{provisioning_template_name}));
 
@@ -294,6 +295,8 @@ sub edit :Chained('template_base') :PathPart('edit') :Args(0) {
         #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/batchprovisioning'));
         $c->response->redirect($c->uri_for_action('/batchprovisioning/root'));
     }
+
+    $c->stash{close_target} = $c->uri_for_action('/batchprovisioning/root');
     $c->stash(edit_flag => 1 );
     $c->stash(modal_title => $c->loc("Provisioning Template"));
     $c->stash(form => $form );
