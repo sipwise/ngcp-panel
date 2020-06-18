@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6c26853_2a398510",
+        "filename": "etc/ngcp_panel.conf",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000051
+      },
+      "writtenOn": "2020-06-18T13:43:19Z",
+      "side": 1,
+      "message": "I think this is not needed since it\u0027s put in templates already, right?",
+      "revId": "9c15c5c40f320527419d5d3e6cf3a13b29e17afa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
