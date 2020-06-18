@@ -71,20 +71,20 @@ sub reseller_sum {
 sub _prepare_customer_sum {
     my ($self, $c) = @_;
     my ($stime,$etime) = $self->_get_interval();
-
-    # how to catchup contract balances of all contracts here?
-    # well, we don't care for a stats view ...
     
     $c->stash(
-        customer_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
-            'start' => { '>=' => $stime },
-            'end' => { '<' => $etime},
+        customer_sum => $c->model('DB')->resultset('cdr_period_costs')->search_rs({
+            'period_date' => {
+                '>=' => $stime,
+                '<' => $etime,
+            },
+            'period' => 'month',
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => {
                 'contract' => 'contact',
             },
-        })->get_column('cash_balance_interval'),
+        })->get_column('customer_cost'),
     );
 }
 
