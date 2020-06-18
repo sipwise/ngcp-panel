@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21ab2983_00ee889b",
+        "filename": "lib/NGCP/Panel/Widget/Dashboard/ResellerBillingOverview.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-18T21:25:06Z",
+      "side": 1,
+      "message": "Wouldn\u0027t this override the previous entry? Perhaps you meant something like:\n\n  period_date \u003d\u003e {\n    \u0027\u003e\u003d\u0027 \u003d\u003e $stime,\n    \u0027\u003c\u0027 \u003d\u003e $etime,\n  },\n\n?",
+      "revId": "97da2620084994c7ccdea8a4586b05f0481ead6b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
