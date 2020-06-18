@@ -4318,6 +4318,10 @@ msgstr "Image d'accueil"
 msgid "G.723.1 bitrate"
 msgstr "Débit G.723.1"
 
+#: share/layout/body.tt
+msgid "GO TO NEW ADMIN PANEL"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "General Purpose Parameter 0"
 msgstr "Paramètre général 0"

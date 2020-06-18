@@ -4177,6 +4177,10 @@ msgstr "Bild Vorderansicht"
 msgid "G.723.1 bitrate"
 msgstr ""
 
+#: share/layout/body.tt
+msgid "GO TO NEW ADMIN PANEL"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "General Purpose Parameter 0"
 msgstr ""
