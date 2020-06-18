@@ -16,6 +16,24 @@
       "revId": "9c15c5c40f320527419d5d3e6cf3a13b29e17afa",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d605b0c_d80e51f1",
+        "filename": "etc/ngcp_panel.conf",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-06-18T14:30:30Z",
+      "side": 1,
+      "message": "This is a default value in a very default config file... why not?",
+      "parentUuid": "f6c26853_2a398510",
+      "revId": "9c15c5c40f320527419d5d3e6cf3a13b29e17afa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
