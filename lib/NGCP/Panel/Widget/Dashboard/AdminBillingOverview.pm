@@ -79,13 +79,18 @@ sub _prepare_customer_sum {
 
     my ($stime,$etime) = $self->_get_interval();
     $c->stash(
-        customer_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
-            'start' => { '>=' => $stime },
-            'end' => { '<' => $etime},
+        customer_sum => $c->model('DB')->resultset('cdr_period_costs')->search_rs({
+            'period_date' => {
+                '>=' => $stime,
+                '<' => $etime,
+            },
+            'period' => 'month',
             'product.class' => { -in => [ 'sipaccount', 'pbxaccount' ] },
-        },{
-            join => { contract => 'product', },
-        })->get_column('cash_balance_interval'),
+        }, {
+            join => {
+                contract => 'product',
+            },
+        })->get_column('customer_cost'),        
     );
 
 }
