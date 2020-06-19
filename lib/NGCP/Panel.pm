@@ -172,7 +172,6 @@ __PACKAGE__->config(
                 user_model => 'DB::admins',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
             },
-            use_session => 0,
         },
         api_admin => {
             credential => {
@@ -290,7 +289,6 @@ __PACKAGE__->config(
                 user_model => 'DB::admins',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
             },
-            use_session => 0,
         },
         api_admin_system => {
             credential => {
