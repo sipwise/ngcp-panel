@@ -11,9 +11,10 @@ has 'driver' => (
 );
 
 sub login_ok {
-    my ($self, $login, $pwd) = @_;
+    my ($self, $login, $pwd, $fail) = @_;
     $login = 'administrator' unless $login;
     $pwd = 'administrator' unless $pwd;
+    $fail = 0 unless $fail;
 
     diag("Load login page (logout first)");
     my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
@@ -27,9 +28,17 @@ sub login_ok {
     $self->driver->fill_element('#password', 'css', $pwd);
     $self->driver->find_element('#submit', 'css')->click();
 
-    diag("Check Admin interface");
-    is($self->driver->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard", 'Dashboard is shown');
-    is($self->driver->get_title, 'Dashboard', 'We are in the Dashboard. Login Successful');
+    if ($fail){
+        diag("Check if login failed");
+        ok($self->driver->find_element('/html/body//div//h1[contains(text(), "Admin Sign In")]'), "Text 'Admin Sign In' found");
+        ok($self->driver->find_element('//form//div/span'), "Error Message was shown");
+        return 1
+    } else {
+        diag("Check Admin interface");
+        is($self->driver->find_element('//*[@id="masthead"]//h2')->get_text(), "Dashboard", 'Dashboard is shown');
+        is($self->driver->get_title, 'Dashboard', 'Login successful, something went wrong there');
+        return 0
+    }
 }
 
 sub create_domain {

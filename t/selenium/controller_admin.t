@@ -85,7 +85,35 @@ ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $resellername . '")]'), 'Reseller is correct');
 ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[7][contains(text(), "1")]'), 'Read-Only value is correct');
 
-diag("New Administrator tries to login now");
+diag("Try to log in new Administrator without any credentials");
+$d->get("$uri/logout");
+$d->get("$uri/login");
+ok($d->find_element('/html/body//div//h1[contains(text(), "Admin Sign In")]'), "Text 'Admin Sign In' found");
+is($d->get_title, '', 'No Tab Title was set');
+$d->fill_element('#username', 'css', "");
+$d->fill_element('#password', 'css', "");
+$d->find_element('#submit', 'css')->click();
+ok($d->find_element('/html/body//div//h1[contains(text(), "Admin Sign In")]'), "Text 'Admin Sign In' found");
+ok($d->find_element('//form//div/span'), "Error Message was shown");
+
+diag("Try to log in new Administrator with invalid credentials");
+ok($c->login_ok("invalid", "creds", 1), "Login failed as intended");
+
+diag("Try to log in new Administrator with invalid password");
+ok($c->login_ok($adminname, "invalidpass", 1), "Login failed as intended");
+
+diag("Try to log in new Administrator with no password");
+$d->get("$uri/logout");
+$d->get("$uri/login");
+ok($d->find_element('/html/body//div//h1[contains(text(), "Admin Sign In")]'), "Text 'Admin Sign In' found");
+is($d->get_title, '', 'No Tab Title was set');
+$d->fill_element('#username', 'css', $adminname);
+$d->fill_element('#password', 'css', "");
+$d->find_element('#submit', 'css')->click();
+ok($d->find_element('/html/body//div//h1[contains(text(), "Admin Sign In")]'), "Text 'Admin Sign In' found");
+ok($d->find_element('//form//div/span'), "Error Message was shown");
+
+diag("Try to log in new Administrator for real this time");
 $c->login_ok($adminname, $adminpwd);
 
 diag("Go to 'Administrators' page");
