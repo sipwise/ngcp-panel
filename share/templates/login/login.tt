@@ -1,4 +1,4 @@
-<body class="login">
+<body class="login"  id="login_page_v1">
     <div class="account-container login stacked">
 
 [% IF messages -%]

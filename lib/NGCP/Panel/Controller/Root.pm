@@ -648,6 +648,55 @@ sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method(
     return;
 }
 
+sub login_to_v2 :Chained('/') :PathPart('login_to_v2') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page') unless ($c->user_exists);
+
+    use JSON qw/encode_json decode_json/;
+    use Crypt::JWT qw/encode_jwt/;
+    use Redis;
+
+    my $key = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{jwt_key};
+    my $relative_exp = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{relative_exp};
+    my $alg = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{alg};
+
+    unless ($key) {
+        NGCP::Panel::Utils::Message::error(
+            c    => $c,
+            desc => $c->loc('No JWT key has been configured.'),
+        );
+    }
+
+    my $raw_key = pack('H*', $key);
+
+    my $jwt_data = {
+        id => $c->user->id,
+        username => $c->user->login,
+    };
+    my $token = encode_jwt(
+        payload => $jwt_data,
+        key => $raw_key,
+        alg => $alg,
+        $relative_exp ? (relative_exp => $relative_exp) : (),
+    );
+
+    my $redis = Redis->new(
+        server => $c->config->{redis}->{central_url},
+        reconnect => 10, every => 500000, # 500ms
+        cnx_timeout => 3,
+    );
+    unless ($redis) {
+        $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
+        return;
+    }
+    $redis->select($c->config->{'Plugin::Session'}->{redis_db});
+    $redis->set("jwt:$token", '');
+    $redis->expire("jwt:$token", 300);
+
+    $c->res->redirect($c->req->base.'v2/#/?v1_auth='.$token);
+}
+
 sub api_apply_fake_time :Private {
     my ($self, $c) = @_;
     my $allow_fake_client_time = 0;
