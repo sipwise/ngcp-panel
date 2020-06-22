@@ -16,6 +16,24 @@
       "revId": "97da2620084994c7ccdea8a4586b05f0481ead6b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c17fa9f9_605b3442",
+        "filename": "lib/NGCP/Panel/Widget/Dashboard/ResellerBillingOverview.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-06-22T15:06:31Z",
+      "side": 1,
+      "message": "right, was yet incomplete",
+      "parentUuid": "21ab2983_00ee889b",
+      "revId": "97da2620084994c7ccdea8a4586b05f0481ead6b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
