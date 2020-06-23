@@ -52,7 +52,7 @@ sub hal_from_item {
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my ($cloudpbx, $sms, $faxserver, $rtcengine, $fileshare, $mobilepush);
+    my ($cloudpbx, $sms, $faxserver, $rtcengine, $fileshare, $mobilepush, $csc_rtcengine_ui);
 
     $cloudpbx = $c->config->{features}->{cloudpbx} // 0;
     $sms = $c->config->{features}->{sms} // 0;
@@ -60,6 +60,7 @@ sub _item_rs {
     $rtcengine = $c->config->{features}->{rtcengine} // 0;
     $fileshare = $c->config->{features}->{fileshare} // 0;
     $mobilepush = $c->config->{features}->{mobilepush} // 0;
+    $csc_rtcengine_ui = $c->config->{features}->{csc_rtcengine_ui} // 0;
 
     if($c->user->roles eq "admin") {
         # nothing to be done
@@ -92,6 +93,7 @@ sub _item_rs {
         { id => 4, name => 'rtcengine', enabled => $rtcengine },
         { id => 5, name => 'fileshare', enabled => $fileshare},
         { id => 6, name => 'mobilepush',enabled => $mobilepush},
+        { id => 7, name => 'csc_rtcengine_ui',enabled => $csc_rtcengine_ui},
     ];
 
     if($c->req->param('name')) {
