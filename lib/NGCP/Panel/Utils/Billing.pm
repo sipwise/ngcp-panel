@@ -469,12 +469,14 @@ sub get_contract_count_stmt {
 
     return <<EOS;
 select
-  count(distinct c.id)
-from `billing`.`contracts_billing_profile_network` cbpn
-join `billing`.`contracts` c on c.id = cbpn.contract_id
-where cbpn.`billing_profile_id` = `me`.`id`
+  count(c.id)
+from billing.contracts_billing_profile_network_schedule cbpns
+join billing.contracts_billing_profile_network cbpn on cbpns.profile_network_id = cbpn.id
+join billing._v_actual_effective_start_time est on est.contract_id = cbpn.contract_id and cbpns.effective_start_time = est.effective_start_time
+join billing.contracts as c on est.contract_id = c.id
+where
+cbpn.billing_profile_id = me.id
 and c.status != 'terminated'
-and (cbpn.end_date is null or cbpn.end_date >= now())
 EOS
 
 }
