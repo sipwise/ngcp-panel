@@ -37,27 +37,6 @@ sub get_form {
     }
 }
 
-sub post_process_hal_resource {
-    my($self, $c, $item, $resource, $form) = @_;
-    my $rwr_form = $self->get_form($c, "rules");
-    my @rewriterules;
-    for my $rule ( $item->voip_rewrite_rules->search_rs(undef, { order_by => { '-asc' => 'priority' } } )->all ) {
-        my $rule_resource = { $rule->get_inflated_columns };
-        return unless $self->validate_form(
-            c => $c,
-            form => $rwr_form,
-            resource => $rule_resource,
-            run => 0,
-        );
-        delete $rule_resource->{set_id};
-        $rule_resource->{match_pattern} = $rwr_form->inflate_match_pattern($rule_resource->{match_pattern});
-        $rule_resource->{replace_pattern} = $rwr_form->inflate_replace_pattern($rule_resource->{replace_pattern});
-        push @rewriterules, $rule_resource;
-    }
-    $resource->{rewriterules} = \@rewriterules;
-    return $resource;
-}
-
 sub _item_rs {
     my ($self, $c, $type) = @_;
     my $item_rs;
@@ -75,6 +54,31 @@ sub process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     NGCP::Panel::Utils::API::apply_resource_reseller_id($c, $resource);
     return $resource;
+}
+
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my %resource = $item->get_inflated_columns;
+    my $rwr_form = $self->get_form($c, "rules");
+    my @rewriterules = ();
+
+    foreach my $rule ($item->voip_rewrite_rules->search_rs(undef, { order_by => { '-asc' => 'priority' } } )->all) {
+        my $rule_resource = { $rule->get_inflated_columns };
+        return unless $self->validate_form(
+            c => $c,
+            form => $rwr_form,
+            resource => $rule_resource,
+            run => 0,
+        );
+        delete $rule_resource->{set_id};
+        $rule_resource->{match_pattern} = $rwr_form->inflate_match_pattern($rule_resource->{match_pattern});
+        $rule_resource->{replace_pattern} = $rwr_form->inflate_replace_pattern($rule_resource->{replace_pattern});
+        push @rewriterules, $rule_resource;
+    }
+    $resource{rewriterules} = \@rewriterules;
+
+    return \%resource;
 }
 
 sub check_resource{
