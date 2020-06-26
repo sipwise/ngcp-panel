@@ -9,7 +9,7 @@ use NGCP::Panel::Utils::Auth;
 __PACKAGE__->set_config();
 
 sub config_allowed_roles {
-    return [qw/admin reseller/];
+    return [qw/admin reseller lintercept/];
 }
 
 sub allowed_methods {

@@ -22,10 +22,10 @@ sub validate {
     return unless $c;
 
     my $resource = Storable::dclone($self->values);
-    if ($resource->{is_ccare} && $resource->{lawful_intercept}) {
-        my $err = "Administrator cannot be ccare and lawful intercept at the same time.";
+    if ($resource->{lawful_intercept} &&
+        ($resource->{is_superuser} || $resource->{is_master} || $resource->{is_ccare} || $resource->{is_system} || $resource->{call_data} || $resource->{billing_data} || $resource->{show_passwords})) {
+        my $err = "Administrator can be flagged as 'lafwul_intercept' only in conjunction with 'is_active', 'read_only' and 'can_reset_password' flags";
         $c->log->error($err);
-        $self->field('is_ccare')->add_error($err);
         $self->field('lawful_intercept')->add_error($err);
     }
 }
