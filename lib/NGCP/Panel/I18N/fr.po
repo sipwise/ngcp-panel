@@ -6083,6 +6083,10 @@ msgstr "Aucun fichier de bon de facturation spécifié!"
 msgid "No CSV file specified!"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Root.pm
+msgid "No JWT key has been configured."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "No LNP number file specified!"
 msgstr "Aucun fichier de numéro LNP spécifié!"
