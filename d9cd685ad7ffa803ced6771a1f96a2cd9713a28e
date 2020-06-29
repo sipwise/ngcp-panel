@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49b2037a_8ac44fe8",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-29T16:39:23Z",
+      "side": 1,
+      "message": "Please avoid leaving behind this kind of development commented out code.",
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18f65c68_ea5c7dc3",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-29T16:39:23Z",
+      "side": 1,
+      "message": "Isn\u0027t this dangerously tiny? I don think in general systems have started to refuse RSA keys smaller than 1k (or even 2k)?",
+      "range": {
+        "startLine": 26,
+        "startChar": 48,
+        "endLine": 26,
+        "endChar": 59
+      },
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c01c948_99f10ded",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-29T16:39:23Z",
+      "side": 1,
+      "message": "If this tools is going to end up in the path and is really ngcp-panel-specific, then its name seems rather too generic.",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 16
+      },
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d600b757_5a1f84f4",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-29T16:39:23Z",
+      "side": 1,
+      "message": "List here the supported values for type?",
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a4f6ddb_f0e37e13",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-29T16:39:23Z",
+      "side": 1,
+      "message": "List here the bits allowed range?",
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a377cd75_fa45ce51",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2020-06-29T16:39:23Z",
+      "side": 1,
+      "message": "This looks like it should say --type?",
+      "range": {
+        "startLine": 80,
+        "startChar": 19,
+        "endLine": 80,
+        "endChar": 21
+      },
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
