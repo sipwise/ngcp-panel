@@ -194,7 +194,6 @@ $d->select_if_unselected('//*[@id="is_superuser"]');
 $d->select_if_unselected('//*[@id="is_master"]');
 $d->select_if_unselected('//*[@id="is_active"]');
 $d->unselect_if_selected('//*[@id="read_only"]');
-$d->select_if_unselected('//*[@id="lawful_intercept"]');
 $d->find_element('//*[@id="save"]')->click();
 
 diag("Check Administrator details");
@@ -210,7 +209,7 @@ $c->login_ok($adminname, $adminpwd);
 
 diag("Go to 'Administrators' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
-$d->find_element('Administrator', 'link_text')->click();
+$d->find_element('Administrators', 'link_text')->click();
 
 diag("Check if Administrator is still here");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
@@ -224,6 +223,22 @@ $c->login_ok();
 diag("Go to 'Administrators' page");
 $d->find_element('//*[@id="main-nav"]//*[contains(text(),"Settings")]')->click();
 $d->find_element('Administrators', 'link_text')->click();
+
+diag("See if invalid 'lawful_intercept' setting gets rejected");
+$d->select_if_unselected('//*[@id="lawful_intercept"]');
+$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
+ok($d->find_element_by_css('#administrator_table tr > td.dataTables_empty', 'css'), 'Garbage text was not found');
+$d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', $adminname);
+ok($d->find_element_by_xpath('//*[@id="administrator_table"]//tr[1]/td[contains(text(), "' . $adminname . '")]'), 'Administrator found');
+$d->move_and_click('//*[@id="administrator_table"]/tbody/tr[1]/td//a[contains(text(), "Edit")]', 'xpath', '//*[@id="administrator_table_filter"]/label/input');
+ok($d->find_element_by_xpath('//*[@id="mod_edit"]/div/h3[contains(text(), "Edit Administrator")]'), 'Edit window has been opened');
+$d->select_if_unselected('//*[@id="lawful_intercept"]');
+$d->select_if_unselected('//*[@id="can_reset_password"]');
+$d->find_element('//*[@id="save"]')->click();
+ok($d->find_element_by_xpath('//form//div[@class="control-group error"]//span[@class="help-inline"]'), 'Error message was shown');
+$d->unselect_if_selected('//*[@id="lawful_intercept"]');
+$d->find_element('//*[@id="save"]')->click();
+is($d->get_text_safe('//*[@id="content"]//div[contains(@class, "alert")]'), 'Administrator successfully updated',  'Correct Alert was shown');
 
 diag("Try to NOT delete Administrator");
 $d->fill_element('//*[@id="administrator_table_filter"]/label/input', 'xpath', 'thisshouldnotexist');
