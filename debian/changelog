@@ -1,3 +1,19 @@
+ngcp-panel (5.5.13.0+0~mr5.5.13.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [0935067] TT#71871 - Fix /api/bannedusers arbitrary result
+  * [350e250] TT#69407 - Add customer external_id to /api/customerbalances
+  * [4e486b7] TT#72163 - Fix 500 error on recorded streams
+  * [987ebda] TT#71240 - Issue permission.trustedReload when terminating subscribers
+
+  [ Rene Krenn ]
+  * [6442036] TT#67108 peer rule unique check
+
+  [ Guillem Jover ]
+  * [a2e39cb] TT#83651 Move code within the try {} block
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Jun 2020 17:25:53 +0200
+
 ngcp-panel (5.5.12.0+0~mr5.5.12.0) unstable; urgency=medium
 
   [ Rene Krenn ]
