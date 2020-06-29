@@ -38,6 +38,7 @@ Depends:
  libcrypt-cracklib-perl,
  libcrypt-eksblowfish-perl,
  libcrypt-jwt-perl,
+ libcrypt-openssl-rsa-perl,
  libcrypt-rc4-perl,
  libcrypt-rijndael-perl,
  libcryptx-perl,
