@@ -75,11 +75,11 @@ COPY t/selenium/jenkins_docker_run /home/selenium/
 # When you want to build the base image from scratch (jump to the next section if you don't want to build yourself!):
 # NOTE: run the following command from root folder of git repository:
 # % docker build --tag="ngcp-panel-tests-selenium-buster" -f t/selenium/Dockerfile .
-# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw ngcp-panel-tests-selenium-buster:latest bash
+# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw ngcp-panel-tests-selenium-buster:latest bash
 #
 # Use the existing docker image:
 # % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-selenium-buster
-# % docker run --rm -p 5999:5999 -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-buster:latest bash
+# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-buster:latest bash
 #
 # Inside docker:
 #   su - selenium
