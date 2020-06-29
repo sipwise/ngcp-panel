@@ -313,9 +313,9 @@ ngcp-provisioning-template <provisioning template name> [options]
 
 =head1 DESCRIPTION
 
-B<This program> This program allows to run a 'provisioning template' defined in config.yml. This will produce a
-subscriber setup including required billing contact, contract, preferences, etc. from an input form defined by that
-template. The form fields can be passed as command line options.
+This program allows to run a 'provisioning template' from database or config.yml. This will produce a
+subscriber setup including required billing contact, contract, preferences, etc. from an input form defined
+by that template. The form fields can be passed as command line options.
 
 =head1 OPTIONS
 
