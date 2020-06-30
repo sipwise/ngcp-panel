@@ -77,13 +77,24 @@ sub POST :Allow {
             last;
         }
 
-        my $normalized;
+        my @result;
         try {
-
-            $normalized = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                c => $c, subscriber => $subscriber, 
-                number => $resource->{number}, direction => $resource->{direction},
-            );
+            if (ref $resource->{numbers} eq 'ARRAY') {
+                foreach my $number (@{$resource->{numbers}}) {
+                    my $normalized = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                        c => $c, subscriber => $subscriber,
+                        number => $number, direction => $resource->{direction},
+                    );
+                    push @result, $normalized;
+                }
+            }
+            else {
+                my $normalized = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    c => $c, subscriber => $subscriber,
+                    number => $resource->{numbers}, direction => $resource->{direction},
+                );
+                push @result, $normalized;
+            }
         } catch($e) {
             $c->log->error("failed to rewrite number: $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to rewrite number.");
@@ -92,10 +103,10 @@ sub POST :Allow {
 
         $guard->commit;
 
-        my $res = '{ "result": "'.$normalized.'" }'."\n";
+        my $res = {result => scalar @result == 1 ? $result[0] : \@result};
 
         $c->response->status(HTTP_OK);
-        $c->response->body($res);
+        $c->response->body(JSON::to_json($res));
     }
     return;
 }
