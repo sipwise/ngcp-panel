@@ -114,7 +114,7 @@ sub perform_subscriber_auth {
     });
 
     my $sub = $authrs->first;
-    if(defined $sub) {
+    if(defined $sub && $sub->webpassword) {
         my $sub_pass = $sub->webpassword;
         if (length $sub_pass > 40) {
             my @splitted_pass = split /\$/, $sub_pass;
