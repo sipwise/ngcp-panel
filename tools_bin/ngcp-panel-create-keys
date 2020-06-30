@@ -1,0 +1,226 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Long qw(GetOptions);
+use Pod::Usage qw(pod2usage);
+use File::Basename qw(fileparse);
+use File::Path qw(make_path);
+
+use Crypt::PK::RSA qw();
+use Crypt::OpenSSL::RSA qw();
+
+if ($>) {
+    die("Please run as root.\n");
+}
+
+my $type;
+my $size;
+GetOptions(
+   "type=s" => \$type,
+   "size=i" => \$size,
+) or pod2usage(2);
+
+$type //= 'rsa';
+
+if ('rsa' eq lc($type)) {
+
+    my $private_key_filename_format = '/etc/ngcp-config/shared-files/ngcp-panel/rsa_private_key%s.pem';
+    my $public_key_filename_format = '/etc/ngcp-config/shared-files/ngcp-panel/rsa_public_key%s.pem';
+
+    my $private_key_filename = sprintf($private_key_filename_format,'');
+    my $public_key_filename = sprintf($public_key_filename_format,'');
+    my $i = 1;
+    while (1) {
+        if (-e $private_key_filename or -e $public_key_filename) {
+            $private_key_filename = sprintf($private_key_filename_format, "_$i");
+            $public_key_filename = sprintf($public_key_filename_format, "_$i");
+        } else {
+            last;
+        }
+        $i++;
+    }
+
+    $size //= 2048;
+    die("Invalid size $size for RSA keys\n") if ($size < 256 or $size > 8192);
+
+    my $rsa = Crypt::OpenSSL::RSA->generate_key($size);
+
+    print "$size bit RSA keypair created.\n";
+
+    my $pk = Crypt::PK::RSA->new();
+    $pk->import_key(\$rsa->get_private_key_string());
+    save_pem(data => $pk->export_key_pem('private'),
+         filename => $private_key_filename,
+         owner => "root",
+         group => "root",
+         mod => 600,
+         make_dir => 1,
+         path_owner => "root",
+         path_group => "root",
+         path_mod => 777,
+    );
+
+    $pk->import_key(\$rsa->get_public_key_string());
+    save_pem(data => $pk->export_key_pem('public'),
+         filename => $public_key_filename,
+         owner => "root",
+         group => "root",
+         mod => 600,
+         make_dir => 1,
+         path_owner => "root",
+         path_group => "root",
+         path_mod => 777,
+    );
+} else {
+    die("Unsupported key type: $type\n")
+}
+
+print "For the new keys to come into effect, please update config.yml and run ngcpcfg to apply.\n";
+
+exit(0);
+
+sub save_pem {
+    my %params = @_;
+    my ($filename,
+        $data,
+        $owner,
+        $group,
+        $mod,
+        $make_dir,
+        $path_mod,
+        $path_owner,
+        $path_group) = @params{qw/
+        filename
+        data
+        owner
+        group
+        mod
+        make_dir
+        path_mod
+        path_owner
+        path_group
+    /};
+    _makedir(filename => $filename,
+        extension => '.pem',
+        make_dir => $make_dir,
+        path_mod => $path_mod,
+        path_owner => $path_owner,
+        path_group => $path_group);
+    open(my $fh, '>', $filename) or die "Could not open file '$filename': $!\n";
+    print $fh $data;
+    close $fh;
+    _chownmod($filename,$owner,$group,$mod);
+    print "$filename created.\n";
+}
+
+sub _makedir {
+    my %params = @_;
+    my ($filename,
+        $extension,
+        $make_dir,
+        $path_mod,
+        $path_owner,
+        $path_group) = @params{qw/
+        filename
+        extension
+        make_dir
+        path_mod
+        path_owner
+        path_group
+    /};
+    my ($name,$path,$suffix) = fileparse($filename,$extension);
+    _makepath($path, $path_mod, $path_owner, $path_group)
+        if ($make_dir and length($path) > 0 and not -d $path);
+    return $filename;
+
+}
+
+sub _chownmod {
+    my ($filename, $user, $group, $mod) = @_;
+
+    chmod(oct($mod), $filename);
+    chown((getpwnam($user) || -1),(getgrnam($group) || -1),$filename);
+    my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
+        $atime,$mtime,$ctime,$blksize,$blocks) = lstat $filename;
+    die "Could not chown file '$filename'\n" if ($user ne getpwuid($uid) or $group ne getgrgid($gid));
+    die "Could not chmod file '$filename'\n" if (($mode & oct(7777)) != oct($mod));
+}
+
+sub _makepath {
+    my ($dirpath, $mod, $path_owner, $path_group) = @_;
+    make_path($dirpath,{
+        'chmod' => oct($mod),
+        'owner' => $path_owner,
+        'group' => $path_group,
+        'verbose' => 1,
+        'error' => \my $err });
+    if (@$err) {
+         for my $diag (@$err) {
+            my ($file, $message) = %$diag;
+            if ($file eq '') {
+               die("Problem creating path: $message\n");
+            } else {
+               die("Problem creating $file: $message\n");
+         }
+      }
+      return 0;
+    }
+    return 1;
+}
+
+__END__
+
+=head1 NAME
+
+ngcp-create-keys - Generate encryption keys for ngcp-panel
+
+=head1 SYNOPSIS
+
+B<ngcp-create-keys> [I<options>]
+
+=head1 DESCRIPTION
+
+This program will generate new master key(s) required by ngcp-panel e.g. for encryption/decryption of JSON values.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--type=>I<key type>
+
+Specify what key to generate. Defaults to "rsa" (encryption of JSON fields).
+
+=item B<--size=>I<key length>
+
+Specify the key size in bits.
+
+=back
+
+=head1 EXAMPLES
+
+ngcp-create-keys --type="rsa" --size="2048"
+
+=head1 AUTHOR
+
+Sipwise Development Team C<< <support@sipwise.com> >>
+
+=head1 LICENSE
+
+This software is Copyright © 2020 by Sipwise GmbH, Austria.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this package.  If not, see <https://www.gnu.org/licenses/>.
+
+=cut

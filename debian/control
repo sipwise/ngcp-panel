@@ -38,7 +38,6 @@ Depends:
  libcrypt-cracklib-perl,
  libcrypt-eksblowfish-perl,
  libcrypt-jwt-perl,
- libcrypt-openssl-rsa-perl,
  libcrypt-rc4-perl,
  libcrypt-rijndael-perl,
  libcryptx-perl,
@@ -140,6 +139,7 @@ Section: admin
 Architecture: all
 Depends:
  curl,
+ libcrypt-openssl-rsa-perl,
  libio-prompt-tiny-perl,
  libmoose-perl,
  libngcp-api-client-perl,
