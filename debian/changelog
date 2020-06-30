@@ -1,3 +1,28 @@
+ngcp-panel (8.3.2.1+0~mr8.3.2.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [a6ef670] TT#78569 provide tools menu for reseller admins
+  * [890c55c] TT#78467 OWNER_VAT_SETTINGS option for calllist/conversations
+  * [b05c1e9] TT#80161 refactor subscriber datatable search
+  * [1a1dfab] TT#80161 properly avoid dupes in subscriber datatable
+  * [9e8d37d] TT#82304 fix fraud reseller<->customer costs in mails
+  * [e873dab] TT#82260 fix updating fraud notification status
+  * [632cbf5] TT#82260 limit fraud interval costs to 2 fractional digits
+  * [6c5fb14] TT#83355 consider prepaid call costs for reseller revenue
+
+  [ Flaviu Mates ]
+  * [8ae8b98] TT#68217 - Delete htable peer_probe when deleting/disabling peer
+  * [aa3cef5] TT#80994 - Get click2dial version from config
+  * [2bab63d] TT#71240 - Issue permission.trustedReload when terminating subscribers
+
+  [ Nico Schedel ]
+  * [b3efddb] TT#80128 selenium: generate both subscriber passwords with generate button
+
+  [ Guillem Jover ]
+  * [2bd97c7] TT#83651 Move code within the try {} block
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 30 Jun 2020 15:29:35 +0200
+
 ngcp-panel (8.3.2.0+0~mr8.3.2.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
