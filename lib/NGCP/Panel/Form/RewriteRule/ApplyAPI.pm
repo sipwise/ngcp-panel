@@ -21,8 +21,8 @@ has_field 'subscriber_id' => (
     },
 );
 
-has_field 'number' => (
-    type => 'Text',
+has_field 'numbers' => (
+    type => 'Compound',
     label => 'User or number to rewrite',
     required => 1,
     element_attr => {
