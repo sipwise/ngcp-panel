@@ -1,0 +1,177 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Long qw(GetOptions);
+use Pod::Usage qw(pod2usage);
+use File::Basename qw(fileparse);
+use File::Path qw(make_path);
+
+use Crypt::PK::RSA qw();
+use Crypt::OpenSSL::RSA qw();
+
+my $type;
+my $size;
+GetOptions(
+   "type=s" => \$type,
+   "size=i" => \$size,
+) or pod2usage(2);
+
+$type //= 'rsa';
+if ('rsa' eq lc($type)) {
+   $size //= 2048;
+   die("invalid size $size for RSA keys\n") if ($size < 256 or $size > 8192);
+   
+   my $rsa = Crypt::OpenSSL::RSA->generate_key($size);
+
+   my $pk = Crypt::PK::RSA->new();
+   $pk->import_key(\$rsa->get_private_key_string());
+   _save_pem(data => $pk->export_key_pem('private'),
+         filename => '/etc/ngcp-config/shared-files/ngcp-panel/rsa_private_key.pem',
+         owner => "root",
+         group => "root",
+         mask => oct(600),
+         make_dir => 1,
+         path_umask => 777,
+   );
+
+   $pk->import_key(\$rsa->get_public_key_string());
+   save_pem(data => $pk->export_key_pem('public'),
+         filename => '/etc/ngcp-config/shared-files/ngcp-panel/rsa_public_key.pem',
+         owner => "root",
+         group => "root",
+         mask => oct(600),
+         make_dir => 1,
+         path_umask => 777,
+   );
+   
+   print "$size bit RSA keypair created.\n";
+} elsif ('voucher' eq lc($type)) {
+   #todo
+} else {
+   die("unsupported key type: $type\n")
+}
+
+print "Please run ngcpcfg to apply.\n";
+
+exit(0);
+
+sub _save_pem {
+    my %params = @_;
+    my ($filename,
+        $data,
+        $owner,
+        $group,
+        $mask,
+        $make_dir,
+        $path_umask) = @params{qw/
+        filename
+        data
+        owner
+        group
+        mask make_dir
+        path_umask
+    /};   
+    _makedir($filename, '.pem',$make_dir,$path_umask);
+    open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+    print $fh $data;
+    close $fh;
+    _chownmod($filename,$owner,$group,666,$mask);
+}
+
+sub _makedir {
+
+    my ($filename,$extension,$make_dir,$path_umask) = @_;
+    my ($name,$path,$suffix) = fileparse($filename,$extension);
+    _makepath($path, $path_umask) if ($make_dir and length($path) > 0 and not -d $path);
+    return $filename;
+
+}
+
+sub _chownmod {
+    my ($file, $user, $group, $defmode, $mask) = @_;
+
+    if ($user || $group) {
+        my @arg = (-1, -1, $file);
+        $user and ($arg[0] = (getpwnam($user) || -1));
+        $group and ($arg[1] = (getgrnam($group) || -1));
+        chown(@arg);
+    }
+    $mask and chmod(oct($defmode) & ~oct($mask), $file);
+}
+
+sub _makepath {
+    my ($dirpath, $chmod_umask) = @_;
+    make_path($dirpath,{
+        'chmod' => $chmod_umask,
+        'verbose' => 1,
+        'error' => \my $err });
+    if (@$err) {
+         for my $diag (@$err) {
+            my ($file, $message) = %$diag;
+            if ($file eq '') {
+               die("creating path: $message\n");
+            } else {
+               die("problem creating $file: $message\n");
+         }
+      }
+      return 0;
+    }
+    return 1;
+}
+
+__END__
+
+=head1 NAME
+
+ngcp-create-keys - Generate encryption keys for ngcp-panel
+
+=head1 SYNOPSIS
+
+B<ngcp-create-keys> [I<options>]
+
+=head1 DESCRIPTION
+
+This program will generate new master key(s) required by ngcp-panel e.g. for encryption/decryption of JSON values.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--type=>I<key type>
+
+Specify what key to generate. Defaults to "rsa" (encryption of JSON fields).
+
+=item B<--size=>I<key length>
+
+Specify the key size in bits.
+
+=back
+
+=head1 EXAMPLES
+
+ngcp-create-keys --type="rsa" --size="2048"
+
+=head1 AUTHOR
+
+Sipwise Development Team C<< <support@sipwise.com> >>
+
+=head1 LICENSE
+
+This software is Copyright © 2020 by Sipwise GmbH, Austria.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this package.  If not, see <https://www.gnu.org/licenses/>.
+
+=cut
