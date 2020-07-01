@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "552e3b2b_f5b08208",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-01T16:55:41Z",
+      "side": 1,
+      "message": "well but i usually need those values, to debug it *outside the ngcp vagrant*",
+      "parentUuid": "49b2037a_8ac44fe8",
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "18f65c68_ea5c7dc3",
         "filename": "tools_bin/ngcp-create-keys",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2020-06-29T16:39:23Z",
       "side": 1,
       "message": "Isn\u0027t this dangerously tiny? I don think in general systems have started to refuse RSA keys smaller than 1k (or even 2k)?",
+      "range": {
+        "startLine": 26,
+        "startChar": 48,
+        "endLine": 26,
+        "endChar": 59
+      },
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1ed00f69_2f6bdbc0",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-01T16:55:41Z",
+      "side": 1,
+      "message": "agree, that\u0027s moreover just the \"physical\" limits i tested with openssl, so it does not croak",
+      "parentUuid": "18f65c68_ea5c7dc3",
       "range": {
         "startLine": 26,
         "startChar": 48,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "89af3383_9433a5f8",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-01T16:55:41Z",
+      "side": 1,
+      "message": "ok agree; what would be a better name then?",
+      "parentUuid": "6c01c948_99f10ded",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 16
+      },
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d600b757_5a1f84f4",
         "filename": "tools_bin/ngcp-create-keys",
         "patchSetId": 2
@@ -76,6 +142,24 @@
       "writtenOn": "2020-06-29T16:39:23Z",
       "side": 1,
       "message": "List here the supported values for type?",
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3963341e_ea3d02e2",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-01T16:55:41Z",
+      "side": 1,
+      "message": "as soon as more (eg. voucher encryption master key, or JWT secret) will be implemented, it will be added here. for now there only is that RSA/json content encryption type.",
+      "parentUuid": "d600b757_5a1f84f4",
       "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -99,6 +183,24 @@
     },
     {
       "key": {
+        "uuid": "c1884611_685299c1",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-01T16:55:41Z",
+      "side": 1,
+      "message": "well it will vary with the key type. here for RSA, it could be those 256-8192.\nbut for an AES key (eg. voucher master key), it could be 128-256, etc.",
+      "parentUuid": "1a4f6ddb_f0e37e13",
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a377cd75_fa45ce51",
         "filename": "tools_bin/ngcp-create-keys",
         "patchSetId": 2
@@ -110,6 +212,30 @@
       "writtenOn": "2020-06-29T16:39:23Z",
       "side": 1,
       "message": "This looks like it should say --type?",
+      "range": {
+        "startLine": 80,
+        "startChar": 19,
+        "endLine": 80,
+        "endChar": 21
+      },
+      "revId": "d9cd685ad7ffa803ced6771a1f96a2cd9713a28e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0b53a91_668c0c96",
+        "filename": "tools_bin/ngcp-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-01T16:55:41Z",
+      "side": 1,
+      "message": "right.",
+      "parentUuid": "a377cd75_fa45ce51",
       "range": {
         "startLine": 80,
         "startChar": 19,
