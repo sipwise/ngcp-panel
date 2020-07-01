@@ -1,3 +1,11 @@
+ngcp-panel (7.5.3.20+0~mr7.5.3.20) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9e5d110] TT#82260 fix updating fraud notification status
+  * [1f1d909] TT#82260 limit fraud interval costs to 2 fractional digits
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 01 Jul 2020 10:18:49 +0200
+
 ngcp-panel (7.5.3.19+0~mr7.5.3.19) unstable; urgency=medium
 
   [ Rene Krenn ]
