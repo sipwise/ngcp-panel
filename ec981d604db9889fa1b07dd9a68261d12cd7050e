@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aa91c419_d9f4ec13",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-02T18:18:27Z",
+      "side": 1,
+      "message": "well i directly placed here the config specified by mykola:\n\n\"place files to /etc/ngcp-config/shared-files/ngcp-panel/ with root:root 600\"",
+      "parentUuid": "6d01b3f3_e5eef0b5",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 25
+      },
+      "revId": "ec981d604db9889fa1b07dd9a68261d12cd7050e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1b09c98b_a751ee7b",
         "filename": "tools_bin/ngcp-panel-create-keys",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2020-07-02T17:07:42Z",
       "side": 1,
       "message": "These octal handling seems confusing, as you pass some as octal and some others as decimal. Why not simply avoid the oct() function completely, and simply use octal literals instead (0600, 0777), which mean no room for \"reencoding\".",
+      "range": {
+        "startLine": 34,
+        "startChar": 17,
+        "endLine": 34,
+        "endChar": 25
+      },
+      "revId": "ec981d604db9889fa1b07dd9a68261d12cd7050e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b805db31_67e10fb2",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-02T18:18:27Z",
+      "side": 1,
+      "message": "leftover, fixed.\nwe have a critic rule that prohibits literals such as 0777.",
+      "parentUuid": "1b09c98b_a751ee7b",
       "range": {
         "startLine": 34,
         "startChar": 17,
@@ -65,6 +113,24 @@
     },
     {
       "key": {
+        "uuid": "d15f4983_0262e13b",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-02T18:18:27Z",
+      "side": 1,
+      "message": "with make_dir \u003d\u003e 0 it is supposed to croak if the parent folder(s) for the key file do not yet exists.",
+      "parentUuid": "1802f418_32259662",
+      "revId": "ec981d604db9889fa1b07dd9a68261d12cd7050e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5aaadd08_a8ebb3e3",
         "filename": "tools_bin/ngcp-panel-create-keys",
         "patchSetId": 2
@@ -76,6 +142,24 @@
       "writtenOn": "2020-07-02T17:07:42Z",
       "side": 1,
       "message": "Is there a need to unpack the arguments into variables instead of using the %params hash directly?",
+      "revId": "ec981d604db9889fa1b07dd9a68261d12cd7050e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19ce7d93_e524f060",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-02T18:18:27Z",
+      "side": 1,
+      "message": "coding style from panel, as soon as there are more than 5 args.",
+      "parentUuid": "5aaadd08_a8ebb3e3",
       "revId": "ec981d604db9889fa1b07dd9a68261d12cd7050e",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -127,6 +211,30 @@
       "writtenOn": "2020-07-02T17:07:42Z",
       "side": 1,
       "message": "this is not really an umask, it\u0027s an absolute mode not affected by umask.",
+      "range": {
+        "startLine": 107,
+        "startChar": 20,
+        "endLine": 107,
+        "endChar": 31
+      },
+      "revId": "ec981d604db9889fa1b07dd9a68261d12cd7050e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c839cfde_748091ff",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-02T18:18:27Z",
+      "side": 1,
+      "message": "seems it was different in the past.\ni\u0027ll update to all of mode, owner, group args for creating directories.",
+      "parentUuid": "7f369865_0bb04607",
       "range": {
         "startLine": 107,
         "startChar": 20,
