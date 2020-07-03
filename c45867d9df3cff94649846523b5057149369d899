@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3ff4e5d_554a0cb9",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000045
+      },
+      "writtenOn": "2020-07-03T09:16:19Z",
+      "side": 1,
+      "message": "The name should be dynamic so every run of this script produces a new pair. In this case wrong run didn\u0027t break anything.",
+      "range": {
+        "startLine": 27,
+        "startChar": 3,
+        "endLine": 27,
+        "endChar": 89
+      },
+      "revId": "c45867d9df3cff94649846523b5057149369d899",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
