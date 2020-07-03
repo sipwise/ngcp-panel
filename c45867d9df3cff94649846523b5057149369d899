@@ -22,6 +22,30 @@
       "revId": "c45867d9df3cff94649846523b5057149369d899",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfd54ca6_01f5f789",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2020-07-03T09:48:08Z",
+      "side": 1,
+      "message": "how to find the random name then in the template, for rendering /etc/ngcp-panel/*.pem\n\ntimestamp could be included in the name, then use the latest.\n\non the other hand one must not accidentially create a new key, as richard suggested.\nso the --force logic is required anyway.",
+      "parentUuid": "e3ff4e5d_554a0cb9",
+      "range": {
+        "startLine": 27,
+        "startChar": 3,
+        "endLine": 27,
+        "endChar": 89
+      },
+      "revId": "c45867d9df3cff94649846523b5057149369d899",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
