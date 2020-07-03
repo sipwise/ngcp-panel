@@ -46,6 +46,30 @@
       "revId": "c45867d9df3cff94649846523b5057149369d899",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdd39dbf_9bce0eee",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000045
+      },
+      "writtenOn": "2020-07-03T10:13:54Z",
+      "side": 1,
+      "message": "\u003e timestamp could be included in the name.\n\nYes, this is a good way.\n\n\u003e then use the latest.\n\nUser writes the required filename to config.yml. It can be the latest or can\u0027t.\n\n\u003e on the other hand one must not accidentially create a new key, as richard suggested.\n\nI see no problem if someone creates a new pair of files. As the used files (their path and name) is stored in config.yml additional files just be located on fs.\n\n\u003e so the --force logic is required anyway.\n\nNo. I\u0027m sure that this script should not delete any key for any reason. Otherwise someone will do it and blame us.",
+      "parentUuid": "cfd54ca6_01f5f789",
+      "range": {
+        "startLine": 27,
+        "startChar": 3,
+        "endLine": 27,
+        "endChar": 89
+      },
+      "revId": "c45867d9df3cff94649846523b5057149369d899",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
