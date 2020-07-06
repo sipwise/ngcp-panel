@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f9e5e73_398709b0",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 7
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000045
+      },
+      "writtenOn": "2020-07-06T09:19:25Z",
+      "side": 1,
+      "message": "Pls use type here. So if the algo is changed you won\u0027t need to change the code.",
+      "range": {
+        "startLine": 26,
+        "startChar": 79,
+        "endLine": 26,
+        "endChar": 82
+      },
+      "revId": "0de5f9387dfb27cd0c27b32e6333887c074400b8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f90dacd2_22cb6f75",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000045
+      },
+      "writtenOn": "2020-07-06T09:19:25Z",
+      "side": 1,
+      "message": "Remove these spaces.",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 3
+      },
+      "revId": "0de5f9387dfb27cd0c27b32e6333887c074400b8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
