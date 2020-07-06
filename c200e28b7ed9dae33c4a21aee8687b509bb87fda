@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf6f8d55_b5678698",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 9
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000045
+      },
+      "writtenOn": "2020-07-06T10:34:11Z",
+      "side": 1,
+      "message": "I thing these variables can be global so no need to redefine in every \u0027type\u0027 branch.",
+      "range": {
+        "startLine": 29,
+        "startChar": 4,
+        "endLine": 29,
+        "endChar": 35
+      },
+      "revId": "c200e28b7ed9dae33c4a21aee8687b509bb87fda",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "031fcb96_91e55b9d",
+        "filename": "tools_bin/ngcp-panel-create-keys",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1000045
+      },
+      "writtenOn": "2020-07-06T10:34:11Z",
+      "side": 1,
+      "message": "Didn\u0027t get this part. Are you going to add \u0027aes\u0027 and \u0027voucher\u0027 support in this commit? If not - it\u0027s better to remove it.",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 9
+      },
+      "revId": "c200e28b7ed9dae33c4a21aee8687b509bb87fda",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
