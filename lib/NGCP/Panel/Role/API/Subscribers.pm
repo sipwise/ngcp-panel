@@ -18,6 +18,7 @@ use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract qw();
+use NGCP::Panel::Utils::Encryption qw();
 
 sub resource_name{
     return 'subscribers';
@@ -151,7 +152,17 @@ sub resource_from_item {
         }else{
             $resource{lock} = undef;
         }
-        unless ($c->user->show_passwords) {
+        if ($c->user->show_passwords) {
+            foreach my $k(qw/password webpassword/) {
+                eval {
+                    $resource{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
+                };
+                if ($@) {
+                    $c->log->error("Failed to encrypt $k '$resource{$k}': " . $@);
+                    delete $resource{$k};
+                }
+            }
+        } else {
             foreach my $k(qw/password webpassword/) {
                 delete $resource{$k};
             }
