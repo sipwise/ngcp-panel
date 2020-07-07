@@ -22,6 +22,7 @@ use HTTP::Status qw(:constants);
 use IPC::System::Simple qw/capturex/;
 use File::Slurp qw/read_file/;
 use Redis;
+use NGCP::Panel::Utils::Encryption qw();
 
 my %LOCK = (
     0, 'none',
@@ -315,6 +316,17 @@ sub prepare_resource {
             } else {
                 delete $alias_number->{number_id};
             }
+        }
+    }
+    
+    foreach my $k(qw/password webpassword/) {
+        eval {
+            $resource->{$k} = NGCP::Panel::Utils::Encryption::decrypt_rsa($c,$resource->{$k});
+        };
+        if ($@) {
+            $c->log->error("Failed to decrypt $k '$resource->{$k}': " . $@);
+            &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Failed to decrypt $k.");
+            return;
         }
     }
 
