@@ -5,6 +5,8 @@ use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 use Data::Entropy::Algorithms qw/rand_bits/;
 use IO::Compress::Zip qw/zip/;
 use IPC::System::Simple qw/capturex/;
+use Redis;
+use UUID;
 
 
 sub get_special_admin_login {
@@ -383,6 +385,38 @@ sub cmd {
         return $e;
     }
     return $output;
+}
+
+sub initiate_password_reset {
+    my ($c, $admin) = @_;
+    # don't clear password, a user might just have guessed it and
+    # could then block the legit user out
+    my ($uuid_bin, $uuid_string);
+    UUID::generate($uuid_bin);
+    UUID::unparse($uuid_bin, $uuid_string);
+    my $redis = Redis->new(
+        server => $c->config->{redis}->{central_url},
+        reconnect => 10, every => 500000, # 500ms
+        cnx_timeout => 3,
+    );
+    unless ($redis) {
+        return {success => 0, error => "Failed to connect to central redis url " . $c->config->{redis}->{central_url}};
+    }
+    $redis->select($c->config->{'Plugin::Session'}->{redis_db});
+    my $username = $admin->login;
+    if ($redis->exists("password_reset:admin::$username")) {
+        return {success => 0, error => 'A password reset attempt has been made already recently, please check your email.'};
+    }
+    else {
+        $redis->hset("password_reset:admin::$username", 'token', $uuid_string);
+        $redis->expire("password_reset:admin::$username", 300);
+        $redis->hset("password_reset:admin::$uuid_string", 'user', $username);
+        $redis->hset("password_reset:admin::$uuid_string", 'ip', $c->req->address);
+        $redis->expire("password_reset:admin::$uuid_string", 300);
+        my $url = $c->uri_for_action('/login/recover_password')->as_string . '?token=' . $uuid_string;
+        NGCP::Panel::Utils::Email::admin_password_reset($c, $admin, $url);
+    }
+    return {success => 1};
 }
 
 1;
