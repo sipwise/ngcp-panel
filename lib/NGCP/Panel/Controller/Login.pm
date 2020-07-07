@@ -112,37 +112,14 @@ sub reset_password :Chained('/') :PathPart('resetpassword') :Args(0) {
                         );
                     }
                     elsif ($admin->can_reset_password) {
-                        # don't clear password, a user might just have guessed it and
-                        # could then block the legit user out
-                        my ($uuid_bin, $uuid_string);
-                        UUID::generate($uuid_bin);
-                        UUID::unparse($uuid_bin, $uuid_string);
-                        my $redis = Redis->new(
-                            server => $c->config->{redis}->{central_url},
-                            reconnect => 10, every => 500000, # 500ms
-                            cnx_timeout => 3,
-                        );
-                        unless ($redis) {
-                            $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
-                            return;
-                        }
-                        $redis->select($c->config->{'Plugin::Session'}->{redis_db});
-                        $username = $admin->login;
-                        if ($redis->exists("password_reset:admin::$username")) {
-                            NGCP::Panel::Utils::Message::info(
+                        my $result = NGCP::Panel::Utils::Auth::initiate_password_reset($c, $admin);
+                        if (!$result->{success}) {
+                            NGCP::Panel::Utils::Message::error(
                                 c    => $c,
-                                desc => $c->loc('A password reset attempt has been made already recently, please check your email'),
+                                desc => $c->loc($result->{error}),
                             );
                         }
                         else {
-                            $redis->hset("password_reset:admin::$username", 'token', $uuid_string);
-                            $redis->expire("password_reset:admin::$username", 300);
-                            $redis->hset("password_reset:admin::$uuid_string", 'user', $username);
-                            $redis->hset("password_reset:admin::$uuid_string", 'ip', $c->req->address);
-                            $redis->expire("password_reset:admin::$uuid_string", 300);
-                            my $url = $c->uri_for_action('/login/recover_password')->as_string . '?token=' . $uuid_string;
-                            NGCP::Panel::Utils::Email::admin_password_reset($c, $admin, $url);
-
                             NGCP::Panel::Utils::Message::info(
                                 c    => $c,
                                 desc => $c->loc('Successfully reset password, please check your email'),
