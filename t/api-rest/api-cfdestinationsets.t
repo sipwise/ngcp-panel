@@ -67,6 +67,7 @@ SKIP:
             my $data = $fake_data->process('admins');
             $data->{login}   = 'api_test';
             $data->{password} = 'api_test';
+            $data->{lawful_intercept} = 0;
             my($res,$content) = $test_machine->request_post($data, '/api/admins/');
             $test_machine->http_code_msg(201, "create reseller",$res,$content);
             $test_machine->set_reseller_credentials($data);
