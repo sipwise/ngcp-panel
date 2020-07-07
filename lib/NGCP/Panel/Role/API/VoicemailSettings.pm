@@ -10,6 +10,7 @@ use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::Encryption qw();
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -84,6 +85,16 @@ sub resource_from_item {
     $resource->{delete} = delete $resource->{delete} eq 'yes' ? 1 : 0; 
     $resource->{attach} = delete $resource->{attach} eq 'yes' ? 1 : 0; 
     $resource->{sms_number} = delete $resource->{pager};
+    
+    foreach my $k(qw/pin/) {
+        eval {
+            $resource->{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource->{$k});
+        };
+        if ($@) {
+            $c->log->error("Failed to encrypt $k '$resource->{$k}': " . $@);
+            delete $resource->{$k};
+        }
+    }
 
     return $resource;
 }
@@ -101,6 +112,17 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
+    foreach my $k (qw/pin/) {
+        eval {
+            $resource->{$k} = NGCP::Panel::Utils::Encryption::decrypt_rsa($c,$resource->{$k});
+        };
+        if ($@) {
+            $c->log->error("Failed to encrypt $k '$resource->{$k}': " . $@);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to encrypt $k.");
+            return;
+        }
+    }
+    
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
