@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6e1a4ab8_4c1e5905",
+        "filename": "lib/NGCP/Panel/Utils/Encryption.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2020-07-07T11:50:10Z",
+      "side": 1,
+      "message": "Hmm where\u0027s these coming from?",
+      "range": {
+        "startLine": 30,
+        "startChar": 39,
+        "endLine": 30,
+        "endChar": 55
+      },
+      "revId": "317ce1156f179c926129948c662cb5bbeaa9f29d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
