@@ -1,3 +1,10 @@
+ngcp-panel (8.3.2.2+0~mr8.3.2.2) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [94ee0ba] TT#83014 - Add call_id search param to /api/callrecordings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 Jul 2020 11:08:01 +0200
+
 ngcp-panel (8.3.2.1+0~mr8.3.2.1) unstable; urgency=medium
 
   [ Rene Krenn ]
