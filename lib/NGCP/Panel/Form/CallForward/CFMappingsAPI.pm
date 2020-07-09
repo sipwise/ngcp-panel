@@ -143,6 +143,11 @@ has_field 'cfu.bnumberset_id' => (
     do_label => 0,
 );
 
+has_field 'cfu.cfm_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfb.destinationset' => (
     type => 'Compound',
     do_wrapper => 1,
@@ -197,6 +202,11 @@ has_field 'cfb.enabled' => (
     do_label => 0,
 );
 
+has_field 'cfb.cfm_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cft.destinationset' => (
     type => 'Compound',
     do_wrapper => 1,
@@ -243,6 +253,11 @@ has_field 'cft.bnumberset_id' => (
 
 has_field 'cft.enabled' => (
     type => 'Boolean',
+    do_label => 0,
+);
+
+has_field 'cft.cfm_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -295,6 +310,11 @@ has_field 'cfna.enabled' => (
     do_label => 0,
 );
 
+has_field 'cfna.cfm_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfs.destinationset' => (
     type => 'Compound',
     do_wrapper => 1,
@@ -341,6 +361,11 @@ has_field 'cfs.bnumberset_id' => (
 
 has_field 'cfs.enabled' => (
     type => 'Boolean',
+    do_label => 0,
+);
+
+has_field 'cfs.cfm_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 
@@ -399,6 +424,11 @@ has_field 'cfr.enabled' => (
     do_label => 0,
 );
 
+has_field 'cfr.cfm_id' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'cfo.destinationset' => (
     type => 'Compound',
     do_wrapper => 1,
@@ -445,6 +475,11 @@ has_field 'cfo.bnumberset_id' => (
 
 has_field 'cfo.enabled' => (
     type => 'Boolean',
+    do_label => 0,
+);
+
+has_field 'cfo.cfm_id' => (
+    type => 'PosInteger',
     do_label => 0,
 );
 

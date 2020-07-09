@@ -63,6 +63,7 @@ sub hal_from_item {
                     bnumberset_id => undef,
                 ),
                 ( enabled => $mapping->enabled ),
+                ( cfm_id => $mapping->id ),
             };
     }
 
