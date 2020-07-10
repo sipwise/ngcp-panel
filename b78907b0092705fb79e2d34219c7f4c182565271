@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9606dbf5_e377f339",
+        "filename": "lib/NGCP/Panel/Controller/API/PasswordReset.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-07-10T10:38:52Z",
+      "side": 1,
+      "message": "this can be moved to Utils/Admin.pm and unified as we already have similar code in the Controller",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 86
+      },
+      "revId": "b78907b0092705fb79e2d34219c7f4c182565271",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
