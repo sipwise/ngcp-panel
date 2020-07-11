@@ -2160,13 +2160,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Defines a rewrite CLI and and pattern. If the a-number of a call matches one "
-"of the associated patterns, the User-Provided-Number is set to the "
-"configured CLI."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
 "Defines how to provide the routing number after a LNP query. If enabled, rn "
 "parameter will be used."
 msgstr ""
@@ -9118,10 +9111,6 @@ msgstr "Usuario"
 msgid "User Agent"
 msgstr "Agente de usuario"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "User CLI rewrite"
-msgstr ""
-
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt
 #, fuzzy
@@ -9287,6 +9276,8 @@ msgstr "Lo sentimos, ha ocurrido un error:"
 msgid "Web Fax"
 msgstr ""
 
+#: share/templates/subscriber/edit_webpass.tt
+#: share/templates/subscriber/master.tt
 #: share/templates/subscriber/recoverpassword.tt
 msgid "Web Password"
 msgstr "Contraseña web"

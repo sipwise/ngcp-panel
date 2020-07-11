@@ -2254,16 +2254,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"Defines a rewrite CLI and and pattern. If the a-number of a call matches one "
-"of the associated patterns, the User-Provided-Number is set to the "
-"configured CLI."
-msgstr ""
-"Définit une règle de reformulation de CLI et de modèle. Si le numéro de "
-"l'appelant correspond à l'un des modèles associés, le numéro fourni par "
-"l'utilisateur sera placé dans le CLI configuré."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
 "Defines how to provide the routing number after a LNP query. If enabled, rn "
 "parameter will be used."
 msgstr ""
@@ -9407,10 +9397,6 @@ msgstr "Utilisateur"
 msgid "User Agent"
 msgstr "User Agent"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "User CLI rewrite"
-msgstr "Reformulation CLI de l'utilisateur"
-
 #: share/templates/widgets/subscriber_topmenu_settings.tt
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt
 msgid "User Details"
@@ -9577,6 +9563,8 @@ msgstr ""
 msgid "Web Fax"
 msgstr "Web Fax"
 
+#: share/templates/subscriber/edit_webpass.tt
+#: share/templates/subscriber/master.tt
 #: share/templates/subscriber/recoverpassword.tt
 msgid "Web Password"
 msgstr "Mot de passe Web"
@@ -10001,6 +9989,18 @@ msgstr "années"
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "oui"
+
+#~ msgid ""
+#~ "Defines a rewrite CLI and and pattern. If the a-number of a call matches "
+#~ "one of the associated patterns, the User-Provided-Number is set to the "
+#~ "configured CLI."
+#~ msgstr ""
+#~ "Définit une règle de reformulation de CLI et de modèle. Si le numéro de "
+#~ "l'appelant correspond à l'un des modèles associés, le numéro fourni par "
+#~ "l'utilisateur sera placé dans le CLI configuré."
+
+#~ msgid "User CLI rewrite"
+#~ msgstr "Reformulation CLI de l'utilisateur"
 
 #~ msgid ""
 #~ "Call Deflection allows a called endpoint to redirect the unanswered call "
