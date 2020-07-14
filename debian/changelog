@@ -1,3 +1,85 @@
+ngcp-panel (8.5.1.0+0~mr8.5.1.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [e170193] TT#81184 - Add PATCH/PUT endpoints for '/api/admins'
+  * [9907936] TT#76108 - Implement password reset mechanism for admins
+  * [c8ae369] TT#76109 - Fix duplicate administrator email check
+  * [951bad4] TT#80994 - Get click2dial version from config
+  * [ec67413] TT#76111 - Hide LI Admins from NGCP Panel
+  * [3551855] Revert "TT#76111 - Hide LI Admins from NGCP Panel"
+  * [9411eb6] TT#65101 - Fix reseller datatables ajax error
+  * [a370111] TT#76111 - Change Lawful Intercept admins managing
+  * [f52dd70] TT#76111 - Remove '/api/interceptions' from tests
+  * [7660cc2] TT#71240 - Issue permission.trustedReload when terminating subscribers
+  * [51f55ea] TT#83502 - UI: drop ringtimeout pref when deleting last CFT
+  * [b8f2af8] TT#83014 - Add call_id search param to /api/callrecordings
+  * [7912652] TT#83000 - Change SIP username validation in accordance with RFC
+  * [d15a6b3] TT#83200 - Add csc_show_rtcengine_features capability
+  * [4365599] TT#83000 Re-add posibilioty to use + = , ; for SIP usernames since they are unreserved
+  * [321b696] TT#84254 - Allow patching of rewriterules on /api/rewriterulesets
+  * [0b10a86] TT#80301 - Implement login_to_v2 endpoint
+  * [aec7c89] TT#76111 - Change LI admins flags permissions
+  * [6c64549] TT#84453 - Fix error when subscriber logs in on old CSC
+  * [4659e7e] TT#76111 - Fix api-cfdestinations.t admin creation
+  * [08291b5] TT#85620 - Add CF mapping id to all mappings
+  * [e90c642] TT#84260 - Add number batch processing on /api/applyrewrites
+  * [5d4225e] TT#84336 - Show webpassword in input when setting it
+
+  [ Rene Krenn ]
+  * [39bf6ab] TT#82304 fix fraud reseller<->customer costs in mails
+  * [f0768e1] TT#82260 fix updating fraud notification status
+  * [5fb66c1] TT#82260 limit fraud interval costs to 2 fractional digits
+  * [2c94115] TT#29201 collapse contact name columns
+  * [69e2910] TT#83313 lnp rounting_number csv NULL values
+  * [f6a2802] TT#83502 api: drop ringtimeout pref when deleting last CFT
+  * [72bfba6] TT#83716 fix close_target of prov template forms
+  * [0f042e3] TT#83716 fix typo with stash->close_target
+  * [9d6fd2a] TT#83355 consider prepaid call costs for reseller revenue
+  * [b1defc5] TT#84316 more accurate profile usage count query
+  * [041ed1c] TT#84328 generate RSA keypair
+  * [175d8b2] TT#84328 write .pem files directly
+  * [65634d7] TT#84329 encrypt/decrypt password, weppassword, pin
+
+  [ Nico Schedel ]
+  * [9eac3af] TT#82263 fix admin tests in trunk
+  * [a44ec2d] TT#82263 selenium: remove some admin tests to fix trunk
+  * [32c2cff] TT#82258 fix customer creation on pro machines with cloudpbx enabled
+  * [424642a] TT#83370 selenium: remove fixed column xpath descriptions in Common.pm
+  * [b1b2b05] TT#83370 selenium: fix scrolling issue when trying to enable opus stereo
+  * [1340394] TT#83370 selenium: add new admin login tests
+  * [5feb7b0] TT#83370 selenium: add new lawful intercept admin checks
+
+  [ Sipwise Jenkins Builder ]
+  * [e64b0aa] TT#4166 I18N dump: snapshot 2020.05.28-01.26.38
+  * [22e95b3] TT#4166 I18N dump: snapshot 2020.06.05-01.26.03
+  * [f411c10] TT#4166 I18N dump: snapshot 2020.06.11-01.26.13
+  * [d7b3f70] TT#4166 I18N dump: snapshot 2020.06.17-01.26.43
+  * [e656949] TT#4166 I18N dump: snapshot 2020.06.19-01.27.15
+  * [c952ac2] TT#4166 I18N dump: snapshot 2020.06.28-01.30.45
+  * [e12ca78] TT#4166 I18N dump: snapshot 2020.07.12-01.29.55
+
+  [ Alexander Lutay ]
+  * [3c51389] TT#81185 Fix d31797c: do not show 'back' button for framed=1
+  * [ea27f12] TT#81185 Fix d31797c: fix 'create' buttons layout for framed=1
+  * [2884071] TT#82553 Use common buttons order on page 'Call List Suppressions'
+  * [080b2ac] TT#81185 Fix 'back' button behaviour for admin panel v2
+  * [45b4e30] TT#80301 Add 'Switch to NEW admin panel' link on Perl based ngcp-panel
+  * [bbafe9b] TT#80301 Fix 45b4e3: do not show link to admin-ui on old self-case interface
+
+  [ Kirill Solomko ]
+  * [7862a87] TT#76111 add lintercept role
+  * [aa279e0] TT#76111 add admin flags for 'system' user
+  * [536ecce] TT#84150 fix /api/rewriterules /api/rewriterulesets transactions
+  * [ddd35a2] TT#84401 store session cookies for jwt auth
+
+  [ Guillem Jover ]
+  * [a621bd5] TT#77256 ngcp-api-tools: Fix credentials usage
+  * [e7fd7fb] TT#83651 Do not use the topic variable for nested loops
+  * [0a96a5d] TT#83651 Move code within the try {} block
+  * [3537b4b] TT#83651 Merge two cascaded if conditionals
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Jul 2020 11:53:16 +0200
+
 ngcp-panel (8.5.0.0+0~mr8.5.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
