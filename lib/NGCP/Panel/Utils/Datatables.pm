@@ -76,7 +76,6 @@ sub process {
         }
     }
 
-
     if (!$use_rs_cb) {
         if (@searchColumns) {
             ($totalRecords, $totalRecordCountClipped) = _get_count_safe($c,$totalRecords_rs,$params);
@@ -178,7 +177,7 @@ sub process {
             });
         }
         #for case $displayRecords < 0, that means All. And for all other cases too.
-        @rows = $rs->all;
+        @rows = $rs->all if $displayRecords;
     }
 
     for my $row (@rows) {
