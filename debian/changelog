@@ -1,3 +1,10 @@
+ngcp-panel (7.5.1.19+0~mr7.5.1.19) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [c830376] TT#86351 prevent datatable queries with no clipping
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 16 Jul 2020 13:34:15 +0200
+
 ngcp-panel (7.5.1.18+0~mr7.5.1.18) unstable; urgency=medium
 
   [ Rene Krenn ]
