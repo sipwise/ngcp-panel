@@ -330,7 +330,7 @@ $(document).ready(function() {
 
 <div class="ngcp-separator"></div>
 
-<table class="table table-bordered table-striped table-highlight table-hover ngcp-datatable" id="[% helper.id_from_name %]_table">
+<table class="table table-bordered table-striped table-highlight table-hover ngcp-datatable" id="[% helper.id_from_name %]_table" width="100%">
     <thead>
         <tr>
             [% FOREACH t IN helper.column_titles -%]
