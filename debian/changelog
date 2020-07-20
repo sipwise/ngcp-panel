@@ -1,3 +1,25 @@
+ngcp-panel (7.5.5.1+0~mr7.5.5.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ba34bf8] TT#80161 refactor subscriber datatable search
+  * [12a99c1] TT#80161 properly avoid dupes in subscriber datatable
+  * [c967dc1] TT#82304 fix fraud reseller<->customer costs in mails
+  * [2f212c1] TT#82260 fix updating fraud notification status
+  * [39f7219] TT#82260 limit fraud interval costs to 2 fractional digits
+  * [722840b] TT#83313 lnp rounting_number csv NULL values
+  * [35f0a92] TT#83355 consider prepaid call costs for reseller revenue
+  * [15e8985] TT#84316 more accurate profile usage count query
+
+  [ Flaviu Mates ]
+  * [a6e777d] TT#80994 - Get click2dial version from config
+  * [a833e09] TT#71240 - Issue permission.trustedReload when terminating subscribers
+  * [a2ec7aa] TT#83014 - Add call_id search param to /api/callrecordings
+
+  [ Guillem Jover ]
+  * [a856e06] TT#83651 Move code within the try {} block
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Jul 2020 13:00:30 +0200
+
 ngcp-panel (7.5.5.0+0~mr7.5.5.0) unstable; urgency=medium
 
   [ Marco Capetta ]
