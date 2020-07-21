@@ -1,3 +1,13 @@
+ngcp-panel (9.0.0.0+0~mr9.0.0.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b821a57] TT#86351 prevent datatable queries with no clipping
+
+  [ Kirill Solomko ]
+  * [7347fa9] TT#86800 datatable width is not relative to 100%
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 Jul 2020 14:48:47 +0200
+
 ngcp-panel (8.6.0.0+0~mr8.6.0.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
