@@ -1,3 +1,10 @@
+ngcp-panel (7.5.3.22+0~mr7.5.3.22) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [67d778f] TT#80552 fix /api/calllist owner logic
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 23 Jul 2020 14:41:48 +0200
+
 ngcp-panel (7.5.3.21+0~mr7.5.3.21) unstable; urgency=medium
 
   [ Flaviu Mates ]
