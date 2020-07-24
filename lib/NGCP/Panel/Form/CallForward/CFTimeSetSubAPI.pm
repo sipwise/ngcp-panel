@@ -37,6 +37,7 @@ has_field 'times.month' => (
     type => '+NGCP::Panel::Field::NumRangeAPI',
     min_start => 1,
     max_end => 12,
+    cyclic => 1,
     label => 'Month',
     empty_select => '',
 );
@@ -44,6 +45,7 @@ has_field 'times.mday' => (
     type => '+NGCP::Panel::Field::NumRangeAPI',
     min_start => 1,
     max_end => 31,
+    cyclic => 1,
     label => 'Day',
 );
 
@@ -60,6 +62,7 @@ has_field 'times.hour' => (
     type => '+NGCP::Panel::Field::NumRangeAPI',
     min_start => 0,
     max_end => 23,
+    cyclic => 1,
     label => 'Hour',
     empty_select => '',
 );
@@ -68,6 +71,7 @@ has_field 'times.minute' => (
     type => '+NGCP::Panel::Field::NumRangeAPI',
     min_start => 0,
     max_end => 59,
+    cyclic => 1,
     label => 'Minute',
     empty_select => '',
 );
