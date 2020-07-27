@@ -6545,6 +6545,10 @@ msgstr "Coûts d'enregistrement opérateur"
 msgid "Peering Group"
 msgstr "Groupe d'opérateurs"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peering Group Tag"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Peering Group successfully deleted"
 msgstr "Groupe d' opérateurs supprimé avec succès"
@@ -8737,6 +8741,12 @@ msgstr "La suppression de son propre abonné est interdite."
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid ""
 "Terminating pilot subscriber when other subscribers exist is prohibited."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"The 'caller_pattern' of a peering group has to match this tag to be "
+"considered for outgoing calls."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
