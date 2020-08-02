@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72ceb193_230351c7",
+        "filename": "lib/NGCP/Panel/Controller/API/PasswordReset.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-08-02T15:11:12Z",
+      "side": 1,
+      "message": "solution to unauthenticated users:\n\n__PACKAGE__-\u003eset_config({\n    action \u003d\u003e {\n        map { $_ \u003d\u003e {\n            #ACLDetachTo \u003d\u003e \u0027invalid_user\u0027,\n            #AllowedRole \u003d\u003e [qw/admin reseller ccareadmin ccare lintercept subscriberadmin subscriber/],\n            Args \u003d\u003e 0,\n            #Does \u003d\u003e [qw(ACL CheckTrailingSlash RequireSSL)],\n            Does \u003d\u003e [qw(CheckTrailingSlash RequireSSL)],\n            Method \u003d\u003e $_,\n            Path \u003d\u003e __PACKAGE__-\u003edispatch_path,\n        } } @{ __PACKAGE__-\u003eallowed_methods },\n    },\n});",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 3
+      },
+      "revId": "6a6a57820ee89883f2119d026969108256bd6c1d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
