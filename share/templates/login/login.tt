@@ -26,7 +26,7 @@
     </div>
 
 [%#
-    TODO: load this only if a signup plugin is installed      
+    TODO: load this only if a signup plugin is installed
     <div class="login-extra">
         c.loc("Don't have an account?") <a href="signup.html">c.loc('Sign Up')</a><br/>
     </div>
@@ -42,13 +42,11 @@
     <script>
         $(function () {
             Theme.init();
-            //localStorage.clear();//it's a little bit too greedy )
-            for (var i = 0; i < localStorage.length; i++){
-                var key = localStorage.key(i);
-                if(!key.test(/^DataTables_/)){
-                    localStorage.removeItem(key);
-                }
-            }
+            Object.keys(localStorage).forEach((key)=>{
+				if(!key.startsWith('DataTables_') && !key.startsWith('aui_')){
+					localStorage.removeItem(key);
+				}
+            })
         });
     </script>
 </body>
