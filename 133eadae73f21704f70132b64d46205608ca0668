@@ -22,6 +22,30 @@
       "revId": "133eadae73f21704f70132b64d46205608ca0668",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d4b65cb_a011a40d",
+        "filename": "share/templates/login/login.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2020-08-03T10:21:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bc3fe843_1613c685",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 4
+      },
+      "revId": "133eadae73f21704f70132b64d46205608ca0668",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
