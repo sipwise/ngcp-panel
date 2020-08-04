@@ -35,5 +35,11 @@ sub _item_rs {
     return $item_rs;
 }
 
+sub post_process_hal_resource {
+    my ($self, $c, $item, $resource, $form) = @_;
+    my $res = { has_certificate => $item->ssl_client_m_serial ? 1 : 0 };
+    return $res;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
