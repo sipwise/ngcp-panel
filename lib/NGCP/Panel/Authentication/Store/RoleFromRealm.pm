@@ -14,7 +14,7 @@ sub roles {
                     $self->_user->is_superuser ? return "ccareadmin"
                                                : return "ccare";
                 } else {
-                    $self->_user->is_superuser ? return "admin"
+                    $self->_user->is_superuser || $self->_user->is_system ? return "admin"
                                                : return "reseller";
                 }
             }
