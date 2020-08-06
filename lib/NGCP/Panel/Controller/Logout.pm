@@ -30,6 +30,15 @@ sub logout_index :Path {
     $c->response->redirect($c->uri_for('/login'));
 }
 
+sub ajax_logout :Chained('/') :PathPart('ajax_logout') :Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->logout;
+    $c->response->status(200);
+    $c->response->content_type('application/json');
+    $c->response->body('');
+    $c->detach( $c->view("JSON") );
+}
 
 =head1 AUTHOR
 
