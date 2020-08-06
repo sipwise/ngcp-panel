@@ -47,6 +47,8 @@
                     localStorage.removeItem(key);
                 }
             })
+            localStorage.removeItem('aui_jwt');
+            localStorage.removeItem('aui_adminId');
         });
     </script>
 </body>
