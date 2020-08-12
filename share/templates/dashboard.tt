@@ -32,7 +32,7 @@ $(document).ready(function () {
 [% wcount = enabled_widgets.size() > 4 ? 4 : enabled_widgets.size() -%]
 
 <div class="row">
-    <div class="span12">
+    <div [% IF !framed -%]class="span12"[% END -%]>
         <div class="pricing-plans plans-[% wcount %]">
             [% FOR w IN enabled_widgets -%]
                 [% INCLUDE $w -%]
