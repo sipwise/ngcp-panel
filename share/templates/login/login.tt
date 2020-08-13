@@ -25,6 +25,14 @@
         <br/>
     </div>
 
+<div class="login-footer">
+    [% IF c.config.general.ui_enable && realm != 'subscriber' -%]
+        <div>
+            <b><a href="[% c.uri_for('/') -%]v2/#/login/admin" style="padding-right: 20px">[% c.loc('GO TO NEW ADMIN PANEL') -%]</a></b>
+        </div>
+    [% END -%]
+</div class="footer">
+
 [%#
     TODO: load this only if a signup plugin is installed
     <div class="login-extra">
@@ -51,5 +59,18 @@
             localStorage.removeItem('aui_adminId');
         });
     </script>
+    <style>
+        .login-footer {
+          box-sizing: border-box;
+          position: fixed;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          color: white;
+          text-align: right;
+          padding-bottom: 30px;
+          padding-right: 50px;
+        }
+    </style>
 </body>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
