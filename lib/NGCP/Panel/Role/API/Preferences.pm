@@ -274,6 +274,13 @@ sub get_resource {
             # default
             $value = $pref->value;
         } # SWITCH
+        eval {
+            $value = NGCP::Panel::Utils::Preferences::api_transform_out($c, $pref->attribute, $pref->value);
+        };
+        if ($@) {
+            $c->log->error("Failed to transform pref value - $@");
+            # let it slip through
+        }
         if($pref->attribute->max_occur != 1) {
             $resource->{$pref->attribute->attribute} = []
                 unless(exists $resource->{$pref->attribute->attribute});
@@ -754,7 +761,7 @@ sub update_item {
                 }
             }
 
-            if($meta->data_type eq "boolean" && JSON::is_bool($resource->{$pref})) {
+            if (($meta->data_type eq "boolean" or NGCP::Panel::Utils::Preferences::exists_api_transform_in($c, $pref)) and JSON::is_bool($resource->{$pref})) {
                 $vtype = "";
             }
             if($meta->max_occur == 1 && $vtype ne "") {
@@ -935,6 +942,14 @@ sub update_item {
                     $pref_rs->delete;
                     foreach my $v(@{ $resource->{$pref} }) {
                         return unless $self->check_pref_value($c, $meta, $v, $pref_type);
+                        eval {
+                            $v = NGCP::Panel::Utils::Preferences::api_transform_in($c, $meta, $v);
+                        };
+                        if ($@) {
+                            $c->log->error("Failed to transform pref value - $@");
+                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Internal Server Error."); # TODO?
+                            return;
+                        }
 						if(JSON::is_bool($v)){
 							$v =  $v ? 1 : 0 ;
 						}
@@ -942,12 +957,28 @@ sub update_item {
                     }
                 } elsif($pref_rs->first) {
                     return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
+                    eval {
+                        $resource->{$pref} = NGCP::Panel::Utils::Preferences::api_transform_in($c, $meta, $resource->{$pref});
+                    };
+                    if ($@) {
+                        $c->log->error("Failed to transform pref value - $@");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Internal Server Error."); # TODO?
+                        return;
+                    }
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
                     $pref_rs->first->update({ value => $resource->{$pref} });
                 } else {
                     return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
+                    eval {
+                        $resource->{$pref} = NGCP::Panel::Utils::Preferences::api_transform_in($c, $meta, $resource->{$pref});
+                    };
+                    if ($@) {
+                        $c->log->error("Failed to transform pref value - $@");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Internal Server Error."); # TODO?
+                        return;
+                    }
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
@@ -992,6 +1023,8 @@ sub check_pref_value {
     my ($self, $c, $meta, $value, $pref_type) = @_;
     my $err;
 
+    return 1 if NGCP::Panel::Utils::Preferences::exists_api_transform_in($c,$meta->attribute);
+    
     my $vtype = ref $value;
     if($meta->data_type eq "boolean" && JSON::is_bool($value)) {
         $vtype = "";

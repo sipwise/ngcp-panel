@@ -10,6 +10,10 @@ use NGCP::Panel::Utils::Sems;
 
 use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
 
+my $API_TRANSFORM_OUT;
+my $API_TRANSFORM_IN;
+my $CODE_SUFFIX_FNAME = '_code';
+
 sub validate_ipnet {
     my ($field) = @_;
     if ( !$field->value ) {
@@ -34,6 +38,87 @@ sub validate_ipnet {
         return;
     }
     return 1;
+}
+
+sub _init_transform {
+    my ($transform,$conf) = @_;
+    unless (defined $transform) {
+        $transform = {};
+        if (defined $conf) {
+            foreach my $p (keys %$conf) {
+                $transform->{$p} = {};
+                foreach my $v (keys %{$conf->{$p}}) {
+                    if ($v =~ /^([a-z0-9_]+)$CODE_SUFFIX_FNAME$/) {
+                        ## no critic (BuiltinFunctions::ProhibitStringyEval)
+                        $transform->{$p}->{$1} = eval($conf->{$p}->{$v});
+                        die("$p '$v': " . $@) if $@;
+                    } else {
+                        $transform->{$p}->{$v} = $conf->{$p}->{$v};                    
+                    }
+                }
+            }
+        }
+    }
+    return $transform;
+}
+
+sub exists_api_transform_in {
+    my ($c, $pref) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_IN = _init_transform($API_TRANSFORM_IN,$c->config->{preference_in_transformations});
+        if (exists $API_TRANSFORM_IN->{$pref}) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+sub api_transform_in {
+    my ($c, $meta, $value) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_IN = _init_transform($API_TRANSFORM_IN,$c->config->{preference_in_transformations});
+        if (exists $API_TRANSFORM_IN->{$meta->attribute}) {
+            if (defined $value) {
+                my $v = $value;
+                if (JSON::is_bool($v)) {
+                    $v =  $v ? 1 : 0 ;
+                }
+                if (exists $API_TRANSFORM_IN->{$meta->attribute}->{$v}) {
+                    $value = $API_TRANSFORM_IN->{$meta->attribute}->{$v};
+                    if ('CODE' eq ref $value) {
+                        eval {
+                            $value = $value->($meta,$value);
+                        };
+                        if ($@) {
+                            die($meta->attribute . ": " . $@);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return $value;
+}
+
+sub api_transform_out {
+    my ($c, $meta, $value) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_OUT = _init_transform($API_TRANSFORM_OUT,$c->config->{preference_out_transformations});
+        if (exists $API_TRANSFORM_OUT->{$meta->attribute}) {
+            if (defined $value and exists $API_TRANSFORM_OUT->{$meta->attribute}->{$value}) {
+                $value = $API_TRANSFORM_OUT->{$meta->attribute}->{$value};
+                if ('CODE' eq ref $value) {
+                    eval {
+                        $value = $value->($meta,$value);
+                    };
+                    if ($@) {
+                        die($meta->attribute . ": " . $@);
+                    }
+                }
+            }
+        }
+    }
+    return $value;
 }
 
 sub load_preference_list {
@@ -1431,7 +1516,7 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
     }
 }
 
-sub api_preferences_defs{
+sub api_preferences_defs {
     my %params = @_;
 
     my $c = $params{c};
