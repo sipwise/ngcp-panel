@@ -24,6 +24,10 @@ our $TYPE_PREF_MAP = {
     'contracts'         => 'contract',
 };
 
+my $API_TRANSFORM_OUT;
+my $API_TRANSFORM_IN;
+my $CODE_SUFFIX_FNAME = '_code';
+
 sub validate_ipnet {
     my ($field) = @_;
     if ( !$field->value ) {
@@ -322,6 +326,13 @@ sub prepare_resource {
             # default
             $value = $pref->value;
         } # SWITCH
+        eval {
+            $value = _api_transform_out($c, $pref->attribute, $pref->value);
+        };
+        if ($@) {
+            $c->log->error("Failed to transform pref value - $@");
+            # let it slip through
+        }
         if($pref->attribute->max_occur != 1) {
             $resource->{$pref->attribute->attribute} = []
                 unless(exists $resource->{$pref->attribute->attribute});
@@ -667,7 +678,7 @@ sub update_preferences {
                 }
             }
 
-            if($meta->data_type eq "boolean" && JSON::is_bool($resource->{$pref})) {
+            if (($meta->data_type eq "boolean" or _exists_api_transform_in($c, $pref)) and JSON::is_bool($resource->{$pref})) {
                 $vtype = "";
             }
             if($meta->max_occur == 1 && $vtype ne "") {
@@ -848,6 +859,14 @@ sub update_preferences {
                     $pref_rs->delete;
                     foreach my $v(@{ $resource->{$pref} }) {
                         return unless _check_pref_value($c, $meta, $v, $pref_type, $err_code);
+                        eval {
+                            $v = _api_transform_in($c, $meta, $v);
+                        };
+                        if ($@) {
+                            $c->log->error("Failed to transform pref value - $@");
+                            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                            return;
+                        }
 						if(JSON::is_bool($v)){
 							$v =  $v ? 1 : 0 ;
 						}
@@ -855,12 +874,28 @@ sub update_preferences {
                     }
                 } elsif($pref_rs->first) {
                     return unless _check_pref_value($c, $meta, $resource->{$pref}, $pref_type, $err_code);
+                    eval {
+                        $resource->{$pref} = _api_transform_in($c, $meta, $resource->{$pref});
+                    };
+                    if ($@) {
+                        $c->log->error("Failed to transform pref value - $@");
+                        &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                        return;
+                    }
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
                     $pref_rs->first->update({ value => $resource->{$pref} });
                 } else {
                     return unless _check_pref_value($c, $meta, $resource->{$pref}, $pref_type, $err_code);
+                    eval {
+                        $resource->{$pref} = _api_transform_in($c, $meta, $resource->{$pref});
+                    };
+                    if ($@) {
+                        $c->log->error("Failed to transform pref value - $@");
+                        &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                        return;
+                    }
                     if(JSON::is_bool($resource->{$pref})){
 						$resource->{$pref} =  $resource->{$pref} ? 1 : 0 ;
 					}
@@ -901,9 +936,92 @@ sub update_preferences {
     return $item;
 }
 
+sub _init_transform {
+    my ($transform,$conf) = @_;
+    unless (defined $transform) {
+        $transform = {};
+        if (defined $conf) {
+            foreach my $p (keys %$conf) {
+                $transform->{$p} = {};
+                foreach my $v (keys %{$conf->{$p}}) {
+                    if ($v =~ /^([a-z0-9_]+)$CODE_SUFFIX_FNAME$/) {
+                        ## no critic (BuiltinFunctions::ProhibitStringyEval)
+                        $transform->{$p}->{$1} = eval($conf->{$p}->{$v});
+                        die("$p '$v': " . $@) if $@;
+                    } else {
+                        $transform->{$p}->{$v} = $conf->{$p}->{$v};                    
+                    }
+                }
+            }
+        }
+    }
+    return $transform;
+}
+
+sub _exists_api_transform_in {
+    my ($c, $pref) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_IN = _init_transform($API_TRANSFORM_IN,$c->config->{preference_in_transformations});
+        if (exists $API_TRANSFORM_IN->{$pref}) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+sub _api_transform_in {
+    my ($c, $meta, $value) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_IN = _init_transform($API_TRANSFORM_IN,$c->config->{preference_in_transformations});
+        if (exists $API_TRANSFORM_IN->{$meta->attribute}) {
+            if (defined $value) {
+                my $v = $value;
+                if (JSON::is_bool($v)) {
+                    $v =  $v ? 1 : 0 ;
+                }
+                if (exists $API_TRANSFORM_IN->{$meta->attribute}->{$v}) {
+                    $value = $API_TRANSFORM_IN->{$meta->attribute}->{$v};
+                    if ('CODE' eq ref $value) {
+                        eval {
+                            $value = $value->($meta,$value);
+                        };
+                        if ($@) {
+                            die($meta->attribute . ": " . $@);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return $value;
+}
+
+sub _api_transform_out {
+    my ($c, $meta, $value) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_OUT = _init_transform($API_TRANSFORM_OUT,$c->config->{preference_out_transformations});
+        if (exists $API_TRANSFORM_OUT->{$meta->attribute}) {
+            if (defined $value and exists $API_TRANSFORM_OUT->{$meta->attribute}->{$value}) {
+                $value = $API_TRANSFORM_OUT->{$meta->attribute}->{$value};
+                if ('CODE' eq ref $value) {
+                    eval {
+                        $value = $value->($meta,$value);
+                    };
+                    if ($@) {
+                        die($meta->attribute . ": " . $@);
+                    }
+                }
+            }
+        }
+    }
+    return $value;
+}
+
 sub _check_pref_value {
     my ($c, $meta, $value, $pref_type, $err_code) = @_;
 
+    return 1 if _exists_api_transform_in($c,$meta->attribute);
+    
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { };
     }
@@ -911,7 +1029,7 @@ sub _check_pref_value {
     my $err;
 
     my $vtype = ref $value;
-    if($meta->data_type eq "boolean" && JSON::is_bool($value)) {
+    if ($meta->data_type eq "boolean" and JSON::is_bool($value)) {
         $vtype = "";
     }
     unless($vtype eq "") {
@@ -2360,7 +2478,7 @@ sub get_provisoning_voip_subscriber_first_int_attr_value {
     }
 }
 
-sub api_preferences_defs{
+sub api_preferences_defs {
     my %params = @_;
 
     my $c = $params{c};
