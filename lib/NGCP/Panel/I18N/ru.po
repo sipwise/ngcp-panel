@@ -308,12 +308,6 @@ msgstr ""
 "Номер предназначенный для использования в правилах перезаписи для экстренных "
 "вызовов."
 
-#: lib/NGCP/Panel/Controller/Login.pm
-msgid ""
-"A password reset attempt has been made already recently, please check your "
-"email"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A password used for authentication against the peer host."
 msgstr "Пароль для аутентификации на принимающем 'SIP Транк' сервере."

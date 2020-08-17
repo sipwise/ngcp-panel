@@ -338,12 +338,6 @@ msgstr ""
 "Une chaine de caractères numériques prévue pour être utilisée dans les "
 "règles de reformulation des numéros d'urgence."
 
-#: lib/NGCP/Panel/Controller/Login.pm
-msgid ""
-"A password reset attempt has been made already recently, please check your "
-"email"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A password used for authentication against the peer host."
 msgstr "Un mot de passe utilisé pour l'authentification de l'opérateur."

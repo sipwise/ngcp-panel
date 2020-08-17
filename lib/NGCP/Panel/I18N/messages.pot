@@ -205,10 +205,6 @@ msgstr ""
 msgid "A numeric string intended to be used in rewrite rules for emergency numbers."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Login.pm
-msgid "A password reset attempt has been made already recently, please check your email"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A password used for authentication against the peer host."
 msgstr ""
