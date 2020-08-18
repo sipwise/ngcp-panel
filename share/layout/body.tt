@@ -157,6 +157,13 @@ if (!window.console) {
 }
 
 Theme.init ();
+
+[% IF c.session.aui_adminId && c.session.aui_jwt -%]
+    localStorage.setItem('aui_adminId', [% c.session.aui_adminId -%]);
+    localStorage.setItem('aui_jwt', '[% c.session.aui_jwt -%]');
+    [% c.session.delete('aui_adminId', 'aui_jwt') %]
+[% END -%]
+
 var mainWrapperInit = function () {
 
     $('[rel="tooltip"]').tooltip({'html': false});

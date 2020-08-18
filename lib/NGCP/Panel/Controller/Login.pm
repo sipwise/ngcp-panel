@@ -49,6 +49,38 @@ sub login_index :Path Form {
 
         if($res) {
             # auth ok
+
+            if ($realm eq 'admin') {
+                use Crypt::JWT qw/encode_jwt/;
+
+                my $key = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{jwt_key};
+                my $relative_exp = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{relative_exp};
+                my $alg = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{alg};
+
+                unless ($key) {
+                    NGCP::Panel::Utils::Message::error(
+                        c    => $c,
+                        desc => $c->loc('No JWT key has been configured.'),
+                    );
+                }
+
+                my $raw_key = pack('H*', $key);
+
+                my $jwt_data = {
+                    id => $c->user->id,
+                    username => $c->user->login,
+                };
+                my $token = encode_jwt(
+                    payload => $jwt_data,
+                    key => $raw_key,
+                    alg => $alg,
+                    $relative_exp ? (relative_exp => $relative_exp) : (),
+                );
+
+                $c->session->{aui_adminId} = $c->user->id;
+                $c->session->{aui_jwt} = $token;
+            }
+
             $c->session->{user_tz} = undef;  # reset to reload from db
             $c->session->{user_tz_name} = undef;  # reset to reload from db
             my $target = $c->session->{'target'} || '/';
