@@ -29,7 +29,7 @@ has_field 'type' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/username/],
+    render_list => [qw/username domain type/],
 );
 
 sub validate {

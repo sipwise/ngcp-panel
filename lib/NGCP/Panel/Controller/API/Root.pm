@@ -94,9 +94,9 @@ sub GET : Allow {
         my $full_item_mod = 'NGCP::Panel::Controller::API::'.$mod.'Item';
 
         my $role = $full_mod->config->{action}->{OPTIONS}->{AllowedRole};
-        if(ref $role eq "ARRAY") {
+        if($role && ref $role eq "ARRAY") {
             next unless grep { $user_roles{$_}; } @{ $role };
-        } else {
+        } elsif ($role) {
             next unless $user_roles{$role};
         }
 
