@@ -105,14 +105,20 @@ sub api_transform_out {
     if ($c->request and $c->request->path =~/^api\//i) {
         $API_TRANSFORM_OUT = _init_transform($API_TRANSFORM_OUT,$c->config->{preference_out_transformations});
         if (exists $API_TRANSFORM_OUT->{$meta->attribute}) {
-            if (defined $value and exists $API_TRANSFORM_OUT->{$meta->attribute}->{$value}) {
-                $value = $API_TRANSFORM_OUT->{$meta->attribute}->{$value};
-                if ('CODE' eq ref $value) {
-                    eval {
-                        $value = $value->($meta,$value);
-                    };
-                    if ($@) {
-                        die($meta->attribute . ": " . $@);
+            if (defined $value) {
+                my $v = $value;
+                if (JSON::is_bool($v)) {
+                    $v =  $v ? 1 : 0 ;
+                }
+                if (exists $API_TRANSFORM_OUT->{$meta->attribute}->{$v}) {
+                    $value = $API_TRANSFORM_OUT->{$meta->attribute}->{$v};
+                    if ('CODE' eq ref $value) {
+                        eval {
+                            $value = $value->($meta,$value);
+                        };
+                        if ($@) {
+                            die($meta->attribute . ": " . $@);
+                        }
                     }
                 }
             }

@@ -275,7 +275,7 @@ sub get_resource {
             $value = $pref->value;
         } # SWITCH
         eval {
-            $value = NGCP::Panel::Utils::Preferences::api_transform_out($c, $pref->attribute, $pref->value);
+            $value = NGCP::Panel::Utils::Preferences::api_transform_out($c, $pref->attribute, $value);
         };
         if ($@) {
             $c->log->error("Failed to transform pref value - $@");
