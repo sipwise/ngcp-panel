@@ -111,7 +111,7 @@ See description how to obtain properties, if any.
 [% FOREACH f IN col.query_params -%]
     <li><b>[% f.param %]</b>: [% f.description %]</li>
 [% END -%]
-    <li><b>order_by</b>: Order collection by a specific attribute. Possible values are: <i>[% col.sorting_cols.join(', ') %]</i></li>
+    <li><b>order_by</b>: Order collection by a specific attribute. Possible values are: <i>[% col.sorting_cols.sort.join(', ') %]</i></li>
     <li><b>order_by_direction</b>: Direction which the collection should be ordered by. Possible values are: <i>asc (default), desc</i></li>
 </ul>
 
@@ -482,7 +482,7 @@ Query parameters:
 [% FOREACH f IN col.journal_resource_config.query_params -%]
     <li><b>[% f.param %]</b>: [% f.description %]</li>
 [% END -%]
-    <li><b>order_by</b>: Order collection by a specific attribute. Possible values are: <i>[% col.journal_resource_config.sorting_cols.join(', ') %]</i></li>
+    <li><b>order_by</b>: Order collection by a specific attribute. Possible values are: <i>[% col.journal_resource_config.sorting_cols.sort.join(', ') %]</i></li>
     <li><b>order_by_direction</b>: Direction which the collection should be ordered by. Possible values are: <i>asc (default), desc</i></li>
 </ul>
 The item's state after a completed create or update operation/before a delete operation is serialized and stored in [% col.journal_resource_config.format -%] format. It can be retrieved by requesting the corresponding journal record with <span>OPTIONS/GET/HEAD [% col.journal_resource_config.item_uri %]</span>.
