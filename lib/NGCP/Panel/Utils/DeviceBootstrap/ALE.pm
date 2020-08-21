@@ -16,7 +16,7 @@ sub rpc_server_params{
     my $self = shift;
     my $cfg  = {
         proto    => 'https',
-        host     => 'api.rps.ce.al-enterprise.com',
+        host     => 'api.eds.al-enterprise.com',
         path     => 'api',
     };
     $self->{rpc_server_params} = $cfg;
