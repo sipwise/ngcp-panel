@@ -1,3 +1,35 @@
+ngcp-panel (8.4.2.1+0~mr8.4.2.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e468654] TT#82260 limit fraud interval costs to 2 fractional digits
+  * [1b5a422] TT#83313 lnp rounting_number csv NULL values
+  * [b90eb8e] TT#83502 api: drop ringtimeout pref when deleting last CFT
+  * [b761724] TT#83355 consider prepaid call costs for reseller revenue
+
+  [ Flaviu Mates ]
+  * [93074e5] TT#80994 - Get click2dial version from config
+  * [744a942] TT#76108 - Implement password reset mechanism for admins
+  * [79b6042] TT#76109 - Fix duplicate administrator email check
+  * [26c70c7] TT#81184 - Add PATCH/PUT endpoints for '/api/admins'
+  * [1b457bd] TT#76111 - Hide LI Admins from NGCP Panel
+  * [9cde4d0] Revert "TT#76111 - Hide LI Admins from NGCP Panel"
+  * [ef40658] TT#71240 - Issue permission.trustedReload when terminating subscribers
+  * [3ef6b38] TT#83502 - UI: drop ringtimeout pref when deleting last CFT
+  * [0073fb7] TT#83014 - Add call_id search param to /api/callrecordings
+
+  [ Nico Schedel ]
+  * [03d2a3e] TT#82263 fix admin tests in trunk
+
+  [ Guillem Jover ]
+  * [3351dc1] TT#77256 ngcp-api-tools: Fix credentials usage
+  * [1f3a764] TT#83651 Move code within the try {} block
+
+  [ Kirill Solomko ]
+  * [37a8780] TT#84150 fix /api/rewriterules /api/rewriterulesets transactions
+  * [a82b64d] TT#86800 datatable width is not relative to 100%
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 25 Aug 2020 16:49:36 +0200
+
 ngcp-panel (8.4.2.0+0~mr8.4.2.0) unstable; urgency=medium
 
   [ Rene Krenn ]
