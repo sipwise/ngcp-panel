@@ -1,3 +1,38 @@
+ngcp-panel (9.1.0.0+0~mr9.1.0.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [339a803] TT#87505 CF timeset fields extend cyclic
+  * [b709a31] TT#89801 api documentation v1 - sort order_by
+
+  [ Sipwise Jenkins Builder ]
+  * [86a60ec] TT#4166 I18N dump: snapshot 2020.07.28-01.34.29
+  * [7574e7d] TT#4166 I18N dump: snapshot 2020.08.18-01.27.48
+
+  [ Flaviu Mates ]
+  * [4aac77b] TT#87801 - Remember previous page when switching to new admin UI
+  * [55e279c] TT#88202 - Allow ccare admins to access /api/admins/:id
+  * [cf619e1] TT#88203 - Give 'admin' role to admins with is_system flag
+  * [adcfc4f] TT#88209 - Create ajax_logout endpoint
+  * [444a0d3] TT#88901 - Add GET and DELETE method for /api/admincerts
+  * [be14a92] TT#84337 - Implement /api/passwordreset
+  * [116d092] TT#84337 - Add check for existence of allowed roles variable
+  * [d028948] TT#90351 - Fix /api/subscribers PATCH
+
+  [ Hans-Peter Herzog ]
+  * [1ca518d] TT#88201 Fix cleanup of localStorage cross versions v1/v2
+  * [88542fc] TT#88209 As an Admin, I want to logout from both versions v1/v2 at the same time
+  * [0ce823b] TT#88512 Fix redirection in order to login v2 automatically
+
+  [ Alexander Lutay ]
+  * [12ad407] TT#88519 Fix default dashboard layout on ngcp-admin-ui
+  * [94ef1fe] TT#89451 Update ALE redirect URL to api.eds.al-enterprise.com
+
+  [ Rene Krenn ]
+  * [db973da] TT#89200 workaround logic for backward-incompatible prefs
+  * [543533b] TT#89200 fix workaround logic for backward-incompatible prefs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 31 Aug 2020 21:54:47 +0200
+
 ngcp-panel (9.0.0.0+0~mr9.0.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
