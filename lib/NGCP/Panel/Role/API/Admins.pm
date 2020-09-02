@@ -161,5 +161,13 @@ sub update_item {
     return $item;
 }
 
+sub post_process_hal_resource {
+    my ($self, $c, $item, $resource, $form) = @_;
+
+    $resource->{role} = $c->user->roles if ($c->user->id == $item->id);
+
+    return $resource;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
