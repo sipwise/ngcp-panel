@@ -122,6 +122,8 @@ sub get_redirect_processor{
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
+    elsif('none' eq $bootstrap_method){
+    }
     return $redirect_processor;
 }
 
