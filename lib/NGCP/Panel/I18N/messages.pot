@@ -3642,7 +3642,7 @@ msgstr ""
 msgid "G.723.1 bitrate"
 msgstr ""
 
-#: share/layout/body.tt
+#: share/layout/body.tt share/templates/login/login.tt
 msgid "GO TO NEW ADMIN PANEL"
 msgstr ""
 

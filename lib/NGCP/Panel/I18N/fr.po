@@ -4302,7 +4302,7 @@ msgstr "Image d'accueil"
 msgid "G.723.1 bitrate"
 msgstr "Débit G.723.1"
 
-#: share/layout/body.tt
+#: share/layout/body.tt share/templates/login/login.tt
 msgid "GO TO NEW ADMIN PANEL"
 msgstr ""
 
