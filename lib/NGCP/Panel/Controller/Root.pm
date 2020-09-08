@@ -126,6 +126,7 @@ sub auto :Private {
         or $c->req->uri->path =~ m|^/resetwebpassword/?$|
         or $c->req->uri->path =~ m|^/resetpassword/?$|
         or $c->req->uri->path =~ m|^/api/passwordreset/?$|
+        or $c->req->uri->path =~ m|^/api/passwordrecovery/?$|
         or $c->req->uri->path =~ m|^/internalsms/receive/?$|
         or $c->req->uri->path =~ m|^/soap/intercept(\.wsdl)?/?$|i
     ) {

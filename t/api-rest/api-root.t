@@ -110,6 +110,7 @@ $ua = Test::Collection->new()->ua();
         numbers => 1,
         partycallcontrols => 1,
         passwordreset => 1,
+        passwordrecovery => 1,
         pbxdeviceconfigfiles => 1,
         pbxdeviceconfigs => 1,
         pbxdevicefirmwarebinaries => 1,
@@ -172,7 +173,7 @@ $ua = Test::Collection->new()->ua();
         vouchers => 1,
     };
     foreach my $link(@links) {
-        my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash|managersecretary|passwordreset)"$!;
+        my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash|managersecretary|passwordre(set|covery))"$!;
         like($link, $rex, "check for valid link syntax");
         my ($relname) = ($link =~ $rex);
         ok(exists $rels->{$relname}, "check for '$relname' collection in Link");
