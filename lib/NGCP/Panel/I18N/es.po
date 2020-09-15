@@ -325,6 +325,62 @@ msgstr "Usuario usado para autenticación contra un peer host."
 msgid "ACL"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: CMR interval"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: initial bitrate"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: mode change interval"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: mode change neighbor"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: mode change period"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: mode-set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: octet-aligned mode"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: CMR interval"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: initial bitrate"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: mode change interval"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: mode change neighbor"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: mode change period"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: mode-set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: octet-aligned mode"
+msgstr ""
+
 #: share/templates/widgets/admin_topmenu_settings.tt
 #: share/templates/widgets/reseller_topmenu_settings.tt
 msgid "API"
@@ -4686,6 +4742,20 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Initial encoder bitrate (mode) to use when offering to transcode to AMR-WB. "
+"The bitrate is further constrained by the mode-set and can change "
+"dynamically via a CMR."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Initial encoder bitrate (mode) to use when offering to transcode to AMR. The "
+"bitrate is further constrained by the mode-set and can change dynamically "
+"via a CMR."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Intercept and record media packets from or to this subscriber into a file."
 msgstr ""
 
@@ -4783,6 +4853,20 @@ msgstr "Interiores"
 
 #: share/templates/customer/details.tt
 msgid "Interval from:"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Interval in milliseconds at which to perform an unsolicited change to a "
+"higher bitrate if the local encoder isn't already sending at the highest "
+"allowed bitrate. Default is not to perform unsolicited mode changes."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Interval in milliseconds at which to send a Codec Mode Request (CMR) for a "
+"higher bitrate to the remote encoder if it isn't already sending at the "
+"highest allowed bitrate. Default is not to send any CMR."
 msgstr ""
 
 #: share/templates/customer/details.tt
@@ -7134,6 +7218,44 @@ msgstr ""
 msgid "Reset Web Password"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Restrict the AMR encoders (both local and remote) to change mode only to "
+"neighbouring modes instead of any random mode."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Restrict the AMR encoders (both local and remote) to change modes only every "
+"other packet (period 2) instead of any packet (period 1, default)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Restrict the AMR encoders (both local and remote) to the given list of AMR "
+"bitrates (modes). Must be a comma-separated list of integer modes without "
+"spaces, e.g. '2,3,4,5'."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Restrict the AMR-WB encoders (both local and remote) to change mode only to "
+"neighbouring modes instead of any random mode."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Restrict the AMR-WB encoders (both local and remote) to change modes only "
+"every other packet (period 2) instead of any packet (period 1, default)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Restrict the AMR-WB encoders (both local and remote) to the given list of "
+"AMR-WB bitrates (modes). Must be a comma-separated list of integer modes "
+"without spaces, e.g. '2,3,4,5'."
+msgstr ""
+
 #: share/templates/callrouting/result.tt
 msgid "Result"
 msgstr ""
@@ -9075,6 +9197,18 @@ msgid ""
 "Use integrated call recording functionality or notify external call "
 "recording server by providing SIP header specified in 'rtpproxy.recording."
 "add_header_for_external_callrecording' config.yml key"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Use octet-aligned mode instead of bandwidth-efficient mode when offering to "
+"transcode to AMR-WB."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Use octet-aligned mode instead of bandwidth-efficient mode when offering to "
+"transcode to AMR."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
