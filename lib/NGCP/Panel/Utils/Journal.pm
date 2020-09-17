@@ -480,11 +480,12 @@ sub get_journal_relation_link {
     my ($resource, $c, $item_id, $id, $relation) = @_;
     my $resource_name = undef;
     my $controller = undef;
+    my $action_name = $id ? 'handle_journalsitem_get' : 'handle_journals_get';
     if (ref $resource eq 'HASH') {
         $resource_name = $resource->{resource_name};
     } elsif ((defined blessed($resource)) && $resource->can('resource_name')) { #both controllers and journal rows
         $resource_name = $resource->resource_name;
-        if ($resource->can('get_config')) {
+        if ($resource->can('get_config') and exists $resource->get_config('action')->{$action_name}) {
             $controller = $resource;
         } 
     } elsif (!ref $resource) {
@@ -496,8 +497,9 @@ sub get_journal_relation_link {
             $controller = NGCP::Panel::Utils::API::get_module_by_resource($c, $resource_name, $item_id);
         }
         if ($controller->can('get_config')) {
-            my $action_name = $id ? 'handle_journalsitem_get' : 'handle_journals_get';
-            $allowed_roles = $controller->get_config('action')->{$action_name}->{AllowedRole};
+            if (exists $controller->get_config('action')->{$action_name}) {
+                $allowed_roles = $controller->get_config('action')->{$action_name}->{AllowedRole};
+            }
         }
         if (grep { $_ eq $c->user->roles } @$allowed_roles) {
             if (defined $id) {
