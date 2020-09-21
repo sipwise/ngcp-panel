@@ -224,6 +224,51 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'primary_number',
+            description => 'Filter for subscribers of contracts with a specific primary number',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { \['concat(primary_number.cc, primary_number.ac, primary_number.sn) like ?', "%$q%"] };
+
+                },
+                second => sub {
+                    return { join => 'primary_number' }
+                },
+            },
+        },
+        {
+            param => 'pbx_extension',
+            description => 'Filter for subscribers of contracts with a specific PBX extension',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'provisioning_voip_subscriber.pbx_extension' => { like => "%$q%" } };
+
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' }
+                },
+            },
+        },
+        {
+            param => 'display_name',
+            description => 'Filter for subscribers of contracts with a specific display name',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                        'attribute.attribute' => 'display_name',
+                        'voip_usr_preferences.value' => { like => "%$q%" }
+                    };
+
+                },
+                second => sub {
+                    return { join => { 'provisioning_voip_subscriber' => { 'voip_usr_preferences' => 'attribute' } } }
+                },
+            },
+        },
     ];
     foreach my $field (qw/create_timestamp modify_timestamp/){
         push @$params, {
