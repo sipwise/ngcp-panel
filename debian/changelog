@@ -1,3 +1,10 @@
+ngcp-panel (7.5.5.2+0~mr7.5.5.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b92f70b] TT#92700 print journal links of collection items
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Sep 2020 13:53:19 +0200
+
 ngcp-panel (7.5.5.1+0~mr7.5.5.1) unstable; urgency=medium
 
   [ Rene Krenn ]
