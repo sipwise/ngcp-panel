@@ -22,7 +22,6 @@ sub api_description {
 
 sub query_params {
     return [
-        {},
     ];
 }
 
