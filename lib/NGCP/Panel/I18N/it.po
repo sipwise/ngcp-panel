@@ -6072,7 +6072,7 @@ msgstr "Nessun file di Voucher specificato!"
 msgid "No CSV file specified!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Root.pm
+#: lib/NGCP/Panel/Controller/Login.pm lib/NGCP/Panel/Controller/Root.pm
 msgid "No JWT key has been configured."
 msgstr ""
 
