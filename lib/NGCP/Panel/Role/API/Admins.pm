@@ -164,7 +164,10 @@ sub update_item {
 sub post_process_hal_resource {
     my ($self, $c, $item, $resource, $form) = @_;
 
-    $resource->{role} = $c->user->roles if ($c->user->id == $item->id);
+    if ($c->user->id == $item->id) {
+        $resource->{role} = $c->user->roles;
+        $resource->{reseller_id} = $c->user->reseller_id if ($c->user->roles eq 'reseller');
+    }
 
     return $resource;
 }
