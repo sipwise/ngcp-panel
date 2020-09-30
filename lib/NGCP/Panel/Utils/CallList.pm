@@ -83,40 +83,35 @@ sub process_cdr_item {
 
     my $anonymize;
     my $prefs;
-    my $sub_pref = $item->source_subscriber->provisioning_voip_subscriber->voip_usr_preferences->search(
-                    {
-                        'attribute.attribute' => 'calllist_clir_scope',
-                    },
-                    {
-                        join => 'attribute',
-                    }
-                )->first;
+    my $source_subscriber = $item->source_subscriber;
+    my $source_prov_subscriber = undef;
+    $source_prov_subscriber = $source_subscriber->provisioning_voip_subscriber if $source_subscriber;
+    my $sub_pref;
+    $sub_pref = $source_prov_subscriber->voip_usr_preferences->search({
+        'attribute.attribute' => 'calllist_clir_scope',
+    },{
+        join => 'attribute',
+    })->first if $source_prov_subscriber;
     if ($sub_pref) {
         $prefs = $sub_pref;
-    }
-    else {
-        my $ct_pref = $item->source_subscriber->contract->voip_contract_preferences->search(
-                    {
-                        'attribute.attribute' => 'calllist_clir_scope',
-                    },
-                    {
-                        join => 'attribute',
-                    }
-                )->first;
-        if ($ct_pref) {
-            $prefs = $ct_pref;
-        }
-        else {
-            my $dom_pref = $item->source_subscriber->domain->provisioning_voip_domain->voip_dom_preferences->search(
-                    {
-                        'attribute.attribute' => 'calllist_clir_scope',
-                    },
-                    {
-                        join => 'attribute',
-                    }
-                )->first;
-            if ($dom_pref) {
-                $prefs = $dom_pref;
+    } else {
+        if ($source_subscriber) {
+            my $ct_pref = $source_subscriber->contract->voip_contract_preferences->search({
+                'attribute.attribute' => 'calllist_clir_scope',
+            },{
+                join => 'attribute',
+            })->first;
+            if ($ct_pref) {
+                $prefs = $ct_pref;
+            } else {
+                my $dom_pref = $source_subscriber->domain->provisioning_voip_domain->voip_dom_preferences->search({
+                    'attribute.attribute' => 'calllist_clir_scope',
+                },{
+                    join => 'attribute',
+                })->first;
+                if ($dom_pref) {
+                    $prefs = $dom_pref;
+                }
             }
         }
     }
@@ -134,7 +129,7 @@ sub process_cdr_item {
     my ($source_cli_suppression,$destination_user_in_suppression) = _get_suppressions($c,$item);
 
     my ($src_sub, $dst_sub);
-    my $billing_src_sub = $item->source_subscriber;
+    my $billing_src_sub = $source_subscriber;
     my $billing_dst_sub = $item->destination_subscriber;
     if($billing_src_sub && $billing_src_sub->provisioning_voip_subscriber) {
         $src_sub = $billing_src_sub->provisioning_voip_subscriber;
