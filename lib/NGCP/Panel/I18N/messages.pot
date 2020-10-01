@@ -238,6 +238,10 @@ msgid "AMR-WB: initial bitrate"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR-WB: mode change capability"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: mode change interval"
 msgstr ""
 
@@ -263,6 +267,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: initial bitrate"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "AMR: mode change capability"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -415,6 +423,14 @@ msgstr ""
 
 #: share/templates/administrator/list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Administrators"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Advertise to the peer that the AMR encoder is able to perform mode changes in a restricted interval (2), or that the encoder is not capable of doing that (1), or don't advertise that capability at all (omit)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Advertise to the peer that the AMR-WB encoder is able to perform mode changes in a restricted interval (2), or that the encoder is not capable of doing that (1), or don't advertise that capability at all (omit)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
