@@ -1281,6 +1281,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         firmware => {
         },
         phone => {
+            vendor => $model->vendor,
+            model => $model->model,
             stationname => $dev->station_name,
             lineranges => [],
         },
