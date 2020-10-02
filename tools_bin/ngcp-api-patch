@@ -73,7 +73,7 @@ fi
 validateurl "$URL"
 
 ${CURL} -i ${VERBOSE} -X PATCH \
-  "${APIREALM[@]}"
+  "${APIREALM[@]}" \
   -H 'Connection: close' -H "Prefer: return=${PREFER}" \
   -H "Content-Type: ${CTYPE}" \
   --user "${APIUSER}" --insecure "${FILE_INPUT[@]}" "${URL}" "${INPUT[@]}"
