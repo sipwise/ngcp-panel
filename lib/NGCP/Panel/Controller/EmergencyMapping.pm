@@ -23,11 +23,16 @@ sub list :Chained('/') :PathPart('emergencymapping') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     my $emergency_container_rs = $c->model('DB')->resultset('emergency_containers');
+    my $emergency_mapping_rs = $c->model('DB')->resultset('emergency_mappings');
     if($c->user->roles eq "reseller") {
         $emergency_container_rs = $emergency_container_rs->search({
             reseller_id => $c->user->reseller_id
         });
+        $emergency_mapping_rs = $emergency_mapping_rs->search({
+            reseller_id => $c->user->reseller_id
+        });
     }
+
     $c->stash(emergency_container_rs => $emergency_container_rs);
     $c->stash->{emergency_container_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", "search" => 1, "title" => $c->loc("#") },
@@ -35,7 +40,6 @@ sub list :Chained('/') :PathPart('emergencymapping') :CaptureArgs(0) {
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
     ]);
 
-    my $emergency_mapping_rs = $c->model('DB')->resultset('emergency_mappings');
     $c->stash(emergency_mapping_rs => $emergency_mapping_rs);
     $c->stash->{emergency_mapping_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", "search" => 1, "title" => $c->loc("#") },
