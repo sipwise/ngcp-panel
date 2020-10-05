@@ -412,23 +412,51 @@ has_field 'bootstrap_config_redirect_polycom_profile' => (
 has_field 'bootstrap_config_redirect_snom_user' => (
     type => 'Text',
     required => 0,
-    label => 'Snom username',
+    label => 'Snom access key id',
     default => '',
     wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_snom/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Username used to configure bootstrap url on Snom redirect server. Obtained from Snom.'],
+        title => ['Id used to configure bootstrap url on Snom redirect server. Obtained from Snom\'s Secure Redirection and Provisioning Service (SRAPS).'],
     },
 );
 has_field 'bootstrap_config_redirect_snom_password' => (
     type => 'Text',
     required => 0,
-    label => 'Snom password',
+    label => 'Snom access key secret',
     default => '',
     wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_snom/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Password used to configure bootstrap url on Snom redirect server. Obtained from Snom.'],
+        title => ['Secret key used to configure bootstrap url on Snom redirect server. Obtained from Snom\'s Secure Redirection and Provisioning Service (SRAPS).'],
+    },
+);
+has_field 'bootstrap_config_redirect_snom_profile' => (
+    type => 'Text',
+    required => 0,
+    label => 'Snom profile',
+    default => '',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_snom/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Profile name used to create or use an existing a profile on Snom redirect server.'],
+    },
+);
+has_field 'bootstrap_config_redirect_snom_product_family' => (
+    type => 'Select',
+    required => 0,
+    label => 'Snom product family',
+    options => [
+        { label => 'C-Series', value => 'C-Series' },
+        { label => 'D-Series', value => 'D-Series' },
+        { label => 'M-Series', value => 'M-Series' },
+        { label => 'MSC-Series', value => 'MSC-Series' },
+    ],
+    default => '',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_snom/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The Snom device Product Family. Used to create the profile on Snom redirect server.'],
     },
 );
 has_field 'bootstrap_config_redirect_grandstream_cid' => (
@@ -532,7 +560,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model type extensions_num connectable_models linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile bootstrap_config_redirect_grandstream_cid bootstrap_config_redirect_grandstream_key bootstrap_config_redirect_sipwise_user bootstrap_config_redirect_sipwise_password bootstrap_config_profile_sipwise_user bootstrap_config_profile_sipwise_password bootstrap_config_redirect_ale_user bootstrap_config_redirect_ale_password front_image front_thumbnail mac_image/],
+    render_list => [qw/vendor model type extensions_num connectable_models linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile bootstrap_config_redirect_snom_user bootstrap_config_redirect_snom_password bootstrap_config_redirect_snom_profile bootstrap_config_redirect_snom_product_family bootstrap_config_redirect_grandstream_cid bootstrap_config_redirect_grandstream_key bootstrap_config_redirect_sipwise_user bootstrap_config_redirect_sipwise_password bootstrap_config_profile_sipwise_user bootstrap_config_profile_sipwise_password bootstrap_config_redirect_ale_user bootstrap_config_redirect_ale_password front_image front_thumbnail mac_image/],
 );
 
 has_block 'actions' => (

@@ -26,6 +26,10 @@ sub redirect_server_call {
     if ($data->{token}) {
         $req->header(token => $data->{token});
     }
+    elsif ($data->{hawk}) {
+        $req->header(Authorization => $data->{hawk});
+        $req->header('accept' => 'application/json');
+    }
     else {
         $req->header(%{$self->get_basic_authorization($self->params->{credentials})});
     }
