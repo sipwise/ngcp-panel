@@ -33,6 +33,7 @@ sub logout_index :Path {
 sub ajax_logout :Chained('/') :PathPart('ajax_logout') :Args(0) {
     my ( $self, $c ) = @_;
 
+    delete $c->session->{framed} if ($c->session->{framed});
     $c->logout;
     $c->response->status(200);
     $c->response->content_type('application/json');
