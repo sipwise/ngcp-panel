@@ -154,7 +154,7 @@ foreach my $api (@apis){
         (undef, $preferences_new->{content}) = $test_machine->check_item_get($preferences->{uri});
         is_deeply([@{$preferences_new->{content}->{allowed_clis}}[-4..-1]], $addmulti_value, "check patched allowed_clis: add multi to absent");
 
-        $addmulti_value = ['222','222','222','555','666'];
+        $addmulti_value = ['444','555','666','777','888'];
         $preferences_patch_op = [
             {'op' => 'add', 'path' => '/allowed_clis', value => $addmulti_value, mode => 'append' },
         ];
@@ -164,12 +164,12 @@ foreach my $api (@apis){
         is_deeply([@{$preferences_new->{content}->{allowed_clis}}[-5..-1]], $addmulti_value, "check patched allowed_clis: add multi to existing");
 
         $preferences_patch_op = [
-            {'op' => 'remove', 'path' => '/allowed_clis', value => '222', 'index' => 2 },
+            {'op' => 'remove', 'path' => '/allowed_clis', value => '222', 'index' => 1 },
         ];
         ($res, $preferences_put->{content}) = $test_machine->request_patch($preferences_patch_op,$preferences->{uri});
         $test_machine->http_code_msg(200, "check extended patch result: remove by value", $res, $preferences_put->{content});
         (undef, $preferences_new->{content}) = $test_machine->check_item_get($preferences->{uri});
-        is_deeply([@{$preferences_new->{content}->{allowed_clis}}[-8..-1]], ['111','222','222','333','222','222','555','666'], "check patched allowed_clis: remove by value.");
+        is_deeply([@{$preferences_new->{content}->{allowed_clis}}[-8..-1]], ['111','222','333','444','555','666','777','888'], "check patched allowed_clis: remove by value.");
     }
 
 

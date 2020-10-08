@@ -854,6 +854,33 @@ sub update_preferences {
                     );
                     last SWITCH;
                 };
+                /^allowed_clis$/ && do {
+                    if ($replace) {
+                        #check duplicates in case of PUT
+                        if ($resource->{$pref}) {
+                            my %seen;
+                            foreach my $allowed_cli (@{$resource->{$pref}}) {
+                                next unless $seen{$allowed_cli}++;
+                                $c->log->error("Duplicate $pref value: ".$allowed_cli);
+                                &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Duplicate $pref value: ".$allowed_cli);
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        #in case of PATCH, check duplicates only for new values, since there could already be duplicates in some systems
+                        if ($resource->{$pref} && $old_resource->{$pref}) {
+                            my @new_clis = @{$resource->{$pref}}[scalar @{$old_resource->{$pref}} .. scalar @{$resource->{$pref}} - 1];
+                            my %existing_clis = map {$_ => 1} @{$old_resource->{$pref}};
+                            my ($allowed_cli) = grep { exists $existing_clis{$_} } @new_clis;
+                            if ( $allowed_cli ) {
+                                $c->log->error("Duplicate $pref value: ".$allowed_cli);
+                                &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Duplicate $pref value: ".$allowed_cli);
+                                return;
+                            }
+                        }
+                    }
+                };
                 # default
                 if($meta->max_occur != 1) {
                     $pref_rs->delete;
@@ -1625,6 +1652,33 @@ sub create_preference_form {
                 );
                 $c->response->redirect($base_uri);
                 return 1;
+            }
+        } elsif ($attribute eq "allowed_clis") {
+            my $v = $form->field($attribute)->value;
+            my $existing_cli = $pref_rs->search({
+                attribute_id => $c->stash->{preference_meta}->id,
+                value => $v
+            });
+            if ($existing_cli->first) {
+                NGCP::Panel::Utils::Message::error(
+                    c => $c,
+                    error => $c->loc('Duplicate preference [_1]', $attribute),
+                    data  => \%log_data,
+                    desc  => $c->loc('Duplicate preference [_1]', $attribute),
+                );
+                $c->response->redirect($base_uri);
+                return 1;
+            }
+            else {
+                $pref_rs->create({
+                    attribute_id => $c->stash->{preference_meta}->id,
+                    value => $form->values->{$c->stash->{preference_meta}->attribute},
+                });
+                NGCP::Panel::Utils::Message::info(
+                    c => $c,
+                    data => \%log_data,
+                    desc => $c->loc('Preference [_1] successfully created', $attribute),
+                );
             }
         } elsif ($c->stash->{preference_meta}->max_occur != 1) {
             if($c->stash->{subscriber} &&
