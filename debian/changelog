@@ -1,3 +1,10 @@
+ngcp-panel (6.5.10.2+0~mr6.5.10.2) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [962316e] TT#47268 Use order_by_cols to avoid item_rs call for api doc gen
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 09 Oct 2020 16:36:15 +0200
+
 ngcp-panel (6.5.10.1+0~mr6.5.10.1) unstable; urgency=medium
 
   [ Flaviu Mates ]
