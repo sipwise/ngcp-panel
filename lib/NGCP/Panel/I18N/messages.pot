@@ -2196,6 +2196,11 @@ msgstr ""
 msgid "Duplicate %1"
 msgstr ""
 
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
+msgid "Duplicate preference %1"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Duration"
 msgstr ""
@@ -5924,7 +5929,7 @@ msgid "Ported Numbers"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm
+#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Preference %1 successfully created"
 msgstr ""
 

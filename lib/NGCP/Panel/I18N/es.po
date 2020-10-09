@@ -2629,6 +2629,11 @@ msgstr ""
 msgid "Duplicate %1"
 msgstr ""
 
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm
+msgid "Duplicate preference %1"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Duration"
