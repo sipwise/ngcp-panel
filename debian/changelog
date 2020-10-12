@@ -1,3 +1,10 @@
+ngcp-panel (7.5.5.3+0~mr7.5.5.3) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [561b237] TT#94650 - Fix access to emergency mappings for reseller admins
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 Oct 2020 15:12:10 +0200
+
 ngcp-panel (7.5.5.2+0~mr7.5.5.2) unstable; urgency=medium
 
   [ Rene Krenn ]
