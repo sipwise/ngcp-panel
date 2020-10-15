@@ -123,7 +123,7 @@ sub search {
                 @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
                     lc($filter->{username}), $filter) };
         } else {
-            $new_rs->_scan($filter);
+            $new_rs->_scan($filter, $opt);
         }
         $new_rs->_query_done(1);
     }
@@ -150,15 +150,6 @@ sub search {
         }
     }
 
-    $opt->{rows} //= -1;
-    $opt->{offset} //= 0;
-    if (!defined $opt->{page} && $opt->{rows} > -1 || $opt->{offset} > 0) {
-        $new_rs->_rows([ splice @{ $new_rs->_rows }, $opt->{offset}, $opt->{rows} ]);
-    }
-
-    if (defined $opt->{page} && $opt->{rows} > 0) {
-        $new_rs->_rows([ splice(@{ $new_rs->_rows }, ($opt->{page} - 1 )*$opt->{rows}, $opt->{rows}) ]);
-    }
     return $new_rs;
 }
 
@@ -167,29 +158,35 @@ sub _rows_from_mapkey {
     my @rows = ();
     my $keys = $self->_redis->smembers($mapkey);
     foreach my $key (@{ $keys }) {
-        my %entry = $self->_redis->hgetall($key);
-        $entry{id} = $entry{ruid};
-        next unless $entry{id};
-        # deflate expires column
-        if ($entry{expires}) {
-            $entry{expires} = strftime("%Y-%m-%d %H:%M:%S", localtime($entry{expires}));
-        } else {
-            $entry{expires} = "1970-01-01 00:00:00";
-        }
-        my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
-            join => { 'contract' => { 'contact' => 'reseller' } },
-            '+select' => ['reseller.id'],
-            '+as' => ['reseller_id']
-        })->first;
-        next unless $subscribers_reseller;
-        if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
-            next;
-        }
-        my $res = NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
-
-        push @rows, $res;
+        my $res = $self->_row_from_key($key, $filter);
+        push @rows, $res if $res;
     }
     return \@rows;
+}
+
+sub _row_from_key {
+    my ($self, $key, $filter) = @_;
+
+    my %entry = $self->_redis->hgetall($key);
+    $entry{id} = $entry{ruid};
+    next unless $entry{id};
+    # deflate expires column
+    if ($entry{expires}) {
+        $entry{expires} = strftime("%Y-%m-%d %H:%M:%S", localtime($entry{expires}));
+    } else {
+        $entry{expires} = "1970-01-01 00:00:00";
+    }
+    my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
+        join => { 'contract' => { 'contact' => 'reseller' } },
+        '+select' => ['reseller.id'],
+        '+as' => ['reseller_id']
+    })->first;
+    next unless $subscribers_reseller;
+    if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
+        return;
+    }
+    my $res = NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
+    return $res;
 }
 
 sub _filter {
@@ -239,7 +236,7 @@ sub _filter {
 }
 
 sub _scan {
-    my ($self, $filter) = @_;
+    my ($self, $filter, $opt) = @_;
     $filter //= {};
     my $domain = ref $filter->{domain} eq "HASH"
                     ? ''
@@ -256,15 +253,51 @@ sub _scan {
     }
 
     $self->_rows([]);
-    my $cursor = 0;
-    do {
-        my $res = $self->_redis->scan($cursor, MATCH => $self->usrloc_path.":usrdom::$match", COUNT => 1000);
-        $cursor = shift @{ $res };
-        my $mapkeys = shift @{ $res };
-        foreach my $mapkey (@{ $mapkeys }) {
-            push @{ $self->_rows }, @{ $self->_rows_from_mapkey($mapkey, $filter) };
+    if ($match ne '*') {
+        my $cursor = 0;
+        do {
+            my $res = $self->_redis->scan($cursor, MATCH => $self->usrloc_path.":usrdom::$match", COUNT => 1000);
+            $cursor = shift @{ $res };
+            my $mapkeys = shift @{ $res };
+            foreach my $mapkey (@{ $mapkeys }) {
+                push @{ $self->_rows }, @{ $self->_rows_from_mapkey($mapkey, $filter) };
+            }
+        } while ($cursor);
+    }
+    else {
+        my $cursor = -1;
+        my $fetched_keys_count = 0;
+        my $stored_keys_count = 0;
+        my $res;
+        my $page = $opt->{page} // 1;
+        my $rows = $opt->{rows} // 10;
+        while ($cursor) {
+            $cursor == -1 and $cursor = 0; # init cursor first iteration
+            $res = $self->_redis->scan($cursor, MATCH => $self->usrloc_path.":entry::*", COUNT => 1000);
+            $cursor = shift @{ $res };
+
+            last unless $res && ref $res eq 'ARRAY' && $#$res >= 0;
+
+            my $keys = shift @{$res};
+            my $keys_count = $#$keys+1;
+
+            my $offset = $fetched_keys_count - ($page-1)*$rows;
+            $fetched_keys_count += $keys_count;
+
+            foreach my $key (@{$keys}) {
+                if ($offset < 0) {
+                    $offset++;
+                    next;
+                }
+                if (my $v = $self->_row_from_key($key)) {
+                    push @{$self->_rows}, $v;
+                    $stored_keys_count++;
+                    last if $stored_keys_count >= $rows;
+                }
+            }
+            last if $stored_keys_count >= $rows;
         }
-    } while ($cursor);
+    }
 
     return 1;
 }
