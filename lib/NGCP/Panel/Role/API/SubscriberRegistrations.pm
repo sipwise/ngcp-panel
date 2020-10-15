@@ -14,7 +14,7 @@ use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Subscriber;
 
 sub _item_rs {
-    my ($self, $c, $filter) = @_;
+    my ($self, $c, $filter, $opt) = @_;
 
     my $item_rs;
 
@@ -46,7 +46,7 @@ sub _item_rs {
                 $filter->{reseller_id} = $c->user->reseller_id;
             }
         }
-        $item_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter);
+        $item_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter, $opt);
     } else {
         my @joins = ();
         if($c->config->{features}->{multidomain}) {

@@ -36,7 +36,7 @@ my %LOCK = (
 );
 
 sub get_subscriber_location_rs {
-    my ($c, $filter) = @_;
+    my ($c, $filter, $opt) = @_;
     if ($c->config->{redis}->{usrloc}) {
         my $redis;
         try {
@@ -51,7 +51,7 @@ sub get_subscriber_location_rs {
             }
             $redis->select($c->config->{redis}->{usrloc_db});
             my $rs = NGCP::Panel::Utils::RedisLocationResultSet->new(_redis => $redis, _c => $c);
-            $rs = $rs->search($filter) if ($filter and scalar keys %$filter);
+            $rs = $rs->search($filter, $opt) if ($filter and scalar keys %$filter);
             return $rs;
         } catch($e) {
             $c->log->error("Failed to fetch location information from redis: $e");
