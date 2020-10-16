@@ -1,3 +1,17 @@
+ngcp-panel (7.5.6.1+0~mr7.5.6.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [a20a886] TT#86351 prevent datatable queries with no clipping
+  * [a2be08a] TT#80552 fix /api/calllist owner logic
+  * [010baf5] TT#89200 workaround logic for backward-incompatible prefs 7.5
+  * [a6a672b] TT#89200 fix workaround logic for backward-incompatible prefs 7.5
+  * [91367e9] TT#92700 print journal links of collection items
+
+  [ Flaviu Mates ]
+  * [29dad8f] TT#94650 - Fix access to emergency mappings for reseller admins
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 16 Oct 2020 16:18:12 +0200
+
 ngcp-panel (7.5.6.0+0~mr7.5.6.0) unstable; urgency=medium
 
   [ Rene Krenn ]
