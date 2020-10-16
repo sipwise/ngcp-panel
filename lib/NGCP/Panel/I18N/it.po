@@ -2235,6 +2235,10 @@ msgstr "Clienti"
 msgid "DB Statistics"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "DTLS fingerprint hashing function"
+msgstr ""
+
 #: share/templates/customer/details.tt
 msgid "Daily Settings"
 msgstr "Frode Giornaliera"
@@ -7386,6 +7390,10 @@ msgid "Reset Web Password"
 msgstr "Resetta Password Web"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Restrict every answer to just the first preferred codec."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Restrict the AMR encoders (both local and remote) to change mode only to "
 "neighbouring modes instead of any random mode."
@@ -7962,6 +7970,10 @@ msgstr "Registrati"
 #: share/templates/login/login.tt
 msgid "Sign in using your %1 credentials:"
 msgstr "Accedi usando le tue credenziali %1:"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Single-codec answers"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Skip Rewrite"
@@ -9412,6 +9424,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use peer-specific outbound headers when call is forced to peer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Use the specified hashing function to communicate the DTLS certificate's "
+"fingerprint to the peer."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
