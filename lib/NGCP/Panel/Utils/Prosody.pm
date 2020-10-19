@@ -22,13 +22,7 @@ sub activate_domain {
         } else {
             $ok = 0;
         }
-        $t->print("host:activate('search.$domain', { component_module = 'sipwise_vjud' })");
-        ($res, $amatch)  = $t->waitfor('/(Result: \w+)|(Message: .+)/');
-        if($amatch =~ /Result:\s*true/) {
-            # fine
-        } else {
-            $ok = 0;
-        }
+        $t->print("quit");
     }
 
     return $ok if($ok);
@@ -54,13 +48,7 @@ sub deactivate_domain {
         } else {
             $ok = 0;
         }
-        $t->print("host:deactivate('search.$domain')");
-        ($res, $amatch)  = $t->waitfor('/(Result: \w+)|(Message: .+)/');
-        if($amatch =~ /Result:\s*true/) {
-            # fine
-        } else {
-            $ok = 0;
-        }
+        $t->print("quit");
     }
 
     return $ok if($ok);
