@@ -1,3 +1,19 @@
+ngcp-panel (8.5.3.0+0~mr8.5.3.0) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [8a5140e] TT#89451 Update ALE redirect URL to api.eds.al-enterprise.com
+  * [86c9854] TT#77256 Fix a621bd592: Add missing '\' for tool 'ngcp-api-patch'
+
+  [ Flaviu Mates ]
+  * [0fb6ad5] TT#90351 - Fix /api/subscribers PATCH
+  * [9c786d6] TT#94650 - Fix access to emergency mappings for reseller admins
+
+  [ Rene Krenn ]
+  * [1a78b35] TT#92700 print journal links of collection items
+  * [8cd5afe] TT#95252 fix callist error with clir_scope & terminated subs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Oct 2020 14:28:40 +0200
+
 ngcp-panel (8.5.2.0+0~mr8.5.2.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
