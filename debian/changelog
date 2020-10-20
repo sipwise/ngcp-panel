@@ -1,3 +1,10 @@
+ngcp-panel (7.5.6.2+0~mr7.5.6.2) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [21efe0a] TT#97400 prosody: [de]activate just the main domain
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Oct 2020 11:26:22 +0200
+
 ngcp-panel (7.5.6.1+0~mr7.5.6.1) unstable; urgency=medium
 
   [ Rene Krenn ]
