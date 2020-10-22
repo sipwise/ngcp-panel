@@ -14,35 +14,37 @@ use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Subscriber;
 
 sub _item_rs {
-    my ($self, $c) = @_;
+    my ($self, $c, $filter) = @_;
 
     my $item_rs;
 
     if ($c->config->{redis}->{usrloc}) {
         # TODO: will this survive with like 1M records?
 
-        my $filter = {};
-        if ($c->req->param('subscriber_id')) {
-            my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
-            if ($sub) {
-                $filter->{username} = $sub->username;
-            }
-            if($c->config->{features}->{multidomain}) {
-                $filter->{domain} = $sub->domain->domain;
+        unless (defined $filter) {
+            $filter = {};
+            if ($c->req->param('subscriber_id')) {
+                my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+                if ($sub) {
+                    $filter->{username} = $sub->username;
+                }
+                if($c->config->{features}->{multidomain}) {
+                    $filter->{domain} = $sub->domain->domain;
+                } else {
+                    $filter->{domain} = undef;
+                }
             } else {
-                $filter->{domain} = undef;
+                if ($c->config->{features}->{multidomain}) {
+                    $filter->{domain} = { like => '.+' };
+                } else {
+                    $filter->{domain} = undef;
+                }
             }
-        } else {
-            if ($c->config->{features}->{multidomain}) {
-                $filter->{domain} = { like => '.+' };
-            } else {
-                $filter->{domain} = undef;
-            }
-        }
 
-        if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
-        } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
-            $filter->{reseller_id} = $c->user->reseller_id;
+            if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+            } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
+                $filter->{reseller_id} = $c->user->reseller_id;
+            }
         }
         $item_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter);
     } else {
@@ -136,7 +138,7 @@ sub resource_from_item {
 sub item_by_id {
     my ($self, $c, $id) = @_;
 
-    my $item_rs = $self->item_rs($c);
+    my $item_rs = $self->item_rs($c,{ id => $id, });
     return $item_rs->find($id);
 }
 
