@@ -96,22 +96,26 @@ sub PATCH :Allow {
         last unless $txn_ok;
 
         $item = $self->fetch_item($c, $resource, $form, $item);
-        last unless $item;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
-            $c->response->body(q());
+        if ($item) {
+            if ('minimal' eq $preference) {
+                $c->response->status(HTTP_NO_CONTENT);
+                $c->response->header(Preference_Applied => 'return=minimal');
+                $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
+                $c->response->body(q());
+            } else {
+                my $hal = $self->hal_from_item($c, $item, $form);
+                my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                    $hal->http_headers,
+                ), $hal->as_json);
+                $c->response->headers($response->headers);
+                $c->response->header(Preference_Applied => 'return=representation');
+                $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
+                $c->response->body($response->content);
+            }
         } else {
-            my $hal = $self->hal_from_item($c, $item, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
-            $c->response->body($response->content);
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->body(q());            
         }
     }
 
@@ -152,22 +156,26 @@ sub PUT :Allow {
         last unless $txn_ok;
 
         $item = $self->fetch_item($c, $resource, $form, $item);
-        last unless $item;
 
-        if ('minimal' eq $preference) {
-            $c->response->status(HTTP_NO_CONTENT);
-            $c->response->header(Preference_Applied => 'return=minimal');
-            $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
-            $c->response->body(q());
+        if ($item) {
+            if ('minimal' eq $preference) {
+                $c->response->status(HTTP_NO_CONTENT);
+                $c->response->header(Preference_Applied => 'return=minimal');
+                $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
+                $c->response->body(q());
+            } else {
+                my $hal = $self->hal_from_item($c, $item, $form);
+                my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                    $hal->http_headers,
+                ), $hal->as_json);
+                $c->response->headers($response->headers);
+                $c->response->header(Preference_Applied => 'return=representation');
+                $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
+                $c->response->body($response->content);
+            }
         } else {
-            my $hal = $self->hal_from_item($c, $item, $form);
-            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-                $hal->http_headers,
-            ), $hal->as_json);
-            $c->response->headers($response->headers);
-            $c->response->header(Preference_Applied => 'return=representation');
-            $c->response->header(Location => sprintf('%s%s', $self->dispatch_path, $item->id));
-            $c->response->body($response->content);
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->body(q());            
         }
     }
 
@@ -195,7 +203,7 @@ sub delete_item {
     return unless($sub);
     NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
         $sub, $item->contact);
-    NGCP::Panel::Utils::Kamailio::flush($c);
+    NGCP::Panel::Utils::Kamailio::flush($c) unless $self->suppress_flush($c);
     return 1;
 }
 
