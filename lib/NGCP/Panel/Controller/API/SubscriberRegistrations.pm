@@ -154,11 +154,15 @@ sub POST :Allow {
         last unless $txn_ok;
 
         $item = $self->fetch_item($c, $resource, $form, $item);
-        last unless $item;
 
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%s', $c->request->path, $item->id));
-        $c->response->body(q());
+        if ($item) {
+            $c->response->status(HTTP_CREATED);
+            $c->response->header(Location => sprintf('/%s%s', $c->request->path, $item->id));
+            $c->response->body(q());
+        } else {
+            $c->response->status(HTTP_CREATED);
+            $c->response->body(q());
+        }
     }
     return;
 }
