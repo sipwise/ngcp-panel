@@ -244,7 +244,7 @@ sub update_item {
         $sub->provisioning_voip_subscriber,
         $values
     );
-    NGCP::Panel::Utils::Kamailio::flush($c);
+    NGCP::Panel::Utils::Kamailio::flush($c) unless $self->suppress_flush($c);
 
     return $item;
 }
@@ -283,6 +283,19 @@ sub fetch_item {
     }
 
     return $item;
+}
+
+sub suppress_flush {
+    
+    my ($self, $c) = @_;
+    my $suppress_flush = $c->req->param('suppress_flush');
+    if (length($suppress_flush)
+        and ('1' eq $suppress_flush
+        or 'true' eq lc($suppress_flush))) {
+        return 1;
+    }
+    return 0;
+    
 }
 
 sub valid_id {
