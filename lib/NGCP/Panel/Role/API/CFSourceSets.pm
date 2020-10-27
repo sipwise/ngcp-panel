@@ -143,6 +143,10 @@ sub update_item {
     #    last;
     #}
 
+    return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form);
+    return unless $self->check_duplicate($c, $item, $old_resource, $resource, $form);
+    return unless $self->check_resource($c, $item, $old_resource, $resource, $form);
+
     try {
         $item->update({
                 name => $resource->{name},
@@ -164,6 +168,77 @@ sub update_item {
     };
 
     return $item;
+}
+
+sub process_form_resource{
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
+    } elsif(!defined $resource->{subscriber_id}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
+        return;
+    }
+
+    return $resource;
+}
+
+sub check_resource {
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    my $schema = $c->model('DB');
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
+        id => $resource->{subscriber_id},
+    });
+    unless($b_subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
+        return;
+    }
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+    unless($subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
+        return;
+    }
+    if (! exists $resource->{sources} ) {
+        $resource->{sources} = [];
+    }
+    if (ref $resource->{sources} ne "ARRAY") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'sources'. Must be an array.");
+        return;
+    }
+
+    return 1; # all good
+}
+
+sub check_duplicate {
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $schema = $c->model('DB');
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
+        id => $resource->{subscriber_id},
+    });
+    unless($b_subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
+        return;
+    }
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+    unless($subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
+        return;
+    }
+
+    my $existing_item = $schema->resultset('voip_cf_source_sets')->search({
+        name => $resource->{name},
+        subscriber_id => $subscriber->id
+    })->first;
+    if ($existing_item && (!$item || $item->id != $existing_item->id)) {
+        $c->log->error("source_set name '$$resource{name}' already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A Sourceset with this name already exists");
+        return;
+    }
+    return 1;
 }
 
 1;

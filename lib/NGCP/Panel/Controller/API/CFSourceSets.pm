@@ -116,86 +116,40 @@ sub GET :Allow {
     return;
 }
 
-sub POST :Allow {
-    my ($self, $c) = @_;
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
 
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $schema = $c->model('DB');
-        my $resource = $self->get_valid_post_data(
-            c => $c,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-
-        my $sset;
-
-        if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-            $resource->{subscriber_id} = $c->user->voip_subscriber->id;
-        } elsif(!defined $resource->{subscriber_id}) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
-            last;
-        }
-
+    my $schema = $c->model('DB');
+    my $sset;
+    try {
         my $b_subscriber = $schema->resultset('voip_subscribers')->find({
-                id => $resource->{subscriber_id},
-            });
-        unless($b_subscriber) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-            last;
-        }
+            id => $resource->{subscriber_id},
+        });
         my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-        unless($subscriber) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-            last;
+        $sset = $schema->resultset('voip_cf_source_sets')->create({
+            name => $resource->{name},
+            mode => $resource->{mode},
+            is_regex => $resource->{is_regex} // 0,
+            subscriber_id => $subscriber->id,
+        });
+        for my $s ( @{$resource->{sources}} ) {
+            $sset->create_related("voip_cf_sources", {
+                source => $s->{source},
+            });
         }
-        if (! exists $resource->{sources} ) {
-            $resource->{sources} = [];
-        }
-        if (ref $resource->{sources} ne "ARRAY") {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'sources'. Must be an array.");
-            last;
-        }
-        try {
-            my $domain = $subscriber->domain->domain // '';
-
-            $sset = $schema->resultset('voip_cf_source_sets')->create({
-                    name => $resource->{name},
-                    mode => $resource->{mode},
-                    is_regex => $resource->{is_regex} // 0,
-                    subscriber_id => $subscriber->id,
-                });
-            for my $s ( @{$resource->{sources}} ) {
-                $sset->create_related("voip_cf_sources", {
-                    source => $s->{source},
-                });
-            }
-        } catch($e) {
-            $c->log->error("failed to create cfsourceset: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfsourceset.");
-            last;
-        }
-
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
             my $_sset = $self->item_by_id($c, $sset->id);
-            return $self->hal_from_item($c, $_sset, "cfsourcesets"); });
-
-        $guard->commit;
-
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $sset->id));
-        $c->response->body(q());
+            return $self->hal_from_item($c, $_sset, "cfsourcesets");
+        });
+    } catch($e) {
+        $c->log->error("failed to create source_set: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create source_set.");
+        return;
     }
-    return;
+
+    return $sset;
 }
 
 1;
