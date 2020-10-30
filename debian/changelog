@@ -1,3 +1,19 @@
+ngcp-panel (6.5.10.3+0~mr6.5.10.3) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [035010e] TT#64017 API/SubscriberRegistrations Redis multidomain search
+
+  [ Flaviu Mates ]
+  * [1c2a664] TT#69405 - Allow reseller to view subscriberregistrations
+
+  [ Rene Krenn ]
+  * [7cfe055] TT#78153 fix _item_by_aor for redis
+  * [491230e] TT#78153 fix redis location resultset filtering
+  * [82f8fc3] TT#98650 speedup redis locaction search by id
+  * [e151fff] TT#98650 ?suppress_flush=1 parameter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 30 Oct 2020 12:04:52 +0100
+
 ngcp-panel (6.5.10.2+0~mr6.5.10.2) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
