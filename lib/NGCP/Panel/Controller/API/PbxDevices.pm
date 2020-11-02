@@ -46,6 +46,37 @@ sub query_params {
             param => 'station_name',
             description => 'Search for PBX devices matching a station_name pattern (wildcards possible)',
             query_type => 'string_like',
+        },
+        {
+            param => 'pbx_extension',
+            description => 'Search for PBX devices matching a subscriber\'s extension pattern (wildcards possible)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'provisioning_voip_subscriber.pbx_extension' => { like => "$q%" } };
+
+                },
+                second => sub {
+                    return { join => { 'autoprov_field_device_lines' => 'provisioning_voip_subscriber'} }
+                },
+            },
+        },
+        {
+            param => 'display_name',
+            description => 'Search for PBX devices matching a subscriber\'s diplay name pattern (wildcards possible)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                        'attribute.attribute' => 'display_name',
+                        'voip_usr_preferences.value' => { like => "$q%" }
+                    };
+
+                },
+                second => sub {
+                    return { join => { 'autoprov_field_device_lines' => {'provisioning_voip_subscriber' => { 'voip_usr_preferences' => 'attribute' } } } }
+                },
+            },
         }
 
     ];
