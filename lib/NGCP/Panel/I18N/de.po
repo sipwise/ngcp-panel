@@ -1107,6 +1107,14 @@ msgstr "Benutzerdefiniertes Layout"
 msgid "Buddy List"
 msgstr "Kontakt-Liste"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"By default incoming calls to subscriber's primary number and standard "
+"aliases are routed only to devices registered by subscriber's username. "
+"Enabling this option allows to route the calls also to endpoints registered "
+"as devices (those who use subscriber's alias to register)."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "CA certificate is OK"
 msgstr ""
@@ -7375,6 +7383,12 @@ msgstr "Läut-Zeitüberschreitung für CFT"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ring Timeout of each single contact"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Route incoming subscriber calls to all registered devices belonging to the "
+"subscriber"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
