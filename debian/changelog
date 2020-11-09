@@ -1,3 +1,57 @@
+ngcp-panel (9.2.0.0+0~mr9.2.0.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [5f20ca5] TT#91506 - Return administrator's 'role' in /api/admins
+  * [45fcec6] TT#88902 - Add link to v2 on v1 login page
+  * [29647d6] TT#91000 - Add 'None' device bootstrap method
+  * [654bb1a] TT#92550 - Implement /api/passwordrecovery
+  * [01e11a7] TT#93753 - Enhance subscriber api filtering
+  * [eb13492] TT#88904 - Store admin id and jwt key in localStorage
+  * [ab03c59] TT#88901 - Fix /api/admincerts GET
+  * [1b1199e] TT#92002 - Add reseller_id to admins with role 'reseller'
+  * [103bdce] TT#96250 - Delete 'framed' from session on ajax logout
+  * [c988ba5] TT#94650 - Fix access to emergency mappings for reseller admins
+  * [5a020e3] TT#91507 - Implements SNOM devices autoporovisioning with SRAPS
+  * [88f70bd] TT#93500 Restrict allowed_clis to unique numbers
+  * [66c472e] TT#92800 Remove deprecated Sipwise device provisioning using EDS
+  * [2741e9e] TT#98650 Fix /api/subscriberregistration gateway timeout
+  * [a1254c8] TT#99565 Add preference group name to preference defs
+  * [0c01994] TT#96803 Enhance /api/pbxdevices filtering
+
+  [ Guillem Jover ]
+  * [31eb8a8] TT#91650 Add a .mailmap file to correct author information
+
+  [ Sipwise Jenkins Builder ]
+  * [fe010c8] TT#4166 I18N dump: snapshot 2020.09.05-01.33.39
+  * [abd4e16] TT#4166 I18N dump: snapshot 2020.09.16-01.24.53
+  * [bb7e046] TT#4166 I18N dump: snapshot 2020.09.25-01.23.53
+  * [3530ded] TT#4166 I18N dump: snapshot 2020.10.02-01.21.45
+  * [6be18bb] TT#4166 I18N dump: snapshot 2020.10.08-01.23.32
+  * [46fbecb] TT#4166 I18N dump: snapshot 2020.10.10-01.23.44
+  * [6ea0c07] TT#4166 I18N dump: snapshot 2020.10.17-01.22.05
+  * [1342e35] TT#4166 I18N dump: snapshot 2020.11.07-01.23.56
+
+  [ Nico Schedel ]
+  * [d890524] TT#83370 selenium: add missing launch arguments in dockerfile example
+
+  [ Rene Krenn ]
+  * [f637402] TT#92700 print journal links of collection items
+  * [ed01e29] TT#95252 fix callist error with clir_scope & terminated subs
+  * [b4281d4] TT#98650 speedup redis locaction search by id
+  * [186ddab] TT#98650 ?suppress_flush=1 parameter
+
+  [ Alexander Lutay ]
+  * [7c7d136] TT#77256 Fix a621bd592: Add missing '\' for tool 'ngcp-api-patch'
+  * [15cae22] TT#91508 Add PBX 'vendor and 'model' to PBX device configuration
+
+  [ Victor Seva ]
+  * [258a54d] TT#97400 prosody: [de]activate just the main domain
+
+  [ Michael Prokop ]
+  * [3b9ef3d] TT#99206 Depend on libcrypt-openssl-rsa-perl
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Nov 2020 16:25:33 +0100
+
 ngcp-panel (9.1.0.0+0~mr9.1.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
