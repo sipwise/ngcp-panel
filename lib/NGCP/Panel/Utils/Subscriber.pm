@@ -1664,6 +1664,7 @@ sub terminate {
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
         my @events_to_create = ();
+        my @aors = ();
         my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
             c => $c,
             schema => $schema,
@@ -1704,6 +1705,16 @@ sub terminate {
             #}
         }
         if($prov_subscriber && !$prov_subscriber->is_pbx_pilot) {
+            my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
+                {
+                    is_devid => 1,
+                    subscriber_id => $prov_subscriber->id
+                }
+            );
+            foreach my $devid ($devid_aliases->all) {
+                push @aors, $devid->username . '@' . $devid->domain->domain;
+            }
+
             my $pilot_rs = $schema->resultset('voip_subscribers')->search({
                 contract_id => $subscriber->contract_id,
                 status => { '!=' => 'terminated' },
@@ -1749,7 +1760,6 @@ sub terminate {
             my $auth_prefs = {};
             NGCP::Panel::Utils::Preferences::get_peer_auth_params($c, $prov_subscriber, $auth_prefs);
             NGCP::Panel::Utils::Preferences::update_sems_peer_auth($c, $prov_subscriber, $auth_prefs, {});
-            NGCP::Panel::Utils::Kamailio::delete_location($c, $prov_subscriber);
             foreach my $pref(qw/allowed_ips_grp man_allowed_ips_grp/) {
                 my $aig_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, prov_subscriber => $prov_subscriber, attribute => $pref,
@@ -1766,9 +1776,11 @@ sub terminate {
             );
             #ready for number change events here
 
+            push @aors, $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
             $prov_subscriber->delete;
         }
         $subscriber->update({ status => 'terminated' });
+        NGCP::Panel::Utils::Kamailio::delete_location_by_aor($c, \@aors);
     });
 }
 

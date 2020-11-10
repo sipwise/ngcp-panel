@@ -40,6 +40,23 @@ EOF
 
 }
 
+sub delete_location_by_aor {
+    my ($c, $aors) = @_;
+
+    foreach my $aor (@$aors) {
+        my $ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>ul.rm</methodName>
+<params>
+<param><value><string>location</string></value></param>
+<param><value><string>$aor</string></value></param>
+</params>
+</methodCall>
+EOF
+    }
+}
+
 sub create_location {
     my ($c, $prov_subscriber, $params) = @_;
     my($contact, $q, $expires, $flags, $cflags) = @$params{qw/contact q expires flags cflags/};
