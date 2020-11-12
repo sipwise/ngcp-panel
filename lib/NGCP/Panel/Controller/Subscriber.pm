@@ -5693,6 +5693,170 @@ sub header_actions_create :Chained('header_actions_list') :PathPart('create') :A
     );
 }
 
+sub create_location_map :Chained('base') :PathPart('preferences/locationmap/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $location_map_rs = $c->stash->{subscriber}->provisioning_voip_subscriber->location_mappings;
+    my $params = {};
+
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::LocationMapping", $c);
+    $form->process(
+        posted => $posted,
+        params => $posted ? $c->req->params : {}
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            $location_map_rs->create({
+                subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id,
+                location => $form->field('location')->value,
+                caller_pattern => $form->field('caller_pattern')->value // '.+',
+                callee_pattern => $form->field('callee_pattern')->value // '.+',
+                mode => $form->field('mode')->value,
+                to_username => $form->field('to_username')->value,
+                external_id => $form->field('external_id')->value,
+                enabled => $form->field('enabled')->value,
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully created location mapping'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create location mapping'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => $c->loc('Location Mapping'),
+        cf_form => $form,
+    );
+}
+
+sub location_map_base :Chained('base') :PathPart('preferences/locationmap') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
+    my ($self, $c, $map_id) = @_;
+
+    $c->stash->{location_map} = $c->stash->{subscriber}->provisioning_voip_subscriber->location_mappings->find($map_id);
+
+    unless($c->stash->{location_map}) {
+        NGCP::Panel::Utils::Message::error(
+            c    => $c,
+            log  => "location mapping id '$map_id' is not found for subscriber uuid ".$c->qs($c->stash->{subscriber}->uuid),
+            desc => $c->loc('Trusted source entry not found'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+}
+
+sub edit_location_map :Chained('location_map_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
+
+    my $posted = ($c->request->method eq 'POST');
+    my $location_map = $c->stash->{location_map};
+    my $params = {};
+
+    if(!$posted && $location_map) {
+        $params = {
+            'location' => $location_map->location,
+            'caller_pattern' => $location_map->caller_pattern,
+            'callee_pattern' => $location_map->callee_pattern,
+            'mode' => $location_map->mode,
+            'to_username' => $location_map->to_username,
+            'external_id' => $location_map->external_id,
+            'enabled' => $location_map->enabled,
+        };
+    }
+
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::LocationMapping", $c);
+    $form->process(
+        params => $posted ? $c->req->params : $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            $location_map->update({
+                location => $form->field('location')->value,
+                caller_pattern => $form->field('caller_pattern')->value // '.+',
+                callee_pattern => $form->field('callee_pattern')->value // '.+',
+                mode => $form->field('mode')->value,
+                to_username => $form->field('to_username')->value,
+                external_id => $form->field('external_id')->value,
+                enabled => $form->field('enabled')->value,
+            });
+            NGCP::Panel::Utils::Message::info(
+                c    => $c,
+                desc => $c->loc('Successfully updated location mapping'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message::error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update location mapping'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => $c->loc('Location Mapping'),
+        cf_form => $form,
+    );
+}
+
+sub delete_location_map :Chained('location_map_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
+            $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
+
+    try {
+        $c->stash->{location_map}->delete;
+        NGCP::Panel::Utils::Message::info(
+            c    => $c,
+            data => { $c->stash->{location_map}->get_inflated_columns },
+            desc => $c->loc('Successfully deleted location mapping'),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete location mapping.'),
+        );
+    }
+
+    NGCP::Panel::Utils::Navigation::back_or($c,
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+}
+
 =head1 AUTHOR
 
 Andreas Granig,,,
