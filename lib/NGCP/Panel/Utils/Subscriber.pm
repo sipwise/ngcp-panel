@@ -377,6 +377,11 @@ sub prepare_resource {
         return;
     }
 
+    unless (check_pbx_extension_range($customer, $resource->{pbx_extension})) {
+        &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Subscriber's PBX extension is out of customer's extension range.");
+        return;
+    }
+
     if (!$customer->contact->reseller->domain_resellers->search({domain_id => $domain->id})->first()) {
         &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't belong to the same reseller as subscriber's customer.");
         return;
@@ -2472,6 +2477,36 @@ sub billing_to_prov_subscriber_id {
     return unless $subscriber;
     return unless $subscriber->provisioning_voip_subscriber;
     return $subscriber->provisioning_voip_subscriber->id;
+}
+
+sub check_pbx_extension_range {
+    my ($customer, $pbx_extension) = @_;
+    my $ext_range_min = $customer->voip_contract_preferences->search(
+            {
+                'attribute.attribute' => 'ext_range_min'
+            },
+            {
+                join => 'attribute',
+            }
+    )->get_column('value')->first;
+
+    my $ext_range_max = $customer->voip_contract_preferences->search(
+        {
+            'attribute.attribute' => 'ext_range_max'
+        },
+        {
+            join => 'attribute',
+        }
+    )->get_column('value')->first;
+
+    if ($pbx_extension) {
+        if ((!defined $ext_range_min || $pbx_extension >= $ext_range_min) && (!defined $ext_range_max || $pbx_extension <= $ext_range_max)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    return 1
 }
 
 1;

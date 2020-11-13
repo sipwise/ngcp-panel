@@ -2878,6 +2878,16 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $self->terminate($c);
             # we never return from here
         }
+        unless (NGCP::Panel::Utils::Subscriber::check_pbx_extension_range($subscriber->contract, $form->values->{pbx_extension})) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => "tried to input extension out of customer's extension range",
+                desc  => $c->loc("Subscriber's PBX extension is out of customer's extension range."),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c,
+                $c->uri_for_action('/customer/details', [$subscriber->contract->id])
+            );
+        }
         my $schema = $c->model('DB');
         try {
             $schema->set_transaction_isolation('READ COMMITTED');

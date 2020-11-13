@@ -808,6 +808,16 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        unless (NGCP::Panel::Utils::Subscriber::check_pbx_extension_range($c->stash->{contract}, $form->values->{pbx_extension})) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => "tried to input extension out of customer's extension range",
+                desc  => $c->loc("Subscriber's PBX extension is out of customer's extension range."),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c,
+                $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+            );
+        }
         my $billing_subscriber;
         try {
             my $schema = $c->model('DB');

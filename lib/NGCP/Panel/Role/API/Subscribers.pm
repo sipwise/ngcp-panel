@@ -85,6 +85,25 @@ sub resource_from_item {
     );
 
     if($customer->product->class eq 'pbxaccount') {
+        if ($resource{administrative} == 1) {
+            $resource{ext_range_min} = $customer->voip_contract_preferences->search(
+                {
+                    'attribute.attribute' => 'ext_range_min'
+                },
+                {
+                    join => 'attribute',
+                }
+            )->get_column('value')->first;
+
+            $resource{ext_range_max} = $customer->voip_contract_preferences->search(
+                {
+                    'attribute.attribute' => 'ext_range_max'
+                },
+                {
+                    join => 'attribute',
+                }
+            )->get_column('value')->first;
+        }
         $resource{pbx_group_ids} = [];
         foreach my $group($item->provisioning_voip_subscriber->voip_pbx_groups->search_rs(undef,{'order_by' => 'me.id'})->all) {
             push @{ $resource{pbx_group_ids} }, int($group->group->voip_subscriber->id);
