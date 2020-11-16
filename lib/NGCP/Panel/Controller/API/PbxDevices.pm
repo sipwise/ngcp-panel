@@ -35,7 +35,12 @@ sub query_params {
         {
             param => 'profile_id',
             description => 'Search for PBX devices with a specific autoprovisioning device profile',
-            query_type => 'string_eq',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.profile_id' => $q };
+                }
+            }
         },
         {
             param => 'identifier',
