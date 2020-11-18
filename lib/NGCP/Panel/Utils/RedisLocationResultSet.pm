@@ -93,11 +93,19 @@ sub find {
     } else {
         $entry{expires} = "1970-01-01 00:00:00";
     }
-    my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
-        join => { 'contract' => { 'contact' => 'reseller' } },
-        '+select' => ['reseller.id'],
-        '+as' => ['reseller_id']
-    })->first;
+    my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search(
+        {
+            '-or' => [
+                { 'me.username' => $entry{username} },
+                { 'voip_dbaliases.username' => $entry{username}, 'voip_dbaliases.is_devid' => 1 },
+            ],
+        },
+        {
+            join => [ { 'contract' => { 'contact' => 'reseller' } }, 'voip_dbaliases' ],
+            '+select' => ['reseller.id'],
+            '+as' => ['reseller_id']
+        }
+    )->first;
     return unless $subscribers_reseller;
     if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
         return;
@@ -114,19 +122,36 @@ sub search {
     unless ($new_rs->_query_done) {
         if ($filter->{id}) {
             push @{ $new_rs->_rows }, $new_rs->find($filter);
-        } elsif ($filter->{username} && $filter->{domain}) {
-            push @{ $new_rs->_rows },
-                @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
-                    lc($filter->{username}) . ":" . lc($filter->{domain}), $filter) };
+        } elsif ($filter->{username} && ref $filter->{username} eq 'ARRAY') {
+            foreach my $username (@{$filter->{username}}) {
+                if ($filter->{domain}) {
+                    push @{ $new_rs->_rows },
+                        @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
+                            lc($username) . ":" . lc($filter->{domain}), $filter) };
+                } else {
+                    push @{ $new_rs->_rows },
+                        @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
+                            lc($username), $filter) };
+                }
+            }
         } elsif ($filter->{username}) {
-            push @{ $new_rs->_rows },
-                @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
-                    lc($filter->{username}), $filter) };
+            if ($filter->{domain}) {
+                push @{ $new_rs->_rows },
+                    @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
+                        lc($filter->{username}) . ":" . lc($filter->{domain}), $filter) };
+            } else {
+                push @{ $new_rs->_rows },
+                    @{ $new_rs->_rows_from_mapkey($self->usrloc_path.":usrdom::" .
+                        lc($filter->{username}), $filter) };
+            }
         } else {
             $new_rs->_scan($filter, $opt);
         }
         $new_rs->_query_done(1);
     }
+    #domain and username already handled; if not deleted, would break filtering because of username duality (SCALAR and ARRAY)
+    delete $filter->{username};
+    delete $filter->{domain};
     $new_rs->_filter($filter);
     if ($opt->{order_by}) {
         my $sort_field;
@@ -176,11 +201,19 @@ sub _row_from_key {
     } else {
         $entry{expires} = "1970-01-01 00:00:00";
     }
-    my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search({username => $entry{username}}, {
-        join => { 'contract' => { 'contact' => 'reseller' } },
-        '+select' => ['reseller.id'],
-        '+as' => ['reseller_id']
-    })->first;
+    my $subscribers_reseller = $self->_c->model('DB')->resultset('provisioning_voip_subscribers')->search(
+        {
+            '-or' => [
+                { 'me.username' => $entry{username} },
+                { 'voip_dbaliases.username' => $entry{username}, 'voip_dbaliases.is_devid' => 1 },
+            ],
+        },
+        {
+            join => [ { 'contract' => { 'contact' => 'reseller' } }, 'voip_dbaliases' ],
+            '+select' => ['reseller.id'],
+            '+as' => ['reseller_id']
+        }
+    )->first;
     next unless $subscribers_reseller;
     if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
         return;

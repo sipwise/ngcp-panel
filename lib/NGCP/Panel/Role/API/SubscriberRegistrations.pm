@@ -25,8 +25,19 @@ sub _item_rs {
             $filter = {};
             if ($c->req->param('subscriber_id')) {
                 my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+                my $prov_subscriber = $sub->provisioning_voip_subscriber;
+                my @usernames = ($prov_subscriber->username);
+                my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
+                    {
+                        is_devid => 1,
+                        subscriber_id => $prov_subscriber->id
+                    }
+                );
+                foreach my $devid ($devid_aliases->all) {
+                    push @usernames, $devid->username;
+                }
                 if ($sub) {
-                    $filter->{username} = $sub->username;
+                    $filter->{username} = \@usernames;
                 }
                 if($c->config->{features}->{multidomain}) {
                     $filter->{domain} = $sub->domain->domain;
@@ -145,10 +156,18 @@ sub item_by_id {
 sub subscriber_from_item {
     my ($self, $c, $item) = @_;
 
-    my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
-        username => $item->username,
-        status => { '!=' => 'terminated' },
-    });
+    my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search(
+        {
+            '-or' => [
+                    'me.username' => $item->username,
+                    'voip_dbaliases.username' => $item->username,
+                ],
+            status => { '!=' => 'terminated' },
+        },
+        {
+            join => { 'provisioning_voip_subscriber' => 'voip_dbaliases' },
+        }
+    );
     if($c->config->{features}->{multidomain}) {
         my $domain = $c->config->{redis}->{usrloc} ? $item->domain : $item->domain->domain;
         $sub_rs = $sub_rs->search({
@@ -192,9 +211,21 @@ sub _item_by_aor {
 
     my $domain = $sub->provisioning_voip_subscriber->domain->domain;
 
+    my $prov_subscriber = $sub->provisioning_voip_subscriber;
+    my @usernames = ($prov_subscriber->username);
+    my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
+        {
+            is_devid => 1,
+            subscriber_id => $prov_subscriber->id
+        }
+    );
+    foreach my $devid ($devid_aliases->all) {
+        push @usernames, $devid->username;
+    }
+
     my $filter = {
         'me.contact'  => $contact,
-        'me.username' => $sub->provisioning_voip_subscriber->username,
+        'me.username' => \@usernames,
         $c->config->{redis}->{usrloc}
             ? ($c->config->{features}->{multidomain}
                 ? ('me.domain' => $domain)

@@ -4020,10 +4020,21 @@ sub ajax_call_details :Chained('master') :PathPart('calls/ajax') :Args(1) {
 sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
     my ($self, $c) = @_;
 
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my @usernames = ($prov_subscriber->username);
+    my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
+        {
+            is_devid => 1,
+            subscriber_id => $prov_subscriber->id
+        }
+    );
+    foreach my $devid ($devid_aliases->all) {
+        push @usernames, $devid->username;
+    }
     my $reg_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs(
         $c,
         {
-            username => $c->stash->{subscriber}->username,
+            username => \@usernames,
             $c->config->{features}->{multidomain} ? (domain => $c->stash->{subscriber}->domain->domain) : (),
         }
     );
