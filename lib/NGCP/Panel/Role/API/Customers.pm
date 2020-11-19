@@ -234,8 +234,8 @@ sub update_customer {
         $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
         $billing_profile = $billing_mapping->billing_profile;
 
-        if(($customer->external_id // '') ne $old_ext_id) {
-            foreach my $sub($customer->voip_subscribers->all) {
+        foreach my $sub ($customer->voip_subscribers->all) {
+            if(($customer->external_id // '') ne $old_ext_id) {
                 my $prov_sub = $sub->provisioning_voip_subscriber;
                 next unless($prov_sub);
                 NGCP::Panel::Utils::Subscriber::update_preferences(
@@ -243,6 +243,10 @@ sub update_customer {
                     prov_subscriber => $prov_sub,
                     preferences => { ext_contract_id => $customer->external_id }
                 );
+            }
+            if ($old_resource->{status} ne $resource->{status} && $resource->{status} eq 'terminated') {
+                next if $sub->status eq 'terminated';
+                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $sub);
             }
         }
 
