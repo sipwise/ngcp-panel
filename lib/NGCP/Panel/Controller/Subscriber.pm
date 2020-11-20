@@ -4331,9 +4331,9 @@ sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
     my $ret;
 
     try {
-        NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
-            $c->stash->{subscriber}->provisioning_voip_subscriber,
-            $c->stash->{registered}->contact);
+        my $reg = $c->stash->{registered} // die "No registration data";
+        my $aor = $reg->username . '@' . $reg->domain;
+        NGCP::Panel::Utils::Kamailio::delete_location_contact($c, $aor, $reg->contact);
     } catch($e) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
