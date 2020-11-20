@@ -6,9 +6,8 @@ use NGCP::Panel::Utils::DateTime;
 use Data::Dumper;
 
 sub delete_location_contact {
-    my ($c, $prov_subscriber, $contact) = @_;
+    my ($c, $aor, $contact) = @_;
 
-    my $aor = $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
     my $ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
@@ -24,9 +23,8 @@ EOF
 }
 
 sub delete_location {
-    my ($c, $prov_subscriber) = @_;
+    my ($c, $aor) = @_;
 
-    my $aor = $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
     my $ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
