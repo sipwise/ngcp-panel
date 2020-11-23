@@ -682,20 +682,6 @@ sub terminate :Chained('base_restricted') :PathPart('terminate') :Args(0) {
         my $old_status = $contract->status;
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
-
-            foreach my $subscriber ($contract->voip_subscribers->all) {
-                next if $subscriber->status eq 'terminated';
-                try {
-                    NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-                } catch($e) {
-                    NGCP::Panel::Utils::Message::error(
-                        c     => $c,
-                        error => $e,
-                        desc  => $c->loc('Failed to terminate subscriber'),
-                    );
-                }
-            }
-
             $contract->voip_contract_preferences->delete;
             $contract->update({
                 status => 'terminated',
