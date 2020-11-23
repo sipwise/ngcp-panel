@@ -1,3 +1,16 @@
+ngcp-panel (9.1.1.1+0~mr9.1.1.1) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [77df59b] TT#100954 Show device id registrations in panel UI and API
+  * [ea2952e] TT#100751 Remove all registrations when terminating subscriber
+
+  [ Kirill Solomko ]
+  * [2e3b62d] TT#101300 add susbcriber location mappings
+  * [0eb60d0] TT#102056 terminate subscriber on customer termination
+  * [a1cef52] TT#102056 fix registration entry removal
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 23 Nov 2020 12:20:38 +0100
+
 ngcp-panel (9.1.1.0+0~mr9.1.1.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
