@@ -35,9 +35,6 @@ sub pre_process_form_resource {
     if (!exists $resource->{is_devid} && defined $item->voip_dbalias) {
         $resource->{is_devid} = $item->voip_dbalias->is_devid;
     }
-    if (!exists $resource->{devid_alias} && defined $item->voip_dbalias) {
-        $resource->{devid_alias} = $item->voip_dbalias->devid_alias;
-    }
     return 1;
 }
 
@@ -109,15 +106,9 @@ sub update_item_model {
                     ();
                 } else {
                     # otherwise keep number
-                    if (!defined $_->voip_dbalias) {
-                        $c->log->debug("+++ no oldsub dbalias for sn " . $_->sn);
-                    } else {
-                        $c->log->debug("+++ oldsub dbalias for sn " . $_->sn . " is " . ($_->voip_dbalias->devid_alias//"undef"));
-                    }
                     { e164 => {
                             cc => $_->cc, ac => $_->ac, sn => $_->sn,
                             is_devid => (defined $_->voip_dbalias ? $_->voip_dbalias->is_devid : 0),
-                            devid_alias => (defined $_->voip_dbalias ? $_->voip_dbalias->devid_alias : undef),
                         }
                     };
                 }
@@ -142,16 +133,9 @@ sub update_item_model {
                     # filter number we're about to remove
                     ();
                 } else {
-                    # otherwise keep number
-                    if (!defined $_->voip_dbalias) {
-                        $c->log->debug("+++ no newsub dbalias for sn " . $_->sn);
-                    } else {
-                        $c->log->debug("+++ newsub dbalias for sn " . $_->sn . " is " . ($_->voip_dbalias->devid_alias//"undef"));
-                    }
                     { e164 => {
                             cc => $_->cc, ac => $_->ac, sn => $_->sn,
                             is_devid => (defined $_->voip_dbalias ? $_->voip_dbalias->is_devid : 0),
-                            devid_alias => (defined $_->voip_dbalias ? $_->voip_dbalias->devid_alias : undef),
                         }
                     };
                 }
@@ -162,7 +146,6 @@ sub update_item_model {
         push @{ $newalias }, { e164 => {
                 cc => $item->cc, ac => $item->ac, sn => $item->sn,
                 is_devid => $resource->{is_devid} // 0,
-                devid_alias => $resource->{devid_alias},
             }
         };
 

@@ -1503,9 +1503,6 @@ sub update_subscriber_numbers {
             if (exists $alias->{is_devid} && !exists $alias->{e164}->{is_devid}) {
                 $alias->{e164}->{is_devid} = delete $alias->{is_devid};
             }
-            if (exists $alias->{devid_alias} && !exists $alias->{e164}->{devid_alias}) {
-                $alias->{e164}->{devid_alias} = delete $alias->{devid_alias};
-            }
 
             my $dbalias = $prov_subs->voip_dbaliases->find({
                 username => $cli,
@@ -1514,7 +1511,6 @@ sub update_subscriber_numbers {
                 $dbalias->update({
                     is_primary => 0,
                     is_devid => $alias->{e164}->{is_devid} // 0,
-                    devid_alias => $alias->{e164}->{devid_alias},
                 });
             } else {
                 $dbalias = $prov_subs->voip_dbaliases->create({
@@ -1522,7 +1518,6 @@ sub update_subscriber_numbers {
                     domain_id => $prov_subs->domain->id,
                     is_primary => 0,
                     is_devid => $alias->{e164}->{is_devid} // 0,
-                    devid_alias => $alias->{e164}->{devid_alias},
                 });
             }
             if(defined $acli_pref) {
@@ -1921,7 +1916,6 @@ sub prepare_alias_select {
             e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn },
             $num->voip_dbalias ? (
                 is_devid => $num->voip_dbalias->is_devid,
-                devid_alias => $num->voip_dbalias->devid_alias,
             ) : (),
         };
         unless($unselect) {

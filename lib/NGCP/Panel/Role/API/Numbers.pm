@@ -44,8 +44,8 @@ sub _item_rs {
         'me.subscriber_id' => { '!=' => undef },
         'subscriber.status' => { '!=' => 'terminated' },
     },{
-        '+select' => [\'if(me.id=subscriber.primary_number_id,1,0)','voip_dbalias.is_devid','voip_dbalias.devid_alias'],
-        '+as' => ['is_primary','is_devid','devid_alias'],
+        '+select' => [\'if(me.id=subscriber.primary_number_id,1,0)','voip_dbalias.is_devid'],
+        '+as' => ['is_primary','is_devid'],
         join => ['subscriber', 'voip_dbalias'],
     });
     if($c->user->roles eq "admin") {
@@ -89,10 +89,8 @@ sub post_process_hal_resource {
     }
     if ($item->voip_dbalias) {
         $resource->{is_devid} = bool $item->voip_dbalias->is_devid;
-        $resource->{devid_alias} = $item->voip_dbalias->devid_alias;
     } else {
         $resource->{is_devid} = JSON::false;
-        $resource->{devid_alias} = undef;
     }
     return $resource;
 }
