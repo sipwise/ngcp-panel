@@ -1,3 +1,11 @@
+ngcp-panel (9.1.1.2+0~mr9.1.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [9747dd1] TT#101300 add subscriber location mappings filter by external id
+  * [4b4bd5f] TT#101300 remove devid_alias field
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Nov 2020 19:41:18 +0100
+
 ngcp-panel (9.1.1.1+0~mr9.1.1.1) unstable; urgency=medium
 
   [ Flaviu Mates ]
