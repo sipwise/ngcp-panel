@@ -44,9 +44,6 @@ override 'update_fields' => sub {
 
         my $set_id = $c->stash->{subscriber}->provisioning_voip_subscriber->profile_set_id;
         if($set_id) {
-            # don't show the profile set selection if we already have a profile set
-            $profile_set_field->inactive(1) if($profile_set_field);
-
             my $profile = $self->field('profile');
             if($profile) {
                 $profile->field('id')->ajax_src(
