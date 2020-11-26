@@ -1,3 +1,10 @@
+ngcp-panel (8.5.2.3+0~mr8.5.2.3) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [35a1217] TT#99500 Fix adding subscriber to group
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Nov 2020 19:00:39 +0100
+
 ngcp-panel (8.5.2.2+0~mr8.5.2.2) unstable; urgency=medium
 
   [ Victor Seva ]
