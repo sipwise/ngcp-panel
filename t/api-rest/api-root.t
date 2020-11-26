@@ -153,6 +153,7 @@ $ua = Test::Collection->new()->ua();
         soundhandles => 1,
         soundsets => 1,
         speeddials => 1,
+        subscriberlocationmappings => 1,
         subscriberpreferencedefs => 1,
         subscriberpreferences => 1,
         subscriberprofiles => 1,
