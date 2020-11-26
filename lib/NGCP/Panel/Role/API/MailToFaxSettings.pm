@@ -38,6 +38,11 @@ sub hal_from_item {
         };
     }
 
+    if ($mtf_preference->active == 0 && ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin')) {
+        $self->error($c, HTTP_FORBIDDEN, "Forbidden!");
+        return;
+    }
+
     my %resource = (
             $mtf_preference ? $mtf_preference->get_inflated_columns : (),
             subscriber_id => $item->id,
@@ -80,7 +85,7 @@ sub hal_from_item {
         resource => \%resource,
         run => 0,
     );
-
+    $self->post_process_hal_resource($c, $item, \%resource, $form);
     $hal->resource(\%resource);
     return $hal;
 }
@@ -99,6 +104,10 @@ sub _item_rs {
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => { 'contract' => 'contact' },
+        });
+    } elsif ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        $item_rs = $item_rs->search({
+            'provisioning_voip_subscriber.id' => $c->user->id,
         });
     }
 
@@ -128,6 +137,14 @@ sub update_item {
         resource => $resource,
         run => 1,
     );
+    if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        #subscriber's can't change the 'active' field
+        $resource->{active} = $prov_subs->voip_mail_to_fax_preference->active;
+        if ($prov_subs->voip_mail_to_fax_preference->active == 0) {
+            $self->error($c, HTTP_FORBIDDEN, "Forbidden!");
+            return;
+        }
+    }
 
     if (! exists $resource->{secret_renew_notify} ) {
         $resource->{secret_renew_notify} = [];
@@ -169,6 +186,12 @@ sub update_item {
     };
 
     return $item;
+}
+
+sub post_process_hal_resource {
+    my ($self, $c, $item, $resource, $form) = @_;
+    delete $resource->{active} if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin');
+    return $resource;
 }
 
 1;

@@ -37,8 +37,8 @@ sub journal_query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller ccareadmin ccare/],
-        Journal => [qw/admin reseller ccareadmin ccare/],
+        Default => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
+        Journal => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
     }
 });
 
@@ -50,6 +50,7 @@ sub GET :Allow {
         last unless $self->resource_exists($c, mailtofaxsettings => $subs);
 
         my $hal = $self->hal_from_item($c, $subs);
+        last unless $hal;
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -81,7 +82,9 @@ sub PATCH :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, mailtofaxsettings => $item);
-        my $old_resource = $self->hal_from_item($c, $item)->resource;
+        my $old_hal = $self->hal_from_item($c, $item);
+        last unless $old_hal;
+        my $old_resource = $old_hal->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
