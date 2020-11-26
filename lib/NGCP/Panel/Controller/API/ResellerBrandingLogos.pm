@@ -37,9 +37,8 @@ sub GET :Allow {
 
     my $branding = $item->first->branding;
 
-    unless($branding || $branding->logo) {
+    if(!$branding || !$branding->logo) {
         $self->error($c, HTTP_NOT_FOUND, "No branding logo available for this reseller");
-        return;
         return;
     }
     $c->response->content_type($branding->logo_image_type);
