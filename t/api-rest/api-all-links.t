@@ -52,6 +52,7 @@ $ua = Test::Collection->new()->ua();
         if (grep {$_ eq "GET"} @{ $opts->{methods} }) {
             # skip calllists collection, as it needs a subscriber_id parameter also in the collection
             next if $relname eq "calllists";
+            next if $relname eq "resellerbrandinglogos";
             next if $relname eq "conversations";
             next if $relname eq "phonebookentries";
             #my $uri = "$uri/api/$relname/";
