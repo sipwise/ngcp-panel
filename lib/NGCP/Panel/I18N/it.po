@@ -1409,6 +1409,7 @@ msgid "Callee"
 msgstr "Chiamato"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
+#: share/templates/subscriber/preferences.tt
 msgid "Callee Pattern"
 msgstr "Pattern Chiamato"
 
@@ -1435,6 +1436,7 @@ msgid "Caller"
 msgstr "Chiamante"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
+#: share/templates/subscriber/preferences.tt
 msgid "Caller Pattern"
 msgstr "Pattern Chiamante"
 
@@ -3118,6 +3120,10 @@ msgstr "Codice Esterno #"
 msgid "External Contract #"
 msgstr "Codice Esterno Contratto #"
 
+#: share/templates/subscriber/preferences.tt
+msgid "External ID"
+msgstr "ID Codice Esterno"
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External Subscriber #"
 msgstr "Codice Esterno Abbonato #"
@@ -3317,6 +3323,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to create invoice template"
 msgstr "Creazione del modello fattura fallita"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to create location mapping"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create location."
@@ -3559,6 +3569,10 @@ msgstr "Eliminazione della fattura fallita."
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to delete invoice template."
 msgstr "Eliminazione del modello di fattura fallita"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete location mapping."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "Failed to delete number block"
@@ -3977,6 +3991,10 @@ msgstr "Aggiornamento modello fattura fallito"
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to update location"
 msgstr "Aggiornamento localizzazione fallito"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update location mapping"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update mailtofax setting"
@@ -5553,6 +5571,18 @@ msgstr "Caricamento..."
 msgid "Location"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Location Mapping"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Location Mappings"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Location SIP-URI"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Location does not exist"
 msgstr "Localizzazione non esistente"
@@ -5834,6 +5864,10 @@ msgstr ""
 "gli abbonati."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Maximum value for subscriber extension number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Media Codec Transcoding Options"
 msgstr ""
 
@@ -5851,6 +5885,10 @@ msgid "Method"
 msgstr "Metodo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Minimum value for subscriber extension number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "MoH sendonly"
 msgstr "Musica di attesa sendonly"
 
@@ -5866,10 +5904,6 @@ msgstr "Timeout Scadenza Mobile Push"
 #: lib/NGCP/Panel/Controller/NCOS.pm share/templates/subscriber/preferences.tt
 msgid "Mode"
 msgstr "Modo"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Mode to handle SIP URI for looking up registration"
-msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
 msgid "Model"
@@ -7589,22 +7623,6 @@ msgid "SIP URI"
 msgstr "URI SIP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SIP URI for looking up registration"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"SIP URI of another subscriber (typically a SIP trunk) for looking up "
-"registration. If non-empty, the calls will be routed to registered location "
-"of specified user. Depending on the location_from_subscriber_mode "
-"preference, registration of current user will be ignored for incoming calls "
-"(\"replace\" mode) or registrations of both current user and specified URI "
-"will be combined (\"add\" mode). This feature can be combined with "
-"e164_to_ruri preference for SIP trunking, thus allowing to reach subscriber/"
-"extension behind the SIP trunk. A valid value must begin with sip:"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SIP User-Agent Filter List"
 msgstr ""
 
@@ -8170,6 +8188,20 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
+"Specifies the maximum value that can be assigned as extension to a "
+"subscriber. If left empty, only the minimum value will be considered. If "
+"both are empty, there is no extension range limit."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Specifies the minimum value that can be assigned as extension to a "
+"subscriber. If left empty, only the maximum value will be considered. If "
+"both are empty, there is no extension range limit."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
 "Specifies the operational mode of the Call Forward on Response. If set to "
 "Whitelist (default) the CFR is executed only for reply codes included in the "
 "'rerouting_codes' list, if set to Blacklist the CFR is executed except for "
@@ -8422,6 +8454,11 @@ msgstr "Abbonato creato con successo"
 msgid "Subscriber using Provisioning Template '%1'"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Customer.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Subscriber's PBX extension is out of customer's extension range."
+msgstr ""
+
 #: share/templates/customer/details.tt share/templates/subscriber/list.tt
 #: share/templates/widgets/admin_reseller_overview.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -8479,6 +8516,10 @@ msgid "Successfully created device profile"
 msgstr "Profilo dispositivo creato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully created location mapping"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully created new destination set"
 msgstr "Set di destinazioni creato con successo"
 
@@ -8521,6 +8562,10 @@ msgstr "ccmapping eliminato con successo"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted destination set"
 msgstr "Set di destinazioni eliminato con successo"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted location mapping"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted recording"
@@ -8630,6 +8675,10 @@ msgstr "Profilo dispositivo aggiornato con successo"
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated fax setting"
 msgstr "Configurazione fax aggiornata con successo"
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully updated location mapping"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated mailtofax setting"
@@ -9013,16 +9062,6 @@ msgstr "I membri (come URI SIP) del gruppo di chiamata PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
-"The mode how to handle SIP URI of another subscriber (typically a SIP trunk) "
-"for looking up registration. In \"add\" mode, the registrations of the SIP "
-"URI specified in location_from_subscriber preference will be added in "
-"addtion to the registrations of the current subscriber. In \"replace\" mode, "
-"the registrations of the current subscriber will be ignored and be replaced "
-"by the registrations of the SIP URI specified in the preference"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
 "The network-provided display name used for XMPP contacts and optionally SIP "
 "outbound header manipulation."
 msgstr ""
@@ -9163,6 +9202,10 @@ msgstr "A"
 
 #: share/templates/subscriber/preferences.tt
 msgid "To (B-Numbers)"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "To Username"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -11076,9 +11119,6 @@ msgstr "si"
 
 #~ msgid "Extension unit"
 #~ msgstr "Unità estensione"
-
-#~ msgid "External ID"
-#~ msgstr "ID Codice Esterno"
 
 #~ msgid "External ID of calling subscriber, if local."
 #~ msgstr "ID Codice Esterno dell´abbonato chiamante, se locale."

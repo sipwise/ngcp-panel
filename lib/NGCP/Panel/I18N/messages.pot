@@ -1108,7 +1108,7 @@ msgstr ""
 msgid "Callee"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm share/templates/subscriber/preferences.tt
 msgid "Callee Pattern"
 msgstr ""
 
@@ -1132,7 +1132,7 @@ msgstr ""
 msgid "Caller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm
+#: lib/NGCP/Panel/Controller/Peering.pm share/templates/subscriber/preferences.tt
 msgid "Caller Pattern"
 msgstr ""
 
@@ -1508,7 +1508,7 @@ msgstr ""
 msgid "Country Code"
 msgstr ""
 
-#: share/templates/billing/zones.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
+#: share/templates/billing/zones.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
 msgid "Create"
 msgstr ""
 
@@ -1899,7 +1899,7 @@ msgstr ""
 msgid "Defines whether this subscriber or domain is handled in an IMS application server context, so no direct registrations and calls are possible, but are signalled via an IMS S-CSCF instead"
 msgstr ""
 
-#: share/templates/administrator/list.tt share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt share/templates/billing/peaktimes.tt share/templates/billing/zones.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/header/actions_list.tt share/templates/header/conditions_list.tt share/templates/header/rules_list.tt share/templates/header/set_list.tt share/templates/helpers/datatables.tt share/templates/helpers/pref_table.tt share/templates/invoice/invoice_list.tt share/templates/invoice/template_list.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/maliciouscall/list.tt share/templates/ncos/list.tt share/templates/ncos/lnp_pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peeringoverview/list.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/header_rule_actions_list.tt share/templates/subscriber/header_rule_conditions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/recording.tt share/templates/subscriber/voicemail.tt share/templates/timeset/event_list.tt share/templates/timeset/list.tt share/templates/voucher/list.tt
+#: share/templates/administrator/list.tt share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt share/templates/billing/peaktimes.tt share/templates/billing/zones.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/header/actions_list.tt share/templates/header/conditions_list.tt share/templates/header/rules_list.tt share/templates/header/set_list.tt share/templates/helpers/datatables.tt share/templates/helpers/pref_table.tt share/templates/invoice/invoice_list.tt share/templates/invoice/template_list.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/maliciouscall/list.tt share/templates/ncos/list.tt share/templates/ncos/lnp_pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peeringoverview/list.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/header_rule_actions_list.tt share/templates/subscriber/header_rule_conditions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/recording.tt share/templates/subscriber/voicemail.tt share/templates/timeset/event_list.tt share/templates/timeset/list.tt share/templates/voucher/list.tt
 msgid "Delete"
 msgstr ""
 
@@ -2217,7 +2217,7 @@ msgstr ""
 msgid "ECM"
 msgstr ""
 
-#: share/templates/administrator/list.tt share/templates/administrator/list.tt share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt share/templates/billing/list.tt share/templates/billing/peaktimes.tt share/templates/billing/peaktimes.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/contract/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/header/actions_list.tt share/templates/header/conditions_list.tt share/templates/header/rules_list.tt share/templates/header/set_list.tt share/templates/helpers/pref_table.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/ncos/list.tt share/templates/ncos/lnp_pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/network/list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/list.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/header_rule_actions_list.tt share/templates/subscriber/header_rule_conditions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/timeset/event_list.tt share/templates/timeset/list.tt share/templates/voucher/list.tt
+#: share/templates/administrator/list.tt share/templates/administrator/list.tt share/templates/batchprovisioning/list.tt share/templates/billing/fees.tt share/templates/billing/list.tt share/templates/billing/peaktimes.tt share/templates/billing/peaktimes.tt share/templates/calllistsuppression/list.tt share/templates/contact/list.tt share/templates/contract/list.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/emailtemplate/list.tt share/templates/emergencymapping/list.tt share/templates/emergencymapping/list.tt share/templates/header/actions_list.tt share/templates/header/conditions_list.tt share/templates/header/rules_list.tt share/templates/header/set_list.tt share/templates/helpers/pref_table.tt share/templates/lnp/list.tt share/templates/lnp/list.tt share/templates/ncos/list.tt share/templates/ncos/lnp_pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/ncos/pattern_list.tt share/templates/network/list.tt share/templates/numberblock/block_list.tt share/templates/numberblock/profile_list.tt share/templates/numberblock/profile_list.tt share/templates/package/list.tt share/templates/peering/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/list.tt share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/set_list.tt share/templates/subscriber/header_rule_actions_list.tt share/templates/subscriber/header_rule_conditions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/master.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/timeset/event_list.tt share/templates/timeset/list.tt share/templates/voucher/list.tt
 msgid "Edit"
 msgstr ""
 
@@ -2446,7 +2446,7 @@ msgstr ""
 msgid "Enable the Vertical Service Code to redial latest dialed number for this subscriber/domain."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
 msgid "Enabled"
 msgstr ""
 
@@ -2544,6 +2544,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External Contract #"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "External ID"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2744,6 +2748,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to create invoice template"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to create location mapping"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -2985,6 +2993,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Failed to delete invoice template."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to delete location mapping."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
@@ -3400,6 +3412,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to update location"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to update location mapping"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -4818,6 +4834,18 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Location Mapping"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Location Mappings"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "Location SIP-URI"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Location does not exist"
 msgstr ""
@@ -5050,6 +5078,10 @@ msgid "Maximum total number of overall (incoming and outgoing) concurrent calls 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Maximum value for subscriber extension number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Media Codec Transcoding Options"
 msgstr ""
 
@@ -5066,6 +5098,10 @@ msgid "Method"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Minimum value for subscriber extension number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "MoH sendonly"
 msgstr ""
 
@@ -5077,12 +5113,8 @@ msgstr ""
 msgid "Mobile Push Expiry Timeout"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/NCOS.pm share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/NCOS.pm share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
 msgid "Mode"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Mode to handle SIP URI for looking up registration"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -6655,14 +6687,6 @@ msgid "SIP URI"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SIP URI for looking up registration"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SIP URI of another subscriber (typically a SIP trunk) for looking up registration. If non-empty, the calls will be routed to registered location of specified user. Depending on the location_from_subscriber_mode preference, registration of current user will be ignored for incoming calls (\"replace\" mode) or registrations of both current user and specified URI will be combined (\"add\" mode). This feature can be combined with e164_to_ruri preference for SIP trunking, thus allowing to reach subscriber/extension behind the SIP trunk. A valid value must begin with sip:"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SIP User-Agent Filter List"
 msgstr ""
 
@@ -7089,6 +7113,14 @@ msgid "Specifies the list of caller and callee rewrite rules which should be app
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specifies the maximum value that can be assigned as extension to a subscriber. If left empty, only the minimum value will be considered. If both are empty, there is no extension range limit."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specifies the minimum value that can be assigned as extension to a subscriber. If left empty, only the maximum value will be considered. If both are empty, there is no extension range limit."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the operational mode of the Call Forward on Response. If set to Whitelist (default) the CFR is executed only for reply codes included in the 'rerouting_codes' list, if set to Blacklist the CFR is executed except for reply codes included in the list."
 msgstr ""
 
@@ -7283,6 +7315,10 @@ msgstr ""
 msgid "Subscriber using Provisioning Template '%1'"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Subscriber's PBX extension is out of customer's extension range."
+msgstr ""
+
 #: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/subscriber/list.tt share/templates/widgets/admin_reseller_overview.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccare_customer_overview.tt share/templates/widgets/ccare_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_customer_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Subscribers"
 msgstr ""
@@ -7333,6 +7369,10 @@ msgid "Successfully created device profile"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully created location mapping"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully created new destination set"
 msgstr ""
 
@@ -7374,6 +7414,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted destination set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully deleted location mapping"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -7479,6 +7523,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated fax setting"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Successfully updated location mapping"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
@@ -7762,10 +7810,6 @@ msgid "The members (as SIP URIs) of the PBX hunt group."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The mode how to handle SIP URI of another subscriber (typically a SIP trunk) for looking up registration. In \"add\" mode, the registrations of the SIP URI specified in location_from_subscriber preference will be added in addtion to the registrations of the current subscriber. In \"replace\" mode, the registrations of the current subscriber will be ignored and be replaced by the registrations of the SIP URI specified in the preference"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The network-provided display name used for XMPP contacts and optionally SIP outbound header manipulation."
 msgstr ""
 
@@ -7885,6 +7929,10 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "To (B-Numbers)"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "To Username"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
@@ -8023,7 +8071,7 @@ msgstr ""
 msgid "Trusted Sources"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Trusted source entry not found"
 msgstr ""
 
