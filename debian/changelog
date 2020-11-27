@@ -1,3 +1,10 @@
+ngcp-panel (9.1.1.5+0~mr9.1.1.5) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [1863fa5] TT#103400 Change uri validation to be in accordance with RFC        in the Call Routing Verification form
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 27 Nov 2020 16:37:51 +0100
+
 ngcp-panel (9.1.1.4+0~mr9.1.1.4) unstable; urgency=medium
 
   [ Flaviu Mates ]
