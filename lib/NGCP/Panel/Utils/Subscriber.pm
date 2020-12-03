@@ -2438,12 +2438,14 @@ sub delete_callrecording {
 
     foreach my $stream($recording->recording_streams->all) {
         #if we met some error deleting file - we will fail and transaction will be rollbacked
-        if (! -e $stream->full_filename) {
-            if ( !$force_delete ) {
-                die("Callrecording file ".$stream->full_filename." is absent");
-            }
-        } elsif( !unlink($stream->full_filename) && !$force_delete ) {
-            die($!);
+        if (! -e $stream->full_filename && !$force_delete) {
+            die "Callrecording file ".$stream->full_filename." is absent";
+        }
+        eval {
+            unlink $stream->full_filename;
+        };
+        if ($@ && !$force_delete) {
+            die("Cannot delete call recording file: $@");
         }
     }
     $recording->recording_streams->delete;
