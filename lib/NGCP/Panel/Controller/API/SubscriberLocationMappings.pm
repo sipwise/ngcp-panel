@@ -22,7 +22,15 @@ sub query_params {
         {
             param => 'subscriber_id',
             description => 'Filter for location mappings of a specific subscriber',
-            query_type => 'string_eq',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'voip_subscriber.id' => $q };
+                },
+                second => sub {
+                    return { join => { subscriber => 'voip_subscriber' } };
+                },
+            },
         },
         {
             param => 'external_id',
