@@ -16,6 +16,12 @@ has_field 'secret_key' => (
     required => 0,
 );
 
+has_field 'last_secret_key_modify' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    label => 'The datetime (YYYY-MM-DD HH:mm:ss) of the secret key modification.',
+    required => 0,
+);
+
 has_field 'secret_key_renew' => (
     type => 'Select',
     options => [

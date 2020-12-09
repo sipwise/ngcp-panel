@@ -8,6 +8,7 @@ use parent 'NGCP::Panel::Role::API';
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
+use DateTime::Format::ISO8601;
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
@@ -161,6 +162,15 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'acl'. Must be an array.");
         return;
     }
+    if ($resource->{secret_key} && (!$old_resource->{secret_key} || $old_resource->{secret_key} ne $resource->{secret_key})) {
+        $resource->{last_secret_key_modify} = NGCP::Panel::Utils::DateTime::current_local;
+    } elsif ($resource->{last_secret_key_modify} && ($old_resource->{last_secret_key_modify} ne $resource->{last_secret_key_modify})) {
+        #forbid changing modify time
+        $resource->{last_secret_key_modify} = $old_resource->{last_secret_key_modify};
+    } elsif (!$resource->{last_secret_key_modify}) {
+        #delete last_secret_key_modify to prevent automatic conversion to current time when inserting into DB
+        delete $resource->{last_secret_key_modify};
+    }
 
     my %update_fields = %{ $resource };
     delete $update_fields{secret_renew_notify};
@@ -191,6 +201,10 @@ sub update_item {
 sub post_process_hal_resource {
     my ($self, $c, $item, $resource, $form) = @_;
     delete $resource->{active} if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin');
+    my $dtf = $c->model('DB')->storage->datetime_parser;
+    $resource->{last_secret_key_modify} = defined $resource->{last_secret_key_modify} ?
+                                    $dtf->format_datetime(DateTime::Format::ISO8601->parse_datetime($resource->{last_secret_key_modify})):
+                                    undef;
     return $resource;
 }
 
