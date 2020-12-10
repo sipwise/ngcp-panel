@@ -1,3 +1,10 @@
+ngcp-panel (8.4.2.3+0~mr8.4.2.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [383a563] TT#95252 fix callist error with clir_scope & terminated subs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Dec 2020 17:32:18 +0100
+
 ngcp-panel (8.4.2.2+0~mr8.4.2.2) unstable; urgency=medium
 
   [ Rene Krenn ]
