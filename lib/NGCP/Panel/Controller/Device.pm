@@ -1187,6 +1187,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         return;
     }
 
+    my $filename = $id;
     $id =~ s/\.(cfg|ini|xml)$//;
     $id =~ s/^config\.//;
 
@@ -1277,6 +1278,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             url => "$schema://$host:$config_port/device/autoprov/config/$id",
             baseurl => "$schema://$host:$config_port/device/autoprov/config/",
             mac => $id,
+            filename => $filename,
         },
         firmware => {
         },
