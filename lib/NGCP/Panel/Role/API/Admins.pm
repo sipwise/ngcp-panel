@@ -140,6 +140,12 @@ sub update_item {
         resource => $resource,
     );
 
+    if($item->id == $c->user->id) {
+        # don't allow to take away own master rights/write permission, otherwise he'll not be
+        # able to manage any more admins
+        delete $resource->{$_} for qw(is_master is_active read_only);
+    }
+
     my $pass = $resource->{password};
     delete $resource->{password};
     if(defined $pass && $pass ne $old_resource->{saltedpass}) {
