@@ -11,6 +11,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
+use POSIX qw(ceil);
 use NGCP::Panel::Form;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
@@ -19,6 +20,7 @@ use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract qw();
 use NGCP::Panel::Utils::Encryption qw();
+use NGCP::Panel::Utils::Auth qw();
 
 sub resource_name{
     return 'subscribers';
@@ -73,6 +75,11 @@ sub resource_from_item {
     } else {
         $resource{email} = undef;
         $resource{timezone} = undef;
+    }
+    if (length($resource{webpassword})
+        and $resource{webpassword} =~ /^([^\$]+)\$([^\$]+)$/
+        and length($1) == ceil(4 * (($NGCP::Panel::Utils::Auth::SALT_LENGTH / 8) / 3))) {
+        delete $resource{webpassword};
     }
     if(!$form){
         ($form) = $self->get_form($c);
