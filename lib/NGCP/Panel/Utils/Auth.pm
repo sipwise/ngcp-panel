@@ -8,6 +8,7 @@ use IPC::System::Simple qw/capturex/;
 use Redis;
 use UUID;
 
+our $SALT_LENGTH = 128;
 
 sub get_special_admin_login {
     return 'sipwise';
@@ -20,7 +21,7 @@ sub get_bcrypt_cost {
 sub generate_salted_hash {
     my $pass = shift;
 
-    my $salt = rand_bits(128);
+    my $salt = rand_bits($SALT_LENGTH);
     my $b64salt = en_base64($salt);
     my $b64hash = en_base64(bcrypt_hash({
         key_nul => 1,
@@ -131,7 +132,7 @@ sub perform_subscriber_auth {
                 }, $pass));
                 if ($db_b64hash eq $usr_b64hash) {
                     #upgrade password to bigger cost
-                    $salt = rand_bits(128);
+                    $salt = rand_bits($SALT_LENGTH);
                     my $b64salt = en_base64($salt);
                     my $b64hash = en_base64(bcrypt_hash({
                         key_nul => 1,
