@@ -1,3 +1,22 @@
+ngcp-panel (6.5.12.0+0~mr6.5.12.0) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [45b854b] TT#47268 Use order_by_cols to avoid item_rs call for api doc gen
+
+  [ Kirill Solomko ]
+  * [bdc4a76] TT#64017 API/SubscriberRegistrations Redis multidomain search
+
+  [ Flaviu Mates ]
+  * [5368221] TT#69405 - Allow reseller to view subscriberregistrations
+
+  [ Rene Krenn ]
+  * [4d49178] TT#78153 fix _item_by_aor for redis
+  * [3f98357] TT#78153 fix redis location resultset filtering
+  * [8c43951] TT#98650 speedup redis locaction search by id
+  * [9bc32cd] TT#98650 ?suppress_flush=1 parameter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Dec 2020 14:49:07 +0100
+
 ngcp-panel (6.5.11.0+0~mr6.5.11.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
