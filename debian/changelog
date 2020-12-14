@@ -1,3 +1,10 @@
+ngcp-panel (9.1.1.8+0~mr9.1.1.8) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [acc1388] TT#102054 Add original filename param to device configuration template
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Dec 2020 19:07:24 +0100
+
 ngcp-panel (9.1.1.7+0~mr9.1.1.7) unstable; urgency=medium
 
   [ Kirill Solomko ]
