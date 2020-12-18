@@ -1,3 +1,10 @@
+ngcp-panel (9.1.1.10+0~mr9.1.1.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [8d4ab28] TT#106003 fix /api/peeringrules transaction control
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 18 Dec 2020 17:37:42 +0100
+
 ngcp-panel (9.1.1.9+0~mr9.1.1.9) unstable; urgency=medium
 
   [ Flaviu Mates ]
