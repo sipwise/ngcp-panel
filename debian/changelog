@@ -1,3 +1,10 @@
+ngcp-panel (8.5.2.4+0~mr8.5.2.4) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [5d64219] TT#104760 Fix non-master admin privileges managing in API
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Dec 2020 10:44:14 +0100
+
 ngcp-panel (8.5.2.3+0~mr8.5.2.3) unstable; urgency=medium
 
   [ Flaviu Mates ]
