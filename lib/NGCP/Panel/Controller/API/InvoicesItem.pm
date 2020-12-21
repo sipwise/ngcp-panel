@@ -7,6 +7,10 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Invoices/;
 
 __PACKAGE__->set_config({
     log_response => 0,
+    GET => {
+        #first element of array is default, if no accept header was received.
+        'ReturnContentType' => [ 'application/pdf', 'application/json' ],
+    },
 });
 
 sub allowed_methods{
