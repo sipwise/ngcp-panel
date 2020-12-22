@@ -1,3 +1,10 @@
+ngcp-panel (6.5.11.2+0~mr6.5.11.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9a4ff3b] TT#105954 /api/invoices: accept 'application/pdf' type
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 22 Dec 2020 11:16:55 +0100
+
 ngcp-panel (6.5.11.1+0~mr6.5.11.1) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
