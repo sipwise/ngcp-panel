@@ -38,7 +38,7 @@ sub relation{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller/],
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
 });
 
 sub POST :Allow {
@@ -75,6 +75,11 @@ sub POST :Allow {
             $c->log->error("invalid subscriber id $$resource{subscriber_id} for outbound call");
             $self->error($c, HTTP_NOT_FOUND, "Calling subscriber not found.");
             last;
+        }
+        if (($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") && $subscriber->provisioning_voip_subscriber->id != $c->user->id) {
+            $c->log->error("Insuficient permissions to apply rewrites for subscriber id $$resource{subscriber_id}");
+            $self->error($c, HTTP_FORBIDDEN, "Insuficient permissions.");
+            return;
         }
 
         my @result;
