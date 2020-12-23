@@ -1,3 +1,10 @@
+ngcp-panel (6.5.11.3+0~mr6.5.11.3) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [164eb01] TT#59164 Field::URI allow "\\" char in sip-username
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 23 Dec 2020 19:47:10 +0100
+
 ngcp-panel (6.5.11.2+0~mr6.5.11.2) unstable; urgency=medium
 
   [ Rene Krenn ]
