@@ -1,3 +1,51 @@
+ngcp-panel (9.2.1.0+0~mr9.2.1.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [ed6986d] TT#101101 Notify parent window about current path
+  * [c45eb99] TT#101103 Notify module in v2 about an error from v1
+
+  [ Flaviu Mates ]
+  * [8450bf3] TT#100751 Remove all registrations when terminating subscriber
+  * [815baf1] TT#100954 Show device id registrations in panel UI and API
+  * [c50153b] TT#99561 Introduce extension range preference for Customers
+  * [ded942b] TT#96502 Introduce duplicate check for /api/cfsourcesets
+  * [8c1e7e2] TT#101300 Fix tests after adding /api/subscriberlocationmappings endpoint
+  * [e03533c] TT#101100 Fix /api/pbxdevices 500 error introduced with TT#96803
+  * [c0638b5] TT#103400 Change uri validation to be in accordance with RFC        in the Call Routing Verification form
+  * [733f4ac] TT#101108 Expose panel branding logo via API
+  * [83a084f] TT#101108 Fix api test after adding /api/panelbrandinglogos
+  * [c8049ea] TT#101108 - Fix condition when reseller has no logo
+  * [9249dee] TT#99500 Fix adding subscriber to group
+  * [551c8b3] TT#103401 Allow subscriber access to /api/mailtofaxsettings/{id}
+  * [233be55] TT#104174 Add last_secret_key_modify readonly field on /api/mailtofaxsettings
+  * [52cbca5] TT#102054 Add original filename param to device configuration template
+  * [b79d68e] TT#104760 Fix non-master admin privileges managing in API
+
+  [ Kirill Solomko ]
+  * [50d985c] TT#101300 add susbcriber location mappings
+  * [ce7b9e8] TT#102056 terminate subscriber on customer termination
+  * [59a1ba2] TT#102056 fix registration entry removal
+  * [822d3fe] Revert "TT#102056 terminate subscriber on customer termination"
+  * [1885af6] TT#101300 add subscriber location mappings filter by external id
+  * [96ce7b1] TT#101300 remove devid_alias field
+  * [6175625] TT#104150 fix /api/callrecordings deletion
+  * [3531622] TT#101300 /api/subscriberlocationmappings fix search by subscriber_id
+  * [88d91b8] TT#106003 fix /api/peeringrules transaction control
+
+  [ Rene Krenn ]
+  * [c2b5602] TT#103450 enable lintercept role for interceptions PUT/DELETE
+  * [8238204] TT#105100 fix update case for webpasswd db encrytion
+  * [be92558] TT#105954 /api/invoices: accept 'application/pdf' type
+
+  [ Sipwise Jenkins Builder ]
+  * [f71cdda] TT#4166 I18N dump: snapshot 2020.11.27-01.21.02
+
+  [ Richard Fuchs ]
+  * [fd3e56e] TT#82405 hide menu for statistics if grafana is disabled
+  * [a6254b9] TT#82405 add link to RTP stats
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Jan 2021 15:32:06 +0100
+
 ngcp-panel (9.2.0.0+0~mr9.2.0.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
