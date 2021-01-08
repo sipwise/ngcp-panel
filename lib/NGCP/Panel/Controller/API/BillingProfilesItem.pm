@@ -78,6 +78,7 @@ sub PATCH :Allow {
             c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
+            ops => ["add", "replace", "copy", "remove"],
         );
         last unless $json;
 
@@ -85,8 +86,7 @@ sub PATCH :Allow {
         my $profile = $self->profile_by_id($c, $id);
         last unless $self->resource_exists($c, billingprofile => $profile);
         my $old_resource = $self->resource_from_item($c, $profile, $form);
-        $old_resource = clone($old_resource);
-        my $resource = $self->apply_patch($c, $old_resource, $json);
+        my $resource = $self->apply_patch($c, clone($old_resource), $json);
         last unless $resource;
 
         $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
