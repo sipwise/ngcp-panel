@@ -3038,6 +3038,12 @@ msgstr ""
 "final le supporte."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Enable detection of silence in received RTP audio and transcode to CN "
+"(comfort noise) RTP packets if supported by the peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable last number redial VSC"
 msgstr ""
 
@@ -4460,6 +4466,10 @@ msgstr "Paramètre général 8"
 msgid "General Purpose Parameter 9"
 msgstr "Paramètre général 9"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Generate RTCP"
+msgstr ""
+
 #: share/templates/calllistsuppression/list.tt
 msgid "Global Call List Suppressions"
 msgstr "Liste globale de filtrage d'appels"
@@ -5649,6 +5659,13 @@ msgstr "Charge les fichiers par défaut"
 #: share/templates/helpers/datatables.tt
 msgid "Loading..."
 msgstr "Chargement..."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Locally track RTP statistics for each media stream and generate RTCP reports "
+"to send to the peers, instead of just passing through RTCP reports sent by "
+"the peers."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Location"
@@ -7103,6 +7120,10 @@ msgstr ""
 msgid "RTC"
 msgstr "RTC"
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "RTP Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "RTP interface"
 msgstr "Interface RTP"
@@ -7529,6 +7550,10 @@ msgstr "Réinitialiser le mot de passe"
 #: share/templates/subscriber/recoverpassword.tt
 msgid "Reset Web Password"
 msgstr "Réinitialiser le mot de passe Web"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Restrict ICE support to ICE-lite"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict every answer to just the first preferred codec."
@@ -9438,6 +9463,10 @@ msgstr "Transcoder en Speex 32 kHz"
 msgid "Transcode to Speex 8 kHz"
 msgstr "Transcoder en Speex 8 kHz"
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to comfort noise payload"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
 msgstr "Le transcodage de fichier audio a échoué"
@@ -9848,6 +9877,12 @@ msgstr "Jours de la semaine"
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
 msgid "Weight"
 msgstr "Poids"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When ICE support is enabled towards this peer, act as an ICE agent that "
+"supports only ICE-lite instead of full ICE."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""

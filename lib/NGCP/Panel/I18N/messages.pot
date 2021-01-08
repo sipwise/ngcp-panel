@@ -2439,6 +2439,10 @@ msgid "Enable T38 Fax-over-IP via auto-provisioning if the end device supports i
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable detection of silence in received RTP audio and transcode to CN (comfort noise) RTP packets if supported by the peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable last number redial VSC"
 msgstr ""
 
@@ -3787,6 +3791,10 @@ msgstr ""
 msgid "General Purpose Parameter 9"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Generate RTCP"
+msgstr ""
+
 #: share/templates/calllistsuppression/list.tt
 msgid "Global Call List Suppressions"
 msgstr ""
@@ -4828,6 +4836,10 @@ msgstr ""
 
 #: share/templates/helpers/datatables.tt
 msgid "Loading..."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Locally track RTP statistics for each media stream and generate RTCP reports to send to the peers, instead of just passing through RTCP reports sent by the peers."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -6150,6 +6162,10 @@ msgstr ""
 msgid "RTC"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "RTP Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "RTP interface"
 msgstr ""
@@ -6526,6 +6542,10 @@ msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt share/templates/subscriber/recoverpassword.tt
 msgid "Reset Web Password"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Restrict ICE support to ICE-lite"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8051,6 +8071,10 @@ msgstr ""
 msgid "Transcode to Speex 8 kHz"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to comfort noise payload"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
 msgstr ""
@@ -8404,6 +8428,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/PeeringOverview.pm
 msgid "Weight"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "When ICE support is enabled towards this peer, act as an ICE agent that supports only ICE-lite instead of full ICE."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

@@ -2925,6 +2925,12 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Enable detection of silence in received RTP audio and transcode to CN "
+"(comfort noise) RTP packets if supported by the peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable last number redial VSC"
 msgstr ""
 
@@ -4318,6 +4324,10 @@ msgstr ""
 msgid "General Purpose Parameter 9"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Generate RTCP"
+msgstr ""
+
 #: share/templates/calllistsuppression/list.tt
 msgid "Global Call List Suppressions"
 msgstr ""
@@ -5459,6 +5469,13 @@ msgstr ""
 #: share/templates/helpers/datatables.tt
 msgid "Loading..."
 msgstr "Загрузка..."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"Locally track RTP statistics for each media stream and generate RTCP reports "
+"to send to the peers, instead of just passing through RTCP reports sent by "
+"the peers."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Location"
@@ -6888,6 +6905,10 @@ msgstr ""
 msgid "RTC"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "RTP Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "RTP interface"
 msgstr ""
@@ -7298,6 +7319,10 @@ msgstr "Сброс пароля"
 #: share/templates/subscriber/recoverpassword.tt
 msgid "Reset Web Password"
 msgstr "Сброс Web пароля"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Restrict ICE support to ICE-lite"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict every answer to just the first preferred codec."
@@ -9160,6 +9185,10 @@ msgstr ""
 msgid "Transcode to Speex 8 kHz"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to comfort noise payload"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
 msgstr "Ошибка преобразования аудио файла"
@@ -9556,6 +9585,12 @@ msgstr "По будням"
 #: lib/NGCP/Panel/Controller/PeeringOverview.pm
 msgid "Weight"
 msgstr "Вес"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"When ICE support is enabled towards this peer, act as an ICE agent that "
+"supports only ICE-lite instead of full ICE."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
