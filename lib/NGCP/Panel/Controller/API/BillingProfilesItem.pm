@@ -5,6 +5,7 @@ use Sipwise::Base;
 
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use Clone qw/clone/;
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Billing qw /check_profile_update_item/;
@@ -49,7 +50,8 @@ sub GET :Allow {
         my $profile = $self->profile_by_id($c, $id);
         last unless $self->resource_exists($c, billingprofile => $profile);
 
-        my $hal = $self->hal_from_profile($c, $profile);
+        my $form = $self->get_form($c);
+        my $hal = $self->hal_from_item($c, $profile, $self->resource_from_item($c, $profile, $form));
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -85,17 +87,19 @@ sub PATCH :Allow {
             last;
         }
 
+        my $form = $self->get_form($c);
         my $profile = $self->profile_by_id($c, $id);
         last unless $self->resource_exists($c, billingprofile => $profile);
-        my $old_resource = { $profile->get_inflated_columns };
+        my $old_resource = $self->resource_from_item($c, $profile, $form);
+        $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = $self->get_form($c);
         $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
         last unless $profile;
 
-        my $hal = $self->hal_from_profile($c, $profile, $form);
+        $resource = $self->resource_from_item($c, $profile, $form);
+        my $hal = $self->hal_from_item($c, $profile, $resource, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -126,13 +130,15 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $profile->get_inflated_columns };
-
+        
         my $form = $self->get_form($c);
+        my $old_resource = $self->resource_from_item($c, $profile, $form);
+
         $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
         last unless $profile;
 
-        my $hal = $self->hal_from_profile($c, $profile, $form);
+        $resource = $self->resource_from_item($c, $profile, $form);
+        my $hal = $self->hal_from_item($c, $profile, $resource, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;

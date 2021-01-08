@@ -75,7 +75,7 @@ sub GET :Allow {
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $profile (@$profiles_rows) {
-            push @embedded, $self->hal_from_profile($c, $profile, $form);
+            push @embedded, $self->hal_from_item($c, $profile, $self->resource_from_item($c, $profile, $form), $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%d', $c->request->path, $profile->id),
@@ -164,7 +164,7 @@ sub POST :Allow {
 
         my $billing_profile;
         try {
-            $billing_profile= $schema->resultset('billing_profiles')->create($resource);
+            $billing_profile = $schema->resultset('billing_profiles')->create($resource);
             foreach my $weekday_peaktime (@$weekday_peaktimes_to_create) {
                 $billing_profile->billing_peaktime_weekdays->create($weekday_peaktime);
             }
@@ -181,7 +181,8 @@ sub POST :Allow {
             my $self = shift;
             my ($c) = @_;
             my $_billing_profile = $self->profile_by_id($c, $billing_profile->id);
-            return $self->hal_from_profile($c, $_billing_profile,$form); });
+            return $self->hal_from_item($c, $_billing_profile,
+                $self->resource_from_item($c, $_billing_profile, $form), $form); });
 
         $guard->commit;
 
