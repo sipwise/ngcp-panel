@@ -5,7 +5,6 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
@@ -44,7 +43,7 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::BillingProfile::PeaktimeAPI", $c);
 }
 
-sub hal_from_profile {
+sub resource_from_item {
     my ($self, $c, $profile, $form) = @_;
 
     my %resource = $profile->get_inflated_columns;
@@ -55,24 +54,6 @@ sub hal_from_profile {
     # TODO: we should return the fees in an embedded field,
     # if the structure is returned for one single item
     # (make it a method flag)
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $profile->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/?billing_profile_id=%d", $profile->id ) ),
-            Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/?billing_profile_id=%d", $profile->id )),
-            $self->get_journal_relation_link($c, $profile->id),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
 
     $form //= $self->get_form($c);
     return unless $self->validate_form(
@@ -85,7 +66,32 @@ sub hal_from_profile {
     $resource{id} = int($profile->id);
     $resource{peaktime_weekdays} = $weekday_peaktimes;
     $resource{peaktime_special} = $special_peaktimes;
-    $hal->resource({%resource});
+
+    return \%resource;
+}
+
+sub hal_from_item {
+    my ($self, $c, $item, $resource, $form) = @_;
+
+    my $hal = Data::HAL->new(
+        links => [
+            Data::HAL::Link->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/?billing_profile_id=%d", $item->id ) ),
+            Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/?billing_profile_id=%d", $item->id )),
+            $self->get_journal_relation_link($c, $item->id),
+        ],
+        relation => 'ngcp:'.$self->resource_name,
+    );
+
+    $hal->resource($resource);
     return $hal;
 }
 
