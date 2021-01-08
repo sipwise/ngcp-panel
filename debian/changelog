@@ -1,3 +1,10 @@
+ngcp-panel (8.5.2.8+0~mr8.5.2.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [60d296b] TT#107051 enable "add" for PATCH /billingprofiles/x
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Jan 2021 19:11:28 +0100
+
 ngcp-panel (8.5.2.7+0~mr8.5.2.7) unstable; urgency=medium
 
   [ Rene Krenn ]
