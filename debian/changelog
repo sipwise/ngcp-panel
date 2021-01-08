@@ -1,3 +1,10 @@
+ngcp-panel (8.5.2.7+0~mr8.5.2.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [a9b65ea] TT#107051 fix PATCH /billingprofiles/x - peaktimes
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Jan 2021 16:51:23 +0100
+
 ngcp-panel (8.5.2.6+0~mr8.5.2.6) unstable; urgency=medium
 
   [ Rene Krenn ]
