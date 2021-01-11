@@ -1383,7 +1383,7 @@ sub get_balanceinterval_datatable_cols {
 
         { name => "initial_free_time_balance", search => 0, title => $c->loc('Initial Free-Time') },
         { name => "free_time_balance", search => 0, title => $c->loc('Free-Time Balance') },
-        { name => "free_time_interval", search => 0, title => $c->loc('Free-Time spent') },
+        { name => "free_time_balance_interval", search => 0, title => $c->loc('Free-Time spent') },
 
         { name => "topups", search => 0, title => $c->loc('#Top-ups (timely)'), literal_sql => 'CONCAT(topup_count," (",timely_topup_count,")")' },
 
