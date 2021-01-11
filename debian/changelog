@@ -1,3 +1,11 @@
+ngcp-panel (6.5.10.4+0~mr6.5.10.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [5b0884e] TT#107051 fix PATCH /billingprofiles/x - peaktimes
+  * [d4aba2f] TT#107051 enable "add" for PATCH /billingprofiles/x
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 Jan 2021 12:09:43 +0100
+
 ngcp-panel (6.5.10.3+0~mr6.5.10.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
