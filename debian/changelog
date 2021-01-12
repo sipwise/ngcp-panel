@@ -1,3 +1,9 @@
+ngcp-panel (9.2.2.0+0~mr9.2.2.0) unstable; urgency=medium
+
+  * New release.
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 12 Jan 2021 11:42:04 +0100
+
 ngcp-panel (9.2.1.0+0~mr9.2.1.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
