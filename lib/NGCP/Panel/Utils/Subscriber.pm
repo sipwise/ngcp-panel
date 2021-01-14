@@ -335,17 +335,11 @@ sub prepare_resource {
     }
 
     my $webpassword;
-    if (length($resource->{webpassword}) and $item and length($item->provisioning_voip_subscriber->webpassword)
+    if (length($resource->{webpassword}) and $item #and length($item->provisioning_voip_subscriber->webpassword)
         and $resource->{webpassword} eq $item->provisioning_voip_subscriber->webpassword) {
         $webpassword = delete $resource->{webpassword};
     }
-
-    #password is mandatory field, so it cannot be absent from resource, the only reason for that being it was
-    #deleted in resource_from_item for admins without show_passwords flag; in this case, we are restoring it here
-    if (not length($resource->{password}) and $item and length($item->provisioning_voip_subscriber->password)) {
-        $resource->{password} = $item->provisioning_voip_subscriber->password;
-    }
-
+    
     return unless &$validate_code($resource);
     $resource->{webpassword} = $webpassword if ($webpassword);
 
