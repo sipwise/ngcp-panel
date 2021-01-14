@@ -333,7 +333,7 @@ sub prepare_resource {
     }
 
     my $webpassword;
-    if (length($resource->{webpassword}) and $item #and length($item->provisioning_voip_subscriber->webpassword)
+    if (length($resource->{webpassword}) and $item and length($item->provisioning_voip_subscriber->webpassword)
         and $resource->{webpassword} eq $item->provisioning_voip_subscriber->webpassword) {
         $webpassword = delete $resource->{webpassword};
     }
