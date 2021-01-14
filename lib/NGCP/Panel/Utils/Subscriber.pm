@@ -332,18 +332,12 @@ sub prepare_resource {
         }
     }
 
-    #if webpassword hasn't changed, it means that nothing has been done to it via PUT/PATCH, and it comes encrypted from the database
-    #so we're deleting it here for form's length validation and then reassigning it to the resource
     my $webpassword;
-    $webpassword = delete $resource->{webpassword} if ( $resource->{webpassword} && $item &&
-                                                        $resource->{webpassword} eq $item->provisioning_voip_subscriber->webpassword );
-
-    #password is mandatory field, so it cannot be absent from resource, the only reason for that being it was
-    #deleted in resource_from_item for admins without show_passwords flag; in this case, we are restoring it here
-    if (not length($resource->{password}) and $item and length($item->provisioning_voip_subscriber->password)) {
-        $resource->{password} = $item->provisioning_voip_subscriber->password;
+    if (length($resource->{webpassword}) and $item #and length($item->provisioning_voip_subscriber->webpassword)
+        and $resource->{webpassword} eq $item->provisioning_voip_subscriber->webpassword) {
+        $webpassword = delete $resource->{webpassword};
     }
-
+    
     return unless &$validate_code($resource);
     $resource->{webpassword} = $webpassword if ($webpassword);
 
