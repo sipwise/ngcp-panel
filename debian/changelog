@@ -1,3 +1,17 @@
+ngcp-panel (8.5.3.1+0~mr8.5.3.1) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [41970bc] TT#97400 prosody: [de]activate just the main domain
+
+  [ Flaviu Mates ]
+  * [fbaf3cc] TT#99500 Fix adding subscriber to group
+  * [72df497] TT#104760 Fix non-master admin privileges managing in API
+
+  [ Rene Krenn ]
+  * [e9acfb4] TT#105954 /api/invoices: accept 'application/pdf' type
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Jan 2021 16:48:37 +0100
+
 ngcp-panel (8.5.3.0+0~mr8.5.3.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
