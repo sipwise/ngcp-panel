@@ -1,3 +1,10 @@
+ngcp-panel (9.1.1.12+0~mr9.1.1.12) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [5e1bf95] TT#108452 disable order_by in call_list_suppressions_rs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Jan 2021 16:30:38 +0100
+
 ngcp-panel (9.1.1.11+0~mr9.1.1.11) unstable; urgency=medium
 
   [ Rene Krenn ]
