@@ -394,7 +394,7 @@ sub call_list_suppressions_rs {
     $c->stash->{source_cli_suppression_id_colname} = $source_cli_suppression_id_colname;
     $c->stash->{destination_user_in_suppression_id_colname} = $destination_user_in_suppression_id_colname;
     my %search_cond = ();
-    my %search_xtra = ();
+    my %search_xtra = (order_by => '');
     if (_is_show_suppressions($c)) {
         if (defined $mode and SUPPRESS_OUT == $mode) {
             $search_xtra{'+select'} = [
