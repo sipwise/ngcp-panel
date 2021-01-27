@@ -73,6 +73,9 @@
 
     };
     $(modalFormScript);
+[% IF framed -%]
+    setTimeout(function() { $('#mod_max:visible').click(); }, 0);
+[% END -%]
 </script>
 [% END -%]
 
