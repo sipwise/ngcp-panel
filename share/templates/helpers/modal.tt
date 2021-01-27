@@ -3,6 +3,8 @@
 <div id="mod_edit" class="modal hide ngcp-modal">
     <div class="modal-header">
         <button id="mod_close" type="button" class="close mod_close">×</button>
+        <button id="mod_min" type="button" class="close" style="margin-right: 15px;display:none;"> _ </button>
+        <button id="mod_max" type="button" class="close" style="margin-right: 15px;"> [] </button>
         <h3>[% m.create_flag == 1 ? c.loc('Create [_1]',m.name) : m.duplicate_flag == 1 ? c.loc('Duplicate [_1]',m.name) : c.loc('Edit [_1]',m.name) %]</h3>
     </div>
 
@@ -16,6 +18,8 @@
 
 <div id="[% m.id %]" class="modal hide">
     <div class="modal-header">
+        <button id="mod_min" type="button" class="close" style="margin-right: 15px;display:none;"> _ </button>
+        <button id="mod_max" type="button" class="close" style="margin-right: 15px;"> [] </button>
         <button type="button" class="close mod_close fade" data-dismiss="modal">×</button>
         <h3>[% m.header %]</h3>
     </div>
@@ -41,6 +45,32 @@
             $(this).parents('form').find('#submitid').attr('value', $(this).attr('name'));
             $(this).parents('form').submit();
         });
+
+    $('#mod_max').click(function maximizePopup() {
+        const $btn = $(this);
+        const $popup = $btn.parents('.modal:first');
+
+        $popup.prop('style', 'max-width: none; top: 50px; margin: 0; left: 20px; right: 20px; width: auto;');
+        $popup.find('.modal-body').css('max-height', 'calc(100vh - 250px)');
+        $popup.find('textarea').css('width', 'calc(100% - 12px)');
+        $popup.find('table.dataTable').css('width', '100%');
+
+        $popup.find('#mod_min').show();
+        $btn.hide();
+    });
+
+    $('#mod_min').click(function maximizePopup() {
+        const $btn = $(this);
+        const $popup = $btn.parents('.modal:first');
+
+        $popup.prop('style', '');
+        $popup.find('.modal-body').css('max-height', '');
+        $popup.find('textarea, table.dataTable').css('width', '');
+
+        $popup.find('#mod_max').show();
+        $btn.hide();
+    });
+
     };
     $(modalFormScript);
 </script>
