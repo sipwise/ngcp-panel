@@ -2,9 +2,9 @@
 
 <div id="mod_edit" class="modal hide ngcp-modal">
     <div class="modal-header">
-        <button id="mod_close" type="button" class="close mod_close">×</button>
-        <button id="mod_min" type="button" class="close" style="margin-right: 15px;display:none;"> _ </button>
-        <button id="mod_max" type="button" class="close" style="margin-right: 15px;"> [] </button>
+        <button id="mod_close" type="button" class="close mod_close" title="close">×</button>
+        <button id="mod_min" type="button" class="close" style="margin-right: 10px;display:none;" title="minimize">-</button>
+        <button id="mod_max" type="button" class="close" style="margin-right: 10px;" title="maximize">+</button>
         <h3>[% m.create_flag == 1 ? c.loc('Create [_1]',m.name) : m.duplicate_flag == 1 ? c.loc('Duplicate [_1]',m.name) : c.loc('Edit [_1]',m.name) %]</h3>
     </div>
 
@@ -18,9 +18,9 @@
 
 <div id="[% m.id %]" class="modal hide">
     <div class="modal-header">
-        <button id="mod_min" type="button" class="close" style="margin-right: 15px;display:none;"> _ </button>
-        <button id="mod_max" type="button" class="close" style="margin-right: 15px;"> [] </button>
-        <button type="button" class="close mod_close fade" data-dismiss="modal">×</button>
+        <button id="mod_min" type="button" class="close" style="margin-right: 10px;display:none;" title="close">-</button>
+        <button id="mod_max" type="button" class="close" style="margin-right: 10px;" title="minimize">+</button>
+        <button type="button" class="close mod_close fade" data-dismiss="modal" title="maximize">×</button>
         <h3>[% m.header %]</h3>
     </div>
 
