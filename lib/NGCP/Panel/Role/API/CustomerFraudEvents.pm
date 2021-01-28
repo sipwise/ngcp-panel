@@ -189,6 +189,8 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
+    undef $resource->{interval_lock} if (defined $resource->{interval_lock} and $resource->{interval_lock} eq '0');
+    
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
