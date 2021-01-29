@@ -1,3 +1,10 @@
+ngcp-panel (8.5.3.2+0~mr8.5.3.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [38b8ac8] TT#109402 fix PATCHing fraud notification status
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Jan 2021 16:28:37 +0100
+
 ngcp-panel (8.5.3.1+0~mr8.5.3.1) unstable; urgency=medium
 
   [ Victor Seva ]
