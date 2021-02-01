@@ -124,7 +124,7 @@ sub rest_prepare_request {
             if ($profile) {
                 $profile_id = $profile->{uuid};
             }
-            else {
+            elsif (length $self->params->{redirect_params}->{profile}) {
                 #profile does not exist, create it
                 $c->log->debug("Snom create profile '$url'");
                 $req = HTTP::Request->new(POST => $url);
@@ -151,7 +151,6 @@ sub rest_prepare_request {
 
             my $body = {
                 mac => $new_mac,
-                provisioning_profile => $profile_id,
                 autoprovisioning_enabled => 'true',
                 settings_manager => {
                     $setting_id => {
@@ -163,6 +162,7 @@ sub rest_prepare_request {
                     }
                 }
             };
+            $body->{provisioning_profile} = $profile_id if ($profile_id);
             $url = "$company_url/endpoints/$new_mac";
             $ret = {
                 method =>'PUT',
