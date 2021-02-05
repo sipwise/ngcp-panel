@@ -528,9 +528,17 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
             
     my %pref_values;
     foreach my $value($x_pref_values->all) {
-    
-        $pref_values{$value->attribute} = 
-            [ map {$_->value} $value->voip_peer_preferences->all ];
+        if ($value->data_type eq "blob") {
+            $pref_values{$value->attribute} = [
+                map {$_->blob
+                        ? $_->blob->content_type
+                        : ''} $value->voip_peer_preferences->all
+            ];
+        } else {
+            $pref_values{$value->attribute} = [
+                map {$_->value} $value->voip_peer_preferences->all
+            ];
+        }
     }
 
     my $rewrite_rule_sets_rs = $c->model('DB')
@@ -576,6 +584,7 @@ sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') 
         })
         ->find({id => $pref_id});
 
+    my $blob_short_value_size = NGCP::Panel::Utils::Preferences::get_blob_short_value_size;
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_peer_preferences')
         ->search({
@@ -583,6 +592,9 @@ sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') 
             'peer_host.id' => $c->stash->{server}->{id},
         },{
             prefetch => 'peer_host',
+            join => 'blob',
+            '+select' => [ \"SUBSTRING(blob.value, 1, $blob_short_value_size)" ],
+            '+as' => [ 'short_blob_value' ],
         });
     return;
 }
@@ -603,6 +615,7 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
         enums   => \@enums,
         base_uri => $c->uri_for_action('/peering/servers_preferences_root', [@{ $c->req->captures }[0,1]]),
         edit_uri => $c->uri_for_action('/peering/servers_preferences_edit', $c->req->captures),
+        blob_rs  => $c->model('DB')->resultset('voip_peer_preferences_blob'),
     );
     return;
 }

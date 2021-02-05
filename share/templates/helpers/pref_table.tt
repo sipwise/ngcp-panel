@@ -138,7 +138,7 @@
                     [% ELSIF r.data_type == "boolean" %]
                         <input type="checkbox" disabled="disabled"
                             [% IF r.value %]checked="checked"[% END %]/>
-                    [% ELSIF r.data_type == "string" || r.data_type == "int" %]
+                    [% ELSIF r.data_type == "string" || r.data_type == "int" || r.data_type == "blob" %]
                         [% IF r.max_occur == 1 %]
                             [% r.value %]
                         [% ELSE %]
@@ -189,6 +189,21 @@
                  m.name = c.loc("Preference '") _ c.loc(helper.preference_meta.label) _"'");
 -%]
 
+    [% IF helper.preference_meta.data_type == "blob" %]
+        <script>
+            $(document).ready(function() {
+                $(".ngcp-blob-data-area").hide();
+                $(".ngcp-blob-show-data").click(function() {
+                    $(".ngcp-blob-data-area").toggle();
+                    if ($(".ngcp-blob-data-area").is(':visible')) {
+                        $(".ngcp-blob-show-data").attr('value', 'Hide Data');
+                    } else {
+                        $(".ngcp-blob-show-data").attr('value', 'Show Data');
+                    }
+                });
+            });
+        </script>
+    [% END %]
     [% IF helper.preference_meta.attribute == "allowed_ips" %]
         <div class="modal-body">
         [% FOREACH net IN helper.aip_grp_rs.all %]

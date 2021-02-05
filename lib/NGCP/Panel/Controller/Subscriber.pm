@@ -792,11 +792,16 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         $c->detach('/denied_page');
     }
 
+    my $blob_short_value_size = NGCP::Panel::Utils::Preferences::get_blob_short_value_size;
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_usr_preferences')
         ->search({
             attribute_id => $pref_id,
             subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id
+        },{
+            join => 'blob',
+            '+select' => [ \"SUBSTRING(blob.value, 1, $blob_short_value_size)" ],
+            '+as' => [ 'short_blob_value' ],
         });
     $c->stash(template => 'subscriber/preferences.tt');
 }
@@ -835,6 +840,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             enums   => \@enums,
             base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
             edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
+            blob_rs  => $c->model('DB')->resultset('voip_usr_preferences_blob'),
         );
         my $attr = $c->stash->{preference_meta}->attribute;
         if ($c->req->method eq "POST" && $attr && ($attr eq "voicemail_echo_number" || $attr eq "cli")) {
@@ -2561,14 +2567,21 @@ sub load_preference_list :Private {
         ->search({
                 'subscriber.id' => $c->stash->{subscriber}->provisioning_voip_subscriber->id
             },{
-                prefetch => {'voip_usr_preferences' => 'subscriber'},
+                prefetch => { 'voip_usr_preferences' => [ 'subscriber', 'blob' ] },
             });
     my %pref_values;
-    foreach my $value($usr_pref_values->all) {
-
-        $pref_values{$value->attribute} = [
-            map {$_->value} $value->voip_usr_preferences->all
-        ];
+    foreach my $value ($usr_pref_values->all) {
+        if ($value->data_type eq "blob") {
+            $pref_values{$value->attribute} = [
+                map {$_->blob
+                        ? $_->blob->content_type
+                        : ''} $value->voip_usr_preferences->all
+            ];
+        } else {
+            $pref_values{$value->attribute} = [
+                map {$_->value} $value->voip_usr_preferences->all
+            ];
+        }
     }
 
     my $rewrite_rule_sets_rs = $c->model('DB')

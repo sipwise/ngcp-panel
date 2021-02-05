@@ -9,6 +9,8 @@ use NGCP::Panel::Utils::I18N qw//;
 use NGCP::Panel::Utils::Sems;
 use JSON qw();
 use HTTP::Status qw(:constants);
+use File::Type;
+use Readonly;
 
 use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
 
@@ -27,6 +29,7 @@ our $TYPE_PREF_MAP = {
 my $API_TRANSFORM_OUT;
 my $API_TRANSFORM_IN;
 my $CODE_SUFFIX_FNAME = '_code';
+Readonly my $blob_short_value_size => 4096;
 
 sub validate_ipnet {
     my ($field) = @_;
@@ -1283,6 +1286,7 @@ sub create_preference_form {
     my $base_uri = $params{base_uri};
     my $edit_uri = $params{edit_uri};
     my $enums    = $params{enums};
+    my $blob_rs = $params{blob_rs};
 
     my $aip_grp_rs;
     my $aip_group_id;
@@ -1431,7 +1435,7 @@ sub create_preference_form {
         }
     } elsif ($c->stash->{preference_meta}->max_occur == 1) {
         if ($c->stash->{preference}->first) {
-            $preselected_value = $c->stash->{preference}->first->value;
+            $preselected_value = $c->stash->{preference}->first->value unless ($c->stash->{preference_meta}->data_type eq 'blob');
         }
     }
 
@@ -1456,6 +1460,12 @@ sub create_preference_form {
     }
 
     my $posted = ($c->request->method eq 'POST');
+    if($posted && $c->stash->{preference_meta}->data_type eq 'blob') {
+        # construct the form field name for blob data types,
+        # since we need to pass the Catalyst::Upload object to req params
+        my $field_name = $c->stash->{preference_meta}->attribute . '.file';
+        $c->req->params->{$field_name} = $c->req->upload($field_name) if ($c->req->upload($field_name));
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -1953,6 +1963,59 @@ sub create_preference_form {
                         error => $e,
                         data  => \%log_data,
                         desc  => $c->loc('Failed to delete preference [_1]', $attribute),
+                    );
+                    $c->response->redirect($base_uri);
+                    return 1;
+                }
+            } elsif($c->stash->{preference_meta}->data_type eq 'blob') {
+                try {
+                    my $preference = $pref_rs->search({ attribute_id => $c->stash->{preference_meta}->id });
+                    my $file = $form->field("$attribute.file")->value;
+                    my $content_type = $form->field("$attribute.content_type")->value;
+                    if ($c->req->body_parameters->{"$attribute.delete"}) {
+                        $preference->delete if $preference;
+                    } elsif ($c->req->body_parameters->{"$attribute.download"}) {
+                        my $blob = $blob_rs->search({ preference_id => $preference->first->id });
+                        my $data = $blob->first->value;
+                        my $ft = File::Type->new();
+                        $c->response->header('Content-Disposition' => 'attachment; filename="' . $blob->first->id . '-' . $attribute . '"');
+                        $c->response->content_type($ft->mime_type($blob->first->value) || $blob->first->content_type);
+                        $c->response->body($data);
+                        return 1;
+                    } elsif ($preference->first) {
+                        my $blob = $blob_rs->search({ preference_id => $preference->first->id });
+                        if ($blob->first) {
+                            $blob->update({
+                                preference_id => $preference->first->id,
+                                $file ? (value => $file->slurp) : (),
+                                $content_type ? (content_type => $content_type) : (),
+                            });
+                        } else {
+                            $blob_rs->create({
+                                preference_id => $preference->first->id,
+                                value => ($file ? $file->slurp : undef),
+                                content_type => $content_type,
+                            });
+                        }
+                    } else {
+                        $preference->create({ value => 0 });
+                        $blob_rs->create({
+                            preference_id => $preference->first->id,
+                            value => ($file ? $file->slurp : undef),
+                            content_type => $content_type,
+                        });
+                    }
+                    NGCP::Panel::Utils::Message::info(
+                        c => $c,
+                        data  => \%log_data,
+                        desc  => $c->loc('Preference [_1] successfully updated', $attribute),
+                    );
+                } catch($e) {
+                   NGCP::Panel::Utils::Message::error(
+                        c => $c,
+                        error => $e,
+                        data  => \%log_data,
+                        desc  => $c->loc('Failed to update preference [_1]', $attribute),
                     );
                     $c->response->redirect($base_uri);
                     return 1;
@@ -2710,6 +2773,10 @@ sub dynamic_pref_attribute_to_db {
     my ($attribute) = @_;
     $attribute =~s/^_*/_DYNAMIC_PREFERENCE_PREFIX/e;
     return $attribute;
+}
+
+sub get_blob_short_value_size {
+    return $blob_short_value_size;
 }
 
 1;
