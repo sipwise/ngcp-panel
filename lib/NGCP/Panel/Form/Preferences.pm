@@ -8,6 +8,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
+has '+enctype' => ( default => 'multipart/form-data');
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
@@ -125,6 +126,11 @@ sub field_list {
             $field = {
                 name => $meta->attribute,
                 type => 'Integer',
+            };
+        } elsif($meta->data_type eq "blob") {
+            $field = {
+                name => $meta->attribute,
+                type => '+NGCP::Panel::Field::BlobUpload',
             };
         } else { # string
             if($meta->max_occur == 1) {

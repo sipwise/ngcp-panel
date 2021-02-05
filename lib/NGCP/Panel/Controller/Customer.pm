@@ -2375,12 +2375,17 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         $c->detach('/denied_page');
     }
 
+    my $blob_short_value_size = NGCP::Panel::Utils::Preferences::get_blob_short_value_size;
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_contract_preferences')
         ->search({
             attribute_id => $pref_id,
             contract_id => $c->stash->{contract}->id,
             location_id => $c->stash->{location}{id} || undef,
+        },{
+            join => 'blob',
+            '+select' => [ \"SUBSTRING(blob.value, 1, $blob_short_value_size)" ],
+            '+as' => [ 'short_blob_value' ],
         });
     $c->stash->{pref_id} = $pref_id;
     $c->stash(template => 'customer/preferences.tt');
@@ -2407,6 +2412,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         enums   => \@enums,
         base_uri => $base_uri,
         edit_uri => $edit_uri,
+        blob_rs  => $c->model('DB')->resultset('voip_contract_preferences_blob'),
     );
 }
 
@@ -2425,10 +2431,17 @@ sub load_preference_list :Private {
 
     my %pref_values;
     foreach my $value($contract_pref_values->all) {
-
-        $pref_values{$value->attribute} = [
-            map {$_->value} $value->voip_contract_preferences->all
-        ];
+        if ($value->data_type eq "blob") {
+            $pref_values{$value->attribute} = [
+                map {$_->blob
+                        ? $_->blob->content_type
+                        : ''} $value->voip_contract_preferences->all
+            ];
+        } else {
+            $pref_values{$value->attribute} = [
+                map {$_->value} $value->voip_contract_preferences->all
+            ];
+        }
     }
 
     my $reseller_id = $c->stash->{contract}->contact->reseller_id;

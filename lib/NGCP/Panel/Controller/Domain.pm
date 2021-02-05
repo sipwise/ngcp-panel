@@ -351,12 +351,17 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         ->single({id => $pref_id});
     my $domain_name = $c->stash->{domain}->{domain};
     my $provisioning_domain_id = $c->stash->{provisioning_domain_result}->id;
+    my $blob_short_value_size = NGCP::Panel::Utils::Preferences::get_blob_short_value_size;
 
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_dom_preferences')
         ->search({
             attribute_id => $pref_id,
             domain_id => $provisioning_domain_id,
+        },{
+            join => 'blob',
+            '+select' => [ \"SUBSTRING(blob.value, 1, $blob_short_value_size)" ],
+            '+as' => [ 'short_blob_value' ],
         });
     $c->stash(template => 'domain/preferences.tt');
 }
@@ -382,6 +387,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         enums   => \@enums,
         base_uri => $c->uri_for_action('/domain/preferences', [$c->req->captures->[0]]),
         edit_uri => $c->uri_for_action('/domain/preferences_edit', $c->req->captures),
+        blob_rs  => $c->model('DB')->resultset('voip_dom_preferences_blob'),
     );
 }
 
@@ -398,10 +404,17 @@ sub load_preference_list :Private {
 
     my %pref_values;
     foreach my $value($dom_pref_values->all) {
-
-        $pref_values{$value->attribute} = [
-            map {$_->value} $value->voip_dom_preferences->all
-        ];
+        if ($value->data_type eq "blob") {
+            $pref_values{$value->attribute} = [
+                map {$_->blob
+                        ? $_->blob->content_type
+                        : ''} $value->voip_dom_preferences->all
+            ];
+        } else {
+            $pref_values{$value->attribute} = [
+                map {$_->value} $value->voip_dom_preferences->all
+            ];
+        }
     }
 
     my $correct_reseller_id = $c->stash->{domain_result}->domain_resellers->first->reseller_id;
