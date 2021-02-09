@@ -19,8 +19,6 @@
 <div id="[% m.id %]" class="modal hide">
     <div class="modal-header">
         <button type="button" class="close mod_close fade" data-dismiss="modal" title="close">×</button>
-        <button id="mod_min" type="button" class="close" style="margin-right: 10px;display:none;" title="minimize">-</button>
-        <button id="mod_max" type="button" class="close" style="margin-right: 10px;" title="maximize">+</button>
         <h3>[% m.header %]</h3>
     </div>
 
