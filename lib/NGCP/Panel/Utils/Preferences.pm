@@ -11,6 +11,7 @@ use JSON qw();
 use HTTP::Status qw(:constants);
 use File::Type;
 use Readonly;
+use MIME::Base64 qw(decode_base64);
 
 use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
 
@@ -86,12 +87,14 @@ sub prepare_resource {
     /};
 
     my $prefs;
+    my $blob_rs;
     my %profile_attrs = (); # for filtering profiles based list
     my %profile_allowed_attrs; # for filtering subscriber attrs on its profile
     my $has_profile = 0;
     my $attr = 0;
     if($type eq "subscribers") {
         $prefs = $item->provisioning_voip_subscriber->voip_usr_preferences;
+        $blob_rs = $c->model('DB')->resultset('voip_usr_preferences_blob');
         my $profile = $item->provisioning_voip_subscriber->voip_subscriber_profile;
         if ($profile) {
             $has_profile = 1;
@@ -103,14 +106,17 @@ sub prepare_resource {
         $prefs = $item->voip_prof_preferences;
     } elsif($type eq "domains") {
         $prefs = $item->provisioning_voip_domain->voip_dom_preferences;
+        $blob_rs = $c->model('DB')->resultset('voip_dom_preferences_blob');
     } elsif($type eq "peerings") {
         $prefs = $item->voip_peer_preferences;
+        $blob_rs = $c->model('DB')->resultset('voip_peer_preferences_blob');
     } elsif($type eq "resellers") {
         $prefs = $item->reseller_preferences;
     } elsif($type eq "contracts") {
         $prefs = $item->voip_contract_preferences->search(
                     { location_id => $c->request->param('location_id') || undef },
                     undef);
+        $blob_rs = $c->model('DB')->resultset('voip_contract_preferences_blob');
     } elsif($type eq "pbxdevicemodels") {
         $prefs = $item->voip_dev_preferences;
     } elsif($type eq "pbxdeviceprofiles") {
@@ -323,6 +329,26 @@ sub prepare_resource {
             /^boolean$/ && do {
                 if (defined $pref->value) {
                     $value = ($pref->value ? JSON::true : JSON::false);
+                }
+                last SWITCH;
+            };
+            /^blob$/ && do {
+                if (defined $pref->value) {
+                    my $blob = $blob_rs->search({ preference_id => $pref->id });
+                    my $attribute = $pref->attribute->attribute;
+                    if ($c->req->param('preference') && $c->req->param('preference') eq $attribute) {
+                        my $data = $blob->first->value;
+                        my $ft = File::Type->new();
+                        $c->response->header('Content-Disposition' => 'attachment; filename="' . $blob->first->id . '-' . $attribute . '"');
+                        $c->response->content_type($ft->mime_type($blob->first->value) || $blob->first->content_type);
+                        $c->response->body($data);
+                        $c->detach();
+                        return 1;
+                    }
+                    $value = {
+                        content_type => $blob->first->content_type,
+                        data => $blob->first->value ? '#blob' : undef
+                    };
                 }
                 last SWITCH;
             };
@@ -684,7 +710,7 @@ sub update_preferences {
             if (($meta->data_type eq "boolean" or _exists_api_transform_in($c, $pref)) and JSON::is_bool($resource->{$pref})) {
                 $vtype = "";
             }
-            if($meta->max_occur == 1 && $vtype ne "") {
+            if($meta->max_occur == 1 && $vtype ne "" && $meta->data_type ne "blob") {
                 $c->log->error("preference '$pref' has max_occur '".$meta->max_occur."', but value got passed in as '$vtype', expected flat value");
                 &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Invalid data type '$vtype' for preference '$pref', expected flat value");
                 return;
@@ -884,8 +910,36 @@ sub update_preferences {
                         }
                     }
                 };
-                # default
-                if($meta->max_occur != 1) {
+                if ($meta->data_type eq 'blob') {
+                    if ($resource->{$pref}->{data} ne '#blob'){
+                        my $file = decode_base64($resource->{$pref}->{data});
+                        my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref);
+                        my $blob_rs = $c->model('DB')->resultset("voip_$TYPE_PREF_MAP->{$type}_preferences_blob");
+                        if ($rs->first) {
+                            my $blob = $blob_rs->search({ preference_id => $rs->first->id });
+                            if ($blob->first) {
+                                $blob->update({
+                                    preference_id => $rs->first->id,
+                                    $file ? (value => $file) : (),
+                                    $resource->{$pref}->{content_type} ? (content_type => $resource->{$pref}->{content_type}) : (),
+                                });
+                            } else {
+                                $blob_rs->create({
+                                    preference_id => $rs->first->id,
+                                    value => ($file ? $file : undef),
+                                    content_type => $resource->{$pref}->{content_type},
+                                });
+                            }
+                        } else {
+                            $rs->create({ value => 0 });
+                            $blob_rs->create({
+                                preference_id => $rs->first->id,
+                                value => ($file ? $file : undef),
+                                content_type => $resource->{$pref}->{content_type},
+                            });
+                        }
+                    }
+                } elsif($meta->max_occur != 1) { #default
                     $pref_rs->delete;
                     foreach my $v(@{ $resource->{$pref} }) {
                         return unless _check_pref_value($c, $meta, $v, $pref_type, $err_code);
@@ -1065,7 +1119,7 @@ sub _check_pref_value {
     my $err;
 
     my $vtype = ref $value;
-    if ($meta->data_type eq "boolean" and JSON::is_bool($value)) {
+    if (($meta->data_type eq "boolean" and JSON::is_bool($value)) or $meta->data_type eq "blob") {
         $vtype = "";
     }
     unless($vtype eq "") {
