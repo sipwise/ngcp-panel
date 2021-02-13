@@ -2127,6 +2127,10 @@ msgid "Do Not Disturb"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Do not fallback after a callee 404 response"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Do not increase outgoing call counter on CF"
 msgstr ""
 
@@ -4083,6 +4087,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If set to a number, any outbound calls which are blocked due to outbound block lists or NCOS levels are diverted to the given number."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If set, do not try to fallback if the callee UAc replies with a '404 Not found' message after receiving an extension included in the base number or a e164 number (if e164_to_ruri is set)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
