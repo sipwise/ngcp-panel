@@ -1,3 +1,36 @@
+ngcp-panel (9.3.1.0+0~mr9.3.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [5196477] TT#4166 I18N dump: snapshot 2021.01.08-01.25.59
+  * [53524c1] TT#4166 I18N dump: snapshot 2021.02.13-01.27.30
+
+  [ Rene Krenn ]
+  * [00f0614] TT#107051 fix PATCH /billingprofiles/x - peaktimes
+  * [92455d8] TT#107051 enable "add" for PATCH /billingprofiles/x
+  * [e3b5ea8] TT#108250 js warning unknown parameter 'free_time_interval'
+  * [8325f3e] TT#105100 fix PATCHing unset webpasswords
+  * [aa84c19] TT#105100 check PATCHing unset webpasswords
+  * [645231c] TT#109402 fix PATCHing fraud notification status
+
+  [ Flaviu Mates ]
+  * [0d0a2fa] TT#100761 Allow subscribers to access /api/applyrewrites
+  * [a61d4db] TT#108000 Implement getPref function in DeviceConfig
+  * [a9b115e] TT#109651 Allow SNOM device creation without a profile
+
+  [ Kirill Solomko ]
+  * [b2dfe28] TT#108452 disable order_by in call_list_suppressions_rs
+
+  [ Alexander Lutay ]
+  * [d0f339e] TT#109166 Add ability to expand/collapse edit pop-up windows
+  * [3c0b2cf] TT#109166 Open pop-up windows expanded for ngcp-admin-ui
+  * [c87f10a] TT#109166 Improve look&feel for maximize/minimize pop-up
+  * [6f2cc8b] TT#109166 Fix d0f339: sync modal pop-up buttons layout
+
+  [ Sergii Leonenko ]
+  * [8480d2a] TT#109166 Fix 6f2cc8: maximize and minimize buttons doesn't work
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Feb 2021 17:53:20 +0100
+
 ngcp-panel (9.3.0.0+0~mr9.3.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
