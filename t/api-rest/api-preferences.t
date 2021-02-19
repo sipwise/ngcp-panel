@@ -7,6 +7,7 @@ use Test::More;
 use Data::Dumper;
 use JSON;
 use Clone qw/clone/;
+use MIME::Base64 qw(encode_base64);
 use feature "state";
 
 
@@ -121,6 +122,8 @@ foreach my $api (@apis){
             $value = get_preference_existen_value($preference, $api) // "test_api preference string";
         }elsif('int' eq $preference->{data_type}){
             $value = get_preference_existen_value($preference, $api) // 33;
+        }elsif('blob' eq $preference->{data_type}){
+            $value = {content_type => "text/plain", data => encode_base64("Test blob text")};
         }else{
             die("unknown data type: ".$preference->{data_type}." for $preference_name;\n");
         }
