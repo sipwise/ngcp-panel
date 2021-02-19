@@ -1657,7 +1657,7 @@ msgstr "Azienda"
 msgid "Conditions"
 msgstr ""
 
-#: share/templates/customer/details.tt
+#: share/templates/customer/details.tt share/templates/device/list.tt
 msgid "Config"
 msgstr "Configurazioni"
 
@@ -2323,6 +2323,10 @@ msgstr ""
 "numeri portati. Se abilitato, sarà utilizzato il parametro rn."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Defines the format of emergency_location_object"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Defines whether the subscriber can still register and send/receive calls if "
 "Emergency Mode is enabled for the domain of the subscriber. If disabled, "
@@ -2888,6 +2892,10 @@ msgid "Emergency Priorization"
 msgstr "Priorità di Emergenza"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency Provider info"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Suffix variable"
 msgstr "Suffisso di Emergenza"
 
@@ -2898,6 +2906,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency code already defined for emergency mapping container!"
 msgstr "Numero di emergenza già definito per questo gruppo!"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency location format"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency mapping already exists for this emergency mapping container!"
@@ -6990,18 +7002,6 @@ msgid ""
 "user agent"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"Provide this field as pre-coded value to add it to the SDP as MIME object "
-"with content-type \"application/vnd.cirpack.isdn-ext\" and \"content-"
-"disposition: signal;handling=required\" according to the German NGN "
-"interconnect specification"
-msgstr ""
-"Usa questo campo come valore precodificato da aggiungere nel corpo SDP come "
-"oggetto MIME con content-type \"application/vnd.cirpack.isdn-ext\" e "
-"\"content-disposition: signal;handling=required\", in accordo con le "
-"specifiche di interconnessione NGN tedesche."
-
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning Template"
 msgstr ""
@@ -7609,6 +7609,10 @@ msgstr "Regola"
 #: share/templates/rewrite/set_list.tt
 msgid "Rules"
 msgstr "Regole"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SDP MIME object related to location to be added on an emergency call"
+msgstr ""
 
 #: share/templates/callflow/list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -9852,6 +9856,12 @@ msgid "Which transport protocol (e.g. RTP, SRTP, etc) to use"
 msgstr "Quale protocollo di trasporto usare (es. RTP, SRTP, ecc)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"XML with the ProviderInfo data that will be added as MIME object on an "
+"emergency call"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "XMPP Settings"
 msgstr "Configurazione XMPP"
 
@@ -10160,6 +10170,17 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "si"
+
+#~ msgid ""
+#~ "Provide this field as pre-coded value to add it to the SDP as MIME object "
+#~ "with content-type \"application/vnd.cirpack.isdn-ext\" and \"content-"
+#~ "disposition: signal;handling=required\" according to the German NGN "
+#~ "interconnect specification"
+#~ msgstr ""
+#~ "Usa questo campo come valore precodificato da aggiungere nel corpo SDP "
+#~ "come oggetto MIME con content-type \"application/vnd.cirpack.isdn-ext\" e "
+#~ "\"content-disposition: signal;handling=required\", in accordo con le "
+#~ "specifiche di interconnessione NGN tedesche."
 
 #~ msgid ""
 #~ "Call Deflection allows a called endpoint to redirect the unanswered call "

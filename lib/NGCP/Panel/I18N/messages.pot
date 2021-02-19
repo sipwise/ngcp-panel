@@ -1342,7 +1342,7 @@ msgstr ""
 msgid "Conditions"
 msgstr ""
 
-#: share/templates/customer/details.tt
+#: share/templates/customer/details.tt share/templates/device/list.tt
 msgid "Config"
 msgstr ""
 
@@ -1892,6 +1892,10 @@ msgid "Defines how to provide the routing number after a LNP query. If enabled, 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Defines the format of emergency_location_object"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Defines whether the subscriber can still register and send/receive calls if Emergency Mode is enabled for the domain of the subscriber. If disabled, registrations and calls are blocked and dropped."
 msgstr ""
 
@@ -2335,6 +2339,10 @@ msgid "Emergency Priorization"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency Provider info"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Suffix variable"
 msgstr ""
 
@@ -2344,6 +2352,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency code already defined for emergency mapping container!"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency location format"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
@@ -3451,7 +3463,7 @@ msgid "Failed to update phonebook entry"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
+#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Failed to update preference %1"
 msgstr ""
 
@@ -5999,7 +6011,7 @@ msgid "Preference %1 successfully deleted"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
+#: lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Preference %1 successfully updated"
 msgstr ""
 
@@ -6007,7 +6019,7 @@ msgstr ""
 msgid "Preference '"
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/domain/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subscriber/master.tt
+#: share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/customer/details.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/device/list.tt share/templates/domain/list.tt share/templates/domain/list.tt share/templates/peering/servers_rules.tt share/templates/peering/servers_rules.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/reseller/details.tt share/templates/subprofile/profile_list.tt share/templates/subprofile/profile_list.tt share/templates/subscriber/master.tt
 msgid "Preferences"
 msgstr ""
 
@@ -6118,10 +6130,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Provide Auto-Answer header to this subscriber if requested by the remote user agent"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Provide this field as pre-coded value to add it to the SDP as MIME object with content-type \"application/vnd.cirpack.isdn-ext\" and \"content-disposition: signal;handling=required\" according to the German NGN interconnect specification"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm lib/NGCP/Panel/Controller/BatchProvisioning.pm
@@ -6671,6 +6679,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm share/templates/header/set_list.tt share/templates/header/set_list.tt share/templates/rewrite/set_list.tt share/templates/rewrite/set_list.tt
 msgid "Rules"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SDP MIME object related to location to be added on an emergency call"
 msgstr ""
 
 #: share/templates/callflow/list.tt share/templates/widgets/admin_topmenu_settings.tt
@@ -8488,6 +8500,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Which transport protocol (e.g. RTP, SRTP, etc) to use"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "XML with the ProviderInfo data that will be added as MIME object on an emergency call"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

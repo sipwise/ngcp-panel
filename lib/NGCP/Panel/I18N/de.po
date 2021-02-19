@@ -1602,7 +1602,7 @@ msgstr "Firma"
 msgid "Conditions"
 msgstr ""
 
-#: share/templates/customer/details.tt
+#: share/templates/customer/details.tt share/templates/device/list.tt
 msgid "Config"
 msgstr ""
 
@@ -2258,6 +2258,10 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Defines the format of emergency_location_object"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid ""
 "Defines whether the subscriber can still register and send/receive calls if "
 "Emergency Mode is enabled for the domain of the subscriber. If disabled, "
@@ -2819,6 +2823,10 @@ msgid "Emergency Priorization"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency Provider info"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Suffix variable"
 msgstr "Notruf-Suffix variable"
 
@@ -2828,6 +2836,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency code already defined for emergency mapping container!"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Emergency location format"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
@@ -6859,14 +6871,6 @@ msgid ""
 "user agent"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid ""
-"Provide this field as pre-coded value to add it to the SDP as MIME object "
-"with content-type \"application/vnd.cirpack.isdn-ext\" and \"content-"
-"disposition: signal;handling=required\" according to the German NGN "
-"interconnect specification"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning Template"
 msgstr ""
@@ -7474,6 +7478,10 @@ msgstr "Regel"
 #: share/templates/rewrite/set_list.tt
 msgid "Rules"
 msgstr "Regeln"
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SDP MIME object related to location to be added on an emergency call"
+msgstr ""
 
 #: share/templates/callflow/list.tt
 #: share/templates/widgets/admin_topmenu_settings.tt
@@ -9675,6 +9683,12 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Which transport protocol (e.g. RTP, SRTP, etc) to use"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid ""
+"XML with the ProviderInfo data that will be added as MIME object on an "
+"emergency call"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
