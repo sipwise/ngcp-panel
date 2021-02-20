@@ -2078,6 +2078,14 @@ msgstr ""
 msgid "Create call list suppression"
 msgstr ""
 
+#: share/templates/reseller/branding.tt
+msgid "Custom CSS"
+msgstr ""
+
+#: share/templates/reseller/branding.tt
+msgid "Custom Logo"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/Sounds.pm share/templates/customer/list.tt
 #: share/templates/customer/preferences.tt share/templates/device/list.tt
 #: share/templates/reseller/details.tt share/templates/subscriber/list.tt
@@ -2309,6 +2317,10 @@ msgstr ""
 #: share/templates/voucher/list.tt
 msgid "Delete"
 msgstr "Удалить"
+
+#: share/templates/reseller/branding.tt
+msgid "Delete Logo"
+msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "Delete after sending Email"
@@ -2706,6 +2718,10 @@ msgstr "Редактировать"
 #: share/templates/helpers/modal.tt
 msgid "Edit %1"
 msgstr "Редактировать %1"
+
+#: share/templates/reseller/branding.tt
+msgid "Edit Branding"
+msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "Edit Callthrough CLIs"
@@ -6065,6 +6081,10 @@ msgstr ""
 msgid "No LNP number file specified!"
 msgstr ""
 
+#: share/templates/reseller/branding.tt
+msgid "No branding specified, using standard branding."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 msgid "No call list suppression file specified!"
 msgstr ""
@@ -6083,6 +6103,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "No iCalendar file specified!"
+msgstr ""
+
+#: share/templates/reseller/branding.tt
+msgid "No logo uploaded"
 msgstr ""
 
 #: share/templates/widgets/subscriber_vm_overview.tt
