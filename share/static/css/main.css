@@ -595,4 +595,15 @@ div.login {
   display: none;
 }
 
+/* -------------
+  Reseller Bradnings
+----------------*/
+
+.color-box {
+    display: inline-block;
+    width: 50px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
 /* vim: set tabstop=4 syntax=css expandtab: */

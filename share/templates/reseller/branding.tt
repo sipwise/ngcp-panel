@@ -46,6 +46,18 @@
 [% branding.css %]
     </pre>
     </p>
+    <h3>[% c.loc('CSC Primary Color: ') %]
+    <div class="color-box" style="background-color: [% branding.csc_color_primary %]">
+        &nbsp;
+    </div>
+    <div style="display: inline-block;">[% branding.csc_color_primary %]</div>
+    </h3>
+    <h3>[% c.loc('CSC Secondary Color: ') %]
+    <div class="color-box" style="background-color: [% branding.csc_color_secondary %]">
+        &nbsp;
+    </div>
+    <div style="display: inline-block;">[% branding.csc_color_secondary %]</div>
+    </h3>
 [% ELSE -%]
   [% c.loc('No branding specified, using standard branding.') %]
 [% END -%]
@@ -62,6 +74,20 @@
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
+<script type="text/javascript" src="/js/spectrum.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/spectrum.min.css" />
+<script>
+    $(document).ready(function() {
+        $('.ngcp-csc-color-primary').spectrum({
+          type: "component",
+          showInput: true
+        });
+        $('.ngcp-csc-color-secondary').spectrum({
+          type: "component",
+          showInput: true
+        });
+    });
+</script>
 [% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

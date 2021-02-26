@@ -27,6 +27,22 @@ has_field 'css' => (
     element_class => [qw/ngcp-autoconf-area/],
 );
 
+has_field 'csc_color_primary' => (
+    type => 'Text',
+    required => 0,
+    label => 'CSC Primary Color',
+    maxlength => 45,
+    element_class => [qw/ngcp-csc-color-primary/],
+);
+
+has_field 'csc_color_secondary' => (
+    type => 'Text',
+    required => 0,
+    label => 'CSC Secondary Color',
+    maxlength => 45,
+    element_class => [qw/ngcp-csc-color-secondary/],
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -37,7 +53,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/logo css/],
+    render_list => [qw/logo css csc_color_primary csc_color_secondary/],
 );
 
 has_block 'actions' => (

@@ -21,3 +21,4 @@ ngcp-panel source: source-is-missing share/static/js/plugins/validate/jquery.val
 ngcp-panel source: source-is-missing share/static/js/swaggerui/swagger-ui-bundle.js *
 ngcp-panel source: source-is-missing share/static/js/swaggerui/swagger-ui-standalone-preset.js *
 ngcp-panel source: source-is-missing share/static/js/swaggerui/swagger-ui.css *
+ngcp-panel source: source-is-missing share/static/js/spectrum.min.js
