@@ -269,6 +269,7 @@ sub process_billing_fees{
         $row->{onpeak_extra_second} = undef if (defined $row->{onpeak_extra_second} and $row->{onpeak_extra_second} eq '');
         $row->{offpeak_extra_second} = undef if (defined $row->{offpeak_extra_second} and $row->{offpeak_extra_second} eq '');
         $row->{offpeak_use_free_time} = $row->{onpeak_use_free_time} if (not defined $row->{offpeak_use_free_time} or $row->{offpeak_use_free_time} eq '');
+        $row->{aoc_pulse_amount_per_message} = 0 unless $row->{aoc_pulse_amount_per_message};
         unless (validate_billing_fee($row,
             sub {
                 my ($field,$error,$error_detail) = @_;
