@@ -1,3 +1,12 @@
+ngcp-panel (9.3.1.1+0~mr9.3.1.1) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [a76244e] TT#109604 Implement blob preferences upload in Panel UI
+  * [459406a] TT#110257 Implement blob preferences support in API
+  * [0c7c098] TT#110257 Add blob preference type to API tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Mar 2021 12:07:46 +0100
+
 ngcp-panel (9.3.1.0+0~mr9.3.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
