@@ -1,3 +1,10 @@
+ngcp-panel (7.5.2.15+0~mr7.5.2.15) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2bb5324] TT#71313 fix tz selector field for subscribers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Mar 2021 15:09:47 +0100
+
 ngcp-panel (7.5.2.14+0~mr7.5.2.14) unstable; urgency=medium
 
   [ Flaviu Mates ]
