@@ -54,6 +54,9 @@ sub PATCH :Allow {
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
+        my $hal = $self->hal_from_item($c, $item);
+        last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $item->id });
+
         $guard->commit;
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
