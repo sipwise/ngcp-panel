@@ -696,7 +696,7 @@ sub login_to_v2 :Chained('/') :PathPart('login_to_v2') :Args(0) {
     $redis->set("jwt:$token", '');
     $redis->expire("jwt:$token", 300);
 
-    $c->res->redirect($c->req->base.'v2?v1_auth='.$token.'#/'.$c->req->params->{page});
+    $c->res->redirect($c->req->base.'v2/#/'.$c->req->params->{page});
 }
 
 sub api_apply_fake_time :Private {
