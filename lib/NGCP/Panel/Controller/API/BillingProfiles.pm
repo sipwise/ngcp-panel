@@ -171,6 +171,21 @@ sub POST :Allow {
             foreach my $special_peaktime (@$special_peaktimes_to_create) {
                 $billing_profile->billing_peaktime_specials->create($special_peaktime);
             }
+        } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key ('reshand_idx'|'resnam_idx')/ }) {
+            $e =~ /Duplicate entry '([^']+)' for key ('reshand_idx'|'resnam_idx')/;
+            my $log_error;
+            my @http_errors;
+            if ($2 eq '\'reshand_idx\'') {
+                $log_error = "failed to create subscriber, number " . $c->qs($1) . " already exists";
+                @http_errors = ("Reseller-Billing Profile handle '" . $1 . "' already exists.", "Reseller-Billing Profile handle already exists.");
+            }
+            elsif ($2 eq '\'resnam_idx\'') {
+                $log_error = "failed to create subscriber, reseller-billing profile combination " . $c->qs($1) . " already exists";
+                @http_errors = ("Reseller-Billing Profile name combination '" . $1 . "' already exists.", "Reseller-Billing Profile name combination already exists.");
+            }
+            $c->log->error($log_error); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $http_errors[0], $http_errors[1]);
+            last;
         } catch($e) {
             $c->log->error("failed to create billing profile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.");
