@@ -34,7 +34,7 @@
 
 <div class="ngcp-separator"></div>
 <h3>[% c.loc('Outbound Peering Rules') %]</h3>
-<p>ANY of the rules must match to choose the peering group for outbound calls.</p>
+<p>[% c.loc('ANY of the rules must match to choose the peering group for outbound calls.') %]</p>
 [%
     helper.name = c.loc('Outbound Peering Rule');
     helper.identifier = 'PeeringRules';
@@ -66,7 +66,7 @@
 
 <div class="ngcp-separator"></div>
 <h3>[% c.loc('Inbound Peering Rules') %]</h3>
-<p>ALL of the rules must match to choose the peering group for inbound calls.</p>
+<p>[% c.loc('ALL of the rules must match to choose the peering group for inbound calls.') %]</p>
 [%
     helper.name = c.loc('Inbound Peering Rule');
     helper.identifier = 'InboundPeeringRules';
