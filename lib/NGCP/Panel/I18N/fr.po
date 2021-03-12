@@ -370,6 +370,11 @@ msgstr "Un nom d'utilisateur utilisé pour l'authentification de l'opérateur."
 msgid "ACL"
 msgstr "ACL"
 
+#: share/templates/peering/servers_rules.tt
+msgid ""
+"ALL of the rules must match to choose the peering group for inbound calls."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: CMR interval"
 msgstr ""
@@ -432,6 +437,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: octet-aligned mode"
+msgstr ""
+
+#: share/templates/peering/servers_rules.tt
+msgid ""
+"ANY of the rules must match to choose the peering group for outbound calls."
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
