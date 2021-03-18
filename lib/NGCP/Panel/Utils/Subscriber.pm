@@ -1510,12 +1510,13 @@ sub update_subscriber_numbers {
                 $alias->{e164}->{is_devid} = delete $alias->{is_devid};
             }
 
-            my $dbalias = $prov_subs->voip_dbaliases->find({
+            my $dbalias = $prov_subs->voip_dbaliases->search_rs({
                 username => $cli,
-            });
+                is_primary => 0,
+            })->first;
             if($dbalias) {
                 $dbalias->update({
-                    is_primary => 0,
+                    #is_primary => 0,
                     is_devid => $alias->{e164}->{is_devid} // 0,
                 });
             } else {
