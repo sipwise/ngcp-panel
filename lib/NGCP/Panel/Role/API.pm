@@ -818,7 +818,7 @@ sub collection_nav_links {
     #so - in array collections we don't define now collection_infinite_pager_stop, but get total_count from array size.
     if ( (! defined $total_count
             && ! $c->stash->{collection_infinite_pager_stop} )
-        || ( defined $total_count && ($total_count / $rows) > $page ) ) {
+        || ( defined $total_count && $rows && ($total_count / $rows) > $page ) ) {
 
         push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
     }
@@ -1474,6 +1474,15 @@ sub post_process_commit{
 
 sub validate_request {
     my ($self, $c) = @_;
+
+    my $page = $c->request->params->{page} // 1;
+    my $rows = $c->request->params->{rows} // 10;
+
+    if ($page == 0 || $rows == 0) {
+        $self->error($c, HTTP_BAD_REQUEST, "Query parameters 'page' and 'rows', when specified, must be greater than 0.");
+        return;
+    }
+
     return 1;
 }
 
