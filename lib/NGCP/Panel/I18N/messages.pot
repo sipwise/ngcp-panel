@@ -955,6 +955,14 @@ msgstr ""
 msgid "CPBX Device Firmware Settings"
 msgstr ""
 
+#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
+msgid "CSC Primary Color: "
+msgstr ""
+
+#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
+msgid "CSC Secondary Color: "
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CSTA Client"
 msgstr ""
