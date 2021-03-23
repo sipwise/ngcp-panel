@@ -484,7 +484,12 @@ sub update_item {
         $c->log->error("failed to update subscriber, number " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
         return;
-    }
+    } catch($e where { /alias '([^']+)' already exists/ }) {
+        $e =~ /alias '([^']+)' already exists/;
+        $c->log->error("failed to update subscriber, alias " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
+        return;
+    }        
 
     my $billing_res = {
         external_id => $resource->{external_id},
