@@ -510,6 +510,34 @@ sub provision_commit_row {
         } else {
             die $msg;
         }
+    } catch($e where { /alias '([^']+)' already exists/ }) {
+        my ($msg, $subscriber) = _get_duplicate_subs(
+            $c,
+            $context,
+            $schema,
+            $e,
+            $purge,
+        );
+        if ($purge && $subscriber && scalar @$subscriber) {
+            foreach (@$subscriber) {
+                $subscriber = $_;
+                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
+                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+                _init_subscriber_context(
+                    $c,
+                    $context,
+                    $schema,
+                    $c->stash->{provisioning_templates}->{$template},
+                );
+                _create_subscriber(
+                    $c,
+                    $context,
+                    $schema,
+                );
+            }
+        } else {
+            die $msg;
+        }
     }
 
     _init_subscriber_preferences_context(
@@ -1298,7 +1326,21 @@ sub _get_duplicate_subs {
         $idx = $2;
         $val = $1;
     }
-    if ($idx and 'number_idx' eq $idx) {
+    if ($e =~ /alias '([^']+)' already exists/) {
+        $val = $1;
+        $msg = $e;
+        if ($get) {
+            $c->log->debug("provisioning template - $msg");
+            my %subs = ();
+            foreach my $alias ($c->model('DB')->resultset('voip_dbaliases')->search_rs({
+                    username => $val,
+                },undef)->all) {
+                $subscriber = $alias->subscriber->voip_subscriber;
+                $subs{$subscriber->id} = $subscriber unless exists $subs{$subscriber->id};
+            }
+            $subscriber = [ values %subs ];
+        }
+    } elsif ($idx and 'number_idx' eq $idx) {
         $msg = "number already exists: $e";
         if ($get) {
             $c->log->debug("provisioning template - $msg");

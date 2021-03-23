@@ -1393,11 +1393,17 @@ sub update_subscriber_numbers {
                         $dbalias->update({ is_primary => 1 });
                     }
                 } else {
-                    $dbalias = $prov_subs->voip_dbaliases->create({
-                        username => $cli,
-                        domain_id => $prov_subs->domain->id,
-                        is_primary => 1,
-                    });
+                    if ($schema->resultset('voip_dbaliases')->search_rs({
+                            username => $cli,
+                        })->first) {
+                        die("alias '" . $c->qs($cli) . "' already exists");
+                    } else {
+                        $dbalias = $prov_subs->voip_dbaliases->create({
+                            username => $cli,
+                            domain_id => $prov_subs->domain->id,
+                            is_primary => 1,
+                        });                        
+                    }                    
                 }
                 if(defined $acli_pref) {
                     $acli_pref->search({ value => $old_cli })->delete if($old_cli);
@@ -1486,6 +1492,12 @@ sub update_subscriber_numbers {
                 $number = $old_number;
                 $old_cli = $old_number->cc . ($old_number->ac // '') . $old_number->sn;
             } else {
+                #too slow:
+                #$schema->resultset('voip_numbers')->search(
+                #    \[ 'concat(cc,ac,sn) = ?', [ {} => (
+                #        $alias->{e164}->{cc} . ($alias->{e164}->{ac} // '') . $alias->{e164}->{sn}
+                #    ) ]]
+                #)->first;
                 $number = $schema->resultset('voip_numbers')->create({
                     cc            => $alias->{e164}->{cc},
                     ac            => $alias->{e164}->{ac} // '',
@@ -1518,13 +1530,19 @@ sub update_subscriber_numbers {
                     devid_alias => $alias->{e164}->{devid_alias},
                 });
             } else {
-                $dbalias = $prov_subs->voip_dbaliases->create({
-                    username => $cli,
-                    domain_id => $prov_subs->domain->id,
-                    is_primary => 0,
-                    is_devid => $alias->{e164}->{is_devid} // 0,
-                    devid_alias => $alias->{e164}->{devid_alias},
-                });
+                if ($schema->resultset('voip_dbaliases')->search_rs({
+                        username => $cli,
+                    })->first) {
+                    die("alias '" . $c->qs($cli) . "' already exists");
+                } else {
+                    $dbalias = $prov_subs->voip_dbaliases->create({
+                        username => $cli,
+                        domain_id => $prov_subs->domain->id,
+                        is_primary => 0,
+                        is_devid => $alias->{e164}->{is_devid} // 0,
+                        devid_alias => $alias->{e164}->{devid_alias},
+                    });
+                }
             }
             if(defined $acli_pref) {
                 $acli_pref->search({ value => $old_cli })->delete if($old_cli);
