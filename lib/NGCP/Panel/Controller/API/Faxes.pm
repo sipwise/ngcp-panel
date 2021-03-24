@@ -7,6 +7,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Faxes/;
 
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use Encode qw/decode_utf8/;
 
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::API::Subscribers;
@@ -119,7 +120,7 @@ sub create_item {
             subscriber => $billing_subscriber,
             destination => $form->values->{destination},
             upload => $form->values->{faxfile},
-            data => $form->values->{data},
+            data => $c->req->headers->content_type eq 'multipart/form-data' ? decode_utf8($form->values->{data}) : $form->values->{data}
         );
         $c->log->debug("faxserver output:\n");
         $c->log->debug($output);
