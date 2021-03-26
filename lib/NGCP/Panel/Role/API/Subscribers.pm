@@ -188,6 +188,12 @@ sub resource_from_item {
         }
         if($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
+            if(!$c->config->{security}->{password_sip_expose_subadmin}) {
+                delete $resource{password};
+            }
+            if(!$c->config->{security}->{password_web_expose_subadmin}) {
+                delete $resource{webpassword};
+            }
         }
     }
 
