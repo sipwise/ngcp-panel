@@ -132,6 +132,7 @@ $ua = Test::Collection->new()->ua();
         peeringserverpreferences => 1,
         peeringservers => 1,
         phonebookentries => 1,
+        resellerbrandings => 1,
         resellerpreferencedefs => 1,
         resellerpreferences => 1,
         preferencesmetaentries => 1,
@@ -168,6 +169,7 @@ $ua = Test::Collection->new()->ua();
         topupvouchers => 1,
         trustedsources => 1,
         upnrewritesets => 1,
+        userinfo => 1,
         voicemailrecordings => 1,
         voicemailgreetings => 1,
         voicemails => 1,
@@ -175,7 +177,7 @@ $ua = Test::Collection->new()->ua();
         vouchers => 1,
     };
     foreach my $link(@links) {
-        my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash|managersecretary|passwordre(set|covery))"$!;
+        my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash|managersecretary|userinfo|passwordre(set|covery))"$!;
         like($link, $rex, "check for valid link syntax");
         my ($relname) = ($link =~ $rex);
         ok(exists $rels->{$relname}, "check for '$relname' collection in Link");
