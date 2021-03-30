@@ -1,3 +1,15 @@
+ngcp-panel (6.5.12.1+0~mr6.5.12.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [a3b05e4] TT#105954 /api/invoices: accept 'application/pdf' type
+  * [87b09f5] TT#107051 fix PATCH /billingprofiles/x - peaktimes
+  * [2bc3347] TT#107051 enable "add" for PATCH /billingprofiles/x
+
+  [ Kirill Solomko ]
+  * [94f4862] TT#59164 Field::URI allow "\\" char in sip-username
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 30 Mar 2021 19:22:11 +0200
+
 ngcp-panel (6.5.12.0+0~mr6.5.12.0) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
