@@ -21,8 +21,9 @@ sub get_form {
 }
 
 sub hal_from_item {
-    my ($self, $c, $item, $type) = @_;
+    my ($self, $c, $item, $type, $params) = @_;
     my $form;
+    $params //= {};
 
     my $resource = { subscriber_id => $item->id, cfu => [], cfb => [], cfna => [], cft => [], cfs => [], cfr => [], cfo => []};
     my $b_subs_id = $item->id;
@@ -32,39 +33,41 @@ sub hal_from_item {
             c => $c, attribute => 'ringtimeout', prov_subscriber => $item->provisioning_voip_subscriber)->first;
     $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
 
-    for my $mapping ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
-        push @{ $resource->{$mapping->type} }, {
-                $mapping->destination_set ? (
-                    destinationset => $mapping->destination_set->name,
-                    destinationset_id => $mapping->destination_set->id,
-                ) : (
-                    destinationset => undef,
-                    destinationset_id => undef,
-                ),
-                $mapping->time_set ? (
-                    timeset => $mapping->time_set->name,
-                    timeset_id => $mapping->time_set->id,
-                ) : (
-                    timeset => undef,
-                    timeset_id => undef,
-                ),
-                $mapping->source_set ? (
-                    sourceset => $mapping->source_set->name,
-                    sourceset_id => $mapping->source_set->id,
-                ) : (
-                    sourceset => undef,
-                    sourceset_id => undef,
-                ),
-                $mapping->bnumber_set ? (
-                    bnumberset => $mapping->bnumber_set->name,
-                    bnumberset_id => $mapping->bnumber_set->id,
-                ) : (
-                    bnumberset => undef,
-                    bnumberset_id => undef,
-                ),
-                ( enabled => $mapping->enabled ),
-                ( cfm_id => $mapping->id ),
-            };
+    unless ($params->{skip_existing}) {
+        for my $mapping ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
+            push @{ $resource->{$mapping->type} }, {
+                    $mapping->destination_set ? (
+                        destinationset => $mapping->destination_set->name,
+                        destinationset_id => $mapping->destination_set->id,
+                    ) : (
+                        destinationset => undef,
+                        destinationset_id => undef,
+                    ),
+                    $mapping->time_set ? (
+                        timeset => $mapping->time_set->name,
+                        timeset_id => $mapping->time_set->id,
+                    ) : (
+                        timeset => undef,
+                        timeset_id => undef,
+                    ),
+                    $mapping->source_set ? (
+                        sourceset => $mapping->source_set->name,
+                        sourceset_id => $mapping->source_set->id,
+                    ) : (
+                        sourceset => undef,
+                        sourceset_id => undef,
+                    ),
+                    $mapping->bnumber_set ? (
+                        bnumberset => $mapping->bnumber_set->name,
+                        bnumberset_id => $mapping->bnumber_set->id,
+                    ) : (
+                        bnumberset => undef,
+                        bnumberset_id => undef,
+                    ),
+                    ( enabled => $mapping->enabled ),
+                    ( cfm_id => $mapping->id ),
+                };
+        }
     }
 
     my $adm = $c->user->roles eq "admin" || $c->user->roles eq "reseller";
@@ -97,6 +100,7 @@ sub hal_from_item {
     $resource->{cft_ringtimeout} = $ringtimeout_preference;
     $resource->{id} = int($item->id);
     $hal->resource($resource);
+
     return $hal;
 }
 
@@ -132,7 +136,9 @@ sub item_by_id {
 }
 
 sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+    my ($self, $c, $item, $old_resource, $resource, $form, $params) = @_;
+
+    $params //= {};
 
     if (ref $resource ne "HASH") {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Must be a hash.");
@@ -150,12 +156,32 @@ sub update_item {
 
     my $mappings_rs = $item->provisioning_voip_subscriber->voip_cf_mappings;
     my $p_subs_id = $item->provisioning_voip_subscriber->id;
+    my $domain = $item->provisioning_voip_subscriber->domain->domain // '';
+    my $primary_nr_rs = $item->primary_number;
+    my $number;
+    if ($primary_nr_rs) {
+        $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
+    } else {
+        $number = $item->uuid;
+    }
     my @new_mappings;
+    my @new_destinations;
+    my @new_times;
+    my @new_sources;
+    my @new_bnumbers;
+    my @new_dsets;
+    my @new_tsets;
+    my @new_ssets;
+    my @new_bsets;
     my %cf_preferences;
     my $dsets_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
     my $tsets_rs = $c->model('DB')->resultset('voip_cf_time_sets');
     my $ssets_rs = $c->model('DB')->resultset('voip_cf_source_sets');
     my $bsets_rs = $c->model('DB')->resultset('voip_cf_bnumber_sets');
+    my $dset_max_id = $dsets_rs->search( undef, { for => 'update' } )->get_column('id')->max() // -1;
+    my $tset_max_id = $tsets_rs->search( undef, { for => 'update' } )->get_column('id')->max() // -1;
+    my $sset_max_id = $ssets_rs->search( undef, { for => 'update' } )->get_column('id')->max() // -1;
+    my $bset_max_id = $bsets_rs->search( undef, { for => 'update' } )->get_column('id')->max() // -1;
 
     for my $type ( qw/cfu cfb cft cfna cfs cfr cfo/) {
         if (ref $resource->{$type} ne "ARRAY") {
@@ -191,19 +217,14 @@ sub update_item {
                 if (!NGCP::Panel::Role::API::CFDestinationSets->check_destinations($c, $mapping->{destinationset})) {
                     return;
                 }
-                my $primary_nr_rs = $item->primary_number;
-                my $number;
-                if ($primary_nr_rs) {
-                    $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
-                } else {
-                    $number = $item->uuid;
-                }
-                my $domain = $item->provisioning_voip_subscriber->domain->domain // '';
 
-                $dset = $dsets_rs->create({
-                        name => $mapping->{destinationset}->{name},
-                        subscriber_id => $p_subs_id,
-                    });
+                $dset_max_id +=2;
+                $dset = {
+                    id => $dset_max_id,
+                    name => $mapping->{destinationset}->{name},
+                    subscriber_id => $p_subs_id,
+                };
+                push @new_dsets, $dset;
                 for my $d ( @{$mapping->{destinationset}->{destinations}} ) {
                     delete $d->{destination_set_id};
                     delete $d->{simple_destination};
@@ -213,7 +234,8 @@ sub update_item {
                             domain => $domain,
                             uri => $d->{destination},
                         );
-                    $dset->create_related("voip_cf_destinations", $d);
+                    $d->{destination_set_id} = $dset_max_id;
+                    push @new_destinations, $d;
                 }
             } else {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing field 'destinationset' or 'destinationset_id' in '$type'.");
@@ -252,13 +274,17 @@ sub update_item {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
                     return;
                 }
-                $tset = $tsets_rs->create({
+                $tset_max_id +=2;
+                $tset = {
+                    id => $tset_max_id,
                     name => $mapping->{timeset}->{name},
                     subscriber_id => $p_subs_id,
-                });
+                };
+                push @new_tsets, $tset;
                 for my $t ( @{$mapping->{timeset}->{times}} ) {
                     delete $t->{time_set_id};
-                    $tset->create_related("voip_cf_periods", $t);
+                    $t->{time_set_id} = $tset_max_id;
+                    push @new_times, $t;
                 }
             }
             if($has_tset && !$tset) {
@@ -294,18 +320,21 @@ sub update_item {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'sources'. Must be an array.");
                     return;
                 }
-                my $domain = $item->provisioning_voip_subscriber->domain->domain // '';
 
-                $sset = $ssets_rs->create({
-                        name => $mapping->{sourceset}->{name},
-                        mode => $mapping->{sourceset}->{mode},
-                        is_regex => $mapping->{sourceset}->{is_regex} // 0,
-                        subscriber_id => $p_subs_id,
-                    });
+                $sset_max_id +=2;
+                $sset = {
+                    id => $sset_max_id,
+                    name => $mapping->{sourceset}->{name},
+                    mode => $mapping->{sourceset}->{mode},
+                    is_regex => $mapping->{sourceset}->{is_regex} // 0,
+                    subscriber_id => $p_subs_id,
+                };
+                push @new_ssets, $sset;
                 for my $s ( @{$mapping->{sourceset}->{sources}} ) {
-                    $sset->create_related("voip_cf_sources", {
+                    push @new_sources, {
+                        source_set_id => $sset_max_id,
                         source => $s->{source},
-                    });
+                    };
                 }
             }
             if($has_sset && !$sset) {
@@ -342,47 +371,81 @@ sub update_item {
                     return;
                 }
 
-                $bset = $bsets_rs->create({
+                $bset_max_id +=2;
+                $bset = {
+                    id => $bset_max_id,
                     name => $mapping->{bnumberset}->{name},
                     mode => $mapping->{bnumberset}->{mode},
                     is_regex => $mapping->{bnumberset}->{is_regex} // 0,
                     subscriber_id => $p_subs_id,
-                });
+                };
+                push @new_bsets, $bset;
                 for my $b ( @{$mapping->{bnumberset}->{bnumbers}} ) {
-                    $bset->create_related("voip_cf_bnumbers", {
+                    push @new_bnumbers, {
+                        bnumber_set_id => $bset_max_id,
                         bnumber => $b->{bnumber},
-                    });
+                    };
                 }
             }
             if($has_bset && !$bset) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'bnumberset'. Could not be found.");
                 return;
             }
-
-            push @new_mappings, $mappings_rs->new_result({
-                    destination_set_id => $dset->id,
-                    time_set_id => $tset ? $tset->id : undef,
-                    source_set_id => $sset ? $sset->id : undef,
-                    bnumber_set_id => $bset ? $bset->id : undef,
+            push @new_mappings, {
+                    destination_set_id => ref $dset eq 'HASH' ? $dset->{id} : $dset->id,
+                    time_set_id => ref $tset eq 'HASH' ? $tset->{id} : ( $tset ? $tset->id : undef ),
+                    source_set_id => ref $sset eq 'HASH' ? $sset->{id} : ( $sset ? $sset->id : undef ),
+                    bnumber_set_id => ref $bset eq 'HASH' ? $bset->{id} : ( $bset ? $bset->id : undef ),
                     type => $type,
                     enabled => defined $mapping->{enabled} ? $mapping->{enabled} : 1,
-                });
+                };
         }
     }
 
     try {
         my $autoattendant_count = 0;
-        foreach my $map($mappings_rs->all) {
-            $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
+        $c->model('DB')->resultset('voip_cf_destination_sets')->populate(\@new_dsets);
+        $c->model('DB')->resultset('voip_cf_time_sets')->populate(\@new_tsets);
+        $c->model('DB')->resultset('voip_cf_source_sets')->populate(\@new_ssets);
+        $c->model('DB')->resultset('voip_cf_bnumber_sets')->populate(\@new_bsets);
+        $c->model('DB')->resultset('voip_cf_destinations')->populate(\@new_destinations);
+        $c->model('DB')->resultset('voip_cf_periods')->populate(\@new_times);
+        $c->model('DB')->resultset('voip_cf_sources')->populate(\@new_sources);
+        $c->model('DB')->resultset('voip_cf_bnumbers')->populate(\@new_bnumbers);
+
+        unless ($params->{add_only}) {
+            foreach my $map($mappings_rs->all) {
+                $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
+            }
+            $mappings_rs->delete;
+            for my $type ( qw/cfu cfb cft cfna cfs cfr cfo/) {
+                $cf_preferences{$type}->delete;
+            }
         }
-        $mappings_rs->delete;
+
+        $mappings_rs->populate(\@new_mappings);
         for my $type ( qw/cfu cfb cft cfna cfs cfr cfo/) {
-            $cf_preferences{$type}->delete;
+            my @mapping_ids_by_type = $mappings_rs->search(
+                {
+                    type => $type
+                },
+                {
+                    select => [qw/me.id /],
+                    as => [qw/value/],
+                    result_class => 'DBIx::Class::ResultClass::HashRefInflator'
+                }
+            )->all();
+            $cf_preferences{$type}->populate(\@mapping_ids_by_type);
         }
-        for my $mapping ( @new_mappings ) {
-            $mapping->insert;
-            $cf_preferences{$mapping->type}->create({ value => $mapping->id });
-            $autoattendant_count -= NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($mapping->destination_set);
+
+        unless ($params->{add_only}) {
+            for my $mapping ($mappings_rs->all) {
+                $autoattendant_count -= NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($mapping->destination_set);
+            }
+        } else {
+            for my $d (@new_destinations) {
+                $autoattendant_count -= (NGCP::Panel::Utils::Subscriber::destination_to_field($d->{destination}))[0] eq 'autoattendant' ? 1 : 0;
+            }
         }
 
         if ($autoattendant_count > 0) {

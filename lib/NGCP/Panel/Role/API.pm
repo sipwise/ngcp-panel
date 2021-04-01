@@ -987,6 +987,22 @@ sub apply_patch {
     return $entity;
 }
 
+sub check_patch_op_add_only {
+    my ($self, $c, $json) = @_;
+
+    my $patch = JSON::from_json($json, { utf8 => 1 });
+    my $add_only = 1;
+
+    foreach my $op (@{$patch}) {
+        if ($op->{op} ne "add") {
+            $add_only = 0;
+            last;
+        }
+    }
+
+    return $add_only;
+}
+
 #sub apply_fake_time {
 #    my ($self, $c) = @_;
 #    if (exists $ENV{API_FAKE_CLIENT_TIME} && $ENV{API_FAKE_CLIENT_TIME}) {
