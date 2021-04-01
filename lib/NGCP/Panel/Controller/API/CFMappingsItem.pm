@@ -83,15 +83,20 @@ sub PATCH :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subs_for_cfmapping => $item);
-        my $old_resource = $self->hal_from_item($c, $item, "cfmappings")->resource;
+        my $add_only = $self->check_patch_op_add_only($c, $json);
+        my $old_resource = $self->hal_from_item($c, $item, "cfmappings",
+                                { skip_existing => $add_only })->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
+
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form,
+                    { add_only => $add_only });
         last unless $item;
 
-        my $hal = $self->hal_from_item($c, $item, "cfmappings");
+        my $hal = $self->hal_from_item($c, $item, "cfmappings",
+                        { skip_existing => $add_only });
         last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $item->id });
         
         $guard->commit; 
