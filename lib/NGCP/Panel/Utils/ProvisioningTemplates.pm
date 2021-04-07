@@ -923,8 +923,8 @@ sub _init_contract_preferences_context {
 sub _init_registrations_context {
 
     my ($c, $context, $schema, $template) = @_;
-
-    foreach my $template_registration (@{$template->{registrations} // []}) {
+    
+    foreach my $template_registration (@{_force_array($template->{registrations})}) {
         my %registration = ();
         foreach my $col (keys %$template_registration) {
             my ($k,$v) = _calculate($context,$col, $template_registration->{$col});
@@ -951,7 +951,7 @@ sub _init_trusted_sources_context {
         id => $context->{subscriber}->{id},
     });
 
-    foreach my $template_trusted_source (@{$template->{trusted_sources} // []}) {
+    foreach my $template_trusted_source (@{_force_array($template->{trusted_sources})}) {
         my %trusted_source = ();
         foreach my $col (keys %$template_trusted_source) {
             my ($k,$v) = _calculate($context,$col, $template_trusted_source->{$col});
@@ -1307,7 +1307,7 @@ sub get_fields {
     my $template = $c->stash->{provisioning_template_name};
     my %fields = ();
     my $fields_tied = tie(%fields, 'Tie::IxHash');
-    foreach my $f (@{$c->stash->{provisioning_templates}->{$template}->{fields} // []}) {
+    foreach my $f (@{_force_array($c->stash->{provisioning_templates}->{$template}->{fields})}) {
         next unless ($f->{$FIELD_TYPE_ATTRIBUTE} =~ /calculated/i ? $calculated : not $calculated);
         $fields{$f->{name}} = { %$f };
     }
@@ -1397,6 +1397,13 @@ sub _switch_lang {
     die("template lang '$lang' not supported") unless grep { $_ eq $lang} @SUPPORTED_LANGS;
     return &{$code{$lang}}($context);
 
+}
+
+sub _force_array {
+    my $value = shift;
+    $value //= [];
+    $value = [ $value ] if 'ARRAY' ne ref $value;
+    return $value;
 }
 
 1;
