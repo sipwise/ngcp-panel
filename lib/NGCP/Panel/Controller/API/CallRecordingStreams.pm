@@ -27,7 +27,7 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    { 'call' => $q };
+                    { 'me.call' => $q };
                 },
                 second => sub {}
             },
