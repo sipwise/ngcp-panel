@@ -50,6 +50,14 @@ sub hal_from_item {
         run => 0,
     );
 
+    if ($c->req->param('expand') && is_int($c->req->param('expand')) && $c->req->param('expand') == 1) {
+        my $subscriber_form = NGCP::Panel::Role::API::Subscribers->get_form($c);
+        $resource->{subscriber} = NGCP::Panel::Role::API::Subscribers->resource_from_item($c, $item, $subscriber_form);
+        #don't show passwords here
+        delete $resource->{subscriber}->{webpassword};
+        delete $resource->{subscriber}->{password};
+    }
+
     $hal->resource($resource);
     return $hal;
 }
