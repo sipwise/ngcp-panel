@@ -2467,6 +2467,10 @@ msgid "Enable Prepaid"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable RTP proxy debugging"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP OPTIONS ping"
 msgstr ""
 
@@ -2500,6 +2504,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt share/templates/subscriber/preferences.tt
 msgid "Enabled"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enables full debug logging in the RTP proxy for all calls from or to this subscriber or peer."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
