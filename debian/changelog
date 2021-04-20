@@ -1,3 +1,47 @@
+ngcp-panel (9.4.1.0+0~mr9.4.1.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [c344dee] TT#110700 Add 'config' and 'preferences' buttons for Deployed Devices
+  * [055751e] TT#109604 Implement blob preferences upload in Panel UI
+  * [3d2df8b] TT#110257 Implement blob preferences support in API
+  * [5826bec] TT#110257 Add blob preference type to API tests
+  * [8bc9a39] TT#108162 Reseller branding primary and secondary colors
+  * [bbc5468] TT#108854 Implement /api/userinfo endpoint
+  * [221572d] TT#113767 Fix 500 error on /api/customerpreferences
+  * [cece861] TT#113513 Handle duplicate billingprofiles in API
+  * [67ca4d5] TT#114703 Use config flags password_(sip|web)_expose_subadmin in api
+  * [8c3c0bb] TT#108854 Fix api tests after adding userinfo and resellebrandings endpoints
+  * [b13e487] TT#118600 Fix /api/callrecordingstreams filter by recording_id
+
+  [ Sipwise Jenkins Builder ]
+  * [dc85fdf] TT#4166 I18N dump: snapshot 2021.02.19-01.23.56
+  * [43e780b] TT#4166 I18N dump: snapshot 2021.02.20-01.23.44
+  * [d76dff7] TT#4166 I18N dump: snapshot 2021.03.13-00.52.16
+  * [07f2b64] TT#4166 I18N dump: snapshot 2021.03.18-01.21.46
+  * [c2c9f84] TT#4166 I18N dump: snapshot 2021.04.20-01.22.18
+
+  [ Alexander Lutay ]
+  * [754ae4b] TT#103252 Fix 'Panel Branding': codestyle, layout, localization
+  * [6c86122] TT#113251 Create journal 'update' records for 'admins' REST API
+  * [a7d718c] TT#113765 AUI: Remove v1_auth from v1->v2 URL
+  * [02a183e] TT#115002 Add missing localization for 'SIP Peering Group'
+  * [90dac30] TT#115002 Add crowdin.com translation badge
+  * [cf8fa9a] TT#115002 Fix 90dac30: rename README to README.md
+
+  [ Rene Krenn ]
+  * [c36a029] TT#111305 TT#111304 add aoc_pulse_amount_per_message field
+  * [a15e3c2] TT#113450 prevent deleting primary alias
+  * [a916bd3] TT#116703 prevent entering duplicate alias numbers
+  * [1b73a16] TT#118550 enforce array values in prov templates
+
+  [ Kirill Solomko ]
+  * [96f0b07] TT#116251 validate params page and rows equal 0
+
+  [ Guillem Jover ]
+  * [578bd85] TT#115002 Convert README.md to actual Markdown syntax
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Apr 2021 11:58:21 +0200
+
 ngcp-panel (9.4.0.0+0~mr9.4.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
