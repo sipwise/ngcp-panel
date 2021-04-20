@@ -138,7 +138,7 @@ sub _autoattendants_from_subscriber {
 
     my @aas;
     for my $s ($prov_subscriber->voip_pbx_autoattendants->all) {
-        push @aas, {destination => $s->destination, slot => $s->choice};
+        push @aas, {destination => $s->destination, slot => $s->choice, id => $s->id};
     }
     return \@aas;
 }

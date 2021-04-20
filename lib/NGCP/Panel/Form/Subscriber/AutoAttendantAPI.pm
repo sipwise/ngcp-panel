@@ -16,6 +16,11 @@ has_field 'slots' => (
     },
 );
 
+has_field 'slots.id' => (
+    type => '+NGCP::Panel::Field::PosInteger',
+    readonly => 1,
+);
+
 has_field 'slots.slot' => (
     type => 'Select',
     label => 'Key',
