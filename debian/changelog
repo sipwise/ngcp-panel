@@ -1,3 +1,10 @@
+ngcp-panel (7.5.6.7+0~mr7.5.6.7) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [333d951] TT#114703 Use config flags password_(sip|web)_expose_subadmin in api
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Apr 2021 17:13:01 +0200
+
 ngcp-panel (7.5.6.6+0~mr7.5.6.6) unstable; urgency=medium
 
   [ Rene Krenn ]
