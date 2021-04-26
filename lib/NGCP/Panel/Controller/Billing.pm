@@ -351,7 +351,7 @@ sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
         { name => 'source', search => 1, title => $c->loc('Source Pattern') },
         { name => 'destination', search => 1, title => $c->loc('Destination Pattern') },
         { name => 'match_mode', search => 0, title => $c->loc('Match Mode'),
-          custom_renderer => 'function ( data, type, full ) {'.
+          custom_renderer => 'function ( data, type, full, opt ) {'.
             'if(full.match_mode == "regex_longest_pattern"){return "' . $c->loc('Regular expression - longest pattern') . '";}'.
             'else if(full.match_mode == "regex_longest_match"){return "' . $c->loc('Regular expression - longest match') . '";}'.
             'else if(full.match_mode == "prefix"){return "' . $c->loc('Prefix string') . '";}'.
