@@ -51,7 +51,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
         { name => "contact.firstname", search => 1, title => '' },
         { name => "contact.lastname", search => 1, title => $c->loc("Name"),
-            custom_renderer => 'function ( data, type, full ) { var sep = (full.contact_firstname && full.contact_lastname) ? " " : ""; return (full.contact_firstname || "") + sep + (full.contact_lastname || ""); }' },
+            custom_renderer => 'function ( data, type, full, opt ) { var sep = (full.contact_firstname && full.contact_lastname) ? " " : ""; return (full.contact_firstname || "") + sep + (full.contact_lastname || ""); }' },
         { name => "product.name", search => 1, title => $c->loc("Product") },
         { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
           literal_sql => '""' },
