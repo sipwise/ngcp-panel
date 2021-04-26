@@ -60,7 +60,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     $c->stash->{subscribers_rs} = $c->model('DB')->resultset('voip_subscribers')->search({
         'me.status' => { '!=' => 'terminated' },
     },{
-        group_by => [ qw/me.id/ ],
+        join => [ qw(domain primary_number) ],
     });
     if ($c->user->roles eq 'reseller' || $c->user->roles eq 'ccare') {
         $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
@@ -97,8 +97,8 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "domain.domain", search => 1, title => $c->loc('Domain') },
         { name => "uuid", search => 1, title => $c->loc('UUID') },
         { name => "status", search => 1, title => $c->loc('Status') },
-        { name => "number", search => 0, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)",'join' => 'primary_number'},
-        { name => "provisioning_voip_subscriber.voip_dbaliases.username", search => 1, 'no_column' => 1 },
+        { name => "number", search => 0, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)" },
+        #{ name => "provisioning_voip_subscriber.voip_dbaliases.username", search => 1, 'no_column' => 1 },
         { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 1, title => $c->loc('Profile') },
     ]);
 }
@@ -364,7 +364,7 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{subscribers_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{dt_columns}, undef, { 'count_limit' => 1000, });
     $c->detach( $c->view("JSON") );
 }
 
