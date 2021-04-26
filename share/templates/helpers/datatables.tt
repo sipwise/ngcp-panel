@@ -112,7 +112,7 @@ $(document).ready(function() {
                 "className": 'hidden',
                 "hidden": true,
                 [%END%]
-                "mRender": function ( data, type, full ) {
+                "mRender": function ( data, type, full, opt ) {
                     [% IF !helper.options.${f}.dont_skip_empty_data %]
                     if(data == null)
                       return '';
@@ -120,14 +120,17 @@ $(document).ready(function() {
                     if(data == null)
                       data = '';
                     [% END %]
+                    if (typeof opt !== 'object') {
+                        opt = {};
+                    }
+                    opt.escapeHtml = true; // always escape HTML by default
                     [% IF helper.custom_renderers.${f} -%]
-                        data.escapeHtml = true; //true by default;
                         var renderCustom = [% helper.custom_renderers.${f} -%];
                     [% ELSE -%]
-                        var renderCustom = function(data, type, full) { data.escapeHtml = true; return data; };
+                        var renderCustom = function(data, type, full, opt) { return data; };
                     [% END -%]
-                    var str = String(renderCustom(data, type, full));
-                    if (data.escapeHtml) {
+                    var str = String(renderCustom(data, type, full, opt));
+                    if (opt.escapeHtml) {
                         return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');//"
                     }
                     return str;
@@ -135,7 +138,7 @@ $(document).ready(function() {
                 "bSortable": [% IF helper.column_sortable_map.${f} %] true [% ELSE %] false [% END %]
             },
             [% END -%]
-            {   "mRender": function ( data, type, full ) {
+            {   "mRender": function ( data, type, full, opt ) {
                     var html = '' +
                     '<div class="sw_actions pull-right">';
                     [%

@@ -53,19 +53,19 @@ $(document).ready(function() {
                         [% FOREACH f IN table_fields -%]
                         {
                            "mData": "[% f %]",
-                           "mRender": function ( data, type, full ) {
+                           "mRender": function ( data, type, full, opt ) {
                                 if(data == null)
                                     return '';
                                 [% IF custom_renderers.${f} -%]
                                     var renderCustom = [% custom_renderers.${f} -%];
                                 [% ELSE -%]
-                                    var renderCustom = function(data, type, full) { return data; };
+                                    var renderCustom = function(data, type, full, opt) { return data; };
                                 [% END -%]
                                 return String(renderCustom(data, type, full)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                             }
                         },
                         [% END -%]
-                        { "mRender": function ( data, type, full ) {
+                        { "mRender": function ( data, type, full, opt ) {
                                 return '<input type="checkbox" value="' + full.id + '"/>';
                             },
                           "mData": null,
