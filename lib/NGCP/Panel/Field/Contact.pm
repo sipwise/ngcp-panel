@@ -13,7 +13,7 @@ has_field 'id' => (
     table_titles => ['#', 'Reseller', 'Name', 'Email'],
     table_fields => ['id', 'reseller_name', 'firstname', 'email'],
     custom_renderers => {
-        firstname => 'function ( data, type, full ) { var sep = (full.firstname && full.lastname) ? " " : ""; return (full.firstname || "") + sep + (full.lastname || ""); }',
+        firstname => 'function ( data, type, full, opt ) { var sep = (full.firstname && full.lastname) ? " " : ""; return (full.firstname || "") + sep + (full.lastname || ""); }',
     },
 );
 
