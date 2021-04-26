@@ -12,7 +12,7 @@ has_field 'profile_id' => (
     ajax_src => '/billing/ajax',
     table_titles => ['#', 'Reseller', 'Profile'],
     table_fields => ['id', 'reseller_name', 'name'],
-    custom_renderers => { name => 'function ( data, type, full ) { if(data.length > 13) data = data.substring(0,10) + \'...\'; return data; }'}
+    custom_renderers => { name => 'function ( data, type, full, opt ) { if(data.length > 13) data = data.substring(0,10) + \'...\'; return data; }'}
 );
 
 has_field 'network_id' => (
@@ -25,7 +25,7 @@ has_field 'network_id' => (
     ajax_src => '/network/ajax',
     table_titles => ['#', 'Reseller', 'Network'],
     table_fields => ['id', 'reseller_name', 'name'],
-    custom_renderers => { name => 'function ( data, type, full ) { if(data.length > 13) data = data.substring(0,10) + \'...\'; return data; }'}
+    custom_renderers => { name => 'function ( data, type, full, opt ) { if(data.length > 13) data = data.substring(0,10) + \'...\'; return data; }'}
 );
 
 no Moose;
