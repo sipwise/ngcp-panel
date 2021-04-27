@@ -1,3 +1,10 @@
+ngcp-panel (9.3.1.3+0~mr9.3.1.3) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [de7f717] TT#116900 Use multidomain when deleting a registration
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 27 Apr 2021 12:05:51 +0200
+
 ngcp-panel (9.3.1.2+0~mr9.3.1.2) unstable; urgency=medium
 
   [ Flaviu Mates ]
