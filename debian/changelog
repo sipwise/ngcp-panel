@@ -1,3 +1,10 @@
+ngcp-panel (8.5.1.7+0~mr8.5.1.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [5230b64] TT#120309 fix datatable escape html rendering
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 28 Apr 2021 11:27:19 +0200
+
 ngcp-panel (8.5.1.6+0~mr8.5.1.6) unstable; urgency=medium
 
   [ Flaviu Mates ]
