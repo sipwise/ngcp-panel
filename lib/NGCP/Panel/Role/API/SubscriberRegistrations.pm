@@ -55,6 +55,47 @@ sub _item_rs {
             if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
             } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
                 $filter->{reseller_id} = $c->user->reseller_id;
+            } elsif ($c->user->roles eq "subscriber") {
+                if ($c->req->param('subscriber_id')) {
+                    my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+                    if ($sub && $sub->provisioning_voip_subscriber->id == $c->user->id) {
+                        $filter->{username} = NGCP::Panel::Utils::Subscriber::get_sub_username_and_aliases($sub->provisioning_voip_subscriber);
+                    } else {
+                        $filter->{username} = undef;
+                    }
+                } else {
+                    $filter->{username} = NGCP::Panel::Utils::Subscriber::get_sub_username_and_aliases($c->user);
+                }
+                if($c->config->{features}->{multidomain}) {
+                    $filter->{domain} = $c->user->domain->domain;
+                } else {
+                    $filter->{domain} = undef;
+                }
+            } elsif ($c->user->roles eq "subscriberadmin") {
+                if ($c->req->param('subscriber_id')) {
+                    my $sub = $c->model('DB')->resultset('voip_subscribers')->search(
+                        {
+                            id => $c->req->param('subscriber_id'),
+                            contract_id => $c->user->account_id
+                        }
+                    )->first;
+                    if ($sub) {
+                        $filter->{username} = NGCP::Panel::Utils::Subscriber::get_sub_username_and_aliases($sub->provisioning_voip_subscriber);
+                    } else {
+                        $filter->{username} = undef;
+                    }
+                } else {
+                    my @customer_subscribers = $c->model('DB')->resultset('voip_subscribers')->search({contract_id => $c->user->account_id})->all();
+                    foreach my $sub (@customer_subscribers) {
+                        my $sub_username_aliases = NGCP::Panel::Utils::Subscriber::get_sub_username_and_aliases($sub->provisioning_voip_subscriber);
+                        push (@{ $filter->{username} }, @$sub_username_aliases);
+                    }
+                }
+                if($c->config->{features}->{multidomain}) {
+                    $filter->{domain} = $c->user->domain->domain;
+                } else {
+                    $filter->{domain} = undef;
+                }
             }
         }
         $item_rs = NGCP::Panel::Utils::Subscriber::get_subscriber_location_rs($c, $filter, $opt);
@@ -75,6 +116,12 @@ sub _item_rs {
                 'contact.reseller_id' => $c->user->reseller_id
             },{
                 join => [@joins, { 'subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}} ],
+            });
+        } elsif($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+            $item_rs = $item_rs->search({
+                'subscriber.uuid' => $c->user->uuid
+            },{
+                join => [@joins,'subscriber'],
             });
         }
     }
@@ -150,7 +197,12 @@ sub item_by_id {
     my ($self, $c, $id) = @_;
 
     my $item_rs = $self->item_rs($c,{ id => $id, });
-    return $item_rs->find($id);
+    my $item = $item_rs->find($id);
+    if ($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        my $sub = $self->subscriber_from_item($c, $item);
+        return unless($sub->provisioning_voip_subscriber->id == $c->user->id);
+    }
+    return $item;
 }
 
 sub subscriber_from_item {
@@ -196,6 +248,10 @@ sub subscriber_from_id {
             'contact.reseller_id' => $c->user->reseller_id,
         },{
             join => { contract => 'contact' },
+        });
+    } elsif($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        $sub_rs = $sub_rs->search({
+            'me.uuid' => $c->user->uuid,
         });
     }
     my $sub = $sub_rs->first;

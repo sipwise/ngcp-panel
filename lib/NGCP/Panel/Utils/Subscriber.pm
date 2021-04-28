@@ -2531,6 +2531,22 @@ sub check_pbx_extension_range {
     return 1
 }
 
+sub get_sub_username_and_aliases {
+    my ($prov_subscriber) = @_;
+    my @usernames;
+    push @usernames, $prov_subscriber->username;
+    my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
+        {
+            is_devid => 1,
+            subscriber_id => $prov_subscriber->id,
+        }
+    );
+    foreach my $devid ($devid_aliases->all) {
+        push @usernames, $devid->username;
+    }
+    return \@usernames;
+}
+
 1;
 
 =head1 NAME
