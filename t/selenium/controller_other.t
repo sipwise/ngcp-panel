@@ -343,14 +343,15 @@ $d->find_element('//*[@id="main-nav"]/li[2]/a')->click();
 $d->find_element('//*[@id="main-nav"]//li//a[contains(text(), "Handbook")]')->click();
 
 diag("Check if we start at the right page");
-ok($d->find_element_by_xpath('/html/body//div//h2/a[@name="_introduction"]'), "We are on the right page");
+ok($d->find_element_by_xpath('/html/body/header/nav/div[1]/a[contains(., "The Sipwise NGCP Handbook")]'), "We are on the right page");
 
 diag("Change page");
 sleep 1; #else the element will get blocked by... itself? (<html>)
-$d->find_element('//*[@id="toc-root-item-2"]//a[contains(text(), "Architecture")]')->click();
+
+$d->find_element('/html/body/div/div/aside/div/div[1]/nav/ul/li[2]/ul/li/a')->click();
 
 diag("Check if page was successfully changed");
-ok($d->find_element_by_xpath('/html/body//div//h2/a[@name="architecture"]'), "We are on the right page");
+ok($d->find_element_by_xpath('/html/body/div/main/div[2]/article/h1[contains(., "Architecture")]'), "We are on the right page");
 
 diag("This test run was successful");
 $run_ok = 1;
