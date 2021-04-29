@@ -15,32 +15,23 @@ if [ -z "${1:-}" ] ; then
   echo
   echo "Usage examples:
 
-  $0 192.168.88.162
-  $0 192.168.88.162 /results/ junit controller_billing.t"
+  $0 1.2.3.4
+  $0 1.2.3.4 /code/ tap"
   exit 1
 fi
 
 SERVER="${1}"
 OUTPUT_DIRECTORY="${2:-/code/}"
 OUTPUT_TYPE=${3:-}
-shift; shift; shift # remove first three argv to use ${@} below.
-if [ -z "${1:-}" ] || [ "${1:-}" == '*.t' ]; then
-  declare -a TEST_PLAN="t/selenium/runner.t"
-elif [ "${1:-}" == 'experimental' ] || [ "${1:-}" == 'exp' ]; then
-  declare -a TEST_PLAN="exp"
-else
-  declare -a TEST_PLAN=( "${@/#/t/selenium/}" )
-fi
-export TESTFILES=${TEST_PLAN[*]}
-
-# workaround for new Selenium::Remote::Driver (see Dockerfile)
-export PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/
+BROWSER=${4:-"firefox"}
+shift; shift; shift; # remove first four argv to use ${@} below.
 
 # vnc
 echo "Setting VNC password"
 printf '%s\n%s\n\n' "${PASSWORD}" "${PASSWORD}" | vncpasswd >/dev/null
 PASSWORD_ENCODED=$(hexdump -v -e '"\\""x" 1/1 "%02X"' < "${HOME}/.vnc/passwd")
 xvnc_process=$(pgrep -f 'Xtigervnc :99' || true)
+export DISPLAY=":99"
 if [ -n "${xvnc_process:-}" ] ; then
   echo "Warning: existing VNC server found, not restarting Xtigervnc process (PID: $xvnc_process)."
 else
@@ -48,15 +39,27 @@ else
   vncserver -localhost no -geometry 1280x1024 :99
 fi
 
-echo "Firefox version:"
-firefox --version
+if [ "${BROWSER:-}" = "firefox" ] ; then
+  echo "Firefox version:"
+  firefox --version
+elif [ "${BROWSER:-}" = "chrome" ] ; then
+  echo "Chrome version:"
+  google-chrome --version
+elif [ "${BROWSER:-}" = "all" ] ; then
+  echo "################################################################################"
+  echo "Firefox version:"
+  firefox --version
+  echo "Chrome version:"
+  google-chrome --version
+else
+  echo "Invalid browser"
+  exit "${RC}"
+fi
+
+export BROWSER
 
 # ensure we don't leave any process behind causing problems with re-execution
 pkill -f 'geckodriver' || true
-DISPLAY=:99 ~/geckodriver -p 4444 --log fatal &
-DISPLAY=:99 ~/geckodriver -p 5555 --log fatal &
-DISPLAY=:99 ~/geckodriver -p 6666 --log fatal &
-DISPLAY=:99 ~/geckodriver -p 7777 --log fatal &
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
@@ -65,14 +68,20 @@ echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
 echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
 
 RC=0
-export CATALYST_SERVER="https://${SERVER}:1443"
+export CATALYST_SERVER="https://${SERVER}"
+cd t/selenium
+
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
+  #Change thread count here and in nose2cfg/jenkinstest.cfg
+  export THREADS=2
   export JENKINS=1
-  perl t/selenium/runner.t | \
+  python3 testrun.py -v -c nose2cfg/jenkinstest.cfg | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
-  perl t/selenium/runner.t || RC=$?
+  #Change thread count here and in nose2cfg/localtest.cfg
+  export THREADS=1
+  python3 testrun.py -v -c nose2cfg/localtest.cfg|| RC=$?
 fi
 
 echo "Finished test execution, test execution returned with exit code ${RC}."
