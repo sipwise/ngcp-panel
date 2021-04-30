@@ -1,3 +1,10 @@
+ngcp-panel (9.3.1.6+0~mr9.3.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [eda7cf9] TT#121250 /api/peeringrules use old model
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 30 Apr 2021 11:08:43 +0200
+
 ngcp-panel (9.3.1.5+0~mr9.3.1.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
