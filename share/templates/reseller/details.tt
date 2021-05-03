@@ -1,3 +1,4 @@
+[% UNLESS framed -%]
 [% site_config.title = c.loc('Reseller Details for [_1]', reseller.first.name) -%]
 
 <div class="row">
@@ -10,6 +11,7 @@
 [% back_created = 1 -%]
 
 <div class="ngcp-separator"></div>
+[% END -%]
 
 <div class="row">
     [% FOREACH m IN messages -%]
