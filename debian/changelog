@@ -1,3 +1,12 @@
+ngcp-panel (9.4.2.0+0~mr9.4.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [0698c8b] TT#120309 fix datatable escape html rendering
+  * [af276ee] TT#121250 fix /api/peeringrules
+  * [2215898] TT#121250 /api/peeringrules use old model
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 May 2021 23:53:12 +0200
+
 ngcp-panel (9.4.1.0+0~mr9.4.1.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
