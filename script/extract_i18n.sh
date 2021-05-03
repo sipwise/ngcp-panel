@@ -24,13 +24,28 @@ perl -I../sipwise-base/lib -I../ngcp-schema/lib -Ilib script/ngcp_panel_dump_db_
 
 echo; echo "Creating ${POT}"; echo
 xgettext.pl \
+  --no-wrap \
   --output="${POT}" \
   "${I18_DIRS[@]/#/--directory=}" \
    -P perl=tt,pm
 
+msgattrib \
+  --no-wrap \
+  --add-location=file \
+  --width=100000 \
+  --output-file="${POT}" \
+  "${POT}"
+
 while IFS= read -r -d '' po ; do
   echo; echo "Merging ${po}"; echo
-  msgmerge --no-fuzzy-matching --add-location=file --update "${po}" "${POT}"
+  msgmerge \
+    --no-fuzzy-matching \
+    --no-wrap \
+    --width=100000 \
+    --add-location=file \
+    --update \
+    "${po}" \
+    "${POT}"
 done < <(find lib/NGCP/Panel/I18N -name "*.po" -print0)
 
 echo; echo "Removing line numbers"; echo
