@@ -457,6 +457,10 @@ msgstr ""
 msgid "Alias Numbers"
 msgstr ""
 
+#: share/templates/helpers/datatables.tt
+msgid "All"
+msgstr ""
+
 #: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
 msgid "All services running"
 msgstr ""
@@ -1806,7 +1810,7 @@ msgstr ""
 msgid "Customer Contracts"
 msgstr ""
 
-#: share/templates/customer/details.tt
+#: share/templates/customer/details.tt share/templates/widgets/subscriberadmin_topmenu_settings.tt
 msgid "Customer Details"
 msgstr ""
 
@@ -1821,10 +1825,6 @@ msgstr ""
 
 #: share/templates/widgets/admin_billing_overview.tt share/templates/widgets/reseller_billing_overview.tt
 msgid "Customer Revenue"
-msgstr ""
-
-#: share/templates/widgets/subscriberadmin_topmenu_settings.tt
-msgid "Customer Settings"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2199,10 +2199,6 @@ msgstr ""
 msgid "Domains"
 msgstr ""
 
-#: share/templates/login/login.tt
-msgid "Don't have an account?"
-msgstr ""
-
 #: share/templates/peering/servers_rules.tt
 msgid "Down"
 msgstr ""
@@ -2476,6 +2472,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP Session Timers."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable STIR Identity validation"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3791,6 +3791,10 @@ msgstr ""
 msgid "From"
 msgstr ""
 
+#: share/templates/helpers/datatables.tt
+msgid "From Date"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "From-Pattern"
 msgstr ""
@@ -4955,6 +4959,10 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+#: share/templates/subscriber/master.tt
+msgid "Login to CSC"
+msgstr ""
+
 #: share/layout/body.tt
 msgid "Logout"
 msgstr ""
@@ -6009,6 +6017,10 @@ msgid "Play an announcement for failure on outbound call"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Play an emulated ringback tone as early media after the pre-call announcements. The ringback tone is played while the final callee is ringing and only if a 180 Ringing message is received from the callee endpoint."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement before call setup"
 msgstr ""
 
@@ -6022,6 +6034,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement to callee after answer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Play emulated ringback tone after pre-call announcements"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6218,8 +6234,16 @@ msgstr ""
 msgid "Provisioning template successfully updated"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Public key HTTP URL"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Q-Value"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "RFC8224 Authenticated Identity Management in the Session Initiation Protocol"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
@@ -7034,8 +7058,16 @@ msgstr ""
 msgid "Show Variables"
 msgstr ""
 
-#: share/templates/login/login.tt
-msgid "Sign Up"
+#: share/templates/subscriber/calllist.tt
+msgid "Show all calls"
+msgstr ""
+
+#: share/templates/subscriber/calllist.tt
+msgid "Show incoming calls only"
+msgstr ""
+
+#: share/templates/subscriber/calllist.tt
+msgid "Show outgoing calls only"
 msgstr ""
 
 #. (realm.ucfirst)
@@ -7174,6 +7206,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Special offpeak entry successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specific value for the Authorization username"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7937,6 +7973,10 @@ msgstr ""
 msgid "This user is not allowed to reset password"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "This value will be specifically used as the 'username' parameter in the Proxy-Authorization/Authorization header (an invitation/a registration session accordingly)"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "This weekday does not exist"
 msgstr ""
@@ -8017,6 +8057,10 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "To (B-Numbers)"
+msgstr ""
+
+#: share/templates/helpers/datatables.tt
+msgid "To Date"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -8556,6 +8600,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "XMPP Settings"
+msgstr ""
+
+#: share/templates/helpers/datatables.tt
+msgid "YYYY-MM-DD"
 msgstr ""
 
 #: share/templates/reseller/branding.tt share/templates/reseller/details.tt
