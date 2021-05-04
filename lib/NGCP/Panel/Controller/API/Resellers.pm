@@ -39,8 +39,8 @@ sub query_params {
             description => 'Filter for terminated resellers',
             query => {
                 first => sub {
-                    my $q = shift;
-                    { status => $q };
+                    my @q = split /,/, shift;
+                    { -or => [ map { { status => $_ } } @q ] };
                 },
                 second => sub {},
             },
