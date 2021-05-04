@@ -1,21 +1,20 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Juan ABREU <juan.abreu@dauphintelecom.com>, 2017.
-# Nicolas PILLET <nicolas.pillet@dauphintelecom.com>, 2017.
 msgid ""
 msgstr ""
-"Project-Id-Version: SIPWISE FR PO\n"
+"Project-Id-Version: ngcp-panel\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2020-01-29 23:12+0100\n"
-"Last-Translator: Juan ABREU <juan.abreu@dauphinteleom.com>\n"
-"Language-Team: LANGUAGE FR <sysadmin@dtfibre.fr>\n"
-"Language: fr_FR\n"
+"PO-Revision-Date: 2021-05-04 21:35\n"
+"Last-Translator: \n"
+"Language-Team: French\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Crowdin-Project: ngcp-panel\n"
+"X-Crowdin-Project-ID: 445460\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /master/messages.pot\n"
+"X-Crowdin-File-ID: 32\n"
+"Language: fr_FR\n"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid " Outbound To-Username Field "
@@ -221,7 +220,7 @@ msgstr "Un domaine (nom d'hôte) utilisé pour identifier et pour authentifier s
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A user defined quota for concurrent calls, does not block calls"
-msgstr ""
+msgstr "Un quota défini par l'utilisateur pour les appels simultanés ne bloque pas les appels"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A username used for authentication against the peer host."
@@ -233,75 +232,75 @@ msgstr "ACL"
 
 #: share/templates/peering/servers_rules.tt
 msgid "ALL of the rules must match to choose the peering group for inbound calls."
-msgstr ""
+msgstr "TOUTES les règles doivent correspondre pour choisir le groupe de Peering pour les appels entrants."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: CMR interval"
-msgstr ""
+msgstr "AMR-WB : intervalle CMR"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: initial bitrate"
-msgstr ""
+msgstr "AMR-WB : débit d'encodage initial"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: mode change capability"
-msgstr ""
+msgstr "AMR-WB : capacité de changement de mode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: mode change interval"
-msgstr ""
+msgstr "AMR-WB : intervalle de changement de mode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: mode change neighbor"
-msgstr ""
+msgstr "AMR-WB : changement de mode voisin"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: mode change period"
-msgstr ""
+msgstr "AMR-WB : période de changement de mode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: mode-set"
-msgstr ""
+msgstr "AMR-WB : mode-set"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR-WB: octet-aligned mode"
-msgstr ""
+msgstr "AMR-WB : mode aligné sur les octets"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: CMR interval"
-msgstr ""
+msgstr "AMR : intervalle CMR"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: initial bitrate"
-msgstr ""
+msgstr "AMR : débit d'encodage initial"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: mode change capability"
-msgstr ""
+msgstr "AMR : capacité de changement de mode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: mode change interval"
-msgstr ""
+msgstr "AMR : intervalle de changement de mode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: mode change neighbor"
-msgstr ""
+msgstr "AMR : changement de mode voisin"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: mode change period"
-msgstr ""
+msgstr "AMR : période de changement de mode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: mode-set"
-msgstr ""
+msgstr "AMR : mode-set"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "AMR: octet-aligned mode"
-msgstr ""
+msgstr "AMR : mode aligné sur les octets"
 
 #: share/templates/peering/servers_rules.tt
 msgid "ANY of the rules must match to choose the peering group for outbound calls."
-msgstr ""
+msgstr "TOUTES les règles doivent correspondre pour choisir le groupe de Peering pour les appels sortants."
 
 #: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "API"
@@ -329,7 +328,7 @@ msgstr "Le solde de votre compte a été modifié avec succès!"
 
 #: share/templates/header/conditions_list.tt share/templates/header/rules_list.tt share/templates/subscriber/header_rule_conditions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/preferences.tt
 msgid "Actions"
-msgstr ""
+msgstr "Actions"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm lib/NGCP/Panel/Controller/Reseller.pm share/templates/subscriber/preferences.tt
 msgid "Active"
@@ -361,7 +360,7 @@ msgstr "Adresse"
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Admin does not have an email set"
-msgstr ""
+msgstr "L'administrateur n'a pas d'adresse électronique"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Admin name"
@@ -437,11 +436,11 @@ msgstr "Administrateurs"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Advertise to the peer that the AMR encoder is able to perform mode changes in a restricted interval (2), or that the encoder is not capable of doing that (1), or don't advertise that capability at all (omit)."
-msgstr ""
+msgstr "Annoncer à l'opérateur que le codeur AMR est capable d'effectuer des changements de mode dans un intervalle restreint (2), ou que le codeur n'est pas capable de le faire (1), ou ne pas faire de publicité pour cette capacité du tout (omettre)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Advertise to the peer that the AMR-WB encoder is able to perform mode changes in a restricted interval (2), or that the encoder is not capable of doing that (1), or don't advertise that capability at all (omit)."
-msgstr ""
+msgstr "Annoncer à l'opérateur que le codeur AMR-WB est capable d'effectuer des changements de mode dans un intervalle restreint (2), ou que le codeur n'est pas capable de le faire (1), ou ne pas faire de publicité pour cette capacité du tout (omettre)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Advice of charge type"
@@ -449,11 +448,11 @@ msgstr "Conseil sur le type de frais"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Alert-Info Type"
-msgstr ""
+msgstr "Type d'information d'alerte"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Alert-Info URL"
-msgstr ""
+msgstr "URL d'alerte et d'information"
 
 #: share/templates/subscriber/master.tt
 msgid "Alias Numbers"
@@ -525,7 +524,7 @@ msgstr "Toujours proposer le codec audio G.711 a-Law (PCMA, 8 kHz) à cet abonn�
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Always offer the audio codec G.711 u-Law (PCMU, 8 kHz) to this subscriber or peer."
-msgstr ""
+msgstr "Toujours offrir le codec audio G.711 u-Law (PCMU, 8 kHz) à cet abonné ou à cet homologue."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Always offer the audio codec G.722 (16 kHz) to this subscriber or peer."
@@ -565,7 +564,7 @@ msgstr "Toujours proposer le codec audio Speex (8 kHz) à cet abonné ou opérat
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Always transcode media from the user"
-msgstr ""
+msgstr "Toujours transcoder les médias de l'utilisateur"
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm lib/NGCP/Panel/Utils/Voucher.pm
 msgid "Amount"
@@ -593,11 +592,11 @@ msgstr "Expiration de réponse"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Any T.38 fax media that is offered to this subscriber or peer will be translated into audio media carrying T.30 fax data."
-msgstr ""
+msgstr "Tout support de fax T.38 offert à cet abonné ou à ce pair sera traduit en support audio transportant des données de fax T.30."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Any audio media that is offered to this subscriber or peer will be translated into T.38 fax media."
-msgstr ""
+msgstr "Tout support audio offert à cet abonné ou à cet homologue sera traduit en support de télécopie T.38."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/widgets/admin_system_overview.tt
 msgid "Applications"
@@ -613,7 +612,7 @@ msgstr "Indicatif"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Assign a \"Header Rule Set\" to manipulate SIP headers based on dynamic conditions"
-msgstr ""
+msgstr "Attribuez un \"ensemble de règles d'en-tête\" pour manipuler les en-têtes SIP en fonction de conditions dynamiques."
 
 #: share/templates/subscriber/preferences.tt
 msgid "Attach WAV in Email"
@@ -621,7 +620,7 @@ msgstr "Attacher un fichier WAV dans l'e-mail"
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
 msgid "Attempted to save an empty invoice template"
-msgstr ""
+msgstr "Tentative d'enregistrement d'un modèle de facture vide"
 
 #: share/templates/helpers/pref_table.tt
 msgid "Attribute"
@@ -718,7 +717,7 @@ msgstr "Utilisateurs bannis"
 
 #: share/templates/batchprovisioning/list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Batch Provisioning"
-msgstr ""
+msgstr "Approvisionnement par lots"
 
 #: share/templates/widgets/admin_billing_overview.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_billing_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Billing"
@@ -870,7 +869,7 @@ msgstr "Zone de facturation supprimée avec succès"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for UPN-based call blocking"
-msgstr ""
+msgstr "Liste de blocage pour le blocage d'appels basé sur le NUP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block List for inbound calls"
@@ -882,7 +881,7 @@ msgstr "Liste d'interdictions pour les appels sortants"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block Mode for UPN-based call blocking"
-msgstr ""
+msgstr "Mode blocage pour le blocage d'appel basé sur le NUP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block Mode for inbound calls"
@@ -898,7 +897,7 @@ msgstr "Bloque les appels entrants anonymes"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Block incoming anonymous calls from this user"
-msgstr ""
+msgstr "Bloquer les appels anonymes entrants de cet utilisateur"
 
 #: share/templates/reseller/details.tt
 msgid "Branding"
@@ -910,7 +909,7 @@ msgstr "Liste de contacts"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "By default incoming calls to subscriber's primary number and standard aliases are routed only to devices registered by subscriber's username. Enabling this option allows to route the calls also to endpoints registered as devices (those who use subscriber's alias to register)."
-msgstr ""
+msgstr "Par défaut, les appels entrants vers le numéro principal de l'abonné et les alias standard sont acheminés uniquement vers les dispositifs enregistrés par le nom d'utilisateur de l'abonné. L'activation de cette option permet de router les appels également vers les terminaux enregistrés en tant qu'appareils (ceux qui utilisent l'alias de l'abonné pour s'enregistrer)."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "CA certificate is OK"
@@ -923,11 +922,11 @@ msgstr "Echec de la vérification du certicicat CA: "
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CDR/EDR Export Settings"
-msgstr ""
+msgstr "Paramètres d'exportation CDR/EDR"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CFR Mode"
-msgstr ""
+msgstr "Mode CFR"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "CLI"
@@ -959,11 +958,11 @@ msgstr "Paramètres du firmware du poste du CPBX"
 
 #: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "CSC Primary Color: "
-msgstr ""
+msgstr "Couleur principale du CSC : "
 
 #: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "CSC Secondary Color: "
-msgstr ""
+msgstr "Couleur secondaire CSC : "
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CSTA Client"
@@ -977,7 +976,7 @@ msgstr "Controlleur CSTA"
 #. ($linecount, 0)
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "CSV file (%1 lines) processed, %2 error(s)."
-msgstr ""
+msgstr "Fichier CSV (%1 lignes) traité, %2 erreur(s)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Call Blockings"
@@ -985,7 +984,7 @@ msgstr "Interdiction d'appel"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Call Deflection allows a called endpoint to redirect the unanswered call to another destination during the call setup phase by sending 302 redirect message in ringing phase. Disabling the preference will make the platform ignore the redirect message. Setting Immediate the redirection will be immediately executed cancelling the other active brances."
-msgstr ""
+msgstr "La déviation d'appel permet à un terminal appelé de rediriger l'appel non répondu vers une autre destination pendant la phase d'établissement de l'appel en envoyant un message de redirection 302 pendant la phase de sonnerie. En désactivant cette préférence, la plate-forme ignorera le message de redirection. En activant la préférence Immédiate, la redirection sera immédiatement exécutée en annulant les autres branches actives."
 
 #: share/templates/subscriber/calllist.tt share/templates/subscriber/master.tt share/templates/subscriber/recording.tt
 msgid "Call Details"
@@ -1026,11 +1025,11 @@ msgstr "Transfert d'appel inconditionnel"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
 msgid "Call Forward on Overflow"
-msgstr ""
+msgstr "Renvoi d'appel sur débordement"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Widget/Dashboard/SubscriberCFOverview.pm share/templates/subscriber/preferences.tt
 msgid "Call Forward on Response"
-msgstr ""
+msgstr "Appel en avant sur la réponse"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt share/templates/widgets/subscriber_cf_overview.tt
 msgid "Call Forwards"
@@ -1176,19 +1175,19 @@ msgstr "Appels par CLIs"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Can Reset Password"
-msgstr ""
+msgstr "Peut réinitialiser le mot de passe"
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Can not close openvpn connection."
-msgstr ""
+msgstr "Impossible de fermer la connexion openvpn."
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Can not enable openvpn."
-msgstr ""
+msgstr "Impossible d'activer openvpn."
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Can not open openvpn connection."
-msgstr ""
+msgstr "Impossible d'ouvrir une connexion openvpn."
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Can't create a PBX group without having a pilot subscriber."
@@ -1270,7 +1269,7 @@ msgstr "Choisir la logique d'autodétection IPv4/IPv6 pour les relais RTP"
 
 #: share/templates/timeset/switch_field_label.tt
 msgid "Clear"
-msgstr ""
+msgstr "Clair"
 
 #: share/templates/statistics/list.tt
 msgid "Click&Drag on the graphs to zoom individual ranges."
@@ -1282,7 +1281,7 @@ msgstr "Cloner"
 
 #: share/templates/header/set_list.tt
 msgid "Cloned Header Rule Set"
-msgstr ""
+msgstr "Ensemble de règles pour les en-têtes clonés"
 
 #: share/templates/invoice/template_editor_form.tt share/templates/subscriber/call_details_wrapper.tt
 msgid "Close"
@@ -1322,19 +1321,19 @@ msgstr "Code"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Codecs filter by ID"
-msgstr ""
+msgstr "Filtrage des codecs par ID"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Codecs filter by name"
-msgstr ""
+msgstr "Filtre de codecs par nom"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Codecs list of IDs"
-msgstr ""
+msgstr "Liste d'ID de codecs"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Codecs list of names"
-msgstr ""
+msgstr "Liste de noms de codecs"
 
 #: share/layout/body.tt
 msgid "Collapse Groups"
@@ -1346,11 +1345,11 @@ msgstr "Colonnes"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Comma separated list of audio and video codecs IDs to whitelist or blacklist."
-msgstr ""
+msgstr "Liste séparée par des virgules des ID de codecs audio et vidéo à mettre sur liste blanche ou liste noire."
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Comment"
-msgstr ""
+msgstr "Commentaire"
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm share/templates/customer/details.tt
 msgid "Company"
@@ -1358,7 +1357,7 @@ msgstr "Entreprise"
 
 #: share/templates/header/actions_list.tt share/templates/header/rules_list.tt share/templates/subscriber/header_rule_actions_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/preferences.tt
 msgid "Conditions"
-msgstr ""
+msgstr "Conditions"
 
 #: share/templates/customer/details.tt share/templates/device/list.tt
 msgid "Config"
@@ -1426,7 +1425,7 @@ msgstr "Contient une liste de codes SIP qui sont comparés avec celui reçu en r
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains a list of SIP codes that is matched with the response code received in reply from the subscriber's contacts in case of call failure. In case of match, the forking (parallel or based on Q value) is stopped and the code is transparently signaled back to the caller, whereas also an announcement can be played if configured in the existing sound set or a call forward can be triggered if activated. Response codes 600, 603, 604, 606 are implicitly included in the list."
-msgstr ""
+msgstr "Contient une liste de codes SIP qui est mise en correspondance avec le code de réponse reçu en réponse des contacts de l'abonné en cas d'échec de l'appel. En cas de correspondance, la bifurcation (parallèle ou basé sur la valeur Q) est arrêté et le code est renvoyé de manière transparente à l'appelant, tandis qu'une annonce peut être diffusée si elle est configurée dans le jeu de sons existant ou qu'un renvoi d'appel peut être déclenché s'il est activé. Les codes de réponse 600, 603, 604, 606 sont implicitement inclus dans la liste."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains a list of numbers used in the \"Manager Secretary\" call forwardings"
@@ -1434,15 +1433,15 @@ msgstr "Contient une liste de numéros utilisés dans les rencois d'appels \"Pat
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains a list of the announcements that will be played to the caller in case the respective error code is returned back from the callee. Each entry of the list has to be a string composed in the following way: <error_code>;<announcement_name>, where error_code is the SIP return code and the announcement_name is name of the announcement taken from the sound_set list. '*', '?' and 'x-y' with 'x' and 'y' representing numbers from 0 to 9 may be used as wildcards like in shell patterns. For example, to play callee_unknown message in case of 404 returned from the callee: 404;callee_unknown"
-msgstr ""
+msgstr "Contient une liste des annonces qui seront diffusées à l'appelant si le code d'erreur correspondant est renvoyé par l'appelant. Chaque entrée de la liste doit être une chaîne composée de la manière suivante : <error_code>;<announcement_name>, où error_code est le code de retour SIP et announcement_name est le nom de l'annonce prise dans la liste sound_set. Les caractères '*', '?' et 'x-y', où 'x' et 'y' représentent des nombres de 0 à 9, peuvent être utilisés comme jokers, comme dans les motifs de shell. Par exemple, pour jouer le message callee_unknown en cas de retour de 404 de l'appelant : 404;callee_unknown"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains a user defined quota for concurrent calls, the preference does not have an impact on ongoing calls and used mostly for reporting reasons, when a soft limit for calls needs to defined, based on which the subscriber/customer/peer is reported or charged for making too many calls."
-msgstr ""
+msgstr "Contient un quota défini par l'utilisateur pour les appels simultanés, la préférence n'a pas d'impact sur les appels en cours et est utilisée principalement pour des raisons de rapport, lorsqu'une limite souple pour les appels doit être définie, sur la base de laquelle l'abonné/client/pair est signalé ou facturé pour avoir passé trop d'appels."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains options for defining the scope in which CLIR is applied in the call lists: External(default; hide caller in clir enabled calls, except calls within the same customer) or All(hide caller for clir enabled calls)"
-msgstr ""
+msgstr "Contient des options permettant de définir la portée de l'application du CLIR dans les listes d'appels : Externe (par défaut ; cache l'appelant dans les appels activés par le CLIR, sauf les appels au sein du même client) ou Tous (cache l'appelant pour les appels activés par le CLIR)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains wildcard list of allowed or denied SIP User-Agents matched against the User-Agent header."
@@ -1458,7 +1457,7 @@ msgstr "Contient des noms d'utilisateurs SIP avec caractères génériques (la p
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains wildcarded User-Provided Numbers that are (not) allowed to be used by the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
-msgstr ""
+msgstr "Contient des numéros joker fournis par l'utilisateur qui sont (non) autorisés à être utilisés par l'abonné. Les caractères \"*\", \" ?\" et \"[x-y]\" avec \"x\" et \"y\" représentant des nombres de 0 à 9 peuvent être utilisés comme caractères génériques, comme dans les modèles de shell."
 
 #: share/templates/contract/list.tt share/templates/package/details.tt share/templates/reseller/details.tt
 msgid "Contract"
@@ -1504,19 +1503,19 @@ msgstr "Contrats"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Controls whether to enable/disable NAT pings for a given domain/user. Requires re-registrations for the change in settings to take effect"
-msgstr ""
+msgstr "Contrôle l'activation/désactivation des pings NAT pour un domaine/utilisateur donné. Il faut se réenregistrer pour que le changement de paramètres prenne effet."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Convert DTMF INFO to RFC DTMF events"
-msgstr ""
+msgstr "Convertir les INFO DTMF en événements DTMF RFC"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Convert SIP INFO messages containing application/dtmf-relay or application/dtmf payloads to RFC DTMF events. ATTENTION: for internal use only, external generated INFO messages will be not converted but passed through."
-msgstr ""
+msgstr "Convertit les messages SIP INFO contenant des charges utiles application/dtmf-relay ou application/dtmf en événements RFC DTMF. ATTENTION : pour un usage interne uniquement, les messages INFO générés en externe ne seront pas convertis mais transmis."
 
 #: share/templates/emailtemplate/list.tt
 msgid "Copy"
-msgstr ""
+msgstr "Copie"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Cost"
@@ -1593,7 +1592,7 @@ msgstr "Créer une association de numéros d'urgence"
 
 #: share/templates/timeset/event_list.tt
 msgid "Create Event"
-msgstr ""
+msgstr "Créer un événement"
 
 #: share/templates/billing/fees.tt
 msgid "Create Fee Entry"
@@ -1601,19 +1600,19 @@ msgstr "Créer une entrée de frais"
 
 #: share/templates/header/rules_list.tt share/templates/subscriber/header_rules_list.tt share/templates/subscriber/preferences.tt
 msgid "Create Header Rule"
-msgstr ""
+msgstr "Créer une règle d'en-tête"
 
 #: share/templates/header/actions_list.tt share/templates/subscriber/header_rule_actions_list.tt
 msgid "Create Header Rule Action"
-msgstr ""
+msgstr "Créer une action de règle d'en-tête"
 
 #: share/templates/header/conditions_list.tt share/templates/subscriber/header_rule_conditions_list.tt
 msgid "Create Header Rule Condition"
-msgstr ""
+msgstr "Créer une condition de règle d'en-tête"
 
 #: share/templates/header/set_list.tt
 msgid "Create Header Rule Set"
-msgstr ""
+msgstr "Créer un ensemble de règles d'en-tête"
 
 #: share/templates/peering/servers_rules.tt
 msgid "Create Inbound Peering Rule"
@@ -1637,7 +1636,7 @@ msgstr "Créer une entrée LNP"
 
 #: share/templates/ncos/lnp_pattern_list.tt
 msgid "Create LNP Pattern Entry"
-msgstr ""
+msgstr "Créer une entrée de modèle LNP"
 
 #: share/templates/customer/details.tt
 msgid "Create Location"
@@ -1701,7 +1700,7 @@ msgstr "Créer un package de profile"
 
 #: share/templates/batchprovisioning/list.tt
 msgid "Create Provisioning Template"
-msgstr ""
+msgstr "Créer un modèle de provisionnement"
 
 #: share/templates/reseller/list.tt
 msgid "Create Reseller"
@@ -1749,11 +1748,11 @@ msgstr "Créer un jeu de profil d'abonné"
 
 #: share/templates/reseller/details.tt
 msgid "Create Time Set"
-msgstr ""
+msgstr "Créer un ensemble de temps"
 
 #: share/templates/timeset/list.tt
 msgid "Create Time Set Entry"
-msgstr ""
+msgstr "Création d'une entrée de set de temps"
 
 #: share/templates/calllistsuppression/list.tt
 msgid "Create call list suppression"
@@ -1761,11 +1760,11 @@ msgstr "Créer une liste de filtrage d'appels"
 
 #: share/templates/reseller/branding.tt
 msgid "Custom CSS"
-msgstr ""
+msgstr "CSS personnalisé"
 
 #: share/templates/reseller/branding.tt
 msgid "Custom Logo"
-msgstr ""
+msgstr "Logo personnalisé"
 
 #: lib/NGCP/Panel/Utils/Sounds.pm share/templates/customer/list.tt share/templates/customer/preferences.tt share/templates/device/list.tt share/templates/reseller/details.tt share/templates/subscriber/list.tt share/templates/subscriber/master.tt share/templates/widgets/admin_reseller_overview.tt share/templates/widgets/ccare_customer_overview.tt share/templates/widgets/reseller_customer_overview.tt
 msgid "Customer"
@@ -1802,7 +1801,7 @@ msgstr "Client #%1 mis à jour avec succès"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Customer Care"
-msgstr ""
+msgstr "Service clientèle"
 
 #: share/templates/package/details.tt
 msgid "Customer Contracts"
@@ -1859,7 +1858,7 @@ msgstr "Statistiques BDD"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "DTLS fingerprint hashing function"
-msgstr ""
+msgstr "Fonction de hachage de l'empreinte digitale DTLS"
 
 #: share/templates/customer/details.tt
 msgid "Daily Settings"
@@ -1919,7 +1918,7 @@ msgstr "Définit comment fournir le numéro de routage après une requête LNP. 
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Defines the format of emergency_location_object"
-msgstr ""
+msgstr "Définit le format de l'objet emergency_location_object"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Defines whether the subscriber can still register and send/receive calls if Emergency Mode is enabled for the domain of the subscriber. If disabled, registrations and calls are blocked and dropped."
@@ -1935,7 +1934,7 @@ msgstr "Efface"
 
 #: share/templates/reseller/branding.tt
 msgid "Delete Logo"
-msgstr ""
+msgstr "Supprimer le logo"
 
 #: share/templates/subscriber/preferences.tt
 msgid "Delete after sending Email"
@@ -1943,7 +1942,7 @@ msgstr "Efface après l'envoi de l'e-mail"
 
 #: share/templates/subscriber/master.tt
 msgid "Delete recording"
-msgstr ""
+msgstr "Supprimer l'enregistrement"
 
 #: share/templates/customer/details.tt share/templates/device/list.tt
 msgid "Deployed Device"
@@ -2162,11 +2161,11 @@ msgstr "Ne pas déranger"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Do not fallback after a callee 404 response"
-msgstr ""
+msgstr "Ne pas se replier après une réponse 404 de l'appelé"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Do not increase outgoing call counter on CF"
-msgstr ""
+msgstr "Ne pas augmenter le compteur d'appels sortants sur CF"
 
 #: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccare_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/lintercept_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Documentation"
@@ -2231,7 +2230,7 @@ msgstr "Télécharger en CSV"
 
 #: share/templates/timeset/event_list.tt
 msgid "Download iCalendar"
-msgstr ""
+msgstr "Télécharger iCalendar"
 
 #: share/templates/billing/list.tt
 msgid "Duplicate"
@@ -2245,7 +2244,7 @@ msgstr "Dupliquer %1"
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm
 msgid "Duplicate preference %1"
-msgstr ""
+msgstr "Duplication de la préférence %1"
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Duration"
@@ -2266,7 +2265,7 @@ msgstr "Editer %1"
 
 #: share/templates/reseller/branding.tt
 msgid "Edit Branding"
-msgstr ""
+msgstr "Éditer la personnalisation"
 
 #: share/templates/subscriber/preferences.tt
 msgid "Edit Callthrough CLIs"
@@ -2310,11 +2309,11 @@ msgstr "Modèles d'e-mail"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template"
-msgstr ""
+msgstr "Modèle de courriel"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template does not exist"
-msgstr ""
+msgstr "Le modèle d'email n'existe pas"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully created"
@@ -2326,7 +2325,7 @@ msgstr "Modèle d'e-mail supprimé avec succès"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully synced"
-msgstr ""
+msgstr "Le modèle d'e-mail a été synchronisé avec succès"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Email template successfully updated"
@@ -2374,7 +2373,7 @@ msgstr "Priorisation de numéros d'urgence"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Provider info"
-msgstr ""
+msgstr "Informations d'urgence sur le fournisseur"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Suffix variable"
@@ -2382,7 +2381,7 @@ msgstr "Variable suffixe de numéros d'urgence"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency User-Provided-Number Field"
-msgstr ""
+msgstr "Champ de numéro d'urgence fourni par l'utilisateur"
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency code already defined for emergency mapping container!"
@@ -2390,7 +2389,7 @@ msgstr "Code d'urgence déjà défini pour le conteneur d'association de numéro
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency location format"
-msgstr ""
+msgstr "Format du lieu de l'urgence"
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Emergency mapping already exists for this emergency mapping container!"
@@ -2450,11 +2449,11 @@ msgstr "Activer la recherche LNP de l'appelant"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable DNS SRV"
-msgstr ""
+msgstr "Activer le DNS SRV"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable DNS SRV on device when resolving server host"
-msgstr ""
+msgstr "Activer le SRV DNS sur le dispositif lors de la résolution de l'hôte du serveur."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Party Call Control (PCC) Application to route calls to a remote API server first and continue the call only upon an accepted reply"
@@ -2474,7 +2473,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP OPTIONS ping"
-msgstr ""
+msgstr "Activer le ping des OPTIONS SIP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable SIP Session Timers."
@@ -2494,15 +2493,15 @@ msgstr "Activer Fax-over-IP T38 via l'auto-approvisionnement si le périphériqu
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable detection of silence in received RTP audio and transcode to CN (comfort noise) RTP packets if supported by the peer."
-msgstr ""
+msgstr "Activer la détection du silence dans l'audio RTP reçu et transcoder en paquets RTP CN (bruit de confort) si l'opérateur le supporte."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable last number redial VSC"
-msgstr ""
+msgstr "Activation de la recomposition du dernier numéro VSC"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable the Vertical Service Code to redial latest dialed number for this subscriber/domain."
-msgstr ""
+msgstr "Activez le code de service vertical pour recomposer le dernier numéro composé pour cet abonné/domaine."
 
 #: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt
 msgid "Enabled"
@@ -2542,23 +2541,23 @@ msgstr "Erreur pendant l'envoi de fax (les paramètres fax ont-ils été configu
 
 #: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
 msgid "Errors"
-msgstr ""
+msgstr "Erreurs"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Event entry does not exist"
-msgstr ""
+msgstr "L'entrée de l'événement n'existe pas"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Event entry successfully created"
-msgstr ""
+msgstr "L'entrée d'événement a été créée avec succès"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Event entry successfully deleted"
-msgstr ""
+msgstr "L'entrée d'événement a été supprimée avec succès"
 
 #: share/templates/reseller/details.tt share/templates/timeset/list.tt
 msgid "Events"
-msgstr ""
+msgstr "Événements"
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Exact string (destination)"
@@ -2586,7 +2585,7 @@ msgstr "Exporter cet abonné dans la liste de contacts XMPP partagée pour ce cl
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Expression"
-msgstr ""
+msgstr "Expression"
 
 #: share/templates/subscriber/webphone.tt
 msgid "Extended Away"
@@ -2610,7 +2609,7 @@ msgstr "Contrat externe #"
 
 #: share/templates/subscriber/preferences.tt
 msgid "External ID"
-msgstr ""
+msgstr "Identifiant externe"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "External Subscriber #"
@@ -2662,7 +2661,7 @@ msgstr "Echec lors de la mise à jour des paramètres de rappel."
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Failed to clone header rule set."
-msgstr ""
+msgstr "Échec du clonage de l'ensemble de règles d'en-tête."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Failed to clone rewrite rule set."
@@ -2706,15 +2705,15 @@ msgstr "Echec lors de la création du jeu de régles de reformulation UPN"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to create a header rule"
-msgstr ""
+msgstr "Échec de la création d'une règle d'en-tête"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to create a header rule action"
-msgstr ""
+msgstr "Échec de la création d'une action de règle d'en-tête"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to create a header rule condition"
-msgstr ""
+msgstr "Échec de la création d'une condition de règle d'en-tête"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to create administrator"
@@ -2794,11 +2793,11 @@ msgstr "Echec lors de la création du conteneur d'association de numéros d'urge
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Failed to create event entry"
-msgstr ""
+msgstr "Échec de la création d'une entrée d'événement"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Failed to create header rule set"
-msgstr ""
+msgstr "Échec de la création d'un ensemble de règles d'en-tête"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Failed to create inbound peering rule"
@@ -2814,7 +2813,7 @@ msgstr "Echec lors de la création du modèle de facture"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to create location mapping"
-msgstr ""
+msgstr "Échec de la création de l'association de l'emplacement"
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to create location."
@@ -2871,7 +2870,7 @@ msgstr "Echec lors de la création du package de profile."
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Failed to create provisioning template"
-msgstr ""
+msgstr "Échec de la création du modèle de provisionnement"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Failed to create reseller"
@@ -2911,11 +2910,11 @@ msgstr "Echec lors de la création du jeu de profile de l'abonné"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Failed to create timeset entry"
-msgstr ""
+msgstr "Échec de la création de l'entrée timeset"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Failed to create timeset entry."
-msgstr ""
+msgstr "Échec de la création de l'entrée timeset."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to create trusted source"
@@ -3027,23 +3026,23 @@ msgstr "Echec lors de la suppression du conteneur d'association de numéros d'ur
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Failed to delete event entry"
-msgstr ""
+msgstr "Échec de la suppression d'une entrée d'événement"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to delete header rule"
-msgstr ""
+msgstr "Échec de la suppression de la règle d'en-tête"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to delete header rule action"
-msgstr ""
+msgstr "Échec de la suppression de l'action de règle d'en-tête"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to delete header rule condition"
-msgstr ""
+msgstr "Échec de la suppression de la condition de règle d'en-tête"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Failed to delete header rule set"
-msgstr ""
+msgstr "Échec de la suppression du jeu de règles d'en-tête"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Failed to delete inbound peering rule"
@@ -3059,7 +3058,7 @@ msgstr "Echec lors de la suppression du modèle de facture."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete location mapping."
-msgstr ""
+msgstr "Échec de la suppression de l'association de l'emplacement."
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "Failed to delete number block"
@@ -3140,7 +3139,7 @@ msgstr "Echec lors de la suppression du jeu horaire"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Failed to delete timeset entry"
-msgstr ""
+msgstr "Échec de la suppression de l'entrée timeset"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to delete trusted source."
@@ -3192,11 +3191,11 @@ msgstr "Echec lors du chargement des fichiers sons par défaut."
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to move action."
-msgstr ""
+msgstr "Échec de l'action de déplacement."
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to move header rule."
-msgstr ""
+msgstr "Échec du déplacement de la règle d'en-tête."
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Failed to move inbound peering rule down."
@@ -3216,11 +3215,11 @@ msgstr "Echec lors de la prévisualisation du modèle"
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Failed to process CSV file."
-msgstr ""
+msgstr "Échec du traitement du fichier CSV."
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Failed to recover password"
-msgstr ""
+msgstr "Échec de la récupération du mot de passe"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to recover web password"
@@ -3228,7 +3227,7 @@ msgstr "Echec lors de la récupération du mot de passe Web"
 
 #: lib/NGCP/Panel/Controller/API/SubscribersItem.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to reload kamailio. Subscriber was terminated."
-msgstr ""
+msgstr "Échec du rechargement de kamailio. L'abonné a été résilié."
 
 #: lib/NGCP/Panel/Controller/Domain.pm
 msgid "Failed to reload proxy. Domain was deleted."
@@ -3240,7 +3239,7 @@ msgstr "Echec lors du rechargement du proxy. Le domaine a été modifié."
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Failed to remove provisioning template"
-msgstr ""
+msgstr "Échec de la suppression du modèle de provisionnement"
 
 #. ($error->type . ', info is ' . $error->info)
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
@@ -3254,7 +3253,7 @@ msgstr "Echec lors de la mise en forme du modèle. Le type est %1, l'information
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Failed to reset password"
-msgstr ""
+msgstr "Échec de la réinitialisation du mot de passe"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to reset web password"
@@ -3274,7 +3273,7 @@ msgstr "Echec lors du stockage du modèle de facture"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Failed to sync email template"
-msgstr ""
+msgstr "Échec de la synchronisation du modèle d'email"
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Failed to terminate LNP number"
@@ -3442,7 +3441,7 @@ msgstr "Echec lors de la mise à jour du conteneur de l'association de numéros 
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Failed to update event entry"
-msgstr ""
+msgstr "Échec de la mise à jour de l'entrée d'événement"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update fax setting"
@@ -3450,19 +3449,19 @@ msgstr "Echec lors de la mise à jour des paramètres fax"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to update header rule"
-msgstr ""
+msgstr "Échec de la mise à jour de la règle d'en-tête"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to update header rule action"
-msgstr ""
+msgstr "Échec de la mise à jour de l'action de la règle d'en-tête"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Failed to update header rule condition"
-msgstr ""
+msgstr "Échec de la mise à jour de la condition de la règle d'en-tête"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Failed to update header rule set"
-msgstr ""
+msgstr "Échec de la mise à jour du jeu de règles d'en-tête"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Failed to update inbound peering rule"
@@ -3478,7 +3477,7 @@ msgstr "Echec lors de la mise à jour de la localisation"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update location mapping"
-msgstr ""
+msgstr "Échec de la mise à jour de l'association de l'emplacement"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update mailtofax setting"
@@ -3515,7 +3514,7 @@ msgstr "Echec lors de la mise à jour du pack de profile"
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Failed to update provisioning template"
-msgstr ""
+msgstr "Échec de la mise à jour du modèle d'approvisionnement"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update reminder setting."
@@ -3583,7 +3582,7 @@ msgstr "Echec lors de la mise à jour du jeu horaire"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Failed to update timeset entry"
-msgstr ""
+msgstr "Échec de la mise à jour de l'entrée timeset"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Failed to update trusted source"
@@ -3623,7 +3622,7 @@ msgstr "Echec lors de l'envoi des association de numéros d'urgence"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Failed to upload iCalendar events"
-msgstr ""
+msgstr "Échec du téléchargement des événements iCalendar"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Failover to next peer on 5xx with given Reason text"
@@ -3659,11 +3658,11 @@ msgstr "Champ"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Field delimiter"
-msgstr ""
+msgstr "Délimiteur de champ"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Field delimiter symbol used in .cdr files."
-msgstr ""
+msgstr "Symbole de délimitation de champ utilisé dans les fichiers .cdr."
 
 #: share/templates/sound/handles_list.tt
 msgid "Filename"
@@ -3679,11 +3678,11 @@ msgstr "Mode filtre pour la liste des User-Agent SIP"
 
 #: share/templates/helpers/datatables.tt
 msgid "Filter for column values matching the pattern string, e.g. 12*45. The * (wildcard) is implicitly prepended and appended."
-msgstr ""
+msgstr "Filtre pour les valeurs de colonnes correspondant à la chaîne de caractères du modèle, par exemple 12*45. L'astérisque * (caractère de remplacement) est implicitement ajouté au début et à la fin."
 
 #: share/templates/helpers/datatables.tt
 msgid "Filter for column values matching the string, e.g. 12345. A leading * (wildcard) can result in long response times."
-msgstr ""
+msgstr "Filtre pour les valeurs de colonnes correspondant à la chaîne de caractères, par exemple 12345. Un * (caractère générique) peut entraîner des temps de réponse plus longs."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Find Subscriber by UUID"
@@ -3751,7 +3750,7 @@ msgstr "Forcer le système à résoudre le nom d'hôte de l'opérateur en utilis
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Force translation of audio media to T.38 offer"
-msgstr ""
+msgstr "Forcer la traduction des médias audio en offre T.38"
 
 #: share/templates/login/login.tt
 msgid "Forgot your password?"
@@ -3807,7 +3806,7 @@ msgstr "Débit G.723.1"
 
 #: share/layout/body.tt share/templates/login/login.tt
 msgid "GO TO NEW ADMIN PANEL"
-msgstr ""
+msgstr "ALLEZ DANS LE NOUVEAU PANNEAU D'ADMINISTRATION"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "General Purpose Parameter 0"
@@ -3851,7 +3850,7 @@ msgstr "Paramètre général 9"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Generate RTCP"
-msgstr ""
+msgstr "Générer RTCP"
 
 #: share/templates/calllistsuppression/list.tt
 msgid "Global Call List Suppressions"
@@ -3883,125 +3882,125 @@ msgstr "Manuel"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header"
-msgstr ""
+msgstr "En-tête"
 
 #: share/templates/header/set_list.tt share/templates/subscriber/preferences.tt share/templates/widgets/admin_topmenu_settings.tt
 msgid "Header Manipulations"
-msgstr ""
+msgstr "Manipulations d'en-tête"
 
 #: share/templates/header/actions_list.tt share/templates/subscriber/header_rule_actions_list.tt
 msgid "Header Rule Actions"
-msgstr ""
+msgstr "Actions des règles d'en-tête"
 
 #. (hm_rule_result.name)
 #: share/templates/header/actions_list.tt
 msgid "Header Rule Actions for %1"
-msgstr ""
+msgstr "Actions de la règle d'en-tête pour %1"
 
 #. (subscriber.id)
 #: share/templates/subscriber/header_rule_actions_list.tt
 msgid "Header Rule Actions for subscriber %1"
-msgstr ""
+msgstr "Actions de la règle d'en-tête pour l'abonné %1."
 
 #: share/templates/header/conditions_list.tt share/templates/subscriber/header_rule_conditions_list.tt
 msgid "Header Rule Conditions"
-msgstr ""
+msgstr "Conditions de la règle d'en-tête"
 
 #. (hm_rule_result.name)
 #: share/templates/header/conditions_list.tt
 msgid "Header Rule Conditions for %1"
-msgstr ""
+msgstr "Conditions de la règle d'en-tête pour %1"
 
 #. (subscriber.id)
 #: share/templates/subscriber/header_rule_conditions_list.tt
 msgid "Header Rule Conditions for subscriber %1"
-msgstr ""
+msgstr "Conditions de la règle d'en-tête pour l'abonné %1."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/header/set_list.tt
 msgid "Header Rule Set"
-msgstr ""
+msgstr "Ensemble de règles d'en-tête"
 
 #: share/templates/header/rules_list.tt share/templates/subscriber/header_rules_list.tt
 msgid "Header Rules"
-msgstr ""
+msgstr "Règles d'en-tête"
 
 #. (hm_set_result.name)
 #: share/templates/header/rules_list.tt
 msgid "Header Rules for %1"
-msgstr ""
+msgstr "Règles d'en-tête pour %1"
 
 #. (subscriber.id)
 #: share/templates/subscriber/header_rules_list.tt
 msgid "Header Rules for subscriber %1"
-msgstr ""
+msgstr "Règles d'en-tête pour l'abonné %1"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule action does not exist"
-msgstr ""
+msgstr "L'action de la règle d'en-tête n'existe pas"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule action successfully created"
-msgstr ""
+msgstr "L'action de règle d'en-tête a été créée avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule action successfully deleted"
-msgstr ""
+msgstr "Action de règle d'en-tête supprimée avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule action successfully updated"
-msgstr ""
+msgstr "L'action de la règle d'en-tête a été mise à jour avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule condition does not exist"
-msgstr ""
+msgstr "La condition de la règle d'en-tête n'existe pas"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule condition successfully created"
-msgstr ""
+msgstr "La condition de la règle d'en-tête a été créée avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule condition successfully deleted"
-msgstr ""
+msgstr "La condition de la règle d'en-tête a été supprimée avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule condition successfully updated"
-msgstr ""
+msgstr "La condition de la règle d'en-tête a été mise à jour avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule does not exist"
-msgstr ""
+msgstr "La règle d'en-tête n'existe pas"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Header rule set does not exist"
-msgstr ""
+msgstr "L'ensemble de règles d'en-tête n'existe pas"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Header rule set successfully cloned"
-msgstr ""
+msgstr "Clonage réussi du jeu de règles d'en-tête"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Header rule set successfully created"
-msgstr ""
+msgstr "Le jeu de règles d'en-tête a été créé avec succès"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Header rule set successfully deleted"
-msgstr ""
+msgstr "Le jeu de règles d'en-tête a été supprimé avec succès"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Header rule set successfully updated"
-msgstr ""
+msgstr "Le jeu de règles d'en-tête a été mis à jour avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule successfully created"
-msgstr ""
+msgstr "Règle d'en-tête créée avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule successfully deleted"
-msgstr ""
+msgstr "Règle d'en-tête supprimée avec succès"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Header rule successfully updated"
-msgstr ""
+msgstr "Règle d'en-tête mise à jour avec succès"
 
 #: share/templates/subscriber/webphone.tt
 msgid "Hide Offline"
@@ -4061,7 +4060,7 @@ msgstr "Champ entête IP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IP header to use for \"allowed_ips\" check"
-msgstr ""
+msgstr "En-tête IP à utiliser pour la vérification de \"allowed_ips\"."
 
 #: lib/NGCP/Panel/Controller/Security.pm
 msgid "IP successfully unbanned"
@@ -4105,7 +4104,7 @@ msgstr "Si activé, permet les requêtes LNP pour les abonnés internes."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, Call Forwarding does not count as an outgoing call towards concurrent_max limit of subscriber that is doing the forward"
-msgstr ""
+msgstr "S'il est activé, le renvoi d'appel n'est pas comptabilisé comme un appel sortant dans le calcul de la limite concurrent_max de l'abonné qui effectue le renvoi."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, an LNP lookup is performed for calls from this peer using the network-provided calling party number. The resulting LNP prefix is written to CDRs as source_lnp_prefix."
@@ -4117,7 +4116,7 @@ msgstr "Si activé, tout code de service vertical, ex: *99*1234, sera rejeté pa
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, incoming anonyous calls from this user will be dropped"
-msgstr ""
+msgstr "Si cette option est activée, les appels anonymes entrants de cet utilisateur seront supprimés."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, npdi parameter will be added if there is a LNP query."
@@ -4125,15 +4124,15 @@ msgstr "Si activé, le paramètre npdi sera ajouté s'il y a une requête LNP."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, rtpengine will always trancode any received media to the first (highest priority) codec offered by the other side that is supported for transcoding."
-msgstr ""
+msgstr "Si cette option est activée, rtpengine transcode toujours tout média reçu vers le premier codec (priorité la plus élevée) proposé par l'autre partie et qui est pris en charge pour le transcodage."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, set the outbound headers as per peer outbound_* preferences when the call is forced to the peer by force_outbound_calls_to_peer setting. Otherwise, the outbound headers are controlled by the user/domain settings of the subscriber which forces the call to peer (by default)."
-msgstr ""
+msgstr "S'il est activé, définit les en-têtes sortants selon les préférences outbound_* du pair lorsque l'appel est forcé vers le pair par le paramètre force_outbound_calls_to_peer. Sinon, les en-têtes sortants sont contrôlés par les paramètres d'utilisateur/domaine de l'abonné qui force l'appel vers le pair (par défaut)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, the media direction attributes (sendrecv, sendonly, recvonly, inactive) from the original SDP will remain unchanged as they were received"
-msgstr ""
+msgstr "S'il est activé, les attributs de direction du média (sendrecv, sendonly, recvonly, inactive) du SDP original resteront inchangés tels qu'ils ont été reçus."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If set and a CF to an outbound number is configured on the subscriber, the selection of the outbound peer is done using the forwarder as caller number."
@@ -4145,7 +4144,7 @@ msgstr "Si configuré avec un numéro, tous appel sortant bloqués à cause d'un
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If set, do not try to fallback if the callee UAc replies with a '404 Not found' message after receiving an extension included in the base number or a e164 number (if e164_to_ruri is set)"
-msgstr ""
+msgstr "S'il est défini, ne pas essayer de se replier si l'UAc appelé répond avec un message '404 non trouvé' après avoir reçu une extension incluse dans le numéro de base ou un numéro e164 (si e164_to_ruri est défini)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If set, the UPN of the calling party is not checked against the allowed CLIs provisioned for the subscriber if a Diversion or History-Info header that meets the selected criteria has been sent by the calling subscriber. The recommended mode here, for example when connecting external PBX to NGCP, is \"If user in received Diversion or History-Info header is in caller's alias list\", as this validates the forwarding number in received Diversion/History-Info header against subscriber's aliases and is a safer choice than enabling UPN check bypass when any header is present. If any mode other than \"Never\" is selected, the forwarding number in the History-Info header is checked and the History-Info is rewritten if it doesn't match any alias numbers."
@@ -4161,11 +4160,11 @@ msgstr "Si défini, le numéro de la boite vocale du propriétaire sera énoncé
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If the Alert-Info Type is set to \"url\", then specify a URL to a ring tone file (e.g. a WAV file) here"
-msgstr ""
+msgstr "Si le Type d'info d'alerte est défini sur \"url\", indiquez ici l'URL d'un fichier de sonnerie (par exemple, un fichier WAV)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If this option is set, the announcements defined in 'announce_error_codes_list' preference will be played on behalf callee failure in case of outbound calls. In case of activation it is important that the remote endpoint doesn't play an announcement, otherwise the final result will be to have 2 announcements."
-msgstr ""
+msgstr "Si cette option est activée, les annonces définies dans la préférence 'announce_error_codes_list' seront diffusées en cas d'échec de l'appelant dans le cas d'appels sortants. En cas d'activation, il est important que le terminal distant ne joue pas d'annonce, sinon le résultat final sera d'avoir 2 annonces."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If true, calling party number is shown regardles of caller CLIR settings."
@@ -4269,11 +4268,11 @@ msgstr "Profiles intiaux"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Initial encoder bitrate (mode) to use when offering to transcode to AMR-WB. The bitrate is further constrained by the mode-set and can change dynamically via a CMR."
-msgstr ""
+msgstr "Débit d'encodage initial de l'encodeur (mode) à utiliser lors de l'offre de transcodage vers AMR-WB. Le débit binaire est en outre limité par le mode-set et peut changer dynamiquement via un CMR."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Initial encoder bitrate (mode) to use when offering to transcode to AMR. The bitrate is further constrained by the mode-set and can change dynamically via a CMR."
-msgstr ""
+msgstr "Débit d'encodage initial de l'encodeur (mode) à utiliser lors de l'offre de transcodage vers AMR. Le débit binaire est en outre limité par le mode-set et peut changer dynamiquement via un CMR."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Intercept and record media packets from or to this subscriber into a file."
@@ -4321,7 +4320,7 @@ msgstr "Internal Call Forward Busy map #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Call Forward Overflow #"
-msgstr ""
+msgstr "Débordement du renvoi d'appel interne"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Call Forward Timeout #"
@@ -4337,7 +4336,7 @@ msgstr "# interne pour les transferts d'appels inconditionnels"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Call Forward on Response #"
-msgstr ""
+msgstr "Transfert d'appel interne sur le numéro de réponse"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Contract #"
@@ -4353,7 +4352,7 @@ msgstr "# interne niveau NCOS"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Rewrite Rule Set # for Source/Destination fields"
-msgstr ""
+msgstr "Jeu de règles de réécriture interne # pour les champs Source/Destination"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal User CLI rewrite #"
@@ -4377,11 +4376,11 @@ msgstr "Intervalle de:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Interval in milliseconds at which to perform an unsolicited change to a higher bitrate if the local encoder isn't already sending at the highest allowed bitrate. Default is not to perform unsolicited mode changes."
-msgstr ""
+msgstr "Intervalle en millisecondes auquel effectuer un changement non sollicité vers un débit d'encodage plus élevé si l'encodeur local n'envoie pas déjà au débit d'encodage le plus élevé autorisé. La valeur par défaut est de ne pas effectuer de changement de mode non sollicité."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Interval in milliseconds at which to send a Codec Mode Request (CMR) for a higher bitrate to the remote encoder if it isn't already sending at the highest allowed bitrate. Default is not to send any CMR."
-msgstr ""
+msgstr "Intervalle en millisecondes auquel envoyer une requête en mode codec (CMR) pour un débit d'encodage plus élevé à l'encodeur distant s'il n'envoie pas déjà au débit d'encodage le plus élevé autorisé. La valeur par défaut est de ne pas envoyer de CMR."
 
 #: share/templates/customer/details.tt
 msgid "Interval to:"
@@ -4409,7 +4408,7 @@ msgstr "Identifiant invalide de fournisseur LNP détecté!"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "Invalid NCOS LNP pattern id detected"
-msgstr ""
+msgstr "ID de modèle LNP NCOS non valide détecté."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "Invalid NCOS level id detected"
@@ -4490,7 +4489,7 @@ msgstr "Identifiant invalide de domaine détecté"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm
 msgid "Invalid email template id detected"
-msgstr ""
+msgstr "Identifiant de modèle d'email invalide détecté"
 
 #: lib/NGCP/Panel/Controller/EmergencyMapping.pm
 msgid "Invalid emergency container id detected!"
@@ -4506,7 +4505,7 @@ msgstr "Identifiant invalide d'association de numéros d'urgence détecté!"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Invalid event entry id detected"
-msgstr ""
+msgstr "ID d'entrée d'événement invalide détecté"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Invalid fax setting."
@@ -4527,19 +4526,19 @@ msgstr "Identifiant invalide de groupe détecté"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Invalid header rule action id detected"
-msgstr ""
+msgstr "Détection d'un id d'action de règle d'en-tête invalide"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Invalid header rule condition id detected"
-msgstr ""
+msgstr "Détection d'un id de condition de règle d'en-tête invalide"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Invalid header rule id detected"
-msgstr ""
+msgstr "Détection d'un id de règle d'en-tête invalide"
 
 #: lib/NGCP/Panel/Controller/Header.pm
 msgid "Invalid header rule set id detected"
-msgstr ""
+msgstr "Un identifiant d'ensemble de règles d'en-tête invalide a été détecté"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Invalid inbound peering rule id detected"
@@ -4563,7 +4562,7 @@ msgstr "Paramètre mailtofax invalide."
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 msgid "Invalid malicious call id detected"
-msgstr ""
+msgstr "Identification d'appel malveillant invalide détectée"
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "Invalid number block id detected"
@@ -4651,15 +4650,15 @@ msgstr "Identifiant invalide de jeu de profile client détecté"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Invalid timeset entry id detected"
-msgstr ""
+msgstr "Détection d'un identifiant d'entrée de timeset invalide"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Invalid timeset id detected"
-msgstr ""
+msgstr "Détection d'un id de timeset invalide"
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Invalid token"
-msgstr ""
+msgstr "Jeton invalide"
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Invalid username/password"
@@ -4675,7 +4674,7 @@ msgstr "Identifiant invalide de coupon détecté!"
 
 #: share/templates/timeset/switch_field_label.tt
 msgid "Invert selection"
-msgstr ""
+msgstr "Inverser la sélection"
 
 #: share/templates/customer/details.tt share/templates/invoice/invoice_list.tt
 msgid "Invoice"
@@ -4757,12 +4756,12 @@ msgstr "Numéros LNP"
 
 #: share/templates/ncos/lnp_pattern_list.tt
 msgid "LNP Pattern"
-msgstr ""
+msgstr "Motif LNP"
 
 #. (lnp_result.lnp_provider.name)
 #: share/templates/ncos/lnp_pattern_list.tt
 msgid "LNP Patterns for %1"
-msgstr ""
+msgstr "Patrons LNP pour %1"
 
 #: share/templates/rewrite/rules_list.tt
 msgid "LNP Rewrite Rules for Callee"
@@ -4866,7 +4865,7 @@ msgstr "Interception légale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Leave media direction attributes in SDP unchanged"
-msgstr ""
+msgstr "Laisser les attributs de direction du média dans le SDP inchangés"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "Level Name"
@@ -4878,7 +4877,7 @@ msgstr "Limite"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "List of Response Codes that trigger CFR"
-msgstr ""
+msgstr "Liste des codes de réponse qui déclenchent le CFR"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "List of audio and video codecs to whitelist or blacklist. Valid codecs names are G722, PCMU, PCMA, speex, GSM, G723, DVI4, L16, QCELP, CN, MPA, G728, DVI4, G729, AMR, AMR-WB, opus, telephone-event, CelB, JPEG, H261, H263, H263-1998, MPV, MP2T, nv, vp8, vp9 and h264."
@@ -4886,11 +4885,11 @@ msgstr "Liste de codecs audio ou vidéo à autoriser ou interdire. Les noms de c
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "List of error codes and respective announcements"
-msgstr ""
+msgstr "Liste des codes d'erreur et annonces respectives"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "List of response codes for which the forking is stopped"
-msgstr ""
+msgstr "Liste des codes de réponse pour lesquels la bifurcation est arrêtée"
 
 #: share/templates/sound/handles_list.tt
 msgid "Load Default Files"
@@ -4902,23 +4901,23 @@ msgstr "Chargement..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Locally track RTP statistics for each media stream and generate RTCP reports to send to the peers, instead of just passing through RTCP reports sent by the peers."
-msgstr ""
+msgstr "Suivre localement les statistiques RTP pour chaque flux média et générer des rapports RTCP à envoyer aux pairs, au lieu de simplement transmettre les rapports RTCP envoyés par les pairs."
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Location"
-msgstr ""
+msgstr "Localisation"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Location Mapping"
-msgstr ""
+msgstr "Association de l'emplacement"
 
 #: share/templates/subscriber/preferences.tt
 msgid "Location Mappings"
-msgstr ""
+msgstr "Associations d'emplacement"
 
 #: share/templates/subscriber/preferences.tt
 msgid "Location SIP-URI"
-msgstr ""
+msgstr "Emplacement SIP-URI"
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Location does not exist"
@@ -5015,7 +5014,7 @@ msgstr "Appels malveillants"
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 msgid "Malicious call does not exist"
-msgstr ""
+msgstr "L'appel malveillant n'existe pas"
 
 #: lib/NGCP/Panel/Controller/MaliciousCall.pm
 msgid "Malicious call successfully deleted"
@@ -5048,7 +5047,7 @@ msgstr "Données maîtres"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Match"
-msgstr ""
+msgstr "Correspondance"
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Match Mode"
@@ -5097,19 +5096,19 @@ msgstr "Nombre maximum d'appels concurrents du client"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum number of inbound concurrent calls"
-msgstr ""
+msgstr "Nombre maximum d'appels entrants simultanés"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum number of inbound concurrent calls for Customer"
-msgstr ""
+msgstr "Nombre maximum d'appels entrants simultanés pour le client"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum number of incoming concurrent on-net and off-net calls going to a subscriber or coming from a peer, excluding subscriber's intra-PBX calls."
-msgstr ""
+msgstr "Nombre maximum d'appels entrants simultanés on-net et off-net à destination d'un abonné ou en provenance d'un pair, à l'exclusion des appels intra-PBX de l'abonné."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum number of incoming concurrent on-net and off-net calls to subscribers within the same Customer account, excluding calls from the application server and intra-PBX calls."
-msgstr ""
+msgstr "Nombre maximum d'appels entrants simultanés on-net et off-net vers des abonnés du même compte client, à l'exclusion des appels provenant du serveur d'application et des appels intra-PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum number of outbound concurrent calls"
@@ -5141,7 +5140,7 @@ msgstr "Nombre maximum d'abonnés atteint pour ce client"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum total number of incoming concurrent calls going to subscribers."
-msgstr ""
+msgstr "Nombre total maximum d'appels entrants simultanés à destination des abonnés."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum total number of outgoing concurrent calls coming from subscribers."
@@ -5153,7 +5152,7 @@ msgstr "Nombre maximum d'appels concurrents entrants et sortants pour les abonn�
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Maximum value for subscriber extension number"
-msgstr ""
+msgstr "Valeur maximale pour le numéro d'extension de l'abonné"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Media Codec Transcoding Options"
@@ -5173,7 +5172,7 @@ msgstr "Méthode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Minimum value for subscriber extension number"
-msgstr ""
+msgstr "Valeur minimale pour le numéro d'extension de l'abonné"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "MoH sendonly"
@@ -5251,7 +5250,7 @@ msgstr "Opérateurs LNP NCOS"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "NCOS LNP pattern does not exist"
-msgstr ""
+msgstr "Le modèle NCOS LNP n'existe pas."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/ncos/list.tt
 msgid "NCOS Level"
@@ -5356,7 +5355,7 @@ msgstr "Nom"
 
 #: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
 msgid "Name field is required and should be defined in the form field or in the uploaded calendar file."
-msgstr ""
+msgstr "Le champ Nom est obligatoire et doit être défini dans le champ du formulaire ou dans le fichier de calendrier téléchargé."
 
 #: share/templates/subscriber/preferences.tt
 msgid "Name in Fax Header for Sendfax"
@@ -5408,11 +5407,11 @@ msgstr "Aucun fichier de bon de facturation spécifié!"
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "No CSV file specified!"
-msgstr ""
+msgstr "Aucun fichier CSV spécifié !"
 
 #: lib/NGCP/Panel/Controller/Login.pm lib/NGCP/Panel/Controller/Root.pm
 msgid "No JWT key has been configured."
-msgstr ""
+msgstr "Aucune clé JWT n'a été configurée."
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "No LNP number file specified!"
@@ -5420,7 +5419,7 @@ msgstr "Aucun fichier de numéro LNP spécifié!"
 
 #: share/templates/reseller/branding.tt
 msgid "No branding specified, using standard branding."
-msgstr ""
+msgstr "Pas de marque spécifiée, utilisation de la marque standard."
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm
 msgid "No call list suppression file specified!"
@@ -5440,11 +5439,11 @@ msgstr "Aucun fichier d'association de numéros d'urgence spécifié!"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "No iCalendar file specified!"
-msgstr ""
+msgstr "Aucun fichier iCalendar spécifié !"
 
 #: share/templates/reseller/branding.tt
 msgid "No logo uploaded"
-msgstr ""
+msgstr "Aucun logo téléchargé"
 
 #: share/templates/widgets/subscriber_vm_overview.tt
 msgid "No new messages"
@@ -5565,11 +5564,11 @@ msgstr "Horaires d'heures creuses pour %1"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Offer OSRTP"
-msgstr ""
+msgstr "Offre OSRTP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Offer optional opportunistic SRTP (OSRTP, RFC 8643) to the called party."
-msgstr ""
+msgstr "Offrir le SRTP opportuniste facultatif (OSRTP, RFC 8643) à l'appelé."
 
 #: share/templates/subscriber/webphone.tt
 msgid "Offline"
@@ -5581,39 +5580,39 @@ msgstr "Oups!"
 
 #: share/templates/batchprovisioning/list.tt
 msgid "Open Form"
-msgstr ""
+msgstr "Formulaire ouvert"
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection closed."
-msgstr ""
+msgstr "Connexion Openvpn fermée."
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection is already closed."
-msgstr ""
+msgstr "La connexion Openvpn est déjà fermée."
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection is already opened."
-msgstr ""
+msgstr "La connexion Openvpn est déjà ouverte."
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn connection open."
-msgstr ""
+msgstr "Connexion Openvpn ouverte."
 
 #: share/templates/administrator/openvpn_wrapper.tt
 msgid "Openvpn details"
-msgstr ""
+msgstr "Détails sur Openvpn"
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn service is not available on the system."
-msgstr ""
+msgstr "Le service Openvpn n'est pas disponible sur le système."
 
 #: lib/NGCP/Panel/Utils/Auth.pm
 msgid "Openvpn service is not enabled or host role is not allowed."
-msgstr ""
+msgstr "Le service Openvpn n'est pas activé ou le rôle d'hôte n'est pas autorisé."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Option for defining when CLIR should be used"
-msgstr ""
+msgstr "Option permettant de définir quand le CLIR doit être utilisé"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Opus mono bitrate"
@@ -5641,7 +5640,7 @@ msgstr "Champ History-Info sortant"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Outbound PAI Display-Name Field"
-msgstr ""
+msgstr "Champ d'affichage du nom du PAI sortant"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Outbound PAI-Username Field"
@@ -5791,7 +5790,7 @@ msgstr "Personalisatin des panneaux"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Part"
-msgstr ""
+msgstr "Partie"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Party Call Control"
@@ -5799,7 +5798,7 @@ msgstr "Party Call Control"
 
 #: share/templates/administrator/reset_password.tt
 msgid "Password"
-msgstr ""
+msgstr "Mot de passe"
 
 #: lib/NGCP/Panel/Utils/Form.pm
 msgid "Password is too weak"
@@ -5815,7 +5814,7 @@ msgstr "Mot de passe du téléphone administrateur."
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Password successfully recovered, please re-login."
-msgstr ""
+msgstr "Mot de passe récupéré avec succès, veuillez vous reconnecter."
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm
 msgid "Pattern"
@@ -5884,7 +5883,7 @@ msgstr "Groupe d'opérateurs"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Peering Group Tag"
-msgstr ""
+msgstr "Tag du groupe d'échange de trafic"
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Peering Group successfully deleted"
@@ -6008,15 +6007,15 @@ msgstr "Lecture"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play an announcement for failure on outbound call"
-msgstr ""
+msgstr "Diffuser une annonce en cas d'échec d'un appel sortant"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement before call setup"
-msgstr ""
+msgstr "Lecture d'une annonce avant l'établissement de l'appel"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement before recording"
-msgstr ""
+msgstr "Lecture de l'annonce avant l'enregistrement"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement before routing to CFU/CFNA"
@@ -6024,7 +6023,7 @@ msgstr "Lire l'annonce avant le routage vers le CFU/CNFA"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Play announcement to callee after answer"
-msgstr ""
+msgstr "Diffusion d'une annonce au destinataire après la réponse"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Playback announcement as early media before Call Forward Unconditional or Unavailable."
@@ -6032,15 +6031,15 @@ msgstr "Lire l'annonce comme premier média avant un renvoi d'appel inconditionn
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Playback announcement as early media before send the call to callee."
-msgstr ""
+msgstr "Lecture de l'annonce en tant que premier média avant d'envoyer l'appel à l'appelé."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Playback announcement as early media before start call recording."
-msgstr ""
+msgstr "Lecture de l'annonce en tant que média précoce avant de commencer l'enregistrement de l'appel."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Playback announcement to callee after he answered the call (PRO and CARRIER only)."
-msgstr ""
+msgstr "Lecture de l'annonce au destinataire après qu'il ait répondu à l'appel (PRO et CARRIER uniquement)."
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Port"
@@ -6184,45 +6183,45 @@ msgstr "Fournir l'entête d'Auto-answer à l'utilisaeur appelé si demandé par 
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning Template"
-msgstr ""
+msgstr "Modèle d'approvisionnement"
 
 #. ($template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain})
 #: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
 msgid "Provisioning template '%1' done: subscriber %2 created"
-msgstr ""
+msgstr "Provisionnement du modèle '%1' effectué : abonné %2 créé."
 
 #. ($template, $e)
 #: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
 msgid "Provisioning template '%1' failed: %2"
-msgstr ""
+msgstr "Le modèle de provisionnement '%1' a échoué : %2"
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template cannot be edited."
-msgstr ""
+msgstr "Le modèle de provisionnement ne peut pas être édité."
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template cannot be removed."
-msgstr ""
+msgstr "Le modèle de provisionnement ne peut pas être supprimé."
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template does not exist!"
-msgstr ""
+msgstr "Le modèle de provisionnement n'existe pas !"
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template successfully created"
-msgstr ""
+msgstr "Modèle de provisionnement créé avec succès"
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template successfully removed"
-msgstr ""
+msgstr "Le modèle d'approvisionnement a été supprimé avec succès"
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Provisioning template successfully updated"
-msgstr ""
+msgstr "Le modèle d'approvisionnement a été mis à jour avec succès"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Q-Value"
-msgstr ""
+msgstr "Valeur Q"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "RTC"
@@ -6230,7 +6229,7 @@ msgstr "RTC"
 
 #: share/templates/widgets/admin_topmenu_settings.tt
 msgid "RTP Statistics"
-msgstr ""
+msgstr "Statistiques RTP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "RTP interface"
@@ -6529,11 +6528,11 @@ msgstr "Revendeur"
 #. (reseller.name)
 #: share/templates/reseller/preferences.tt
 msgid "Reseller \"%1\" - Preferences"
-msgstr ""
+msgstr "Revendeur \"%1\" - Préférences"
 
 #: lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Reseller #"
-msgstr ""
+msgstr "Revendeur"
 
 #: share/templates/reseller/details.tt
 msgid "Reseller Base Information"
@@ -6612,35 +6611,35 @@ msgstr "Réinitialiser le mot de passe Web"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict ICE support to ICE-lite"
-msgstr ""
+msgstr "Limiter le support ICE à ICE-lite"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict every answer to just the first preferred codec."
-msgstr ""
+msgstr "Limiter chaque réponse au premier codec préféré."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict the AMR encoders (both local and remote) to change mode only to neighbouring modes instead of any random mode."
-msgstr ""
+msgstr "Limiter les encodeurs AMR (locaux et distants) pour qu'ils ne changent de mode qu'en fonction des modes voisins au lieu de tout mode aléatoire."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict the AMR encoders (both local and remote) to change modes only every other packet (period 2) instead of any packet (period 1, default)."
-msgstr ""
+msgstr "Limiter les encodeurs AMR (locaux et distants) pour qu'ils ne changent de mode que tous les deux paquets (période 2) au lieu de tous les paquets (période 1, par défaut)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict the AMR encoders (both local and remote) to the given list of AMR bitrates (modes). Must be a comma-separated list of integer modes without spaces, e.g. '2,3,4,5'."
-msgstr ""
+msgstr "Restreint les encodeurs AMR (locaux et distants) à la liste donnée de débits d'encodage AMR (modes). Il doit s'agir d'une liste de modes entiers séparés par des virgules et sans espace, par exemple '2,3,4,5'."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict the AMR-WB encoders (both local and remote) to change mode only to neighbouring modes instead of any random mode."
-msgstr ""
+msgstr "Limiter les encodeurs AMR-WB (locaux et distants) pour qu'ils ne changent de mode qu'en fonction des modes voisins au lieu de tout mode aléatoire."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict the AMR-WB encoders (both local and remote) to change modes only every other packet (period 2) instead of any packet (period 1, default)."
-msgstr ""
+msgstr "Limiter les encodeurs AMR-WB (locaux et distants) pour qu'ils ne changent de mode que tous les deux paquets (période 2) au lieu de tous les paquets (période 1, par défaut)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Restrict the AMR-WB encoders (both local and remote) to the given list of AMR-WB bitrates (modes). Must be a comma-separated list of integer modes without spaces, e.g. '2,3,4,5'."
-msgstr ""
+msgstr "Restreint les encodeurs AMR-WB (locaux et distants) à la liste donnée de débits d'encodage AMR-WB (modes). Il doit s'agir d'une liste de modes entiers séparés par des virgules et sans espace, par exemple '2,3,4,5'."
 
 #: share/templates/callrouting/result.tt
 msgid "Result"
@@ -6652,7 +6651,7 @@ msgstr "Ensemble de règles de reformulation"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rewrite Rule Set for Source/Destination fields"
-msgstr ""
+msgstr "Jeu de règles de réécriture pour les champs Source/Destination"
 
 #: share/templates/rewrite/set_list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_domain_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Rewrite Rule Sets"
@@ -6693,7 +6692,7 @@ msgstr "Ensemble de règles de reformulation mis à jour avec succès"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rewrite rule set to apply caller outbound rule to \"SOURCE_CLI\", callee outbound rule to \"DESTINATION_USER_IN\" CDR export fields."
-msgstr ""
+msgstr "Réécriture du jeu de règles pour appliquer la règle de sortie de l'appelant à \"SOURCE_CLI\" et la règle de sortie de l'appelé à \"DESTINATION_USER_IN\" Champs d'exportation du CDR."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Rewrite rule successfully created"
@@ -6713,11 +6712,11 @@ msgstr "Durée de la sonnerie pour CFT"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ring Timeout of each single contact"
-msgstr ""
+msgstr "Temporisation de la sonnerie de chaque contact individuel"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Route incoming subscriber calls to all registered devices belonging to the subscriber"
-msgstr ""
+msgstr "Acheminer les appels entrants de l'abonné vers tous les appareils enregistrés appartenant à l'abonné"
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Routing Number"
@@ -6733,7 +6732,7 @@ msgstr "Règles"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SDP MIME object related to location to be added on an emergency call"
-msgstr ""
+msgstr "Objet SDP MIME relatif à l'emplacement à ajouter sur un appel d'urgence"
 
 #: share/templates/callflow/list.tt share/templates/widgets/admin_topmenu_settings.tt
 msgid "SIP Call Flows"
@@ -6914,11 +6913,11 @@ msgstr "Interdictions de sécurité"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Select if, in case of emergency calls, the subscriber's User-Provided-Number is ovewritten with the Network-Provided-Number (default) or not."
-msgstr ""
+msgstr "Sélectionnez si, en cas d'appels d'urgence, le numéro fourni par l'utilisateur de l'abonné est remplacé par le numéro fourni par le réseau (par défaut) ou non."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Select which type of forking based on q-value you want to perform. Select 'Standard' for the serial forking defined by q-value priority: the higher the q value number the more priority is given, same values mean parallel ringing. Select 'Probability' for a serial forking based on probability: higher q-value means higher probability to be contacted as first, contacts with q-value 0 have the lowest priority and they are tried after all the others."
-msgstr ""
+msgstr "Sélectionnez le type de bifurcation basé sur la valeur q que vous souhaitez effectuer. Sélectionnez 'Standard' pour un forking en série défini par la priorité de la valeur q : plus le numéro de la valeur q est élevé, plus la priorité est donnée, des valeurs identiques signifient une sonnerie parallèle. Sélectionnez \"Probabilité\" pour un branchement en série basé sur la probabilité : plus la valeur q est élevée, plus la probabilité d'être contacté en premier est grande, les contacts avec la valeur q 0 ont la priorité la plus basse et sont essayés après tous les autres."
 
 #: share/templates/subscriber/webfax.tt
 msgid "Send Fax"
@@ -6970,7 +6969,7 @@ msgstr "Méthode de rafraîchissement des Temporisations de session"
 
 #: share/templates/timeset/switch_end_control.tt
 msgid "Set"
-msgstr ""
+msgstr "Définir"
 
 #: share/templates/customer/details.tt
 msgid "Set Cash Balance"
@@ -7022,7 +7021,7 @@ msgstr "Afficher les CDRs"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Show Call Forward Destination to Caller"
-msgstr ""
+msgstr "Afficher la destination du renvoi d'appel à l'appelant"
 
 #: share/templates/subscriber/webphone.tt
 msgid "Show Offline"
@@ -7047,7 +7046,7 @@ msgstr "Connectez-vous en utilisant vos identifiants %1 :"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Single-codec answers"
-msgstr ""
+msgstr "Réponses à un codec unique"
 
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Skip Rewrite"
@@ -7180,7 +7179,7 @@ msgstr "Entrée spéciale heures creuses mise à jour avec succès"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies how many seconds each single contact should ring before the calls goes to the next one. It is considered only in case of forking based on Q value."
-msgstr ""
+msgstr "Spécifie combien de secondes chaque contact unique doit sonner avant que les appels ne passent au suivant. Elle n'est prise en compte qu'en cas de forking basé sur la valeur Q."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies how many seconds the system should wait before redirecting the call if \"cft\" is set."
@@ -7204,15 +7203,15 @@ msgstr "Spécifie la liste des règles d'appel et de reformulation de l'appelé 
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the maximum value that can be assigned as extension to a subscriber. If left empty, only the minimum value will be considered. If both are empty, there is no extension range limit."
-msgstr ""
+msgstr "Spécifie la valeur maximale qui peut être attribuée comme extension à un abonné. Si elle est laissée vide, seule la valeur minimale sera prise en compte. Si les deux sont vides, il n'y a pas de limite de plage d'extension."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the minimum value that can be assigned as extension to a subscriber. If left empty, only the maximum value will be considered. If both are empty, there is no extension range limit."
-msgstr ""
+msgstr "Spécifie la valeur minimale qui peut être attribuée comme extension à un abonné. Si elle est laissée vide, seule la valeur maximale sera prise en compte. Si les deux sont vides, il n'y a pas de limite de plage d'extension."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the operational mode of the Call Forward on Response. If set to Whitelist (default) the CFR is executed only for reply codes included in the 'rerouting_codes' list, if set to Blacklist the CFR is executed except for reply codes included in the list."
-msgstr ""
+msgstr "Spécifie le mode opérationnel du renvoi d'appel sur réponse. S'il est réglé sur Whitelist (par défaut), le CFR est exécuté uniquement pour les codes de réponse inclus dans la liste 'rerouting_codes', s'il est réglé sur Blacklist, le CFR est exécuté sauf pour les codes de réponse inclus dans la liste."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the operational mode of the SIP User-Agent Filter List. If unset or set to a false value, it is a blacklist (accept all requests except from user-agents listed in the filter list), with a true value it is a whitelist (reject all requests except from user-agents listed in the filter list)."
@@ -7220,7 +7219,7 @@ msgstr "Spécifie le mode opérationnel de la liste des filtres SIP User-Agents.
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the operational mode of the User-Provided Number (UPN) based call blocking. If unset or set to a false value, it is a blacklist (accept all calls except from UPNs listed in the block list), with a true value it is a whitelist (reject all calls except from UPNs listed in the block list)"
-msgstr ""
+msgstr "Spécifie le mode opérationnel du blocage d'appel basé sur le numéro fourni par l'utilisateur (UPN). S'il n'est pas défini ou s'il a une valeur fausse, il s'agit d'une liste noire (accepter tous les appels, sauf ceux provenant des NUP figurant dans la liste de blocage), avec une valeur vraie, il s'agit d'une liste blanche (rejeter tous les appels, sauf ceux provenant des NUP figurant dans la liste de blocage)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the operational mode of the incoming block list. If unset or set to a false value, it is a blacklist (accept all calls except from numbers listed in the block list), with a true value it is a whitelist (reject all calls except from numbers listed in the block list)."
@@ -7403,11 +7402,11 @@ msgstr "Abonné créé avec succès"
 #. ($c->stash->{provisioning_template_name})
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Subscriber using Provisioning Template '%1'"
-msgstr ""
+msgstr "Abonné utilisant le modèle de provisionnement '%1'"
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Subscriber's PBX extension is out of customer's extension range."
-msgstr ""
+msgstr "L'extension du PBX de l'abonné est hors de la plage d'extension de l'abonné."
 
 #: share/templates/customer/details.tt share/templates/subscriber/list.tt share/templates/widgets/admin_reseller_overview.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccare_customer_overview.tt share/templates/widgets/ccare_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_customer_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Subscribers"
@@ -7416,7 +7415,7 @@ msgstr "Abonnés"
 #. ($c->stash->{provisioning_template_name})
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Subscribers using Provisioning Template '%1' from CSV"
-msgstr ""
+msgstr "Abonnés utilisant le modèle de provisionnement '%1' à partir de CSV"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully added registered device"
@@ -7460,7 +7459,7 @@ msgstr "Profil d'appareil créé avec succès"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully created location mapping"
-msgstr ""
+msgstr "L'association de l'emplacement a été créée avec succès"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully created new destination set"
@@ -7508,7 +7507,7 @@ msgstr "Ensemble de destination supprimé avec succès"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted location mapping"
-msgstr ""
+msgstr "L'association de l'emplacement a été supprimée avec succès"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully deleted recording"
@@ -7544,7 +7543,7 @@ msgstr "Demande redirigée vers l'appareil avec succès"
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Successfully reset password, please check your email"
-msgstr ""
+msgstr "Le mot de passe a été réinitialisé avec succès, veuillez vérifier votre courriel."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully reset web password, please check your email"
@@ -7617,7 +7616,7 @@ msgstr "Paramètres du fax mis à jour avec succès"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated location mapping"
-msgstr ""
+msgstr "L'association de l'emplacement a été mise à jour avec succès"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated mailtofax setting"
@@ -7669,7 +7668,7 @@ msgstr "État du support"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Switch between blacklisting (bl) or whitelisting (wl) of codec IDs listed in codecs_id_list (1 for wl, 0 bl)."
-msgstr ""
+msgstr "Bascule entre la liste noire (bl) ou la liste blanche (wl) des ID de codecs listés dans codecs_id_list (1 pour wl, 0 bl)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Switch between blacklisting (bl) or whitelisting (wl) of codecs listed in codecs_list (1 for wl, 0 bl)."
@@ -7681,7 +7680,7 @@ msgstr "Synchronisation de l'appareil"
 
 #: share/templates/emailtemplate/list.tt
 msgid "Sync Email Templates"
-msgstr ""
+msgstr "Synchronisation des modèles d'e-mails"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Synchronisation interval of NTP server."
@@ -7721,31 +7720,31 @@ msgstr "Statut système"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "T.38: Disable ECM support"
-msgstr ""
+msgstr "T.38 : Désactiver le support ECM"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "T.38: Disable IAF support"
-msgstr ""
+msgstr "T.38 : Désactiver le soutien de l'IAF"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "T.38: Disable V.17 support"
-msgstr ""
+msgstr "T.38 : Désactiver le support V.17"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "T.38: Disable V.27ter support"
-msgstr ""
+msgstr "T.38 : Désactiver le support V.27ter"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "T.38: Disable V.29 support"
-msgstr ""
+msgstr "T.38 : Désactiver le support V.29"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "T.38: Disable V.34 support"
-msgstr ""
+msgstr "T.38 : Désactiver le support V.34"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "T.38: Use FEC"
-msgstr ""
+msgstr "T.38 : Utiliser FEC"
 
 #: share/templates/subscriber/preferences.tt
 msgid "T38"
@@ -7777,11 +7776,11 @@ msgstr "La suppression de son propre abonné est interdite."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Terminating pilot subscriber when other subscribers exist is prohibited."
-msgstr ""
+msgstr "Il est interdit de résilier un abonné pilote lorsqu'il existe d'autres abonnés."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The 'caller_pattern' of a peering group has to match this tag to be considered for outgoing calls."
-msgstr ""
+msgstr "Le \"caller_pattern\" d'un groupe d'échange de trafic doit correspondre à cette étiquette pour être pris en compte pour les appels sortants."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The IP address of the SNMP manager which is supposed to access this IMG. Only this IP will have access to the SNMP Agent."
@@ -7845,7 +7844,7 @@ msgstr "Le contenu à mettre dans le \"P-Preferred-Identity username\" pour les 
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The content to put into the PAI display-name for outbound calls"
-msgstr ""
+msgstr "Le contenu à mettre dans le nom d'affichage du PAI pour les appels sortants."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The content to put into the To username for outbound calls from the platform to the subscriber or peer."
@@ -7873,7 +7872,7 @@ msgstr "L'Id indiquant l'entrée \"Renvoi d'appel sur occupation\" dans la table
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The id pointing to the \"Call Forward Overflow\" entry in the voip_cf_mappings table"
-msgstr ""
+msgstr "L'identifiant qui pointe vers l'entrée \"Call Forward Overflow\" dans la table voip_cf_mappings."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The id pointing to the \"Call Forward SMS\" entry in the voip_cf_mappings table"
@@ -7893,7 +7892,7 @@ msgstr "L'Id indiquant l'entrée \"Renvoi d'appel inconditionnel\" dans la table
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The id pointing to the \"Call Forward on Response\" entry in the voip_cf_mappings table"
-msgstr ""
+msgstr "L'identifiant qui pointe vers l'entrée \"Call Forward on Response\" dans la table voip_cf_mappings."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The members (as SIP URIs) of the PBX hunt group."
@@ -7933,11 +7932,11 @@ msgstr "L'intervalle de temps que vous souhaitez supprimer n'existe pas"
 
 #: lib/NGCP/Panel/Form/EmailTemplate/Reseller.pm lib/NGCP/Panel/Form/TimeSet/Reseller.pm
 msgid "This name already exists"
-msgstr ""
+msgstr "Ce nom existe déjà"
 
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "This user is not allowed to reset password"
-msgstr ""
+msgstr "Cet utilisateur n'est pas autorisé à réinitialiser le mot de passe"
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "This weekday does not exist"
@@ -7957,7 +7956,7 @@ msgstr "Réglage de l'heure"
 
 #: share/templates/timeset/event_list.tt
 msgid "Time Set Event"
-msgstr ""
+msgstr "Heure de l'événement"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm share/templates/widgets/admin_topmenu_settings.tt
 msgid "Time Sets"
@@ -7966,11 +7965,11 @@ msgstr "Réglages de l'heure"
 #. (timeset.name)
 #: share/templates/timeset/event_list.tt
 msgid "Time set \"%1\" - Events"
-msgstr ""
+msgstr "Heure fixée \"%1\" - Événements"
 
 #: share/templates/reseller/details.tt
 msgid "Time sets"
-msgstr ""
+msgstr "Les ensembles de temps"
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Timerange has been successfully created"
@@ -7991,19 +7990,19 @@ msgstr "Details Timeset \"%1\""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Timeset entry does not exist"
-msgstr ""
+msgstr "L'entrée Timeset n'existe pas"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Timeset entry successfully created"
-msgstr ""
+msgstr "L'entrée Timeset a été créée avec succès"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Timeset entry successfully deleted"
-msgstr ""
+msgstr "L'entrée Timeset a été supprimée avec succès"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
 msgid "Timeset entry successfully updated"
-msgstr ""
+msgstr "L'entrée Timeset a été mise à jour avec succès"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Timestamp"
@@ -8023,7 +8022,7 @@ msgstr "Vers (numéro distant)"
 
 #: share/templates/subscriber/preferences.tt
 msgid "To Username"
-msgstr ""
+msgstr "A l'utilisateur"
 
 #: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Tools"
@@ -8071,7 +8070,7 @@ msgstr "Montant total"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Total max number of inbound concurrent calls"
-msgstr ""
+msgstr "Nombre total maximum d'appels entrants simultanés"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Total max number of outbound concurrent calls"
@@ -8099,7 +8098,7 @@ msgstr "Transcoder en G.711 a-Law"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Transcode to G.711 u-Law"
-msgstr ""
+msgstr "Transcode en G.711 u-Law"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Transcode to G.722"
@@ -8127,7 +8126,7 @@ msgstr "Transcoder en Opus stereo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Transcode to RFC DTMF events"
-msgstr ""
+msgstr "Transcodage vers les événements RFC DTMF"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Transcode to Speex 16 kHz"
@@ -8143,7 +8142,7 @@ msgstr "Transcoder en Speex 8 kHz"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Transcode to comfort noise payload"
-msgstr ""
+msgstr "Transcodage vers une charge utile de bruit de confort"
 
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
@@ -8151,11 +8150,11 @@ msgstr "Le transcodage de fichier audio a échoué"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Translate T.38 offer into T.30 audio"
-msgstr ""
+msgstr "Traduire l'offre T.38 en audio T.30"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Translate inband PCM DTMF tones to RFC DTMF events."
-msgstr ""
+msgstr "Traduit les tonalités DTMF PCM en bande intérieure en événements DTMF RFC."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Trusted Source"
@@ -8207,7 +8206,7 @@ msgstr "Dépassement profils"
 
 #: lib/NGCP/Panel/Form/TimeSet/Reseller.pm
 msgid "Unknow reseller"
-msgstr ""
+msgstr "Revendeur inconnu"
 
 #: lib/NGCP/Panel/Utils/DeviceBootstrap/VendorRPC.pm
 msgid "Unknown error"
@@ -8239,11 +8238,11 @@ msgstr "Télécharger des coupons en CSV"
 
 #: share/templates/timeset/event_list.tt
 msgid "Upload iCalendar events"
-msgstr ""
+msgstr "Télécharger des événements iCalendar"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use IP address for \"allowed_ips\" check from a header name provided in this preference"
-msgstr ""
+msgstr "Utiliser l'adresse IP pour la vérification de \"allowed_ips\" à partir d'un nom d'en-tête fourni dans cette préférence."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use Number instead of Contact first for outbound calls"
@@ -8263,19 +8262,19 @@ msgstr "Utiliser la fonction interne d'enregistrement d'appels ou notifier le se
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use octet-aligned mode instead of bandwidth-efficient mode when offering to transcode to AMR-WB."
-msgstr ""
+msgstr "Utiliser le mode d'alignement d'octets au lieu du mode d'efficacité de la bande passante lorsque vous proposez de transcoder en AMR-WB."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use octet-aligned mode instead of bandwidth-efficient mode when offering to transcode to AMR."
-msgstr ""
+msgstr "Utiliser le mode d'alignement d'octets au lieu du mode d'efficacité de la bande passante lorsque vous proposez de transcoder en AMR."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use peer-specific outbound headers when call is forced to peer"
-msgstr ""
+msgstr "Utiliser des en-têtes sortants spécifiques au pair lorsque l'appel est forcé vers le pair."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use the specified hashing function to communicate the DTLS certificate's fingerprint to the peer."
-msgstr ""
+msgstr "Utilisez la fonction de hachage spécifiée pour communiquer l'empreinte digitale du certificat DTLS à l'opérateur."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use valid Alias CLI as NPN"
@@ -8360,7 +8359,7 @@ msgstr "Valeur"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Value Part"
-msgstr ""
+msgstr "Partie de valeur"
 
 #: lib/NGCP/Panel/Utils/HeaderManipulations.pm share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt share/templates/subscriber/preferences.tt
 msgid "Values"
@@ -8450,7 +8449,7 @@ msgstr "Coupons"
 
 #: lib/NGCP/Panel/Widget/Dashboard/AdminSystemOverview.pm
 msgid "Warnings"
-msgstr ""
+msgstr "Avertissements"
 
 #: share/templates/error_page.tt
 msgid "We are terribly sorry, an exceptional error has occurred:"
@@ -8502,11 +8501,11 @@ msgstr "Poids"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When ICE support is enabled towards this peer, act as an ICE agent that supports only ICE-lite instead of full ICE."
-msgstr ""
+msgstr "Lorsque le support ICE est activé pour ce pair, agir comme un agent ICE qui supporte seulement ICE-lite au lieu de ICE complet."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When forwarding a call, send the destination number or user back to the calling party."
-msgstr ""
+msgstr "Lorsque vous transférez un appel, renvoyez le numéro de destination ou l'utilisateur à l'appelant."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When set to true, the ISDN ports are configured to be the Userside end of an ISDN network. This only has an effect in the ISDN mode."
@@ -8518,35 +8517,35 @@ msgstr "Positionné à vrai, utilise le lien optique à la place des ports ISDN.
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When using the T.38 gateway, do not advertise support for, and do not negotiate, T.30 ECM (error correction mode). Support for ECM is enabled by default."
-msgstr ""
+msgstr "Lorsque vous utilisez la passerelle T.38, n'annoncez pas la prise en charge de l'ECM (mode de correction d'erreur) T.30 et ne la négociez pas. La prise en charge de l'ECM est activée par défaut."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When using the T.38 gateway, do not support the IAF fax protocol (Internet-Aware Fax). Support for IAF is enabled by default."
-msgstr ""
+msgstr "Lorsque vous utilisez la passerelle T.38, ne prenez pas en charge le protocole de fax IAF (Internet-Aware Fax). La prise en charge du protocole IAF est activée par défaut."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When using the T.38 gateway, do not support the V.17 fax modem protocol (12.0 and 14.4 kbit/s). Support for V.17 is enabled by default."
-msgstr ""
+msgstr "Lorsque vous utilisez la passerelle T.38, ne prenez pas en charge le protocole de modem fax V.17 (12,0 et 14,4 kbit/s). La prise en charge de V.17 est activée par défaut."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When using the T.38 gateway, do not support the V.27ter fax modem protocol (2.4 and 4.8 kbit/s half-duplex). Support for V.27ter is enabled by default."
-msgstr ""
+msgstr "Lorsque vous utilisez la passerelle T.38, ne prenez pas en charge le protocole de modem fax V.27ter (2,4 et 4,8 kbit/s half-duplex). La prise en charge de V.27ter est activée par défaut."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When using the T.38 gateway, do not support the V.29 fax modem protocol (between 4.8 and 9.6 kbit/s). Support for V.29 is enabled by default."
-msgstr ""
+msgstr "Lorsque vous utilisez la passerelle T.38, ne prenez pas en charge le protocole de modem fax V.29 (entre 4,8 et 9,6 kbit/s). La prise en charge de V.29 est activée par défaut."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When using the T.38 gateway, do not support the V.34 fax modem protocol (up to 33.8 kbit/s). Support for V.34 is enabled by default."
-msgstr ""
+msgstr "Lorsque vous utilisez la passerelle T.38, ne prenez pas en charge le protocole de modem fax V.34 (jusqu'à 33,8 kbit/s). La prise en charge de V.34 est activée par défaut."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When using the T.38 gateway, use UDPTL FEC (forward error correction) instead of the default UDPTL redundancy protocol. This is only useful in combination with T38_force as this is a negotiated parameter."
-msgstr ""
+msgstr "Lorsque vous utilisez la passerelle T.38, utilisez UDPTL FEC (forward error correction) au lieu du protocole de redondance UDPTL par défaut. Ceci n'est utile qu'en combinaison avec T38_force car il s'agit d'un paramètre négocié."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether to send a specific Alert-Info to the called party to control the ring tone"
-msgstr ""
+msgstr "Envoi ou non d'une information d'alerte spécifique à l'appelé pour contrôler la sonnerie."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Which transport protocol (e.g. RTP, SRTP, etc) to use"
@@ -8554,7 +8553,7 @@ msgstr "Le protocole de transport utilisé (par ex. RTP, SRTP, etc)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "XML with the ProviderInfo data that will be added as MIME object on an emergency call"
-msgstr ""
+msgstr "XML avec les données d'information sur le fournisseur qui seront ajoutées comme objet MIME lors d'un appel d'urgence"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "XMPP Settings"
@@ -8614,7 +8613,7 @@ msgstr "numéro associé"
 
 #: share/templates/timeset/event_list.tt
 msgid "at"
-msgstr ""
+msgstr "sur"
 
 #: share/templates/customer/details.tt
 msgid "billing profile default"
@@ -8698,7 +8697,7 @@ msgstr "appels à l'étranger"
 
 #: share/templates/timeset/event_list.tt
 msgid "from"
-msgstr ""
+msgstr "de"
 
 #: share/templates/subscriber/preferences.tt
 msgid "from_email"
@@ -8822,7 +8821,7 @@ msgstr "secondes"
 
 #: share/layout/body.tt
 msgid "time"
-msgstr ""
+msgstr "temps"
 
 #: share/templates/error_page.tt
 msgid "time of incident:"
@@ -8852,57 +8851,3 @@ msgstr "années"
 #: lib/NGCP/Panel/Controller/Reseller.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt
 msgid "yes"
 msgstr "oui"
-
-#~ msgid "Provide this field as pre-coded value to add it to the SDP as MIME object with content-type \"application/vnd.cirpack.isdn-ext\" and \"content-disposition: signal;handling=required\" according to the German NGN interconnect specification"
-#~ msgstr "Remplissez ce champ avec une valeur pré-codée pour l'ajouter au SDP en tant qu'objet MIME avec le type de contenu \"application/vnd.cirpack.isdn-ext\" et \"content-disposition: signal;handling=required;\" en accord avec la spécification d'interconnexion NGN allemande"
-
-#~ msgid "Defines a rewrite CLI and and pattern. If the a-number of a call matches one of the associated patterns, the User-Provided-Number is set to the configured CLI."
-#~ msgstr "Définit une règle de reformulation de CLI et de modèle. Si le numéro de l'appelant correspond à l'un des modèles associés, le numéro fourni par l'utilisateur sera placé dans le CLI configuré."
-
-#~ msgid "User CLI rewrite"
-#~ msgstr "Reformulation CLI de l'utilisateur"
-
-#~ msgid "Call Deflection allows a called endpoint to redirect the unanswered call to another destination during the call setup phase by sending 302 redirect message in ringing phase. Disabling the preference will make the platform ignore the redirect message."
-#~ msgstr "La déviation des appels permet à un terminal de rediriger les appels sans réponses vers une autre destination pendant l'initiatialisation de l'appel en envoyant le code 302 dans la phase de sonnerie. Désactiver cette option fera ignorer le message de redirection que la plateforme."
-
-#~ msgid "Check the box if you want to perform serial forking based on q-value instead of parallel forking for registered contacts"
-#~ msgstr "Cocher la case si vous voulez l'utiliser en série au lieu de l'utiliser en parallèle pour les contacts enregistrés"
-
-#~ msgid "Controls whether to enable/disable NAT pings for a given domain/user"
-#~ msgstr "Contrôle s'il faut activer ou désactiver les pings NAT pour un domaine/utilisateur donné"
-
-#~ msgid "NAT pinger"
-#~ msgstr "Pinger NAT"
-
-#~ msgid "Hardware"
-#~ msgstr "Hardware"
-
-#~ msgid "Call Forward Rerouting"
-#~ msgstr "Temporisation du transfert d'appel"
-
-#~ msgid "Internal Call Forward Rerouting #"
-#~ msgstr "# interne de reroutage de renvoi d'appels"
-
-#~ msgid "List of Rerouting Codes"
-#~ msgstr "Liste des codes de reroutage"
-
-#~ msgid "Rerouting Mode"
-#~ msgstr "Mode de reroutage"
-
-#~ msgid "Specifies the operational mode of the Rerouting Call Forward. If set to Whitelist (default) the CFR is executed only for reply codes included in the 'rerouting_codes' list, if set to Blacklist the CFR is executed except for reply codes included in the list."
-#~ msgstr "Spécifie le mode opérationnel du renvoi d'appel. S'il est positionné à 'Liste blanche' (valeur par défaut) le CFR est xécuté uniquement pour les codes de réponse de la liste 'rerouting_codes', s'il est positionné à 'Liste noire' le CFR est exécuté pour les codes de réponses inclus dans la liste."
-
-#~ msgid "The id pointing to the \"Call Forward Rerouting\" entry in the voip_cf_mappings table"
-#~ msgstr "L'Id indiquant l'entrée \"Renvoi d'appel\" dans la table voip_cf_mappings"
-
-#~ msgid "Always offer the audio codec G.711 µ-Law (PCMU, 8 kHz) to this subscriber or peer."
-#~ msgstr "Toujours proposer le codec audio G.711 µ-Law (PCMU, 8 kHz) à cet abonné ou opérateur."
-
-#~ msgid "Codecs filter"
-#~ msgstr "Filtre de codecs"
-
-#~ msgid "Codecs list"
-#~ msgstr "Liste de codecs"
-
-#~ msgid "Transcode to G.711 µ-Law"
-#~ msgstr "Transcoder en G.711 µ-Law"
