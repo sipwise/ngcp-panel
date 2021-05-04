@@ -34,6 +34,17 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'status',
+            description => 'Filter for terminated resellers',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { status => $q };
+                },
+                second => sub {},
+            },
+        },
     ];
 }
 
