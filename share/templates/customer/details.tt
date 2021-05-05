@@ -41,16 +41,6 @@ $(function() {
 </script>
 
 
-
-
-
-
-[% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
-    [% site_config.title = c.loc('Customer Details') -%]
-[% ELSE -%]
-    [% site_config.title = c.loc('Customer Details for #[_1] ([_2])',contract.id,product.name) -%]
-[% END -%]
-
 [%
     lock_levels = [
         { level = 0, text = c.loc("none") },
@@ -61,6 +51,13 @@ $(function() {
         { level = 5, text = c.loc("ported (call forwarding only)") },
     ];
 -%]
+
+[% UNLESS framed -%]
+[% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
+    [% site_config.title = c.loc('Customer Details') -%]
+[% ELSE -%]
+    [% site_config.title = c.loc('Customer Details for #[_1] ([_2])',contract.id,product.name) -%]
+[% END -%]
 
 <div class="row">
     <span>
@@ -75,6 +72,7 @@ $(function() {
     [% END -%]
 </div>
 [% back_created = 1 -%]
+[% END -%]
 
 <div class="row">
     [% FOREACH m IN messages -%]

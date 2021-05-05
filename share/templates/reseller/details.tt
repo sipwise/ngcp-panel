@@ -9,8 +9,6 @@
 </div>
 
 [% back_created = 1 -%]
-
-<div class="ngcp-separator"></div>
 [% END -%]
 
 <div class="row">
@@ -22,6 +20,8 @@
     [% END -%]
 [% messages = [] -%]
 </div>
+
+<div class="ngcp-separator"></div>
 
 <div class="accordion" id="reseller_details">
     <div class="accordion-group">
