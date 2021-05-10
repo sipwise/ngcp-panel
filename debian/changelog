@@ -1,3 +1,10 @@
+ngcp-panel (9.4.1.2+0~mr9.4.1.2) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [0336e7b] TT#119057 selenium: fix crash when testing documentation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 May 2021 12:46:09 +0200
+
 ngcp-panel (9.4.1.1+0~mr9.4.1.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
