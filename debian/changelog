@@ -1,3 +1,10 @@
+ngcp-panel (9.3.1.7+0~mr9.3.1.7) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [adf2ecf] TT#122050 Fix main link on ngcp-panel Dashboard->"View Statistics"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 May 2021 08:08:14 +0200
+
 ngcp-panel (9.3.1.6+0~mr9.3.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
