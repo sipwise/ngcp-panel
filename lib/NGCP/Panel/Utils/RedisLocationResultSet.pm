@@ -7,6 +7,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::RedisLocationResultSource;
 
 use Data::Dumper;
+use Data::Page;
 use Time::HiRes qw(time);
 use POSIX qw(strftime);
 
@@ -173,6 +174,14 @@ sub search {
         } else {
             $new_rs->_rows([sort { $a->$sort_field cmp $b->$sort_field } @{ $new_rs->_rows }]);
         }
+    }
+
+    if ($opt->{page} && $opt->{rows}) {
+        my $pager = Data::Page->new();
+        $pager->total_entries(scalar @{ $new_rs->_rows });
+        $pager->entries_per_page($opt->{rows});
+        $pager->current_page($opt->{page});
+        $new_rs->_rows([$pager->splice(\@{ $new_rs->_rows })]);
     }
 
     return $new_rs;
