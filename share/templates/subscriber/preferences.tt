@@ -675,9 +675,14 @@ $( document ).ready(function() {
     helper.length_change = 1;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_autoattendant', [c.req.captures.0]);
 
-    helper.dt_buttons = [
-        { name = c.loc('Delete'), uri = "preferences/autoattendant/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "preferences/autoattendant/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 %]
@@ -711,10 +716,15 @@ $( document ).ready(function() {
     helper.dt_columns = sd_dt_columns;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_speeddial', [c.req.captures.0]);
 
-    helper.dt_buttons = [
-        { name = c.loc('Edit'), uri = "preferences/speeddial/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = c.loc('Delete'), uri = "preferences/speeddial/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "preferences/speeddial/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "preferences/speeddial/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 %]
