@@ -18,7 +18,7 @@
     helper.man_aip_grp_rs = man_aip_grp_rs;
 
     helper.top_buttons = [
-        { name = c.loc('Back'), uri = c.uri_for(), icon = 'icon-arrow-left' },
+        { name = c.loc('Back'), uri = c.uri_for(profile.profile_set.id, 'profile'), icon = 'icon-arrow-left' },
     ];
 
     PROCESS 'helpers/pref_table.tt';
