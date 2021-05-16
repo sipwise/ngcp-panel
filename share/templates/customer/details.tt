@@ -251,6 +251,9 @@ $(function() {
     helper.dt_columns = subscriber_dt_columns;
     helper.ajax_uri = c.uri_for_action('/customer/subscriber_ajax', [ c.req.captures.0 ]);
 
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
+
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = c.loc('Terminate'), uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
@@ -303,6 +306,9 @@ $(function() {
     helper.length_change = 1;
     helper.dt_columns = pbxgroup_dt_columns;
     helper.ajax_uri = c.uri_for_action('/customer/pbx_group_ajax', [ c.req.captures.0 ]);
+
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
@@ -410,6 +416,9 @@ $(function() {
     helper.identifier = 'sound_sets';
     helper.dt_columns = soundset_dt_columns;
     helper.ajax_uri = c.uri_for_action('/sound/contract_ajax', [ c.req.captures.0 ]);
+
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
@@ -717,6 +726,9 @@ $(function() {
     helper.dt_columns = location_dt_columns;
     helper.ajax_uri = c.uri_for_action('/customer/location_ajax', [ c.req.captures.0 ]);
 
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
+
     helper.tmpuri = c.uri_for(contract.id, 'location');
     UNLESS c.user.read_only;
         helper.dt_buttons = [
@@ -756,6 +768,9 @@ $(function() {
     helper.dt_columns = phonebook_dt_columns;
     helper.ajax_uri = c.uri_for_action('/customer/phonebook_ajax', [ c.req.captures.0 ]);
     helper.tmpuri = c.uri_for_action('/customer/phonebook_root', [ c.req.captures.0 ]);
+
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
