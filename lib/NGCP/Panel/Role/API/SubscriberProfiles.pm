@@ -20,6 +20,8 @@ sub _item_rs {
         $item_rs = $item_rs->search({ 'profile_set.reseller_id' => $c->user->reseller_id }, {
             join => 'profile_set',
         });
+    } elsif ($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+        $item_rs = $item_rs->search({ id => $c->user->profile_id });
     }
     return $item_rs;
 }
