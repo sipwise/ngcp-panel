@@ -1,3 +1,17 @@
+ngcp-panel (8.5.4.4+0~mr8.5.4.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [cafe333] TT#98650 speedup redis locaction search by id
+  * [d1498c6] TT#98650 ?suppress_flush=1 parameter
+
+  [ Flaviu Mates ]
+  * [593c684] TT#98650 Fix /api/subscriberregistration gateway timeout
+
+  [ Kirill Solomko ]
+  * [db2ea57] TT#102056 fix registration entry removal
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 18 May 2021 16:31:35 +0200
+
 ngcp-panel (8.5.4.3+0~mr8.5.4.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
