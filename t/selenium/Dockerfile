@@ -5,65 +5,66 @@ FROM docker.mgm.sipwise.com/sipwise-bullseye:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2021-05-03
+ENV REFRESHED_AT 2021-05-31
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
+        apt-utils \
         curl \
         devscripts \
         fluxbox \
         git \
-        libarchive-zip-perl \
         libdbus-glib-1-2 \
-        libfile-which-perl \
         libgtk-3-0 \
-        libhttp-message-perl \
-        libio-string-perl \
-        libjson-perl \
-        libmoo-perl \
-        libmoosex-method-signatures-perl \
-        libnamespace-clean-perl \
-        libsub-install-perl \
-        libtap-formatter-junit-perl \
-        libtest-longstring-perl \
-        libtest-time-perl \
-        libtrycatch-perl \
-        libtry-tiny-perl \
-        libwww-perl \
-        libxml-simple-perl \
         lsof \
         net-tools \
         procps \
-        vim-tiny \
+        python3 \
+        python3-pip \
         tigervnc-standalone-server \
+        unzip \
+        vim-tiny \
         wget \
         xterm
 
-# NOTE: we used to use selenium for testing, nowadays we're using
-# only firefox with geckodriver and libselenium-remote-driver-perl
-# without the need for selenium
 RUN adduser --disabled-password --gecos=Selenium-User selenium
 
 WORKDIR /home/selenium/
 
-# the connection between firefox and our selenium tests
-RUN wget https://deb.sipwise.com/files/Selenium-Remote-Driver-1.33.tar.gz && \
-    tar xvf Selenium-Remote-Driver-1.33.tar.gz && \
-    mv Selenium-Remote-Driver-1.33 Selenium-Remote-Driver && \
-    rm -f Selenium-Remote-Driver-1.33.tar.gz
-RUN wget https://deb.sipwise.com/files/geckodriver-v0.24.0-linux64.tar.gz && \
-    tar xvf geckodriver-v0.24.0-linux64.tar.gz && \
+# installing geckodriver (0.29.1)
+RUN wget http://deb.sipwise.com/files/geckodriver-v0.29.1-linux64.tar.gz && \
+    tar xvf geckodriver-v0.29.1-linux64.tar.gz && \
     ln -s /home/selenium/geckodriver /usr/bin/geckodriver && \
-    rm -f geckodriver-v0.24.0-linux64.tar.gz
+    rm -f geckodriver-v0.29.1-linux64.tar.gz
 
-# pulling firefox 68.0.1 (download en_US version of firefox package)
-RUN wget https://deb.sipwise.com/files/firefox-68.0.1.tar.bz2 && \
-    tar xvf firefox-68.0.1.tar.bz2 && \
+# installing firefox (lang=en_US) (88.0.1)
+RUN wget http://deb.sipwise.com/files/firefox-88.0.1.tar.bz2 && \
+    tar xvf firefox-88.0.1.tar.bz2 && \
     ln -s /home/selenium/firefox/firefox /usr/bin/firefox && \
-    rm -f firefox-68.0.1.tar.bz2
+    rm -f firefox-88.0.1.tar.bz2
 
-# this is a workaround with PERL5LIB= ... until we've a proper libselenium-remote-driver-perl package again
-RUN echo "cd /code && PERL5LIB=/home/selenium/Selenium-Remote-Driver/lib/ ./t/selenium/testrunner 1.2.3.4 /code/ tap" >/home/selenium/.bash_history
+# installing chromedriver (91.0.4472.19)
+RUN wget http://deb.sipwise.com/files/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    ln -s /home/selenium/chromedriver /usr/bin/chromedriver && \
+    rm -f chromedriver_linux64.zip
+
+# installing chrome (91.0.4472.77)
+RUN wget http://deb.sipwise.com/files/google-chrome-stable_current_amd64.deb && \
+    apt install -y ./google-chrome-stable_current_amd64.deb && \
+    rm -f google-chrome-stable_current_amd64.deb
+
+# installing nose2 (0.10.0), coverage (5.5) and selenium (3.141.0) via pip
+# considering to package latest version of python3-nose2/selenium/coverage as .deb package
+# installing coverage first to satisfy dependency for nose2
+RUN wget http://deb.sipwise.com/files/nose2-0.10.0.tar.gz && \
+    wget http://deb.sipwise.com/files/selenium-3.141.0.tar.gz && \
+    wget http://deb.sipwise.com/files/coverage-5.5.tar.gz && \
+    pip3 install coverage-5.5.tar.gz && \
+    pip3 install nose2-0.10.0.tar.gz selenium-3.141.0.tar.gz && \
+    rm -f nose2-0.10.0.tar.gz selenium-3.141.0.tar.gz coverage-5.5.tar.gz
+
+RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4 /code/ tap" >/home/selenium/.bash_history
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 
