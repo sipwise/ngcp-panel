@@ -69,11 +69,12 @@
         $btn.hide();
     });
 
+[% IF framed -%]
+    setTimeout(function() { $('#mod_max:first').click(); }, 0);
+[% END -%]
+
     };
     $(modalFormScript);
-[% IF framed -%]
-    setTimeout(function() { $('#mod_max:visible').click(); }, 0);
-[% END -%]
 </script>
 [% END -%]
 
