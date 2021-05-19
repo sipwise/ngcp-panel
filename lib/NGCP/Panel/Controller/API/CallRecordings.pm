@@ -63,6 +63,36 @@ sub query_params {
                 }
             },
         },
+        {
+            param => 'start_time',
+            description => 'Filter for callrecordings made at a later date than provided datetime.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    if ($q) {
+                        my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                        return { 'me.start_timestamp' => { '>=' => $dt->epoch } };
+                    }
+                    return {};
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'end_time',
+            description => 'Filter for callrecordings made at an earlier date than provided datetime.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    if ($q) {
+                        my $dt = NGCP::Panel::Utils::DateTime::from_string($q);
+                        return { 'me.end_timestamp' => { '<=' => $dt->epoch } };
+                    }
+                    return {};
+                },
+                second => sub {},
+            },
+        },
     ];
 }
 
