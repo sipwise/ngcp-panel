@@ -819,9 +819,14 @@ $( document ).ready(function() {
     helper.length_change = 1;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_ccmappings', [c.req.captures.0]);
 
-    helper.dt_buttons = [
-        { name = c.loc('Delete'), uri = "/subscriber/"_ c.req.captures.0 _"/preferences/ccmappings/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
+    helper.top_buttons = [];
+    helper.dt_buttons = [];
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "/subscriber/"_ c.req.captures.0 _"/preferences/ccmappings/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 %]
