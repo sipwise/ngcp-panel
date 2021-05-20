@@ -1,0 +1,26 @@
+[%-
+json = '';
+
+IF !c.user_exists;
+    IF c.stash.ngcp_api_realm == "subscriber";
+        json_file = "/etc/ngcp-defaults/csc_defaults_public.json";
+    ELSE;
+        json_file = "/etc/ngcp-defaults/admin_defaults_public.json";
+    END;
+ELSE;
+    IF c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin';
+        json_file = "/etc/ngcp-defaults/csc_defaults_private.json";
+    ELSE;
+        json_file = "/etc/ngcp-defaults/admin_defaults_private.json";
+    END;
+END;
+
+TRY;
+    INCLUDE $json_file;
+CATCH;
+    json = '{"error": "an internal error when fetching the config data"}';
+END;
+
+json;
+
+-%]

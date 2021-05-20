@@ -322,6 +322,21 @@ sub swaggerui :Private {
     # ));
 }
 
+sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    $c->response->content_type('application/json');
+    unless (uc $c->request->method eq 'GET') {
+        $c->response->status(HTTP_METHOD_NOT_ALLOWED);
+        $c->response->body(q());
+        return;
+    }
+
+    $c->stash->{ngcp_api_realm} = $c->request->env->{NGCP_API_REALM} // "";
+    $c->stash(template => 'api/platforminfo.tt');
+    $c->forward($c->view());
+}
+
 sub HEAD : Allow {
     my ($self, $c) = @_;
     $c->forward(qw(GET));
@@ -361,6 +376,7 @@ sub collections_link_headers : Private {
 
 sub invalid_user : Private {
     my ($self, $c, $ssl_client_m_serial) = @_;
+
     #$self->error($c, HTTP_FORBIDDEN, "Invalid certificate serial number '$ssl_client_m_serial'.");
     $self->error($c, HTTP_FORBIDDEN, "Invalid user");
     return;

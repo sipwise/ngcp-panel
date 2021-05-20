@@ -157,7 +157,7 @@ sub auto :Private {
                     ssl_client_m_serial => $ssl_sn,
                     is_active => 1, # TODO: abused as password until NoPassword handler is available
                 }, 'api_admin_cert');
-            unless($c->user_exists)  {
+            unless ($c->user_exists) {
                 $c->log->warn("invalid api login from '".$c->qs($c->req->address)."'");
                 $c->detach(qw(API::Root invalid_user), [$ssl_sn]) unless $c->user_exists;
             } else {
@@ -221,6 +221,12 @@ sub auto :Private {
         } elsif ($ngcp_api_realm eq "subscriber") {
             $c->log->debug("++++++ Root::auto API subscriber request with http auth");
             my $realm = "api_subscriber_http";
+
+            if ($c->req->uri->path =~ m|^/api/platforminfo/?$| &&
+                !$c->req->headers->authorization_basic) {
+                    $c->detach(qw(API::Root platforminfo));
+            }
+
             my ($username,$password) = $c->req->headers->authorization_basic;
             my ($u,$d) = split(/\@/,$username);
             if ($d) {
@@ -259,6 +265,12 @@ sub auto :Private {
                 $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
             } else {
                 my $realm = 'api_admin_http';
+
+                if ($c->req->uri->path =~ m|^/api/platforminfo/?$| &&
+                    !$c->req->headers->authorization_basic) {
+                        $c->detach(qw(API::Root platforminfo));
+                }
+
                 $c->user->logout if($c->user);
                 $c->log->debug("+++++ invalid api admin http login");
                 $c->log->warn("invalid api http login from '".$c->req->address."' by '$user'");
