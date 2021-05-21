@@ -77,7 +77,7 @@ sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) :Does(ACL
         $tmpl_rs = $tmpl_rs->search({
             reseller_id => $c->user->reseller_id,
         });
-        $tmpl_missed_rs = $tmpl_missed_rs->search_rs({ reseller_id => $c->user->reseller_id });
+        $tmpl_missed_rs = $tmpl_missed_rs->search_rs({ 'me.id' => $c->user->reseller_id });
     }
 
     $c->stash->{tmpl_rs} = $tmpl_rs;
