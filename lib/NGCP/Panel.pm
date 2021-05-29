@@ -25,7 +25,7 @@ use Catalyst qw/
     Authorization::Roles
     Session
     Session::Store::Redis
-    Session::State::Cookie
+    NGCP::RealmCookie
     NGCP::EscapeSensitiveValue
     NGCP::EscapeJs
     I18N
@@ -122,6 +122,7 @@ __PACKAGE__->config(
         flash_to_stash => 1,
         expires => 3600,
         cookie_secure => 1,
+        cookie_name => 'ngcp-panel',
     },
 
     'Plugin::Authentication' => {
