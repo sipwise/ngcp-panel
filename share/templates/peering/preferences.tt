@@ -18,7 +18,11 @@
 
     helper.top_buttons = [
         { name = c.loc('Back'), uri = c.uri_for(group.id, "servers"), icon = 'icon-arrow-left' },
-        { name = c.loc('Flash Dialogic'), uri = "javascript:call_flash_dialogic('" _ c.uri_for_action("/peering/servers_flash_dialogic", [c.req.captures.0, c.req.captures.1]) _ "');", icon = 'icon-star' },
+        ## Commented the button 'Flash Dialogic' to stop confusing users as
+        ## implementation was never finished and will not be finished (as no longer necessary).
+        ## The code revert is not trivial and unnecessary as ngcp-panel will be deprecated in mr10.5+. 
+        ## Therefore hiding unnecessary button on WEB interface:
+        # { name = c.loc('Flash Dialogic'), uri = "javascript:call_flash_dialogic('" _ c.uri_for_action("/peering/servers_flash_dialogic", [c.req.captures.0, c.req.captures.1]) _ "');", icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/pref_table.tt';
