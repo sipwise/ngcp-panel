@@ -24,17 +24,19 @@ sub dispatch {
             id => $_->id} } $host_rs->all];
     }
 
-    use Data::Dumper;
-    $c->log->info("dispatching to hosts: " . Dumper $hosts);
-    my @ret;
+    $c->log->info("dispatching to hosts: " . join ',', map { $_->{ip} } @{$hosts});
 
+    my @ret;
     for my $host (@$hosts) {
         my ($meth, $ip, $port, $path, $hostid) = ("http", $host->{ip}, $host->{port}, $host->{path}, $host->{id});
         $c->log->info("dispatching xmlrpc $target request to ".$ip.":".$port.$path);
 
         my $ret = eval {    # catch exceptions
-            my $s = Net::HTTP->new(Host => $ip, KeepAlive => 0, PeerPort => $port || 80, Timeout => 5);
-            $s or die "could not connect to server";
+            my $s = Net::HTTP->new(Host => $ip, KeepAlive => 0, PeerPort => $port || 80, Timeout => 3);
+            $s or do {
+                $c->log->info("skip xmlrpc $target request to ".$ip.":".$port.$path. " (timeout)");
+                return [$hostid, -1, '']; # skip the host as it is not active
+            };
 
             my $res = $s->write_request("POST", $path || "/", "User-Agent" => "Sipwise XML Dispatcher", "Content-Type" => "text/xml", $body);
             $res or die "did not get result";
@@ -169,14 +171,16 @@ EOF
         sleep $SLEEP_BEFORE_RETRY if ($i > 0);
 
         ($res) = dispatch($c, "proxy-ng", 1, 1, $reload_command); # we're only checking first host here
-        if ($res->[1] < 1) {
+        if ($res->[1] == 0) {
             die "couldn't reload domains";
         }
         return () unless $domain_name;
         my @replies = dispatch($c, "proxy-ng", 1, 1, $dump_command);
         my $all_successful = 1;
         for my $reply (@replies) {
-            if ($reply->[1] && $reply->[2] =~ m/$domain_name/) {
+            if ($reply->[1] == -1) {
+                # skip inactive host
+            } elsif ($reply->[1] && $reply->[2] =~ m/$domain_name/) {
                 # successful
             } else {
                 $c->log->debug("Domain not loaded. Retrying...");
@@ -184,7 +188,7 @@ EOF
             }
         }
         if ($all_successful) {
-            $c->log->debug("Domain successfully loaded in all proxies");
+            $c->log->debug("Domain successfully loaded in all active proxies");
             return;
         }
     }
