@@ -1,3 +1,10 @@
+ngcp-panel (9.3.1.8+0~mr9.3.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d42b331] TT#119501 XMLDispatcher add skip host support
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 01 Jun 2021 16:32:52 +0200
+
 ngcp-panel (9.3.1.7+0~mr9.3.1.7) unstable; urgency=medium
 
   [ Alexander Lutay ]
