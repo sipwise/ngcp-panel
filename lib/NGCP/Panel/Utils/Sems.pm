@@ -68,7 +68,7 @@ EOF
         return 1;
     }
 
-    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
+    if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
 
         # remove reg from successsful backends
@@ -140,7 +140,7 @@ EOF
         return 1;
     }
 
-    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
+    if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
 
         # undo update on successsful backends
@@ -198,7 +198,7 @@ EOF
         return 1;
     }
 
-    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
+    if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
 
         # remove reg from successsful backends
@@ -274,7 +274,7 @@ sub _clear_audio_cache_service {
   </methodCall>
 EOF
 
-    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
+    if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         die "failed to clear SEMS audio cache";
     }
 
@@ -383,7 +383,7 @@ sub party_call_control {
   </methodCall>
 EOF
 
-    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {
+    if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {
         die "failed to handle party call control request";
     }
 
