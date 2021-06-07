@@ -20,6 +20,7 @@ if [ -z "${1:-}" ] ; then
   exit 1
 fi
 
+RC=0
 SERVER="${1}"
 OUTPUT_DIRECTORY="${2:-/code/}"
 OUTPUT_TYPE=${3:-}
@@ -40,9 +41,11 @@ else
 fi
 
 if [ "${BROWSER:-}" = "firefox" ] ; then
+  echo "################################################################################"
   echo "Firefox version:"
   firefox --version
 elif [ "${BROWSER:-}" = "chrome" ] ; then
+  echo "################################################################################"
   echo "Chrome version:"
   google-chrome --version
 elif [ "${BROWSER:-}" = "all" ] ; then
@@ -52,7 +55,9 @@ elif [ "${BROWSER:-}" = "all" ] ; then
   echo "Chrome version:"
   google-chrome --version
 else
-  echo "Invalid browser"
+  echo "################################################################################"
+  echo "Invalid browser, exiting..."
+  echo "################################################################################"
   exit "${RC}"
 fi
 
@@ -67,7 +72,6 @@ echo "Selenium server log file available at /home/selenium/selenium.log"
 echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
 echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
 
-RC=0
 export CATALYST_SERVER="https://${SERVER}"
 cd t/selenium
 
