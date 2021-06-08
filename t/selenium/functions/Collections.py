@@ -16,7 +16,7 @@ def login_panel(driver, username="administrator", password="administrator"):
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@aria-label="Username"]')))
     fill_element(driver, '//*[@aria-label="Username"]', username)
     fill_element(driver, '//*[@aria-label="Password"]', password)
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div/main/div/form/div[2]/button[2]').click()
+    click_js(driver, '//*[@id="q-app"]/div//main/div/form//button[contains(., "Sign In")]')
     driver.implicitly_wait(2)
     if len(driver.find_elements_by_xpath('//*[@id="footer"]//div//b/a[contains(., "GO TO NEW ADMIN PANEL")]')) > 0:
         driver.find_element_by_xpath('//*[@id="footer"]//div//b/a[contains(., "GO TO NEW ADMIN PANEL")]').click()
@@ -59,6 +59,7 @@ def delete_reseller(driver, reseller):
     driver.find_element_by_xpath('/html/body/div[4]/div/div').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/div[3]/button[2]')))
     driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/div[3]/button[2]').click()
+    wait_for_invisibility(driver, '/html/body//div[@class="q-virtual-scroll__content"]/div[1]')
     print("OK")
 
 
@@ -105,6 +106,7 @@ def delete_reseller_contract(driver, contract):
     driver.find_element_by_xpath('/html/body/div[4]/div/div').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/div[3]/button[2]')))
     driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/div[3]/button[2]').click()
+    wait_for_invisibility(driver, '/html/body//div[@class="q-virtual-scroll__content"]/div[1]')
     print("OK")
 
 
@@ -140,4 +142,5 @@ def delete_billing_profile(driver, billingrealname):
     driver.find_element_by_xpath('/html/body/div[4]/div/div[2]').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/div[3]/button[2]')))
     driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/div[3]/button[2]').click()
+    wait_for_invisibility(driver, '/html/body//div[@class="q-virtual-scroll__content"]/div[1]')
     print("OK")
