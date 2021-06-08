@@ -123,6 +123,7 @@ __PACKAGE__->config(
         expires => 3600,
         cookie_secure => 1,
         cookie_name => 'ngcp-panel',
+        login_to_csc_session_expiry => 86400, #24 hours expiry for subscriber sessions created directly from Admin UI
     },
 
     'Plugin::Authentication' => {

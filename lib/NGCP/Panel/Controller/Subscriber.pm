@@ -3161,6 +3161,29 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
 }
 
+sub login_to_csc :Chained('master') :PathPart('login_to_csc') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page') if($c->user->read_only);
+
+    my $subscriber = $c->stash->{subscriber};
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+
+    #create a new subscriber session and then store it to Redis
+    #realm and user are enough here, as user_tz and language will be automatically filled on redirection
+    my $subscriber_session = {};
+    $subscriber_session->{__user_realm} = 'subscriber';
+    $subscriber_session->{__user} = { $prov_subscriber->get_inflated_columns };
+    my $new_sid = $c->generate_session_id();
+    $c->store_session_data( "session:$new_sid" => $subscriber_session );
+    my $new_session_expiry = $c->_session_plugin_config->{login_to_csc_session_expiry} // 3600;
+    $c->store_session_data( "expires:$new_sid" => time + $new_session_expiry );
+    $c->response->cookies->{'ngcp-panel_subscriber'} = { 'value' => $new_sid };
+
+    #redirect to server's hostname
+    $c->res->redirect("https://" . $c->req->uri->host . "/");
+}
+
 sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) : AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
