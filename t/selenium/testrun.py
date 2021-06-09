@@ -475,6 +475,10 @@ class testrun(unittest.TestCase):
         print("Try to edit customer status...", end="")
         scroll_to_element(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[9]/span')
         driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[9]/span').click()
+        driver.implicitly_wait(1)
+        if len(driver.find_elements_by_xpath('/html/body//div[@class="q-item__label"][contains(., "Locked")]')) == 0:
+            driver.find_element_by_xpath('/html/body//div//label//').click()
+        driver.implicitly_wait(10)
         driver.find_element_by_xpath('/html/body//div[@class="q-item__label"][contains(., "Locked")]').click()
         wait_for_invisibility(driver, '/html/body//div[@class="q-virtual-scroll__content"]')
         driver.find_element_by_xpath('/html/body//div/button[contains(., "Save")]').click()
