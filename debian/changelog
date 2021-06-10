@@ -1,3 +1,10 @@
+ngcp-panel (9.4.1.7+0~mr9.4.1.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [bc0d4bf] TT#121250 /api/peeringrules fix lcr.reload
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Jun 2021 21:33:36 +0200
+
 ngcp-panel (9.4.1.6+0~mr9.4.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
