@@ -700,9 +700,10 @@ sub _init_contract_context {
         }
         $context->{contract_contact} = \%contract_contact;
         if (scalar @identifiers) {
-            if (my $e = $schema->resultset('contacts')->search_rs({
-                    map { $_ => $contract_contact{$_}; } @identifiers
-                })->first) {
+            my $e = $schema->resultset('contacts')->search_rs({
+                map { $_ => $contract_contact{$_}; } @identifiers
+            })->first;
+            if ($e and 'terminated' ne $e->status) {
                 $contract_contact{id} = $e->id;
             } else {
                 delete $contract_contact{id};
@@ -777,9 +778,10 @@ sub _init_contract_context {
 
         $context->{contract} = \%contract;
         if (scalar @identifiers) {
-            if (my $e = $schema->resultset('contracts')->search_rs({
-                    map { $_ => $contract{$_}; } @identifiers
-                })->first) {
+            my $e = $schema->resultset('contracts')->search_rs({
+                map { $_ => $contract{$_}; } @identifiers
+            })->first;
+            if ($e and 'terminated' ne $e->status) {
                 $contract{id} = $e->id;
             } else {
                 delete $contract{id};
