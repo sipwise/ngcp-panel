@@ -744,12 +744,17 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to enable and disable WebRTC...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[6]/div').click()
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[6]/div[@aria-checked="true"]')) > 0, "WebRTC was not enabled")
-        driver.find_element_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[6]/div').click()
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[6]/div[@aria-checked="false"]')) > 0, "WebRTC was not disabled")
-        print("OK")
+        driver.implicitly_wait(2)
+        if len(driver.find_elements_by_xpath('/html/body//div[@role="alert"]//div[contains(., "Status code: 400")]')) == 0:
+            self.assertTrue(
+                len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[6]/div[@aria-checked="true"]')) > 0, "WebRTC was not enabled")
+            driver.find_element_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[6]/div').click()
+            self.assertTrue(
+                len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[6]/div[@aria-checked="false"]')) > 0, "WebRTC was not disabled")
+            print("OK")
+        else:
+            print("OK")
+        driver.implicitly_wait(10)
         print("Try to open the reseller edit page...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[7]/button').click()
         WebDriverWait(driver, 10.).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div/a[contains(., "Edit")]')))
@@ -763,7 +768,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('/html/body//div[@class="q-virtual-scroll__content"]/div[1]').click()
         driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div/button[contains(., "Save")]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div[@role="progressbar"]')
-        driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div/button[contains(., "Close")]').click()
+        click_js(driver, '//*[@id="q-app"]/div//main//div/button[contains(., "Close")]')
         print("OK")
         print("Check if reseller staus has been changed...", end="")
         wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
