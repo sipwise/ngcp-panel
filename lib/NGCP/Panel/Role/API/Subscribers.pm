@@ -405,6 +405,12 @@ sub prepare_resource {
         }
     }
 
+    #password is mandatory field, so it cannot be absent from resource, the only reason for that being it was
+    #deleted in resource_from_item for admins without show_passwords flag; in this case, we are restoring it here
+    if (not length($resource->{password}) and $item and length($item->provisioning_voip_subscriber->password)) {
+        $resource->{password} = $item->provisioning_voip_subscriber->password;
+    }
+
     my ($form) = $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
