@@ -57,6 +57,19 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'type',
+            description => 'Filter for contracts with a specific type',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'product.class' => $q };
+                },
+                second => sub {
+                    { join => 'product' };
+                },
+            },
+        },
     ];
 }
 
