@@ -1,3 +1,68 @@
+ngcp-panel (9.5.1.0+0~mr9.5.1.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [a9817e5] TT#116900 Use multidomain when deleting a registration
+  * [232cf70] TT#119200 Expose subscriber object on /api/autoattendants
+  * [e66a868] TT#119900 Expose slots id in /api/autoattendants
+  * [35d9c35] TT#122001 Allow subscribers to access /api/subscriberprofiles
+  * [7177959] TT#119550 Fix registrations pagination on parametrized request
+  * [f4cb693] TT#119550 Allow subscribers to manage their registrations
+  * [884229f] TT#123650 Fix 500 error in Panel UI Email Templates
+  * [43abaee] TT#119464 Add start_time and end_time filter params to callrecordings
+  * [e09c478] TT#124275 Add 'Login to CSC' button in subscriber page
+  * [fe7f65d] TT#99700 Fix subscribers PATCH in case of admin without show_passwords
+  * [a840fc5] TT#125850 Add filtering by 'type' for /api/contracts
+
+  [ Kirill Solomko ]
+  * [87bdb69] TT#120309 fix datatable escape html rendering
+  * [ba82a55] TT#121250 fix /api/peeringrules
+  * [3e207aa] TT#121250 /api/peeringrules use old model
+  * [0484c0d] TT#114304 add status query param to /api/resellers
+  * [1e06df3] TT#114304 /api/resellers?status support multi values
+  * [61fc16d] TT#122000 split session cookies per realm
+  * [eb9a263] TT#119501 XMLDispatcher add skip host support
+  * [85c7d7c] TT#123550 add /api/platforminfo virtual endpoint
+  * [102e494] TT#121250 /api/peeringrules fix lcr.reload
+
+  [ Rene Krenn ]
+  * [9aaf04e] TT#120651 susbcriber datatable performance: fix initial page load time
+
+  [ Nico Schedel ]
+  * [9efd53a] TT#119057 selenium: fix crash when testing documentation
+  * [1db7f4d] TT#122872 increase column limit on new python-based tests
+  * [72beda0] TT#122872 initial commit for the new ngcp admin panel tests
+  * [86603dd] TT#122872 create new docker container for new admin panel tests
+  * [1448b76] TT#122872 fix for message boxes sometimes blocking buttons
+  * [8eeee42] TT#122872 selenium: fix for customer status not changing properly
+  * [f8ce039] TT#122872 selenium: fix one instance of invalid xpath syntax
+  * [11e56c2] TT#122872 selenium: workaround for webrtc tests on CE
+
+  [ Alexander Lutay ]
+  * [131e79f] TT#88903 Reset 'framed' session state if user open v1 as URL in browser
+  * [090722b] TT#121400 Hide Reseller details navigation buttons for framed=1
+  * [27da72e] TT#121404 Hide Customer details navigation buttons for framed=1
+  * [313bd57] TT#122050 Fix main link on ngcp-panel Dashboard->"View Statistics"
+  * [abba894] TT#122518 Fix 'Back' button on 'Subscriber Profile - Preferences'
+  * [fbbbc25] TT#122532 Init helper.dt_buttons/top_buttons as empty for each section on Customer->Details
+  * [69e7373] TT#122530 Hide edit buttons for read-only user on Admin UI v1
+  * [0341c2f] TT#123202 Fix v1 add/edit windows auto-expand on v2 (it worked in 50% cases)
+  * [91afd69] TT#122530 Hide edit buttons for read-only user on Admin UI v1 page 'Callthrough CLIs'
+  * [4d72ec9] TT#121750 Hide 'Flash Dialogic' button on Peering Preferences
+
+  [ Manuel Montecelo ]
+  * [71636e8] TT#118659 Switch Dockerfiles from Debian buster to bullseye
+
+  [ Victor Tsvetov ]
+  * [2985238] TT#115002 Do not wrap lines in i18n POT, PO files
+  * [63356d2] TT#115002 Normalize i18n English messages.pot file
+  * [dfe2a65] TT#115002 Unwrap i18n PO translation files
+  * [c3474ae] TT#118401 Complete the missing French translations
+
+  [ Gerhard Jungwirth ]
+  * [64c120a] TT#44168 create additional form for subadmin non-pbx subscriber edit
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jun 2021 16:37:08 +0200
+
 ngcp-panel (9.5.0.0+0~mr9.5.0.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
