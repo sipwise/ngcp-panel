@@ -1,3 +1,17 @@
+ngcp-panel (7.5.10.0+0~mr7.5.10.0) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [2d918f8] TT#114703 Use config flags password_(sip|web)_expose_subadmin in api
+  * [48245e2] TT#99700 Fix subscribers PATCH in case of admin without show_passwords
+
+  [ Kirill Solomko ]
+  * [104635f] TT#120309 fix datatable escape html rendering
+
+  [ Gerhard Jungwirth ]
+  * [5996005] TT#44168 create additional form for subadmin non-pbx subscriber edit
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jun 2021 14:56:11 +0200
+
 ngcp-panel (7.5.9.0+0~mr7.5.9.0) unstable; urgency=medium
 
   [ Rene Krenn ]
