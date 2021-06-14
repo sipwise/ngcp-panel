@@ -1,3 +1,10 @@
+ngcp-panel (8.5.3.5+0~mr8.5.3.5) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [428b8c4] TT#99700 Fix subscribers PATCH in case of admin without show_passwords
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jun 2021 11:22:23 +0200
+
 ngcp-panel (8.5.3.4+0~mr8.5.3.4) unstable; urgency=medium
 
   [ Kirill Solomko ]
