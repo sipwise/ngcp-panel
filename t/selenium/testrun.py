@@ -475,13 +475,10 @@ class testrun(unittest.TestCase):
         print("Try to edit customer status...", end="")
         scroll_to_element(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span')
         click_js(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span')
-        driver.implicitly_wait(1)
-        if len(driver.find_elements_by_xpath('/html/body//div[@class="q-item__label"][contains(., "Locked")]')) == 0:
-            driver.find_element_by_xpath('/html/body/div[4]/label').click()
-        driver.implicitly_wait(10)
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div[@class="q-item__label"][contains(., "Locked")]')))
         driver.find_element_by_xpath('/html/body//div[@class="q-item__label"][contains(., "Locked")]').click()
         wait_for_invisibility(driver, '/html/body//div[@class="q-virtual-scroll__content"]')
-        driver.find_element_by_xpath('/html/body//div/button[contains(., "Save")]').click()
+        click_js(driver, '/html/body//div/button[contains(., "Save")]')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span[contains(., "Locked")]')) > 0, "Subscriber status was not edited")
         print("OK")
