@@ -474,7 +474,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to edit customer status...", end="")
         scroll_to_element(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span')
-        driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span').click()
+        click_js(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span')
         driver.implicitly_wait(1)
         if len(driver.find_elements_by_xpath('/html/body//div[@class="q-item__label"][contains(., "Locked")]')) == 0:
             driver.find_element_by_xpath('/html/body/div[4]/label').click()
