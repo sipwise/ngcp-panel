@@ -161,6 +161,7 @@ sub POST :Allow {
         }
 
         $guard->commit;
+
         NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_CREATED);

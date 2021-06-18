@@ -167,7 +167,6 @@ sub POST :Allow {
 
         try {
             $item = $c->model('DB')->resultset('voip_peer_hosts')->create($resource);
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             if($resource->{probe}) {
                 NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             }
@@ -179,8 +178,9 @@ sub POST :Allow {
 
         $guard->commit;
 
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+
         try {
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             if($resource->{probe}) {
                 NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             }
