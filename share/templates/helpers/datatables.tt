@@ -77,7 +77,7 @@ $(document).ready(function() {
         "sPaginationType": "bootstrap",
         [% IF helper.length_change %]
             "bLengthChange": true,
-            "aLengthMenu":  [% helper.length_menu || '[[ 5, 10, 50, 100, 250, -1], [5, 10, 50, 100, 250, "All"]]' %],
+            "aLengthMenu":  [% helper.length_menu || '[[ 5, 10, 15, 20, 35, 50, 100, 250, -1], [5, 10, 15, 20, 35, 50, 100, 250, "All"]]' %],
         [% ELSE %]
             "bLengthChange": false,
         [% END %]
