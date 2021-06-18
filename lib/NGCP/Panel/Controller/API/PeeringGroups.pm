@@ -99,13 +99,13 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c, 
+            c => $c,
             media_type => 'application/json',
         );
         last unless $resource;
 
         my $form = $self->get_form($c);
-        
+
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
@@ -125,7 +125,6 @@ sub POST :Allow {
 
         try {
             $item = $c->model('DB')->resultset('voip_peer_groups')->create($resource);
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         } catch($e){
             $c->log->error("failed to create peering group: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering group.");
@@ -133,6 +132,8 @@ sub POST :Allow {
         }
 
         $guard->commit;
+
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
