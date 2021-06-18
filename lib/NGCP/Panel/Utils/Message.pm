@@ -170,9 +170,9 @@ sub error {
         $msg = "$desc ($error)";
     }
 
-    my $logstr = 'IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"';
+    my $logstr = 'IP=%s CALLED=%s TX=%s USER=%s DDATA=%s MSG="%s" LOG="%s" DURATION=%f';
     my $rc = $c->log->error(
-        sprintf $logstr, @{$log_params}{qw(r_ip called tx_id r_user data)}, $c->qs($msg), $log_msg);
+        sprintf $logstr, @{$log_params}{qw(r_ip called tx_id r_user data)}, $c->qs($msg), $log_msg, (defined $c->stash->{_request_start} ? Time::HiRes::time - $c->stash->{_request_start} : 0));
     if ($type eq 'panel') {
         if (!defined $params{flash} || $params{flash} ) {
             $c->flash(messages => [{ type => $usr_type,
@@ -230,10 +230,10 @@ sub info {
         $log_msg =~ s/\s+/ /g;
     }
 
-    my $logstr = 'IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"';
+    my $logstr = 'IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s" DURATION=%f';
     my $rc = $c->log->info(
         sprintf $logstr,
-                @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
+                @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg, (defined $c->stash->{_request_start} ? Time::HiRes::time - $c->stash->{_request_start} : 0));
     if ($type eq 'panel') {
         #flash is on by default
         if (!defined $params{flash} || $params{flash} ) {
