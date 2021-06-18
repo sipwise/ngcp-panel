@@ -70,7 +70,7 @@ sub dispatch {
         }
 
         # failure
-        
+
         $c->log->info("failure: $@");
 
         $all or next;
@@ -147,10 +147,6 @@ sub _unqueue {
 sub sip_domain_reload {
     my ($c, $domain_name) = @_;
 
-    my $NUM_TRIES = 3;
-    my $SLEEP_BEFORE_RETRY = 1;
-    my $res;
-
     my $reload_command = <<EOF;
 <?xml version="1.0" ?>
 <methodCall>
@@ -159,41 +155,15 @@ sub sip_domain_reload {
 </methodCall>
 EOF
 
-    my $dump_command = <<EOF;
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>domain.dump</methodName>
-<params/>
-</methodCall>
-EOF
+    my @ret = dispatch($c, "proxy-ng", 1, 1, $reload_command); # we're only checking first host here
 
-    for (my $i = 0; $i < $NUM_TRIES; $i++) {
-        sleep $SLEEP_BEFORE_RETRY if ($i > 0);
-
-        ($res) = dispatch($c, "proxy-ng", 1, 1, $reload_command); # we're only checking first host here
-        if ($res->[1] == 0) {
-            die "couldn't reload domains";
-        }
-        return () unless $domain_name;
-        my @replies = dispatch($c, "proxy-ng", 1, 1, $dump_command);
-        my $all_successful = 1;
-        for my $reply (@replies) {
-            if ($reply->[1] == -1) {
-                # skip inactive host
-            } elsif ($reply->[1] && $reply->[2] =~ m/$domain_name/) {
-                # successful
-            } else {
-                $c->log->debug("Domain not loaded. Retrying...");
-                $all_successful = 0;
-            }
-        }
-        if ($all_successful) {
-            $c->log->debug("Domain successfully loaded in all active proxies");
-            return;
-        }
+    if (grep { $_->[1] == 0 } @ret) {
+        die "Couldn't reload domain";
     }
 
-    die "couldn't load domain into all proxies. Tried $NUM_TRIES times.";
+    $c->log->debug("Domain successfully loaded in all active proxies");
+
+    return;
 }
 
 

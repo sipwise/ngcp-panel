@@ -63,7 +63,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -78,7 +78,7 @@ sub PATCH :Allow {
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
-        
+
         $guard->commit;
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
@@ -121,8 +121,9 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, peeringrule => $item);
         $item->delete;
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         $guard->commit;
+
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
