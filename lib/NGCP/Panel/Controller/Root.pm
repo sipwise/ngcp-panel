@@ -28,6 +28,8 @@ __PACKAGE__->config(namespace => '');
 
 sub auto :Private {
     my($self, $c) = @_;
+    
+    $c->stash->{_request_start} = Time::HiRes::time;
 
     my $is_api_request = 0;
     $c->log->debug("Path: " . $c->request->path);
