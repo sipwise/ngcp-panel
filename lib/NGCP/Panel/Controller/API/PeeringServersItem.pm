@@ -63,7 +63,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -78,11 +78,12 @@ sub PATCH :Allow {
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
-        
+
         $guard->commit;
 
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+
         try {
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             if (($item->probe && $old_resource->{enabled} && !$item->enabled) || ($old_resource->{probe} && !$item->probe)) {
                 NGCP::Panel::Utils::Peering::_sip_delete_probe(
                     c => $c,
@@ -136,9 +137,11 @@ sub PUT :Allow {
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        $guard->commit; 
+        $guard->commit;
+
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+
         try {
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             if (($item->probe && $old_resource->{enabled} && !$item->enabled) || ($old_resource->{probe} && !$item->probe)) {
                 NGCP::Panel::Utils::Peering::_sip_delete_probe(
                     c => $c,
@@ -181,8 +184,10 @@ sub DELETE :Allow {
         my $probe = $item->probe;
         $item->delete;
         $guard->commit;
+
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+
         try {
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
             if($probe) {
                 NGCP::Panel::Utils::Peering::_sip_delete_probe(
                     c => $c,
