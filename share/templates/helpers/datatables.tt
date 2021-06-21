@@ -123,7 +123,7 @@ $(document).ready(function() {
                     if(data == null)
                       data = '';
                     [% END %]
-                    if (typeof opt !== 'object') {
+                    if (opt == null || typeof opt !== 'object') {
                         opt = {};
                     }
                     opt.escapeHtml = true; // always escape HTML by default
