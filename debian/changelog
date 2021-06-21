@@ -1,3 +1,10 @@
+ngcp-panel (9.4.1.9+0~mr9.4.1.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f98623d] TT#121250 improve sip_lcr_reload and sip_domain_reload
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Jun 2021 18:10:08 +0200
+
 ngcp-panel (9.4.1.8+0~mr9.4.1.8) unstable; urgency=medium
 
   [ Flaviu Mates ]
