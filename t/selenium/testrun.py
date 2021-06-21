@@ -474,6 +474,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to edit customer status...", end="")
         scroll_to_element(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span')
+        time.sleep(1)
         click_js(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[10]/span')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div[@class="q-item__label"][contains(., "Locked")]')))
         driver.find_element_by_xpath('/html/body//div[@class="q-item__label"][contains(., "Locked")]').click()
