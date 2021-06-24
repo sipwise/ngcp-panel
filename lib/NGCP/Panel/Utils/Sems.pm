@@ -50,6 +50,10 @@ sub create_peer_registration {
         $transport = $outbound_sock->{transport};
     }
 
+    # if no specific username defined for the Authorization header
+    # use the value of the peer_auth_user instead
+    my $authorization_username = $$prefs{peer_auth_hf_user} // $$prefs{peer_auth_user};
+
     my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
@@ -60,6 +64,7 @@ sub create_peer_registration {
       <param><value><string>$$prefs{peer_auth_pass}</string></value></param>
       <param><value><string>$$prefs{peer_auth_realm}</string></value></param>
       <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
+      <param><value><string>$authorization_username</string></value></param>
     </params>
   </methodCall>
 EOF
@@ -122,6 +127,10 @@ sub update_peer_registration {
     $c->log->debug("+++++++++++++++++++ uuid=$uuid");
     $c->log->debug("+++++++++++++++++++ contact=$contact");
 
+    # if no specific username defined for the Authorization header
+    # use the value of the peer_auth_user instead
+    my $authorization_username = $$prefs{peer_auth_hf_user} // $$prefs{peer_auth_user};
+
     my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
@@ -132,6 +141,7 @@ sub update_peer_registration {
       <param><value><string>$$prefs{peer_auth_pass}</string></value></param>
       <param><value><string>$$prefs{peer_auth_realm}</string></value></param>
       <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
+      <param><value><string>$authorization_username</string></value></param>
     </params>
   </methodCall>
 EOF
@@ -139,6 +149,10 @@ EOF
     if (!$all && @ret && $ret[-1][1] == 1 && $ret[-1][2] =~ m#<value>OK</value>#) { # single host okay
         return 1;
     }
+
+    # if no specific username defined for the Authorization header
+    # use the value of the peer_auth_user instead
+    my $old_authorization_username = $$oldprefs{peer_auth_hf_user} // $$oldprefs{peer_auth_user};
 
     if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
@@ -155,6 +169,7 @@ EOF
           <param><value><string>$$oldprefs{peer_auth_pass}</string></value></param>
           <param><value><string>$$oldprefs{peer_auth_realm}</string></value></param>
           <param><value><string>sip:$$oldprefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
+          <param><value><string>$old_authorization_username</string></value></param>
         </params>
       </methodCall>
 EOF
@@ -198,6 +213,10 @@ EOF
         return 1;
     }
 
+    # if no specific username defined for the Authorization header
+    # use the value of the peer_auth_user instead
+    my $old_authorization_username = $$oldprefs{peer_auth_hf_user} // $$oldprefs{peer_auth_user};
+
     if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
 
@@ -213,6 +232,7 @@ EOF
       <param><value><string>$$oldprefs{peer_auth_pass}</string></value></param>
       <param><value><string>$$oldprefs{peer_auth_realm}</string></value></param>
       <param><value><string>sip:$$oldprefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
+      <param><value><string>$old_authorization_username</string></value></param>
     </params>
   </methodCall>
 EOF
