@@ -1,3 +1,10 @@
+ngcp-panel (9.4.1.10+0~mr9.4.1.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [30dc7a4] TT#127357 /api/callists return correct call type
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 24 Jun 2021 14:46:35 +0200
+
 ngcp-panel (9.4.1.9+0~mr9.4.1.9) unstable; urgency=medium
 
   [ Kirill Solomko ]
