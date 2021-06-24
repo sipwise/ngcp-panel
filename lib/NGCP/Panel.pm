@@ -35,33 +35,35 @@ extends 'Catalyst';
 
 our $VERSION = '0.01';
 
+my $panel_config_file;
 my $panel_config;
 for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
-    if(-f $path) {
-        $panel_config = $path;
+    if (-f $path) {
+        $panel_config_file = $path;
         last;
     }
 }
-$panel_config //= 'etc/ngcp_panel.conf';
+$panel_config_file //= 'etc/ngcp_panel.conf';
+$panel_config        = get_panel_config() // {};
 
-sub get_panel_config{
+sub get_panel_config {
     my $config;
-    if( -f $panel_config ){
-        my $catalyst_config = Config::General->new($panel_config);
+    if( -f $panel_config_file ){
+        my $catalyst_config = Config::General->new($panel_config_file);
         my %config = $catalyst_config->getall();
         $config = \%config;
     }
     return $config;
 }
 
-my $logger_config;
+my $logger_config_file;
 for my $path(qw#./logging.conf /etc/ngcp-panel/logging.conf#) {
     if(-f $path) {
-        $logger_config = $path;
+        $logger_config_file = $path;
         last;
     }
 }
-$logger_config = $panel_config unless(defined $logger_config);
+$logger_config_file //= $panel_config_file;
 
 sub handle_unicode_encoding_exception {
     my ($self, $exception_context) = @_;
@@ -76,7 +78,7 @@ __PACKAGE__->config(
     enable_catalyst_header => 1, # Send X-Catalyst header
     encoding => 'UTF-8',
     'Plugin::ConfigLoader' => {
-        file => $panel_config,
+        file => $panel_config_file,
     },
     'View::HTML' => {
         INCLUDE_PATH => [
@@ -323,14 +325,14 @@ __PACKAGE__->config(
         }
     },
     ngcp_version => get_ngcp_version(),
+    uploadtmp    => $panel_config->{general}{tmpdir} // '/tmp',
 );
 __PACKAGE__->config( default_view => 'HTML' );
 
-__PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
+__PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config_file));
 
 # configure Data::HAL depending on our config
 {
-    my $panel_config = get_panel_config;
     if ($panel_config->{appearance}{api_embedded_forcearray} || $panel_config->{appearance}{api_links_forcearray}) {
         require Data::HAL;
         *{Data::HAL::forcearray_policy} = sub {
