@@ -8657,7 +8657,7 @@ msgstr "client par défaut"
 
 #: share/templates/helpers/datatables.tt
 msgid "dataTables.default.js"
-msgstr "dataTables.default.js"
+msgstr "dataTables.fr.js"
 
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "day"
