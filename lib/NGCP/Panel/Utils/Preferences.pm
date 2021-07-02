@@ -2695,9 +2695,12 @@ sub api_preferences_defs {
         my $language = $c->request->params->{lang} // undef;
         my $old_languages = $c->languages;
         $c->languages([$language]);
-        $fields->{preference_group} = $c->loc($pref->voip_preference_group->name);
-        $fields->{label} = $c->loc($fields->{label});
-        $fields->{description} = $c->loc($fields->{description});
+        my $preference_group = $pref->voip_preference_group->name =~ s/([\[\]])/~$1/rg;
+        my $label = $fields->{label} =~ s/([\[\]])/~$1/rg;
+        my $description = $fields->{description} =~ s/([\[\]])/~$1/rg;
+        $fields->{preference_group} = $c->loc($preference_group);
+        $fields->{label} = $c->loc($label);
+        $fields->{description} = $c->loc($description);
         $c->languages($old_languages);
         $resource->{$pref->attribute} = $fields;
     }
