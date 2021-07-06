@@ -275,7 +275,6 @@ __PACKAGE__->config(
                 user_model => 'DB::provisioning_voip_subscribers',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
             },
-            use_session => 0,
         },
         api_admin_jwt => {
             credential => {
