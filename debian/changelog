@@ -1,3 +1,32 @@
+ngcp-panel (9.5.2.0+0~mr9.5.2.0) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [6e25350] TT#126809 Add extra pager elements to have better visibility on AUI in iframe
+  * [29fe568] TT#115002 Update dataTables.*.js localization files
+  * [bb17cba] TT#124275 Show the button 'Login to CSC' for Perl CSC only
+
+  [ Kirill Solomko ]
+  * [6df13ee] TT#127805 remove temp transcoded files
+  * [6987757] TT#127750 add uploadtmp config option
+
+  [ Nico Schedel ]
+  * [36b5915] TT#122872 selenium: fix domain settings tests
+  * [dc6cc36] TT#122872 selenium: fix customer button position
+  * [35ee409] TT#122872 selenium: fix customer status box missing
+  * [4e2dedc] TT#122872 selenium: even more customer fixes
+  * [c0606b3] TT#122872 selenium: workaround for status box disappearing in customer
+  * [41051a0] TT#122872 selenium: testrunner formatting improvments
+
+  [ Rene Krenn ]
+  * [7fa17c8] TT#118802 log raw perl catalyst request time
+
+  [ Flaviu Mates ]
+  * [87c1305] TT#128253 Add localization support for /api/.+preferencedefs
+  * [18c4692] TT#128552 Add filtering by name for /api/billingprofiles
+  * [128d073] TT#128850 Fix 500 eror on /api/preferencedefs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 06 Jul 2021 14:36:51 +0200
+
 ngcp-panel (9.5.1.0+0~mr9.5.1.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
