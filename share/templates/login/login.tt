@@ -33,13 +33,6 @@
     [% END -%]
 </div class="footer">
 
-[%#
-    TODO: load this only if a signup plugin is installed
-    <div class="login-extra">
-        c.loc("Don't have an account?") <a href="signup.html">c.loc('Sign Up')</a><br/>
-    </div>
-%]
-
     <script src="/js/libs/jquery-1.7.2.min.js"></script>
     <script src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="/js/libs/jquery.ui.touch-punch.min.js"></script>
