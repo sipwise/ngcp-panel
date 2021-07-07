@@ -46,6 +46,7 @@ $ua = Test::Collection->new()->ua();
         admincerts => 1,
         admins => 1,
         applyrewrites => 1,
+        authtokens => 1,
         autoattendants => 1,
         balanceintervals => 1,
         bannedips => 1,
