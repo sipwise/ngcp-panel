@@ -11,6 +11,7 @@ sub roles  {
 }
 
 sub id               { 0 };
+sub is_active        { 1 };
 sub is_system        { 1 };
 sub is_master        { 1 };
 sub is_superuser     { 1 };
