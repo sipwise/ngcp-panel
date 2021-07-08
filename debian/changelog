@@ -1,3 +1,23 @@
+ngcp-panel (8.5.5.1+0~mr8.5.5.1) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [127c1eb] TT#114703 Use config flags password_(sip|web)_expose_subadmin in api
+  * [8a8cb4d] TT#98650 Fix /api/subscriberregistration gateway timeout
+  * [e960c73] TT#99700 Fix subscribers PATCH in case of admin without show_passwords
+
+  [ Kirill Solomko ]
+  * [7c2b5f4] TT#120309 fix datatable escape html rendering
+  * [7d01b93] TT#102056 fix registration entry removal
+
+  [ Gerhard Jungwirth ]
+  * [0f0ce97] TT#44168 create additional form for subadmin non-pbx subscriber edit
+
+  [ Rene Krenn ]
+  * [b037361] TT#98650 speedup redis locaction search by id
+  * [1efe9f9] TT#98650 ?suppress_flush=1 parameter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 08 Jul 2021 12:01:26 +0200
+
 ngcp-panel (8.5.5.0+0~mr8.5.5.0) unstable; urgency=medium
 
   [ Rene Krenn ]
