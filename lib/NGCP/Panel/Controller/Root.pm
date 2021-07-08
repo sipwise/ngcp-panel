@@ -154,7 +154,7 @@ sub auto :Private {
                     return;
                 }
                 $self->api_apply_fake_time($c);
-                return 1;
+                return $self->check_user_access($c);;
             } elsif ($c->req->headers->header("NGCP-UserAgent") &&
                      $c->req->headers->header("NGCP-UserAgent") eq "NGCP::API::Client") {
                 $c->log->debug("++++++ Root::auto API request with system auth");
@@ -167,7 +167,7 @@ sub auto :Private {
                 }
 
                 $self->api_apply_fake_time($c);
-                return 1;
+                return $self->check_user_access($c);
             } elsif ($c->req->headers->header("Authorization") &&
                      $c->req->headers->header("Authorization") =~ m/^Bearer /) {
                 $c->log->debug("++++++ Root::auto API request with JWT");
@@ -180,7 +180,7 @@ sub auto :Private {
                 }
 
                 $self->api_apply_fake_time($c);
-                return 1;
+                return $self->check_user_access($c);
             } elsif ($ngcp_api_realm eq "subscriber") {
                 $c->log->debug("++++++ Root::auto API subscriber request with http auth");
                 my $realm = "api_subscriber_http";
@@ -212,7 +212,7 @@ sub auto :Private {
                     return;
                 }
                 $self->api_apply_fake_time($c);
-                return 1;
+                return $self->check_user_access($c);
             } else {
                 $c->log->debug("++++++ Root::auto API admin request with http auth");
                 my $realm = "api_admin_http";
@@ -231,6 +231,7 @@ sub auto :Private {
                 if($c->user->read_only && $c->req->method eq "POST" &&
                         $c->req->uri->path =~ m|^/api/admincerts/$|) {
                     $c->log->info("let read-only user '".$c->user->login."' generate admin cert for itself");
+                    return 1;
                 } elsif($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                     $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                     $c->user->logout;
@@ -243,7 +244,7 @@ sub auto :Private {
                     return;
                 }
                 $self->api_apply_fake_time($c);
-                return 1;
+                return $self->check_user_access($c);
             }
         }
 
@@ -273,16 +274,6 @@ sub auto :Private {
 
     $c->log->debug("*** Root::auto grant access for authenticated user");
 
-    # check for read_only on write operations
-    if($c->user->read_only && (
-        $c->req->uri->path =~ /create/
-        || $c->req->uri->path =~ /edit/
-        || $c->req->uri->path =~ /delete/
-        || !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)
-    )) {
-        $c->detach('/denied_page');
-    }
-
     if (exists $c->config->{external_documentation}{link} && 'ARRAY' ne ref $c->config->{external_documentation}{link}) {
         $c->config->{external_documentation}{link} = [$c->config->{external_documentation}{link}];
     }
@@ -303,7 +294,7 @@ sub auto :Private {
 
     $c->session->{created_objects} = {} unless(defined $c->session->{created_objects});
 
-    return 1;
+    return $self->check_user_access($c);
 }
 
 sub root_index :Path :Args(0) {
@@ -380,11 +371,39 @@ sub denied_page :Private {
     $c->log->error('Access denied to path ' . $c->request->path );
     if($c->request->path =~ /^api\/.+/) {
         $c->response->content_type('application/json');
-        $c->response->body(JSON::to_json({ code => 403, message => 'Path forbidden' })."\n");
+        $c->response->body(JSON::to_json({ code => 403, message => 'Forbidden' })."\n");
     } else {
         $c->stash(template => 'denied_page.tt');
     }
     $c->response->status(403);
+}
+
+sub check_user_access {
+    my ($self, $c) = @_;
+
+    my $path = $c->req->uri->path;
+
+    if ($path =~ /^\/(login|logout|login_jwt|admin_login_jwt)$/) {
+        return 1;
+    }
+
+    # deny access to inactive users
+    if ($c->user_exists && !$c->user->uuid && !$c->user->is_active) {
+        $c->detach('/denied_page');
+        return;
+    }
+
+    # deny access to read-only users
+    if ($c->user_exists && $c->user->read_only &&
+        ($path =~ /create/ ||
+         $path =~ /edit/   ||
+         $path =~ /delete/ ||
+         $c->req->method =~ /^(POST|PUT|PATCH|DELETE)$/)) {
+        $c->detach('/denied_page');
+        return;
+    }
+
+    return 1;
 }
 
 sub emptyajax :Chained('/') :PathPart('emptyajax') :Args(0) {

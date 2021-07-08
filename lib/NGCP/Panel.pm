@@ -135,7 +135,7 @@ __PACKAGE__->config(
                 user_model => 'DB::admins',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
-                use_userdata_from_session => 1,
+                use_userdata_from_session => 0,
             }
         },
         admin_bcrypt => {
@@ -150,7 +150,7 @@ __PACKAGE__->config(
                 user_model => 'DB::admins',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
-                use_userdata_from_session => 1,
+                use_userdata_from_session => 0,
             }
         },
         api_admin_cert => {
@@ -199,7 +199,7 @@ __PACKAGE__->config(
                 class => 'DBIx::Class',
                 user_model => 'DB::provisioning_voip_subscribers',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
-                # use_userdata_from_session => 1,
+                use_userdata_from_session => 0,
             },
             use_session => 0,
         },
@@ -247,7 +247,7 @@ __PACKAGE__->config(
                 user_model => 'DB::provisioning_voip_subscribers',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
-                use_userdata_from_session => 1,
+                use_userdata_from_session => 0,
             }
         }
     },
