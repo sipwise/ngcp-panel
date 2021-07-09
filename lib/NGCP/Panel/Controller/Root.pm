@@ -486,6 +486,14 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         return;
     }
 
+    if ($pass =~ /[^[:ascii:]]/) {
+        $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
+        $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+            message => "'password' contains invalid characters" })."\n");
+        $c->log->error("'password' contains invalid characters");
+        return;
+    }
+
     my ($u, $d, $t) = split(/\@/, $user, 3);
     if(defined $t) {
         # in case username is an email address
@@ -606,6 +614,14 @@ sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method(
         $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
             message => "No username or password given" })."\n");
         $c->log->error("No username or password given");
+        return;
+    }
+
+    if ($pass =~ /[^[:ascii:]]/) {
+        $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
+        $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+            message => "'password' contains invalid characters" })."\n");
+        $c->log->error("'password' contains invalid characters");
         return;
     }
 
