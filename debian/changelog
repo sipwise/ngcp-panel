@@ -1,3 +1,16 @@
+ngcp-panel (9.5.1.2+0~mr9.5.1.2) unstable; urgency=medium
+
+  [ Victor Tsvetov ]
+  * [2272ea8] TT#129160 Complete missing Russian translations
+
+  [ Alexander Lutay ]
+  * [64b1afe] TT#129176 Hide buttons 'upload/download CVS' for Emergency Mapping and Number Porting
+  * [6010751] TT#122202 Remove trailing spaces from error pages
+  * [8ac2996] TT#122202 Hide 'Back/Contact' buttons for framed mode
+  * [47b8e2b] TT#122202 Sync 'Customer Details' in CSC v1 and v2
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 09 Jul 2021 18:45:59 +0200
+
 ngcp-panel (9.5.1.1+0~mr9.5.1.1) unstable; urgency=medium
 
   [ Alexander Lutay ]
