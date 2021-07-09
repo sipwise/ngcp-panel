@@ -12,7 +12,7 @@
 				[% c.loc('Sorry, an error has occurred, requested operation denied!') %]
 
 			</div> <!-- /error-details -->
-
+[% IF ! framed -%]
 			<div class="error-actions">
 				<a href="[% c.uri_for('/back') %]" class="btn btn-large btn-primary">
 					<i class="icon-chevron-left"></i>
@@ -27,7 +27,7 @@
 				</a>
 
 			</div> <!-- /error-actions -->
-
+[% END -%]
 		</div> <!-- /.error-container -->
 
 	</div> <!-- /.span12 -->
