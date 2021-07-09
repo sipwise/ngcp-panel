@@ -1,37 +1,36 @@
 <div class="row">
-	
+
 	<div class="span12">
-		
+
 		<div class="error-container">
-			
+
 			<h1>[% c.loc('Oops!') %]</h1>
-			
+
 			<h2>[% c.loc('[_1] Not found', c.response.status) %]</h2>
-			
+
 			<div class="error-details">
 				[% c.loc('Sorry, an error has occurred, Requested page not found!') %]
-				
+
 			</div> <!-- /error-details -->
-			
+
 			<div class="error-actions">
 				<a href="[% c.uri_for('/back') %]" class="btn btn-large btn-primary">
 					<i class="icon-chevron-left"></i>
 					&nbsp;
-					[% c.loc('Back to Dashboard') %]						
+					[% c.loc('Back to Dashboard') %]
 				</a>
-				
+
 				<a href="mailto:[% c.config.contact.email %]" class="btn btn-large">
 					<i class="icon-envelope"></i>
 					&nbsp;
-					[% c.loc('Contact Support') %]						
+					[% c.loc('Contact Support') %]
 				</a>
-				
+
 			</div> <!-- /error-actions -->
-						
-		</div> <!-- /.error-container -->				
-		
-		
+
+		</div> <!-- /.error-container -->
+
 	</div> <!-- /.span12 -->
-	
-</div> <!-- /.row -->		
-	
+
+</div> <!-- /.row -->
+
