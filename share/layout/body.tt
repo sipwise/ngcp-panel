@@ -2,26 +2,35 @@
 [% IF framed -%]
 
 <body>
-	<div id="wrapper">
-	  <h2>[% template.title or site_config.title %]</h2>
-	  <div id="content">
-		[% content %]
-	  </div>
-	</div>
-	<script type="text/javascript">
-		const errorNode = document.querySelector('#content .alert.alert-error')
-		let errorMessage = null
-		if (errorNode !== null) {
-			errorMessage = errorNode.innerText
-		}
-		if (parent) {
-			parent.postMessage({
-				origin: 'ngcp-panel',
-				path: location.pathname,
-				error: errorMessage
-			}, '*')
-		}
-	</script>
+    <div id="wrapper">
+        <h2>[% template.title or site_config.title %]</h2>
+        <div id="content">
+            [% content %]
+        </div>
+    </div>
+    <script type="text/javascript">
+        const errorNode = document.querySelector('#content .alert.alert-error')
+        let errorMessage = null
+        if (errorNode !== null) {
+            errorMessage = errorNode.innerText
+        }
+        if (parent) {
+            parent.postMessage({
+                origin: 'ngcp-panel',
+                path: location.pathname,
+                error: errorMessage
+            }, '*')
+
+            $(window).on('beforeunload', function() {
+                if (parent) {
+                    parent.postMessage({
+                        origin: 'ngcp-panel-beforeunload',
+                        path: location.pathname
+                    }, '*');
+                }
+            });
+        }
+    </script>
 </body>
 
 [% ELSE -%]
