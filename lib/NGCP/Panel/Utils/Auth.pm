@@ -47,6 +47,10 @@ sub perform_auth {
     my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
     my $res;
 
+    if ($pass =~ /[^[:ascii:]]/) {
+        return $res;
+    }
+
     my $dbadmin;
     $dbadmin = $c->model('DB')->resultset('admins')->find({
         login => $user,
@@ -106,6 +110,10 @@ sub perform_auth {
 sub perform_subscriber_auth {
     my ($c, $user, $domain, $pass) = @_;
     my $res;
+
+    if ($pass =~ /[^[:ascii:]]/) {
+        return $res;
+    }
 
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
         webusername => $user,
