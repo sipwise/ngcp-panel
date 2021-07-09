@@ -353,14 +353,22 @@ sub auto :Private {
     }
     $c->stash(topmenu => $topmenu_templates);
 
+    $self->include_framed($c);
+
+    $c->session->{created_objects} = {} unless(defined $c->session->{created_objects});
+
+    return $self->check_user_access($c);
+}
+
+sub include_framed {
+    my ($self, $c) = @_;
+
     $c->session->{framed} = 1 if ($c->req->params->{framed} && $c->req->params->{framed} == 1);
     $c->session->{framed} = 0 if not defined $c->req->headers->header("referer");
     $c->session->{framed} = 0 if (defined $c->req->params->{framed} && $c->req->params->{framed} == 0);
     $c->stash(framed => $c->session->{framed}) if ($c->session->{framed} && $c->session->{framed} == 1);
 
-    $c->session->{created_objects} = {} unless(defined $c->session->{created_objects});
-
-    return $self->check_user_access($c);
+    return;
 }
 
 sub root_index :Path :Args(0) {
@@ -391,6 +399,9 @@ sub back :Path('/back') :Args(0) {
 # any path that is not matched by anything else (e.g. /foo/bar)
 sub root_default :Path {
     my ( $self, $c ) = @_;
+
+    $self->include_framed($c);
+
     $c->detach( '/error_page' );
 }
 
