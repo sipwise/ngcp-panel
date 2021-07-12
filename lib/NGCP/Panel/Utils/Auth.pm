@@ -47,7 +47,7 @@ sub perform_auth {
     my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
     my $res;
 
-    if ($pass =~ /[^[:ascii:]]/) {
+    if ($pass && $pass =~ /[^[:ascii:]]/) {
         return $res;
     }
 
@@ -111,7 +111,7 @@ sub perform_subscriber_auth {
     my ($c, $user, $domain, $pass) = @_;
     my $res;
 
-    if ($pass =~ /[^[:ascii:]]/) {
+    if ($pass && $pass =~ /[^[:ascii:]]/) {
         return $res;
     }
 
