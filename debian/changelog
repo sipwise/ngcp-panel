@@ -1,3 +1,10 @@
+ngcp-panel (8.5.3.6+0~mr8.5.3.6) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [777de0e] TT#100761 Allow subscribers to access /api/applyrewrites
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 Jul 2021 11:47:54 +0200
+
 ngcp-panel (8.5.3.5+0~mr8.5.3.5) unstable; urgency=medium
 
   [ Flaviu Mates ]
