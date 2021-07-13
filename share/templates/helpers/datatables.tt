@@ -75,9 +75,12 @@ $(document).ready(function() {
         "iStateDuration": 0,
 
         "sPaginationType": "bootstrap",
-        [% IF helper.length_change %]
+        [% IF helper.length_change ;
+            sLabelAll=c.loc('All');
+            aDefaultPager='[[ 5, 10, 15, 20, 35, 50, 100, 250, -1], [5, 10, 15, 20, 35, 50, 100, 250, "' _ sLabelAll _ '"]]'
+        -%]
             "bLengthChange": true,
-            "aLengthMenu":  [% helper.length_menu || '[[ 5, 10, 15, 20, 35, 50, 100, 250, -1], [5, 10, 15, 20, 35, 50, 100, 250, "All"]]' %],
+            "aLengthMenu":  [% helper.length_menu || aDefaultPager %],
         [% ELSE %]
             "bLengthChange": false,
         [% END %]
