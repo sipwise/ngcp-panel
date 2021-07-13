@@ -249,7 +249,7 @@ $(document).ready(function() {
                     [% has_from = 0; has_to = 0; -%]
                     [% FOR col IN helper.dt_columns -%]
                         [% IF col.search_from_epoch && !has_from -%]
-                            var f = '<label>From Date: <input type="text" id="[% helper.id_from_name %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
+                            var f = '<label>[% c.loc('From Date') %]: <input type="text" id="[% helper.id_from_name %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="[% c.loc('YYYY-MM-DD') %]"/></label>';
                             $('#[% helper.id_from_name %]_table_filter').prepend(f);
                             $('#[% helper.id_from_name %]_datepicker_start').datetimepicker({
                                 "dateFormat": "yy-mm-dd",
@@ -263,7 +263,7 @@ $(document).ready(function() {
                             [% has_from = 1 -%]
                         [% END -%]
                         [% IF col.search_to_epoch && !has_to -%]
-                            var t = '<label>To Date: <input type="text" id="[% helper.id_from_name %]_datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
+                            var t = '<label>[% c.loc('To Date') %]: <input type="text" id="[% helper.id_from_name %]_datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="[% c.loc('YYYY-MM-DD') %]"/></label>';
                             if($('#[% helper.id_from_name %]_datepicker_start').length > 0) {
                                 $('#[% helper.id_from_name %]_datepicker_start').parent().after(t);
                             } else {
