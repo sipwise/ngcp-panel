@@ -707,6 +707,42 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]//div[contains(., "Dashboard")]')) > 0, "Credentials werent accepted")
         print("OK")
+        print("Try to change language to German...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
+        time.sleep(1)
+        driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[3]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Übersicht")]')) > 0, "Languave wasn't changed")
+        print("Try to change language to Spanish...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
+        time.sleep(1)
+        driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[4]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Tablón")]')) > 0, "Languave wasn't changed")
+        print("Try to change language to French...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
+        time.sleep(1)
+        driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[5]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Tableau de bord")]')) > 0, "Languave wasn't changed")
+        print("Try to change language to Italian...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
+        time.sleep(1)
+        driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[6]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Dashboard")]')) > 0, "Languave wasn't changed")
+        print("Try to change language to Russian...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
+        time.sleep(1)
+        driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[7]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Главная")]')) > 0, "Languave wasn't changed")
+        print("Try to change language back to English...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
+        time.sleep(1)
+        driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[2]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Dashboard")]')) > 0, "Languave wasn't changed")
         """
         print("Try to open the handbook...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]//div/aside/div/div[2]//div[contains(., "Documentation")]').click()
