@@ -1,3 +1,21 @@
+ngcp-panel (9.5.1.3+0~mr9.5.1.3) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [5cf3e85] TT#122202 notify new UI CSC or AUI that a user is about to visit another page
+
+  [ Alexander Lutay ]
+  * [86ff7ec] TT#128256 Add localisation support on calls list select
+  * [3468da9] TT#128256 Add localisation for datatable pager 'All' element
+  * [03ab60e] TT#128256 Add localisation for 'From Date'/'To Date' on data table
+
+  [ Kirill Solomko ]
+  * [20c1632] TT#129162 tighten user access checks
+  * [7228cbd] TT#129162 add bcrypt password characters check
+  * [06a8477] TT#129162 respect framed setting for root default
+  * [0c4391a] TT#129162 fix passwork characters check
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 13 Jul 2021 18:43:07 +0200
+
 ngcp-panel (9.5.1.2+0~mr9.5.1.2) unstable; urgency=medium
 
   [ Victor Tsvetov ]
