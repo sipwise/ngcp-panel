@@ -18,14 +18,7 @@ use NGCP::Panel::Utils::API::Calllist qw();
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('cdr')->search_rs(
-        undef,
-        {
-            join => 'cdr_mos_data',
-            '+select' => [qw/cdr_mos_data.mos_average cdr_mos_data.mos_average_packetloss cdr_mos_data.mos_average_jitter cdr_mos_data.mos_average_roundtrip/],
-            '+as' => [qw/mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/],
-         }
-    );
+    my $item_rs = $c->model('DB')->resultset('cdr');
 
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
