@@ -48,13 +48,12 @@ sub process_cdr_item {
 
     $params //= $c->req->params;
 
-    foreach my $field (qw/id call_id call_type mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/) {
-        if ($item->can('has_column') && $item->has_column($field)) {
-            $resource->{$field} = $item->get_column($field);
-        } elsif ($item->can($field)) {
-            $resource->{$field} = $item->$field;
-        }
+    map { $resource->{$_} = $item->get_column($_); } qw/id call_id call_type/;
+    if (my $mos_data = $item->cdr_mos_data) {
+        my %mos_data_res = $mos_data->get_inflated_columns;
+        map { $resource->{$_} = $mos_data_res{$_}; } qw/mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/;
     }
+
     my $intra = 0;
     if($item->source_user_id && $item->source_account_id == $item->destination_account_id) {
         $resource->{intra_customer} = JSON::true;
