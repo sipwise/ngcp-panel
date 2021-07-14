@@ -1,3 +1,20 @@
+ngcp-panel (9.5.1.4+0~mr9.5.1.4) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [c6da2bc] TT#128256 Add localisation for support status page
+  * [07e274f] TT#128256 Add localisation for delete/terminate popup confirmations
+  * [a6a8f3d] TT#122202 Re-enable use_session for realm api_subscriber_jwt
+
+  [ Kirill Solomko ]
+  * [4991961] TT#121250 improve sip_lcr_reload and sip_domain_reload
+  * [2e1cba0] TT#130450 use uuid in /api/cfdestinationsets /api/cfmappings
+  * [42ab30b] TT#127357 /api/callists return correct call type
+
+  [ Flaviu Mates ]
+  * [890d442] TT#126601 Implement /api/authtokens endpoint
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 Jul 2021 20:40:07 +0200
+
 ngcp-panel (9.5.1.3+0~mr9.5.1.3) unstable; urgency=medium
 
   [ Sergii Leonenko ]
