@@ -148,7 +148,7 @@ sub update_item {
         if ($primary_nr_rs) {
             $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
         } else {
-            $number = ''
+            $number = $b_subscriber->uuid;
         }
         my $domain = $subscriber->domain->domain // '';
 
