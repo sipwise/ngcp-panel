@@ -1,6 +1,5 @@
 [% site_config.title = c.loc('NGCP Support Status') -%]
 
-
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
@@ -9,24 +8,26 @@
 [% back_created = 1 -%]
 <div class="ngcp-separator"></div>
 
-[% IF support_status_code == 1; %]
-<p>
-Sipwise support access is <em>enabled</em>.
-</p>
+[% IF support_status_code == 1 -%]
 
-To disable support access run
-<br/>
-<code>apt-get install ngcp-support-noaccess</code>
-[% ELSIF support_status_code == 2; %]
-<p>
-Sipwise support access is <em>disabled</em>.
-</p>
+<p>[% c.loc('Sipwise support access is') %] <b>[% c.loc('enabled') %]</b>.</p>
 
-To enable support access run
+[% c.loc('To disable Sipwise support access run:') %]
 <br/>
-<code>apt-get install ngcp-support-access</code>
-[% ELSE %]
-Could not determine status of Sipwise support access.
-[% END; %]
+<code>apt install ngcp-support-noaccess</code>
+
+[% ELSIF support_status_code == 2 -%]
+
+<p>[% c.loc('Sipwise support access is') %] <b>[% c.loc('disabled') %]</b>.</p>
+
+[% c.loc('To enable Sipwise support access run:') %]
+<br/>
+<code>apt install ngcp-support-access</code>
+
+[% ELSE -%]
+
+[% c.loc('Could not determine status of Sipwise support access.') %]
+
+[% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
