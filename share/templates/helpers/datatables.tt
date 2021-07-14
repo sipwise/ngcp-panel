@@ -151,8 +151,8 @@ $(document).ready(function() {
                         backuri = backuri | uri;
                         FOR button IN helper.dt_buttons;
                             separator = '?';
-                            confirm_delete = button.name == c.loc("Delete") ? 'data-confirm="Delete"' : '';
-                            confirm_delete = button.name == c.loc("Terminate") ? 'data-confirm="Terminate"' : confirm_delete;
+                            confirm_delete = button.name == c.loc("Delete") ? 'data-confirm="' _ c.loc("Delete") _ '"' : '';
+                            confirm_delete = button.name == c.loc("Terminate") ? 'data-confirm="' _ c.loc("Terminate") _ '"' : confirm_delete;
                             IF button.uri.search('\?');
                                 separator = '&';
                             END;
