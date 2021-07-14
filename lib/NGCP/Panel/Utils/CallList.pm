@@ -49,7 +49,7 @@ sub process_cdr_item {
     $params //= $c->req->params;
 
     map { $resource->{$_} = $item->get_column($_); } qw/id call_id call_type/;
-    if (my $mos_data = $item->cdr_mos_data) {
+    if ($item->can('cdr_mos_data') and (my $mos_data = $item->cdr_mos_data)) {
         my %mos_data_res = $mos_data->get_inflated_columns;
         map { $resource->{$_} = $mos_data_res{$_}; } qw/mos_average mos_average_packetloss mos_average_jitter mos_average_roundtrip/;
     }
