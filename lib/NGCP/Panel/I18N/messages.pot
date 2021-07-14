@@ -1524,6 +1524,10 @@ msgstr ""
 msgid "Cost"
 msgstr ""
 
+#: share/templates/statistics/supportstatus.tt
+msgid "Could not determine status of Sipwise support access."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/NumberBlock.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Country Code"
 msgstr ""
@@ -7079,6 +7083,10 @@ msgstr ""
 msgid "Single-codec answers"
 msgstr ""
 
+#: share/templates/statistics/supportstatus.tt
+msgid "Sipwise support access is"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "Skip Rewrite"
 msgstr ""
@@ -8067,6 +8075,14 @@ msgstr ""
 msgid "To Username"
 msgstr ""
 
+#: share/templates/statistics/supportstatus.tt
+msgid "To disable Sipwise support access run:"
+msgstr ""
+
+#: share/templates/statistics/supportstatus.tt
+msgid "To enable Sipwise support access run:"
+msgstr ""
+
 #: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Tools"
 msgstr ""
@@ -8730,8 +8746,16 @@ msgstr ""
 msgid "destination"
 msgstr ""
 
+#: share/templates/statistics/supportstatus.tt
+msgid "disabled"
+msgstr ""
+
 #: share/templates/subscriber/webphone.tt
 msgid "disconnected."
+msgstr ""
+
+#: share/templates/statistics/supportstatus.tt
+msgid "enabled"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
