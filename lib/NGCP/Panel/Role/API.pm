@@ -6,6 +6,7 @@ use parent qw/NGCP::Panel::Role::Journal/;
 
 use NGCP::Panel::Utils::Generic qw(:all);
 use boolean qw(true);
+use URI::Escape qw(uri_escape);
 use Safe::Isa qw($_isa $_can);
 use Storable qw();
 use JSON qw();
@@ -1244,7 +1245,7 @@ sub hal_from_item {
                 href => $self->apply_mandatory_parameters($c, 'item', sprintf(
                     "%s%s",
                     $self->dispatch_path,
-                    $self->get_item_id($c, $item)
+                    uri_escape($self->get_item_id($c, $item))
                 ), $item, $resource, $params),
             ),
             Data::HAL::Link->new(
@@ -1252,11 +1253,11 @@ sub hal_from_item {
                 href => $self->apply_mandatory_parameters($c, 'item', sprintf(
                     "/api/%s/%s",
                     $self->resource_name,
-                    $self->get_item_id($c, $item)
+                    uri_escape($self->get_item_id($c, $item))
                 ), $item, $resource, $params)
             ),
             @$links,
-            $self->get_journal_relation_link($c, $self->get_item_id($c, $item)),
+            $self->get_journal_relation_link($c, uri_escape($self->get_item_id($c, $item))),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

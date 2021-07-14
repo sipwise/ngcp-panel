@@ -54,7 +54,7 @@ sub get_journal_item_hal {
     if ($cfg->{operation_enabled}) {
         $item->discard_changes;
         #we may pass resource inparams to don't perform expensive get_resource_from_item operation
-        return $self->hal_from_item($c, $item, $form, $params);
+        return ($self->hal_from_item($c, $item, $form, $params),undef);
     }
     return;
 }
@@ -70,7 +70,7 @@ sub add_journal_item_hal {
             #we may pass resource inparams to don't perform expensive get_resource_from_item operation
             $hal = $self->hal_from_item($c, $item, $form, $params);
         }
-        return NGCP::Panel::Utils::Journal::add_journal_item_hal($self, $c, $operation, $hal);
+        return NGCP::Panel::Utils::Journal::add_journal_item_hal($self, $c, $operation, $params);
     } else {
         return 1;
     }

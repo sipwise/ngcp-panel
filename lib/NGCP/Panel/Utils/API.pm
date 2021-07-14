@@ -14,16 +14,15 @@ my $collections_files_cache;
 
 sub check_resource_reseller_id {
     my($api, $c, $resource, $old_resource) = @_;
-    my $reseller;
     if( $resource->{reseller_id}
         && (( ! $old_resource ) || $old_resource->{reseller_id} != $resource->{reseller_id} )) {
-        $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
         unless( $reseller ) {
             $api->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
             return;
         }
     }
-    return $reseller;
+    return 1;
 }
 
 sub apply_resource_reseller_id {

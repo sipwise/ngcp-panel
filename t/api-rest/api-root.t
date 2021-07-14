@@ -140,6 +140,7 @@ $ua = Test::Collection->new()->ua();
         profilepackages => 1,
         profilepreferencedefs => 1,
         profilepreferences => 1,
+        provisioningtemplates => 1,
         reminders => 1,
         resellers => 1,
         resellerbrandinglogos => 1,

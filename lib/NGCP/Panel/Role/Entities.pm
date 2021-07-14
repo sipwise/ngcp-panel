@@ -255,7 +255,7 @@ sub post {
             resource_media_type => $method_config->{ResourceContentType},
         );
         last unless $resource;
-        my ($item,$data_processed_result,$hal);
+        my ($item,$data_processed_result,$hal,$id);
         if (!$non_json_data || !$data) {
             delete $resource->{purge_existing};
             last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
@@ -272,8 +272,9 @@ sub post {
             $item = $self->create_item($c, $resource, $form, $process_extras);
             last unless $item || $self->get_config('no_item_created');
 
-            $hal = $self->get_journal_item_hal($c, $item, { form => $form });
-            last unless $self->add_journal_item_hal($c, { hal => $hal });
+            ($hal, $id) = $self->get_journal_item_hal($c, $item, { form => $form });
+            last unless $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });
+
         } else {
             try {
                 #$processed_ok(array), $processed_failed(array), $info, $error

@@ -279,8 +279,10 @@ sub patch {
         ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
         last unless $item;
 
-        my $hal = $self->get_journal_item_hal($c, $item, { form => $form });
-        last unless $self->add_journal_item_hal($c, { hal => $hal });
+        my $hal;
+        ($hal,$id) = $self->get_journal_item_hal($c, $item, { form => $form });
+        $c->log->debug("halid: $hal->{id}");
+        last unless $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });
 
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
@@ -345,9 +347,10 @@ sub put {
             };
         }
 
-        my $hal = $self->get_journal_item_hal($c, $item, { form => $form });
-        last unless $self->add_journal_item_hal($c, { hal => $hal });
-
+        my $hal;
+        ($hal,$id) = $self->get_journal_item_hal($c, $item, { form => $form });
+        last unless $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });       
+        
         $self->complete_transaction($c);
         $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
         $self->return_representation($c,
@@ -370,10 +373,11 @@ sub delete {  ## no critic (ProhibitBuiltinHomonyms)
         my $item = $self->item_by_id_valid($c, $id);
         last unless $item;
 
-        my $hal = $self->get_journal_item_hal($c, $item);
+        my $hal;
+        ($hal,$id) = $self->get_journal_item_hal($c, $item);
         #here we left space for information that checking failed and we decided not to delete item
         if ($self->delete_item($c, $item)) {
-            $self->add_journal_item_hal($c, { hal => $hal });
+            $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });
         } else {
             return;
         }

@@ -4,6 +4,8 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
+use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Utils::Generic qw(trim);
 
 use Storable qw();
 
@@ -134,15 +136,11 @@ sub validate_yaml {
     my ($self, $field) = @_;
 
     eval {
-        my $data = YAML::XS::Load($field->value);
-        die('not a hash') unless 'HASH' eq ref $data;
-        foreach my $section (qw/contract subscriber/) {
-            die("section '$section' required") unless exists $data->{$section};
-            die("section '$section' is not a hash") unless 'HASH' eq ref $data->{$section};
-        }
+        my $data = NGCP::Panel::Utils::ProvisioningTemplates::parse_template(undef, undef, undef, $field->value);
+        NGCP::Panel::Utils::ProvisioningTemplates::validate_template($data);
     };
     if ($@) {
-        $field->add_error($@);
+        $field->add_error(trim($@));
     }
 
 }
@@ -164,13 +162,12 @@ sub validate {
     my $reseller;
     $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id}) if $resource->{reseller_id};
 
-    my $template = $field->value;
-    $template = ($reseller->name . '/' . $template) if $reseller;
-    #$c->log->warn("test: ".$template);
-    if (not defined $c->stash->{old_name}
-        or $c->stash->{old_name} ne $template) {
-        $field->add_error("a provisioning template with name '" . $field->value . "' already exists")
-            if exists $c->stash->{provisioning_templates}->{$template};
+    eval {
+        NGCP::Panel::Utils::ProvisioningTemplates::validate_template_name($c,
+            $field->value,$c->stash->{old_name},$reseller);
+    };
+    if ($@) {
+        $field->add_error(trim($@));
     }
 
 }

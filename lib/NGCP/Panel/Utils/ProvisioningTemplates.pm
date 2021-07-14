@@ -110,13 +110,13 @@ sub load_template_map {
     foreach my $db_template ($rs->all) {
         my $template = { $db_template->get_inflated_columns };
         eval {
-            %$template = ( %{YAML::XS::Load($template->{yaml})}, %$template );
+            %$template = ( %{parse_template($c, $template->{id}, $template->{name}, $template->{yaml})}, %$template );
             #use Data::Dumper;
             #$c->log->error(Dumper($template));
             delete $template->{yaml};
         };
         if ($@) {
-            $c->log->error("error parsing provisioning_template id $template->{id} '$template->{name}': " . $@);
+            die $@;
             next;
         }
         $template->{static} = 0;
@@ -128,6 +128,68 @@ sub load_template_map {
         }
     }
     $c->stash->{provisioning_templates} = $templates;
+
+}
+
+sub validate_template {
+
+    my ($data,$prefix) = @_;
+    $prefix //= 'template: ';
+    die($prefix . "not a hash\n") unless 'HASH' eq ref $data;
+    foreach my $section (qw/contract subscriber/) {
+        die($prefix . "section '$section' required\n") unless exists $data->{$section};
+        die($prefix . "section '$section' is not a hash\n") unless 'HASH' eq ref $data->{$section};
+    }
+
+}
+
+sub validate_template_name {
+
+    my ($c,$name,$old_name,$reseller,$old_reseller) = @_;
+    unless ($name =~ /^[a-zA-Z0-9 -]+$/) {
+        die("template name contains invalid characters\n");
+    }
+    #$c->log->warn("test: ".$template);
+
+    if (not defined $old_name
+        or $old_name ne $name) {
+        unless ($c->stash->{provisioning_templates}) {
+            load_template_map($c);
+        }
+        die("a provisioning template with name '" . $name . "' already exists\n")
+            if exists $c->stash->{provisioning_templates}->{$reseller ? ($reseller->name . '/' . $name) : $name};
+    }
+
+}
+
+sub dump_template {
+
+    my ($c,$id,$name,$template) = @_;
+    my $yaml;
+    eval {
+        $yaml = YAML::XS::Dump($template);
+    };
+    if ($@) {
+        $c->log->error("error parsing provisioning_template id $id '$name': " . $@) if $c;
+        die($@);
+    }
+    return $yaml;
+
+}
+
+sub parse_template {
+
+    my ($c,$id,$name,$yaml) = @_;
+    my $template;
+    #die ("yaml: " . $yaml);
+    eval {
+        $template = YAML::XS::Load($yaml);
+    };
+    if ($@) {
+        $c->log->error("error parsing provisioning_template id $id '$name': " . $@) if $c;
+        die($@);
+    }
+    return $template;
 
 }
 
@@ -925,7 +987,7 @@ sub _init_contract_preferences_context {
 sub _init_registrations_context {
 
     my ($c, $context, $schema, $template) = @_;
-    
+
     foreach my $template_registration (@{_force_array($template->{registrations})}) {
         my %registration = ();
         foreach my $col (keys %$template_registration) {
