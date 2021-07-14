@@ -1,3 +1,10 @@
+ngcp-panel (8.5.3.8+0~mr8.5.3.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9ff2005] TT#121500 fix missing mos_data in /api/conversations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 Jul 2021 18:50:53 +0200
+
 ngcp-panel (8.5.3.7+0~mr8.5.3.7) unstable; urgency=medium
 
   [ Rene Krenn ]
