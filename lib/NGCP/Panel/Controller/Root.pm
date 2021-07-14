@@ -637,6 +637,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         my $jwt_data = {
             subscriber_uuid => $auth_user->uuid,
             username => $auth_user->webusername,
+            typ => 'JWT',
         };
         $result->{jwt} = encode_jwt(
             payload => $jwt_data,
@@ -754,6 +755,7 @@ sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method(
         my $jwt_data = {
             id => $auth_user->id,
             username => $auth_user->login,
+            typ => 'JWT',
         };
         $result->{jwt} = 'a='.encode_jwt(
             payload => $jwt_data,
