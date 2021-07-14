@@ -196,7 +196,7 @@ sub update_item {
                 if ($primary_nr_rs) {
                     $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
                 } else {
-                    $number = ''
+                    $number = $item->uuid;
                 }
                 my $domain = $item->provisioning_voip_subscriber->domain->domain // '';
 
