@@ -1,3 +1,10 @@
+ngcp-panel (8.5.4.8+0~mr8.5.4.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [da899dc] TT#121500 fix missing mos_data in /api/callists
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 Jul 2021 15:53:41 +0200
+
 ngcp-panel (8.5.4.7+0~mr8.5.4.7) unstable; urgency=medium
 
   [ Flaviu Mates ]
