@@ -46,16 +46,16 @@ sub authenticate {
     my ($token) = $auth_header =~ m/Bearer\s+(.*)/;
     return unless ($token);
 
-    if ($token =~ /^a=(.+)$/) {
-        $c->log->debug("Found admin token: $token") if $self->debug;
-        $token = $1;
-    } else {
-        $c->log->debug("Found token: $token") if $self->debug;
-    }
+    $c->log->debug("Found token: $token") if $self->debug;
 
     my $jwt_data;
     try {
         $jwt_data = decode_jwt(token=>$token, key=>$self->jwt_key, accepted_alg => $self->alg);
+        if ($jwt_data->{$self->id_field} && $jwt_data->{$self->id_field} eq 'uuid') {
+            $c->log->debug('decoded subscriber JWT token');
+        } else {
+            $c->log->debug('decoded admin JWT token');
+        }
     } catch ($e) {
         # something happened
         $c->log->debug("Error decoding token: $e") if $self->debug;

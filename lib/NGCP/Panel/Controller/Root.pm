@@ -193,27 +193,24 @@ sub auto :Private {
             $self->api_apply_fake_time($c);
             return $self->check_user_access($c);
         } elsif ($c->req->headers->header("Authorization") &&
-                 $c->req->headers->header("Authorization") =~ m/^Bearer(\s+)a=/) {
-            $c->log->debug("++++++ Root::auto API request with admin JWT");
-            my $realm = "api_admin_jwt";
-            my $res = $c->authenticate({}, $realm);
-
-            unless ($c->user_exists) {
-                $c->log->debug("+++++ invalid api admin JWT login");
-                # $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
-            }
-
-            $self->api_apply_fake_time($c);
-            return $self->check_user_access($c);
-        } elsif ($c->req->headers->header("Authorization") &&
                  $c->req->headers->header("Authorization") =~ m/^Bearer /) {
-            $c->log->debug("++++++ Root::auto API request with JWT");
-            my $realm = "api_subscriber_jwt";
-            my $res = $c->authenticate({}, $realm);
+            my $ngcp_api_realm = $c->request->env->{NGCP_API_REALM} // "";
+            if ($ngcp_api_realm eq 'subscriber') {
+                $c->log->debug("++++++ Root::auto API request with JWT");
+                my $realm = "api_subscriber_jwt";
+                my $res = $c->authenticate({}, $realm);
 
-            unless ($c->user_exists) {
-                $c->log->debug("+++++ invalid api subscriber JWT login");
-                # $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
+                unless ($c->user_exists) {
+                    $c->log->debug("+++++ invalid api subscriber JWT login");
+                }
+            } else {
+                $c->log->debug("++++++ Root::auto API request with admin JWT");
+                my $realm = "api_admin_jwt";
+                my $res = $c->authenticate({}, $realm);
+
+                unless ($c->user_exists) {
+                    $c->log->debug("+++++ invalid api admin JWT login");
+                }
             }
 
             $self->api_apply_fake_time($c);
@@ -298,7 +295,7 @@ sub auto :Private {
         }
     } elsif (!$c->user_exists &&
             $c->req->headers->header("Authorization") &&
-            $c->req->headers->header("Authorization") =~ m/^Bearer(\s+)a=/) {
+            $c->req->headers->header("Authorization") =~ m/^Bearer /) {
 
         $c->log->debug("++++++ Root::auto UI request with admin JWT");
         my $realm = "admin_jwt";
@@ -460,7 +457,7 @@ sub check_user_access {
 
     my $path = $c->req->uri->path;
 
-    if ($path =~ /^\/(login|logout|login_jwt|admin_login_jwt)$/) {
+    if ($path =~ /^\/(login|logout|login_jwt)$/) {
         return 1;
     }
 
@@ -506,10 +503,17 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
     my $auth_token = $c->req->body_data->{token} // '';
     my $user = $c->req->body_data->{username} // '';
     my $pass = $c->req->body_data->{password} // '';
+    my $ngcp_realm = $c->request->env->{NGCP_REALM} // 'admin';
 
-    my $key = $c->config->{'Plugin::Authentication'}{api_subscriber_jwt}{credential}{jwt_key};
-    my $relative_exp = $c->config->{'Plugin::Authentication'}{api_subscriber_jwt}{credential}{relative_exp};
-    my $alg = $c->config->{'Plugin::Authentication'}{api_subscriber_jwt}{credential}{alg};
+    my $key = $ngcp_realm eq 'admin'
+                ? $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{jwt_key}
+                : $c->config->{'Plugin::Authentication'}{api_subscriber_jwt}{credential}{jwt_key};
+    my $relative_exp = $ngcp_realm eq 'admin'
+                ? $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{relative_exp}
+                : $c->config->{'Plugin::Authentication'}{api_subscriber_jwt}{credential}{relative_exp};
+    my $alg = $ngcp_realm eq 'admin'
+                ? $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{alg}
+                : $c->config->{'Plugin::Authentication'}{api_subscriber_jwt}{credential}{alg};
 
     $c->response->content_type('application/json');
 
@@ -521,9 +525,18 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         return;
     }
 
+    unless ($ngcp_realm eq 'admin' || $ngcp_realm eq 'subscriber') {
+        $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
+        $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+            message => "Invalid realm" })."\n");
+        $c->log->error("Invalid realm");
+        return;
+    }
+
     my $auth_user;
     if ($auth_token) {
         my $redis = NGCP::Panel::Utils::Redis::get_redis_connection($c, {database => $c->config->{'Plugin::Session'}->{redis_db}});
+
         unless ($redis) {
             $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
             $c->response->body(encode_json({ code => HTTP_INTERNAL_SERVER_ERROR,
@@ -531,25 +544,47 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
             $c->log->error("Could not connect to Redis");
             return;
         }
+
         my $type = $redis->hget("auth_token:$auth_token", "type");
         my $role = $redis->hget("auth_token:$auth_token", "role");
         my $user_id = $redis->hget("auth_token:$auth_token", "user_id");
+
         $redis->del("auth_token:$auth_token") if ($type eq 'onetime');
-        unless (grep {$role eq $_} qw/subscriber subscriberadmin/) {
-            $c->response->status(HTTP_FORBIDDEN);
-            $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-            message => "Forbidden!" })."\n");
-            $c->log->error("Wrong auth_token role");
-            return;
+
+        if ($ngcp_realm eq 'admin') {
+            unless (grep {$role eq $_} qw/admin reseller ccare ccareadmin/) {
+                $c->response->status(HTTP_FORBIDDEN);
+                $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+                message => "Forbidden!" })."\n");
+                $c->log->error("Wrong auth_token role");
+                return;
+            }
+
+            my $authrs = $c->model('DB')->resultset('admins')->search({
+                id => $user_id,
+                is_active => 1,
+            });
+
+            $auth_user = $authrs->first if ($authrs->first);
+        } else {
+            unless (grep {$role eq $_} qw/subscriber subscriberadmin/) {
+                $c->response->status(HTTP_FORBIDDEN);
+                $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+                message => "Forbidden!" })."\n");
+                $c->log->error("Wrong auth_token role");
+                return;
+            }
+
+            my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+                'me.id' => $user_id,
+                'voip_subscriber.status' => 'active',
+                'contract.status' => 'active',
+            }, {
+                join => ['contract', 'voip_subscriber'],
+            });
+
+            $auth_user = $authrs->first if ($authrs->first);
         }
-        my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
-            'me.id' => $user_id,
-            'voip_subscriber.status' => 'active',
-            'contract.status' => 'active',
-        }, {
-            join => ['contract', 'voip_subscriber'],
-        });
-        $auth_user = $authrs->first if ($authrs->first);
     } else {
         unless ($user && $pass) {
             $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
@@ -568,206 +603,136 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         }
 
         my ($u, $d, $t) = split(/\@/, $user, 3);
+
         if(defined $t) {
             # in case username is an email address
             $u = $u . '@' . $d;
             $d = $t;
         }
+
         unless(defined $d) {
             $d = $c->req->uri->host;
         }
-        my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
-            webusername => $u,
-            'voip_subscriber.status' => 'active',
-            'domain.domain' => $d,
-            'contract.status' => 'active',
-        }, {
-            join => ['domain', 'contract', 'voip_subscriber'],
-        });
 
-        if ($authrs->first) {
-            my $password = $authrs->first->webpassword;
-            if (length $password > 40) {
-                my @splitted_pass = split /\$/, $password;
-                if (scalar @splitted_pass == 3) {
-                    #password is bcrypted with lower cost
-                    my ($cost, $db_b64salt, $db_b64hash) = @splitted_pass;
-                    my $salt = de_base64($db_b64salt);
-                    my $usr_b64hash = en_base64(bcrypt_hash({
-                        key_nul => 1,
-                        cost => $cost,
-                        salt => $salt,
-                    }, $pass));
-                    if ($db_b64hash eq $usr_b64hash) {
-                        #upgrade password to bigger cost
-                        $salt = rand_bits(128);
-                        my $b64salt = en_base64($salt);
-                        my $b64hash = en_base64(bcrypt_hash({
+        if ($ngcp_realm eq 'admin') {
+            my $authrs = $c->model('DB')->resultset('admins')->search({
+                login => $user,
+                is_active => 1,
+            });
+
+            my $usr_salted_pass;
+            $auth_user = $authrs->first;
+
+            if ($auth_user && $auth_user->id) {
+                $usr_salted_pass = NGCP::Panel::Utils::Auth::get_usr_salted_pass($auth_user->saltedpass, $pass);
+            }
+
+            unless ($usr_salted_pass && $usr_salted_pass eq $auth_user->saltedpass) {
+                $c->response->status(HTTP_FORBIDDEN);
+                $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+                    message => "User not found" })."\n");
+                $c->log->error("User not found");
+                return;
+            }
+        } else {
+            my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+                webusername => $u,
+                'voip_subscriber.status' => 'active',
+                'domain.domain' => $d,
+                'contract.status' => 'active',
+            }, {
+                join => ['domain', 'contract', 'voip_subscriber'],
+            });
+
+            if ($authrs->first) {
+                my $password = $authrs->first->webpassword;
+                if (length $password > 40) {
+                    my @splitted_pass = split /\$/, $password;
+                    if (scalar @splitted_pass == 3) {
+                        #password is bcrypted with lower cost
+                        my ($cost, $db_b64salt, $db_b64hash) = @splitted_pass;
+                        my $salt = de_base64($db_b64salt);
+                        my $usr_b64hash = en_base64(bcrypt_hash({
+                            key_nul => 1,
+                            cost => $cost,
+                            salt => $salt,
+                        }, $pass));
+                        if ($db_b64hash eq $usr_b64hash) {
+                            #upgrade password to bigger cost
+                            $salt = rand_bits(128);
+                            my $b64salt = en_base64($salt);
+                            my $b64hash = en_base64(bcrypt_hash({
+                                key_nul => 1,
+                                cost => NGCP::Panel::Utils::Auth::get_bcrypt_cost(),
+                                salt => $salt,
+                            }, $pass));
+                            $authrs->first->update({webpassword => $b64salt . '$' . $b64hash});
+                            $auth_user = $authrs->first;
+                        }
+                    }
+                    elsif (scalar @splitted_pass == 2) {
+                        #password is bcrypted with proper cost
+                        my ($db_b64salt, $db_b64hash) = @splitted_pass;
+                        my $salt = de_base64($db_b64salt);
+                        my $usr_b64hash = en_base64(bcrypt_hash({
                             key_nul => 1,
                             cost => NGCP::Panel::Utils::Auth::get_bcrypt_cost(),
                             salt => $salt,
                         }, $pass));
-                        $authrs->first->update({webpassword => $b64salt . '$' . $b64hash});
-                        $auth_user = $authrs->first;
+                        $auth_user = $authrs->search({webpassword => $db_b64salt . '$' . $usr_b64hash})->first;
                     }
                 }
-                elsif (scalar @splitted_pass == 2) {
-                    #password is bcrypted with proper cost
-                    my ($db_b64salt, $db_b64hash) = @splitted_pass;
-                    my $salt = de_base64($db_b64salt);
-                    my $usr_b64hash = en_base64(bcrypt_hash({
-                        key_nul => 1,
-                        cost => NGCP::Panel::Utils::Auth::get_bcrypt_cost(),
-                        salt => $salt,
-                    }, $pass));
-                    $auth_user = $authrs->search({webpassword => $db_b64salt . '$' . $usr_b64hash})->first;
+                else {
+                    $auth_user = $authrs->search({webpassword => $pass})->first;
                 }
-            }
-            else {
-                $auth_user = $authrs->search({webpassword => $pass})->first;
             }
         }
     }
 
     my $result = {};
 
-    if ($auth_user && $auth_user->voip_subscriber) {
-        my $jwt_data = {
-            subscriber_uuid => $auth_user->uuid,
-            username => $auth_user->webusername,
-            typ => 'JWT',
-        };
-        $result->{jwt} = encode_jwt(
-            payload => $jwt_data,
-            key => $key,
-            alg => $alg,
-            $relative_exp ? (relative_exp => $relative_exp) : (),
-            extra_headers => { typ => 'JWT' },
-        );
-        $result->{subscriber_id} = int($auth_user->voip_subscriber->id // 0);
-    } else {
-        $c->response->status(HTTP_FORBIDDEN);
-        $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-            message => "User not found" })."\n");
-        $c->log->error("User not found");
-        return;
-    }
-
-    $c->res->body(encode_json($result));
-    $c->res->code(HTTP_OK);  # 200
-
-    return;
-}
-
-sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method('POST') {
-    my ($self, $c) = @_;
-
-    use JSON qw/encode_json decode_json/;
-    use Crypt::JWT qw/encode_jwt/;
-
-    my $auth_token = $c->req->body_data->{token} // '';
-    my $user = $c->req->body_data->{username} // '';
-    my $pass = $c->req->body_data->{password} // '';
-
-    my $key = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{jwt_key};
-    my $relative_exp = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{relative_exp};
-    my $alg = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{alg};
-
-    $c->response->content_type('application/json');
-
-    unless ($key) {
-        $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
-        $c->response->body(encode_json({ code => HTTP_INTERNAL_SERVER_ERROR,
-            message => "No JWT key has been configured" })."\n");
-        $c->log->error("No JWT key has been configured");
-        return;
-    }
-
-    my $auth_user;
-    if ($auth_token) {
-        my $redis = NGCP::Panel::Utils::Redis::get_redis_connection($c, {database => $c->config->{'Plugin::Session'}->{redis_db}});
-        unless ($redis) {
-            $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
-            $c->response->body(encode_json({ code => HTTP_INTERNAL_SERVER_ERROR,
-            message => "Internal Server Error" })."\n");
-            $c->log->error("Could not connect to Redis");
-            return;
-        }
-        my $type = $redis->hget("auth_token:$auth_token", "type");
-        my $role = $redis->hget("auth_token:$auth_token", "role");
-        my $user_id = $redis->hget("auth_token:$auth_token", "user_id");
-        $redis->del("auth_token:$auth_token") if ($type eq 'onetime');
-        unless (grep {$role eq $_} qw/admin reseller ccare ccareadmin/) {
-            $c->response->status(HTTP_FORBIDDEN);
-            $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-            message => "Forbidden!" })."\n");
-            $c->log->error("Wrong auth_token role");
-            return;
-        }
-        my $authrs = $c->model('DB')->resultset('admins')->search({
-            id => $user_id,
-            is_active => 1,
-        });
-        $auth_user = $authrs->first if ($authrs->first);
-    } else {
-        unless ($user && $pass) {
-            $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-            $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
-                message => "No username or password given" })."\n");
-            $c->log->error("No username or password given");
-            return;
-        }
-
-        if ($pass =~ /[^[:ascii:]]/) {
-            $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-            $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
-                message => "'password' contains invalid characters" })."\n");
-            $c->log->error("'password' contains invalid characters");
-            return;
-        }
-
-        my $authrs = $c->model('DB')->resultset('admins')->search({
-            login => $user,
-            is_active => 1,
-        });
-
-        my $usr_salted_pass;
-        $auth_user = $authrs->first;
-
-        if ($auth_user && $auth_user->id) {
-            $usr_salted_pass = NGCP::Panel::Utils::Auth::get_usr_salted_pass($auth_user->saltedpass, $pass);
-        }
-
-        unless ($usr_salted_pass && $usr_salted_pass eq $auth_user->saltedpass) {
+    if ($ngcp_realm eq 'admin') {
+        if ($auth_user) {
+            my $jwt_data = {
+                id => $auth_user->id,
+                username => $auth_user->login,
+            };
+            $result->{jwt} = encode_jwt(
+                payload => $jwt_data,
+                key => $key,
+                alg => $alg,
+                $relative_exp ? (relative_exp => $relative_exp) : (),
+                extra_headers => { typ => 'JWT' },
+            );
+            $result->{id} = int($auth_user->id // 0);
+        } else {
             $c->response->status(HTTP_FORBIDDEN);
             $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
                 message => "User not found" })."\n");
             $c->log->error("User not found");
             return;
         }
-    }
-
-    my $result = {};
-    if ($auth_user) {
-        my $jwt_data = {
-            id => $auth_user->id,
-            username => $auth_user->login,
-            typ => 'JWT',
-        };
-        $result->{jwt} = 'a='.encode_jwt(
-            payload => $jwt_data,
-            key => $key,
-            alg => $alg,
-            $relative_exp ? (relative_exp => $relative_exp) : (),
-            extra_headers => { typ => 'JWT' },
-        );
-        $result->{id} = int($auth_user->id // 0);
     } else {
-        $c->response->status(HTTP_FORBIDDEN);
-        $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-            message => "User not found" })."\n");
-        $c->log->error("User not found");
-        return;
+        if ($auth_user && $auth_user->voip_subscriber) {
+            my $jwt_data = {
+                subscriber_uuid => $auth_user->uuid,
+                username => $auth_user->webusername,
+            };
+            $result->{jwt} = encode_jwt(
+                payload => $jwt_data,
+                key => $key,
+                alg => $alg,
+                $relative_exp ? (relative_exp => $relative_exp) : (),
+                extra_headers => { typ => 'JWT' },
+            );
+            $result->{subscriber_id} = int($auth_user->voip_subscriber->id // 0);
+        } else {
+            $c->response->status(HTTP_FORBIDDEN);
+            $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+                message => "User not found" })."\n");
+            $c->log->error("User not found");
+            return;
+        }
     }
 
     $c->res->body(encode_json($result));
