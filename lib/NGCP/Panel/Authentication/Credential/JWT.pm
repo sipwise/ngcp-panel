@@ -55,8 +55,7 @@ sub authenticate {
 
     my $jwt_data;
     try {
-        my $raw_key = pack('H*', $self->jwt_key);
-        $jwt_data = decode_jwt(token=>$token, key=>$raw_key, accepted_alg => $self->alg);
+        $jwt_data = decode_jwt(token=>$token, key=>$self->jwt_key, accepted_alg => $self->alg);
     } catch ($e) {
         # something happened
         $c->log->debug("Error decoding token: $e") if $self->debug;

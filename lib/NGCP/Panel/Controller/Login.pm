@@ -64,15 +64,13 @@ sub login_index :Path Form {
                     );
                 }
 
-                my $raw_key = pack('H*', $key);
-
                 my $jwt_data = {
                     id => $c->user->id,
                     username => $c->user->login,
                 };
                 my $token = encode_jwt(
                     payload => $jwt_data,
-                    key => $raw_key,
+                    key => $key,
                     alg => $alg,
                     $relative_exp ? (relative_exp => $relative_exp) : (),
                 );
