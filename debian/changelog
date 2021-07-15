@@ -1,3 +1,10 @@
+ngcp-panel (8.5.5.3+0~mr8.5.5.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9fcfa8f] Revert "TT#102056 fix registration entry removal"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Jul 2021 14:13:53 +0200
+
 ngcp-panel (8.5.5.2+0~mr8.5.5.2) unstable; urgency=medium
 
   [ Flaviu Mates ]
