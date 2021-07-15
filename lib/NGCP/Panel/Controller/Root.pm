@@ -522,8 +522,6 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         return;
     }
 
-    my $raw_key = pack('H*', $key);
-
     my $auth_user;
     if ($auth_token) {
         my $redis = NGCP::Panel::Utils::Redis::get_redis_connection($c, {database => $c->config->{'Plugin::Session'}->{redis_db}});
@@ -641,9 +639,10 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         };
         $result->{jwt} = encode_jwt(
             payload => $jwt_data,
-            key => $raw_key,
+            key => $key,
             alg => $alg,
             $relative_exp ? (relative_exp => $relative_exp) : (),
+            extra_headers => { typ => 'JWT' },
         );
         $result->{subscriber_id} = int($auth_user->voip_subscriber->id // 0);
     } else {
@@ -683,8 +682,6 @@ sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method(
         $c->log->error("No JWT key has been configured");
         return;
     }
-
-    my $raw_key = pack('H*', $key);
 
     my $auth_user;
     if ($auth_token) {
@@ -758,9 +755,10 @@ sub admin_login_jwt :Chained('/') :PathPart('admin_login_jwt') :Args(0) :Method(
         };
         $result->{jwt} = 'a='.encode_jwt(
             payload => $jwt_data,
-            key => $raw_key,
+            key => $key,
             alg => $alg,
             $relative_exp ? (relative_exp => $relative_exp) : (),
+            extra_headers => { typ => 'JWT' },
         );
         $result->{id} = int($auth_user->id // 0);
     } else {
@@ -797,15 +795,13 @@ sub login_to_v2 :Chained('/') :PathPart('login_to_v2') :Args(0) {
         );
     }
 
-    my $raw_key = pack('H*', $key);
-
     my $jwt_data = {
         id => $c->user->id,
         username => $c->user->login,
     };
     my $token = encode_jwt(
         payload => $jwt_data,
-        key => $raw_key,
+        key => $key,
         alg => $alg,
         $relative_exp ? (relative_exp => $relative_exp) : (),
     );
