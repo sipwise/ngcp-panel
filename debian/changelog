@@ -1,3 +1,11 @@
+ngcp-panel (9.5.1.5+0~mr9.5.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2b3536a] TT#121500 fix missing mos_data in /api/callists
+  * [82be560] TT#121500 fix missing mos_data in /api/conversations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Jul 2021 15:23:28 +0200
+
 ngcp-panel (9.5.1.4+0~mr9.5.1.4) unstable; urgency=medium
 
   [ Alexander Lutay ]
