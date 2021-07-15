@@ -146,9 +146,11 @@ sub build_announcements {
     my ($self) = @_;
     my @options = ();
     my $c = $self->form->ctx;
-    push @options, { label => 'Select announcement', value => '' };
-    foreach($c->stash->{custom_announcements_rs}->all){
-        push @options, { label => $_->name, value => $_->id };
+    if(defined $c) {
+        push @options, { label => 'Select announcement', value => '' };
+        foreach($c->stash->{custom_announcements_rs}->all){
+            push @options, { label => $_->name, value => $_->id };
+        }
     }
     return \@options;
 }

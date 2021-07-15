@@ -53,13 +53,16 @@ sub dummy::loc { shift; return shift; };
 my %unique_strings;
 foreach my $mod(@files){
     my $modname = $mod =~ s!lib/!!r =~ s!/!::!gr =~ s!\.pm$!!r;
-    eval {
-        require $mod;
-        my $form = $modname->new;
-        my $strings = NGCP::Panel::Utils::I18N->translate_form($dummy, $form, 1);
-        print $fh "    #$modname\n";
-        @unique_strings{@$strings} = 1;
-    } || print $fh "    #$modname: error\n";
+    if (eval "require $modname; 1;") {
+        eval {
+            my $form = $modname->new;
+            my $strings = NGCP::Panel::Utils::I18N->translate_form($dummy, $form, 1);
+            print $fh "    #$modname\n";
+            @unique_strings{@$strings} = 1;
+        } || print $fh " #$modname: error: $@\n";
+    } else {
+        print $fh "#'$modname' could not be loaded. Skipping it...\n";
+    }
 }
 
 for my $s (keys %unique_strings) {
@@ -75,10 +78,34 @@ print $fh <<FOOTER_END;
 
 1;
 
+=head1 NAME
+
+NGCP::Panel::Utils::DbStrings
+
+=head1 VERSION
+
+Version UNRELEASED_VERSION
+
+=head1 SYNOPSIS
+
+Localization strings from DB and Forms
+
+=head1 DESCRIPTION
+
+Dump strings from DataBase and Forms to a dummy module, for localisation.
+Strings are collected later by extract_i18n.sh script.
+
+=head1 AUTHOR
+
+Sipwise Development Team <support\@sipwise.com>
+
 =head1 LICENSE
 
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
+This software is Copyright 2021 by Sipwise GmbH, Austria.
+
+All rights reserved. You may not copy, distribute
+or modify without prior written permission from
+Sipwise GmbH, Austria.
 
 =cut
 

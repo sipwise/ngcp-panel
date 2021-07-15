@@ -10,7 +10,7 @@ sub new {
     die __PACKAGE__ . " is abstract" if __PACKAGE__ eq $class;
     my $self = {};
     $self->{form} = $args{form};
-    $self->{c} = $args{form}->{ctx} or die "form context required for $class";
+    $self->{c} = $args{form}->{ctx};
     return bless $self, $class;
 }
 
@@ -26,6 +26,7 @@ sub template {
 
 sub render {
     my $self = shift;
+    return unless $self->{c};
     
     my $output = '';
     
