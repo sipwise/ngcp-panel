@@ -24,7 +24,6 @@ Comment:
 
 Files:
  share/static/js/libs/svg-edit/*
- share/static/js/libs/svg-edit-2.6/*
 Copyright:
  Copyright © 2010 "Cowboy" Ben Alman
  Copyright © 2010 AUTHORS.txt (http://jqueryui.com/about)
