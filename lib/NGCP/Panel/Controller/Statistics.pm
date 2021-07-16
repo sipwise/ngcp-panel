@@ -24,105 +24,10 @@ sub root :PathPart('/') :CaptureArgs(0) {
 
 sub statistics_index :Chained('/') :PathPart('statistics') :Args(0) {
     my ( $self, $c ) = @_;
-
-    my $posted = ($c->req->method eq 'POST');
-    my $selected_host;
-    my $selected_folder;
-
-    my $hosts = NGCP::Panel::Utils::Statistics::get_host_list();
-    unless($posted) {
-        my $ownhost = hostname;
-        if(grep { $ownhost eq $_ } @$hosts) {
-            $selected_host = $ownhost;
-        } else {
-            $selected_host = $hosts->[0];
-        }
-    } else {
-        $selected_host = $c->request->params->{host};
-    }
-    $c->stash->{hosts} = $hosts;
-
-    my $subdirs = NGCP::Panel::Utils::Statistics::get_host_subdirs($selected_host);
-    unless($posted) {
-        $selected_folder = $subdirs->[0];
-        
-    } else {
-        $selected_folder = $c->request->params->{folder};
-    }
-    $c->stash->{folders} = $subdirs;
-
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Statistics", $c);
-    $form->process(
-        posted => ($c->req->method eq 'POST'),
-        params => { host => $selected_host, folder => $selected_folder },
+    my $versions_info = NGCP::Panel::Utils::Statistics::get_dpkg_versions();
+    $c->stash(versions_info => $versions_info,
+        template => 'statistics/versions.tt',
     );
-    if($posted && !$form->validated) {
-        $c->log->error("tried to select invalid host/folder pair");
-        $c->response->redirect($c->uri_for_action('/statistics/statistics_index'));
-        return;
-    }
-    delete $c->stash->{hosts};
-    delete $c->stash->{folders};
-
-    my $rrds = NGCP::Panel::Utils::Statistics::get_rrd_files(
-        $selected_host, $selected_folder
-    );
-    my @plotdata = ();
-    foreach my $rrd (@{ $rrds }) {
-        my $name = $rrd;
-        $name =~ s/[\.:]/-/g;
-        my $title = $rrd;
-        $title =~ s/\.rrd$//;
-
-        push @plotdata, {
-            name  => $name,
-            title => $title,
-            url   => $c->uri_for_action('/statistics/rrd', 
-                        $selected_host, $selected_folder, $rrd),
-            si    => 1,
-        };
-    }
-
-    $c->stash(
-        template => 'statistics/list.tt',
-        form => $form,
-        plotdata => \@plotdata,
-        tz_offset => NGCP::Panel::Utils::Statistics::tz_offset(),
-    );
-}
-
-sub subdirs : Chained('/') :PathPart('statistics/subdirs') :Args(1) {
-    my ( $self, $c, $host) = @_;
-
-    return unless(defined $host);
-    my $subdirs = NGCP::Panel::Utils::Statistics::get_host_subdirs($host);
-
-    my $options = "";
-    foreach my $opt(@{ $subdirs }) {
-        $options .= '<option value="' . $opt. '">' . $opt . "</option>\n";
-    }
-    $c->response->body($options);
-    return;
-}
-
-sub rrd : Chained('/') :PathPart('statistics/rrd') :Args() {
-    my ( $self, $c, $host, $folder, $file ) = @_;
-
-    unless(defined $host && defined $folder && defined $file) {
-        $c->log->error("tried to fetch rrd with incomplete path");
-        $c->response->redirect($c->uri_for_action('/statistics/statistics_index'));
-        return;
-    }
-
-    my $path = $host.'/'.$folder.'/'.$file;
-    my $content = NGCP::Panel::Utils::Statistics::get_rrd($path);
-    if($content) {
-        $c->response->content_type('application/octet-stream');
-        $c->response->body($content);
-        return;
-    }
-
-    $c->response->redirect($c->uri_for_action('/statistics/statistics_index'));
     return;
 }
 
