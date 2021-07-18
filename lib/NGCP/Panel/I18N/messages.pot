@@ -14722,10 +14722,6 @@ msgstr ""
 msgid "any number"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "ar"
-msgstr ""
-
 #: share/templates/timeset/event_list.tt
 msgid "at"
 msgstr ""
@@ -14978,10 +14974,6 @@ msgstr ""
 msgid "days"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "de"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DateTime.pm
 msgid "default"
 msgstr ""
@@ -15031,10 +15023,6 @@ msgid "enabled"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "es"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "everyday"
 msgstr ""
 
@@ -15068,10 +15056,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "forwarded"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "fr"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -15112,10 +15096,6 @@ msgstr ""
 
 #: share/templates/subscriber/webphone.tt
 msgid "has stopped typing."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "he"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -15207,10 +15187,6 @@ msgid "is typing..."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "it"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "left"
 msgstr ""
 
@@ -15276,10 +15252,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "new interval for each top-up"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "nl"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt
@@ -15443,15 +15415,7 @@ msgid "right"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "ro"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "rsub"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "ru"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
