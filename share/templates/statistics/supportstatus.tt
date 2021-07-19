@@ -30,4 +30,14 @@
 
 [% END -%]
 
+<br/>
+
+[% IF openvpn_info.allowed -%]
+[%   IF openvpn_info.active -%]
+<p>[% c.loc('Sipwise VPN service is') %] <a class="btn btn-small btn-success" href="javascript:toggleOpenvpn('confirm');void(0);"><i class="icon-ok"></i>Running</a></p>
+[%   ELSE -%]
+<p>[% c.loc('Sipwise VPN service is') %] <a class="btn btn-small btn-secondary" href="javascript:toggleOpenvpn('confirm');void(0);"><i class="icon-off"></i>Stopped</a></p>
+[%   END -%]
+[% END -%]
+
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
