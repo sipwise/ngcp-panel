@@ -11,7 +11,7 @@ my $z = IO::Uncompress::Unzip->new(\$zip, MultiStream => 0, Append => 1);
 
 my $data;
 while(!$z->eof() && (my $hdr = $z->getHeaderInfo())) {
-    print "+++ found $$hdr{Name}\n";
+    print "Found $$hdr{Name}\n";
     unless($hdr->{Name} =~ /\.pem$/) {
         # wrong file, just read stream, clear buffer and try next
         while($z->read($data) > 0) {};
@@ -26,7 +26,7 @@ while(!$z->eof() && (my $hdr = $z->getHeaderInfo())) {
 }
 $z->close();
 unless($data) {
-    die "no PEM file found\n";
+    die "No PEM file found\n";
 }
 
 open my $fh, ">:raw", "/tmp/out.zip";

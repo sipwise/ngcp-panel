@@ -30,7 +30,7 @@ sub login_index :Path Form {
         $c->log->debug("login form validated");
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
-        $c->log->debug("*** Login::index user=$user, pass=****, realm=$realm");
+        $c->log->debug("Login::index user=$user, pass=****, realm=$realm");
         my $res;
         if($realm eq 'admin') {
             $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, 'admin', 'admin_bcrypt');
@@ -86,12 +86,12 @@ sub login_index :Path Form {
             my $target = $c->session->{'target'} || '/';
             delete $c->session->{target};
             $target =~ s!^https?://[^/]+/!/!;
-            $c->log->debug("*** Login::index auth ok, redirecting to $target");
+            $c->log->debug("Login::index auth ok, redirecting to $target");
             $c->response->redirect($target);
             return;
         } else {
             $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");
-            $c->log->debug("*** Login::index auth failed");
+            $c->log->debug("Login::index auth failed");
             $form->add_form_error($c->loc('Invalid username/password'));
         }
     } else {

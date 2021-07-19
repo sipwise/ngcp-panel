@@ -133,7 +133,7 @@
                     // TODO: create_incall_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
 
                     session.on('started', function(e) {
-                        console.log("+++++++ session started");
+                        console.log("RTCSession session started");
                         var rtcSession = e.sender;
                         if(rtcSession.getLocalStreams().length > 0) {
                             selfView.src = window.URL.createObjectURL(rtcSession.getLocalStreams()[0]);
@@ -249,7 +249,7 @@
 
             chat.on('session:started', function() {
                 $("#xmpp-status").html("[% c.loc('online.') %]");
-                console.log("++++++++++++++++++ session started");
+                console.log("XMPP session started");
                 chat.enableCarbons();
                 chat.getRoster(function(err, resp) {
                     console.log(err, resp);
@@ -304,7 +304,7 @@
                 var jidid = pres.from.bare.replace(/[^a-zA-Z0-9_]/g, '-');
 
                 $("#xmpp-roster #" + jidid + " .xmpp-roster-entry-col1").removeClass().addClass("xmpp-roster-entry-col1 " + show);
-                console.log("+++++++ type=" + pres.type + ", show=" + pres.show);
+                console.log("xmpp-roster type=" + pres.type + ", show=" + pres.show);
                 if(show != 'unavailable' || xmpp_show_offline) {
                     $("#xmpp-roster #" + jidid).show();
                 } else {
@@ -418,7 +418,7 @@
             });
             $(parent).popover("show");
             $(parent).find(".sip-accept-call").click(function(){
-                console.log("+++++++++++ answering call");
+                console.log("answering call");
                 /*
                 var session = ???; 
                 session.answer({
@@ -427,7 +427,7 @@
                 */
             });
             $(parent).find(".sip-reject-call").click(function(){
-                console.log("+++++++++++ rejecting call");
+                console.log("rejecting call");
                 // var session = ???; session.terminate({ status_code: 486 });
             });
             return $(parent).find(".popover");
@@ -445,7 +445,7 @@
             });
             $(parent).popover("show");
             $(parent).find(".sip-stop-call").click(function(){
-                console.log("+++++++++++ stopping call");
+                console.log("stopping call");
                 /*
                 var session = ???; 
                 session.terminate();
@@ -569,7 +569,7 @@
 
             window.onbeforeunload = function(obj) {
                 if(phone.isRegistered()) {
-                    console.log("++++ unregistering phone before leaving");
+                    console.log("unregistering phone before leaving");
                     phone.unregister({'all': true});
                 }
             };

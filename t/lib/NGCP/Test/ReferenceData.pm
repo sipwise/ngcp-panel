@@ -182,14 +182,14 @@ sub _read_depends {
         my $resource_found = 0;
         foreach my $k(keys %{ $self->_reftree }) {
             my $ref = $self->_reftree->{$k};
-            #$self->_test->debug("++++ checking dependency '$$d{resource}' against reference '$$ref{name}' of type '$$ref{type}'\n");
+            #$self->_test->debug("Checking dependency '$$d{resource}' against reference '$$ref{name}' of type '$$ref{type}'\n");
             if($ref->{type} eq $d->{resource}) {
-                #$self->_test->debug("+++ found a reference data entry of resource $$d{resource}\n");
+                #$self->_test->debug("Found a reference data entry of resource $$d{resource}\n");
                 if(defined $d->{hints}) {
                     my $hint_found = 0;
                     foreach my $hint(@{ $d->{hints} }) {
                
-                        #$self->_test->debug("+++ checking hint field $$hint{field} with expected value $$hint{value} against ".$ref->{data}->{$hint->{field}}."\n");
+                        #$self->_test->debug("Checking hint field $$hint{field} with expected value $$hint{value} against ".$ref->{data}->{$hint->{field}}."\n");
                         if(defined $hint->{name} && $hint->{name} eq $ref->{name}) {
                             $hint_found = 1;
                             $self->_dependstree->{$d->{name}}->{data} = $ref->{data};
@@ -241,20 +241,20 @@ sub _replace_vars {
         return;
     } else {
         my @vars = $$var =~ /(\$\{.+?\})/g;
-        $self->_test->debug("++++++ found vars in $refname:\n");
+        $self->_test->debug("Found vars in $refname:\n");
         $self->_test->debug(Dumper \@vars);
         foreach my $tvar(@vars) {
             my $val;
             my $revar = $tvar;
             $revar =~ s/([\$\{\}])/\\$1/g;
-            $self->_test->debug("++++ replaced varname '$tvar' by revar '$revar'\n");
+            $self->_test->debug("Replaced varname '$tvar' by revar '$revar'\n");
             if($tvar eq '${sid}') {
                 $val = $self->sid;
-                $self->_test->debug("++++ replace $tvar by sid $val\n");
+                $self->_test->debug("Replace $tvar by sid $val\n");
             } else {
                 my $len = length($tvar) - 3;
                 my $varname = substr($tvar, 2, $len);
-                $self->_test->debug("++++ extracted varname '$varname'\n");
+                $self->_test->debug("Extracted varname '$varname'\n");
                 unless(exists $self->_reftree->{$varname}) {
                     die "Internal error, unresolved dependency '$varname'\n";
                 }
@@ -286,7 +286,7 @@ sub _resolve_deps {
             $self->_replace_vars(\$ref->{data}, $refname);
 
             unless($ref->{data}->{id}) {
-                #$self->_test->debug("++++ '$refname' has no id yet, create via API, uri is 'api/$$ref{type}\n");
+                #$self->_test->debug("The '$refname' has no id yet, create via API, uri is 'api/$$ref{type}\n");
                 #$self->_test->debug Dumper $ref->{data};
                 my $url = 'api/'.$ref->{type};
                 my $res = $self->client->_post('api/'.$ref->{type}, $ref->{data});
@@ -304,12 +304,12 @@ sub _resolve_deps {
         }
     } else {
         if(exists $self->_reftree->{$refname}) {
-            #$self->_test->debug("++++ found ref '$refname' in tree, just return it\n");
+            #$self->_test->debug("Found ref '$refname' in tree, just return it\n");
             return $self->_reftree->{$refname};
         } else {
             foreach my $ref(@{ $self->_refdata }) {
                 if($ref->{name} eq $refname) {
-                    #$self->_test->debug("++++ found ref '$refname' in JSON, return for creation\n");
+                    #$self->_test->debug("Found ref '$refname' in JSON, return for creation\n");
                     return $ref;
                 }
             }
@@ -350,7 +350,7 @@ sub DESTROY {
 
 	if($self->delete_persistent) {
 		while((my $url = pop @{ $self->_refurls })) {
-            #$self->_test->debug("+++++ deleting $url\n");
+            #$self->_test->debug("Deleting $url\n");
 			my $res = $self->client->_delete($url);
             unless($res->is_success) {
                 my $data = from_json($res->decoded_content);
@@ -363,11 +363,11 @@ sub DESTROY {
                     unless($res->is_success) {
                         $self->_test->info("Failed to both auto-delete or auto-terminate '$url': $$data{message}\n");
                     } else {
-                        #$self->_test->debug("+++++ $url successfully terminated\n");
+                        #$self->_test->debug("The $url successfully terminated\n");
                     }
                 }
             } else {
-                #$self->_test->debug("+++++ $url successfully deleted\n");
+                #$self->_test->debug("The $url successfully deleted\n");
             }
 		}
 	}

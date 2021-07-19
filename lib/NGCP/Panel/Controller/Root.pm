@@ -32,13 +32,13 @@ sub auto :Private {
     $c->stash->{_request_start} = Time::HiRes::time;
 
     my $is_api_request = 0;
-    $c->log->debug("Path: " . $c->request->path);
+    $c->log->debug("*** New " . $c->request->method . " request on path: " . $c->request->path);
     if ($c->request->path =~/^api\//i) {
-        $c->log->debug("Root::auto: enable cache");
+        $c->log->debug("Root::auto enable cache");
         NGCP::Panel::Form::dont_use_cache(0);
         $is_api_request = 1;
     } else {
-        $c->log->debug("Root::auto: disable cache");
+        $c->log->debug("Root::auto disable cache");
         NGCP::Panel::Form::dont_use_cache(1);
     }
 
@@ -132,19 +132,19 @@ sub auto :Private {
         or $c->req->uri->path =~ m|^/internalsms/receive/?$|
         or $c->req->uri->path =~ m|^/soap/intercept(\.wsdl)?/?$|i
     ) {
-        $c->log->debug("*** Root::auto skip authn, grant access to " . $c->request->path);
+        $c->log->debug("Root::auto skip authn, grant access to " . $c->request->path);
         return 1;
     }
 
     if(index($c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') == 0) {
-        $c->log->debug("++++++ Root::auto unauthenticated API request");
+        $c->log->debug("Root::auto unauthenticated API request");
         my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // "";
         my $ssl_sn = hex ($c->request->env->{SSL_CLIENT_M_SERIAL} // 0);
         my $ngcp_api_realm = $c->request->env->{NGCP_API_REALM} // "";
         if($ssl_sn) {
-            $c->log->debug("++++++ Root::auto API request with client auth sn '$ssl_sn'");
+            $c->log->debug("Root::auto API request with client auth sn '$ssl_sn'");
             unless($ssl_dn =~ /^\/?CN=Sipwise NGCP API client certificate$/) {
-                $c->log->error("++++++ Root::auto API request with invalid client DN '" . $ssl_dn . "'");
+                $c->log->error("Root::auto API request with invalid client DN '" . $ssl_dn . "'");
                 $c->res->status(403);
                 $c->res->body(JSON::to_json({
                     message => "Invalid client certificate DN '$ssl_dn'",
@@ -161,7 +161,7 @@ sub auto :Private {
                 $c->log->warn("invalid api login from '".$c->qs($c->req->address)."'");
                 $c->detach(qw(API::Root invalid_user), [$ssl_sn]) unless $c->user_exists;
             } else {
-                $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_cert");
+                $c->log->debug("admin '".$c->user->login."' authenticated via api_admin_cert");
             }
             if($c->user->read_only && $c->req->method eq "POST" &&
                     $c->req->uri->path =~ m|^/api/admincerts/$|) {
@@ -169,7 +169,7 @@ sub auto :Private {
             } elsif($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                 $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                 $c->user->logout;
-                $c->log->error("++++ body data: " . $c->qs($c->req->body_data));
+                $c->log->error("body data: " . $c->qs($c->req->body_data));
                 $c->response->status(403);
                 $c->res->body(JSON::to_json({
                     message => "Invalid HTTP method for read-only user",
@@ -181,12 +181,12 @@ sub auto :Private {
             return $self->check_user_access($c);
         } elsif ($c->req->headers->header("NGCP-UserAgent") &&
                  $c->req->headers->header("NGCP-UserAgent") eq "NGCP::API::Client") {
-            $c->log->debug("++++++ Root::auto API request with system auth");
+            $c->log->debug("Root::auto API request with system auth");
             my $realm = "api_admin_system";
             my $res = $c->authenticate({}, $realm);
 
             unless ($c->user_exists) {
-                $c->log->debug("+++++ invalid api admin system login");
+                $c->log->debug("invalid api admin system login");
                 $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
             }
 
@@ -194,12 +194,12 @@ sub auto :Private {
             return $self->check_user_access($c);
         } elsif ($c->req->headers->header("Authorization") &&
                  $c->req->headers->header("Authorization") =~ m/^Bearer(\s+)a=/) {
-            $c->log->debug("++++++ Root::auto API request with admin JWT");
+            $c->log->debug("Root::auto API request with admin JWT");
             my $realm = "api_admin_jwt";
             my $res = $c->authenticate({}, $realm);
 
             unless ($c->user_exists) {
-                $c->log->debug("+++++ invalid api admin JWT login");
+                $c->log->debug("Invalid api admin JWT login");
                 # $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
             }
 
@@ -207,19 +207,19 @@ sub auto :Private {
             return $self->check_user_access($c);
         } elsif ($c->req->headers->header("Authorization") &&
                  $c->req->headers->header("Authorization") =~ m/^Bearer /) {
-            $c->log->debug("++++++ Root::auto API request with JWT");
+            $c->log->debug("Root::auto API request with JWT");
             my $realm = "api_subscriber_jwt";
             my $res = $c->authenticate({}, $realm);
 
             unless ($c->user_exists) {
-                $c->log->debug("+++++ invalid api subscriber JWT login");
+                $c->log->debug("Invalid api subscriber JWT login");
                 # $c->log->warn("invalid api system login from '".$c->qs($c->req->address)."'");
             }
 
             $self->api_apply_fake_time($c);
             return $self->check_user_access($c);
         } elsif ($ngcp_api_realm eq "subscriber") {
-            $c->log->debug("++++++ Root::auto API subscriber request with http auth");
+            $c->log->debug("Root::auto API subscriber request with http auth");
             my $realm = "api_subscriber_http";
 
             if ($c->req->uri->path =~ m|^/api/platforminfo/?$| &&
@@ -236,19 +236,19 @@ sub auto :Private {
 
             if($res && $c->user_exists) {
                 $d //= $c->req->uri->host;
-                $c->log->debug("++++++ checking '".$c->user->domain->domain."' against '$d'");
+                $c->log->debug("checking '".$c->user->domain->domain."' against '$d'");
                 if ($c->user->domain->domain ne $d) {
                     $c->user->logout;
-                    $c->log->debug("+++++ invalid api subscriber http login by '$username' (domain check failed)");
+                    $c->log->debug("invalid api subscriber http login by '$username' (domain check failed)");
                     $c->log->warn("invalid api http login from '".$c->qs($c->req->address)."' by '" . $c->qs($username) ."'");
                     my $r = $c->get_auth_realm($realm);
                     $r->credential->authorization_required_response($c, $r);
                     return;
                 }
-                $c->log->debug("++++++ subscriber '$username' authenticated via api_subscriber_http");
+                $c->log->debug("subscriber '$username' authenticated via api_subscriber_http");
             } else {
                 $c->user->logout if($c->user);
-                $c->log->debug("+++++ invalid api subscriber http login");
+                $c->log->debug("invalid api subscriber http login");
                 $c->log->warn("invalid api http login from '".$c->qs($c->req->address)."' by '" . $c->qs($username) ."'");
                 my $r = $c->get_auth_realm($realm);
                 $r->credential->authorization_required_response($c, $r);
@@ -257,12 +257,12 @@ sub auto :Private {
             $self->api_apply_fake_time($c);
             return $self->check_user_access($c);
         } else {
-            $c->log->debug("++++++ Root::auto API admin request with http auth");
+            $c->log->debug("Root::auto API admin request with http auth");
             my ($user, $pass) = $c->req->headers->authorization_basic;
             #$c->log->debug("user: " . $user . " pass: " . $pass);
             my $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
             if($res and $c->user_exists and $c->user->is_active)  {
-                $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
+                $c->log->debug("admin '".$c->user->login."' authenticated via api_admin_http");
             } else {
                 my $realm = 'api_admin_http';
 
@@ -272,7 +272,7 @@ sub auto :Private {
                 }
 
                 $c->user->logout if($c->user);
-                $c->log->debug("+++++ invalid api admin http login");
+                $c->log->debug("invalid api admin http login");
                 $c->log->warn("invalid api http login from '".$c->req->address."' by '$user'");
                 my $r = $c->get_auth_realm($realm);
                 $r->credential->authorization_required_response($c, $r);
@@ -285,7 +285,7 @@ sub auto :Private {
             } elsif($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                 $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                 $c->user->logout;
-                $c->log->error("++++ body data: " . $c->req->body_data);
+                $c->log->error("body data: " . $c->req->body_data);
                 $c->response->status(403);
                 $c->res->body(JSON::to_json({
                     message => "Invalid HTTP method for read-only user",
@@ -300,12 +300,12 @@ sub auto :Private {
             $c->req->headers->header("Authorization") &&
             $c->req->headers->header("Authorization") =~ m/^Bearer(\s+)a=/) {
 
-        $c->log->debug("++++++ Root::auto UI request with admin JWT");
+        $c->log->debug("Root::auto UI request with admin JWT");
         my $realm = "admin_jwt";
         my $res = $c->authenticate({}, $realm);
 
         unless ($c->user_exists) {
-            $c->log->debug("+++++ invalid UI admin JWT login");
+            $c->log->debug("invalid UI admin JWT login");
         }
 
         $self->api_apply_fake_time($c);
@@ -330,13 +330,13 @@ sub auto :Private {
         } else {
             $target = $c->request->headers->referer;
         }
-        $c->log->debug("*** Root::auto do login, target='$target'");
+        $c->log->debug("Root::auto do login, target='$target'");
         $c->session(target => $target);
         $c->response->redirect($c->uri_for('/login'));
         return;
     }
 
-    $c->log->debug("*** Root::auto grant access for authenticated user");
+    $c->log->debug("Root::auto grant access for authenticated user");
 
     if (exists $c->config->{external_documentation}{link} && 'ARRAY' ne ref $c->config->{external_documentation}{link}) {
         $c->config->{external_documentation}{link} = [$c->config->{external_documentation}{link}];
@@ -396,6 +396,7 @@ sub root_default :Path {
 
     $self->include_framed($c);
 
+    $c->log->debug("Root::root_default 404 Not found. Requested unknown resource.");
     $c->detach( '/error_page' );
 }
 
@@ -415,9 +416,13 @@ sub end :Private {
             exception_timestamp => $incident_timestamp,
             template => 'error_page.tt'
         );
+        $c->log->debug("Root::end 500 Internal error");
         $c->response->status(500);
         $c->detach($c->view);
     }
+    $c->stash->{_request_done} = Time::HiRes::time;
+    my $total = $c->stash->{_request_done} - $c->stash->{_request_start};
+    $c->log->debug("Root::end Finished in $total seconds" );
 }
 
 sub error_page :Private {
@@ -434,6 +439,7 @@ sub error_page :Private {
         $c->stash(template => 'notfound_page.tt');
     }
     $c->response->status(404);
+    $c->log->debug("Root::error_page 404 Not found");
 }
 
 sub denied_page :Private {
@@ -447,6 +453,7 @@ sub denied_page :Private {
         $c->stash(template => 'denied_page.tt');
     }
     $c->response->status(403);
+    $c->log->debug("Root::denied_page 403 Access denied");
 }
 
 sub check_user_access {

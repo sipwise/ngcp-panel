@@ -116,11 +116,12 @@ sub update_peer_registration {
     }
 
     use Data::Dumper;
-    $c->log->debug("+++++++++++++++++++ old peer auth params: " . Dumper $oldprefs);
-    $c->log->debug("+++++++++++++++++++ new peer auth params: " . Dumper $prefs);
-    $c->log->debug("+++++++++++++++++++ sid=$sid");
-    $c->log->debug("+++++++++++++++++++ uuid=$uuid");
-    $c->log->debug("+++++++++++++++++++ contact=$contact");
+    $c->log->debug("update_peer_registration():");
+    $c->log->debug(" old peer auth params: " . Dumper $oldprefs);
+    $c->log->debug(" new peer auth params: " . Dumper $prefs);
+    $c->log->debug(" sid=$sid");
+    $c->log->debug(" uuid=$uuid");
+    $c->log->debug(" contact=$contact");
 
     my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>

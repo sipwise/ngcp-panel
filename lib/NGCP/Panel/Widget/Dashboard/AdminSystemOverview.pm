@@ -31,7 +31,7 @@ sub emergency_mode {
             prov_domain => $prov_dom,
         );
         if($em_rs && $em_rs->first && int($em_rs->first->value) > 0) {
-            $c->log->debug("+++++ domain ".$prov_dom->domain." has emergency mode " . $em_rs->first->value);
+            $c->log->debug("The domain ".$prov_dom->domain." has emergency mode " . $em_rs->first->value);
             $em_count++;
         }
     }
