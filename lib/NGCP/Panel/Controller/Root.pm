@@ -345,12 +345,6 @@ sub auto :Private {
     # load top menu widgets
     my $topmenu_templates = [];
     $topmenu_templates = ['widgets/'.$c->user->roles.'_topmenu_settings.tt'];
-    if ($c->user->roles eq 'admin') {
-        if (!$c->stash->{openvpn_info}) {
-            my $openvpn_info = NGCP::Panel::Utils::Auth::check_openvpn_status($c);
-            $c->stash(openvpn_info => $openvpn_info);
-        }
-    }
     $c->stash(topmenu => $topmenu_templates);
 
     $self->include_framed($c);
