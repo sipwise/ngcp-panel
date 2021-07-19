@@ -198,7 +198,7 @@ sub _get_patch_data {
 
 sub _test_fields {
     my ($self, $skip, $expected, $ref, $item, $name) = @_;
-    #print "++++ testing fields for $name\n";
+    #print "Testing fields for $name\n";
     #print Dumper $ref;
     #print Dumper $item;
 
@@ -878,11 +878,11 @@ sub DEMOLISH {
                         diag("Failed to both auto-delete or auto-terminate '$url': $$data{message}");
                         push @failed, $id;
                     } else {
-                        #print "+++++ $url successfully terminated\n";
+                        #print "The $url successfully terminated\n";
                     }
                 }
             } else {
-                #print "+++++ $url successfully deleted\n";
+                #print "The $url successfully deleted\n";
             }
 
             $self->_push_request('autodelete', $res);
