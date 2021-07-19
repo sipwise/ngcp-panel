@@ -144,6 +144,12 @@ sub supportstatus :Chained('/') :PathPart('statistics/supportstatus') :Args() {
     $c->stash(support_status_code => $support_status_code,
         #template => 'statistics/supportstatus.tt',
     );
+
+    if (!$c->stash->{openvpn_info}) {
+        my $openvpn_info = NGCP::Panel::Utils::Auth::check_openvpn_status($c);
+        $c->stash(openvpn_info => $openvpn_info);
+    }
+
     return;
 }
 
