@@ -550,13 +550,21 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         my $role = $redis->hget("auth_token:$auth_token", "role");
         my $user_id = $redis->hget("auth_token:$auth_token", "user_id");
 
-        $redis->del("auth_token:$auth_token") if ($type eq 'onetime');
+        unless ($type && $role && $user_id) {
+            $c->response->status(HTTP_FORBIDDEN);
+            $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+                                             message => "Forbidden!" })."\n");
+            $c->log->error("Unknown auth_token");
+            return;
+        }
+
+        $redis->del("auth_token:$auth_token") if $type eq 'onetime';
 
         if ($ngcp_realm eq 'admin') {
             unless (grep {$role eq $_} qw/admin reseller ccare ccareadmin/) {
                 $c->response->status(HTTP_FORBIDDEN);
                 $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-                message => "Forbidden!" })."\n");
+                                                 message => "Forbidden!" })."\n");
                 $c->log->error("Wrong auth_token role");
                 return;
             }

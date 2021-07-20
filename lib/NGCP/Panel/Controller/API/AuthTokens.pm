@@ -8,9 +8,9 @@ use File::Basename;
 use File::Find::Rule;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::Auth;
 
-
-sub allowed_methods{
+sub allowed_methods {
     return [qw/POST OPTIONS/];
 }
 
@@ -25,15 +25,15 @@ sub query_params {
     ];
 }
 
-sub resource_name{
+sub resource_name {
     return 'authtokens';
 }
 
-sub dispatch_path{
+sub dispatch_path {
     return '/api/authtokens/';
 }
 
-sub relation{
+sub relation {
     return 'http://purl.org/sipwise/ngcp-api/#rel-authtokens';
 }
 
@@ -45,24 +45,37 @@ sub POST :Allow {
     my ($self, $c) = @_;
 
     my $resource = $self->get_valid_post_data(
-        c => $c, 
+        c => $c,
         media_type => 'application/json',
     );
+
     return unless $resource;
 
     my $form = $self->get_form($c);
+
     return unless $self->validate_form(
         c => $c,
         resource => $resource,
         form => $form,
     );
-    if($c->user->roles eq "reseller") {
+
+    if ($c->user->roles eq "reseller") {
         $resource->{reseller_id} = $c->user->reseller_id;
     }
-    
+
     my $res = {};
 
-    $res->{token} = $self->generate_auth_token($c, $resource);
+    $res->{token} = NGCP::Panel::Utils::Auth::generate_auth_token($self, $c,
+        $resource->{type},
+        $c->users->role,
+        $c->users->id,
+        $resource->{expires} // 10,
+    );
+
+    unless ($res->{token}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Could not generate auth token");
+        return;
+    }
 
     $c->response->status(HTTP_CREATED);
     $c->response->body(JSON::to_json($res));

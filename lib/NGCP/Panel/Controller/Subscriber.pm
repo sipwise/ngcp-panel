@@ -12,6 +12,7 @@ use Data::Dumper;
 use MIME::Base64 qw(encode_base64url decode_base64url);
 use File::Slurp qw/read_file/;
 
+use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
@@ -3164,7 +3165,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 sub login_to_csc :Chained('master') :PathPart('login_to_csc') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
 
-    $c->detach('/denied_page') if($c->user->read_only);
+    $c->detach('/denied_page') if ($c->user->read_only);
 
     my $subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
@@ -3182,6 +3183,39 @@ sub login_to_csc :Chained('master') :PathPart('login_to_csc') :Args(0) :Does(ACL
 
     #redirect to server's hostname
     $c->res->redirect("https://" . $c->req->uri->host . "/");
+}
+
+sub login_to_csc_v2 :Chained('master') :PathPart('login_to_csc_v2') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page') if ($c->user->read_only);
+
+    my $subscriber = $c->stash->{subscriber};
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+    my $auth_token_type = 'onetime';
+    my $auth_token_role = 'subscriber';
+    my $auth_token_user_id = $prov_subscriber->id;
+    my $auth_token_expires = 60;
+
+    my $token = NGCP::Panel::Utils::Auth::generate_auth_token($self, $c,
+        $auth_token_type,
+        $auth_token_role,
+        $auth_token_user_id,
+        $auth_token_expires,
+    );
+
+    unless ($token) {
+        NGCP::Panel::Utils::Message::error(
+            c     => $c,
+            error => 'Internal error when generating the auth token',
+            desc  => $c->loc('Failed to perform CSC V2 login'),
+        );
+        return;
+    }
+
+    #redirect to server's hostname
+    my $v2_prefix = $c->config->{general}{csc_js_enable} == 2 ? '/v2/' : '/';
+    $c->res->redirect("https://" . $c->req->uri->host . $v2_prefix . "?a=$token");
 }
 
 sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) : AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {

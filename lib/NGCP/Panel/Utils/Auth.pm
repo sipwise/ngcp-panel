@@ -7,6 +7,7 @@ use IO::Compress::Zip qw/zip/;
 use IPC::System::Simple qw/capturex/;
 use Redis;
 use UUID;
+use NGCP::Panel::Utils::Redis;
 
 our $SALT_LENGTH = 128;
 
@@ -428,6 +429,37 @@ sub initiate_password_reset {
         NGCP::Panel::Utils::Email::admin_password_reset($c, $admin, $url);
     }
     return {success => 1};
+}
+
+sub generate_auth_token {
+    my ($self, $c, $type, $role, $user_id, $expires) = @_;
+
+    my ($uuid_bin, $uuid_string);
+    my $redis = NGCP::Panel::Utils::Redis::get_redis_connection($c, {database => $c->config->{'Plugin::Session'}->{redis_db}});
+
+    unless ($redis) {
+        $c->log->error("Could not generate auth token for user $user_id, no Redis connection available");
+        return;
+    }
+
+    $expires //= 10; # auto expire the token in 10 seconds if the value is not provided
+
+    my $expire_time = time+10;
+
+    UUID::generate($uuid_bin);
+    UUID::unparse($uuid_bin, $uuid_string);
+    #remove '-' from the token
+    $uuid_string =~ s/\-//g;
+    $redis->hset("auth_token:$uuid_string", 'type', $type);
+    $redis->hset("auth_token:$uuid_string", 'role', $role);
+    $redis->hset("auth_token:$uuid_string", 'user_id', $user_id);
+    $redis->hset("auth_token:$uuid_string", 'exp', $expire_time);
+    $redis->expire("auth_token:$uuid_string", $expires);
+
+    $c->log->debug(sprintf "Generated auth_token=%s type=%s role=%s user_id=%s expires=%d expire_time=%d",
+                    $uuid_string, $type, $role, $user_id, $expires, $expire_time);
+
+    return $uuid_string;
 }
 
 1;
