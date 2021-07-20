@@ -1,3 +1,14 @@
+ngcp-panel (9.5.1.6+0~mr9.5.1.6) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [774463e] TT#122872 selenium: add new superuser test
+
+  [ Alexander Lutay ]
+  * [01413e2] TT#128256 Add localisation for phonebook 'Upload CSV' page
+  * [867fca8] TT#130659 Stop calling systemd openvpn status twice on every HTTP request
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Jul 2021 16:22:38 +0200
+
 ngcp-panel (9.5.1.5+0~mr9.5.1.5) unstable; urgency=medium
 
   [ Rene Krenn ]
