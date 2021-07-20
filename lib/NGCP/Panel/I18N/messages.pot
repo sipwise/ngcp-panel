@@ -10488,6 +10488,10 @@ msgid "Single-codec answers"
 msgstr ""
 
 #: share/templates/statistics/supportstatus.tt
+msgid "Sipwise VPN service is"
+msgstr ""
+
+#: share/templates/statistics/supportstatus.tt
 msgid "Sipwise support access is"
 msgstr ""
 
