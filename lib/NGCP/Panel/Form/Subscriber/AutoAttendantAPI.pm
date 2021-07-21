@@ -61,6 +61,14 @@ has_block 'fields' => (
 
 has_field 'subscriber_id' => (
     type => '+NGCP::Panel::Field::PosInteger',
+    element_attr => {
+        expand => {
+            class    => 'NGCP::Panel::Role::API::Subscribers',
+            alias    => 'subscriber',
+            id_field => 'subscriber_id',
+            remove_fields => [qw(password webpassword)],
+        },
+    },
 );
 
 sub validate_slots_destination {

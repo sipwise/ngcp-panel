@@ -86,7 +86,9 @@ sub hal_from_item {
         resource => \%resource,
         run => 0,
     );
+
     $self->post_process_hal_resource($c, $item, \%resource, $form);
+    $self->expand_fields($c, \%resource);
     $hal->resource(\%resource);
     return $hal;
 }

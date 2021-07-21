@@ -8,7 +8,11 @@ has_field 'reseller' => (
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The reseller id to assign this domain to.']
+        title => ['The reseller id to assign this domain to.'],
+        expand => {
+            class    => 'NGCP::Panel::Role::API::Resellers',
+            id_field => 'reseller_id',
+        },
     },
 );
 

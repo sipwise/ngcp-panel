@@ -72,6 +72,8 @@ sub hal_from_zone {
 
     $resource{id} = int($zone->id);
     $resource{billing_profile_id} = int($zone->billing_profile_id);
+
+    $self->expand_fields($c, \%resource);
     $hal->resource({%resource});
     return $hal;
 }

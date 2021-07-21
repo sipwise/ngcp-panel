@@ -22,9 +22,33 @@ sub get_form {
     return;
 }
 
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my %resource = $item->get_inflated_columns;
+
+    $form //= $self->get_form($c);
+
+    $self->validate_form(
+        c => $c,
+        resource => \%resource,
+        form => $form,
+        run => 0,
+    );
+
+    $resource{id} = int($item->id);
+
+    if ($c->user->roles eq "admin" && $item->domain_resellers->first) {
+        $resource{reseller_id} = int($item->domain_resellers->first->reseller_id)
+    }
+
+    return \%resource;
+}
+
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
-    my %resource = $item->get_inflated_columns;
+
+    my $resource = $self->resource_from_item($c, $item, $form);
 
     my $hal = Data::HAL->new(
         links => [
@@ -44,73 +68,8 @@ sub hal_from_item {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= $self->get_form($c);
-
-    $self->validate_form(
-        c => $c,
-        resource => \%resource,
-        form => $form,
-        run => 0,
-    );
-
-    $resource{id} = int($item->id);
-    if($c->user->roles eq "admin") {
-        $resource{reseller_id} = 
-            int($item->domain_resellers->first->reseller_id)
-            if($item->domain_resellers->first);
-    } elsif($c->user->roles eq "reseller") {
-    }
-
-=pod
-    # TODO: do we really want to provide this info, as you can't actually
-    # PUT/PATCH/POST it? Or should you?
-    $resource{preferences} = {};
-    foreach my $pref($item->provisioning_voip_domain->voip_dom_preferences->all) {
-        next if($pref->attribute->internal);
-        my $plain = { "boolean" => 1, "int" => 1, "string" => 1 };
-        if(exists $plain->{$pref->attribute->data_type}) {
-            # plain key/value pairs
-            my $value;
-            SWITCH: for ($pref->attribute->data_type) {
-                /^int$/ && do {
-                    $value = int($pref->value);
-                    last SWITCH;
-                };
-                /^boolean$/ && do {
-                    $value = JSON::Types::bool($pref->value);
-                    last SWITCH;
-                };
-                # default
-                $value = $pref->value;
-            } # SWITCH
-            if($pref->attribute->max_occur != 1) {
-                $resource{preferences}{$pref->attribute->attribute} = $value;
-            } else {
-                $resource{preferences}{$pref->attribute->attribute} = []
-                    unless(exists $resource{preferences}{$pref->attribute->attribute});
-                push @{ $resource{preferences}{$pref->attribute->attribute} }, $value;
-            }
-        } else {
-            # enum mappings
-            my $value;
-            SWITCH: for ($pref->attribute->data_type) {
-                /^int$/ && do {
-                    $value = int($pref->value);
-                    last SWITCH;
-                };
-                /^boolean$/ && do {
-                    $value = JSON::Types::bool($pref->value);
-                    last SWITCH;
-                };
-                # default
-                $value = $pref->value;
-            } # SWITCH
-            $resource{preferences}{$pref->attribute->attribute} = $value;
-        }
-    }
-=cut    
-    
-    $hal->resource({%resource});
+    $self->expand_fields($c, $resource);
+    $hal->resource($resource);
     return $hal;
 }
 

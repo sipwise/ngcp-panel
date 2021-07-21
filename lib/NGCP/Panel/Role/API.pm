@@ -1272,8 +1272,55 @@ sub hal_from_item {
     }
     $resource->{id} = $self->get_item_id($c, $item);
     $resource = $self->post_process_hal_resource($c, $item, $resource, $form);
+
+    $self->expand_fields($c, $resource);
+
     $hal->resource({%$resource});
     return $hal;
+}
+
+sub expand_fields {
+    my ($self, $c, $resource) = @_;
+
+    my $expand_param = $c->req->param('expand') // return 1;
+    my $all = $expand_param eq 'all' ? 1 : 0;
+    my @expand_fields = split /,/, $expand_param;
+    my @found_fields = ();
+
+    my $resource_form = $self->get_form($c);
+    return unless $resource_form;
+
+    foreach my $field ($resource_form->fields) {
+        my $attr     = $field->element_attr;
+        my $expand   = $attr->{expand} // next;
+        my $alias    = $expand->{alias} // $field->name;
+        my $class    = $expand->{class} // next;
+        my $id_field = $expand->{id_field} // next;
+        my $fetch    = $expand->{fetch} // 0;
+        my $id       = $resource->{$id_field} // next;
+        next unless $all || grep { /^$id_field$/ } @expand_fields;
+        my $form = $class->get_form($c) // next;
+        my $item = $class->item_by_id($c, $id) // next;
+        my $data = $class->resource_from_item($c, $item, $form);
+        $data = $class->post_process_hal_resource($c, $item, $data, $form);
+        push @found_fields, $id_field;
+        if (my $remove_fields = $expand->{remove_fields}) {
+            delete @{$data}{@{$remove_fields}};
+        }
+        if ($fetch && $data->{$id_field}) {
+            $resource->{$alias} = $data->{$id_field};
+        } else {
+            $resource->{$alias} = $data;
+        }
+    }
+
+    unless ($all || $#expand_fields == $#found_fields) {
+        $c->log->debug("Provided expand fields are invalid");
+        $self->error($c, HTTP_CONFLICT, "Provided expand fields are invalid");
+        return;
+    }
+
+    return 1;
 }
 
 sub get_mandatory_params {

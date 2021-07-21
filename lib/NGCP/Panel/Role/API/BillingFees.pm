@@ -71,6 +71,8 @@ sub hal_from_fee {
 
     $resource{id} = int($fee->id);
     $resource{billing_profile_id} = int($fee->billing_profile_id);
+
+    $self->expand_fields($c, \%resource);
     $hal->resource({%resource});
     return $hal;
 }

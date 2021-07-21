@@ -96,6 +96,8 @@ sub hal_from_item {
     );
     $resource->{cft_ringtimeout} = $ringtimeout_preference;
     $resource->{id} = int($item->id);
+
+    $self->expand_fields($c, $resource);
     $hal->resource($resource);
     return $hal;
 }

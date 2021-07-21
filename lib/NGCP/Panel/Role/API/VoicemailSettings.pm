@@ -73,6 +73,8 @@ sub hal_from_item {
     );
 
     $resource->{id} = int($item->provisioning_voip_subscriber->voip_subscriber->id);
+
+    $self->expand_fields($c, $resource);
     $hal->resource($resource);
     return $hal;
 }

@@ -94,6 +94,8 @@ sub hal_from_item {
     );
 
     my $resource = $self->resource_from_item($c, $item, $form);
+
+    $self->expand_fields($c, $resource);
     $hal->resource($resource);
     return $hal;
 }

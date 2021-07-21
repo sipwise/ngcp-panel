@@ -34,6 +34,46 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::CustomerAPI", $c);
 }
 
+sub resource_from_item {
+    my ($self, $c, $item, $form, $now) = @_;
+
+    my %resource = $item->get_inflated_columns;
+
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $item);
+    my $billing_profile_id = $billing_mapping->billing_profile->id;
+    my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($item);
+    my $billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_mappings($item);
+
+    NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+            contract => $item,
+            now => $now);
+
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => \%resource,
+        run => 0,
+    );
+
+    foreach my $field (qw/create_timestamp activate_timestamp modify_timestamp terminate_timestamp/) {
+        $resource{$field} = defined $resource{$field} 
+                                ? NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::from_string($resource{$field})) 
+                                : undef;
+    }
+    # return the virtual "type" instead of the actual product id
+    $resource{type} = $item->product->class; #$billing_mapping->product->class;
+    $resource{billing_profiles} = $future_billing_profiles;
+    $resource{all_billing_profiles} = $billing_profiles;
+
+    $resource{id} = int($item->id);
+    $resource{billing_profile_id} = int($billing_profile_id);
+    $resource{billing_profile_definition} = 'id';
+
+    return \%resource;
+}
+
 sub hal_from_customer {
     my ($self, $c, $customer, $form, $now) = @_;
 
@@ -43,16 +83,7 @@ sub hal_from_customer {
         $is_adm = 1;
     }
 
-    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
-    my $billing_profile_id = $billing_mapping->billing_profile->id;
-    my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($customer);
-    my $billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_mappings($customer);
-
-    NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
-            contract => $customer,
-            now => $now);
-
-    my %resource = $customer->get_inflated_columns;
+    my $resource = $self->resource_from_item($c, $customer, $form, $now);
 
     my @profile_links = ();
     my @network_links = ();
@@ -96,26 +127,8 @@ sub hal_from_customer {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    foreach my $field (qw/create_timestamp activate_timestamp modify_timestamp terminate_timestamp/){
-        $resource{$field} =  defined $resource{$field} ? NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::from_string($resource{$field})) : undef ;
-    }
-    # return the virtual "type" instead of the actual product id
-    $resource{type} = $customer->product->class; #$billing_mapping->product->class;
-    $resource{billing_profiles} = $future_billing_profiles;
-    $resource{all_billing_profiles} = $billing_profiles;
-
-    $resource{id} = int($customer->id);
-    $resource{billing_profile_id} = int($billing_profile_id);
-    $resource{billing_profile_definition} = 'id';
-    $hal->resource({%resource});
+    $self->expand_fields($c, $resource);
+    $hal->resource($resource);
     return $hal;
 }
 

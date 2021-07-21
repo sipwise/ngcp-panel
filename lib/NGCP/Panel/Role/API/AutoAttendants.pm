@@ -18,11 +18,27 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::AutoAttendantAPI", $c);
 }
 
-sub hal_from_item {
-    my ($self, $c, $item) = @_;
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
 
     my $p_subs = $item->provisioning_voip_subscriber;
     my $resource = { subscriber_id => $item->id, slots => $self->_autoattendants_from_subscriber($p_subs) };
+
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+        run => 0,
+    );
+
+    return $resource;
+}
+
+sub hal_from_item {
+    my ($self, $c, $item) = @_;
+
+    my $resource = $self->resource_from_item($c, $item);
 
     my $hal = Data::HAL->new(
         links => [
@@ -42,22 +58,7 @@ sub hal_from_item {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    my $form = $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-        run => 0,
-    );
-
-    if ($c->req->param('expand') && is_int($c->req->param('expand')) && $c->req->param('expand') == 1) {
-        my $subscriber_form = NGCP::Panel::Role::API::Subscribers->get_form($c);
-        $resource->{subscriber} = NGCP::Panel::Role::API::Subscribers->resource_from_item($c, $item, $subscriber_form);
-        #don't show passwords here
-        delete $resource->{subscriber}->{webpassword};
-        delete $resource->{subscriber}->{password};
-    }
-
+    $self->expand_fields($c, $resource);
     $hal->resource($resource);
     return $hal;
 }

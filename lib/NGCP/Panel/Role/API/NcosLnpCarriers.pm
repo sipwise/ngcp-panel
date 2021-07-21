@@ -55,6 +55,8 @@ sub hal_from_item {
     $resource{id} = int($item->id);
     $resource{carrier_id} = int($item->lnp_provider_id);
     delete $resource{lnp_provider_id};
+
+    $self->expand_fields($c, \%resource);
     $hal->resource({%resource});
     return $hal;
 }

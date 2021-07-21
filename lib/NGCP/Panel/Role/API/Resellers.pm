@@ -25,15 +25,30 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::ResellerAPI", $c);
 }
 
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my %resource = $item->get_inflated_columns;
+
+    $resource{enable_rtc} = $item->rtc_user ? JSON::true : JSON::false;
+
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => \%resource,
+        run => 0,
+    );
+
+    $resource{id} = int($item->id);
+
+    return \%resource;
+}
+
 sub hal_from_reseller {
     my ($self, $c, $reseller, $form) = @_;
 
-    my %resource = $reseller->get_inflated_columns;
-    if ($reseller->rtc_user) {
-        $resource{enable_rtc} = JSON::true;
-    } else {
-        $resource{enable_rtc} = JSON::false;
-    }
+    my $resource = $self->resource_from_item($c, $reseller, $form);
 
     # TODO: we should return the relations in embedded fields,
     # if the structure is returned for one single item
@@ -61,16 +76,8 @@ sub hal_from_reseller {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    $resource{id} = int($reseller->id);
-    $hal->resource({%resource});
+    $self->expand_fields($c, $resource);
+    $hal->resource($resource);
     return $hal;
 }
 

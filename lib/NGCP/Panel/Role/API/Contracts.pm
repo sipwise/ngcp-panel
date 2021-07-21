@@ -37,20 +37,45 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::ContractAPI", $c);
 }
 
-sub hal_from_contract {
-    my ($self, $c, $contract, $form, $now) = @_;
+sub resource_from_item {
+    my ($self, $c, $item, $form, $now) = @_;
 
-    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $contract, );
+    my %resource = $item->get_inflated_columns;
+
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
+    my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $item, );
     my $billing_profile_id = $billing_mapping->billing_profile->id;
-    my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($contract);
-    my $billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_mappings($contract);
+    my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($item);
+    my $billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_mappings($item);
 
     #contract balances are created with GET api/contracts/4711
     NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
-            contract => $contract,
+            contract => $item,
             now => $now);
 
-    my %resource = $contract->get_inflated_columns;
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => \%resource,
+        run => 0,
+    );
+
+    $resource{type} = $item->product->class;
+    $resource{billing_profiles} = $future_billing_profiles;
+    $resource{all_billing_profiles} = $billing_profiles;
+
+    $resource{id} = int($item->id);
+    $resource{billing_profile_id} = $billing_profile_id ? int($billing_profile_id) : undef;
+    $resource{billing_profile_definition} = 'id';
+
+    return \%resource;
+}
+
+sub hal_from_contract {
+    my ($self, $c, $contract, $form, $now) = @_;
+
+    my $resource = $self->resource_from_item($c, $contract, $form, $now);
 
     my @profile_links = ();
     my @network_links = ();
@@ -81,22 +106,8 @@ sub hal_from_contract {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= $self->get_form($c);
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    $resource{type} = $contract->product->class;
-    $resource{billing_profiles} = $future_billing_profiles;
-    $resource{all_billing_profiles} = $billing_profiles;
-
-    $resource{id} = int($contract->id);
-    $resource{billing_profile_id} = $billing_profile_id ? int($billing_profile_id) : undef;
-    $resource{billing_profile_definition} = 'id';
-    $hal->resource({%resource});
+    $self->expand_fields($c, $resource);
+    $hal->resource($resource);
     return $hal;
 }
 

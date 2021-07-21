@@ -51,6 +51,8 @@ sub hal_from_item {
 
     my $resource = $self->resource_from_item($c, $item);
     return unless $resource;
+
+    $self->expand_fields($c, $resource);
     $hal->resource($resource);
     return $hal;
 }

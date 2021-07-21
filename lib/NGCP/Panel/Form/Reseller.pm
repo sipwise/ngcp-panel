@@ -16,7 +16,11 @@ has_field 'contract' => (
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The contract used for this reseller.']
+        title => ['The contract used for this reseller.'],
+        expand => {
+            class    => 'NGCP::Panel::Role::API::Contracts',
+            id_field => 'contract_id',
+        },
     },
 );
 

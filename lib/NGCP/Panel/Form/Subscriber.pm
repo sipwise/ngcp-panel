@@ -91,6 +91,10 @@ has_field 'domain' => (
                 title => ['The domain name this subscriber belongs to.'],
             },
         },
+        expand => {
+            class    => 'NGCP::Panel::Role::API::Domains',
+            id_field => 'domain_id',
+        },
     },
 );
 

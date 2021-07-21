@@ -74,6 +74,8 @@ sub hal_from_item {
     );
 
     $resource->{id} = int($item->contract->id);
+
+    $self->expand_fields($c, $resource);
     $hal->resource($resource);
     return $hal;
 }

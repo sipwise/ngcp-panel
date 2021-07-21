@@ -12,7 +12,13 @@ has_field 'customer_id' => (
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The contract used for this subscriber.']
+        title => ['The contract used for this subscriber.'],
+        expand => {
+            class    => 'NGCP::Panel::Role::API::Customers',
+            alias    => 'customer',
+            id_field => 'customer_id',
+            fetch    => 0,
+        },
     },
 );
 

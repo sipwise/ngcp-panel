@@ -79,6 +79,7 @@ sub hal_from_item {
         }
     }
 
+    $self->expand_fields($c, \%resource);
     $hal->resource(\%resource);
     return $hal;
 }

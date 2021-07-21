@@ -68,6 +68,8 @@ sub hal_from_item {
         delete $resource{code};
     }
     $resource{id} = int($item->id);
+
+    $self->expand_fields($c, \%resource);
     $hal->resource({%resource});
     return $hal;
 }

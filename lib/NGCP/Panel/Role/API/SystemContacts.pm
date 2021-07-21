@@ -64,6 +64,8 @@ sub hal_from_contact {
     $resource{timezone} = $resource{timezone}{name};
 
     $resource{id} = int($contact->id);
+
+    $self->expand_fields($c, \%resource);
     $hal->resource({%resource});
     return $hal;
 }
