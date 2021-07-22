@@ -2909,7 +2909,7 @@ msgstr ""
 msgid "Cust6"
 msgstr ""
 
-#: share/templates/reseller/branding.tt
+#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "Custom CSS"
 msgstr ""
 
@@ -3155,7 +3155,7 @@ msgstr ""
 msgid "Delete Key"
 msgstr ""
 
-#: share/templates/reseller/branding.tt
+#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "Delete Logo"
 msgstr ""
 
@@ -3742,7 +3742,7 @@ msgstr ""
 msgid "Edit %1"
 msgstr ""
 
-#: share/templates/reseller/branding.tt
+#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "Edit Branding"
 msgstr ""
 
@@ -4854,6 +4854,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm
 msgid "Failed to move rewrite rule."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Failed to perform CSC V2 login"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm
@@ -7283,6 +7287,10 @@ msgstr ""
 msgid "Login to CSC"
 msgstr ""
 
+#: share/templates/subscriber/master.tt
+msgid "Login to New CSC"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Logo"
 msgstr ""
@@ -7980,7 +7988,7 @@ msgstr ""
 msgid "No LNP number file specified!"
 msgstr ""
 
-#: share/templates/reseller/branding.tt
+#: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "No branding specified, using standard branding."
 msgstr ""
 
@@ -8006,6 +8014,10 @@ msgstr ""
 
 #: share/templates/reseller/branding.tt
 msgid "No logo uploaded"
+msgstr ""
+
+#: share/templates/reseller/details.tt
+msgid "No logo uploaded."
 msgstr ""
 
 #: share/templates/widgets/subscriber_vm_overview.tt
@@ -10019,6 +10031,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SA"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "SDP Crypto base64 padding"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14576,6 +14592,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whitelist"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "With this flag set, Trailing `=' characters used for base64 SDP crypto padding, will be left in place"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
