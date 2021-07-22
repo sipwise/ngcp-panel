@@ -32,7 +32,7 @@ sub auto :Private {
     $c->stash->{_request_start} = Time::HiRes::time;
 
     my $is_api_request = 0;
-    $c->log->debug("*** New " . $c->request->method . " request on path: " . $c->request->path);
+    $c->log->debug("*** New " . $c->request->method . " request on path: /" . $c->request->path);
     if ($c->request->path =~/^api\//i) {
         $c->log->debug("Root::auto enable cache");
         NGCP::Panel::Form::dont_use_cache(0);
