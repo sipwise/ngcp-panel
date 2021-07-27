@@ -67,8 +67,8 @@ sub POST :Allow {
 
     $res->{token} = NGCP::Panel::Utils::Auth::generate_auth_token($self, $c,
         $resource->{type},
-        $c->users->role,
-        $c->users->id,
+        $c->user->roles,
+        $c->user->id,
         $resource->{expires} // 10,
     );
 
