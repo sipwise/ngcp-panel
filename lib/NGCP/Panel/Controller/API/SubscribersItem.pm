@@ -101,7 +101,6 @@ sub PUT :Allow {
         last unless $subscriber;
 
         $resource = $self->resource_from_item($c, $subscriber, $form);
-        delete $resource->{webpassword}; # since it's encrypted, no point to return it
         my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
@@ -151,7 +150,6 @@ sub PATCH :Allow {
         last unless $subscriber;
 
         $resource = $self->resource_from_item($c, $subscriber, $form);
-        delete $resource->{webpassword}; # since it's encrypted, no point to return it
         my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 

@@ -55,7 +55,16 @@ sub resource_from_item {
     delete $prov_resource->{domain_id};
     delete $prov_resource->{account_id};
     my %resource = %{ merge($bill_resource, $prov_resource) };
+    my $delete_passwords = 1;
     $resource{administrative} = delete $resource{admin};
+
+    if ($c->request->method eq 'PATCH' && !$resource{pre_patch_resource}) {
+        $delete_passwords = 0;
+        $resource{pre_patch_resource} = 1;
+    } else {
+        $delete_passwords = 1;
+        delete $resource{pre_patch_resource};
+    }
 
     unless($customer->product->class eq 'pbxaccount') {
         delete $resource{is_pbx_group};
@@ -76,10 +85,19 @@ sub resource_from_item {
         $resource{email} = undef;
         $resource{timezone} = undef;
     }
-    if (length($resource{webpassword})
-        and $resource{webpassword} =~ /^([^\$]+)\$([^\$]+)$/
-        and length($1) == ceil(4 * (($NGCP::Panel::Utils::Auth::SALT_LENGTH / 8) / 3))) {
-        delete $resource{webpassword};
+    # if the webpassword length is 54 or 56 chars and it contains $,
+    # we assume that the password is encrypted,
+    # as we do not have an explicit flag for the password field
+    # wether it's encrypted or not, there is a chance that
+    # if somebody manages to create a 54 chars password containing
+    # '$', it will be detected as false positive, but
+    #  - all webpasswords from mr8.5+ are meant to be encrypted
+    #  - in case of the false positive result, the worse that happens
+    #    the password is not returned to the user in plain-text
+    if ($delete_passwords &&
+        $resource{webpassword} && length $resource{webpassword} =~ /^(54|56)$/ &&
+        $resource{webpassword} =~ /\$/) {
+            delete $resource{webpassword};
     }
     if(!$form){
         ($form) = $self->get_form($c);
@@ -180,16 +198,18 @@ sub resource_from_item {
         if ($c->user->show_passwords) {
             foreach my $k(qw/password webpassword/) {
                 eval {
-                    $resource{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
+                    if ($resource{$k}) {
+                        $resource{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
+                    }
                 };
                 if ($@) {
                     $c->log->error("Failed to encrypt $k '$resource{$k}': " . $@);
-                    delete $resource{$k};
+                    delete $resource{$k} if $delete_passwords;
                 }
             }
         } else {
             foreach my $k(qw/password webpassword/) {
-                delete $resource{$k};
+                delete $resource{$k} if $delete_passwords;
             }
         }
     } else {
@@ -201,16 +221,16 @@ sub resource_from_item {
 
             # TODO: make custom filtering configurable!
             foreach my $k(qw/password webpassword/) {
-                delete $resource{$k};
+                delete $resource{$k} if $delete_passwords;
             }
         }
         if($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
             if(!$c->config->{security}->{password_sip_expose_subadmin}) {
-                delete $resource{password};
+                delete $resource{password} if $delete_passwords;
             }
             if(!$c->config->{security}->{password_web_expose_subadmin}) {
-                delete $resource{webpassword};
+                delete $resource{webpassword} if $delete_passwords;
             }
         }
     }
@@ -495,7 +515,7 @@ sub update_item {
         $c->log->error("failed to update subscriber, alias " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
         return;
-    }        
+    }
 
     my $billing_res = {
         external_id => $resource->{external_id},
