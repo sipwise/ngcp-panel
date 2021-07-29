@@ -262,7 +262,7 @@ sub validate_form {
                     ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
                     $in, #for now, we dont change the error response text, even if causes sensitive data in the logs.
                          #(($_->$_can('todo') && $_->todo()) ? $c->qs($in) : $in),
-                    join('', @{ $_->errors })
+                    join(',', @{ $_->errors })
             } $form->error_fields;
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
             return;

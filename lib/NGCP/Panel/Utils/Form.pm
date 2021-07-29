@@ -2,12 +2,14 @@ package NGCP::Panel::Utils::Form;
 
 use Sipwise::Base;
 use Crypt::Cracklib;
+use NGCP::Panel::Utils::Auth;
 
 sub validate_password {
     my %params = @_;
     my $c = $params{c};
     my $field = $params{field};
     my $r = $c->config->{security};
+    my $utf8 = $params{utf8} // 1;
     my $pass = $field->value;
 
     my $minlen = $r->{password_min_length} // 6;
@@ -31,6 +33,9 @@ sub validate_password {
     if($r->{password_musthave_specialchar} && $pass !~ /[^0-9a-zA-Z]/) {
         $field->add_error($c->loc('Must contain special characters'));
     }
+    if (!$utf8 && $pass && !NGCP::Panel::Utils::Auth::check_password($pass)) {
+        $field->add_error($c->loc('Contains invalid characters'));
+    }
     if($field->name eq "password" && $r->{password_sip_validate}) {
         my $user;
         if($field->form->field('username')) {
@@ -39,7 +44,7 @@ sub validate_password {
             $user = $c->stash->{subscriber}->provisioning_voip_subscriber->username;
         }
         if(defined $user && $pass =~ /$user/i) {
-            $field->add_error($c->loc('Password must not contain username'));
+            $field->add_error($c->loc('Must not contain username'));
         }
         unless(Crypt::Cracklib::check($pass)) {
             $field->add_error($c->loc('Password is too weak'));
@@ -52,10 +57,10 @@ sub validate_password {
             $user = $c->stash->{subscriber}->provisioning_voip_subscriber->webusername;
         }
         if(defined $user && $pass =~ /$user/i) {
-            $field->add_error($c->loc('Web password must not contain username'));
+            $field->add_error($c->loc('Must not contain username'));
         }
         unless(Crypt::Cracklib::check($pass)) {
-            $field->add_error($c->loc('Web password is too weak'));
+            $field->add_error($c->loc('Password is too weak'));
         }
     }
 }

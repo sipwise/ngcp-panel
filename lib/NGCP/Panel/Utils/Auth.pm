@@ -10,6 +10,14 @@ use UUID;
 
 our $SALT_LENGTH = 128;
 
+sub check_password {
+    my $pass = shift // return;
+
+    return if $pass =~ /[^[:ascii:]]/;
+
+    return 1;
+}
+
 sub get_special_admin_login {
     return 'sipwise';
 }
@@ -47,9 +55,7 @@ sub perform_auth {
     my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
     my $res;
 
-    if ($pass && $pass =~ /[^[:ascii:]]/) {
-        return $res;
-    }
+    return $res unless check_password($pass);
 
     my $dbadmin;
     $dbadmin = $c->model('DB')->resultset('admins')->find({

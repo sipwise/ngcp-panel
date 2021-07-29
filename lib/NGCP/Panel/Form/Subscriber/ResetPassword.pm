@@ -49,7 +49,7 @@ sub validate_password {
     my $c = $self->form->ctx;
     return unless $c;
 
-    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field, utf8 => 0);
 }
 
 1;
