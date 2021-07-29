@@ -320,10 +320,12 @@ sub prepare_resource {
             }
         }
     }
-    
+
     foreach my $k(qw/password webpassword/) {
         eval {
-            $resource->{$k} = NGCP::Panel::Utils::Encryption::decrypt_rsa($c,$resource->{$k});
+            if ($resource->{$k}) {
+                $resource->{$k} = NGCP::Panel::Utils::Encryption::decrypt_rsa($c,$resource->{$k});
+            }
         };
         if ($@) {
             $c->log->error("Failed to decrypt $k '$resource->{$k}': " . $@);

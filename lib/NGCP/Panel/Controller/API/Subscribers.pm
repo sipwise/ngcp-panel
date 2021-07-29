@@ -335,7 +335,6 @@ sub GET :Allow {
                 now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
             $contract_map{$contract->id} = 1;
             my $resource = $self->resource_from_item($c, $subscriber, $form);
-            delete $resource->{webpassword}; # since it's encrypted, no point to return it
             push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
@@ -473,7 +472,6 @@ sub POST :Allow {
             my ($_form) = $self->get_form($c);
             my $_subscriber = $self->item_by_id($c, $subscriber->id);
             my $_resource = $self->resource_from_item($c, $_subscriber, $_form);
-            delete $_resource->{webpassword}; # since it's encrypted, no point writing it into journal as well
             return $self->hal_from_item($c,$_subscriber,$_resource,$_form); });
 
         $guard->commit;
