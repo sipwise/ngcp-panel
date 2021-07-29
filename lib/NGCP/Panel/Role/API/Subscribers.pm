@@ -531,13 +531,13 @@ sub update_item {
         password => $resource->{password},
         webusername => $resource->{webusername},
         webpassword => $resource->{webpassword},
-        admin => $resource->{administrative} // 0,
         is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
         is_pbx_group => $resource->{is_pbx_group} // 0,
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         profile_set_id => $profile_set ? $profile_set->id : undef,
         profile_id => $profile ? $profile->id : undef,
         pbx_extension => $resource->{pbx_extension},
+        $resource->{administrative} ? (admin => $resource->{administrative}) : (),
     };
     if(is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
