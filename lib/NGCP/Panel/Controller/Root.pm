@@ -603,7 +603,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
             return;
         }
 
-        if ($pass =~ /[^[:ascii:]]/) {
+        unless (NGCP::Panel::Utils::Auth::check_password($pass)) {
             $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
             $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
                 message => "'password' contains invalid characters" })."\n");
