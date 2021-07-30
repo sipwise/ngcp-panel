@@ -25,7 +25,7 @@ def login_panel(driver, username="administrator", password="administrator"):
 
 def logout_panel(driver):
     driver.find_element_by_xpath('//*[@id="q-app"]//div/button[@aria-label="UserMenu"]').click()
-    driver.find_element_by_xpath('/html/body//div[@class="q-list"]/div[1]').click()
+    driver.find_element_by_xpath('/html/body//div[@class="q-list"]/div[2]').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="login-title"]')))
 
 

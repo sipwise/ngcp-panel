@@ -786,7 +786,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to logout...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]//div/button[@aria-label="UserMenu"]').click()
-        driver.find_element_by_xpath('/html/body//div[@class="q-list"]/div[1]').click()
+        driver.find_element_by_xpath('/html/body//div[@class="q-list"]/div[2]').click()
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="login-title"]')) > 0, "Logout wasnt successful")
         print("OK")
