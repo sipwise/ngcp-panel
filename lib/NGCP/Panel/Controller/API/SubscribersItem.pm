@@ -51,7 +51,6 @@ sub GET :Allow {
 
         my ($form) = $self->get_form($c);
         my $resource = $self->resource_from_item($c, $subscriber, $form);
-        delete $resource->{webpassword}; # since it's encrypted, no point to return it
         my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
         $guard->commit; #potential db write ops in hal_from
 
@@ -215,7 +214,6 @@ sub DELETE :Allow {
             my ($_form) = $self->get_form($c);
             #my $_subscriber = $self->item_by_id($c, $id);
             my $_resource = $self->resource_from_item($c, $subscriber, $_form);
-            delete $_resource->{webpassword}; # since it's encrypted, no point writing it into journal as well
             return $self->hal_from_item($c,$subscriber,$_resource,$_form); });
 
         NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
