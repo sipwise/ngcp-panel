@@ -94,21 +94,25 @@ $(function() {
         </div>
         <div class="accordion-body collapse" id="collapse_reseller">
             <div class="accordion-inner">
+                [% UNLESS c.user.read_only -%]
+                <span>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/reseller', contract.contact.reseller.id, 'edit') %]"><i class="icon-edit"></i> [% c.loc('Edit Reseller') %]</a>
+                </span>
+                <div class="ngcp-separator"></div>
+                [% END -%]
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <tr>
+                            <th>[% c.loc('#') %]</th>
                             <th>[% c.loc('Name') %]</th>
-                            <th>[% c.loc('Value') %]</th>
+                            <th>[% c.loc('Status') %]</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>[% c.loc('#') %]</td>
                             <td>[% contract.contact.reseller.id %]</td>
-                        </tr>
-                        <tr>
-                            <td>[% c.loc('Name') %]</td>
                             <td>[% contract.contact.reseller.name %]</td>
+                            <td>[% contract.contact.reseller.status %]</td>
                         </tr>
                     </tbody>
                 </table>
