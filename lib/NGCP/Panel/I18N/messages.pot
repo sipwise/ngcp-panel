@@ -2470,6 +2470,10 @@ msgstr ""
 msgid "Contains a user defined quota for concurrent calls, the preference does not have an impact on ongoing calls and used mostly for reporting reasons, when a soft limit for calls needs to defined, based on which the subscriber/customer/peer is reported or charged for making too many calls."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Contains invalid characters"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contains options for defining the scope in which CLIR is applied in the call lists: External(default; hide caller in clir enabled calls, except calls within the same customer) or All(hide caller for clir enabled calls)"
 msgstr ""
@@ -7755,6 +7759,10 @@ msgstr ""
 msgid "Must contain upper-case characters"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Must not contain username"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "NAT and Media Flow Control"
 msgstr ""
@@ -8661,10 +8669,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
 msgid "Password is too weak"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/Form.pm
-msgid "Password must not contain username"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14396,14 +14400,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt
 msgid "Web Username"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/Form.pm
-msgid "Web password is too weak"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/Form.pm
-msgid "Web password must not contain username"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
