@@ -80,7 +80,7 @@ has_field 'interval_free_time' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The included free minutes per billing interval (in seconds, e.g. 60000 for 1000 free minutes).']
+        title => ['The included free calling time per billing interval (in seconds, e.g. 60000 for 1000 free minutes).']
     },
     default => '0',
 );
