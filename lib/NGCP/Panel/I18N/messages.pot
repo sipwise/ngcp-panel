@@ -5504,6 +5504,14 @@ msgid "Fraud use reseller rates"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Free calling time may be used when calling this destination during off-peak hours."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Free calling time may be used when calling this destination during on-peak hours."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Free time balance"
 msgstr ""
 
@@ -12478,7 +12486,7 @@ msgid "The id pointing to the \"Call Forward on Response\" entry in the voip_cf_
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The included free minutes per billing interval (in seconds, e.g. 60000 for 1000 free minutes)."
+msgid "The included free calling time per billing interval (in seconds, e.g. 60000 for 1000 free minutes)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14500,14 +14508,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Whether customers using this profile are handled prepaid."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Whether free minutes may be used when calling this destination during offpeak hours."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Whether free minutes may be used when calling this destination during onpeak hours."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
