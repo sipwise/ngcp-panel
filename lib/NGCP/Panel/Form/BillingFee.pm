@@ -159,7 +159,7 @@ has_field 'onpeak_use_free_time' => (
     type => 'Boolean',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Whether free minutes may be used when calling this destination during onpeak hours.']
+        title => ['Free calling time may be used when calling this destination during on-peak hours.']
     },
     default => 0,
 );
@@ -168,7 +168,7 @@ has_field 'offpeak_use_free_time' => (
     type => 'Boolean',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Whether free minutes may be used when calling this destination during offpeak hours.']
+        title => ['Free calling time may be used when calling this destination during off-peak hours.']
     },
     default => 0,
 );
