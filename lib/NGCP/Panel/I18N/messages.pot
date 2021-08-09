@@ -14994,7 +14994,7 @@ msgstr ""
 msgid "days"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DateTime.pm
+#: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "default"
 msgstr ""
 
