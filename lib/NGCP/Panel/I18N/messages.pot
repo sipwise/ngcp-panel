@@ -3766,6 +3766,10 @@ msgstr ""
 msgid "Edit Meta"
 msgstr ""
 
+#: share/templates/customer/details.tt
+msgid "Edit Reseller"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "Edit Slots"
 msgstr ""
@@ -10992,7 +10996,7 @@ msgstr ""
 msgid "Statistics Administration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/subscriber/master.tt share/templates/widgets/admin_system_overview.tt
+#: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/ProfilePackages.pm share/templates/customer/details.tt share/templates/subscriber/master.tt share/templates/widgets/admin_system_overview.tt
 msgid "Status"
 msgstr ""
 
