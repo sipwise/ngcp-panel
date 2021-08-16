@@ -378,6 +378,11 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
                     transport => $c->stash->{server_result}->transport,
                 );
             }
+            if (!$c->stash->{server_result}->enabled) {
+                NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+            } else {
+                NGCP::Panel::Utils::Peering::_sip_create_peer_registration(c => $c);
+            }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -405,6 +410,8 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     
     try {
         my $probe = $c->stash->{server_result}->probe;
+        NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+
         $c->stash->{server_result}->delete;
         NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
         if($probe) {
@@ -608,7 +615,20 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
         ->voip_preferences_enums
         ->all;
     
-    my $pref_rs = $c->stash->{server_result}->voip_peer_preferences;
+    my $pref_rs = $c->stash->{server_result}->voip_peer_preferences->search({
+    }, {
+        join => 'attribute',
+    });
+
+    my $old_authentication_prefs = {};
+    if ($c->req->method eq "POST" && $c->stash->{preference_meta}->attribute =~ /^peer_auth_/) {
+        foreach my $pref ($pref_rs->all) {
+            my $attr = $pref->attribute->attribute;
+            if ($attr =~ /^peer_auth_/) {
+                $old_authentication_prefs->{$attr} = $pref->value;
+            }
+        }
+    }
 
     NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
         pref_rs => $pref_rs,
@@ -617,6 +637,39 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
         edit_uri => $c->uri_for_action('/peering/servers_preferences_edit', $c->req->captures),
         blob_rs  => $c->model('DB')->resultset('voip_peer_preferences_blob'),
     );
+
+    if (keys %{ $old_authentication_prefs }) {
+        my $new_authentication_prefs = {};
+        if ($c->req->method eq "POST" && $c->stash->{preference_meta}->attribute =~ /^peer_auth_/) {
+            foreach my $pref ($pref_rs->all) {
+                my $attr = $pref->attribute->attribute;
+                if ($attr =~ /^peer_auth_/) {
+                    $new_authentication_prefs->{$attr} = $pref->value;
+                }
+            }
+
+            my $prov_peer = {};
+            my $type = 'peering';
+            $prov_peer->{username} = $c->stash->{server}->{name};
+            $prov_peer->{domain} = $c->stash->{server}->{ip};
+            $prov_peer->{id} = $c->stash->{server}->{id};
+            $prov_peer->{uuid} = 0;
+
+            unless(compare($old_authentication_prefs, $new_authentication_prefs)) {
+                try {
+                    NGCP::Panel::Utils::Preferences::update_sems_peer_auth(
+                        $c, $prov_peer, $type, $old_authentication_prefs, $new_authentication_prefs);
+                } catch($e) {
+                    NGCP::Panel::Utils::Message::error(
+                        c     => $c,
+                        log   => "Failed to set peer registration: $e",
+                        desc  => $c->loc('Peer registration error'),
+                    );
+                }
+            }
+        }
+    }
+
     return;
 }
 

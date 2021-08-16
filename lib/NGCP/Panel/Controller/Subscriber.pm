@@ -865,9 +865,10 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         NGCP::Panel::Utils::Preferences::get_peer_auth_params(
             $c, $prov_subscriber, $new_auth_prefs);
         unless(compare($old_auth_prefs, $new_auth_prefs)) {
+            my $type = 'subscriber';
             try {
                 NGCP::Panel::Utils::Preferences::update_sems_peer_auth(
-                    $c, $prov_subscriber, $old_auth_prefs, $new_auth_prefs);
+                    $c, $prov_subscriber, $type, $old_auth_prefs, $new_auth_prefs);
             } catch($e) {
                 NGCP::Panel::Utils::Message::error(
                     c     => $c,

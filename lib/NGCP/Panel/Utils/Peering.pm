@@ -18,6 +18,71 @@ EOF
     return 1;
 }
 
+sub _sip_delete_peer_registration {
+  my(%params) = @_;
+  my($c) = @params{qw/c/};
+  my $prov_peer = {};
+  my $type = 'peering';
+
+  $prov_peer->{username} = $c->stash->{server}->{name};
+  $prov_peer->{domain} = $c->stash->{server}->{ip};
+  $prov_peer->{id} = $c->stash->{server}->{id};
+  $prov_peer->{uuid} = 0;
+
+  my $pref_all = $c->stash->{server_result}->voip_peer_preferences->search({
+  }, {
+      join => 'attribute',
+  });
+
+  my $auth_prefs = {};
+  foreach my $pref ($pref_all->all) {
+      my $attr = $pref->attribute->attribute;
+      if ($attr =~ /^peer_auth_/) {
+          $auth_prefs->{$attr} = $pref->value;
+      }
+  }
+
+  if (defined $auth_prefs->{peer_auth_register} && $auth_prefs->{peer_auth_register} == 1 &&
+       defined $auth_prefs->{peer_auth_user} &&
+       defined $auth_prefs->{peer_auth_realm} &&
+       defined $auth_prefs->{peer_auth_pass}) {
+          NGCP::Panel::Utils::Sems::delete_peer_registration($c, $prov_peer, $type, $auth_prefs);
+  }
+  return 1;
+}
+
+sub _sip_create_peer_registration {
+  my(%params) = @_;
+  my($c) = @params{qw/c/};
+  my $prov_peer = {};
+  my $type = 'peering';
+
+  $prov_peer->{username} = $c->stash->{server}->{name};
+  $prov_peer->{domain} = $c->stash->{server}->{ip};
+  $prov_peer->{id} = $c->stash->{server}->{id};
+  $prov_peer->{uuid} = 0;
+
+  my $pref_all = $c->stash->{server_result}->voip_peer_preferences->search({
+  }, {
+      join => 'attribute',
+  });
+
+  my $auth_prefs = {};
+  foreach my $pref ($pref_all->all) {
+      my $attr = $pref->attribute->attribute;
+      if ($attr =~ /^peer_auth_/) {
+          $auth_prefs->{$attr} = $pref->value;
+      }
+  }
+  if (defined $auth_prefs->{peer_auth_register} && $auth_prefs->{peer_auth_register} == 1 &&
+       defined $auth_prefs->{peer_auth_user} &&
+       defined $auth_prefs->{peer_auth_realm} &&
+       defined $auth_prefs->{peer_auth_pass}) {
+          NGCP::Panel::Utils::Sems::create_peer_registration($c, $prov_peer, $type, $auth_prefs);
+  }
+  return 1;
+}
+
 sub _sip_dispatcher_reload {
     my ($self, $c) = @_;
     my ($res) = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );

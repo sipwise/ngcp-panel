@@ -25,10 +25,35 @@ sub _get_outbound_socket {
 }
 
 sub create_peer_registration {
-    my ($c, $prov_subscriber, $prefs) = @_;
+    my ($c, $prov_obj, $type, $prefs) = @_;
+
+    my $sid;
+    my $uuid;
+    my $username;
+    my $domain;
+
+    my $contact = $c->config->{sip}->{lb_ext};
+    my $transport = '';
+
+    if ($type eq 'peering') {
+        # outbound registration for a peering
+        $sid = $prov_obj->{id};
+        $uuid = $prov_obj->{uuid};
+        $username = $prov_obj->{username};
+        $domain = $prov_obj->{domain};
+    } elsif ($type eq "subscriber") {
+        # outbound registration for usual subscriber
+        $sid = $prov_obj->id;
+        $uuid = $prov_obj->uuid;
+        $username = $prov_obj->username;
+        $domain = $prov_obj->domain->domain;
+    } else {
+        $c->log->debug("skip creating a registration for undefined type!");
+        return 1;
+    }
 
     if($c->config->{features}->{debug}) {
-        $c->log->debug("skip creating peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
+        $c->log->debug("skip creating peer registration for subscriber '".$username.'@'.$domain."'");
         return 1;
     }
 
@@ -37,12 +62,7 @@ sub create_peer_registration {
         $all = 0;
     }
 
-    $c->log->debug("creating peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
-
-    my $sid = $prov_subscriber->id;
-    my $uuid = $prov_subscriber->uuid;
-    my $contact = $c->config->{sip}->{lb_ext};
-    my $transport = '';
+    $c->log->debug("creating peer registration for subscriber '".$username.'@'.$domain."'");
 
     my $outbound_sock = _get_outbound_socket($c, $prefs);
     if($outbound_sock) {
@@ -65,6 +85,7 @@ sub create_peer_registration {
       <param><value><string>$$prefs{peer_auth_realm}</string></value></param>
       <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
       <param><value><string>$authorization_username</string></value></param>
+      <param><value><string>$type</string></value></param>
     </params>
   </methodCall>
 EOF
@@ -95,10 +116,35 @@ EOF
 }
 
 sub update_peer_registration {
-    my ($c, $prov_subscriber, $prefs, $oldprefs) = @_;
+    my ($c, $prov_obj, $type, $prefs, $oldprefs) = @_;
+
+    my $sid;
+    my $uuid;
+    my $username;
+    my $domain;
+
+    my $contact = $c->config->{sip}->{lb_ext};
+    my $transport = '';
+
+    if ($type eq 'peering') {
+        # outbound registration for a peering
+        $sid = $prov_obj->{id};
+        $uuid = $prov_obj->{uuid};
+        $username = $prov_obj->{username};
+        $domain = $prov_obj->{domain};
+    } elsif ($type eq "subscriber") {
+        # outbound registration for usual subscriber
+        $sid = $prov_obj->id;
+        $uuid = $prov_obj->uuid;
+        $username = $prov_obj->username;
+        $domain = $prov_obj->domain->domain;
+    } else {
+        $c->log->debug("skip updating a registration for undefined type!");
+        return 1;
+    }
 
     if($c->config->{features}->{debug}) {
-        $c->log->debug("skip updating peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
+        $c->log->debug("skip updating peer registration for subscriber '".$username.'@'.$domain."'");
         return 1;
     }
 
@@ -107,12 +153,7 @@ sub update_peer_registration {
         $all = 0;
     }
 
-    $c->log->debug("trying to update peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
-
-    my $sid = $prov_subscriber->id;
-    my $uuid = $prov_subscriber->uuid;
-    my $contact = $c->config->{sip}->{lb_ext};
-    my $transport = '';
+    $c->log->debug("trying to update peer registration for subscriber '".$username.'@'.$domain."'");
 
     my $outbound_sock = _get_outbound_socket($c, $prefs);
     if($outbound_sock) {
@@ -143,6 +184,7 @@ sub update_peer_registration {
       <param><value><string>$$prefs{peer_auth_realm}</string></value></param>
       <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
       <param><value><string>$authorization_username</string></value></param>
+      <param><value><string>$type</string></value></param>
     </params>
   </methodCall>
 EOF
@@ -171,6 +213,7 @@ EOF
           <param><value><string>$$oldprefs{peer_auth_realm}</string></value></param>
           <param><value><string>sip:$$oldprefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
           <param><value><string>$old_authorization_username</string></value></param>
+          <param><value><string>$type</string></value></param>
         </params>
       </methodCall>
 EOF
@@ -182,10 +225,34 @@ EOF
 }
 
 sub delete_peer_registration {
-    my ($c, $prov_subscriber, $oldprefs) = @_;
+    my ($c, $prov_obj, $type, $oldprefs) = @_;
+
+    my $sid;
+    my $uuid;
+    my $username;
+    my $domain;
+
+    my $contact = $c->config->{sip}->{lb_ext};
+
+    if ($type eq 'peering') {
+        # outbound registration for a peering
+        $sid = $prov_obj->{id};
+        $uuid = $prov_obj->{uuid};
+        $username = $prov_obj->{username};
+        $domain = $prov_obj->{domain};
+    } elsif ($type eq "subscriber") {
+        # outbound registration for usual subscriber
+        $sid = $prov_obj->id;
+        $uuid = $prov_obj->uuid;
+        $username = $prov_obj->username;
+        $domain = $prov_obj->domain->domain;
+    } else {
+        $c->log->debug("skip deleting a registration for undefined type!");
+        return 1;
+    }
 
     if($c->config->{features}->{debug}) {
-        $c->log->debug("skip deleting peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
+        $c->log->debug("skip deleting peer registration for subscriber '".$username.'@'.$domain."'");
         return 1;
     }
 
@@ -194,11 +261,7 @@ sub delete_peer_registration {
         $all = 0;
     }
 
-    $c->log->debug("trying to delete peer registration for subscriber '".$prov_subscriber->username.'@'.$prov_subscriber->domain->domain."'");
-
-    my $sid = $prov_subscriber->id;
-    my $uuid = $prov_subscriber->uuid;
-    my $contact = $c->config->{sip}->{lb_ext};
+    $c->log->debug("trying to delete peer registration for subscriber '".$username.'@'.$domain."'");
 
     my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
@@ -206,6 +269,7 @@ sub delete_peer_registration {
         <methodName>db_reg_agent.removeRegistration</methodName>
         <params>
           <param><value><int>$sid</int></value></param>
+          <param><value><string>$type</string></value></param>
         </params>
       </methodCall>
 EOF
@@ -234,6 +298,7 @@ EOF
       <param><value><string>$$oldprefs{peer_auth_realm}</string></value></param>
       <param><value><string>sip:$$oldprefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
       <param><value><string>$old_authorization_username</string></value></param>
+      <param><value><string>$type</string></value></param>
     </params>
   </methodCall>
 EOF

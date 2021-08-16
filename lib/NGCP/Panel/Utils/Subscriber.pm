@@ -1786,8 +1786,9 @@ sub terminate {
                 subscriber   => $subscriber,
             );
             my $auth_prefs = {};
+            my $type = 'subscriber';
             NGCP::Panel::Utils::Preferences::get_peer_auth_params($c, $prov_subscriber, $auth_prefs);
-            NGCP::Panel::Utils::Preferences::update_sems_peer_auth($c, $prov_subscriber, $auth_prefs, {});
+            NGCP::Panel::Utils::Preferences::update_sems_peer_auth($c, $prov_subscriber, $type, $auth_prefs, {});
             foreach my $pref(qw/allowed_ips_grp man_allowed_ips_grp/) {
                 my $aig_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, prov_subscriber => $prov_subscriber, attribute => $pref,

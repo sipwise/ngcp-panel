@@ -1005,9 +1005,10 @@ sub update_preferences {
                 $c, $prov_subscriber, $new_auth_prefs);
             unless(compare($old_auth_prefs, $new_auth_prefs)) {
                 $c->log->debug("peer_auth_params changed. Updating sems.");
+                my $type = 'subscriber';
                 try {
                     update_sems_peer_auth(
-                        $c, $prov_subscriber, $old_auth_prefs, $new_auth_prefs);
+                        $c, $prov_subscriber, $type, $old_auth_prefs, $new_auth_prefs);
                 } catch($e) {
                     $c->log->error("Failed to set peer registration: $e");
                     &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
@@ -2550,23 +2551,24 @@ sub get_contract_preference_rs {
 }
 
 sub update_sems_peer_auth {
-    my ($c, $prov_subscriber, $old_auth_prefs, $new_auth_prefs) = @_;
+    my ($c, $prov_object, $type, $old_auth_prefs, $new_auth_prefs) = @_;
+    # prov_object can be either peering or subscriber
 
     if(!_is_peer_auth_active($c, $old_auth_prefs) &&
         _is_peer_auth_active($c, $new_auth_prefs)) {
 
         NGCP::Panel::Utils::Sems::create_peer_registration(
-            $c, $prov_subscriber, $new_auth_prefs);
+            $c, $prov_object, $type, $new_auth_prefs);
     } elsif( _is_peer_auth_active($c, $old_auth_prefs) &&
             !_is_peer_auth_active($c, $new_auth_prefs)) {
 
         NGCP::Panel::Utils::Sems::delete_peer_registration(
-            $c, $prov_subscriber, $old_auth_prefs);
+            $c, $prov_object, $type, $old_auth_prefs);
     } elsif(_is_peer_auth_active($c, $old_auth_prefs) &&
             _is_peer_auth_active($c, $new_auth_prefs)){
 
         NGCP::Panel::Utils::Sems::update_peer_registration(
-            $c, $prov_subscriber, $new_auth_prefs, $old_auth_prefs);
+            $c, $prov_object, $type, $new_auth_prefs, $old_auth_prefs);
     }
 
     return;
