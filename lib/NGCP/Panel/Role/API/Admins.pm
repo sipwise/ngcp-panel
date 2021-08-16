@@ -83,6 +83,13 @@ sub process_form_resource{
 
     NGCP::Panel::Utils::API::apply_resource_reseller_id($c, $resource);
 
+    my $pass = $resource->{password};
+    delete $resource->{password};
+    if (defined $pass) {
+        $resource->{md5pass} = undef;
+        $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
+    }
+
     foreach my $f(qw/billing_data call_data is_active is_master is_superuser is_ccare lawful_intercept read_only show_passwords/) {
         $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' || ( defined $resource->{$f} && ( $resource->{$f} eq 'true' || $resource->{$f} eq '1' ) ) ) ? 1 : 0;
     }
