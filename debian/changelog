@@ -1,3 +1,17 @@
+ngcp-panel (9.5.1.7+0~mr9.5.1.7) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [114e5f3] TT#122872 selenium: add language switching test
+  * [b952836] TT#122872 selenium: fix logout function
+
+  [ Alexander Lutay ]
+  * [d652ceb] TT#103252 Add missing localization for Reseller->Branding page
+
+  [ Victor Tsvetov ]
+  * [d126413] TT#126853 Replace "free minutes" with "free calling time"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Aug 2021 10:42:34 +0200
+
 ngcp-panel (9.5.1.6+0~mr9.5.1.6) unstable; urgency=medium
 
   [ Nico Schedel ]
