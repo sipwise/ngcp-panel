@@ -6218,7 +6218,15 @@ msgid "Ignore Call Forward when Hunting"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Ignore SIP domain part when matching fees."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ignore allowed IPs"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Ignore domain"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
