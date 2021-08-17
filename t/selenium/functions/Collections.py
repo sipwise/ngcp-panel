@@ -12,7 +12,14 @@ from functions.Functions import wait_for_invisibility
 
 def login_panel(driver, username="administrator", password="administrator"):
     driver.get(os.environ['CATALYST_SERVER'] + ":1443")
-    driver.find_element_by_xpath('//*[@id="login_page_v1"]/div[3]/div/b/a').click()
+    try:
+        driver.implicitly_wait(1)
+        driver.find_element_by_xpath('//*[@id="login_page_v1"]//div/b/a').click()
+        driver.implicitly_wait(10)
+    except:
+        pass
+    finally:
+        driver.implicitly_wait(10)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@aria-label="Username"]')))
     fill_element(driver, '//*[@aria-label="Username"]', username)
     fill_element(driver, '//*[@aria-label="Password"]', password)

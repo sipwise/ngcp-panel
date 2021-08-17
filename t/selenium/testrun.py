@@ -676,7 +676,14 @@ class testrun(unittest.TestCase):
         filename = "test_login_page.png"
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'] + ":1443")
-        driver.find_element_by_xpath('//*[@id="login_page_v1"]/div[3]/div/b/a').click()
+        try:
+            driver.implicitly_wait(1)
+            driver.find_element_by_xpath('//*[@id="login_page_v1"]//div/b/a').click()
+            driver.implicitly_wait(10)
+        except:
+            pass
+        finally:
+            driver.implicitly_wait(10)
         print("\nTry to login with no credentials...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div//main/div/form//button[contains(., "Sign In")]')))
         click_js(driver, '//*[@id="q-app"]/div//main/div/form//button[contains(., "Sign In")]')
