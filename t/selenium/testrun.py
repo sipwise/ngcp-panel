@@ -714,47 +714,72 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]//div[contains(., "Dashboard")]')) > 0, "Credentials werent accepted")
         print("OK")
+        print("Try to logout...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]//div/button[@aria-label="UserMenu"]').click()
+        driver.find_element_by_xpath('/html/body//div[@class="q-list"]/div[2]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="login-title"]')) > 0, "Logout wasnt successful")
+        print("OK")
+        filename = 0
+
+    def test_other(self):
+        global filename
+        filename = "test_other.png"
+        driver = self.driver
+        login_panel(driver)
+        filename = 0
+        print("Try to search for page 'Customers'...", end="")
+        fill_element(driver, '//*[@id="q-app"]//div/label//div//input[@aria-label="Search menu"]', "Customers")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside//div//a[contains(., "Customers")]')) > 0, "Customers page wasnt found")
+        print("OK")
+        print("Try to access Customers page...", end="")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//aside//div//a[contains(., "Customers")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main/div[2]/div/div[contains(., "Customers")]')) > 0, "Customers page wasn't opened")
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//aside//div/label/div/div/div[3]').click()
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//aside//div/a[contains(., "Dashboard")]').click()
         print("Try to change language to German...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
         time.sleep(1)
         driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[3]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Übersicht")]')) > 0, "Languave wasn't changed")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Übersicht")]')) > 0, "Language wasn't changed")
         print("OK")
         print("Try to change language to Spanish...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
         time.sleep(1)
         driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[4]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Tablón")]')) > 0, "Languave wasn't changed")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Tablón")]')) > 0, "Language wasn't changed")
         print("OK")
         print("Try to change language to French...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
         time.sleep(1)
         driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[5]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Tableau de bord")]')) > 0, "Languave wasn't changed")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Tableau de bord")]')) > 0, "Language wasn't changed")
         print("OK")
         print("Try to change language to Italian...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
         time.sleep(1)
         driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[6]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Dashboard")]')) > 0, "Languave wasn't changed")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Dashboard")]')) > 0, "Language wasn't changed")
         print("OK")
         print("Try to change language to Russian...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
         time.sleep(1)
         driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[7]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Главная")]')) > 0, "Languave wasn't changed")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Главная")]')) > 0, "Language wasn't changed")
         print("OK")
         print("Try to change language back to English...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
         time.sleep(1)
         driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[2]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Dashboard")]')) > 0, "Languave wasn't changed")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/a[contains(., "Dashboard")]')) > 0, "Language wasn't changed")
         print("OK")
         print("Try to add Administrators and Resellers to favourites...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]//div/aside/div/div[2]//div[contains(., "Settings")]').click()
@@ -778,26 +803,7 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//div/a[contains(., "Resellers")]')) > 0, "Wrong webpage was opened")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[2]').click()
-        """
-        print("Try to open the handbook...", end="")
-        driver.find_element_by_xpath('//*[@id="q-app"]//div/aside/div/div[2]//div[contains(., "Documentation")]').click()
-        driver.find_element_by_xpath('//*[@id="q-app"]//div/aside/div//a[contains(., "Handbook")]').click()
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('/html/body/header/nav/div[1]/a[contains(., "The Sipwise NGCP Handbook")]')) > 0, "Handbook wasnt opened")
         print("OK")
-        print("Try to navigate around the handbook...", end="")
-        driver.find_element_by_xpath('/html/body//div//aside//div//nav/ul/li[contains(., "Architecture")]')
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('/html/body//div//article/h1[contains(., "Architecture")]')) > 0, "Page 'Architecture' wasnt opened")
-        """
-        print("OK")
-        print("Try to logout...", end="")
-        driver.find_element_by_xpath('//*[@id="q-app"]//div/button[@aria-label="UserMenu"]').click()
-        driver.find_element_by_xpath('/html/body//div[@class="q-list"]/div[2]').click()
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="login-title"]')) > 0, "Logout wasnt successful")
-        print("OK")
-        filename = 0
 
     def test_reseller(self):
         global filename
