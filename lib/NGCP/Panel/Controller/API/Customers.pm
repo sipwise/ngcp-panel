@@ -268,13 +268,18 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:customercontacts item, but an ngcp:systemcontacts item");
             last;
         }
+
         #todo: strange: why do we check this after customer creation?
         my $tmplfields = $self->get_template_fields_spec();
         foreach my $field (keys %$tmplfields){
+            next unless $customer->$field();
+
             my $field_table_rel = $tmplfields->{$field}->[1];
-            if($customer->$field() &&
-               $customer->$field_table_rel()->reseller_id != $customer->contact->reseller_id) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid '$field', doesn't exist for the reseller assigned to customer contact");
+            unless($customer->$field_table_rel()->reseller_id && 
+                    $customer->$field_table_rel()->reseller_id == $customer->contact->reseller_id) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "'$field' with value '" . $customer->$field() 
+                    . "' does not belong to Reseller '" . $customer->contact->reseller_id 
+                    . "' that is assigned to Customer's Contact '$resource->{contact_id}'");
                 return;
             }
         }
