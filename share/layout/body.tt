@@ -169,9 +169,6 @@ if (!window.console) {
     this.addConsoleNoOp(window);
 }
 
-Theme.init ();
-
-
 
 [% IF c.session.aui_adminId && c.session.aui_jwt -%]
     localStorage.setItem('aui_adminId', [% c.session.aui_adminId -%]);
@@ -311,7 +308,7 @@ $( document ).ready(function() {
         $('#'+lastTab).addClass("in");
     }
 });
-//$(function(){Theme.init();mainWrapperInit();});
+
 </script>
 
 
