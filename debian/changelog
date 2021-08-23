@@ -1,3 +1,10 @@
+ngcp-panel (9.5.1.8+0~mr9.5.1.8) unstable; urgency=medium
+
+  [ Victor Tsvetov ]
+  * [d447e2e] TT#137552 Update German translations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 23 Aug 2021 11:38:24 +0200
+
 ngcp-panel (9.5.1.7+0~mr9.5.1.7) unstable; urgency=medium
 
   [ Nico Schedel ]
