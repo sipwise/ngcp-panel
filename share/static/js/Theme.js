@@ -35,7 +35,9 @@ var Theme = function () {
         });
 
         $('.accordion').on('hide', function (e) {
-            $(this).find('.accordion-toggle').not($(e.target)).parents ('.accordion-group').removeClass('open');
+            if ($(e.target).hasClass('accordion-body')) {
+                $(this).find('.accordion-toggle').not($(e.target)).parents ('.accordion-group').removeClass('open');
+            }
         });
 
         $('.accordion').each (function () {
