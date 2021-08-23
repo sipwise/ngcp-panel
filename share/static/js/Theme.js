@@ -13,7 +13,7 @@ var Theme = function () {
     // Mean Green
     //chartColors = ['#5F9B43', '#DB7D1F', '#BA4139', '#777','#555','#999','#bbb','#ccc','#eee'];
 
-    return { init: init, chartColors: chartColors, validationRules: validationRules };
+    return { init: init, chartColors: chartColors, createExpandCollapseButton: createExpandCollapseButton, validationRules: validationRules };
 
     function init () {
         enhancedAccordion ();
@@ -51,6 +51,51 @@ var Theme = function () {
             $('#'+lastTab).addClass("in");
         }
 
+    }
+
+    function createExpandCollapseButton (msg_collapse, msg_expand, framed) {
+        if(!$('.accordion-body').length) return
+
+        if(!$('#toggle-accordions').length) {
+          if (framed) {
+            $('#content').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i>' + msg_expand + '</a>');
+          } else {
+            $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i>' + msg_expand + '</a>');
+          }
+        }
+
+        $('#toggle-accordions').click(function() {
+            if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {
+                $('#toggle-accordions').removeClass('ngcp-accordion-closed');
+                $('#toggle-accordions').html('<i class="icon-resize-small"></i> ' + msg_collapse);
+                $('.accordion-body').each(function() {
+                    $(this).removeClass('collapse');
+                    $(this).parent().addClass("open");
+                    $(this).addClass('in');
+                    $(this).attr('style', 'height:auto;');
+                });
+                $('.accordion-heading a.accordion-toggle').each(function() {
+                    $(this).removeClass('collapsed');
+                });
+                $('.accordion-group').each(function() {
+                    $(this).addClass('open');
+                });
+            } else {
+                $('#toggle-accordions').addClass('ngcp-accordion-closed');
+                $('#toggle-accordions').html('<i class="icon-resize-full"></i> ' + msg_expand);
+                $('.accordion-body').each(function() {
+                    $(this).removeClass('in');
+                    $(this).addClass('collapse');
+                    $(this).attr('style', 'height:0px;');
+                });
+                $('.accordion-heading a.accordion-toggle').each(function() {
+                    $(this).addClass('collapsed');
+                });
+                $('.accordion-group').each(function() {
+                    $(this).removeClass('open');
+                });
+            }
+        });
     }
 
     function getValidationRules () {
