@@ -252,50 +252,11 @@ var mainWrapperInit = function () {
         }
         return true;
     });
-
-    if($('.accordion-body').length) {
-        if(!$('#toggle-accordions').length){
-          [% IF framed -%]
-            $('#content').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
-          [% ELSE -%]
-            $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
-          [% END -%]
-        }
-        $('#toggle-accordions').click(function() {
-            if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {
-                $('#toggle-accordions').removeClass('ngcp-accordion-closed');
-                $('#toggle-accordions').html('<i class="icon-resize-small"></i> [% c.loc('Collapse Groups') %]');
-                $('.accordion-body').each(function() {
-                    $(this).removeClass('collapse');
-                    $(this).addClass('in');
-                    $(this).attr('style', 'height:auto;');
-                });
-                $('.accordion-heading a.accordion-toggle').each(function() {
-                    $(this).removeClass('collapsed');
-                });
-                $('.accordion-group').each(function() {
-                    $(this).addClass('open');
-                });
-            } else {
-                $('#toggle-accordions').addClass('ngcp-accordion-closed');
-                $('#toggle-accordions').html('<i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]');
-                $('.accordion-body').each(function() {
-                    $(this).removeClass('in');
-                    $(this).addClass('collapse');
-                    $(this).attr('style', 'height:0px;');
-                });
-                $('.accordion-heading a.accordion-toggle').each(function() {
-                    $(this).addClass('collapsed');
-                });
-                $('.accordion-group').each(function() {
-                    $(this).removeClass('open');
-                });
-            }
-        });
-    }
 };
+
 $( document ).ready(function() {
     Theme.init();
+    Theme.createExpandCollapseButton ("[% c.loc('Collapse Groups') %]", "[% c.loc('Expand Groups') %]", [% framed %]);
     mainWrapperInit();
 });
 
