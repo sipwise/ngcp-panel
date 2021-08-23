@@ -40,9 +40,17 @@ var Theme = function () {
             }
         });
 
-        $('.accordion').each (function () {
-            $(this).find ('.accordion-body.in').parent ().addClass ('open');
+        $('.accordion').on('shown', function (e) {
+            localStorage.setItem('lastTab', $(".accordion .in").attr('id'));
         });
+
+        var lastTab = localStorage.getItem('lastTab');
+        if (lastTab) {
+            $('#'+lastTab).removeClass('collapse');
+            $('#'+lastTab).parent().addClass("open");
+            $('#'+lastTab).addClass("in");
+        }
+
     }
 
     function getValidationRules () {
