@@ -297,16 +297,6 @@ var mainWrapperInit = function () {
 $( document ).ready(function() {
     Theme.init();
     mainWrapperInit();
-    [%# open last accordion tab if possible -%]
-    $('.accordion').on('shown', function (e) {
-        localStorage.setItem('lastTab', $(".accordion .in").attr('id'));
-    });
-    var lastTab = localStorage.getItem('lastTab');
-    if (lastTab) {
-        $('#'+lastTab).removeClass('collapse');
-        $('#'+lastTab).parent().addClass("open");
-        $('#'+lastTab).addClass("in");
-    }
 });
 
 </script>
