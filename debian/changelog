@@ -1,3 +1,113 @@
+ngcp-panel (10.1.0.0+0~mr10.1.0.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [7236778] TT#125800 do not lookup terminated contract/contacts
+  * [40c4ade] TT#118802 log raw perl catalyst request time
+  * [ba437ad] TT#127300 TT#120309 fix datatable broken by escapeHtml control opt
+  * [325903c] TT#121500 fix missing mos_data in /api/callists
+  * [fefcf83] TT#121500 fix missing mos_data in /api/conversations
+  * [48f8938] TT#134807 "ignore domain" option for billing profiles
+
+  [ Nico Schedel ]
+  * [16ca366] TT#122872 selenium: fix domain settings tests
+  * [f364d5f] TT#122872 selenium: fix customer button position
+  * [bda2429] TT#122872 selenium: fix customer status box missing
+  * [3889eee] TT#122872 selenium: even more customer fixes
+  * [af17d53] TT#122872 selenium: workaround for status box disappearing in customer
+  * [deec8ac] TT#122872 selenium: testrunner formatting improvments
+  * [0906ca2] TT#122872 selenium: add new superuser test
+  * [c4bb000] TT#122872 selenium: add language switching test
+  * [0bcdc84] TT#122872 selenium: add test "add page to favourites"
+  * [44d0352] TT#122872 selenium: fix logout function
+  * [b989ed8] TT#122872 selenium: Only switch to new admin UI when necessary
+  * [9abcf16] TT#122872 selenium: add test_other
+
+  [ Alexander Lutay ]
+  * [d3a7825] TT#126809 Add extra pager elements to have better visibility on AUI in iframe
+  * [3f96d76] TT#115002 Update dataTables.*.js localization files
+  * [f5356a5] TT#124275 Show the button 'Login to CSC' for Perl CSC only
+  * [894204e] TT#127812 Remove hidden 'Sign Up' functionality
+  * [3ba08f4] TT#122202 Re-enable use_session for realm api_subscriber_jwt
+  * [efc0133] TT#129176 Hide buttons 'upload/download CVS' for Emergency Mapping and Number Porting
+  * [c3975cb] TT#122202 Remove trailing spaces from error pages
+  * [cea0147] TT#122202 Hide 'Back/Contact' buttons for framed mode
+  * [7ca619f] TT#122202 Sync 'Customer Details' in CSC v1 and v2
+  * [d25d256] TT#128256 Add localisation support on calls list select
+  * [2a2988e] TT#128256 Add localisation for datatable pager 'All' element
+  * [05b9f76] TT#128256 Add localisation for 'From Date'/'To Date' on data table
+  * [24e08cb] TT#128256 Add localisation for support status page
+  * [554c33d] TT#128256 Add localisation for delete/terminate popup confirmations
+  * [8885d06] TT#128256 Add localisation for phonebook 'Upload CSV' page
+  * [42e63e5] TT#130659 Remove rrd-related ngcp-panel code
+  * [4f2ba3c] TT#130659 Remove 'svg-edit-2.6' JS code (necessary for Opera Presto only)
+  * [6263f16] TT#130659 Stop calling systemd openvpn status twice on every HTTP request
+  * [6fbf99e] TT#130659 Improve debug log layout (common style, removing plus/star markers)
+  * [12c2911] TT#130659 Improve path debug output in panel-debug.log
+  * [62cf532] TT#103252 Add missing localization for Reseller->Branding page
+  * [6f4c8a2] TT#134951 Use common Reseller datatable on Customer details
+  * [d65cc3b] TT#137650 Restore 'accordion' lastTab collapse state properly
+
+  [ Kirill Solomko ]
+  * [d17c4be] TT#121250 improve sip_lcr_reload and sip_domain_reload
+  * [118d2c3] TT#127357 /api/callists return correct call type
+  * [ac30d51] TT#127750 add uploadtmp config option
+  * [d3566d0] TT#127805 remove temp transcoded files
+  * [20e77c7] TT#129162 tighten user access checks
+  * [f4597b6] TT#129162 add bcrypt password characters check
+  * [407490c] TT#129162 respect framed setting for root default
+  * [6381283] TT#129162 fix passwork characters check
+  * [a4bf25a] TT#130203 add typ=JWT into the JWT payload
+  * [1dfdad0] TT#130450 use uuid in /api/cfdestinationsets /api/cfmappings
+  * [53408c2] TT#130750 do not pack() jwt secret
+  * [fc9c71a] TT#130203 unify admin and subscriber JWT tokens
+  * [1cdae0b] TT#125902 add Login CSC v2 support
+  * [2b144ca] TT#128605 implement dynamic fields expand
+  * [c50b49d] TT#133800 fix password fields behaviour in API
+  * [3ef1675] TT#133901 fix administrative flag for subscriberadmin
+  * [02f3f6b] TT#133800 fix webpassword field removal
+  * [cc10506] TT#129162 fix subscriber webpassword field validation
+  * [992c9f1] TT#129162 Admins fix password field transformation
+
+  [ Flaviu Mates ]
+  * [f27eedf] TT#128253 Add localization support for /api/.+preferencedefs
+  * [c1752e7] TT#128552 Add filtering by name for /api/billingprofiles
+  * [131fe8e] TT#128850 Fix 500 eror on /api/preferencedefs
+  * [9b422dd] TT#126601 Implement /api/authtokens endpoint
+  * [b4bc1f2] TT#133053 Fix 500 error on /api/authtokens
+
+  [ Marco Capetta ]
+  * [7fc4e77] TT#82409 Add support of 'peer_auth_hf_user' preference in createRegistration
+
+  [ Victor Tsvetov ]
+  * [829479e] TT#129160 Complete missing Russian translations
+  * [e8fe196] TT#115002 Stop updating PO translation files locally
+  * [21bbb38] TT#115002 Fix collecting i18n strings from Forms
+  * [50f6b2a] TT#115002 Add strings from Forms to i18n source
+  * [94c3530] TT#129160 Complete missing Russian translations
+  * [0592f3f] TT#126853 Replace "free minutes" with "free calling time"
+  * [c9e5636] TT#137552 Update German translations
+
+  [ Sergii Leonenko ]
+  * [2a1ab7a] TT#122202 notify new UI CSC or AUI that a user is about to visit another page
+
+  [ Sipwise Jenkins Builder ]
+  * [7fe2cef] TT#4166 I18N dump: snapshot 2021.05.05-01.23.15
+  * [5a4f7ee] TT#4166 I18N dump: snapshot 2021.07.15-01.22.19
+  * [c6a6427] TT#4166 I18N dump: snapshot 2021.07.17-01.23.06
+  * [181841e] TT#4166 I18N dump: snapshot 2021.07.19-01.22.52
+  * [382ae28] TT#4166 I18N dump: snapshot 2021.07.21-01.32.54
+  * [f48ec2d] TT#4166 I18N dump: snapshot 2021.07.23-01.23.11
+  * [0d3ea9c] TT#4166 I18N dump: snapshot 2021.08.05-01.24.15
+  * [35f7cde] TT#4166 I18N dump: snapshot 2021.08.06-01.23.29
+  * [6430645] TT#4166 I18N dump: snapshot 2021.08.10-01.27.27
+  * [5f2925c] TT#4166 I18N dump: snapshot 2021.08.17-01.34.01
+  * [b887138] TT#4166 I18N dump: snapshot 2021.08.18-01.28.38
+
+  [ Donat Zenichev ]
+  * [6a17151] TT#133301 Adding default AA slot for timeout cases
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Aug 2021 16:52:08 +0200
+
 ngcp-panel (10.0.0.0+0~mr10.0.0.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
