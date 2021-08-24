@@ -31,13 +31,11 @@ var Theme = function () {
 
     function enhancedAccordion () {
         $('.accordion').on('show', function (e) {
-             $(e.target).prev('.accordion-heading').parent ().addClass('open');
+            $(e.target).prev('.accordion-heading').parent().addClass('open');
         });
 
         $('.accordion').on('hide', function (e) {
-            if ($(e.target).hasClass('accordion-body')) {
-                $(this).find('.accordion-toggle').not($(e.target)).parents ('.accordion-group').removeClass('open');
-            }
+	        $(e.target).prev('.accordion-heading').parent().removeClass('open');
         });
 
         $('.accordion').on('shown', function (e) {
