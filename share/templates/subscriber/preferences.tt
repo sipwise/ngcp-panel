@@ -140,13 +140,14 @@ $( document ).ready(function() {
                                         always
                                         [% jdx = jdx + 1 %]
                                     [% ELSE -%]
-                                        [% maps.tset_name -%]
+                                        [% escaped_tset_name = maps.tset_name | html -%]
+                                        [% escaped_tset_name -%]
                                         [% tset_unique_id = cf.type _ idx _ jdx _ maps.id -%]
                                         <a href="#" data-toggle="modal" data-target="#[% tset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
-                                        [% modal_header_dynamic(m.header = c.loc('Timeset "[_1]" Details', maps.tset_name), m.id=tset_unique_id) %]
+                                        [% modal_header_dynamic(m.header = c.loc('Timeset "[_1]" Details', escaped_tset_name), m.id=tset_unique_id) %]
                                         <div class="modal-body">
                                         [% FOR p IN maps.periods -%]
-                                            [% p.as_string %]<br/>
+                                            [% p.as_string | html %]<br/>
                                         [% END -%]
                                         </div>
                                         [% modal_footer() %]
@@ -164,13 +165,13 @@ $( document ).ready(function() {
                                         [% c.loc('all sources'); %]
                                         [% jdx = jdx + 1 %]
                                     [% ELSE -%]
-                                        [% maps.sset_name -%] ([% maps.sset_mode -%])
+                                        [% maps.sset_name | html -%] ([% maps.sset_mode -%])
                                         [% sset_unique_id = cf.type _ idx _ jdx _ maps.id _ 's' -%]
                                         <a href="#" data-toggle="modal" data-target="#[% sset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
                                         [% modal_header_dynamic(m.header = c.loc('Sourceset "[_1]" Details', maps.sset_name), m.id=sset_unique_id) %]
                                         <div class="modal-body">
                                         [% FOR s IN maps.sources -%]
-                                            [% s.as_string %]<br/>
+                                            [% s.as_string | html %]<br/>
                                         [% END -%]
                                         </div>
                                         [% modal_footer() %]
@@ -189,13 +190,14 @@ $( document ).ready(function() {
                                         [% c.loc('any number'); %]
                                         [% jdx = jdx + 1 %]
                                     [% ELSE -%]
-                                        [% maps.bset_name -%] ([% maps.bset_mode -%])
+                                        [% escaped_bset_name = maps.bset_name | html -%]
+                                        [% escaped_bset_name -%] ([% maps.bset_mode -%])
                                         [% bset_unique_id = cf.type _ idx _ '-' _ jdx _ '-' _ maps.id _ 'b' -%]
                                         <a href="#" data-toggle="modal" data-target="#[% bset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
-                                        [% modal_header_dynamic(m.header = c.loc('B-Number Set "[_1]" Details', maps.bset_name), m.id=bset_unique_id) %]
+                                        [% modal_header_dynamic(m.header = c.loc('B-Number Set "[_1]" Details', escaped_bset_name), m.id=bset_unique_id) %]
                                         <div class="modal-body">
                                         [% FOR s IN maps.bnumbers -%]
-                                            [% s.as_string %]<br/>
+                                            [% s.as_string | html %]<br/>
                                         [% END -%]
                                         </div>
                                         [% modal_footer() %]
@@ -212,17 +214,22 @@ $( document ).ready(function() {
                                 [% idx = 0 -%]
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
                                     [% IF maps.dset_name.search('^quickset_') && maps.destinations.size == 1 %]
+                                        [% FILTER html -%]
                                         [% PROCESS print_destination d=maps.destinations.0; -%]
+                                        [% END -%]
                                     [% ELSE %]
                                         [% jdx = 0 -%]
-                                        [% maps.dset_name -%]
+                                        [% escaped_dset_name = maps.dset_name | html -%]
+                                        [% escaped_dset_name -%]
 
                                         [% dset_unique_id = cf.type _ "dset" _ idx _ jdx _ maps.id -%]
                                         <a href="#" data-toggle="modal" data-target="#[% dset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
-                                        [% modal_header_dynamic(m.header = c.loc('Destination Set "[_1]" Details', maps.dset_name), m.id=dset_unique_id) %]
+                                        [% modal_header_dynamic(m.header = c.loc('Destination Set "[_1]" Details', escaped_dset_name), m.id=dset_unique_id) %]
                                         <div class="modal-body">
                                             [% FOR d IN maps.destinations -%]
+                                                [% FILTER html -%]
                                                 [% PROCESS print_destination d=d; %]<br/>
+                                                [% END -%]
                                                 [% jdx = jdx + 1 -%]
                                             [% END -%]
                                         </div>
@@ -286,7 +293,7 @@ $( document ).ready(function() {
                         <tr class="sw_action_row">
                             <td>[% c.loc('PIN') %]</td>
                             <td>
-                                [% subscriber.provisioning_voip_subscriber.voicemail_user.password %]
+                                [% subscriber.provisioning_voip_subscriber.voicemail_user.password | html %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
@@ -302,7 +309,7 @@ $( document ).ready(function() {
                         <tr class="sw_action_row">
                             <td>[% c.loc('Email') %]</td>
                             <td>
-                                [% subscriber.provisioning_voip_subscriber.voicemail_user.email %]
+                                [% subscriber.provisioning_voip_subscriber.voicemail_user.email | html %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
@@ -352,7 +359,7 @@ $( document ).ready(function() {
                         <tr class="sw_action_row">
                             <td>[% c.loc('SMS Number') %]</td>
                             <td>
-                                [% subscriber.provisioning_voip_subscriber.voicemail_user.pager %]
+                                [% subscriber.provisioning_voip_subscriber.voicemail_user.pager | html %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
@@ -434,7 +441,7 @@ $( document ).ready(function() {
                         <tr class="sw_action_row">
                             <td>[% c.loc('Name in Fax Header for Sendfax') %]</td>
                             <td>
-                                [% faxpref.name %]
+                                [% faxpref.name | html %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
@@ -471,7 +478,9 @@ $( document ).ready(function() {
                             <td>[% c.loc('Destinations') %]</td>
                             <td>
                                 [% FOR faxdest IN faxdests -%]
+                                    [% FILTER html -%]
                                     [% c.loc('[_1] as [_2]', faxdest.destination, faxdest.filetype) %]<br/>
+                                    [% END -%]
                                 [% END -%]
                             </td>
                             <td class="ngcp-actions-column">
@@ -561,7 +570,7 @@ $( document ).ready(function() {
                         <tr class="sw_action_row">
                             <td>[% c.loc('Secret Key (empty=disabled)') %]</td>
                             <td>
-                                [% mtf_pref.secret_key %]
+                                [% mtf_pref.secret_key | html %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
@@ -606,7 +615,7 @@ $( document ).ready(function() {
                             <td>[% c.loc('Secret Key Renew Notify') %]</td>
                             <td>
                                 [% FOR notify_email IN mtf_secret_renew_notify -%]
-                                    [% notify_email.destination %]<br/>
+                                    [% notify_email.destination | html %]<br/>
                                 [% END -%]
                             </td>
                             <td class="ngcp-actions-column">
@@ -626,7 +635,7 @@ $( document ).ready(function() {
                             <td>[% c.loc('ACL') %]</td>
                             <td>
                                 [% FOR acl IN mtf_acl -%]
-                                    [% acl.use_regex ? c.loc('regex') : '' %]  [% c.loc('from_email') %]  <u>[% acl.from_email ? acl.from_email : c.loc('any') %]</u>  [% c.loc('and') %]  [% c.loc('received_from') %]  <u>[% acl.received_from ? acl.received_from : c.loc('any') %]</u>  [% c.loc('to') %]  <u>[% acl.destination ? acl.destination : c.loc('any') %]</u>  [% c.loc('destination') %]<br/>
+                                    [% acl.use_regex ? c.loc('regex') : '' %]  [% c.loc('from_email') | html %]  <u>[% acl.from_email ? acl.from_email : c.loc('any') | html %]</u>  [% c.loc('and') %]  [% c.loc('received_from') | html %]  <u>[% acl.received_from ? acl.received_from : c.loc('any') | html %]</u>  [% c.loc('to') | html %]  <u>[% acl.destination ? acl.destination : c.loc('any') | html %]</u>  [% c.loc('destination') | html %]<br/>
                                 [% END -%]
                             </td>
                             <td class="ngcp-actions-column">
@@ -1035,7 +1044,7 @@ $( document ).ready(function() {
         <tbody>
         [% FOREACH set IN cf_sets -%]
             <tr class="sw_action_row">
-                <td>[% set.name %]</td>
+                <td>[% set.name | html %]</td>
                 <td>
                     [% FOREACH d IN set.destinations -%]
                         [% c.loc('[_1]<span class="pull-right">for [_2]s</span>', d.as_string, d.timeout) %]<br/>
@@ -1085,10 +1094,10 @@ $( document ).ready(function() {
         <tbody>
         [% FOREACH set IN cf_sets -%]
             <tr class="sw_action_row">
-                <td>[% set.name %]</td>
+                <td>[% set.name | html %]</td>
                 <td>
                     [% FOREACH p IN set.periods -%]
-                        [% p.as_string %]<br/>
+                        [% p.as_string | html %]<br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">
@@ -1136,11 +1145,11 @@ $( document ).ready(function() {
         <tbody>
         [% FOREACH set IN cf_source_sets -%]
             <tr class="sw_action_row">
-                <td>[% set.name %]</td>
+                <td>[% set.name | html %]</td>
                 <td>[% set.mode %]</td>
                 <td>
                     [% FOREACH source IN set.sources -%]
-                        [% source.as_string %]<br/>
+                        [% source.as_string | html %]<br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">
@@ -1188,11 +1197,11 @@ $( document ).ready(function() {
         <tbody>
         [% FOREACH set IN cf_bnumber_sets -%]
             <tr class="sw_action_row">
-                <td>[% set.name %]</td>
+                <td>[% set.name | html %]</td>
                 <td>[% set.mode %]</td>
                 <td>
                     [% FOREACH number IN set.bnumbers -%]
-                        [% number.as_string %]<br/>
+                        [% number.as_string | html %]<br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">
