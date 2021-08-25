@@ -57,7 +57,7 @@
                         }); return false;"><i class="icon-question-sign"></i></a>
                 </td>
                 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
-                <td>[% r.attribute %]</td>
+                <td>[% r.attribute | html %]</td>
                 [% END -%]
                 <td>
                   [% c.loc(r.label||" ") %]
@@ -67,58 +67,59 @@
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.rewrite_rule_sets -%]
-                            <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                            <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
+
                     [% ELSIF r.attribute == "ncos" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR level IN helper.ncos_levels -%]
-                            <option [% (r.ncos_id.defined && r.ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
+                            <option [% (r.ncos_id.defined && r.ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "adm_ncos" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR level IN helper.ncos_levels -%]
-                            <option [% (r.adm_ncos_id.defined && r.adm_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
+                            <option [% (r.adm_ncos_id.defined && r.adm_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "adm_cf_ncos" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR level IN helper.ncos_levels -%]
-                            <option [% (r.adm_cf_ncos_id.defined && r.adm_cf_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
+                            <option [% (r.adm_cf_ncos_id.defined && r.adm_cf_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "emergency_mapping_container" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR container IN helper.emergency_mapping_containers -%]
-                            <option [% (r.emergency_mapping_container_id.defined && r.emergency_mapping_container_id == container.id) ? 'selected="selected"' : '' %]>[% container.name %]</option>
+                            <option [% (r.emergency_mapping_container_id.defined && r.emergency_mapping_container_id == container.id) ? 'selected="selected"' : '' %]>[% container.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "sound_set" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.sound_sets -%]
-                            <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                            <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "contract_sound_set" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.contract_sound_sets -%]
-                            <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                            <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "allowed_ips" -%]
                         [% FOR ipnet IN r.allowed_ips_rs.all -%]
-                            [% ipnet.ipnet -%]<br/>
+                            [% ipnet.ipnet | html -%]<br/>
                         [% END -%]
                     [% ELSIF r.attribute == "man_allowed_ips" -%]
                         [% FOR ipnet IN r.man_allowed_ips_rs.all -%]
-                            [% ipnet.ipnet -%]<br/>
+                            [% ipnet.ipnet | html -%]<br/>
                         [% END -%]
 
                     [% ELSIF r.data_type == "boolean" %]
@@ -126,13 +127,13 @@
                             [% IF r.value %]checked="checked"[% END %]/>
                     [% ELSIF r.data_type == "string" || r.data_type == "int" %]
                         [% IF r.max_occur == 1 %]
-                            [% r.value %]
+                            [% r.value | html %]
                         [% ELSE %]
                             [% FOR value IN r.value -%]
                                 [% IF value.substr(0,1) == '#' -%]
-                                    <span class="ngcp-entry-disabled">[% value.substr(1) %]</span>
+                                    <span class="ngcp-entry-disabled">[% value.substr(1) | html %]</span>
                                 [% ELSE -%]
-                                    [% value %]
+                                    [% value | html %]
                                 [% END -%]
                                 <br/>
                             [% END %]
@@ -140,7 +141,7 @@
                     [% ELSIF r.data_type == "enum" %]
                         <select disabled="disabled">
                         [% FOREACH e IN r.enums %]
-                            <option [% IF r.value == e.value || (!r.value.defined && ! e.value.defined) %]selected="selected"[% END %]>[% e.label %]</option>
+                            <option [% IF r.value == e.value || (!r.value.defined && ! e.value.defined) %]selected="selected"[% END %]>[% e.label | html %]</option>
                         [% END %]
                         </select>
                     [% END %]
