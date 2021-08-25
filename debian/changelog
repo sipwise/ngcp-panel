@@ -1,3 +1,10 @@
+ngcp-panel (9.5.1.9+0~mr9.5.1.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a66423a] TT#114401 fix missing html escape in preferences
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Aug 2021 19:10:09 +0200
+
 ngcp-panel (9.5.1.8+0~mr9.5.1.8) unstable; urgency=medium
 
   [ Victor Tsvetov ]
