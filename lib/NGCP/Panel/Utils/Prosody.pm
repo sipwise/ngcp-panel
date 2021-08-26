@@ -5,7 +5,7 @@ use Net::Telnet;
 
 sub activate_domain {
     my ($c, $domain) = @_;
-
+    $domain = lc $domain;
     my $t = Net::Telnet->new(Timeout => 5);
     my $hosts = _load_servers($c);
     my $ok = 1;
