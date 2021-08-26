@@ -226,9 +226,7 @@ $( document ).ready(function() {
                                         [% modal_header_dynamic(m.header = c.loc('Destination Set "[_1]" Details', escaped_dset_name), m.id=dset_unique_id) %]
                                         <div class="modal-body">
                                             [% FOR d IN maps.destinations -%]
-                                                [% FILTER html -%]
                                                 [% PROCESS print_destination d=d; %]<br/>
-                                                [% END -%]
                                                 [% jdx = jdx + 1 -%]
                                             [% END -%]
                                         </div>
