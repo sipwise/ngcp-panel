@@ -1,3 +1,12 @@
+ngcp-panel (6.5.9.6+0~mr6.5.9.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [744ddcd] TT#114401 fix missing html escape in preferences
+  * [08b1552] TT#114401 fix call forwards html escaping
+  * [b672e55] TT#114401 fix call destination set html escaping
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Aug 2021 16:40:34 +0200
+
 ngcp-panel (6.5.9.5+0~mr6.5.9.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
