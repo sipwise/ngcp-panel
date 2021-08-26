@@ -206,14 +206,13 @@ $( document ).ready(function() {
                             </td>
                             <td> <!--- New Destinations (C-Number) -->
                                 [% BLOCK print_destination;
-                                    c.loc('[_1] for [_2]s',d.as_string _' <span class="pull-right">', d.timeout) _ '</span>';
+                                    escaped_dest = d.as_string | html;
+                                    c.loc('[_1] for [_2]s', escaped_dest _' <span class="pull-right">', d.timeout) _ '</span>';
                                 END; -%]
                                 [% idx = 0 -%]
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
                                     [% IF maps.dset_name.search('^quickset_') && maps.destinations.size == 1 %]
-                                        [% FILTER html -%]
                                         [% PROCESS print_destination d=maps.destinations.0; -%]
-                                        [% END -%]
                                     [% ELSE %]
                                         [% jdx = 0 -%]
                                         [% escaped_dset_name = maps.dset_name | html -%]
@@ -985,7 +984,8 @@ $( document ).ready(function() {
                 <td>[% set.name | html %]</td>
                 <td>
                     [% FOREACH d IN set.destinations -%]
-                        [% c.loc('[_1]<span class="pull-right">for [_2]s</span>', d.as_string, d.timeout) %]<br/>
+                        [% escaped_cf = d.as_string | html -%]
+                        [% c.loc('[_1]<span class="pull-right">for [_2]s</span>', escaped_cf, d.timeout) %]<br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">
