@@ -1,3 +1,10 @@
+ngcp-panel (9.5.1.10+0~mr9.5.1.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [9b98f4b] TT#114401 fix call forwards html escaping
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Aug 2021 10:21:11 +0200
+
 ngcp-panel (9.5.1.9+0~mr9.5.1.9) unstable; urgency=medium
 
   [ Kirill Solomko ]
