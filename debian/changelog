@@ -1,3 +1,10 @@
+ngcp-panel (9.5.1.12+0~mr9.5.1.12) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [bccf5ae] TT#137602 prosody: domains are treated as lowercase
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 27 Aug 2021 12:03:04 +0200
+
 ngcp-panel (9.5.1.11+0~mr9.5.1.11) unstable; urgency=medium
 
   [ Kirill Solomko ]
