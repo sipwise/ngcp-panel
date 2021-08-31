@@ -329,6 +329,7 @@
             delete $retained->{subscriber}->{modify_timestamp};
             delete $retained->{subscriber}->{create_timestamp};
             delete $retained->{subscriber}->{primary_number_id};
+            delete $retained->{subscriber}->{webpassword};
         }
     conditions:
         is:
@@ -364,6 +365,7 @@
             delete $retained->{new_subscriber}->{modify_timestamp};
             delete $retained->{new_subscriber}->{create_timestamp};
             delete $retained->{new_subscriber}->{primary_number_id};
+            delete $retained->{new_subscriber}->{webpassword};
         }
     conditions:
         is:
