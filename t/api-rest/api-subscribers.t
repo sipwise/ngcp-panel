@@ -73,7 +73,7 @@ $fake_data->set_data_from_script({
                 $_[0]->{primary_number}->{sn} = $time.$num;
             }, $self->data->{$collection_name}->{data} );
         },
-        'update_change_fields' => [qw/modify_timestamp create_timestamp primary_number_id/],
+        'update_change_fields' => [qw/modify_timestamp create_timestamp primary_number_id webpassword/],
     },
 });
 
