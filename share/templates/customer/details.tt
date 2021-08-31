@@ -52,12 +52,20 @@ $(function() {
     ];
 -%]
 
-[% UNLESS framed -%]
-[% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
-    [% site_config.title = c.loc('Customer Details') -%]
+[% IF framed -%]
+[%   IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/preferences', [c.req.captures.0]) %]"><i class="icon-list"></i> [% c.loc('Preferences') %]</a>
+    </span>
+</div>
+[%   END -%]
 [% ELSE -%]
+[%   IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
+    [% site_config.title = c.loc('Customer Details') -%]
+[%   ELSE -%]
     [% site_config.title = c.loc('Customer Details for #[_1] ([_2])',contract.id,product.name) -%]
-[% END -%]
+[%   END -%]
 
 <div class="row">
     <span>
