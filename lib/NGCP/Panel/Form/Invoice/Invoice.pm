@@ -33,6 +33,7 @@ has_field 'contract' => (
 has_field 'period' => (
     #type => '+NGCP::Panel::Field::DateTime',
     type => '+NGCP::Panel::Field::MonthPicker',
+    max_date => '0', # Disable future dates
     element_attr => {
         rel => ['tooltip'],
         title => ['YYYY-MM']

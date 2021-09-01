@@ -9,6 +9,7 @@ has 'template' => ( isa => 'Str',
                     default => 'helpers/monthpicker.tt' );
 has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
 has 'date_format_js' => (isa => 'Str', is => 'rw', default => 'yy-mm' );
+has 'max_date' => (isa => 'Str', is => 'rw', default => '' );
 
 sub render_element {
     my ($self) = @_;
@@ -22,6 +23,7 @@ sub render_element {
         field_id => $fieldname . "_datepicker",
         value => $self->value,
         date_format_js => $self->date_format_js,
+        max_date => $self->max_date,
         errors => $self->errors,
         language_file => $self->language_file,
     };
