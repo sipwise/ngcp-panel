@@ -1,3 +1,11 @@
+ngcp-panel (9.5.1.13+0~mr9.5.1.13) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4922a53] TT#129162 api-rest subscriber get2put ignore field webpassword
+  * [0ba5a46] TT#129162 api-rest2 subscriber ignore field webpassword
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 02 Sep 2021 21:15:50 +0200
+
 ngcp-panel (9.5.1.12+0~mr9.5.1.12) unstable; urgency=medium
 
   [ Victor Seva ]
