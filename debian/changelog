@@ -1,3 +1,29 @@
+ngcp-panel (10.0.2.0+0~mr10.0.2.0) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [debc9c1] TT#137602 prosody: domains are treated as lowercase
+
+  [ Alexander Lutay ]
+  * [3737288] TT#137901 Removed duplicated Theme.init() call
+  * [da9ea9e] TT#137901 Removed trailing spaces and replaced TABs with spaces for Theme.js
+  * [dc4ad30] TT#137901 Do not clean orange background .accordion-group on hiding tooltip.
+  * [082a753] TT#137901 Move accordion code into function enhancedAccordion()
+  * [8e76e45] TT#137901 Merge expand/collapse accordion buttons into Theme.js
+  * [f62a305] TT#137901 Stop removing orange background from all opened elements on closing one
+  * [4830990] TT#138900 Restore "Preferences" button on JS CSC for framed mode
+
+  [ Nico Schedel ]
+  * [b953500] TT#122872 selenium: expand administrator tests
+
+  [ Kirill Solomko ]
+  * [d1c091b] TT#129162 api-rest subscriber get2put ignore field webpassword
+  * [0533b49] TT#129162 api-rest2 subscriber ignore field webpassword
+  * [5c34a2c] TT#114401 fix missing html escape in preferences
+  * [358348f] TT#114401 fix call forwards html escaping
+  * [b968d96] TT#114401 fix call destination set html escaping
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Sep 2021 16:12:19 +0200
+
 ngcp-panel (10.0.1.0+0~mr10.0.1.0) unstable; urgency=medium
 
   [ Rene Krenn ]
