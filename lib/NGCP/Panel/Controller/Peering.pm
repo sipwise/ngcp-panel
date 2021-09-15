@@ -174,6 +174,13 @@ sub delete_peering :Chained('base') :PathPart('delete') {
                     transport => $p->transport,
                 );
             }
+            if ($p->enabled) {
+                $c->stash->{server}->{name} = $p->name;
+                $c->stash->{server}->{ip} = $p->ip;
+                $c->stash->{server}->{id} = $p->id;
+                $c->stash->{server_result} = $p;
+                NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+            }
             $p->voip_peer_preferences->delete_all;
             $p->delete;
         }
