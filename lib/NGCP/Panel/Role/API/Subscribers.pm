@@ -55,15 +55,16 @@ sub resource_from_item {
     delete $prov_resource->{domain_id};
     delete $prov_resource->{account_id};
     my %resource = %{ merge($bill_resource, $prov_resource) };
-    my $delete_passwords = 1;
+    my $change_passwords = 1;
     $resource{administrative} = delete $resource{admin};
 
-    if ($c->request->method eq 'PATCH' && !$resource{pre_patch_resource}) {
-        $delete_passwords = 0;
-        $resource{pre_patch_resource} = 1;
-    } else {
-        $delete_passwords = 1;
-        delete $resource{pre_patch_resource};
+    if ($c->request->method eq 'PATCH') {
+        if ($resource{pre_patch_resource}) {
+            delete $resource{pre_patch_resource};
+        } else {
+            $change_passwords = 0;
+            $resource{pre_patch_resource} = 1;
+        }
     }
 
     unless($customer->product->class eq 'pbxaccount') {
@@ -94,8 +95,8 @@ sub resource_from_item {
     #  - all webpasswords from mr8.5+ are meant to be encrypted
     #  - in case of the false positive result, the worse that happens
     #    the password is not returned to the user in plain-text
-    if ($delete_passwords &&
-        $resource{webpassword} && length $resource{webpassword} =~ /^(54|56)$/ &&
+    if ($change_passwords &&
+        $resource{webpassword} && (length $resource{webpassword}) =~ /^(54|56)$/ &&
         $resource{webpassword} =~ /\$/) {
             delete $resource{webpassword};
     }
@@ -198,18 +199,18 @@ sub resource_from_item {
         if ($c->user->show_passwords) {
             foreach my $k(qw/password webpassword/) {
                 eval {
-                    if ($resource{$k}) {
+                    if ($resource{$k} && $change_passwords) {
                         $resource{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
                     }
                 };
                 if ($@) {
-                    $c->log->error("Failed to encrypt $k '$resource{$k}': " . $@);
-                    delete $resource{$k} if $delete_passwords;
+                    $c->log->error("Failed to encrypt $k: " . $@);
+                    delete $resource{$k} if $change_passwords;
                 }
             }
         } else {
             foreach my $k(qw/password webpassword/) {
-                delete $resource{$k} if $delete_passwords;
+                delete $resource{$k} if $change_passwords;
             }
         }
     } else {
@@ -221,16 +222,18 @@ sub resource_from_item {
 
             # TODO: make custom filtering configurable!
             foreach my $k(qw/password webpassword/) {
-                delete $resource{$k} if $delete_passwords;
+                delete $resource{$k} if $change_passwords;
             }
         }
-        if($c->user->roles eq "subscriberadmin") {
+        if ($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
-            if(!$c->config->{security}->{password_sip_expose_subadmin}) {
-                delete $resource{password} if $delete_passwords;
-            }
-            if(!$c->config->{security}->{password_web_expose_subadmin}) {
-                delete $resource{webpassword} if $delete_passwords;
+            if ($item->id != $c->user->voip_subscriber->id) {
+                if (!$c->config->{security}->{password_sip_expose_subadmin}) {
+                    delete $resource{password} if $change_passwords;
+                }
+                if (!$c->config->{security}->{password_web_expose_subadmin}) {
+                    delete $resource{webpassword} if $change_passwords;
+                }
             }
         }
     }
