@@ -23,6 +23,7 @@
         [% IF c.config.grafana || c.config.features.callflow -%]
         <li><a href="/grafana/d/system-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('System Statistics') %]</a></li>
         [% IF c.config.monitoring.backend == 'prometheus' -%]
+        <li><a href="/grafana/d/system-processes?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('System Processes') %]</a></li>
         <li><a href="/grafana/d/rtp-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('RTP Statistics') %]</a></li>
         [% END -%]
         <li><a href="/grafana/d/sip-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('SIP Statistics') %]</a></li>
