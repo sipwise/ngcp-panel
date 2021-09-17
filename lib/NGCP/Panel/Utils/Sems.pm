@@ -43,7 +43,7 @@ sub create_peer_registration {
         $domain = $prov_obj->{domain};
     } elsif ($type eq "subscriber") {
         # outbound registration for usual subscriber
-        $sid = $prov_obj->id;
+        $sid = $prov_obj->kamailio_subscriber->id;
         $uuid = $prov_obj->uuid;
         $username = $prov_obj->username;
         $domain = $prov_obj->domain->domain;
@@ -134,7 +134,7 @@ sub update_peer_registration {
         $domain = $prov_obj->{domain};
     } elsif ($type eq "subscriber") {
         # outbound registration for usual subscriber
-        $sid = $prov_obj->id;
+        $sid = $prov_obj->kamailio_subscriber->id;
         $uuid = $prov_obj->uuid;
         $username = $prov_obj->username;
         $domain = $prov_obj->domain->domain;
@@ -242,7 +242,7 @@ sub delete_peer_registration {
         $domain = $prov_obj->{domain};
     } elsif ($type eq "subscriber") {
         # outbound registration for usual subscriber
-        $sid = $prov_obj->id;
+        $sid = $prov_obj->kamailio_subscriber->id;
         $uuid = $prov_obj->uuid;
         $username = $prov_obj->username;
         $domain = $prov_obj->domain->domain;

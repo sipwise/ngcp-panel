@@ -375,8 +375,19 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
         try {
             my $enabled_before = $c->stash->{server_result}->enabled;
             my $probing_before = $c->stash->{server_result}->probe;
+
+            if ($enabled_before && !$form->values->{enabled}) {
+                NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+            }
+
             $c->stash->{server_result}->update($form->values);
+
+            if (!$enabled_before && $form->values->{enabled}) {
+                NGCP::Panel::Utils::Peering::_sip_create_peer_registration(c => $c);
+            }
+
             NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+
             if (($c->stash->{server_result}->probe && $enabled_before && !$c->stash->{server_result}->enabled) || ($probing_before && !$c->stash->{server_result}->probe)) {
                 NGCP::Panel::Utils::Peering::_sip_delete_probe(
                     c => $c,
@@ -384,11 +395,6 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
                     port => $c->stash->{server_result}->port,
                     transport => $c->stash->{server_result}->transport,
                 );
-            }
-            if (!$c->stash->{server_result}->enabled) {
-                NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
-            } else {
-                NGCP::Panel::Utils::Peering::_sip_create_peer_registration(c => $c);
             }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
@@ -659,7 +665,7 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
             my $type = 'peering';
             $prov_peer->{username} = $c->stash->{server}->{name};
             $prov_peer->{domain} = $c->stash->{server}->{ip};
-            $prov_peer->{id} = $c->stash->{server}->{id};
+            $prov_peer->{id} = $c->stash->{server_result}->lcr_gw->id;
             $prov_peer->{uuid} = 0;
 
             unless(compare($old_authentication_prefs, $new_authentication_prefs)) {

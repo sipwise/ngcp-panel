@@ -26,7 +26,7 @@ sub _sip_delete_peer_registration {
 
   $prov_peer->{username} = $c->stash->{server}->{name};
   $prov_peer->{domain} = $c->stash->{server}->{ip};
-  $prov_peer->{id} = $c->stash->{server}->{id};
+  $prov_peer->{id} = $c->stash->{server_result}->lcr_gw->id;
   $prov_peer->{uuid} = 0;
 
   my $pref_all = $c->stash->{server_result}->voip_peer_preferences->search({
@@ -59,7 +59,7 @@ sub _sip_create_peer_registration {
 
   $prov_peer->{username} = $c->stash->{server}->{name};
   $prov_peer->{domain} = $c->stash->{server}->{ip};
-  $prov_peer->{id} = $c->stash->{server}->{id};
+  $prov_peer->{id} = $c->stash->{server_result}->lcr_gw->id;
   $prov_peer->{uuid} = 0;
 
   my $pref_all = $c->stash->{server_result}->voip_peer_preferences->search({
