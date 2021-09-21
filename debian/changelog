@@ -1,3 +1,81 @@
+ngcp-panel (9.5.3.0+0~mr9.5.3.0) unstable; urgency=medium
+
+  [ Victor Tsvetov ]
+  * [e85042c] TT#129160 Complete missing Russian translations
+  * [e4bded2] TT#115002 Fix collecting i18n strings from Forms
+  * [b9d0d14] TT#126853 Replace "free minutes" with "free calling time"
+  * [a38e843] TT#137552 Update German translations
+
+  [ Alexander Lutay ]
+  * [8186771] TT#129176 Hide buttons 'upload/download CVS' for Emergency Mapping and Number Porting
+  * [ca687de] TT#122202 Remove trailing spaces from error pages
+  * [87d0c1c] TT#122202 Hide 'Back/Contact' buttons for framed mode
+  * [049964c] TT#122202 Sync 'Customer Details' in CSC v1 and v2
+  * [681bb49] TT#128256 Add localisation support on calls list select
+  * [cf23cad] TT#128256 Add localisation for datatable pager 'All' element
+  * [eda8a18] TT#128256 Add localisation for 'From Date'/'To Date' on data table
+  * [66ca818] TT#128256 Add localisation for support status page
+  * [fac3d67] TT#128256 Add localisation for delete/terminate popup confirmations
+  * [9672a3c] TT#122202 Re-enable use_session for realm api_subscriber_jwt
+  * [1961077] TT#128256 Add localisation for phonebook 'Upload CSV' page
+  * [d25ed73] TT#130659 Stop calling systemd openvpn status twice on every HTTP request
+  * [a48ed18] TT#130659 Improve debug log layout (common style, removing plus/star markers)
+  * [8de7b9f] TT#130659 Improve path debug output in panel-debug.log
+  * [80e0734] TT#103252 Add missing localization for Reseller->Branding page
+  * [41e0c05] TT#134951 Use common Reseller datatable on Customer details
+  * [3ab0b73] TT#137650 Restore 'accordion' lastTab collapse state properly
+  * [b0fc4ef] TT#137901 Removed duplicated Theme.init() call
+  * [69904fc] TT#137901 Removed trailing spaces and replaced TABs with spaces for Theme.js
+  * [aa0b891] TT#137901 Do not clean orange background .accordion-group on hiding tooltip.
+  * [fe713fd] TT#137901 Move accordion code into function enhancedAccordion()
+  * [95f9dc8] TT#137901 Merge expand/collapse accordion buttons into Theme.js
+  * [9bcd3eb] TT#137901 Stop removing orange background from all opened elements on closing one
+  * [c5ef86b] TT#138900 Restore "Preferences" button on JS CSC for framed mode
+
+  [ Sergii Leonenko ]
+  * [7e73829] TT#122202 notify new UI CSC or AUI that a user is about to visit another page
+
+  [ Kirill Solomko ]
+  * [871fbe4] TT#129162 tighten user access checks
+  * [cefd712] TT#129162 add bcrypt password characters check
+  * [a2002e1] TT#129162 respect framed setting for root default
+  * [698c021] TT#129162 fix passwork characters check
+  * [ab4d8e2] TT#130450 use uuid in /api/cfdestinationsets /api/cfmappings
+  * [351a8c3] TT#121250 improve sip_lcr_reload and sip_domain_reload
+  * [4627e2e] TT#127357 /api/callists return correct call type
+  * [2c5e4d5] TT#133800 fix password fields behaviour in API
+  * [87b706d] TT#133800 fix webpassword field removal
+  * [26f640d] TT#114401 fix missing html escape in preferences
+  * [d3119a0] TT#114401 fix call forwards html escaping
+  * [3389ae8] TT#114401 fix call destination set html escaping
+  * [f41678c] TT#129162 api-rest subscriber get2put ignore field webpassword
+  * [3c30536] TT#129162 api-rest2 subscriber ignore field webpassword
+  * [1870bb7] TT#130750 do not pack() jwt secret
+  * [2a43833] TT#133901 fix administrative flag for subscriberadmin
+  * [9838121] TT#129162 fix subscriber webpassword field validation
+  * [d1e1194] TT#129162 Admins fix password field transformation
+  * [476f937] TT#133800 fix webpassword, change subadmin expose password
+
+  [ Rene Krenn ]
+  * [5c5047a] TT#121500 fix missing mos_data in /api/callists
+  * [944823b] TT#121500 fix missing mos_data in /api/conversations
+  * [4155971] TT#134807 "ignore domain" option for billing profiles
+  * [34605f3] TT#142001 do not quote LI numbers in Response err messages
+
+  [ Flaviu Mates ]
+  * [db8f0fe] TT#126601 Implement /api/authtokens endpoint
+
+  [ Nico Schedel ]
+  * [9fb72be] TT#122872 selenium: add new superuser test
+  * [a83b5cc] TT#122872 selenium: add language switching test
+  * [4dbec3d] TT#122872 selenium: add test "add page to favourites"
+  * [980f948] TT#122872 selenium: fix logout function
+
+  [ Victor Seva ]
+  * [5b9bbab] TT#137602 prosody: domains are treated as lowercase
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 Sep 2021 16:27:11 +0200
+
 ngcp-panel (9.5.2.0+0~mr9.5.2.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
