@@ -357,6 +357,8 @@ sub include_framed {
     $c->session->{framed} = 1 if ($c->req->params->{framed} && $c->req->params->{framed} == 1);
     $c->session->{framed} = 0 if not defined $c->req->headers->header("referer");
     $c->session->{framed} = 0 if (defined $c->req->params->{framed} && $c->req->params->{framed} == 0);
+    $c->session->{framed} = 0 if (defined $c->req->headers->header("sec-fetch-dest") && $c->req->headers->header("sec-fetch-dest") eq "document");
+    $c->session->{framed} = 1 if (defined $c->req->headers->header("sec-fetch-dest") && $c->req->headers->header("sec-fetch-dest") eq "iframe");
     $c->stash(framed => $c->session->{framed}) if ($c->session->{framed} && $c->session->{framed} == 1);
 
     return;
