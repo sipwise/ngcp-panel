@@ -20,7 +20,7 @@ sub check_redirect_chain {
         $back_uri->query_param_delete('back');
         delete $c->request->params->{back};
         if(@{ $c->session->{redirect_targets} }) {
-            unless(${ $c->session->{redirect_targets} }[0]->path eq $back_uri->path) {
+            unless((${ $c->session->{redirect_targets} }[0]->path eq $back_uri->path) || ($back_uri->path eq '/') ) {
                 unshift @{ $c->session->{redirect_targets} }, $back_uri
             }
                 # in case you press F5 with a back-uri in the url
