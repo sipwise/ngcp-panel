@@ -60,6 +60,8 @@ sub create_location {
     my($contact, $q, $expires, $flags, $cflags) = @$params{qw/contact q expires flags cflags/};
     my $aor = get_aor($c, $prov_subscriber);
     my $path = _compose_location_path($c, $prov_subscriber, $params);#compose path from path or socket from params
+    my $socket = $params{socket} // 0;
+
     if ($expires) {
         $expires = NGCP::Panel::Utils::DateTime::from_string($expires)->epoch;
         $expires //= 0;
@@ -88,6 +90,8 @@ sub create_location {
 <param><value><int>$flags</int></value></param>
 <param><value><int>$cflags</int></value></param>
 <param><value><int>0</int></value></param>
+<param><value><int>0</int></value></param>
+<param><value><int>$socket</int></value></param>
 </params>
 </methodCall>
 EOF
