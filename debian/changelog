@@ -1,3 +1,11 @@
+ngcp-panel (9.5.1.14+0~mr9.5.1.14) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [83ff254] TT#142402 Improve 'framed' session behaviour when users are using v1 and v2 in parallel
+  * [1c11b9c] TT#142402 Fix v1 'Back' button navigation on v2 (iframe inside iframe)
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Sep 2021 17:28:52 +0200
+
 ngcp-panel (9.5.1.13+0~mr9.5.1.13) unstable; urgency=medium
 
   [ Kirill Solomko ]
