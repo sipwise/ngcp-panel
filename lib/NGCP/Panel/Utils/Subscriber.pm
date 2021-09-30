@@ -2280,6 +2280,7 @@ sub vmnotify{
 
     my $data = { $voicemail->get_inflated_columns };
     $data->{cli} = $voicemail->mailboxuser->provisioning_voip_subscriber->username;
+    $data->{uuid} = $voicemail->mailboxuser->provisioning_voip_subscriber->uuid;
     $data->{context} = 'default';
 
     $data->{messages_amount} = $c->model('DB')->resultset('voicemail_spool')->find({
@@ -2290,7 +2291,7 @@ sub vmnotify{
         'select'      => [{'count' => '*', -as => 'messages_number'}]
     })->get_column('messages_number');
 
-    my @cmd = ('ngcp-vmnotify', @$data{qw/context cli messages_amount/});
+    my @cmd = ('ngcp-vmnotify', @$data{qw/context cli uuid messages_amount/});
     my $output = capturex([0..3],@cmd);
     $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
     return;
