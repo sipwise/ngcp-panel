@@ -55,7 +55,7 @@ EOS_XML
 around 'process_bootstrap_uri' => sub {
     my($orig_method, $self, $uri) = @_;
     $uri = $self->$orig_method($uri);
-    $uri = $self->bootstrap_uri_mac($uri);
+    $uri = $self->bootstrap_uri_mac($uri, "{MAC}");
     $self->content_params->{uri} = $uri;
     return $self->content_params->{uri};
 };
