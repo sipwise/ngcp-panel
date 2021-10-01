@@ -44,10 +44,12 @@ sub getPref {
   my ($pref_name, $default_val) = @_;
 
   my $preferences = $self->{_CONTEXT}->stash->get('preferences');
-  foreach my $level (qw/device profile model/) {
-    my $v = $preferences->{device}->{$level}->{$pref_name};
-    next unless $v;
-    return $v;
+  if ($preferences) {
+    foreach my $level (qw/device profile model/) {
+      my $v = $preferences->{device}->{$level}->{$pref_name};
+      next unless $v;
+      return $v;
+    }
   }
 
   return $default_val // '';
