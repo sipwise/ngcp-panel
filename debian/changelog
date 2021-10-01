@@ -1,3 +1,10 @@
+ngcp-panel (9.5.1.15+0~mr9.5.1.15) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [eff9015] TT#139550 fix ngcp-vmnotify system call to use the correct args
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 01 Oct 2021 14:33:32 +0200
+
 ngcp-panel (9.5.1.14+0~mr9.5.1.14) unstable; urgency=medium
 
   [ Alexander Lutay ]
