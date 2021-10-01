@@ -293,4 +293,12 @@ sub generate_normalized_string {
     return $normalized;
 }
 
+around 'process_bootstrap_uri' => sub {
+    my($orig_method, $self, $uri) = @_;
+    $uri = $self->$orig_method($uri);
+    $uri = $self->bootstrap_uri_mac($uri, "{mac}");
+    $self->content_params->{uri} = $uri;
+    return $self->content_params->{uri};
+};
+
 1;

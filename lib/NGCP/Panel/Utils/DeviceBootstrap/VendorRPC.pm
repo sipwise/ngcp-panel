@@ -215,12 +215,12 @@ sub bootstrap_uri_protocol{
     return $uri;
 }
 sub bootstrap_uri_mac{
-    my($self, $uri) = @_;
-    if ($uri !~/\{MAC\}$/){
-        if ($uri !~/\/$/){
-            $uri .= '/' ;
+    my($self, $uri, $label) = @_;
+    if ($uri !~ /\Q$label\E$/) {
+        if ($uri !~ /\/$/) {
+            $uri .= '/';
         }
-        $uri .= '{MAC}' ;
+        $uri .= $label;
     }
     return $uri;
 }
