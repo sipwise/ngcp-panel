@@ -1934,16 +1934,29 @@ sub dev_field_firmware_base :Chained('/') :PathPart('device/autoprov/firmware') 
 
 sub dev_field_firmware_download :Chained('dev_field_firmware_base') :PathPart('version') :Args(1) {
     my ($self, $c, $ver) = @_;
+    my $tag = "";
 
     my $rs = $c->stash->{dev}->profile->config->device->autoprov_firmwares->search({
         device_id => $c->stash->{dev}->profile->config->device->id,
         version => { '=' => $ver },
     });
 
+    unless($rs->first) {
+        $tag = $ver;
+        $rs = $c->stash->{dev}->profile->config->device->autoprov_firmwares->search({
+            device_id => $c->stash->{dev}->profile->config->device->id,
+            tag => { '=' => $tag },
+        });
+    }
+
     my $fw = $rs->first;
     unless($fw) {
         $c->response->content_type('text/plain');
-        $c->response->body("404 - firmware version '$ver' not found latest");
+        if(defined $tag && length $tag > 0) {
+            $c->response->body("404 - firmware tag '$tag' is latest");
+        } else {
+            $c->response->body("404 - firmware version '$ver' is latest");
+        }
         $c->response->status(404);
         return;
     }
