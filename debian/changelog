@@ -1,3 +1,24 @@
+ngcp-panel (8.5.6.1+0~mr8.5.6.1) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [68c5c6d] TT#100761 Allow subscribers to access /api/applyrewrites
+
+  [ Kirill Solomko ]
+  * [4558f34] TT#129162 tighten user access checks
+  * [c3133ac] TT#129162 add bcrypt password characters check
+  * [98bd83f] TT#129162 respect framed setting for root default
+  * [216951e] TT#129162 fix passwork characters check
+  * [63ec846] TT#114401 fix missing html escape in preferences
+  * [ff220c7] TT#114401 fix call forwards html escaping
+  * [e020d4a] TT#114401 fix call destination set html escaping
+
+  [ Rene Krenn ]
+  * [c1bf744] TT#121500 fix missing mos_data in /api/callists
+  * [e404491] TT#121500 fix missing mos_data in /api/conversations
+  * [3951723] TT#142001 do not quote LI numbers in Response err messages
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Oct 2021 14:50:25 +0200
+
 ngcp-panel (8.5.6.0+0~mr8.5.6.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
