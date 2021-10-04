@@ -1,3 +1,13 @@
+ngcp-panel (9.5.1.16+0~mr9.5.1.16) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [1d12285] TT#141802 Fix 'bootsrap' PBX devices config generation
+  * [0aa19ac] TT#141802 Add MAC to default SNOM 'bootstrap' URL on SRAPS
+  * [fe84791] TT#141802 Add firmware 'tags' support for 'next' firmware endpoint
+  * [eb6d214] TT#141802 Add firmware 'tags' support for 'version' firmware endpoint
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Oct 2021 00:52:15 +0200
+
 ngcp-panel (9.5.1.15+0~mr9.5.1.15) unstable; urgency=medium
 
   [ Kirill Solomko ]
