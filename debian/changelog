@@ -1,3 +1,10 @@
+ngcp-panel (8.5.4.10+0~mr8.5.4.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [55f6c94] TT#134254 change fax destination email field type
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Oct 2021 03:30:48 +0200
+
 ngcp-panel (8.5.4.9+0~mr8.5.4.9) unstable; urgency=medium
 
   [ Rene Krenn ]
