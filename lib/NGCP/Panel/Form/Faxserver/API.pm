@@ -43,7 +43,7 @@ has_field 'destinations' => (
 );
 
 has_field 'destinations.destination' => (
-    type => 'Text',
+    type => 'Email',
     label => 'Destination Email',
     required => 1,
 );
