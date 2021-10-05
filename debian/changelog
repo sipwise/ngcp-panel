@@ -1,3 +1,11 @@
+ngcp-panel (8.5.4.11+0~mr8.5.4.11) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [ff2fdc4] Revert "TT#134254 change fax destination email field type"
+  * [6ca61c2] TT#134254 change MailToFax From email field type
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Oct 2021 19:14:00 +0200
+
 ngcp-panel (8.5.4.10+0~mr8.5.4.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
