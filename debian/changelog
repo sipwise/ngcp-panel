@@ -1,3 +1,60 @@
+ngcp-panel (10.1.1.0+0~mr10.1.1.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [9da6c99] TT#114401 fix missing html escape in preferences
+  * [e446ef9] TT#114401 fix call forwards html escaping
+  * [294ad44] TT#114401 fix call destination set html escaping
+  * [ad0f0b3] TT#129162 api-rest subscriber get2put ignore field webpassword
+  * [e3ac5c7] TT#129162 api-rest2 subscriber ignore field webpassword
+  * [535c38c] TT#133800 fix webpassword, change subadmin expose password
+  * [fc8a168] TT#66577 use kamailo ids for sems_registrations
+  * [471b9fe] TT#139550 fix ngcp-vmnotify system call to use the correct args
+  * [7e6c05f] TT#134254 change fax destination email field type
+
+  [ Victor Seva ]
+  * [883cf88] TT#137602 prosody: domains are treated as lowercase
+
+  [ Alexander Lutay ]
+  * [35e1e8f] TT#137901 Removed duplicated Theme.init() call
+  * [e5c98f3] TT#137901 Removed trailing spaces and replaced TABs with spaces for Theme.js
+  * [e89bf23] TT#137901 Do not clean orange background .accordion-group on hiding tooltip.
+  * [4ede236] TT#137901 Move accordion code into function enhancedAccordion()
+  * [d0b5830] TT#137901 Merge expand/collapse accordion buttons into Theme.js
+  * [e0b71b2] TT#137901 Stop removing orange background from all opened elements on closing one
+  * [35e9b4e] TT#138900 Restore "Preferences" button on JS CSC for framed mode
+  * [3cc0192] TT#142402 Improve 'framed' session behaviour when users are using v1 and v2 in parallel
+  * [1840af1] TT#142402 Fix v1 'Back' button navigation on v2 (iframe inside iframe)
+  * [725cbfb] TT#141802 Fix 'bootsrap' PBX devices config generation
+  * [b106891] TT#141802 Add MAC to default SNOM 'bootstrap' URL on SRAPS
+  * [31d954d] TT#141802 Add firmware 'tags' support for 'next' firmware endpoint
+  * [8516d81] TT#141802 Add firmware 'tags' support for 'version' firmware endpoint
+
+  [ Nico Schedel ]
+  * [daefe15] TT#122872 selenium: expand administrator tests
+  * [c028b1c] TT#70901 selenium: add tests for reseller details page
+
+  [ Victor Tsvetov ]
+  * [3cb71e4] TT#130456 API Customers POST: show error if system template
+  * [74db09a] TT#137754 Disable future dates in Invoice Period
+
+  [ Donat Zenichev ]
+  * [df30292] TT#66577 Add support of outbound registrations for SIP peerings
+  * [f16a4e9] TT#66577 Add a possibility to de-register on peering group deletion
+  * [79c0c9f] TT#110302 Kamailio utils, improve usage of RPC command 'ul.add'
+  * [7d13b49] TT#110302 Small mistake in the 'create_location' of kamailio utils
+
+  [ Guillem Jover ]
+  * [58fb236] TT#140500 Hook new grafana system processes dashboard
+
+  [ Rene Krenn ]
+  * [51f5485] TT#142001 do not quote LI numbers in Response err messages
+  * [b6e6966] TT#132650 /api/provisioning_templates CRUD rail
+
+  [ Flaviu Mates ]
+  * [9bb622a] TT#117153 Improve /api/cfmappings performance
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Oct 2021 13:19:43 +0200
+
 ngcp-panel (10.1.0.0+0~mr10.1.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
