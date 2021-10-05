@@ -28,7 +28,7 @@ has_field 'acl.id' => (
 );
 
 has_field 'acl.from_email' => (
-    type => 'Email',
+    type => 'Text',
     label => 'From email',
     required => 0,
     element_attr => {
