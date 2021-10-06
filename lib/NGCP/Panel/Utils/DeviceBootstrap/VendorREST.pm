@@ -47,6 +47,45 @@ sub redirect_server_call {
     }
 }
 
+sub to_log {
+    my ($self, $data) = @_;
+
+    my $msg = sprintf "%s:", $data->{name};
+    foreach my $t (qw(tx_id action url status msg data)) {
+        if (exists $data->{$t}) {
+            $msg .= sprintf " $t=%s", $data->{$t} // '';
+        }
+    }
+
+    return $msg;
+}
+
+sub data_to_str {
+    my ($self, $data) = @_;
+
+    my $data_str;
+    if (ref $data) {
+        $data_str = Data::Dumper->new([$data])
+                                ->Terse(1)
+                                ->Dump;
+    } elsif ($data) {
+        $data_str = $data;
+    }
+
+    if ($data_str) {
+        $data_str =~ s/\n//g;
+        $data_str =~ s/\s+/ /g;
+    } else {
+        $data_str = '';
+    }
+
+    if (length($data_str) > 100000) {
+        $data_str = "{ data => 'Msg size is too big' }";
+    }
+
+    return $data_str;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
