@@ -58,7 +58,7 @@ sub rest_prepare_request {
     $c->log->debug($self->to_log({ name  => $op_name,
                                    tx_id => $tx_id,
                                    url   => $url }));
-    ($data, $rc) = $self->send_request($c, $tx_id, $url, 'GET', $credentials);
+    ($data, $rc) = $self->send_http_request($c, $tx_id, $url, 'GET', $credentials);
     if ($rc == 0 && $data && ref $data eq 'HASH' && $data->{links}->{company}) {
         $company_url = $data->{links}->{company};
         $c->log->debug($self->to_log({ name   => $op_name,
@@ -88,7 +88,7 @@ sub rest_prepare_request {
         $c->log->debug($self->to_log({ name  => $op_name,
                                        tx_id => $tx_id,
                                        url   => $url }));
-        ($data, $rc) = $self->send_request($c, $tx_id, $url, 'GET', $credentials);
+        ($data, $rc) = $self->send_http_request($c, $tx_id, $url, 'GET', $credentials);
         if ($rc == 0 && $data && ref $data eq 'ARRAY') {
             my ($product_group) = grep {$_->{name} eq $self->params->{redirect_params}->{product_family}} @$data;
             if ($product_group) {
@@ -116,7 +116,7 @@ sub rest_prepare_request {
         $c->log->debug($self->to_log({ name  => $op_name,
                                        tx_id => $tx_id,
                                        url   => $url }));
-        ($data, $rc) = $self->send_request($c, $tx_id, $url, 'GET', $credentials);
+        ($data, $rc) = $self->send_http_request($c, $tx_id, $url, 'GET', $credentials);
         if ($rc == 0 && $data && ref $data eq 'ARRAY') {
             foreach my $setting (@$data) {
                 if ($setting->{param_name} eq 'setting_server') {
@@ -146,7 +146,7 @@ sub rest_prepare_request {
         $c->log->debug($self->to_log({ name  => $op_name,
                                        tx_id => $tx_id,
                                        url   => $url }));
-        ($data, $rc) = $self->send_request($c, $tx_id, $url, 'GET', $credentials);
+        ($data, $rc) = $self->send_http_request($c, $tx_id, $url, 'GET', $credentials);
         if ($rc == 0 && $data && ref $data eq 'ARRAY') {
             # ok, noop
         } else {
@@ -179,7 +179,7 @@ sub rest_prepare_request {
                                            tx_id => $tx_id,
                                            url   => $url,
                                            data  => $self->data_to_str($body) }));
-            ($data, $rc) = $self->send_request($c, $tx_id, $url, 'POST', $credentials, $body_ct, $body);
+            ($data, $rc) = $self->send_http_request($c, $tx_id, $url, 'POST', $credentials, $body_ct, $body);
             if ($rc == 0 && $data && ref $data eq 'HASH' && $data->{uuid}) {
                 $profile_id = $data->{uuid};
             } else {
@@ -235,7 +235,7 @@ sub rest_prepare_request {
         $c->log->debug($self->to_log({ name  => $op_name,
                                        tx_id => $tx_id,
                                        url   => $url }));
-        ($data, $rc) = $self->send_request($c, $tx_id, $url, 'GET', $credentials);
+        ($data, $rc) = $self->send_http_request($c, $tx_id, $url, 'GET', $credentials);
         if ($rc == 0 && $data && ref $data eq 'ARRAY') {
             my $device_id;
             my ($device) = grep {uc($_->{mac}) eq uc($old_mac)} @$data;
@@ -276,20 +276,48 @@ sub rest_prepare_request {
     return $ret;
 }
 
-sub to_log {
-    my ($self, $data) = @_;
+sub generate_header {
+    my ($self, $uri, $method, $options) = @_;
 
-    my $msg = sprintf "%s:", $data->{name};
-    foreach my $t (qw(tx_id action url status msg data)) {
-        if (exists $data->{$t}) {
-            $msg .= sprintf " $t=%s", $data->{$t} // '';
-        }
-    }
+    my $time = time;
+    my $credentials = $options->{credentials};
 
-    return $msg;
+    my @chars = ("A".."Z", "a".."z");
+    my $nonce;
+    $nonce .= $chars[rand @chars] for 1..8;
+
+    $uri = URI->new($uri);
+
+    my $hash = $self->calculate_payload_hash(
+                    $options->{payload},
+                    $options->{content_type},
+                    $credentials->{key}
+    );
+
+    my $artifacts = {
+        ts => $time,
+        nonce => $nonce,
+        method => $method,
+        resource => $uri->path_query,
+        host => $uri->host,
+        port => $uri->port,
+        hash => $hash || ''
+    };
+
+    my $mac = $self->calculate_mac($credentials, $artifacts);
+
+    my $auth  = 'Hawk';
+       $auth .= ' mac="' . $mac . '",';
+       $auth .= ' hash="' . $artifacts->{hash} . '",' unless $hash eq '';
+       $auth .= ' id="' . $credentials->{id} . '",';
+       $auth .= ' ts="' . $artifacts->{ts} . '",';
+       $auth .= ' nonce="' . $artifacts->{nonce} .'"';
+
+    return $auth;
+
 }
 
-sub send_request {
+sub send_http_request {
     my ($self, $c, $tx_id, $url, $method, $credentials, $body_ct, $body) = @_;
 
     my ($res, $data, $rc);
@@ -336,73 +364,6 @@ sub send_request {
     }
 
     return ($data, 0);
-}
-
-sub data_to_str {
-    my ($self, $data) = @_;
-
-    my $data_str;
-    if (ref $data) {
-        $data_str = Data::Dumper->new([$data])
-                                ->Terse(1)
-                                ->Dump;
-    } elsif ($data) {
-        $data_str = $data;
-    }
-
-    if ($data_str) {
-        $data_str =~ s/\n//g;
-        $data_str =~ s/\s+/ /g;
-    } else {
-        $data_str = '';
-    }
-
-    if (length($data_str) > 100000) {
-        $data_str = "{ data => 'Msg size is too big' }";
-    }
-
-    return $data_str;
-}
-
-sub generate_header {
-    my ($self, $uri, $method, $options) = @_;
-
-    my $time = time;
-    my $credentials = $options->{credentials};
-
-    my @chars = ("A".."Z", "a".."z");
-    my $nonce;
-    $nonce .= $chars[rand @chars] for 1..8;
-
-    $uri = URI->new($uri);
-
-    my $hash = $self->calculate_payload_hash(
-                    $options->{payload},
-                    $options->{content_type},
-                    $credentials->{key}
-    );
-
-    my $artifacts = {
-        ts => $time,
-        nonce => $nonce,
-        method => $method,
-        resource => $uri->path_query,
-        host => $uri->host,
-        port => $uri->port,
-        hash => $hash || ''
-    };
-
-    my $mac = $self->calculate_mac($credentials, $artifacts);
-
-    my $auth  = 'Hawk';
-       $auth .= ' mac="' . $mac . '",';
-       $auth .= ' hash="' . $artifacts->{hash} . '",' unless $hash eq '';
-       $auth .= ' id="' . $credentials->{id} . '",';
-       $auth .= ' ts="' . $artifacts->{ts} . '",';
-       $auth .= ' nonce="' . $artifacts->{nonce} .'"';
-
-    return $auth;
-
 }
 
 sub calculate_mac {
