@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.7+0~mr9.5.2.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [c2e5b9f] TT#134254 change MailToFax From email field type
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Oct 2021 23:59:51 +0200
+
 ngcp-panel (9.5.2.6+0~mr9.5.2.6) unstable; urgency=medium
 
   [ Rene Krenn ]
