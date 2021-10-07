@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.5+0~mr9.5.2.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [03a925a] TT#144000 fix /api/ncoslnpcarriers rail
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Oct 2021 10:46:29 +0200
+
 ngcp-panel (9.5.2.4+0~mr9.5.2.4) unstable; urgency=medium
 
   [ Alexander Lutay ]
