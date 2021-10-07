@@ -1,3 +1,10 @@
+ngcp-panel (7.5.10.4+0~mr7.5.10.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e2742e7] TT#144000 add lnp_provider form field to /api/ncoslnpcarriers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Oct 2021 14:38:07 +0200
+
 ngcp-panel (7.5.10.3+0~mr7.5.10.3) unstable; urgency=medium
 
   [ Rene Krenn ]
