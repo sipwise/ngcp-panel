@@ -15,7 +15,7 @@ has_field 'ncos_level_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/description ncos_level_id /],
+    render_list => [qw/description ncos_level_id lnp_provider/],
 );
 
 1;
