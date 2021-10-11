@@ -97,11 +97,19 @@ sub valid_id {
 
 sub get_form {
 
-    my ($self, $c) = @_;
-    if ($c->user->is_superuser) {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::ProvisioningTemplate::AdminAPI", $c);
+    my ($self, $c, $type, $id) = @_;
+    if ($type and 'form' eq lc($type)) {
+        unless ($c->stash->{provisioning_templates}) {
+            NGCP::Panel::Utils::ProvisioningTemplates::load_template_map($c);
+        }
+        $c->stash->{provisioning_template_name} = $id;
+        return NGCP::Panel::Utils::ProvisioningTemplates::get_provisioning_template_form($c);
     } else {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::ProvisioningTemplate::ResellerAPI", $c);
+        if ($c->user->is_superuser) {
+            return NGCP::Panel::Form::get("NGCP::Panel::Form::ProvisioningTemplate::AdminAPI", $c);
+        } else {
+            return NGCP::Panel::Form::get("NGCP::Panel::Form::ProvisioningTemplate::ResellerAPI", $c);
+        }
     }
 
 }

@@ -20,6 +20,15 @@ sub api_description {
     return 'Manage "provisioning templates" for creating subscribers with batch provisioning.';
 };
 
+sub order_by_cols {
+    my ($self, $c) = @_;
+    my $cols = {
+        'name' => 'name',
+        'lang' => 'lang',
+    };
+    return $cols;
+}
+
 sub query_params {
     return [
         {

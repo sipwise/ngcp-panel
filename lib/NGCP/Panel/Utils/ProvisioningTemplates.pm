@@ -193,6 +193,19 @@ sub parse_template {
 
 }
 
+sub get_provisioning_template_form {
+
+    my ($c,$fields) = @_;
+    $fields //= get_fields($c,0);
+    my $form = NGCP::Panel::Form::ProvisioningTemplate::ProvisioningTemplate->new({
+        ctx => $c,
+        fields_config => [ values %$fields ],
+    });
+    $form->create_structure([ keys %$fields ]);
+    return $form;
+
+}
+
 sub create_provisioning_template_form {
 
     my %params = @_;
@@ -208,11 +221,7 @@ sub create_provisioning_template_form {
     my $form;
 
     try {
-        $form = NGCP::Panel::Form::ProvisioningTemplate::ProvisioningTemplate->new({
-            ctx => $c,
-            fields_config => [ values %$fields ],
-        });
-        $form->create_structure([ keys %$fields ]);
+        $form = get_provisioning_template_form($c,$fields);
     } catch($e) {
         NGCP::Panel::Utils::Message::error(
             c => $c,
@@ -260,7 +269,7 @@ sub create_provisioning_template_form {
                 desc => $c->loc("Provisioning template '[_1]' done: subscriber [_2] created", $template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}),
             );
         } catch($e) {
-            _provision_cleanup($c, $context);
+            provision_cleanup($c, $context);
             NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
@@ -652,7 +661,7 @@ sub provision_finish {
             context
         /};
 
-    _provision_cleanup($c, $context);
+    provision_cleanup($c, $context);
 
     if (exists $context->{_dfrd}->{kamailio_trusted_reload}
         and $context->{_dfrd}->{kamailio_trusted_reload} > 0) {
@@ -668,7 +677,7 @@ sub provision_finish {
 
 }
 
-sub _provision_cleanup {
+sub provision_cleanup {
 
     my ($c, $context) = @_;
 

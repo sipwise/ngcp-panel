@@ -11,6 +11,8 @@ require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 use Scalar::Util qw/blessed/;
+use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Role::API::Subscribers qw();
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
@@ -100,6 +102,15 @@ __PACKAGE__->set_config({
             AllowedRole => [qw/admin reseller ccareadmin ccare/],
             Does => [qw(ACL RequireSSL)]
         },
+        item_post => {
+            Chained => 'item_base',
+            PathPart => '',
+            Args => 0,
+            Method => 'POST',
+            ACLDetachTo => '/api/root/invalid_user',
+            AllowedRole => [qw/admin reseller ccareadmin ccare/],
+            Does => [qw(ACL RequireSSL)]
+        },
 
         item_get_reseller => {
             Chained => 'item_base',
@@ -151,6 +162,15 @@ __PACKAGE__->set_config({
             PathPart => '',
             Args => 1,
             Method => 'DELETE',
+            ACLDetachTo => '/api/root/invalid_user',
+            AllowedRole => [qw/admin reseller ccareadmin ccare/],
+            Does => [qw(ACL RequireSSL)]
+        },
+        item_post_reseller => {
+            Chained => 'item_base',
+            PathPart => '',
+            Args => 1,
+            Method => 'POST',
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller ccareadmin ccare/],
             Does => [qw(ACL RequireSSL)]
@@ -251,6 +271,20 @@ sub item_delete_reseller {
 }
 
 
+sub item_post {
+    my ($self,$c) = @_;
+    #$c->log->debug((caller(0))[3] . ": " . $c->stash->{id});
+    return $self->post($c,$c->stash->{id});
+}
+
+sub item_post_reseller {
+    my ($self,$c,$name) = @_;
+    $c->stash->{id} = $self->get_id($c->stash->{id},$name);
+    #$c->log->debug((caller(0))[3] . ": " . $c->stash->{id});
+    return $self->post($c,$c->stash->{id});
+}
+
+
 sub update_item_model {
 
     my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
@@ -283,6 +317,76 @@ sub delete_item {
     $item->delete();
     return 1;
 
+}
+
+sub post {
+    my ($self,$c,$id) = @_;
+
+    my $template = $self->item_by_id_valid($c, $id);
+    last unless $template;
+    my ($form) = $self->get_form($c, 'form', $id);
+    my ($action) = reverse split(/::/,(caller(1))[3],-1);
+    my $method_config = $self->get_config('action')->{$action};
+    my ($resource, $data, $non_json_data) = $self->get_valid_data(
+        c                   => $c,
+        method              => 'POST',
+        media_type          => $method_config->{ContentType} // 'application/json',
+        uploads             => $method_config->{Uploads} // [] ,
+        form                => $form,
+        resource_media_type => $method_config->{ResourceContentType},
+    );
+    return unless $resource;
+
+    if (!$non_json_data || !$data) {
+        my $context;
+        try {
+            $context = NGCP::Panel::Utils::ProvisioningTemplates::provision_begin(
+                c => $c,
+            );
+            NGCP::Panel::Utils::ProvisioningTemplates::provision_commit_row(
+                c => $c,
+                context => $context,
+                'values' => $resource,
+            );
+            NGCP::Panel::Utils::ProvisioningTemplates::provision_finish(
+                c => $c,
+                context => $context,
+            );
+            $c->log->debug(sprintf("Provisioning template '%s' done: subscriber %s created",
+                $id,
+                $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}
+            ));
+            $c->response->header(Location => sprintf('%s%d', NGCP::Panel::Role::API::Subscribers::dispatch_path(), $context->{subscriber}->{id}));
+        } catch($e) {
+            NGCP::Panel::Utils::ProvisioningTemplates::provision_cleanup($c, $context);
+            $c->log->error(sprintf("Provisioning template '%s' failed: %s",
+                $id,
+                $e,
+            ));
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, $e);
+            return;
+        }
+    } else {
+        #try {
+        #    #$processed_ok(array), $processed_failed(array), $info, $error
+        #    $data_processed_result = $self->process_data(
+        #        c        => $c,
+        #        data     => \$data,
+        #        resource => $resource,
+        #        form     => $form,
+        #        process_extras => $process_extras,
+        #    );
+        #} catch($e) {
+        #    $c->log->error("failed to process non json data: $e");
+        #    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+        #    last;
+        #};
+
+    }
+
+    $self->return_representation_post($c);
+
+    return;
 }
 
 1;

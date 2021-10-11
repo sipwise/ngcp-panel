@@ -1413,7 +1413,7 @@ sub update_subscriber_numbers {
                             domain_id => $prov_subs->domain->id,
                             is_primary => 1,
                         });
-                    }                    
+                    }
                 }
                 if(defined $acli_pref) {
                     $acli_pref->search({ value => $old_cli })->delete if($old_cli);
