@@ -22,15 +22,7 @@ sub query_params {
         {
             param => 'reseller_id',
             description => 'Filter for callqueues of subscribers belonging to a specific reseller',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'domain_resellers.reseller_id' => $q };
-                },
-                second => sub {
-                    { join => 'domain_resellers' };
-                },
-            },
+            query_type => 'string_eq',
         },
         {
             # we handle that separately/manually in the role

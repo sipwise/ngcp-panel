@@ -22,15 +22,7 @@ sub query_params {
         {
             param => 'reseller_id',
             description => 'Filter for callrecordings belonging to a specific reseller',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'domain_resellers.reseller_id' => $q };
-                },
-                second => sub {
-                    { join => 'domain_resellers' };
-                },
-            },
+            query_type => 'string_eq',
         },
         {
             param => 'status',

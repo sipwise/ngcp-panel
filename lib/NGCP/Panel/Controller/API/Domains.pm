@@ -24,15 +24,7 @@ sub query_params {
         {
             param => 'reseller_id',
             description => 'Filter for domains belonging to a specific reseller',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'domain_resellers.reseller_id' => $q };
-                },
-                second => sub {
-                    { join => 'domain_resellers' };
-                },
-            },
+            query_type => 'string_eq',
         },
         {
             param => 'domain',
@@ -154,20 +146,18 @@ sub POST :Allow {
         
         try {
             my $rs = $self->item_rs($c);
-            $billing_domain = $c->model('DB')->resultset('domains')->create({
-                domain => $resource->{domain}
-            });
-            my $provisioning_domain = $c->model('DB')->resultset('voip_domains')->create({
-                domain => $resource->{domain}
-            });
             my $reseller_id;
             if($c->user->roles eq "admin") {
                 $reseller_id = $resource->{reseller_id};
             } elsif($c->user->roles eq "reseller") {
                 $reseller_id = $c->user->reseller_id;
             }
-            $billing_domain->create_related('domain_resellers', {
+            $billing_domain = $c->model('DB')->resultset('domains')->create({
+                domain => $resource->{domain},
                 reseller_id => $reseller_id,
+            });
+            my $provisioning_domain = $c->model('DB')->resultset('voip_domains')->create({
+                domain => $resource->{domain}
             });
         } catch($e) {
             $c->log->error("failed to create domain: $e"); # TODO: user, message, trace, ...

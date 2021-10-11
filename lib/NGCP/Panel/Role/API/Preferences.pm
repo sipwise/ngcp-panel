@@ -79,11 +79,9 @@ sub _item_rs {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('domains');
         } elsif($c->user->roles eq "reseller") {
-            $item_rs = $c->model('DB')->resultset('admins')->find(
-                    { id => $c->user->id, } )
-                ->reseller
-                ->domain_resellers
-                ->search_related('domain');
+            $item_rs = $c->model('DB')->resultset('domains')->search({
+                reseller_id => $c->user->reseller_id,
+            });
         }
     } elsif($type eq "profiles") {
         # we actually return the profile rs here, as we can easily

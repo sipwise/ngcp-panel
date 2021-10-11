@@ -35,7 +35,10 @@ sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
 
     $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'domain_resellers.reseller.name', search => 1, title => $c->loc('Reseller') },
+        ($c->user->is_superuser
+            ? { name => "reseller.name", search => 1, title => $c->loc("Reseller") }
+            : ()
+        ),
         { name => 'domain', search => 1, title => $c->loc('Domain') },
     ]);
 
@@ -55,11 +58,9 @@ sub _dom_resultset_admin {
 sub _dom_resultset_reseller {
     my ($self, $c) = @_;
 
-    return $c->model('DB')->resultset('admins')->find(
-            { id => $c->user->id, } )
-        ->reseller
-        ->domain_resellers
-        ->search_related('domain');
+    return $c->model('DB')->resultset('domains')->search({
+        reseller_id => $c->user->reseller_id,
+    });
 }
 
 sub root :Chained('dom_list') :PathPart('') :Args(0) {
@@ -69,9 +70,13 @@ sub root :Chained('dom_list') :PathPart('') :Args(0) {
 sub create :Chained('dom_list_restricted') :PathPart('create') :Args() {
     my ($self, $c, $reseller_id, $type) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
     my $form; my $pbx;
-    if($type && $type eq 'pbx') {
+    my $posted = ($c->request->method eq 'POST');
+    my $params = {};
+    $params = merge($params, $c->session->{created_objects});
+    delete $params->{domain} if exists $params->{domain};
+
+    if ($type && $type eq 'pbx') {
         unless($reseller_id && is_int($reseller_id)) {
             NGCP::Panel::Utils::Message::error(
                 c => $c,
@@ -99,23 +104,38 @@ sub create :Chained('dom_list_restricted') :PathPart('create') :Args() {
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::Reseller", $c);
     }
-    my $params = { %{ $c->session->{created_objects} } };
-    delete $params->{domain} if exists $params->{domain};
+
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        item => $params,
+        item   => $params,
     );
-    if($posted && $form->validated) {
+
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+
+    if ($posted && $form->validated) {
         try {
+            if ($c->user->is_superuser) {
+                $form->values->{reseller_id} = delete $form->values->{reseller}{id};
+            } else {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
             $c->model('DB')->schema->txn_do( sub {
                 my $prov_dom = $c->model('DB')->resultset('voip_domains')
                     ->create({domain => $form->value->{domain}});
-                my $new_dom = $c->stash->{dom_rs}
-                    ->create({domain => $form->value->{domain}});
+                delete $c->session->{created_objects}->{reseller};
+                my $new_dom = $c->stash->{dom_rs}->create({
+                    domain      => $form->value->{domain},
+                    reseller_id => $form->value->{reseller_id},
+                });
                 unless($pbx) {
-                    $reseller_id = $c->user->is_superuser ?
-                        $form->values->{reseller}{id} : $c->user->reseller_id;
                 } elsif($form->values->{rwr_set}) {
                     my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')
                         ->find($form->values->{rwr_set});
@@ -138,9 +158,6 @@ sub create :Chained('dom_list_restricted') :PathPart('create') :Args() {
                     }
                 }
 
-                $new_dom->create_related('domain_resellers', {
-                    reseller_id => $reseller_id
-                    });
                 NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain})
                     unless($c->config->{features}->{debug});
                 delete $c->session->{created_objects}->{reseller};
@@ -219,18 +236,34 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::Reseller", $c);
-    $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{domain},
-        action => $c->uri_for($c->stash->{domain}->{id}, 'edit'),
-    );
-    if($posted && $form->validated) {
+    my $params = { $c->stash->{dom_rs}->get_inflated_columns };
 
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $params,
+    );
+
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+
+    if ($posted && $form->validated) {
         try {
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = delete $form->values->{reseller}{id};
+            } else {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
+
             $c->model('DB')->schema->txn_do( sub {
-                $c->stash->{'domain_result'}->update({
-                    domain => $form->value->{domain},
-                });
+                $c->stash->{'domain_result'}->update($form->values);
+                delete $c->session->{created_objects}->{reseller};
                 $c->stash->{'provisioning_domain_result'}->update({
                     domain => $form->value->{domain},
                 });
@@ -326,9 +359,7 @@ sub ajax_filter_reseller :Chained('dom_list') :PathPart('ajax/filter_reseller') 
     my ($self, $c, $reseller_id) = @_;
 
     my $resultset = $c->stash->{dom_rs}->search({
-        'domain_resellers.reseller_id' => $reseller_id,
-    },{
-        join => 'domain_resellers'
+        'reseller_id' => $reseller_id,
     });
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{domain_dt_columns});
     $c->detach( $c->view("JSON") );
@@ -417,7 +448,7 @@ sub load_preference_list :Private {
         }
     }
 
-    my $correct_reseller_id = $c->stash->{domain_result}->domain_resellers->first->reseller_id;
+    my $correct_reseller_id = $c->stash->{domain_result}->reseller_id;
     my $rewrite_rule_sets_rs = $c->model('DB')
         ->resultset('voip_rewrite_rule_sets')
         ->search_rs({ reseller_id => $correct_reseller_id, });

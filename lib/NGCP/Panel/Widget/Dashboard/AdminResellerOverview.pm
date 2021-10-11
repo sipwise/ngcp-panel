@@ -29,7 +29,7 @@ sub _prepare_resellers_count {
 sub _prepare_domains_count {
     my ($self, $c) = @_;
     $c->stash(
-        domains => $c->model('DB')->resultset('domain_resellers')->search_rs({}),
+        domains => $c->model('DB')->resultset('domains')->search_rs({}),
     );
 }
 

@@ -448,7 +448,7 @@ sub update_preferences {
         $elem = $item->provisioning_voip_domain;
         $full_rs = $elem->voip_dom_preferences;
         $pref_type = 'dom_pref';
-        $reseller_id = $item->domain_resellers->first->reseller_id;
+        $reseller_id = $item->reseller_id;
     } elsif($type eq "profiles") {
         delete $resource->{profile_id};
         delete $resource->{profilepreferences_id};

@@ -38,8 +38,8 @@ sub resource_from_item {
 
     $resource{id} = int($item->id);
 
-    if ($c->user->roles eq "admin" && $item->domain_resellers->first) {
-        $resource{reseller_id} = int($item->domain_resellers->first->reseller_id)
+    if ($c->user->roles eq "admin") {
+        $resource{reseller_id} = $item->reseller_id;
     }
 
     return \%resource;
@@ -80,11 +80,9 @@ sub _item_rs {
     if($c->user->roles eq "admin") {
         $item_rs = $c->model('DB')->resultset('domains');
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $c->model('DB')->resultset('admins')->find(
-                { id => $c->user->id, } )
-            ->reseller
-            ->domain_resellers
-            ->search_related('domain');
+        $item_rs = $c->model('DB')->resultset('domains')->search({
+            reseller_id => $c->user->reseller_id,
+        });
     }
     return $item_rs;
 }

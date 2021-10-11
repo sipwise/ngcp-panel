@@ -214,7 +214,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         { name => "domain", search => 1, title => $c->loc('Domain') },
-        { name => "domain_resellers.reseller.name", search => 1, title => $c->loc('Reseller') },
+        { name => "domain.reseller.name", search => 1, title => $c->loc('Reseller') },
     ]);
     $c->stash->{tmpl_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },

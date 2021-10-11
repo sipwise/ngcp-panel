@@ -25,7 +25,7 @@ sub _prepare_domains_count {
     my ($self, $c) = @_;
     my $reseller = $self->_get_reseller($c);
     $c->stash(
-        domains => $reseller->domain_resellers,
+        domains => $reseller->domains,
     );
 }
 

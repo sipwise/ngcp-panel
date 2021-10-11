@@ -233,9 +233,7 @@ sub prepare_resource {
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
             $domain = $domain->search({
-                'domain_resellers.reseller_id' => $c->user->reseller_id,
-            }, {
-                join => 'domain_resellers',
+                'reseller_id' => $c->user->reseller_id,
             });
         }
         $domain = $domain->first;
@@ -364,9 +362,7 @@ sub prepare_resource {
         if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
             $domain = $domain->search({
-                'domain_resellers.reseller_id' => $c->user->reseller_id,
-            }, {
-                join => 'domain_resellers',
+                'reseller_id' => $c->user->reseller_id,
             });
         }
         $domain = $domain->first;
@@ -391,7 +387,7 @@ sub prepare_resource {
         return;
     }
 
-    if (!$customer->contact->reseller->domain_resellers->search({domain_id => $domain->id})->first()) {
+    if (!$customer->contact->reseller->id != $domain->reseller_id) {
         &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't belong to the same reseller as subscriber's customer.");
         return;
     }
