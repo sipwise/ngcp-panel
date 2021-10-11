@@ -1,3 +1,19 @@
+ngcp-panel (10.1.2.0+0~mr10.1.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [8cd954e] Revert "TT#134254 change fax destination email field type"
+  * [c56bf68] TT#134254 change MailToFax From email field type
+  * [6819727] TT#144254 Rework ALE devices provisioning bootstrap
+
+  [ Alexander Lutay ]
+  * [b0dd858] TT#141802 Improve Snom profile SRAPS handling code
+
+  [ Rene Krenn ]
+  * [e934bcb] TT#144000 fix /api/ncoslnpcarriers rail
+  * [805fae3] TT#144000 add lnp_provider form field to /api/ncoslnpcarriers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 Oct 2021 17:29:08 +0200
+
 ngcp-panel (10.1.1.0+0~mr10.1.1.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
