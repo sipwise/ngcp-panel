@@ -119,7 +119,9 @@ sub rest_prepare_request {
         ($data, $rc) = $self->send_http_request($c, $tx_id, $url, 'GET', $credentials);
         if ($rc == 0 && $data && ref $data eq 'ARRAY') {
             foreach my $setting (@$data) {
-                if ($setting->{param_name} eq 'setting_server') {
+                if ( ($setting->{param_name} eq 'setting_server') &&
+                     ($setting->{section}    eq 'phone-settings') )
+                {
                     $setting_id = $setting->{uuid};
                     last;
                 }
