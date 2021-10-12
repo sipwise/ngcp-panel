@@ -1,3 +1,10 @@
+ngcp-panel (7.5.10.5+0~mr7.5.10.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [1caa1f4] TT#98650 speedup redis locaction search by id
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 12 Oct 2021 16:28:19 +0200
+
 ngcp-panel (7.5.10.4+0~mr7.5.10.4) unstable; urgency=medium
 
   [ Rene Krenn ]
