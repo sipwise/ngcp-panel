@@ -281,7 +281,6 @@ sub patch {
 
         my $hal;
         ($hal,$id) = $self->get_journal_item_hal($c, $item, { form => $form });
-        $c->log->debug("halid: $hal->{id}");
         last unless $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });
 
         $self->complete_transaction($c);
