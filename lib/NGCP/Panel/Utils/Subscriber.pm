@@ -387,7 +387,7 @@ sub prepare_resource {
         return;
     }
 
-    if (!$customer->contact->reseller->id != $domain->reseller_id) {
+    if ($customer->contact->reseller->id != $domain->reseller_id) {
         &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't belong to the same reseller as subscriber's customer.");
         return;
     }
