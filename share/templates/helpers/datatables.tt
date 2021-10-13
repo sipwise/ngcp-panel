@@ -66,12 +66,7 @@ $(document).ready(function() {
         "bProcessing": true,
         "bPaginate": [% helper.paginate || 'true' %],
         "bFilter": [% helper.filter || 'true' %],
-        "bStateSave": true,
-        [% IF helper.name == "Calls" %]
-            "stateSaveParams": function (settings, data) {
-                data.search.search = "";
-            },
-        [% END %]
+        "bStateSave": [% IF helper.name == "Calls" %]false[% ELSE %]true[% END %],
         "iStateDuration": 0,
 
         "sPaginationType": "bootstrap",
