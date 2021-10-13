@@ -1,3 +1,17 @@
+ngcp-panel (6.5.13.1+0~mr6.5.13.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2d7038d] TT#120309 fix datatable escape html rendering
+  * [26b2732] TT#129162 tighten user access checks
+  * [c84eb8f] TT#114401 fix missing html escape in preferences
+  * [ecf1f8c] TT#114401 fix call forwards html escaping
+  * [ade8b7c] TT#114401 fix call destination set html escaping
+
+  [ Gerhard Jungwirth ]
+  * [2326d58] TT#44168 create additional form for subadmin non-pbx subscriber edit
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 13 Oct 2021 18:01:27 +0200
+
 ngcp-panel (6.5.13.0+0~mr6.5.13.0) unstable; urgency=medium
 
   [ Rene Krenn ]
