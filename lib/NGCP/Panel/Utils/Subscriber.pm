@@ -2273,8 +2273,7 @@ sub update_voicemail_number {
 sub vmnotify{
     my (%params) = @_;
 
-    my $c = $params{c};
-    my $voicemail = $params{voicemail};
+    my ($c, $voicemail) = @params{qw(c voicemail)};
     #1.although method is called after delete - DBIC still can access data in deleted row
     #2.amount of the new messages should be selected after played update or delete, of course
 
@@ -2282,16 +2281,30 @@ sub vmnotify{
     $data->{cli} = $voicemail->mailboxuser->provisioning_voip_subscriber->username;
     $data->{uuid} = $voicemail->mailboxuser->provisioning_voip_subscriber->uuid;
     $data->{context} = 'default';
+    $data->{old_messages} = 0;
+    $data->{new_messages} = 0;
 
-    $data->{messages_amount} = $c->model('DB')->resultset('voicemail_spool')->find({
+    my $msg_rs = $c->model('DB')->resultset('voicemail_spool')->search({
         'mailboxuser' => $data->{mailboxuser},
-        'msgnum'      => { '>=' => 0 },
-        'dir'         => { 'like' => '%/INBOX' },
     },{
-        'select'      => [{'count' => '*', -as => 'messages_number'}]
-    })->get_column('messages_number');
+        'select'      => [
+            'dir',
+            { 'count' => 'dir', -as => 'dir_count'},
 
-    my @cmd = ('ngcp-vmnotify', @$data{qw/context cli uuid messages_amount/});
+        ],
+        'group_by' => 'dir',
+    });
+
+    foreach my $r ($msg_rs->all) {
+        my %row = $r->get_inflated_columns;
+        if ($row{dir} =~ m#/INBOX$#) {
+            $data->{new_messages} = $row{dir_count}
+        } elsif ($row{dir} =~ m#/Old$#) {
+            $data->{old_messages} = $row{dir_count};
+        }
+    }
+
+    my @cmd = ('ngcp-vmnotify', @$data{qw/context cli uuid new_messages old_messages/});
     my $output = capturex([0..3],@cmd);
     $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
     return;
