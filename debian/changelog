@@ -1,3 +1,14 @@
+ngcp-panel (10.0.1.5+0~mr10.0.1.5) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [ca76c07] TT#141802 Improve Snom profile SRAPS handling code
+  * [2364638] TT#141802 use proper SNOM param 'setting_server' on SRAPS
+
+  [ Kirill Solomko ]
+  * [f862870] TT#144254 Rework ALE devices provisioning bootstrap
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Oct 2021 17:58:00 +0200
+
 ngcp-panel (10.0.1.4+0~mr10.0.1.4) unstable; urgency=medium
 
   [ Alexander Lutay ]
