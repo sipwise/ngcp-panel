@@ -1,3 +1,10 @@
+ngcp-panel (10.1.1.3+0~mr10.1.1.3) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [5fe8e7a] TT#141802 use proper SNOM param 'setting_server' on SRAPS
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Oct 2021 17:57:07 +0200
+
 ngcp-panel (10.1.1.2+0~mr10.1.1.2) unstable; urgency=medium
 
   [ Kirill Solomko ]
