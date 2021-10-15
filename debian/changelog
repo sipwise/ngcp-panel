@@ -1,3 +1,11 @@
+ngcp-panel (10.0.1.6+0~mr10.0.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [39bb192] TT#139550 improve vmnotify messaging
+  * [274669f] TT#139550 vmnotify use correct uuid
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 15 Oct 2021 15:56:16 +0200
+
 ngcp-panel (10.0.1.5+0~mr10.0.1.5) unstable; urgency=medium
 
   [ Alexander Lutay ]
