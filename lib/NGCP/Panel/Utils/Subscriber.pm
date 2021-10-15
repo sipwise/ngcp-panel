@@ -2285,7 +2285,7 @@ sub vmnotify{
     $data->{new_messages} = 0;
 
     my $msg_rs = $c->model('DB')->resultset('voicemail_spool')->search({
-        'mailboxuser' => $data->{mailboxuser},
+        'mailboxuser' => $data->{uuid},
     },{
         'select'      => [
             'dir',
