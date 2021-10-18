@@ -2267,16 +2267,17 @@ sub update_voicemail_number {
     return;
 }
 
-sub vmnotify{
+sub vmnotify {
     my (%params) = @_;
 
-    my ($c, $voicemail) = @params{qw(c voicemail)};
+    my ($c, $cli, $uuid) = @params{qw(c cli uuid)};
     #1.although method is called after delete - DBIC still can access data in deleted row
     #2.amount of the new messages should be selected after played update or delete, of course
 
-    my $data = { $voicemail->get_inflated_columns };
-    $data->{cli} = $voicemail->mailboxuser->provisioning_voip_subscriber->username;
-    $data->{uuid} = $voicemail->mailboxuser->provisioning_voip_subscriber->uuid;
+    my $data = {
+        cli => $cli,
+        uuid => $uuid
+    };
     $data->{context} = 'default';
     $data->{old_messages} = 0;
     $data->{new_messages} = 0;
@@ -2303,17 +2304,19 @@ sub vmnotify{
 
     my @cmd = ('ngcp-vmnotify', @$data{qw/context cli uuid new_messages old_messages/});
     my $output = capturex([0..3],@cmd);
+
     $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
+
     return;
 }
 
-sub mark_voicemail_read{
+sub mark_voicemail_read {
     my (%params) = @_;
 
     my $c = $params{c};
     my $voicemail = $params{voicemail};
     my $dir = $voicemail->dir;
-    $dir =~s/INBOX$/Old/;
+    $dir = ~s/INBOX$/Old/;
     $voicemail->update({ dir => $dir });
     return;
 }
