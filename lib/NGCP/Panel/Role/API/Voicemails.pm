@@ -120,8 +120,11 @@ sub update_item {
 
     $item->update($upresource);
 
-    if($dir_old =~/INBOX/ && $upresource->{dir} !~/INBOX/){
-        NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $item );
+    my $cli  = $item->mailboxuser->provisioning_voip_subscriber->username;
+    my $uuid = $item->mailboxuser->provisioning_voip_subscriber->uuid;
+
+    if ($dir_old ne $upresource->{dir}) {
+        NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
     }
 
     return $item;
