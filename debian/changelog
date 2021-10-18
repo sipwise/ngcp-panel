@@ -1,3 +1,10 @@
+ngcp-panel (10.0.1.7+0~mr10.0.1.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [15d94e8] TT#139550 improve vmnotify behaviour
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Oct 2021 16:22:12 +0200
+
 ngcp-panel (10.0.1.6+0~mr10.0.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
