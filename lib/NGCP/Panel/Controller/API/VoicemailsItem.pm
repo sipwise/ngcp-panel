@@ -124,7 +124,11 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, voicemail => $item);
 
         $item->delete;
-        NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $item );
+
+        my $cli  = $item->mailboxuser->provisioning_voip_subscriber->username;
+        my $uuid = $item->mailboxuser->provisioning_voip_subscriber->username;
+        NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
+
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
