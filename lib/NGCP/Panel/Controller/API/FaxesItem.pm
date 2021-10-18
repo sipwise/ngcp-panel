@@ -17,7 +17,6 @@ sub allowed_methods{
 #sub delete_item {
 #    my ($self, $c, $item) = @_;
 #    $item->delete;
-#    NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'fax' => $item );
 #}
 
 1;
