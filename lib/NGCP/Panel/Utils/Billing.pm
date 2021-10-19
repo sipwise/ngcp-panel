@@ -474,16 +474,15 @@ EOS
 
 sub get_contract_count_stmt {
 
+    my $count_limit = shift;
+    if (defined $count_limit and $count_limit > 0) {
+        $count_limit = $count_limit + 1;
+    } else {
+        $count_limit = -1;
+    }
+    
     return <<EOS;
-select
-  count(c.id)
-from billing.contracts_billing_profile_network_schedule cbpns
-join billing.contracts_billing_profile_network cbpn on cbpns.profile_network_id = cbpn.id
-join billing._v_actual_effective_start_time est on est.contract_id = cbpn.contract_id and cbpns.effective_start_time = est.effective_start_time
-join billing.contracts as c on est.contract_id = c.id
-where
-cbpn.billing_profile_id = me.id
-and c.status != 'terminated'
+billing.get_billing_profile_contract_cnt(me.id,$count_limit)
 EOS
 
 }
@@ -507,7 +506,8 @@ sub get_datatable_cols {
     return (
         { name => "prepaid", "search" => 0, "title" => $c->loc("Prepaid"),
           custom_renderer => 'function ( data, type, full, opt ) { opt.escapeHtml = false; return \'<input type="checkbox" disabled="disabled"\' + (full.prepaid == 1 ? \' checked="checked"\': \'\') + \'/>\'; }' },
-        { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"), },
+        { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"),
+          custom_renderer => 'function ( data, type, full, opt ) { if(full.contract_cnt > 1000){return \'1000+\'}return full.contract_cnt; }' },
         { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },
 
     );

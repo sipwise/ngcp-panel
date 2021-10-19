@@ -24,7 +24,6 @@ sub process {
 
     my $user_tz = $c->session->{user_tz};
 
-
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
     set_columns($c, $cols);
@@ -36,10 +35,10 @@ sub process {
 
     ### Search processing section
 
-    ($rs,my @searchColumns) = _apply_search_filters($c,$rs,$cols,$use_rs_cb);
+    ($rs,my @searchColumns) = _apply_search_filters($c,$rs,$cols,$use_rs_cb,$params->{extra_or});
 
     my $is_set_operations = 0;
-    ($displayRecords, $displayRecordCountClipped, $is_set_operations) = _get_count_safe($c,$rs,$params) if(!$use_rs_cb);
+    ($displayRecords, $displayRecordCountClipped, $is_set_operations) = _get_count_safe($c,$rs,$params) if (!$use_rs_cb);
     #my $footer = ((scalar @$aggregate_cols) > 0 and $displayRecordCountClipped);
     #$aggregate_cols = [] if $displayRecordCountClipped;
     if(@$aggregate_cols){
@@ -198,9 +197,9 @@ sub process {
 }
 
 sub apply_dt_joins_filters {
-    my ($c,$rs, $cols) = @_;
+    my ($c,$rs, $cols, $extra_or) = @_;
     $rs = _resolve_joins($rs, $cols, undef, 1, 1);
-    ($rs,my @searchColumns) = _apply_search_filters($c,$rs,$cols);
+    ($rs,my @searchColumns) = _apply_search_filters($c, $rs, $cols, $extra_or);
     return $rs;
 }
 
@@ -265,13 +264,13 @@ sub get_search_string_pattern {
 
 sub _apply_search_filters {
 
-    my ($c,$rs,$cols,$use_rs_cb) = @_;
+    my ($c,$rs,$cols,$use_rs_cb,$extra_or) = @_;
     # generic searching
     my @searchColumns = ();
     my %conjunctSearchColumns = ();
     #processing single search input - group1 from groups to be joined by 'AND'
     my $searchString = $c->request->params->{sSearch} // "";
-    if ($searchString && !$use_rs_cb) {
+    if (length($searchString) && !$use_rs_cb) {
     #for search string from one search input we need to check all columns which contain the 'search' spec (now: qw/search search_lower_column search_upper_column/). so, for example user entered into search input ip address - we don't know that it is ip address, so we check that name like search OR id like search OR search is between network_lower_value and network upper value
         foreach my $col(@{ $cols }) {
             my ($name,$search_value,$op,$convert);
@@ -337,6 +336,7 @@ sub _apply_search_filters {
             #...things in arrays are OR'ed, and things in hashes are AND'ed
             push @{$searchColumns[0]}, { map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} };
         }
+        push @{$searchColumns[0]}, @{$extra_or} if $extra_or;
     }
     #/processing single search input
     #processing dates search input - group2 from groups to be joined by 'AND'
