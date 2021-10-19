@@ -168,15 +168,15 @@ EOS
 
 sub get_contract_count_stmt {
 
+    my $count_limit = shift;
+    if (defined $count_limit and $count_limit > 0) {
+        $count_limit = $count_limit + 1;
+    } else {
+        $count_limit = -1;
+    }
+    
     return <<EOS;
-select
-  count(distinct c.id)
-from `billing`.`contracts_billing_profile_network` cbpn
-join `billing`.`contracts` c on c.id = cbpn.contract_id
-where
-cbpn.`billing_network_id` = `me`.`id`
-and c.status != 'terminated'
-and (cbpn.end_date is null or cbpn.end_date >= now())
+billing.get_billing_network_contract_cnt(me.id,$count_limit)
 EOS
 
 }
@@ -200,7 +200,8 @@ sub get_datatable_cols {
     my $grp_stmt = "group_concat(if(`billing_network_blocks`.`mask` is null,`billing_network_blocks`.`ip`,concat(`billing_network_blocks`.`ip`,'/',`billing_network_blocks`.`mask`)) separator ', ')";
     my $grp_len = 30;
     return (
-        { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"), },
+        { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"),
+          custom_renderer => 'function ( data, type, full, opt ) { if(full.contract_cnt > 1000){return \'1000+\'}return full.contract_cnt; }' },
         { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },
         { name => 'blocks_grp', accessor => "blocks_grp", search => 0, title => $c->loc('Network Blocks'), literal_sql =>
           "if(length(".$grp_stmt.") > ".$grp_len.", concat(left(".$grp_stmt.", ".$grp_len."), '...'), ".$grp_stmt.")" },

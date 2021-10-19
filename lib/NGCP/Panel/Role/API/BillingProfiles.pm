@@ -19,21 +19,24 @@ sub _item_rs {
 
     my $item_rs = $c->model('DB')->resultset('billing_profiles');
     my $search_xtra = {
-            '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+            '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             };
     if($c->user->roles eq "admin") {
-        $item_rs = $item_rs->search({ 'me.status' => { '!=' => 'terminated' } },
-                                    $search_xtra);
+        $item_rs = $item_rs->search({
+            'me.status' => { '!=' => 'terminated' },
+        }, $search_xtra);
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id,
-                                      'me.status' => { '!=' => 'terminated' } },
-                                      $search_xtra);
+        $item_rs = $item_rs->search({
+            reseller_id => $c->user->reseller_id,
+            'me.status' => { '!=' => 'terminated' },
+        }, $search_xtra);
     } else {
-        $item_rs = $item_rs->search({ reseller_id => $c->user->contract->contact->reseller_id,
-                                      'me.status' => { '!=' => 'terminated' } },
-                                      $search_xtra);
+        $item_rs = $item_rs->search({
+            reseller_id => $c->user->contract->contact->reseller_id,
+            'me.status' => { '!=' => 'terminated' },
+        }, $search_xtra);
     }
     return $item_rs;
 }

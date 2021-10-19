@@ -47,7 +47,7 @@ sub _package_resultset_admin {
         { group_by => 'me.id',
          })->search_rs(
             undef,
-            { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
                              { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
                              ],
             });
@@ -64,7 +64,7 @@ sub _package_resultset_reseller {
         { group_by => 'me.id',
          })->search_rs(
             undef,
-            { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
                              { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
                              ],
             });
