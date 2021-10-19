@@ -32,7 +32,6 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Does(ACL) :
         { name => "id", "search" => 1, "title" => $c->loc("#") },
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
         { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
-        #{ name => "v_count_used", "search" => 0, "title" => $c->loc("Used") },
         NGCP::Panel::Utils::Billing::get_datatable_cols($c),
     ]);
 
@@ -48,7 +47,7 @@ sub _profile_resultset_admin {
     my $rs = $c->model('DB')->resultset('billing_profiles')->search({
             'me.status' => { '!=' => 'terminated' },
             },
-            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
@@ -62,7 +61,7 @@ sub _profile_resultset_reseller {
         ->search_rs({
             'me.status' => { '!=' => 'terminated' },
             },
-            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });

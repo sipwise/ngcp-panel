@@ -47,7 +47,7 @@ sub _network_resultset_admin {
          })->search_rs({
                 'me.status' => { '!=' => 'terminated' },
                 },
-                { '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                { '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
                 { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                 { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
@@ -65,7 +65,7 @@ sub _network_resultset_reseller {
          })->search_rs({
                 'me.status' => { '!=' => 'terminated' },
                 },
-                { '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                { '+select' => [ { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
                 { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                 { '' => \[ NGCP::Panel::Utils::BillingNetworks::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });

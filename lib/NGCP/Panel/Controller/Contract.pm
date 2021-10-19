@@ -25,13 +25,13 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => $c->loc("#") },
-        { name => "external_id", search => 1, title => $c->loc("External #") },
-        { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "product.name", search => 1, title => $c->loc("Product") },
+        { name => "id", int_search => 1, title => $c->loc("#") },
+        { name => "external_id", strict_search => 1, title => $c->loc("External #") },
+        { name => "contact.email", search => 0, title => $c->loc("Contact Email") },
+        { name => "product.name", search => 0, title => $c->loc("Product") },
         { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
           literal_sql => NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping_stmt(c => $c, now => $now, projection => 'billing_profile.name' ) },
-        { name => "status", search => 1, title => $c->loc("Status") },
+        { name => "status", search => 0, title => $c->loc("Status") },
     ]);
 
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
@@ -50,13 +50,11 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
             join => 'contact',
         });
     }
+
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['pstnpeering','sippeering','reseller'] })->all;
     $rs = $rs->search({
-            '-or' => [
-                'product.class' => 'pstnpeering',
-                'product.class' => 'sippeering',
-                'product.class' => 'reseller',
-            ],
-        });
+        'product_id' => { -in => [ @product_ids ] },
+    });
     $c->stash(contract_select_rs => $rs);
     $c->stash(contract_select_all_rs => $rs_all);
     $c->stash(now => $now);
@@ -297,7 +295,18 @@ sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $res = $c->stash->{contract_select_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns}, undef, {
+        'count_limit' => 1000,
+        'extra_or' => [ {
+            'me.id' => { in => [ map { $_->id } $res->search({
+                'contact.email' => { like => [ NGCP::Panel::Utils::Datatables::get_search_string_pattern($c) ]->[0] },
+            },{
+                rows => 1001,
+                page => 1,
+                join => 'contact',
+            })->all ] },
+        }, ],
+    });
     $c->detach( $c->view("JSON") );
 }
 

@@ -132,9 +132,7 @@ sub get_contract_rs {
     $schema //= $c->model('DB');
     my $rs = $schema->resultset('contracts')->search({
         $include_terminated ? () : ('me.status' => { '!=' => 'terminated' }),  ## no critic (ProhibitCommaSeparatedStatements)
-    },{
-        join => 'product',
-    });
+    }, undef);
     return $rs;
 
 }
@@ -143,12 +141,15 @@ sub get_customer_rs {
     my %params = @_;
     my ($c,$schema,$include_terminated) = @params{qw/c schema include_terminated/};
 
+    $schema //= $c->model('DB');
+    my @product_ids = map { $_->id; } $schema->resultset('products')->search_rs({ 'class' => ['sipaccount','pbxaccount'] })->all;
+
     my $rs = get_contract_rs(
         c => $c,
         schema => $schema,
         include_terminated => $include_terminated,
     )->search_rs({
-        'product.class' => { -in => [ 'sipaccount', 'pbxaccount' ] },
+        'product_id' => { -in => [ @product_ids ] },
     },{
         join => 'contact',
     });

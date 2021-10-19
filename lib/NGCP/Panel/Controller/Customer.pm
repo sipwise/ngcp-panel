@@ -45,18 +45,18 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => $c->loc("#") },
-        { name => "external_id", search => 1, title => $c->loc("External #") },
-        { name => "contact.reseller.name", search => 1, title => $c->loc("Reseller") },
-        { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "contact.firstname", search => 1, title => '' },
-        { name => "contact.lastname", search => 1, title => $c->loc("Name"),
+        { name => "id", int_search => 1, title => $c->loc("#") },
+        { name => "external_id", strict_search => 1, title => $c->loc("External #") },
+        { name => "contact.reseller.name", search => 0, title => $c->loc("Reseller") },
+        { name => "contact.email", search => 0, title => $c->loc("Contact Email") },
+        { name => "contact.firstname", search => 0, title => '' },
+        { name => "contact.lastname", search => 0, title => $c->loc("Name"),
             custom_renderer => 'function ( data, type, full, opt ) { var sep = (full.contact_firstname && full.contact_lastname) ? " " : ""; return (full.contact_firstname || "") + sep + (full.contact_lastname || ""); }' },
-        { name => "product.name", search => 1, title => $c->loc("Product") },
+        { name => "product.name", search => 0, title => $c->loc("Product") },
         { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
           literal_sql => '""' },
-        { name => "status", search => 1, title => $c->loc("Status") },
-        { name => "max_subscribers", search => 1, title => $c->loc("Max. Subscribers") },
+        { name => "status", search => 0, title => $c->loc("Status") },
+        { name => "max_subscribers", search => 0, title => $c->loc("Max. Subscribers") },
     ]);
 
     my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c); #, now => $now);
@@ -88,7 +88,18 @@ sub ajax :Chained('list_customer') :PathPart('ajax') :Args(0) {
         my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $item, now => $now, );
         $result{'billing_profile_name'} = $bm_actual->billing_profile->name if $bm_actual;
         return %result;
-    },);
+    }, { 
+        'count_limit' => 1000,
+        'extra_or' => [ {
+            'me.id' => { in => [ map { $_->id } $res->search({
+                'contact.email' => { like => [ NGCP::Panel::Utils::Datatables::get_search_string_pattern($c) ]->[0] },
+            },{
+                rows => 1001,
+                page => 1,
+                join => 'contact',
+            })->all ] },
+        }, ],
+    });
     $c->detach( $c->view("JSON") );
 }
 
