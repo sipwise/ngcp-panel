@@ -31,11 +31,11 @@ sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) :Does(ACL) :
     $c->stash(template => 'contact/list.tt');
 
     $c->stash->{contact_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => $c->loc("#") },
-        { name => "reseller.name", search => 1, title => $c->loc("Reseller") },
-        { name => "firstname", search => 1, title => $c->loc("First Name") },
-        { name => "lastname", search => 1, title => $c->loc("Last Name") },
-        { name => "company", search => 1, title => $c->loc("Company") },
+        { name => "id", int_search => 1, title => $c->loc("#") },
+        { name => "reseller.name", search => 0, title => $c->loc("Reseller") },
+        { name => "firstname", search => 0, title => $c->loc("First Name") },
+        { name => "lastname", search => 0, title => $c->loc("Last Name") },
+        { name => "company", search => 0, title => $c->loc("Company") },
         { name => "email", search => 1, title => $c->loc("Email") },
     ]);
 }
@@ -311,9 +311,7 @@ sub ajax_list_contacts{
         $c,
         $c->stash->{contacts}->search_rs(
             $reseller_query->[0],
-            $reseller_query->[1] ? $reseller_query->[1] : {
-                prefetch=>"contracts"
-            }
+            $reseller_query->[1],
         ),
         $c->stash->{contact_dt_columns},
         sub {
@@ -328,6 +326,7 @@ sub ajax_list_contacts{
             my %data = (deletable => ($contract_rs->first or $subscriber_rs->first) ? 0 : 1);
             return %data
         },
+	{ 'count_limit' => 1000, },
     );
 
 }
