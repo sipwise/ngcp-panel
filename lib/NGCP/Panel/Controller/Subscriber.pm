@@ -4224,7 +4224,6 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
     my $file = $c->stash->{voicemail};
     my $cli  = $file->mailboxuser->provisioning_voip_subscriber->username;
     my $uuid = $file->mailboxuser->provisioning_voip_subscriber->uuid;
-    my $dir  = $file->dir;
 
     my $data_ref;
 
@@ -4241,7 +4240,7 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
 
-    NGCP::Panel::Utils::Subscriber::mark_voicemail_read(c => $c, dir => $dir);
+    NGCP::Panel::Utils::Subscriber::mark_voicemail_read(c => $c, voicemail => $c->stash->{voicemail});
     NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
 
     my $filename = NGCP::Panel::Utils::Subscriber::get_voicemail_filename($c, $file);
@@ -4253,12 +4252,17 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
 sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    my $file = $c->stash->{voicemail};
+    my $cli  = $file->mailboxuser->provisioning_voip_subscriber->username;
+    my $uuid = $file->mailboxuser->provisioning_voip_subscriber->uuid;
+
     $c->detach('/denied_page')
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
             $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") && $c->user->read_only);
 
     try {
         $c->stash->{voicemail}->delete;
+        NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{voicemail}->get_inflated_columns },
@@ -4271,7 +4275,6 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
             desc  => $c->loc('Failed to delete voicemail message'),
         );
     }
-    NGCP::Panel::Utils::Subscriber::vmnotify( c => $c, voicemail => $c->stash->{voicemail} );
     NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
 }

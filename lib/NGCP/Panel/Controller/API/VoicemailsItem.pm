@@ -123,10 +123,11 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, voicemail => $item);
 
+        my $cli  = $item->mailboxuser->provisioning_voip_subscriber->username;
+        my $uuid = $item->mailboxuser->provisioning_voip_subscriber->uuid;
+
         $item->delete;
 
-        my $cli  = $item->mailboxuser->provisioning_voip_subscriber->username;
-        my $uuid = $item->mailboxuser->provisioning_voip_subscriber->username;
         NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
 
         $guard->commit;
