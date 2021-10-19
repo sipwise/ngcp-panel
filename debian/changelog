@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.10+0~mr9.5.2.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [b8f9b63] TT#139550 fix vmnotify play/delete
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Oct 2021 17:09:07 +0200
+
 ngcp-panel (9.5.2.9+0~mr9.5.2.9) unstable; urgency=medium
 
   [ Kirill Solomko ]
