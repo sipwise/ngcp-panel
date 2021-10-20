@@ -12,7 +12,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD DELETE/];
 }
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::InvoiceTemplates/;
