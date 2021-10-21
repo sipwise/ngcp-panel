@@ -151,6 +151,25 @@ sub _create_c {
     }
     my $db = _get_schema();
 
+    my $req = sub {
+            my $self = shift;
+            return _create_mock('_request',
+                _param => {
+                #    '$c->request->params' => undef,
+                },
+                param => sub {
+                    my $self = shift;
+                    my $key = shift;
+                    return $self->{param}->{$key} if $key;
+                    return $self->{param};
+                },
+                path => sub {
+                    my $self = shift;
+                    return 'api/';
+                },
+            );
+        };
+
     $c = _create_mock('c',
         _stash => {
 
@@ -219,20 +238,8 @@ sub _create_c {
                 #},
             );
         },
-        request => sub {
-            my $self = shift;
-            return _create_mock('_request',
-                _param => {
-                #    '$c->request->params' => undef,
-                },
-                param => sub {
-                    my $self = shift;
-                    my $key = shift;
-                    return $self->{param}->{$key} if $key;
-                    return $self->{param};
-                },
-            );
-        },
+        request => $req,
+        req => $req,
 
     );
 

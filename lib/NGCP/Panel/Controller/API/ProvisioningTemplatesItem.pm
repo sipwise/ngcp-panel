@@ -109,7 +109,9 @@ __PACKAGE__->set_config({
             Method => 'POST',
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller ccareadmin ccare/],
-            Does => [qw(ACL RequireSSL)]
+            Does => [qw(ACL RequireSSL)],
+            ContentType => [qw#application/json text/csv#],
+            ResourceContentType => ['text/csv'],
         },
 
         item_get_reseller => {
@@ -173,7 +175,9 @@ __PACKAGE__->set_config({
             Method => 'POST',
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller ccareadmin ccare/],
-            Does => [qw(ACL RequireSSL)]
+            Does => [qw(ACL RequireSSL)],
+            ContentType => [qw#application/json text/csv#],
+            ResourceContentType => ['text/csv'],
         },
     }
 });
@@ -336,12 +340,21 @@ sub post {
         resource_media_type => $method_config->{ResourceContentType},
     );
     return unless $resource;
+    my $purge = $c->req->params->{purge_existing};
+    if (length($purge)
+        and ('1' eq $purge
+        or 'true' eq lc($purge))) {
+        $purge = 1;
+    } else {
+        $purge = 0;
+    }
 
     if (!$non_json_data || !$data) {
         my $context;
         try {
             $context = NGCP::Panel::Utils::ProvisioningTemplates::provision_begin(
-                c => $c,
+                c     => $c,
+                purge => $purge,
             );
             NGCP::Panel::Utils::ProvisioningTemplates::provision_commit_row(
                 c => $c,
@@ -367,21 +380,24 @@ sub post {
             return;
         }
     } else {
-        #try {
-        #    #$processed_ok(array), $processed_failed(array), $info, $error
-        #    $data_processed_result = $self->process_data(
-        #        c        => $c,
-        #        data     => \$data,
-        #        resource => $resource,
-        #        form     => $form,
-        #        process_extras => $process_extras,
-        #    );
-        #} catch($e) {
-        #    $c->log->error("failed to process non json data: $e");
-        #    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-        #    last;
-        #};
-
+        try {
+            my ($linecount,$errors) = NGCP::Panel::Utils::ProvisioningTemplates::process_csv(
+                c     => $c,
+                data  => \$data,
+                purge => $purge,
+            );
+            if (scalar @$errors) {
+                $c->log->error(sprintf('CSV file (%d lines) processed, %d error(s).', $linecount, scalar @$errors));
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                return;
+            } else {
+                $c->log->debug(sprintf('CSV file (%d lines) processed, %d error(s).', $linecount, 0));
+            }
+        } catch($e) {
+            $c->log->error("failed to process CSV file: $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            return;
+        }
     }
 
     $self->return_representation_post($c);
@@ -390,4 +406,3 @@ sub post {
 }
 
 1;
-

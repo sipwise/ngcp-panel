@@ -246,7 +246,7 @@ sub edit :Chained('template_base') :PathPart('edit') :Args(0) {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
 
-    $c->stash->{old_name} = $template;
+    $c->stash->{old_name} = $c->stash->{provisioning_templates}->{$template}->{name};
 
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::ProvisioningTemplate::Admin", $c);

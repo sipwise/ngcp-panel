@@ -149,7 +149,6 @@ sub validate_template_name {
     unless ($name =~ /^[a-zA-Z0-9 -]+$/) {
         die("template name contains invalid characters\n");
     }
-    #$c->log->warn("test: ".$template);
 
     if (not defined $old_name
         or $old_name ne $name) {
@@ -525,6 +524,7 @@ sub provision_commit_row {
     );
 
     my $purge = $context->{_purge} || $values->{$PURGE_FIELD_NAME};
+
     try {
         _init_subscriber_context(
             $c,
