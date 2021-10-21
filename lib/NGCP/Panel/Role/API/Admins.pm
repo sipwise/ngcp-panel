@@ -32,27 +32,30 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('admins');
-    if($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({
-            reseller_id => $c->user->reseller_id,
-            is_system => 0
-        });
+
+    if ($c->user->is_system || $c->user->is_superuser) {
+        return $item_rs;
     }
 
-    if($c->user->is_system) {
-        # return all (or all of reseller) admins
-    } elsif ($c->user->roles ne 'lintercept' && ($c->user->is_master || $c->user->is_superuser)) {
-        $item_rs = $item_rs->search({
-            lawful_intercept => 0,
+    my %search = ();
+
+    if ($c->user->roles eq "reseller") {
+        %search = (
+            reseller_id => $c->user->reseller_id,
             is_system => 0
-        });
+        );
+    }
+
+    if ($c->user->roles ne 'lintercept' && $c->user->is_master) {
+        %search = (%search,
+            lawful_intercept => 0,
+            is_system        => 0);
     } else {
         # otherwise, only return the own admin if master is not set
-        $item_rs = $item_rs->search({
-            id => $c->user->id,
-        });
+        %search = (%search, id => $c->user->id);
     }
-    return $item_rs;
+
+    return $item_rs->search(\%search);
 }
 
 sub get_form {

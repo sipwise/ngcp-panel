@@ -219,7 +219,12 @@ sub get_api_journal_query_params {
 
 sub handle_api_item_base_journal {
     my ($controller,$c,$id) = @_;
-    $c->stash->{item_id_journal} = $id;
+
+    if ($c->user->id == $id || $c->user->is_system || $c->user->is_superuser) {
+        $c->stash->{item_id_journal} = $id;
+        return;
+    }
+
     return;
 }
 

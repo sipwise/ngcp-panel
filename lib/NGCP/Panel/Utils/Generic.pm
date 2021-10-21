@@ -24,10 +24,7 @@ my $MIME_TYPES = {
 
 sub is_int {
     my $val = shift;
-    if($val =~ /^[+-]?[0-9]+$/) {
-        return 1;
-    }
-    return;
+    return defined $val && $val =~ /^[+-]?\d+\z/;
 }
 
 sub is_integer {

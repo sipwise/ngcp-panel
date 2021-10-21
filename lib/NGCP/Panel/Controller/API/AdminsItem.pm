@@ -18,11 +18,15 @@ sub journal_query_params {
 }
 
 sub get_journal_methods{
-    return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
-}   
+    return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get
+        handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
+}
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller lintercept ccareadmin ccare/],
+    allowed_roles => {
+        Default => [qw/admin reseller lintercept ccareadmin ccare/],
+        Journal => [qw/admin reseller lintercept ccareadmin ccare/],
+    }
 });
 
 sub PATCH :Allow {
@@ -88,7 +92,7 @@ sub delete_item {
         my $self = shift;
         my ($c) = @_;
         return $self->hal_from_item($c, $item); });
-    
+
     $item->delete;
     return 1;
 }
