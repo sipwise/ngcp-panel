@@ -885,8 +885,10 @@ sub _init_subscriber_context {
     my ($c, $context, $schema, $template) = @_;
 
     {
+        my @identifiers = _get_identifiers($template->{subscriber});
         my %subscriber = ();
         foreach my $col (keys %{$template->{subscriber}}) {
+            next if $col eq $IDENTIFIER_FNAME;
             my ($k,$v) = _calculate($context,$col, $template->{subscriber}->{$col});
             $subscriber{$k} = $v;
         }
@@ -911,6 +913,21 @@ sub _init_subscriber_context {
         #todo: profile_set_id
 
         $context->{subscriber} = \%subscriber;
+        
+        if (scalar @identifiers) {
+            my $e = $schema->resultset('voip_subscribers')->search_rs({
+                map { $_ => $subscriber{$_}; } @identifiers
+            },{
+                join => 'domain',
+            })->first;
+            if ($e and 'terminated' ne $e->status) {
+                $subscriber{id} = $e->id;
+            } else {
+                delete $subscriber{id};
+            }
+        } else {
+            delete $subscriber{id};
+        }
 
         $context->{subscriber}->{customer_id} //= $context->{contract}->{id};
 
@@ -970,6 +987,7 @@ sub _init_contract_preferences_context {
     my ($c, $context, $schema, $template) = @_;
 
     if (exists $template->{contract_preferences}) {
+        
         $context->{_cp} = NGCP::Panel::Utils::Preferences::prepare_resource(
             c => $c,
             schema => $schema,
@@ -989,7 +1007,6 @@ sub _init_contract_preferences_context {
         $c->log->debug("provisioning template - contract preferences: " . Dumper($context->{contract_preferences}));
 
     }
-
 
 }
 
@@ -1086,53 +1103,54 @@ sub _create_subscriber {
 
     my ($c, $context, $schema) = @_;
 
-    my $error_info = { extended => {} };
-
-    my @events_to_create = ();
-    my $event_context = { events_to_create => \@events_to_create };
-    my $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
-        c             => $c,
-        schema        => $schema,
-        contract      => $context->{_cs}->{customer},
-        params        => $context->{_cs}->{resource},
-        preferences   => $context->{_cs}->{preferences},
-        admin_default => 0,
-        event_context => $event_context,
-        error         => $error_info,
-    );
-    $context->{subscriber}->{id} = $subscriber->id;
-    if($context->{_cs}->{resource}->{status} eq 'locked') {
-        NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-            c => $c,
-            prov_subscriber => $subscriber->provisioning_voip_subscriber,
-            level => $context->{_cs}->{resource}->{lock} || 4,
+    unless ($context->{subscriber}->{id}) {
+        my $error_info = { extended => {} };
+    
+        my @events_to_create = ();
+        my $event_context = { events_to_create => \@events_to_create };
+        my $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+            c             => $c,
+            schema        => $schema,
+            contract      => $context->{_cs}->{customer},
+            params        => $context->{_cs}->{resource},
+            preferences   => $context->{_cs}->{preferences},
+            admin_default => 0,
+            event_context => $event_context,
+            error         => $error_info,
         );
-    } else {
-        NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
+        $context->{subscriber}->{id} = $subscriber->id;
+        if($context->{_cs}->{resource}->{status} eq 'locked') {
+            NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                c => $c,
+                prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                level => $context->{_cs}->{resource}->{lock} || 4,
+            );
+        } else {
+            NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
+        }
+        NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+            c              => $c,
+            schema         => $schema,
+            alias_numbers  => $context->{_cs}->{alias_numbers},
+            reseller_id    => $context->{_cs}->{customer}->contact->reseller_id,
+            subscriber_id  => $subscriber->id,
+        );
+        $subscriber->discard_changes; # reload row because of new number
+        NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+            c            => $c,
+            schema       => $schema,
+            groups       => $context->{_cs}->{groups},
+            groupmembers => $context->{_cs}->{groupmembers},
+            customer     => $context->{_cs}->{customer},
+            subscriber   => $subscriber,
+        );
+        NGCP::Panel::Utils::Events::insert_deferred(
+            c => $c, schema => $schema,
+            events_to_create => \@events_to_create,
+        );
+    
+        $c->log->debug("provisioning template - subscriber id $context->{subscriber}->{id} created");
     }
-    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-        c              => $c,
-        schema         => $schema,
-        alias_numbers  => $context->{_cs}->{alias_numbers},
-        reseller_id    => $context->{_cs}->{customer}->contact->reseller_id,
-        subscriber_id  => $subscriber->id,
-    );
-    $subscriber->discard_changes; # reload row because of new number
-    NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
-        c            => $c,
-        schema       => $schema,
-        groups       => $context->{_cs}->{groups},
-        groupmembers => $context->{_cs}->{groupmembers},
-        customer     => $context->{_cs}->{customer},
-        subscriber   => $subscriber,
-    );
-    NGCP::Panel::Utils::Events::insert_deferred(
-        c => $c, schema => $schema,
-        events_to_create => \@events_to_create,
-    );
-
-    $c->log->debug("provisioning template - subscriber id $context->{subscriber}->{id} created");
-
 }
 
 sub _create_subscriber_preferences {
