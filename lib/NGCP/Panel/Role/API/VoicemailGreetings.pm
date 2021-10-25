@@ -31,6 +31,8 @@ sub _item_rs {
         '-or' => [
             'dir' => { like => '/var/spool/asterisk/voicemail/%/unavail' },
             'dir' => { like => '/var/spool/asterisk/voicemail/%/busy' },
+            'dir' => { like => '/var/spool/asterisk/voicemail/%/greet' },
+            'dir' => { like => '/var/spool/asterisk/voicemail/%/temp' },
         ],
         'voip_subscriber.id' => { '!=' => undef },
         'voip_subscriber.status' => { '!=' => 'terminated' }
