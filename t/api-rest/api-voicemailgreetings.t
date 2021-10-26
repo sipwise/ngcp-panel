@@ -51,7 +51,7 @@ my $greeting = $test_machine->check_create_correct( 1 )->[0];
 ok(is_int($greeting->{content}->{id}), "Check id presence after creation.");
 ok(is_int($greeting->{content}->{subscriber_id}), "Check subscriber_id presence after creation.");
 is($greeting->{content}->{subscriber_id}, $test_machine->DATA_ITEM->{json}->{subscriber_id}, "Check subscriber_id after creation.");
-ok($greeting->{content}->{dir} =~/^(?:unavail|busy)$/, "Check dir after creation.");
+ok($greeting->{content}->{dir} =~/^(?:unavail|busy|greet|temp)$/, "Check dir after creation.");
 is($greeting->{content}->{dir}, $test_machine->DATA_ITEM->{json}->{dir}, "Check dir after creation #2.");
 
 $res = $test_machine->request_get('/api/voicemailgreetings/?subscriber_id='.$greeting->{content}->{subscriber_id}.'&type='.$greeting->{content}->{dir});
