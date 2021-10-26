@@ -16,6 +16,8 @@ has_field 'dir' => (
     options => [
         { value => 'unavail', label => 'Unavailable' },
         { value => 'busy', label => 'Busy' },
+        { value => 'greet', label => 'Greeting' },
+        { value => 'temp', label => 'Temporary' },
     ],
     element_attr => {
         rel => ['tooltip'],
