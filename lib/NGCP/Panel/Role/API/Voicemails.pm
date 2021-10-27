@@ -83,9 +83,10 @@ sub resource_from_item {
     my %resource = ();
     $resource{id} = int($item->id);
     $resource{duration} = is_int($item->duration) ? int($item->duration) : 0;
-    $resource{time} = "" . NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->origtime,
+    $resource{time} = $datetime_fmt->format_datetime(
+        NGCP::Panel::Utils::API::Calllist::apply_owner_timezone($self,$c,$item->origtime,
         NGCP::Panel::Utils::API::Calllist::get_owner_data($self,$c, undef, undef, 1)
-    );
+    ));
     $resource{caller} = $item->callerid;
     $resource{subscriber_id} = int($item->mailboxuser->provisioning_voip_subscriber->voip_subscriber->id);
 
