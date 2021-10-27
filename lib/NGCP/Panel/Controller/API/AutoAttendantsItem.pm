@@ -39,7 +39,7 @@ sub journal_query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller ccareadmin ccare subscriberadmin/],
+        Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
         Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
@@ -89,7 +89,7 @@ sub PUT :Allow {
 
         my $hal = $self->hal_from_item($c, $subscriber);
         last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $subscriber->id });
-        
+
         $guard->commit;
 
         $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
@@ -122,7 +122,7 @@ sub PATCH :Allow {
 
         $subscriber = $self->update_item($c, $subscriber, undef, $resource, $form);
         last unless $subscriber;
-        
+
         my $hal = $self->hal_from_item($c, $subscriber);
         last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $subscriber->id });
 

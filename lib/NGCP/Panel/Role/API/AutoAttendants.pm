@@ -70,8 +70,8 @@ sub _item_rs {
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search({ 'me.status' => { '!=' => 'terminated' } },
             {join => 'provisioning_voip_subscriber'});
-    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
-    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
+
+    if($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
@@ -81,8 +81,8 @@ sub _item_rs {
         $item_rs = $item_rs->search({
             'provisioning_voip_subscriber.account_id' => $c->user->account_id,
         });
-    } else {
-        return;  # subscriber role not allowed
+    } elsif($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search({'me.username' => $c->user->username});
     }
 
     return $item_rs;
