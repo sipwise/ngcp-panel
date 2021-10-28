@@ -1299,36 +1299,18 @@ sub hal_from_item {
 sub expand_fields {
     my ($self, $c, $resource) = @_;
 
-    my $expand_param = $c->req->param('expand') // return 1;
-    my $all = $expand_param eq 'all' ? 1 : 0;
-    my @expand_fields = split /,/, $expand_param;
-    my @found_fields = ();
-
     my $resource_form = $self->get_form($c);
     return unless $resource_form;
 
-    foreach my $field ($resource_form->fields) {
-        my $attr     = $field->element_attr;
-        my $expand   = $attr->{expand} // next;
-        my $alias    = $expand->{alias} // $field->name;
-        my $class    = $expand->{class} // next;
-        my $id_field = $expand->{id_field} // next;
-        my $fetch    = $expand->{fetch} // 0;
-        my $id       = $resource->{$id_field} // next;
-        next unless $all || grep { /^$id_field$/ } @expand_fields;
-        my $form = $class->get_form($c) // next;
-        my $item = $class->item_by_id($c, $id) // next;
-        my $data = $class->resource_from_item($c, $item, $form);
-        $data = $class->post_process_hal_resource($c, $item, $data, $form);
-        push @found_fields, $id_field;
-        if (my $remove_fields = $expand->{remove_fields}) {
-            delete @{$data}{@{$remove_fields}};
-        }
-        if ($fetch && $data->{$id_field}) {
-            $resource->{$alias} = $data->{$id_field};
-        } else {
-            $resource->{$alias} = $data;
-        }
+    my @found_fields;
+    my $expand_param = $c->req->param('expand') // return 1;
+    my $all = $expand_param eq 'all' ? 1 : 0;
+    my @expand_fields = $all ? map { $_->name } $resource_form->fields
+                             : split /,/, $expand_param;
+
+    foreach my $field (@expand_fields) {
+        my $found = $self->expand_field($c, $resource, $resource_form, $field);
+        push @found_fields, $found if $found;
     }
 
     unless ($all || $#expand_fields == $#found_fields) {
@@ -1338,6 +1320,56 @@ sub expand_fields {
     }
 
     return 1;
+}
+
+sub expand_field {
+    my ($self, $c, $resource, $resource_form, $field) = @_;
+
+    my ($subfield, $found);
+    if ($field =~ /^([^\.]+)\.(.+)/) {
+        $field = $1;
+        $subfield = $2;
+    }
+
+    my $f_field = $resource_form->field($field);
+    unless ($f_field) { # lookup by alias
+        foreach my $a_field ($resource_form->fields) {
+            my $expand = $a_field->element_attr->{expand} // next;
+            my $alias = $expand->{alias} // next;
+            if ($alias eq $field) {
+                $f_field = $a_field;
+                last;
+            }
+        }
+    }
+    return unless $f_field;
+    $found = 1;
+
+    my $attr     = $f_field->element_attr;
+    my $expand   = $attr->{expand} // return;
+    my $alias    = $expand->{alias} // $f_field->name;
+    my $class    = $expand->{class} // return;
+    my $id_field = $expand->{id_field} // return;
+    my $fetch    = $expand->{fetch} // 0;
+    my $id       = $resource->{$id_field} // return;
+    my $form     = $class->get_form($c) // return;
+    my $item     = $class->item_by_id($c, $id) // return;
+    my $item_res = $class->resource_from_item($c, $item, $form);
+    my $data     = $class->post_process_hal_resource($c, $item, $item_res, $form);
+
+    if (my $remove_fields = $expand->{remove_fields}) {
+        delete @{$data}{@{$remove_fields}};
+    }
+
+    $resource->{$alias} = $fetch && $data->{$id_field}
+                            ? $data->{$id_field}
+                            : $resource->{$alias};
+
+    if ($subfield) {
+        $found = $self->expand_field($c, $resource->{$alias}, $form, $subfield);
+    }
+
+    return defined $found;
 }
 
 sub get_mandatory_params {
