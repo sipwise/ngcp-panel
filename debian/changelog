@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.11+0~mr9.5.2.11) unstable; urgency=medium
+
+  [ Javier Rodriguez ]
+  * [afb9664] TT#146900 correction for time format via /api/voicemails/
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Oct 2021 15:57:20 +0200
+
 ngcp-panel (9.5.2.10+0~mr9.5.2.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
