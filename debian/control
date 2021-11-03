@@ -3,19 +3,17 @@ Section: web
 Priority: optional
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends:
- debhelper-compat (= 12),
+ debhelper-compat (= 13),
  libmodule-build-perl,
  libngcp-schema-perl,
  libtrycatch-perl,
  libwww-perl,
-Standards-Version: 3.9.8
+Standards-Version: 4.5.1
 Homepage: https://www.sipwise.com/
 
 Package: ngcp-panel
 Architecture: all
 Depends:
- ${misc:Depends},
- ${perl:Depends},
  cracklib-runtime,
  gettext,
  ghostscript,
@@ -130,6 +128,8 @@ Depends:
  openssl,
  sipsak (>= 0.9.6+git20160713),
  sox,
+ ${misc:Depends},
+ ${perl:Depends},
 Recommends:
  libngcp-rating-inew-perl,
 Description: catalyst based panel application for NGCP
@@ -159,8 +159,6 @@ Package: ngcp-api-testframework
 Section: perl
 Architecture: all
 Depends:
- ${misc:Depends},
- ${perl:Depends},
  libcpanel-json-xs-perl,
  libdata-walk-perl,
  libdatetime-format-iso8601-perl,
@@ -170,6 +168,8 @@ Depends:
  liburi-perl,
  libwww-perl,
  libyaml-libyaml-perl,
+ ${misc:Depends},
+ ${perl:Depends},
 Description: TestFramework for testing NGCP API functionalities
  The NGCP API Test Framework is designed to run over the API rails and test
  its basic functionalities, using yaml scenarios.

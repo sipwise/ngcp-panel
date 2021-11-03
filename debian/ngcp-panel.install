@@ -5,8 +5,7 @@ ngcp_panel.psgi			usr/share/ngcp-panel/
 script/*			usr/share/ngcp-panel/script
 script/ngcp_panel_fastcgi.pl	usr/share/ngcp-panel/
 share/*				usr/share/ngcp-panel/
-
 usr/share/man/man3/NGCP::*
 usr/share/perl5/Catalyst/Plugin/NGCP
-usr/share/perl5/NGCP/Panel.pm
 usr/share/perl5/NGCP/Panel
+usr/share/perl5/NGCP/Panel.pm
