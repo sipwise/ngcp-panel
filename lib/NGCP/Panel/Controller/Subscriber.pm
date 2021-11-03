@@ -2751,7 +2751,7 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) :Allowed
     ) if($c->user->roles eq "admin" || $c->user->roles eq "reseller");
 
     my $vat_factor = $c->config->{appearance}{cdr_apply_vat} && $c->stash->{subscriber}->contract->add_vat
-        ? "* " . (1 + $c->stash->{subscriber}->contract->vat_rate / 100)
+        ? "* " . (1 + $c->stash->{subscriber}->contract->vat_rate / 100.0)
         : "";
     $c->log->debug("using vat_factor '$vat_factor'");
 

@@ -234,7 +234,7 @@ sub get_dummy_data {
         customer => {
             id => int(rand(10000))+10000,
             external_id => 'Resext1234567890',
-            vat_rate => 20,
+            vat_rate => 20.0,
             add_vat => 0,
         },
         custcontact => {

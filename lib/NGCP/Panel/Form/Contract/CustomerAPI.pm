@@ -91,10 +91,12 @@ has_field 'invoice_template_id' => (
 );
 
 has_field 'vat_rate' => (
-    type => 'Integer',
-    range_start => 0,
-    range_end => 100,
-    default => 0,
+    type => 'Float',
+    size => 15,
+    precision => 14,
+    range_start => 0.0,
+    range_end => 100.0,
+    default => 0.0,
     element_attr => {
         rel => ['tooltip'],
         title => ['The VAT rate in percentage (e.g. 20).']

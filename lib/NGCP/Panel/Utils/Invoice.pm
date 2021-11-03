@@ -17,15 +17,15 @@ sub get_invoice_amounts{
     my $invoice = {};
     $contract_balance->{cash_balance_interval} //= 0;
     $billing_profile->{interval_charge} //= 0;
-    $customer_contract->{vat_rate} //= 0;
+    $customer_contract->{vat_rate} //= 0.0;
     #use Data::Dumper;
     #print Dumper [$contract_balance,$billing_profile];
     $invoice->{amount_net} = $contract_balance->{cash_balance_interval} / 100 + $billing_profile->{interval_charge};
     $invoice->{amount_vat} =
         $customer_contract->{add_vat}
         ?
-            $invoice->{amount_net} * ($customer_contract->{vat_rate}/100)
-            : 0;
+            $invoice->{amount_net} * ($customer_contract->{vat_rate} / 100.0)
+            : 0.0;
     $invoice->{amount_total} =  $invoice->{amount_net} + $invoice->{amount_vat};
     return $invoice;
 }
