@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.14+0~mr9.5.2.14) unstable; urgency=medium
+
+  [ Javier Rodriguez ]
+  * [a674e8a] TT#146901 adding greet and temp directories into /api/voicemailgreetings for GET method
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 03 Nov 2021 21:59:02 +0100
+
 ngcp-panel (9.5.2.13+0~mr9.5.2.13) unstable; urgency=medium
 
   [ Javier Rodriguez ]
