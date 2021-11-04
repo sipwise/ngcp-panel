@@ -58,23 +58,21 @@ sub auto :Private {
         }
         # clear form cache (they need to be properly re-translated)
         NGCP::Panel::Form::clear_form_cache();
-    }
-    unless ($is_api_request) {
-        if (defined $c->session->{lang}) {
-            $c->languages([$c->session->{lang}, "i-default"]);
-        } elsif ( $c->req->cookie('ngcp_panel_lang') ) {
-            $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
-            $c->languages([$c->session->{lang}, 'i-default']);
-        } else { # if language has not yet be set, set it from config or browser
-            if (defined $c->config->{appearance}{force_language}) {
-                $c->log->debug("lang set by config: " . $c->config->{appearance}{force_language});
-                $c->languages([$c->config->{appearance}{force_language}, 'i-default']);
-            } else {
-                $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
-            }
-            $c->session->{lang} = $c->language;
-            $c->log->debug("lang set by browser or config: " . $c->language);
+    } elsif (defined $c->session->{lang}) {
+        $c->languages([$c->session->{lang}, "i-default"]);
+    } elsif ( ! $is_api_request && $c->req->cookie('ngcp_panel_lang') ) {
+        $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
+        $c->languages([$c->session->{lang}, 'i-default']);
+    } else { # if language has not yet be set, set it from config or browser
+        if (defined $c->config->{appearance}{force_language}) {
+            $c->log->debug("lang set by config: " . $c->config->{appearance}{force_language});
+            $c->languages([$c->config->{appearance}{force_language}, 'i-default']);
+        } else {
+            $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
+            $c->log->debug("lang set by browser: " . $c->language);
         }
+        $c->session->{lang} = $c->language
+            if ! $is_api_request;
     }
 
     ################################################### timezone retrieval
