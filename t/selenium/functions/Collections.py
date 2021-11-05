@@ -38,8 +38,8 @@ def logout_panel(driver):
 
 def create_reseller(driver, resellername, contractname):
     print("Go to 'Reseller'...", end="")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[2]')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[2]').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Resellers")]')))
+    driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Resellers")]').click()
     print("OK")
     print("Try to create a new Reseller...", end="")
     driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div/a[contains(., "Add")]').click()
@@ -53,15 +53,15 @@ def create_reseller(driver, resellername, contractname):
 
 def delete_reseller(driver, reseller):
     print("Go to 'Reseller'...", end="")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[2]')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[2]').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Resellers")]')))
+    driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Resellers")]').click()
     print("OK")
     print("Try to delete Reseller...", end="")
     wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
     fill_element(driver, '/html/body//div/main//div/label//div/input', reseller)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[contains(., "' + reseller + '")]')))
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[7]/button')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[7]/button').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[2]/button')))
+    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[2]/button').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div/div')))
     driver.find_element_by_xpath('/html/body/div[4]/div/div').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/div[3]/button[2]')))
@@ -72,8 +72,8 @@ def delete_reseller(driver, reseller):
 
 def create_reseller_contract(driver, contractname):
     print("Go to 'Contracts'...", end="")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[4]')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[4]').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Contracts")]')))
+    driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Contracts")]').click()
     print("OK")
     print("Try to create a new Reseller Contract...", end="")
     wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
@@ -100,15 +100,15 @@ def create_reseller_contract(driver, contractname):
 
 def delete_reseller_contract(driver, contract):
     print("Go to 'Contracts'...", end="")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[4]')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[4]').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Contracts")]')))
+    driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Contracts")]').click()
     print("OK")
     print("Try to delete Reseller Contract...", end="")
     wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
     fill_element(driver, '/html/body//div/main//div/label//div/input', contract)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr/td[contains(., "' + contract + '")]')))
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr/td[8]/button')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr/td[8]/button').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[2]/button')))
+    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[2]/button').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div/div')))
     driver.find_element_by_xpath('/html/body/div[4]/div/div').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/div[3]/button[2]')))
@@ -119,8 +119,8 @@ def delete_reseller_contract(driver, contract):
 
 def create_billing_profile(driver, billingname, billingrealname, reseller):
     print("Go to 'Billing Profiles'...", end="")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[10]')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[10]').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Billing Profile")]')))
+    driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Billing Profile")]').click()
     print("OK")
     print("Try to create a new Billing Profile...", end="")
     driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div/div[2]/div[1]/div[1]/a').click()
@@ -135,16 +135,16 @@ def create_billing_profile(driver, billingname, billingrealname, reseller):
 
 def delete_billing_profile(driver, billingrealname):
     print("Go to 'Billing Profiles'...", end="")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[10]')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[2]/div/div[2]/a[10]').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Billing Profile")]')))
+    driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Billing Profile")]').click()
     print("OK")
     print("Try to delete Billing Profile...", end="")
     wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div/main//div/label//div/input')))
     fill_element(driver, '/html/body//div/main//div/label//div/input', billingrealname)
     wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div//main/div//table/tbody/tr[1]/td[7]/button')))
-    driver.find_element_by_xpath('//*[@id="q-app"]/div//main/div//table/tbody/tr[1]/td[7]/button').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[2]/button')))
+    driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[2]/button').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div/div[2]')))
     driver.find_element_by_xpath('/html/body/div[4]/div/div[2]').click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/div[3]/button[2]')))
