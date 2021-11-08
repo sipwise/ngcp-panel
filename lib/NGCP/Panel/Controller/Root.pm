@@ -26,6 +26,7 @@ use NGCP::Schema qw//;
 #
 __PACKAGE__->config(namespace => '');
 
+
 sub auto :Private {
     my($self, $c) = @_;
 
@@ -42,37 +43,10 @@ sub auto :Private {
         NGCP::Panel::Form::dont_use_cache(1);
     }
 
-    if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
-        $c->log->debug("checking language");
-        if($c->request->params->{lang} eq "en") {
-            $c->log->debug("setting language ".$c->request->params->{lang}." to default");
-            $c->request->params->{lang} = "i-default";
-        }
-        if(exists $c->installed_languages->{$c->request->params->{lang}} ||
-           $c->request->params->{lang} eq "i-default") {
-            unless ($is_api_request) {
-                $c->session->{lang} = $c->request->params->{lang};
-                $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
-            }
-            $c->log->debug("Setting language to ". $c->request->params->{lang});
-        }
-        # clear form cache (they need to be properly re-translated)
-        NGCP::Panel::Form::clear_form_cache();
-    } elsif (defined $c->session->{lang}) {
-        $c->languages([$c->session->{lang}, "i-default"]);
-    } elsif ( ! $is_api_request && $c->req->cookie('ngcp_panel_lang') ) {
-        $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
-        $c->languages([$c->session->{lang}, 'i-default']);
-    } else { # if language has not yet be set, set it from config or browser
-        if (defined $c->config->{appearance}{force_language}) {
-            $c->log->debug("lang set by config: " . $c->config->{appearance}{force_language});
-            $c->languages([$c->config->{appearance}{force_language}, 'i-default']);
-        } else {
-            $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
-            $c->log->debug("lang set by browser: " . $c->language);
-        }
-        $c->session->{lang} = $c->language
-            if ! $is_api_request;
+    if ($is_api_request) {
+        $self->_handle_api_lang($c);
+    } else {
+        $self->_handle_ui_lang($c);
     }
 
     ################################################### timezone retrieval
@@ -833,6 +807,52 @@ sub _set_session_tz_from_row {
         $c->session->{user_tz_name} = $tz_name;
         $c->log->debug("timezone set for $role ($identifier) to $tz_name");
     }
+}
+
+sub _handle_api_lang {
+    my $self = shift;
+    my ($c) = @_;
+
+    my $lang = 'i-default';
+    if (defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
+        $lang = $self->_resolve_lang($c, $c->request->params->{lang});
+    }
+
+    $c->languages([$lang]);
+}
+
+sub _handle_ui_lang {
+    my $self = shift;
+    my ($c) = @_;
+
+    my $lang;
+    if (defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
+        $lang = $self->_resolve_lang($c, $c->request->params->{lang});
+        if ($c->request->params->{lang_save}) {
+            $c->response->cookies->{ngcp_panel_lang} = {value => $lang, expires =>  '+3M',};
+        }
+    } else {
+        $lang = defined $c->req->cookie('ngcp_panel_lang') ?
+                $c->req->cookie('ngcp_panel_lang')->value :
+                'i-default';
+    }
+
+    $c->languages([$lang]);
+}
+
+sub _resolve_lang {
+    my $self = shift;
+    my ($c, $lang) = @_;
+
+    if (exists $c->installed_languages->{$lang}) {
+        return $lang;
+    }
+
+    if (defined $c->config->{appearance}{force_language}) {
+        return $c->config->{appearance}{force_language};
+    }
+
+    return 'i-default';
 }
 
 

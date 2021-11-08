@@ -2694,16 +2694,13 @@ sub api_preferences_defs {
         if ($pref->attribute =~ m/^(cdr_export_sclidui_rwrs|rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|emergency_mapping_container|sound_set|contract_sound_set|header_rule_set)$/) {
             $fields->{data_type} = 'string';
         }
-        my $language = $c->request->params->{lang} // undef;
-        my $old_languages = $c->languages;
-        $c->languages([$language]);
+
         my $preference_group = $pref->voip_preference_group->name =~ s/([\[\]])/~$1/rg;
         my $label = $fields->{label} =~ s/([\[\]])/~$1/rg;
         my $description = $fields->{description} =~ s/([\[\]])/~$1/rg;
         $fields->{preference_group} = $c->loc($preference_group);
         $fields->{label} = $c->loc($label);
         $fields->{description} = $c->loc($description);
-        $c->languages($old_languages);
         $resource->{$pref->attribute} = $fields;
     }
     return $resource;
