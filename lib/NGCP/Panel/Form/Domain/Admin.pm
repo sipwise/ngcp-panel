@@ -9,10 +9,6 @@ has_field 'reseller' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The reseller id to assign this domain to.'],
-        expand => {
-            class    => 'NGCP::Panel::Role::API::Resellers',
-            id_field => 'reseller_id',
-        },
     },
 );
 

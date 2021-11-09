@@ -26,10 +26,33 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Reseller", $c);
 }
 
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my %resource = $item->get_inflated_columns;
+
+    $resource{country}{id} = delete $resource{country};
+    $resource{timezone}{name} = delete $resource{timezone};
+
+    $form //= $self->get_form($c);
+    $self->validate_form(
+        c => $c,
+        resource => \%resource,
+        form => $form,
+        run => 0,
+    );
+
+    $resource{id} = int($item->id);
+    $resource{country} = $resource{country}{id};
+    $resource{timezone} = $resource{timezone}{name};
+
+    return \%resource;
+}
+
 sub hal_from_contact {
     my ($self, $c, $contact, $form) = @_;
-    my %resource = $contact->get_inflated_columns;
 
+    my $resource = $self->resource_from_item($c, $contact, $form);
 
     my $hal = Data::HAL->new(
         links => [
@@ -48,25 +71,8 @@ sub hal_from_contact {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $resource{country}{id} = delete $resource{country};
-    $resource{timezone}{name} = delete $resource{timezone};
-    $form //= $self->get_form($c);
-
-    # TODO: i'd expect reseller to be removed automatically
-    delete $resource{reseller_id};
-    $self->validate_form(
-        c => $c,
-        resource => \%resource,
-        form => $form,
-        run => 0,
-    );
-    $resource{country} = $resource{country}{id};
-    $resource{timezone} = $resource{timezone}{name};
-
-    $resource{id} = int($contact->id);
-
-    $self->expand_fields($c, \%resource);
-    $hal->resource({%resource});
+    $self->expand_fields($c, $resource);
+    $hal->resource($resource);
     return $hal;
 }
 

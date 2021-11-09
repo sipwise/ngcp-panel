@@ -1331,28 +1331,30 @@ sub expand_field {
         $subfield = $2;
     }
 
-    my $f_field = $resource_form->field($field);
-    unless ($f_field) { # lookup by alias
-        foreach my $a_field ($resource_form->fields) {
-            my $expand = $a_field->element_attr->{expand} // next;
-            my $alias = $expand->{alias} // next;
-            if ($alias eq $field) {
-                $f_field = $a_field;
-                last;
-            }
-        }
-    }
-    return unless $f_field;
+    return unless $resource->{$field};
     $found = 1;
 
-    my $attr     = $f_field->element_attr;
-    my $expand   = $attr->{expand} // return;
-    my $alias    = $expand->{alias} // $f_field->name;
-    my $class    = $expand->{class} // return;
-    my $id_field = $expand->{id_field} // return;
-    my $fetch    = $expand->{fetch} // 0;
-    my $id       = $resource->{$id_field} // return;
-    my $form     = $class->get_form($c) // return;
+    my $expand_form = NGCP::Panel::Form::get("NGCP::Panel::Form::Expand", $c);
+
+    my ($attr, $expand);
+    my $f_field = $resource_form->field($field);
+
+    if ($f_field) {
+        $attr     = $f_field->element_attr;
+        $expand   = $attr->{expand};
+    }
+
+    unless ($expand) { # use default field expand if specified
+        $f_field  = $expand_form->field($field) // return;
+        $attr     = $f_field->element_attr // return;
+        $expand   = $attr->{expand} // return;
+    }
+
+    my $id    = $resource->{$field};
+    my $to    = $expand->{to} // $field . '_expand';
+    my $class = $expand->{class} // return;
+    my $form  = $class->get_form($c) // return;
+
     my $item     = $class->item_by_id($c, $id) // return;
     my $item_res = $class->resource_from_item($c, $item, $form);
     my $data     = $class->post_process_hal_resource($c, $item, $item_res, $form);
@@ -1361,12 +1363,10 @@ sub expand_field {
         delete @{$data}{@{$remove_fields}};
     }
 
-    $resource->{$alias} = $fetch && $data->{$id_field}
-                            ? $data->{$id_field}
-                            : $resource->{$alias};
+    $resource->{$to} = $data;
 
     if ($subfield) {
-        $found = $self->expand_field($c, $resource->{$alias}, $form, $subfield);
+        $found = $self->expand_field($c, $resource->{$to}, $form, $subfield);
     }
 
     return defined $found;

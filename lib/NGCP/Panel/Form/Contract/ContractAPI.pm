@@ -3,10 +3,22 @@ package NGCP::Panel::Form::Contract::ContractAPI;
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Contract::BaseAPI';
 
+has_field 'contact_id' => (
+    type => 'PosInteger',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contact id this contract belongs to.'],
+        expand => {
+            class => 'NGCP::Panel::Role::API::SystemContacts',
+        },
+    },
+);
+
 has_field 'billing_profile_definition' => (
     type => 'Select',
     #required => 1,
-    options => [ 
+    options => [
         { value => 'id', label => 'single: by \'billing_profile_id\' field' },
         { value => 'profiles', label => 'schedule: by \'billing_profiles\' field' },
     ],

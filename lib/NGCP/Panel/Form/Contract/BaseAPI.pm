@@ -9,11 +9,6 @@ has_field 'contact_id' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The contact id this contract belongs to.'],
-        expand => {
-            class    => 'NGCP::Panel::Role::API::CustomerContacts',
-            id_field => 'contact_id',
-            alias    => 'contact',
-        },
     },
 );
 
@@ -23,11 +18,6 @@ has_field 'billing_profile_id' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The billing profile id used to charge this contract, which will become active immediately. This field is required if the profile definition mode is not defined or the \'id\' mode is used.'],
-        expand => {
-            class    => 'NGCP::Panel::Role::API::BillingProfiles',
-            id_field => 'billing_profile_id',
-            alias    => 'billing_profile',
-        },
     },
 );
 

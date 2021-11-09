@@ -8,13 +8,8 @@ has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     label => 'Reseller',
     validate_when_empty => 1,
-    element_attr => {
-        expand => {
-            class    => 'NGCP::Panel::Role::API::Resellers',
-            id_field => 'reseller_id',
-        },
-    },
 );
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],

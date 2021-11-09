@@ -13,12 +13,6 @@ has_field 'customer_id' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The contract used for this subscriber.'],
-        expand => {
-            class    => 'NGCP::Panel::Role::API::Customers',
-            alias    => 'customer',
-            id_field => 'customer_id',
-            fetch    => 0,
-        },
     },
 );
 
