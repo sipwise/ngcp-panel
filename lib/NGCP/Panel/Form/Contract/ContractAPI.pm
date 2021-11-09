@@ -11,6 +11,7 @@ has_field 'contact_id' => (
         title => ['The contact id this contract belongs to.'],
         expand => {
             class => 'NGCP::Panel::Role::API::SystemContacts',
+            allowed_roles => [qw(admin)],
         },
     },
 );

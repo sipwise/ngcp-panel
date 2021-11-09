@@ -26,6 +26,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
+use List::Util qw(any);
 
 #It is expected to work for all our 3 common cases:
 #1. Body is the plain json data
@@ -1349,6 +1350,9 @@ sub expand_field {
         $attr     = $f_field->element_attr // return;
         $expand   = $attr->{expand} // return;
     }
+
+    return unless $expand->{allowed_roles};
+    return unless any { $c->user->roles eq $_ } @{$expand->{allowed_roles}};
 
     my $id    = $resource->{$field};
     my $to    = $expand->{to} // $field . '_expand';

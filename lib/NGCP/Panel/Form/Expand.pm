@@ -12,6 +12,7 @@ has_field 'billing_profile_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::BillingProfiles',
+            allowed_roles => [qw(admin reseller)],
         },
     },
 );
@@ -21,6 +22,7 @@ has_field 'contact_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::CustomerContacts',
+            allowed_roles => [qw(admin reseller)],
         },
     },
 );
@@ -30,6 +32,7 @@ has_field 'contract_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::Contracts',
+            allowed_roles => [qw(admin)],
         },
     },
 );
@@ -39,6 +42,7 @@ has_field 'customer_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::Customers',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
@@ -48,6 +52,7 @@ has_field 'domain_id' => (
     element_attr => {
         expand => {
             class  => 'NGCP::Panel::Role::API::Domains',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
@@ -57,6 +62,7 @@ has_field 'reseller_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::Resellers',
+            allowed_roles => [qw(admin)],
         },
     },
 );
@@ -67,6 +73,7 @@ has_field 'subscriber_id' => (
         expand => {
             class => 'NGCP::Panel::Role::API::Subscribers',
             remove_fields => [qw(password webpassword)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
