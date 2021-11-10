@@ -1332,7 +1332,7 @@ sub expand_field {
         $subfield = $2;
     }
 
-    return unless $resource->{$field};
+    return unless exists $resource->{$field};
     $found = 1;
 
     my $expand_form = NGCP::Panel::Form::get("NGCP::Panel::Form::Expand", $c);
@@ -1354,7 +1354,7 @@ sub expand_field {
     return unless $expand->{allowed_roles};
     return unless any { $c->user->roles eq $_ } @{$expand->{allowed_roles}};
 
-    my $id    = $resource->{$field};
+    my $id    = $resource->{$field} // return $found; # null value but the field exists
     my $to    = $expand->{to} // $field . '_expand';
     my $class = $expand->{class} // return;
     my $form  = $class->get_form($c) // return;
