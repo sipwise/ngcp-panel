@@ -57,6 +57,26 @@ has_field 'domain_id' => (
     },
 );
 
+has_field 'profile_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::SubscriberProfiles',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
+has_field 'profile_set_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::SubscriberProfileSets',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
 has_field 'reseller_id' => (
     type => 'PosInteger',
     element_attr => {
