@@ -42,13 +42,16 @@ sub _prepare_peering_sum {
     # ok also for contracts without recent balance records:
 
     my ($stime,$etime) = $self->_get_interval();
+    
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['pstnpeering','sippeering'] })->all;
+    
     $c->stash(
         peering_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            'product.class' => { -in => [ 'sippeering', 'pstnpeering' ] },
+            'product_id' => { -in => [ @product_ids ] },
         },{
-            join => { contract => 'product', },
+            join => 'contract',
         })->get_column('cash_balance_interval'),
     );
 
@@ -59,14 +62,16 @@ sub _prepare_reseller_sum {
 
     # ok also for contracts without recent balance records:
 
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['reseller'] })->all;
+    
     my ($stime,$etime) = $self->_get_interval();
     $c->stash(
         reseller_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            'product.class' => 'reseller',
+            'product_id' => { -in => [ @product_ids ] },
         },{
-            join => { contract => 'product', },
+            join => 'product',
         })->get_column('cash_balance_interval'),
     );
 
