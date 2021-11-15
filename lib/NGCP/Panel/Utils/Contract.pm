@@ -126,7 +126,6 @@ sub recursively_lock_contract {
 }
 
 sub get_contract_rs {
-
     my %params = @_;
     my ($c,$schema,$include_terminated) = @params{qw/c schema include_terminated/};
     $schema //= $c->model('DB');
@@ -134,16 +133,13 @@ sub get_contract_rs {
         $include_terminated ? () : ('me.status' => { '!=' => 'terminated' }),  ## no critic (ProhibitCommaSeparatedStatements)
     }, undef);
     return $rs;
-
 }
 
 sub get_customer_rs {
     my %params = @_;
     my ($c,$schema,$include_terminated) = @params{qw/c schema include_terminated/};
-
     $schema //= $c->model('DB');
     my @product_ids = map { $_->id; } $schema->resultset('products')->search_rs({ 'class' => ['sipaccount','pbxaccount'] })->all;
-
     my $rs = get_contract_rs(
         c => $c,
         schema => $schema,

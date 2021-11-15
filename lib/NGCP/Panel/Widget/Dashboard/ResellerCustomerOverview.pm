@@ -18,13 +18,14 @@ sub filter {
 
 sub _prepare_customers_count {
     my ($self, $c) = @_;
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['sipaccount','pbxaccount'] })->all;
     $c->stash(
         customers => $c->model('DB')->resultset('contracts')->search({
             'me.status' => { '!=' => 'terminated' },
             'contact.reseller_id' => $c->user->reseller_id,
-            'product.class' => { 'not in' => [ 'reseller', 'sippeering', 'pstnpeering' ] },
+            'product_id' => { -in => [ @product_ids ] },
         },{
-            join => [ 'contact', 'product' ],
+            join => 'contact',
         }),
     );
 
