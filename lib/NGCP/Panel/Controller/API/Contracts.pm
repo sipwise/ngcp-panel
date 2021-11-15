@@ -62,12 +62,11 @@ sub query_params {
             description => 'Filter for contracts with a specific type',
             query => {
                 first => sub {
-                    my $q = shift;
-                    { 'product.class' => $q };
+                    my ($q,$c) = @_;
+                    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => [split(/\s*[,;]\s*/,$q)] })->all;
+                    { 'product_id' => { -in => [ @product_ids ] }, };
                 },
-                second => sub {
-                    { join => 'product' };
-                },
+                second => sub {},
             },
         },
     ];

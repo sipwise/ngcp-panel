@@ -23,12 +23,13 @@ sub _item_rs {
         include_terminated => (defined $include_terminated && $include_terminated ? 1 : 0),
         now => $now,
     );
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['pstnpeering','sippeering','reseller'] })->all;
     $item_rs = $item_rs->search({
-        'contact.reseller_id' => undef
+        'product_id' => { -in => [ @product_ids ] },
     },{
         join => 'contact',
     });
-
+   
     return $item_rs;
 }
 

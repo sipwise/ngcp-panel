@@ -322,10 +322,11 @@ sub billingmappings_ajax :Chained('base') :PathPart('billingmappings/ajax') :Arg
 sub peering_list :Chained('contract_list') :PathPart('peering') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['sippeering'] })->all;
     my $base_rs = $c->stash->{contract_select_rs};
     $c->stash->{peering_rs} = $base_rs->search({
-            'product.class' => 'sippeering',
-        });
+        'product_id' => { -in => [ @product_ids ] },
+    });
 
     $c->stash(ajax_uri => $c->uri_for_action("/contract/peering_ajax"));
 }
@@ -431,10 +432,11 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
 sub reseller_list :Chained('contract_list') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['reseller'] })->all;
     my $base_rs = $c->stash->{contract_select_rs};
     $c->stash->{reseller_rs} = $base_rs->search({
-            'product.class' => 'reseller',
-        });
+        'product_id' => { -in => [ @product_ids ] },
+    });
 
     $c->stash(ajax_uri => $c->uri_for_action("/contract/reseller_ajax"));
 }

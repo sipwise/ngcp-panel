@@ -372,7 +372,7 @@ my @allcustomers = ();
     is($res->code, 422, "check patched invalid status");
 
     $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/contact_id', value => 99999 } ]
+        [ { op => 'replace', path => '/contact_id', value => 99999999 } ]
     ));
     $res = $ua->request($req);
     is($res->code, 422, "check patched invalid contact_id");
