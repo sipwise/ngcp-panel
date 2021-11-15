@@ -348,12 +348,10 @@ sub get_customer {
         },{
             join => 'contact',
         });
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['sipaccount','pbxaccount'] })->all;
     $customer_rs = $customer_rs->search({
-            '-or' => [
-                'product.class' => 'sipaccount',
-                'product.class' => 'pbxaccount',
-            ],
-        },undef);
+        'product_id' => { -in => [ @product_ids ] },
+    });
     if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
     } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $customer_rs = $customer_rs->search({

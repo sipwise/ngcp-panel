@@ -24,7 +24,7 @@ sub _item_rs {
     my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
         c => $c,
         include_terminated => 1,
-        #now => $now,
+        now => $now,
     );
     return $item_rs;
 }

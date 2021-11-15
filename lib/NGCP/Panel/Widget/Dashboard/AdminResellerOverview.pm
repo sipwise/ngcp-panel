@@ -35,16 +35,14 @@ sub _prepare_domains_count {
 
 sub _prepare_customers_count {
     my ($self, $c) = @_;
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['sipaccount','pbxaccount'] })->all;
     $c->stash(
         customers => $c->model('DB')->resultset('contracts')->search({
             'me.status' => { '!=' => 'terminated' },
             'contact.reseller_id' => { '-not' => undef },
-            '-or' => [
-                'product.class' => 'sipaccount',
-                'product.class' => 'pbxaccount',
-            ],
+            'product_id' => { -in => [ @product_ids ] },
         },{
-            'join' => [ 'contact', 'product' ],
+            'join' => 'contact',
         }),
     );
 

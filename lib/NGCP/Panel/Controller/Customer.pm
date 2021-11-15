@@ -158,7 +158,10 @@ sub ajax_package_filter :Chained('list_customer') :PathPart('ajax/package') :Arg
 sub ajax_pbx_only :Chained('list_customer') :PathPart('ajax_pbx_only') :Args(0) {
     my ($self, $c) = @_;
     my $now = NGCP::Panel::Utils::DateTime::current_local; #uniform ts
-    my $res = $c->stash->{contract_select_rs}->search_rs({'product.class' => 'pbxaccount'});
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['pbxaccount'] })->all;
+    my $res = $c->stash->{contract_select_rs}->search_rs({
+        'product_id' => { -in => [ @product_ids ] },
+    });
     NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns}, sub {
         my $item = shift;
         my %contact = $item->contact->get_inflated_columns;
