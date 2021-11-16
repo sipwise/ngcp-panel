@@ -113,7 +113,7 @@ msgstr ""
 msgid "%1 as %2"
 msgstr ""
 
-#. (d.as_string _' <span class="pull-right">', d.timeout)
+#. (escaped_dest _' <span class="pull-right">', d.timeout)
 #: share/templates/subscriber/preferences.tt
 msgid "%1 for %2s"
 msgstr ""
@@ -124,7 +124,7 @@ msgstr ""
 msgid "%1 of maximum %2 subscribers %3 created"
 msgstr ""
 
-#. (d.as_string, d.timeout)
+#. (escaped_cf, d.timeout)
 #: share/templates/subscriber/preferences.tt
 msgid "%1<span class=\"pull-right\">for %2s</span>"
 msgstr ""
@@ -1073,7 +1073,7 @@ msgstr ""
 msgid "B-Number Set"
 msgstr ""
 
-#. (maps.bset_name)
+#. (escaped_bset_name)
 #: share/templates/subscriber/preferences.tt
 msgid "B-Number Set \"%1\" Details"
 msgstr ""
@@ -1359,7 +1359,7 @@ msgid "Block anonymous inbound calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Block incoming anonymous calls from this user"
+msgid "Block outgoing anonymous calls from this user"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3004,6 +3004,10 @@ msgid "Customer free time"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Customer id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Customer id of called subscriber, if local."
 msgstr ""
 
@@ -3243,7 +3247,7 @@ msgstr ""
 msgid "Destination Set"
 msgstr ""
 
-#. (maps.dset_name)
+#. (escaped_dset_name)
 #: share/templates/subscriber/preferences.tt
 msgid "Destination Set \"%1\" Details"
 msgstr ""
@@ -3633,6 +3637,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Domain.pm
 msgid "Domain does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Domain id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5768,6 +5776,10 @@ msgid "Grandstream"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Greeting"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Greeting type."
 msgstr ""
 
@@ -6146,11 +6158,11 @@ msgid "If enabled, any vertical service codes, e.g. *99*1234, are rejected by th
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "If enabled, incoming anonyous calls from this user will be dropped"
+msgid "If enabled, npdi parameter will be added if there is a LNP query."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "If enabled, npdi parameter will be added if there is a LNP query."
+msgid "If enabled, outgoing anonymous calls from this user will be dropped"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8808,7 +8820,7 @@ msgstr ""
 msgid "Peer auth user"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Peer registration error"
 msgstr ""
 
@@ -9266,6 +9278,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Profile set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Profile set id"
 msgstr ""
 
 #: share/templates/subprofile/set_list.tt
@@ -11553,6 +11569,10 @@ msgstr ""
 msgid "System"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "System Processes"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "System Sound Set"
 msgstr ""
@@ -11639,6 +11659,10 @@ msgstr ""
 
 #: share/templates/invoice/template_editor_form.tt
 msgid "Template variables"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Temporary"
 msgstr ""
 
 #: share/templates/billing/list.tt share/templates/contract/list.tt share/templates/customer/details.tt share/templates/customer/list.tt share/templates/helpers/datatables.tt share/templates/network/list.tt share/templates/reseller/details.tt share/templates/reseller/list.tt share/templates/subscriber/list.tt
@@ -12002,7 +12026,7 @@ msgid "The content to put into the Diversion header for outbound calls (use \"No
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The content to put into the From display-name for outbound calls from the platform to the subscriber"
+msgid "The content to put into the From display-name for outbound calls from the platform to the subscriber/peer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13346,6 +13370,10 @@ msgid "The system name, appearing in the output when acting as an SNMP Agent."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The template definition."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The template is used to generate invoice."
 msgstr ""
 
@@ -13630,7 +13658,7 @@ msgstr ""
 msgid "Timeset"
 msgstr ""
 
-#. (maps.tset_name)
+#. (escaped_tset_name)
 #: share/templates/subscriber/preferences.tt
 msgid "Timeset \"%1\" Details"
 msgstr ""
@@ -14115,7 +14143,7 @@ msgstr ""
 msgid "Use valid Alias CLI as NPN"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/Reseller.pm
+#: lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Used"
 msgstr ""
 
