@@ -49,7 +49,7 @@ sub _prepare_peering_sum {
         peering_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            'product_id' => { -in => [ @product_ids ] },
+            'contract.product_id' => { -in => [ @product_ids ] },
         },{
             join => 'contract',
         })->get_column('cash_balance_interval'),
