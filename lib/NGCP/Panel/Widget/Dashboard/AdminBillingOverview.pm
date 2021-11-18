@@ -93,7 +93,7 @@ sub _prepare_customer_sum {
                 '<' => $etime,
             },
             'period' => 'month',
-            'contract,product_id' => { -in => [ @product_ids ] },
+            'contract.product_id' => { -in => [ @product_ids ] },
         }, {
             join => 'contract',
         })->get_column('customer_cost'),        
