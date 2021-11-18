@@ -82,6 +82,9 @@ sub _prepare_customer_sum {
 
     # ok also for contracts without recent balance records:
 
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['sipaccount', 'pbxaccount'] })->all;
+    
+    
     my ($stime,$etime) = $self->_get_interval();
     $c->stash(
         customer_sum => $c->model('DB')->resultset('cdr_period_costs')->search_rs({
@@ -90,11 +93,9 @@ sub _prepare_customer_sum {
                 '<' => $etime,
             },
             'period' => 'month',
-            'product.class' => { -in => [ 'sipaccount', 'pbxaccount' ] },
+            'contract,product_id' => { -in => [ @product_ids ] },
         }, {
-            join => {
-                contract => 'product',
-            },
+            join => 'contract',
         })->get_column('customer_cost'),        
     );
 

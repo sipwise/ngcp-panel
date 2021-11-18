@@ -448,10 +448,11 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
             $_->get_column('contract_id')
         } else {}
     } $c->stash->{resellers}->all;
+    my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['reseller'] })->all;
     my $free_contracts = NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB'))->search_rs({
         'me.status' => { '!=' => 'terminated' },
         'me.id' => { 'not in' => \@used_contracts },
-        'product.class' => 'reseller',
+        'product_id' => { -in => [ @product_ids ] },
     });
     NGCP::Panel::Utils::Datatables::process($c, $free_contracts, $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
