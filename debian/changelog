@@ -1,3 +1,10 @@
+ngcp-panel (9.5.1.20+0~mr9.5.1.20) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [43485bd] TT#86652 Fix utf8 fax body encoding
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 19 Nov 2021 14:02:01 +0100
+
 ngcp-panel (9.5.1.19+0~mr9.5.1.19) unstable; urgency=medium
 
   [ Kirill Solomko ]
