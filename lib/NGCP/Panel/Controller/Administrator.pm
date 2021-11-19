@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Auth;
+use NGCP::Panel::Utils::UserRole;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(lintercept) {
     my ($self, $c) = @_;
@@ -130,6 +131,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
             }
             $form->values->{md5pass} = undef;
             $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
+            $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -238,6 +240,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 }
                 delete $form->values->{reseller_id};
             }
+
+            $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
 
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};

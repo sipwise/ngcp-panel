@@ -11,6 +11,7 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Auth;
+use NGCP::Panel::Utils::UserRole;
 
 sub item_name{
     return 'admin';
@@ -166,6 +167,9 @@ sub update_item {
         $resource = $old_resource;
         $resource->{is_active} = $active;
     }
+
+    $resource->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $resource);
+
     $item->update($resource);
 
     return $item;

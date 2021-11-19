@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::Admins;
 use NGCP::Panel::Utils::Generic qw(:all);
+use NGCP::Panel::Utils::UserRole;
 
 use Sipwise::Base;
 
@@ -46,6 +47,7 @@ sub create_item {
     }
     my $item;
     try {
+        $resource->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $resource);
         $item = $c->model('DB')->resultset('admins')->create($resource);
     } catch($e) {
         $c->log->error("failed to create admin: $e");
