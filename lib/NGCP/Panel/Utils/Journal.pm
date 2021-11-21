@@ -5,6 +5,7 @@ use warnings;
 use Sipwise::Base;
 use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::UserRole;
 use JSON;
 use HTTP::Status qw(:constants);
 use TryCatch;
@@ -623,7 +624,7 @@ sub _deserialize_content {
 }
 
 sub _create_journal {
-    my ($controller,$c,$id,$resource,$params) = @_;
+    my ($controller, $c, $id, $resource, $params) = @_;
     {
         my $content_format = ((defined $params->{format} and exists _CONTENT_FORMATS->{$params->{format}}) ? $params->{format} : CONTENT_DEFAULT_FORMAT);
         my $operation = ((defined $params->{operation} and exists _JOURNAL_OPS->{$params->{operation}}) ? $params->{operation} : undef);
@@ -644,14 +645,20 @@ sub _create_journal {
         if (defined $params->{user}) {
             $journal{username} = $params->{user};
         } elsif (defined $c->user) {
+            $journal{user_id} = $c->user->id;
             if($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') {
                 $journal{username} = $c->user->login;
             } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
                 $journal{username} = $c->user->webusername . '@' . $c->user->domain->domain;
             }
         }
+
+        $journal{reseller_id} = $resource->{reseller_id};
+        $journal{role_id} = $c->user->acl_role->id;
+        $journal{tx_id} = $c->session->{api_request_tx_id};
+
         try {
-            $journal{content} = _serialize_content($content_format,$resource);
+            $journal{content} = _serialize_content($content_format, $resource);
             #my $test = 1 / 0;
         } catch($e) {
             $c->log->error("Failed to serialize journal content snapshot of '" . $params->{resource_name} . '/' . $id . "': $e");
