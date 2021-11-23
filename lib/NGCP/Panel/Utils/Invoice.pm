@@ -13,14 +13,19 @@ use HTTP::Status qw(:constants);
 
 sub get_invoice_amounts{
     my(%params) = @_;
-    my($customer_contract,$billing_profile,$contract_balance) = @params{qw/customer_contract billing_profile contract_balance/};
+    my($customer_contract,$billing_profile,$contract_balance,$zonecalls) = @params{qw/customer_contract billing_profile contract_balance zonecalls/};
     my $invoice = {};
-    $contract_balance->{cash_balance_interval} //= 0;
-    $billing_profile->{interval_charge} //= 0;
-    $customer_contract->{vat_rate} //= 0;
-    #use Data::Dumper;
-    #print Dumper [$contract_balance,$billing_profile];
-    $invoice->{amount_net} = $contract_balance->{cash_balance_interval} / 100 + $billing_profile->{interval_charge};
+    $billing_profile->{interval_charge} //= 0.0;
+    $customer_contract->{vat_rate} //= 0.0;
+    if ($zonecalls) {
+        $invoice->{amount_net} = 0.0;
+        map { $invoice->{amount_net} += $_->{customercost}; } values %$zonecalls;
+    } else {
+        $contract_balance->{cash_balance_interval} //= 0.0;
+        #use Data::Dumper;
+        #print Dumper [$contract_balance,$billing_profile];
+        $invoice->{amount_net} = ($contract_balance->{cash_balance_interval} + $billing_profile->{interval_charge}) / 100.0;
+    }
     $invoice->{amount_vat} =
         $customer_contract->{add_vat}
         ?
@@ -114,6 +119,7 @@ sub create_invoice{
         customer_contract => {$customer->get_inflated_columns},
         billing_profile   => {$billing_profile->get_inflated_columns},
         contract_balance  => {$balance->get_inflated_columns},
+        zonecalls         => $zonecalls,
     );
     @{$invoice_data}{qw/amount_net amount_vat amount_total/} = @$invoice_amounts{qw/amount_net amount_vat amount_total/};
 
@@ -166,12 +172,18 @@ sub create_invoice{
         amount_net   => $invoice_data->{amount_net},
         amount_vat   => $invoice_data->{amount_vat},
         amount_total => $invoice_data->{amount_total},
+        contract_balance => { $balance->get_inflated_columns },
     };
     $vars->{calls} = $calllist;
     $vars->{zones} = {
-        totalcost => $balance->cash_balance_interval,
+        totalcost => 0.0,
+        totalduration => 0.0,
         data => [ values(%{ $zonecalls }) ],
     };
+    map {
+        $vars->{zones}->{totalcost} += $_->{customercost};
+        $vars->{zones}->{totalduration} += $_->{duration};
+    } values %$zonecalls;
     $t->process(\$svg, $vars, \$out) || do {
         my $error = $t->error();
         my $error_msg = "error processing template, type=".$error->type.", info='".$error->info."'";
