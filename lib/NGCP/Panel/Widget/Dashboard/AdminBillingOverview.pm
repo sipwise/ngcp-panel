@@ -69,9 +69,9 @@ sub _prepare_reseller_sum {
         reseller_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            'product_id' => { -in => [ @product_ids ] },
+            'contract.product_id' => { -in => [ @product_ids ] },
         },{
-            join => 'product',
+            join => 'contract',
         })->get_column('cash_balance_interval'),
     );
 
