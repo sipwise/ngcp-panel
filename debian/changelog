@@ -1,3 +1,71 @@
+ngcp-panel (10.2.1.0+0~mr10.2.1.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [b5cedff] Revert "TT#134254 change fax destination email field type"
+  * [79b2a98] TT#134254 change MailToFax From email field type
+  * [1c10d54] TT#144254 Rework ALE devices provisioning bootstrap
+  * [da4278d] TT#145300 Adjust domains reseller_id handling
+  * [4e33039] TT#145300 fix domain vs customer reseller check
+  * [5a31937] TT#132650 EntitiesItem fix incorrect hal item debug
+  * [68dcad8] TT#139550 improve vmnotify messaging
+  * [67bc755] TT#139550 vmnotify use correct uuid
+  * [b199ad3] TT#139550 improve vmnotify behaviour
+  * [e4cfb19] TT#139550 fix vmnotify play/delete
+  * [748ac56] TT#148250 enhance API expand functionality
+  * [f8d9827] TT#147151 restore get_contract_rs() product join
+  * [8c556bb] TT#149459 improve and automate expand functionality
+  * [78b80e7] TT#149459 enhance expand functionality with allowed_roles
+  * [2223ecf] TT#149460 add expand by profile_id, profile_set_id
+  * [6a0b5d7] TT#149459 expand consider null fields as valid
+
+  [ Alexander Lutay ]
+  * [e548057] TT#141802 Improve Snom profile SRAPS handling code
+  * [f1e00a0] TT#141802 use proper SNOM param 'setting_server' on SRAPS
+
+  [ Rene Krenn ]
+  * [053b013] TT#144000 fix /api/ncoslnpcarriers rail
+  * [bd2c176] TT#144000 add lnp_provider form field to /api/ncoslnpcarriers
+  * [f06bb9a] TT#144705 fix exlusive statesaving of datatables
+  * [4c47920] TT#132650 run provisioningtemplate from api
+  * [e73dd3e] TT#132650 api .csv upload for provisioningtemplates
+  * [133bd43] TT#147151 fast loading/paging/searching panel datatables
+  * [e83ed09] TT#147400 subscriber identifiers/lookup for prov template
+  * [f9ff14f] TT#146800 support decimal VAT rates
+  * [d786af1] TT#147151 finish refactoring of avoiding JOIN billing.product
+  * [27d86e7] TT#147151 fix dashboard peering contractbalance sum
+  * [2172e50] TT#147151 fix ajax rail for reseller contract selection
+  * [0b320b9] TT#147151 fix widget ajax rail for customer costs
+  * [d9878f6] TT#147151 fix dashboard ajaxrail for reseller balance sum
+
+  [ Nico Schedel ]
+  * [368bf76] TT#122872 selenium: fix changing status in multiple tests
+  * [1bb3f6c] TT#122872 selenium: fix domain settings button position
+  * [8853661] TT#122872 selenium: fix many many button positions
+
+  [ Oleksandr Duts ]
+  * [8017805] TT#124802 GET /api/admins/:id/journal - fixing
+  * [e058a15] TT#139351 enable DELETE method in /api/invoicetemplates/:id
+  * [a65d00c] TT#139800 Enable subscriber access to /api/autoattendants/:id
+  * [ddb7412] TT#134102 API language handling
+  * [ad64675] TT#149650 UI language handling
+
+  [ Javier Rodriguez ]
+  * [1b12afb] TT#146900 correction for time format via /api/voicemails/
+  * [26bccf2] TT#146901 adding greet and temp directories into /api/voicemailgreetings for GET method
+  * [effb0e2] TT#146901 adding greet and temp directories into /api/voicemailgreetings for PUT/PATCH methods
+  * [456957d] TT#146901 adding greet and temp directories into /api/voicemailgreetings for testing reasons
+
+  [ Guillem Jover ]
+  * [95e04a0] TT#124273 Update packaging for bullseye
+
+  [ Flaviu Mates ]
+  * [fe09f80] TT#86652 Fix utf8 fax body encoding
+
+  [ Sipwise Jenkins Builder ]
+  * [a47d009] TT#4166 I18N dump: snapshot 2021.11.16-01.22.40
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 Nov 2021 14:18:36 +0100
+
 ngcp-panel (10.2.0.0+0~mr10.2.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
