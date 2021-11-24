@@ -28,12 +28,40 @@ has_block 'fields' => (
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);
 
+sub field_list {
+    my $self = shift;
+    return [
+        role_id => {
+            type => 'Select',
+            options => [
+                $self->_acl_role_select_options()
+            ],
+            required => 1,
+            element_attr => {
+                rel => ['tooltip'],
+                title => ['Role']
+            },
+            label => 'Role',
+        }
+    ];
+}
+
 sub validate_password {
     my ($self, $field) = @_;
     my $c = $self->form->ctx;
     return unless $c;
 
     NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field, utf8 => 0);
+}
+
+sub _acl_role_select_options {
+    my $self = shift;
+    my $c = $self->form->ctx;
+
+    return (
+        map {+{ value => $_->id, label => $_->role }}
+            $c->model('DB')->resultset('acl_roles')->search(undef, {order_by => 'role'})->all
+    );
 }
 
 1;

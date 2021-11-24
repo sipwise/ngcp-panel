@@ -22,7 +22,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
 
     my $dispatch_to = '_admin_resultset_' . $c->user->roles;
     $c->stash(
-        admins => $self->$dispatch_to($c),
+        admins => $self->$dispatch_to($c, join => "acl_role"),
         template => 'administrator/list.tt',
     );
     my $cols = [
@@ -35,8 +35,9 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         { name => "login", search => 1, title => $c->loc("Login") },
         { name => "email", search => 1, title => $c->loc("Email") },
         $c->user->roles eq 'admin' || $c->user->roles eq 'reseller' ?
-        ({ name => "is_master", title => $c->loc("Master") },
-         { name => "is_ccare", title => $c->loc("Customer Care") },
+        (
+         { name => "acl_role.role", title => $c->loc("Role")},
+         { name => "is_master", title => $c->loc("Master") },
          { name => "is_active", title => $c->loc("Active") },
          { name => "read_only", title => $c->loc("Read Only") },
          { name => "show_passwords", title => $c->loc("Show Passwords") },
@@ -45,21 +46,15 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
          { name => "can_reset_password", title => $c->loc("Can Reset Password") },
         ) : ()
     );
-    if($c->user->is_system && $c->user->roles ne 'lintercept') {
-        @{ $cols } =  (@{ $cols },
-            { name => "lawful_intercept", title => $c->loc("Lawful Intercept") },
-            { name => "is_system", title => $c->loc("System") },
-        );
-    }
     $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
     $c->stash->{special_admin_login} = NGCP::Panel::Utils::Auth::get_special_admin_login();
     return;
 }
 
 sub _admin_resultset_admin {
-    my ($self, $c) = @_;
+    my ($self, $c, %attrs) = @_;
     my $condition = $c->user->is_system ? {} : {lawful_intercept => 0, is_system => 0};
-    return $c->model('DB')->resultset('admins')->search($condition);
+    return $c->model('DB')->resultset('admins')->search($condition, \%attrs);
 }
 
 sub _admin_resultset_reseller {
@@ -108,6 +103,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Reseller", $c);
     }
+
     $form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
@@ -131,7 +127,13 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
             }
             $form->values->{md5pass} = undef;
             $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
-            $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
+
+            if ($form->values->{role_id}) {
+                $form->values->%* = ( $form->values->%*, NGCP::Panel::Utils::UserRole::resolve_flags($c, $form->values->{role_id}) );
+            } else {
+                $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
+            }
+
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -185,6 +187,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{administrator}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = merge($params, $c->session->{created_objects});
+
     if ($c->user->is_system) {
        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::System", $c);
     } elsif ($c->user->roles eq 'lintercept') {
@@ -241,7 +244,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $form->values->{reseller_id};
             }
 
-            $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
+            if ($form->values->{role_id}) {
+                $form->values->%* = ( $form->values->%*, NGCP::Panel::Utils::UserRole::resolve_flags($c, $form->values->{role_id}) );
+            } else {
+                $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
+            }
 
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};

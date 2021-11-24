@@ -44,6 +44,23 @@ sub _flags_to_name {
     return 'reseller';
 }
 
+sub _name_to_flags {
+    my $name = shift;
+
+    my @flag_names = qw/ is_system is_superuser is_ccare lawful_intercept /;
+    my %map = (
+        system     => [1, 0, 0, 0],
+        admin      => [0, 1, 0, 0],
+        reseller   => [0, 0, 0, 0],
+        ccareadmin => [0, 1, 1, 0],
+        ccare      => [0, 0, 1, 0],
+        lintercept => [0, 0, 0, 1],
+    );
+
+    return $map{$name} ?
+        ( map { $flag_names[$_] => $map{$name}->[$_] } 0..$#flag_names ) :
+        undef;
+}
 
 sub resolve_role_id {
     my ($c, $params) = @_;
@@ -52,6 +69,15 @@ sub resolve_role_id {
     my $role = $c->model('DB')->resultset('acl_roles')->find({role => $role_name});
 
     return $role ? $role->id : undef;
+}
+
+sub resolve_flags {
+    my ($c, $role_id) = @_;
+
+    my $role_name = $c->model('DB')->resultset('acl_roles')->search({id => $role_id})->first->role
+        || return ();
+
+    return &_name_to_flags($role_name);
 }
 
 1;
