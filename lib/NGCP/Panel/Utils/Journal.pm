@@ -654,7 +654,7 @@ sub _create_journal {
         }
 
         $journal{reseller_id} = $resource->{reseller_id};
-        $journal{role_id} = $c->user->acl_role->id;
+        $journal{role_id} = $c->user->acl_role->id // 0;
         $journal{tx_id} = $c->session->{api_request_tx_id};
 
         try {
