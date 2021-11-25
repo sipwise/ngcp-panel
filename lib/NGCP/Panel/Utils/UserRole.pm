@@ -1,9 +1,19 @@
 package NGCP::Panel::Utils::UserRole;
 
 use Sipwise::Base;
+use Scalar::Util qw(blessed);
 
 sub _flags_to_name {
-    my (%flags) = @_;
+    my $params = shift;
+    return unless $params && ref $params;
+
+    my %flags;
+    if (blessed($params)) { # object
+        map { $flags{$_} = $params->$_ }
+            qw(is_system is_superuser is_ccare lawful_intercept);
+    } else {
+        %flags = %{$params};
+    }
 
     # "system" - is_system = 1,
     # "admin" - is_superuser = 1
@@ -38,10 +48,10 @@ sub _flags_to_name {
 sub resolve_role_id {
     my ($c, $params) = @_;
 
-    my $role_name = &_flags_to_name(%$params);
-    my $role = $c->model('DB')->resultset('acl_roles')->search({role => $role_name})->first;
+    my $role_name = _flags_to_name($params) // return;
+    my $role = $c->model('DB')->resultset('acl_roles')->find({role => $role_name});
 
-    return $role->id;
+    return $role ? $role->id : undef;
 }
 
 1;

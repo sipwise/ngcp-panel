@@ -18,6 +18,7 @@ use IO::Compress::Deflate qw($DeflateError);
 use IO::Uncompress::Inflate qw();
 use Sereal::Decoder qw();
 use Sereal::Encoder qw();
+use NGCP::Panel::Utils::UserRole;
 
 use constant CREATE_JOURNAL_OP => 'create';
 use constant UPDATE_JOURNAL_OP => 'update';
@@ -653,8 +654,9 @@ sub _create_journal {
             }
         }
 
+
         $journal{reseller_id} = $resource->{reseller_id};
-        $journal{role_id} = $c->user->acl_role->id // 0;
+        $journal{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $c->user);
         $journal{tx_id} = $c->session->{api_request_tx_id};
 
         try {
