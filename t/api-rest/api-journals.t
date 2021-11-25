@@ -2458,7 +2458,7 @@ sub _test_journal_collection {
             foreach my $journal (@{ $collection->{_embedded}->{'ngcp:journal'} }) {
                 ok(exists $page_journals->{$journal->{id}},"check existence of linked journal item among embedded");
                 my $original = delete $page_journals->{$journal->{id}};
-                delete @{$original}{qw(content tx_id user_id role_id)};
+                delete @{$original}{qw(content tx_id user_id role_id reseller_id)};
                 is_deeply($original,$journal,"compare created and embedded journal item deeply");
             }
             ok((scalar keys %{ $page_journals }) == 0,"check if all embedded journal items are linked");
