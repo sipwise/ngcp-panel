@@ -1,3 +1,11 @@
+ngcp-panel (8.5.6.5+0~mr8.5.6.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [50bdd7a] TT#105100 fix PATCHing unset webpasswords
+  * [5a05edd] TT#105100 check PATCHing unset webpasswords
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 25 Nov 2021 16:20:50 +0100
+
 ngcp-panel (8.5.6.4+0~mr8.5.6.4) unstable; urgency=medium
 
   [ Flaviu Mates ]
