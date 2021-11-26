@@ -6,6 +6,7 @@ use Data::Entropy::Algorithms qw/rand_bits/;
 use IO::Compress::Zip qw/zip/;
 use IPC::System::Simple qw/capturex/;
 
+our $ENCRYPT_SUBSCRIBER_WEBPASSWORDS = 1;
 
 sub get_special_admin_login {
     return 'sipwise';
@@ -104,6 +105,18 @@ sub perform_auth {
     return $res;
 }
 
+sub is_salted_hash {
+    
+    my $password = shift;
+    if (length($password)
+        and (length($password) == 54 or length($password) == 56)
+        and $password =~ /\$/) {
+        return 1;
+    }
+    return 0;
+    
+}
+
 sub perform_subscriber_auth {
     my ($c, $user, $domain, $pass) = @_;
     my $res;
@@ -122,7 +135,7 @@ sub perform_subscriber_auth {
     });
 
     my $sub = $authrs->first;
-    if(defined $sub && $sub->webpassword) {
+    if(defined $sub && defined $sub->webpassword) {
         my $sub_pass = $sub->webpassword;
         if (length $sub_pass > 40) {
             my @splitted_pass = split /\$/, $sub_pass;

@@ -74,6 +74,8 @@ sub resource_from_item {
         $resource{email} = undef;
         $resource{timezone} = undef;
     }
+    $resource{_password} = $resource{password};
+    $resource{_webpassword} = $resource{webpassword};
     if(!$form){
         ($form) = $self->get_form($c);
     }
@@ -155,16 +157,20 @@ sub resource_from_item {
         if ($c->user->show_passwords) {
             foreach my $k(qw/password webpassword/) {
                 eval {
-                    $resource{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
+                    if (not NGCP::Panel::Utils::Auth::is_salted_hash($resource{$k})) {
+                        $resource{'_' . $k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
+                    } else {
+                        delete $resource{'_' . $k};
+                    }
                 };
                 if ($@) {
-                    $c->log->error("Failed to encrypt $k '$resource{$k}': " . $@);
-                    delete $resource{$k};
+                    $c->log->error("Failed to encrypt $k: " . $@);
+                    delete $resource{'_' . $k};
                 }
             }
         } else {
             foreach my $k(qw/password webpassword/) {
-                delete $resource{$k};
+                delete $resource{'_' . $k};
             }
         }
     } else {
@@ -175,17 +181,17 @@ sub resource_from_item {
             }
 
             # TODO: make custom filtering configurable!
-            foreach my $k(qw/password webpassword/) {
-                delete $resource{$k};
+            foreach my $k (qw/password webpassword/) {
+                delete $resource{'_' . $k};
             }
         }
         if($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
-            if(!$c->config->{security}->{password_sip_expose_subadmin}) {
-                delete $resource{password};
+            if (!$c->config->{security}->{password_sip_expose_subadmin}) {
+                delete $resource{_password};
             }
-            if(!$c->config->{security}->{password_web_expose_subadmin}) {
-                delete $resource{webpassword};
+            if (!$c->config->{security}->{password_web_expose_subadmin}) {
+                delete $resource{_webpassword};
             }
         }
     }
@@ -204,6 +210,11 @@ sub hal_from_item {
     if($c->user->roles eq "subscriber") {
         $is_subadm = 0;
     }
+
+    delete $resource->{password};
+    delete $resource->{webpassword};
+    $resource->{password} = delete $resource->{_password} if exists $resource->{_password};
+    $resource->{webpassword} = delete $resource->{_webpassword} if exists $resource->{_webpassword};
 
     my $hal = Data::HAL->new(
         links => [
@@ -473,15 +484,12 @@ sub update_item {
         contact_id => $resource->{contact_id},
     };
 
-    if(defined $resource->{webpassword}) {
+    if (exists $resource->{webpassword} and $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS) {
         $resource->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($resource->{webpassword});
     }
 
     my $provisioning_res = {
-        password => $resource->{password},
         webusername => $resource->{webusername},
-        webpassword => $resource->{webpassword},
-        admin => $resource->{administrative} // 0,
         is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
         is_pbx_group => $resource->{is_pbx_group} // 0,
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
@@ -489,6 +497,8 @@ sub update_item {
         profile_id => $profile ? $profile->id : undef,
         pbx_extension => $resource->{pbx_extension},
     };
+    $provisioning_res->{password} = $resource->{password} if exists $resource->{password};
+    $provisioning_res->{webpassword} = $resource->{webpassword} if exists $resource->{webpassword};
     if(is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
