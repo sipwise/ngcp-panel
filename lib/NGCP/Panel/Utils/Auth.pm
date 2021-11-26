@@ -10,6 +10,7 @@ use UUID;
 use NGCP::Panel::Utils::Redis;
 
 our $SALT_LENGTH = 128;
+our $ENCRYPT_SUBSCRIBER_WEBPASSWORDS = 1;
 
 sub check_password {
     my $pass = shift // return;
@@ -114,6 +115,18 @@ sub perform_auth {
     return $res;
 }
 
+sub is_salted_hash {
+    
+    my $password = shift;
+    if (length($password)
+        and (length($password) == 54 or length($password) == 56)
+        and $password =~ /\$/) {
+        return 1;
+    }
+    return 0;
+    
+}
+
 sub perform_subscriber_auth {
     my ($c, $user, $domain, $pass) = @_;
     my $res;
@@ -132,7 +145,7 @@ sub perform_subscriber_auth {
     });
 
     my $sub = $authrs->first;
-    if(defined $sub && $sub->webpassword) {
+    if(defined $sub && defined $sub->webpassword) {
         my $sub_pass = $sub->webpassword;
         if (length $sub_pass > 40) {
             my @splitted_pass = split /\$/, $sub_pass;
