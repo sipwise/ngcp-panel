@@ -319,9 +319,25 @@ sub prepare_resource {
         }
     }
 
+    if (exists $resource->{webpassword}
+        and NGCP::Panel::Utils::Auth::is_salted_hash($resource->{webpassword})) {
+        delete $resource->{webpassword};
+    }
+    
+    if (exists $resource->{webpassword} and defined $resource->{webpassword}
+        and $item and defined $item->provisioning_voip_subscriber->webpassword
+        and $resource->{webpassword} eq $item->provisioning_voip_subscriber->webpassword) {
+        delete $resource->{webpassword};
+    }
+    if (exists $resource->{password} and defined $resource->{password}
+        and $item and defined $item->provisioning_voip_subscriber->password
+        and $resource->{password} eq $item->provisioning_voip_subscriber->password) {
+        delete $resource->{password};
+    }
+    
     foreach my $k(qw/password webpassword/) {
         eval {
-            if ($resource->{$k}) {
+            if (exists $resource->{$k}) {
                 $resource->{$k} = NGCP::Panel::Utils::Encryption::decrypt_rsa($c,$resource->{$k});
             }
         };
@@ -332,12 +348,6 @@ sub prepare_resource {
         }
     }
 
-    my $webpassword;
-    if (length($resource->{webpassword}) and $item and length($item->provisioning_voip_subscriber->webpassword)
-        and $resource->{webpassword} eq $item->provisioning_voip_subscriber->webpassword) {
-        $webpassword = delete $resource->{webpassword};
-    }
-
     #password is mandatory field, so it cannot be absent from resource, the only reason for that being it was
     #deleted in resource_from_item for admins without show_passwords flag; in this case, we are restoring it here
     if (not length($resource->{password}) and $item and length($item->provisioning_voip_subscriber->password)) {
@@ -345,14 +355,6 @@ sub prepare_resource {
     }
 
     return unless &$validate_code($resource);
-    $resource->{webpassword} = $webpassword if ($webpassword);
-
-    #my ($form) = $self->get_form($c);
-    #return unless $self->validate_form(
-    #    c => $c,
-    #    resource => $resource,
-    #    form => $form,
-    #);
 
     # this format is expected by NGCP::Panel::Utils::Subscriber::create_subscriber
     $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
@@ -412,7 +414,6 @@ sub prepare_resource {
             $c->stash->{pilot} = $pilot;
         }
     }
-
 
     my $preferences = {};
     my $admin = 0;
@@ -633,7 +634,7 @@ sub create_subscriber {
     }
 
     my $passlen = $c->config->{security}->{password_min_length} || 8;
-    if($c->config->{security}->{password_sip_autogenerate} && !$params->{password}) {
+    if($c->config->{security}->{password_sip_autogenerate} and not defined $params->{password}) {
         $params->{password} = String::MkPasswd::mkpasswd(
             -length => $passlen,
             -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
@@ -642,7 +643,7 @@ sub create_subscriber {
         #otherwise it breaks xml device configs
         $params->{password} =~s/[<>&]/,/g;
     }
-    if($c->config->{security}->{password_web_autogenerate} && !$params->{webpassword}) {
+    if($c->config->{security}->{password_web_autogenerate} and not defined $params->{webpassword}) {
         $params->{webpassword} = String::MkPasswd::mkpasswd(
             -length => $passlen,
             -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
@@ -692,7 +693,7 @@ sub create_subscriber {
             UUID::unparse($pass_bin, $pass_str);
             $params->{password} = $pass_str;
         }
-        if(defined $params->{webpassword}) {
+        if (exists $params->{webpassword} and $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS) {
             $params->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($params->{webpassword});
         }
         my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
@@ -700,7 +701,7 @@ sub create_subscriber {
             username => $params->{username},
             password => $params->{password},
             webusername => $params->{webusername} || $params->{username},
-            webpassword => $params->{webpassword},
+            (exists $params->{webpassword} ? (webpassword => $params->{webpassword}) : ()),
             admin => $params->{administrative} // $administrative,
             account_id => $contract->id,
             domain_id => $prov_domain->id,
