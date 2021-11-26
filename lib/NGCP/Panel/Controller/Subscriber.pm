@@ -632,8 +632,10 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
                     $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->qs($c->req->address)."'");
                     $c->detach('/denied_page');
                 }
+                my $webpassword = $form->params->{password};
+                $webpassword = NGCP::Panel::Utils::Auth::generate_salted_hash($webpassword) if $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS;
                 $subscriber->provisioning_voip_subscriber->update({
-                    webpassword => NGCP::Panel::Utils::Auth::generate_salted_hash($form->params->{password}),
+                    webpassword => $webpassword,
                 });
                 $rs->delete;
             });
@@ -2990,9 +2992,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 my $prov_params = {};
                 $prov_params->{pbx_extension} = $form->params->{pbx_extension};
                 $prov_params->{webusername} = $form->params->{webusername} || undef;
-                if($form->params->{webpassword}) {
-                    $prov_params->{webpassword} =
-                        NGCP::Panel::Utils::Auth::generate_salted_hash($form->params->{webpassword});
+                if ($form->params->{webpassword}) {
+                    $prov_params->{webpassword} = $form->params->{webpassword};
+                    $prov_params->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($prov_params->{webpassword})
+                        if $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS;
                 }
                 $prov_params->{password} = $form->params->{password}
                     if($form->params->{password});
@@ -3362,8 +3365,10 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
             my $subscriber = $c->stash->{subscriber};
             my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
             $schema->txn_do(sub {
+                my $webpassword = $form->values->{webpassword};
+                $webpassword = NGCP::Panel::Utils::Auth::generate_salted_hash($webpassword) if $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS;
                 $prov_subscriber->update({
-                    webpassword => NGCP::Panel::Utils::Auth::generate_salted_hash($form->values->{webpassword}),
+                    webpassword => NGCP::Panel::Utils::Auth::generate_salted_hash($webpassword),
                 });
             });
             NGCP::Panel::Utils::Message::info(

@@ -590,7 +590,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
         if ($authrs->first) {
             my $password = $authrs->first->webpassword;
-            if (length $password > 40) {
+            if (defined $password and length($password) > 40) {
                 my @splitted_pass = split /\$/, $password;
                 if (scalar @splitted_pass == 3) {
                     #password is bcrypted with lower cost
