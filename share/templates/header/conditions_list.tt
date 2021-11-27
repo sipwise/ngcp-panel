@@ -15,6 +15,7 @@
 
     UNLESS c.user.read_only;
         helper.top_buttons = [
+            { name = c.loc('Header Rule Sets'), uri = c.uri_for('/header/'), icon = 'icon-list' },
             { name = c.loc('Create Header Rule Condition'), uri = c.uri_for_action('/header/conditions_create', [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
             { name = c.loc('Actions'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/actions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
         ];
@@ -24,6 +25,7 @@
         ];
     ELSE;
         helper.top_buttons = [
+            { name = c.loc('Header Rule Sets'), uri = c.uri_for('/header/'), icon = 'icon-list' },
             { name = c.loc('Actions'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/actions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
         ];
         helper.dt_buttons = [

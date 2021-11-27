@@ -21,6 +21,7 @@
             backuritmp.query_param_delete('where');
         END;
         helper.top_buttons = [
+            { name = c.loc('Header Rule Sets'), uri = c.uri_for('/header/'), icon = 'icon-list' },
             { name = c.loc('Create Header Rule'), uri = c.uri_for_action('/header/rules_create', [c.req.captures.0]), icon = 'icon-star' },
         ];
         helper.dt_buttons = [
@@ -33,6 +34,7 @@
         ];
     ELSE;
         helper.top_buttons = [
+            { name = c.loc('Header Rule Sets'), uri = c.uri_for('/header/'), icon = 'icon-list' },
         ];
         helper.dt_buttons = [
             { name = c.loc('Conditions'), uri = "/header/"_ hm_set_result.id _ "/rules/'+full.id+'/conditions", class = 'btn-small btn-tertiary', icon = 'icon-glass' },

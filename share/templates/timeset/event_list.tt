@@ -258,9 +258,14 @@ $( document ).ready(function() {
             { name = c.loc('Delete'), uri = "/timeset/'+full.time_set_id+'/event/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
+            { name = c.loc('Time Sets'), uri = c.uri_for('/timeset/'), icon = 'icon-list' },
             { name = c.loc('Create Event'), uri = c.uri_for_action('/timeset/event_create', [c.req.captures.0] ), icon = 'icon-star' },
             { name = c.loc('Upload iCalendar events'), uri = c.uri_for_action('/timeset/event_upload',[c.req.captures.0]), icon = 'icon-star' },
             { name = c.loc('Download iCalendar'), uri = c.uri_for_action('/timeset/download', [c.req.captures.0]), icon = 'icon-th-list'},
+        ];
+    ELSE;
+        helper.top_buttons = [
+            { name = c.loc('Time Sets'), uri = c.uri_for('/timeset/'), icon = 'icon-list' },
         ];
     END;
 

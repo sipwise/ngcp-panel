@@ -21,6 +21,7 @@
             backuritmp.query_param_delete('where');
         END;
         helper.top_buttons = [
+            { name = c.loc('Header Rule Sets'), uri = c.uri_for('/header/'), icon = 'icon-list' },
             { name = c.loc('Create Header Rule Action'), uri = c.uri_for_action('/header/actions_create', [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
             { name = c.loc('Conditions'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/conditions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
         ];
@@ -32,6 +33,7 @@
         ];
     ELSE;
         helper.top_buttons = [
+            { name = c.loc('Header Rule Sets'), uri = c.uri_for('/header/'), icon = 'icon-list' },
             { name = c.loc('Conditions'), uri = "/header/" _ hm_set_result.id _ "/rules/" _ hm_rule_result.id _ "/conditions", class = 'btn btn-teritary btn-large', icon = 'icon-play' },
         ];
         helper.dt_buttons = [

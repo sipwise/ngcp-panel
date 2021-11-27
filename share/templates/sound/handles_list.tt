@@ -3,6 +3,7 @@
 <div class="row">
     <span>
     <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for('/sound') %]"><i class="icon-list"></i> [% c.loc('Sound Sets') %]</a>
     [% IF c.user.roles == "subscriberadmin" ||
           ((c.user.roles == "admin" || c.user.roles == "reseller") && !c.user.read_only)
     -%]
