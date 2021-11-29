@@ -1,3 +1,25 @@
+ngcp-panel (8.5.7.1+0~mr8.5.7.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [fe1cf6f] TT#134254 change fax destination email field type
+  * [d3b7337] Revert "TT#134254 change fax destination email field type"
+  * [d9c8070] TT#134254 change MailToFax From email field type
+
+  [ Rene Krenn ]
+  * [ac41b24] TT#144000 fix /api/ncoslnpcarriers rail
+  * [511cd6a] TT#144000 add lnp_provider form field to /api/ncoslnpcarriers
+  * [3d0c5f8] TT#89200 workaround logic for backward-incompatible prefs
+
+  [ Javier Rodriguez ]
+  * [a2199f0] TT#146900 correction for time format via /api/voicemails/
+  * [4a92ac1] TT#146901 adding greet and temp directories into /api/voicemailgreetings for testing reasons
+  * [339bd9d] TT#146901 adding greet and temp directories into /api/voicemailgreetings for PUT/PATCH methods
+
+  [ Flaviu Mates ]
+  * [6a48454] TT#86652 Fix utf8 fax body encoding
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Nov 2021 19:36:15 +0100
+
 ngcp-panel (8.5.7.0+0~mr8.5.7.0) unstable; urgency=medium
 
   [ Flaviu Mates ]
