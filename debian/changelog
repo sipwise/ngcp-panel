@@ -1,3 +1,10 @@
+ngcp-panel (8.5.6.6+0~mr8.5.6.6) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [841411b] TT#151751 refactor persisting subscriber webpassword mr8.5
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 30 Nov 2021 11:34:15 +0100
+
 ngcp-panel (8.5.6.5+0~mr8.5.6.5) unstable; urgency=medium
 
   [ Rene Krenn ]
