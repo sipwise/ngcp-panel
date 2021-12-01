@@ -1304,6 +1304,7 @@ sub expand_fields {
     return unless $resource_form;
 
     my @found_fields;
+    my $soft_expand = $c->req->params->{soft_expand} // 0;
     my $expand_param = $c->req->param('expand') // return 1;
     my $all = $expand_param eq 'all' ? 1 : 0;
     my @expand_fields = $all ? map { $_->name } $resource_form->fields
@@ -1314,7 +1315,7 @@ sub expand_fields {
         push @found_fields, $found if $found;
     }
 
-    unless ($all || $#expand_fields == $#found_fields) {
+    unless ($soft_expand || $all || $#expand_fields == $#found_fields) {
         $c->log->debug("Provided expand fields are invalid");
         $self->error($c, HTTP_CONFLICT, "Provided expand fields are invalid");
         return;
