@@ -44,7 +44,7 @@ sub _flags_to_name {
     return 'reseller';
 }
 
-sub _name_to_flags {
+sub name_to_flags {
     my $name = shift;
 
     my @flag_names = qw/ is_system is_superuser is_ccare lawful_intercept /;
@@ -59,14 +59,14 @@ sub _name_to_flags {
 
     return $map{$name} ?
         ( map { $flag_names[$_] => $map{$name}->[$_] } 0..$#flag_names ) :
-        undef;
+        ();
 }
 
 sub resolve_role_id {
     my ($c, $params) = @_;
 
     my $role_name = _flags_to_name($params) // return;
-    my $role = $c->model('DB')->resultset('acl_roles')->find({role => $role_name});
+    my $role = &find_row_by_name($c, $role_name);
 
     return $role ? $role->id : undef;
 }
@@ -77,7 +77,33 @@ sub resolve_flags {
     my $role_name = $c->model('DB')->resultset('acl_roles')->search({id => $role_id})->first->role
         || return ();
 
-    return &_name_to_flags($role_name);
+    return &name_to_flags($role_name);
+}
+
+sub find_row_by_name {
+    my ($c, $name) = @_;
+
+    return $c->model('DB')->resultset('acl_roles')->find({role => $name});
+}
+
+sub find_row_by_id {
+    my ($c, $id) = @_;
+
+    return $c->model('DB')->resultset('acl_roles')->find($id);
+}
+
+sub resolve_resource_role {
+    my ($c, $resource) = @_;
+
+    my $role_name = delete $resource->{role};
+    if ($role_name) {
+        $resource = { %$resource, &name_to_flags($role_name) };
+        $resource->{role_id} = &find_row_by_name($c, $role_name)->id;
+    } else {
+        $resource->{role_id} = &resolve_role_id($c, $resource);
+    }
+
+    return $resource;
 }
 
 1;

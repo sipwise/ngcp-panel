@@ -1,0 +1,228 @@
+---
+
+-
+    name: check OPTIONS for admins
+    type: item
+    method: OPTIONS
+    path: /api/admins/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-admins
+        ok:
+            options:
+                - GET
+                - POST
+                - OPTIONS
+                - HEAD
+
+-
+    name: create admin - role admin
+    type: item
+    thread: 1
+    method: POST
+    path: /api/admins/
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        login: test_login_${unique_id}
+        password: password
+        role: admin
+        reseller_id: 1
+    conditions:
+        is:
+            code: 201
+    retain:
+        admin_path: header.location
+        admin_id: header.location
+
+-
+    name: get admin - role admin
+    type: item
+    method: GET
+    path: '/${admin_path}'
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 0
+            '${admin}.is_superuser': 1
+            '${admin}.is_ccare': 0
+            '${admin}.lawful_intercept': 0
+            '${admin}.role': admin
+        ok:
+            '${admin}.login': defined
+            '${admin}.role_id': undefined
+
+-
+    name: put admin - to role system
+    type: item
+    thread: 1
+    method: PUT
+    path: '/${admin_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        login: test_login_${unique_id}
+        role: system
+        reseller_id: 1
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 1
+            '${admin}.is_superuser': 0
+            '${admin}.is_ccare': 0
+            '${admin}.lawful_intercept': 0
+
+-
+    name: put admin - to role ccareadmin
+    type: item
+    thread: 1
+    method: PUT
+    path: '/${admin_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        login: test_login_${unique_id}
+        role: ccareadmin
+        reseller_id: 1
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 0
+            '${admin}.is_superuser': 1
+            '${admin}.is_ccare': 1
+            '${admin}.lawful_intercept': 0
+
+-
+    name: put admin - to role ccare
+    type: item
+    thread: 1
+    method: PUT
+    path: '/${admin_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        login: test_login_${unique_id}
+        role: ccare
+        reseller_id: 1
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 0
+            '${admin}.is_superuser': 0
+            '${admin}.is_ccare': 1
+            '${admin}.lawful_intercept': 0
+
+-
+    name: put admin - to role lintercept
+    type: item
+    thread: 1
+    method: PUT
+    path: '/${admin_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        login: test_login_${unique_id}
+        role: lintercept
+        reseller_id: 1
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 0
+            '${admin}.is_superuser': 0
+            '${admin}.is_ccare': 0
+            '${admin}.lawful_intercept': 1
+
+-
+    name: put admin - to role reseller
+    type: item
+    thread: 1
+    method: PUT
+    path: '/${admin_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        login: test_login_${unique_id}
+        role: reseller
+        reseller_id: 1
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 0
+            '${admin}.is_superuser': 0
+            '${admin}.is_ccare': 0
+            '${admin}.lawful_intercept': 0
+
+-
+    name: put admin - no role, is_system flag
+    type: item
+    thread: 1
+    method: PUT
+    path: '/${admin_path}'
+    header:
+        Content-Type: application/json
+        Prefer: return=representation
+    content:
+        login: test_login_${unique_id}
+        reseller_id: 1
+        is_system: 1
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 1
+            '${admin}.is_superuser': 0
+            '${admin}.is_ccare': 0
+            '${admin}.lawful_intercept': 0
+
+-
+    name: patch admin - to role admin
+    type: item
+    method: PATCH
+    path: '/${admin_path}'
+    header:
+        Content-Type: application/json-patch+json
+        Prefer: return=representation
+    content:
+        -
+            op: replace
+            path: /role
+            value: admin
+    retain:
+        admin: body
+    conditions:
+        is:
+            code: 200
+            '${admin}.is_system': 0
+            '${admin}.is_superuser': 1
+            '${admin}.is_ccare': 0
+            '${admin}.lawful_intercept': 0
+
+-
+    name: delete admin
+    type: item
+    method: DELETE
+    path: '/${admin_path}'
+    conditions:
+        is:
+            code: 204

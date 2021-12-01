@@ -63,13 +63,13 @@ sub get_form {
     my ($self, $c) = @_;
     my $form;
     if ($c->user->is_system) {
-       $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::System", $c);
+       $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::SystemAPI", $c);
     } elsif ($c->user->roles eq "lintercept") {
-        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::LIntercept", $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::LInterceptAPI", $c);
     } elsif ($c->user->roles eq "admin") {
-        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Admin", $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::AdminAPI", $c);
     } else {
-        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::Reseller", $c);
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Administrator::ResellerAPI", $c);
     }
     return $form;
 }
@@ -168,7 +168,7 @@ sub update_item {
         $resource->{is_active} = $active;
     }
 
-    $resource->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $resource);
+    $resource = NGCP::Panel::Utils::UserRole::resolve_resource_role($c, $resource);
 
     $item->update($resource);
 

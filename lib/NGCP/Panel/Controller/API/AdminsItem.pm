@@ -51,6 +51,10 @@ sub PATCH :Allow {
         #we later check in update_item and if the password field is still
         #the same with saltedpass we don't update the password
         $old_resource->{password} = $old_resource->{salted_pass};
+
+        # This trick allows to call apply_patch below without "role" reference error.
+        $old_resource->{role} = undef;
+
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -95,6 +99,24 @@ sub delete_item {
 
     $item->delete;
     return 1;
+}
+
+sub resource_from_item{
+    my($self, $c, $item) = @_;
+
+    my $res;
+    if ('HASH' eq ref $item) {
+        $res = $item;
+    } else {
+        $res = { $item->get_inflated_columns };
+    }
+
+    my $role_id = delete $res->{role_id};
+    if ($role_id) {
+        $res->{role} = NGCP::Panel::Utils::UserRole::find_row_by_id($c, $role_id)->role;
+    }
+
+    return $res;
 }
 
 1;
