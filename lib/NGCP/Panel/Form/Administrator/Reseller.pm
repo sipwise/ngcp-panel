@@ -36,7 +36,7 @@ sub field_list {
             options => [
                 $self->_acl_role_select_options()
             ],
-            required => 1,
+            required => 0,
             element_attr => {
                 rel => ['tooltip'],
                 title => ['Role']
