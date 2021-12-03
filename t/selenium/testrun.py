@@ -55,7 +55,7 @@ class testrun(unittest.TestCase):
         filename = "test_admin.png"
         driver = self.driver
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         create_reseller_contract(driver, resellercontract)
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
         create_reseller(driver, resellername, resellercontract)
@@ -120,7 +120,7 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
         logout_panel(driver)
         login_panel(driver, adminname, 'administrato')
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
@@ -129,24 +129,22 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[6]//div[@aria-checked="false"]')) > 0, "'Master' permission was granted")
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[7]//div[@aria-disabled="true"]')) > 0, "'Ccare' toggle is not disabled")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[7]//div[@aria-disabled="true"]')) > 0, "'Active' toggle is not disabled")
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[8]//div[@aria-disabled="true"]')) > 0, "'Active' toggle is not disabled")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[8]//div[@aria-disabled="true"]')) > 0, "'Read-only' toggle is not disabled")
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[9]//div[@aria-disabled="true"]')) > 0, "'Read-only' toggle is not disabled")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[9]//div[@aria-disabled="true"]')) > 0, "'Show passwords' toggle is not disabled")
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[10]//div[@aria-disabled="true"]')) > 0, "'Show passwords' toggle is not disabled")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[10]//div[@aria-disabled="true"]')) > 0, "'Show CDRs' toggle is not disabled")
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[11]//div[@aria-disabled="true"]')) > 0, "'Show CDRs' toggle is not disabled")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[11]//div[@aria-disabled="true"]')) > 0, "'Show billing' info toggle is not disabled")
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[12]//div[@aria-disabled="true"]')) > 0, "'Show billing' info toggle is not disabled")
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[13]//div[@aria-disabled="true"]')) > 0, "'Can reset password' toggle is not disabled")
+            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//table//tr[1]/td[12]//div[@aria-disabled="true"]')) > 0, "'Can reset password' toggle is not disabled")
         print("OK")
         print("Go back to administrator login...", end="")
         logout_panel(driver)
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         print("OK")
@@ -171,7 +169,7 @@ class testrun(unittest.TestCase):
         print("Check if 'Superuser' can edit admins from other resellers...", end="")
         logout_panel(driver)
         login_panel(driver, adminname, 'administrato')
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
@@ -194,7 +192,7 @@ class testrun(unittest.TestCase):
         print("Go back to administrator login...", end="")
         logout_panel(driver)
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         print("OK")
@@ -221,7 +219,7 @@ class testrun(unittest.TestCase):
         print("Check if 'master' is not allowed to edit admins from other resellers...", end="")
         logout_panel(driver)
         login_panel(driver, adminname, 'administrato')
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
@@ -234,7 +232,7 @@ class testrun(unittest.TestCase):
         print("Go back to administrator login...", end="")
         logout_panel(driver)
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         print("OK")
@@ -244,13 +242,20 @@ class testrun(unittest.TestCase):
         fill_element(driver, '/html/body//div/main//div/label//div/input', adminname)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main/div//table/tbody/tr[1]/td[contains(., "' + adminname + '")]')) > 0, "Administrator was not found")
-        driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[8]').click()
+        wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
+        driver.find_element_by_xpath('//*[@id="q-app"]//div//main//table//tr[1]//td/button').click()
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body//div/a[contains(., "Edit")]')))
+        driver.find_element_by_xpath('/html/body//div/a[contains(., "Edit")]').click()
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//main//form//div[@data-cy="ccare-flag"]').click()
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//main/div//button[contains(., "Save")]').click()
+        wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//main/div//button[contains(., "Close")]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
         print("OK")
         print("Check if 'Customer Care' is enabled...", end="")
         logout_panel(driver)
         login_panel(driver, adminname, 'administrato')
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//aside//div//a[1][contains(., "Customers")]')) > 0, "Customers buttons was not found")
         self.assertTrue(
@@ -259,7 +264,7 @@ class testrun(unittest.TestCase):
         print("Go back to administrator login...", end="")
         logout_panel(driver)
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         print("OK")
@@ -269,13 +274,13 @@ class testrun(unittest.TestCase):
         fill_element(driver, '/html/body//div/main//div/label//div/input', adminname)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main/div//table/tbody/tr[1]/td[contains(., "' + adminname + '")]')) > 0, "Administrator was not found")
-        driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[10]').click()
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/div[2]/main/div[1]/div/div[1]/table/tbody/tr[1]/td[9]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
         print("OK")
         print("Check if 'Read-only' was enabled...", end="")
         logout_panel(driver)
         login_panel(driver, adminname, 'administrato')
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Customers")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Customers")]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
@@ -283,10 +288,11 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//div/a[contains(., "Add")]')) == 0, "'Add' Button is still there")
         print("OK")
+        driver.implicitly_wait(10)
         print("Go back to administrator login...", end="")
         logout_panel(driver)
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         print("OK")
@@ -296,7 +302,7 @@ class testrun(unittest.TestCase):
         fill_element(driver, '/html/body//div/main//div/label//div/input', adminname)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main/div//table/tbody/tr[1]/td[contains(., "' + adminname + '")]')) > 0, "Administrator was not found")
-        driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div//table//tr[1]/td[9]/div').click()
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div//table//tr[1]/td[8]/div').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div/table/thead/tr[2]/th/div[@role="progressbar"]')
         print("OK")
         print("Check if admin was deactivated...", end="")
@@ -310,7 +316,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to delete administrator...", end="")
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
@@ -407,7 +413,7 @@ class testrun(unittest.TestCase):
         filename = "test_contact.png"
         driver = self.driver
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         print("Go to 'Contacts'...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Contacts")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Contacts")]').click()
@@ -520,7 +526,7 @@ class testrun(unittest.TestCase):
         filename = "test_contracts.png"
         driver = self.driver
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         print("Go to 'Contracts'...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Contracts")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Contracts")]').click()
@@ -634,7 +640,7 @@ class testrun(unittest.TestCase):
         filename = "test_customer.png"
         driver = self.driver
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         print("Go to 'Customers'...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Customers")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Customers")]').click()
@@ -729,7 +735,7 @@ class testrun(unittest.TestCase):
         filename = "test_domain.png"
         driver = self.driver
         login_panel(driver)
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         print("Go to 'Domains'...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Domains")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Domains")]').click()
@@ -932,7 +938,7 @@ class testrun(unittest.TestCase):
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside//div//a[contains(., "Dashboard")]')) > 0, "Language wasn't changed")
         print("OK")
         print("Try to add Administrators and Resellers to favourites...", end="")
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div/aside/div//a[contains(., "Administrators")]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div[@role="progressbar"]')
@@ -944,12 +950,12 @@ class testrun(unittest.TestCase):
         time.sleep(1)
         print("OK")
         print("Check if webpages were added to favourites and unfavourite them afterwards...", end="")
-        driver.find_element_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/div[1]/div/div/a[2]').click()
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/div[1]/div/div/div[3]/a[1]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div[@role="progressbar"]')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//div/a[contains(., "Administrators")]')) > 0, "Wrong webpage was opened")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[2]').click()
-        driver.find_element_by_xpath('//*[@id="q-app"]/div/div[1]/aside/div/div[2]/div[1]/div/div/a[2]').click()
+        driver.find_element_by_xpath('//*[@id="q-app"]/div//aside/div/div[2]/div[1]/div/div/div[3]/a[1]').click()
         wait_for_invisibility(driver, '//*[@id="q-app"]/div//main//div[@role="progressbar"]')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//div/a[contains(., "Resellers")]')) > 0, "Wrong webpage was opened")
@@ -964,7 +970,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         login_panel(driver)
         print("Go to 'Reseller'...", end="")
-        click_js(driver, '//*[@id="q-app"]/div//aside//div[@class="bg-secondary main-menu q-list"]/div[1]//i')
+        driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Resellers")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Resellers")]').click()
         print("OK")
