@@ -1,3 +1,10 @@
+ngcp-panel (10.1.1.8+0~mr10.1.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [44aefd6] TT#152901 prosody provision ignore error on timeout
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 03 Dec 2021 15:46:12 +0100
+
 ngcp-panel (10.1.1.7+0~mr10.1.1.7) unstable; urgency=medium
 
   [ Flaviu Mates ]
