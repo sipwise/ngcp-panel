@@ -740,7 +740,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         }),
         hash => 'type',
     );
-    foreach my $voicemail_greeting_type (qw/unavail busy/){
+    foreach my $voicemail_greeting_type (qw/unavail busy temp greet/){
         my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $voicemail_greeting_type);
         push @$vm_recordings_types,
             $subscriber_vm_recordings->{$dir} ? {%{$subscriber_vm_recordings->{$dir}}, type =>  $voicemail_greeting_type }
@@ -3467,7 +3467,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                     if( !grep{ $action eq $_ } (qw/edit delete download/) ){
                         die('Wrong voicemail greeting action.');
                     }
-                    if( !grep{ $type eq $_ } (qw/unavail busy/) ){
+                    if( !grep{ $type eq $_ } (qw/unavail busy temp greet/) ){
                         die('Wrong voicemail greeting type.');
                     }
                     my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory(c => $c, subscriber => $c->stash->{subscriber}, dir => $type);
