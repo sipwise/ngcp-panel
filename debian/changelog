@@ -1,3 +1,10 @@
+ngcp-panel (10.1.1.9+0~mr10.1.1.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f80d823] TT#144300 accept Windows .csv file uploads
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Dec 2021 15:40:49 +0100
+
 ngcp-panel (10.1.1.8+0~mr10.1.1.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
