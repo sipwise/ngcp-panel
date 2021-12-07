@@ -1,3 +1,16 @@
+ngcp-panel (10.2.1.1+0~mr10.2.1.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [5a6929b] TT#152901 prosody provision ignore error on timeout
+
+  [ Alexander Lutay ]
+  * [4681706] TT#153950 Add label 'Invoice Template' to Invoice create page
+
+  [ Rene Krenn ]
+  * [67e74d1] TT#144300 accept Windows .csv file uploads
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Dec 2021 18:23:25 +0100
+
 ngcp-panel (10.2.1.0+0~mr10.2.1.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
