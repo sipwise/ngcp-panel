@@ -60,7 +60,7 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    return { username => { like => $q } };
+                    return { 'me.username' => { like => $q } };
                 },
                 second => sub {},
             },
