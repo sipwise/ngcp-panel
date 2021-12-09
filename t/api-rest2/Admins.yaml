@@ -219,6 +219,15 @@
             '${admin}.lawful_intercept': 0
 
 -
+    name: delete own user
+    type: item
+    method: DELETE
+    path: '/api/admins/1'
+    conditions:
+        is:
+            code: 403
+
+-
     name: delete admin
     type: item
     method: DELETE
