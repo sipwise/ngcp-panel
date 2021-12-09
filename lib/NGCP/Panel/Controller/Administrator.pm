@@ -10,7 +10,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Utils::UserRole;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(lintercept) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(lintercept) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -53,16 +53,38 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
 
 sub _admin_resultset_admin {
     my ($self, $c, %attrs) = @_;
-    my $condition = $c->user->is_system ? {} : {lawful_intercept => 0, is_system => 0};
-    return $c->model('DB')->resultset('admins')->search($condition, \%attrs);
+    my $where = $c->user->is_system ? {} : {lawful_intercept => 0, is_system => 0};
+    if ( ! $c->user->is_master) {
+        $where->{login} = $c->user->login;
+    }
+    return $c->model('DB')->resultset('admins')->search($where, \%attrs);
 }
 
 sub _admin_resultset_reseller {
     my ($self, $c) = @_;
-    return $c->model('DB')->resultset('admins')->search({
+    my $where = {
         reseller_id => $c->user->reseller_id,
         lawful_intercept => 0,
+        is_superuser => 0,
         is_system => 0
+    };
+    if ( ! $c->user->is_master) {
+        $where->{login} = $c->user->login;
+    }
+    return $c->model('DB')->resultset('admins')->search($where);
+}
+
+sub _admin_resultset_ccareadmin {
+    my ($self, $c) = @_;
+    return $c->model('DB')->resultset('admins')->search({
+        login => $c->user->login
+    });
+}
+
+sub _admin_resultset_ccare {
+    my ($self, $c) = @_;
+    return $c->model('DB')->resultset('admins')->search({
+        login => $c->user->login
     });
 }
 
@@ -222,7 +244,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             # don't allow to take away own master rights/write permission, otherwise he'll not be
             # able to manage any more admins
             if($c->stash->{administrator}->id == $c->user->id) {
-                delete $form->values->{$_} for qw(is_master is_active read_only);
+                delete $form->values->{$_}
+                    for qw(login is_master is_active read_only
+                           show_passwords call_data billing_data);
             }
 
             if($c->user->is_superuser) {

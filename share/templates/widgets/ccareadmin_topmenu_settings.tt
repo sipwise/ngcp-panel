@@ -30,6 +30,7 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
+        <li><a href="[% c.uri_for('/administrator') %]">[% c.loc('Administrator') %]</a></li>
         <li><a href="[% c.uri_for('/customer') %]">[% c.loc('Customers') %]</a></li>
         <li><a href="[% c.uri_for('/subscriber') %]">[% c.loc('Subscribers') %]</a></li>
     </ul>

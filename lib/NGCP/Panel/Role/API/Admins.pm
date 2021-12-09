@@ -32,31 +32,35 @@ sub relation{
 sub _item_rs {
     my ($self, $c) = @_;
 
+    my $where;
     my $item_rs = $c->model('DB')->resultset('admins');
 
-    if ($c->user->is_system || $c->user->is_superuser) {
+    if ( ! $c->user->is_master) {
+        $where->{id} = $c->user->id;
+        return $item_rs->search($where);
+    }
+
+    if ($c->user->is_system) {
         return $item_rs;
     }
 
-    my %search = ();
-
-    if ($c->user->roles eq "reseller") {
-        %search = (
+    if ($c->user->is_superuser) {
+        $where = {
+            is_system => 0,
+            lawful_intercept => 0
+        };
+    } elsif ($c->user->roles eq 'reseller') {
+        $where = {
             reseller_id => $c->user->reseller_id,
-            is_system => 0
-        );
-    }
-
-    if ($c->user->roles ne 'lintercept' && $c->user->is_master) {
-        %search = (%search,
-            lawful_intercept => 0,
-            is_system        => 0);
+            is_system => 0,
+            is_superuser => 0,
+            lawful_intercept => 0
+        };
     } else {
-        # otherwise, only return the own admin if master is not set
-        %search = (%search, id => $c->user->id);
+        $where->{id} = $c->user->id;
     }
 
-    return $item_rs->search(\%search);
+    return $item_rs->search($where);
 }
 
 sub get_form {
@@ -146,9 +150,9 @@ sub update_item {
     );
 
     if($item->id == $c->user->id) {
-        # don't allow to take away own master rights/write permission, otherwise he'll not be
-        # able to manage any more admins
-        delete $resource->{$_} for qw(is_master is_active read_only);
+        # user cannot modify the following own permissions for security reasons
+        delete $resource->{$_} for qw(login is_master is_active read_only
+                                      show_passwords call_data billing_data);
     }
 
     my $pass = $resource->{password};
@@ -180,7 +184,6 @@ sub post_process_hal_resource {
 
     if ($c->user->id == $item->id) {
         $resource->{role} = $c->user->roles;
-        $resource->{reseller_id} = $c->user->reseller_id if ($c->user->roles eq 'reseller');
     }
 
     return $resource;

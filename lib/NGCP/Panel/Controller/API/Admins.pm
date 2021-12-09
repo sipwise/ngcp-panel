@@ -17,7 +17,7 @@ sub allowed_methods{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller lintercept/],
+    allowed_roles => [qw/admin reseller ccare ccareadmin lintercept/],
 });
 
 sub query_params {
