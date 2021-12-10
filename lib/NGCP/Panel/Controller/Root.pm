@@ -629,7 +629,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
             if ($authrs->first) {
                 my $password = $authrs->first->webpassword;
-                if (defined $password and length($password) > 40) {
+                if (length $password > 40) {
                     my @splitted_pass = split /\$/, $password;
                     if (scalar @splitted_pass == 3) {
                         #password is bcrypted with lower cost
@@ -664,7 +664,8 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                         }, $pass));
                         $auth_user = $authrs->search({webpassword => $db_b64salt . '$' . $usr_b64hash})->first;
                     }
-                } else {
+                }
+                else {
                     $auth_user = $authrs->search({webpassword => $pass})->first;
                 }
             }

@@ -136,10 +136,8 @@ sub POST :Allow {
                 return;
             }
             $c->log->debug("Updating subscriber password.");
-            my $webpassword = $form->params->{new_password};
-            $webpassword = NGCP::Panel::Utils::Auth::generate_salted_hash($webpassword) if $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS;
             $subscriber->provisioning_voip_subscriber->update({
-                webpassword => $webpassword,
+                webpassword => NGCP::Panel::Utils::Auth::generate_salted_hash($form->params->{new_password}),
             });
             $rs->delete;
         }

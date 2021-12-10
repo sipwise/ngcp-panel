@@ -55,7 +55,17 @@ sub resource_from_item {
     delete $prov_resource->{domain_id};
     delete $prov_resource->{account_id};
     my %resource = %{ merge($bill_resource, $prov_resource) };
+    my $change_passwords = 1;
     $resource{administrative} = delete $resource{admin};
+
+    if ($c->request->method eq 'PATCH') {
+        if ($resource{pre_patch_resource}) {
+            delete $resource{pre_patch_resource};
+        } else {
+            $change_passwords = 0;
+            $resource{pre_patch_resource} = 1;
+        }
+    }
 
     unless($customer->product->class eq 'pbxaccount') {
         delete $resource{is_pbx_group};
@@ -76,8 +86,20 @@ sub resource_from_item {
         $resource{email} = undef;
         $resource{timezone} = undef;
     }
-    $resource{_password} = $resource{password};
-    $resource{_webpassword} = $resource{webpassword};
+    # if the webpassword length is 54 or 56 chars and it contains $,
+    # we assume that the password is encrypted,
+    # as we do not have an explicit flag for the password field
+    # wether it's encrypted or not, there is a chance that
+    # if somebody manages to create a 54 chars password containing
+    # '$', it will be detected as false positive, but
+    #  - all webpasswords from mr8.5+ are meant to be encrypted
+    #  - in case of the false positive result, the worse that happens
+    #    the password is not returned to the user in plain-text
+    if ($change_passwords &&
+        $resource{webpassword} && (length $resource{webpassword}) =~ /^(54|56)$/ &&
+        $resource{webpassword} =~ /\$/) {
+            delete $resource{webpassword};
+    }
     if(!$form){
         ($form) = $self->get_form($c);
     }
@@ -177,20 +199,18 @@ sub resource_from_item {
         if ($c->user->show_passwords) {
             foreach my $k(qw/password webpassword/) {
                 eval {
-                    if (not NGCP::Panel::Utils::Auth::is_salted_hash($resource{$k})) {
-                        $resource{'_' . $k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
-                    } else {
-                        delete $resource{'_' . $k};
+                    if ($resource{$k} && $change_passwords) {
+                        $resource{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
                     }
                 };
                 if ($@) {
                     $c->log->error("Failed to encrypt $k: " . $@);
-                    delete $resource{'_' . $k};
+                    delete $resource{$k} if $change_passwords;
                 }
             }
         } else {
             foreach my $k(qw/password webpassword/) {
-                delete $resource{'_' . $k};
+                delete $resource{$k} if $change_passwords;
             }
         }
     } else {
@@ -201,18 +221,18 @@ sub resource_from_item {
             }
 
             # TODO: make custom filtering configurable!
-            foreach my $k (qw/password webpassword/) {
-                delete $resource{'_' . $k};
+            foreach my $k(qw/password webpassword/) {
+                delete $resource{$k} if $change_passwords;
             }
         }
         if ($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
             if ($item->id != $c->user->voip_subscriber->id) {
                 if (!$c->config->{security}->{password_sip_expose_subadmin}) {
-                    delete $resource{_password};
+                    delete $resource{password} if $change_passwords;
                 }
                 if (!$c->config->{security}->{password_web_expose_subadmin}) {
-                    delete $resource{_webpassword};
+                    delete $resource{webpassword} if $change_passwords;
                 }
             }
         }
@@ -232,11 +252,6 @@ sub hal_from_item {
     if($c->user->roles eq "subscriber") {
         $is_subadm = 0;
     }
-
-    delete $resource->{password};
-    delete $resource->{webpassword};
-    $resource->{password} = delete $resource->{_password} if exists $resource->{_password};
-    $resource->{webpassword} = delete $resource->{_webpassword} if exists $resource->{_webpassword};
 
     my $hal = Data::HAL->new(
         links => [
@@ -510,12 +525,14 @@ sub update_item {
         contact_id => $resource->{contact_id},
     };
 
-    if (exists $resource->{webpassword} and $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS) {
+    if(defined $resource->{webpassword}) {
         $resource->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($resource->{webpassword});
     }
 
     my $provisioning_res = {
+        password => $resource->{password},
         webusername => $resource->{webusername},
+        webpassword => $resource->{webpassword},
         is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
         is_pbx_group => $resource->{is_pbx_group} // 0,
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
@@ -524,8 +541,6 @@ sub update_item {
         pbx_extension => $resource->{pbx_extension},
         $resource->{administrative} ? (admin => $resource->{administrative}) : (),
     };
-    $provisioning_res->{password} = $resource->{password} if exists $resource->{password};
-    $provisioning_res->{webpassword} = $resource->{webpassword} if exists $resource->{webpassword};
     if(is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
