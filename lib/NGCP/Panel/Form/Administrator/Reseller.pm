@@ -53,14 +53,14 @@ sub _check_inactive {
         }
         if ((grep { $field_name eq $_ }
             qw(is_active is_master read_only
-               show_passwords call_data billing_data role_id)) &&
+               show_passwords call_data billing_data role_id)) && $c->state &&
             $c->state->login eq $c->user->login) {
 
             return 1;
         }
     }
 
-    return 0;
+    return;
 }
 
 sub field_list {
