@@ -1,3 +1,41 @@
+ngcp-panel (9.5.4.0+0~mr9.5.4.0) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [7c7453f] TT#142402 Improve 'framed' session behaviour when users are using v1 and v2 in parallel
+  * [94f8e6e] TT#142402 Fix v1 'Back' button navigation on v2 (iframe inside iframe)
+  * [8a34771] TT#141802 Fix 'bootsrap' PBX devices config generation
+  * [a0f24f8] TT#141802 Add MAC to default SNOM 'bootstrap' URL on SRAPS
+  * [253c439] TT#141802 Add firmware 'tags' support for 'next' firmware endpoint
+  * [d767324] TT#141802 Add firmware 'tags' support for 'version' firmware endpoint
+  * [b440ebe] TT#141802 Improve Snom profile SRAPS handling code
+  * [07cf1e5] TT#141802 use proper SNOM param 'setting_server' on SRAPS
+  * [6c2901f] TT#153950 Add label 'Invoice Template' to Invoice create page
+
+  [ Kirill Solomko ]
+  * [0fea023] TT#139550 fix ngcp-vmnotify system call to use the correct args
+  * [2f991a0] TT#134254 change fax destination email field type
+  * [aaec378] Revert "TT#134254 change fax destination email field type"
+  * [7ae21b8] TT#134254 change MailToFax From email field type
+  * [6824a76] TT#144254 Rework ALE devices provisioning bootstrap
+  * [ee1d59c] TT#139550 improve vmnotify messaging
+  * [e1efd6c] TT#139550 vmnotify use correct uuid
+  * [bdbb3fb] TT#139550 improve vmnotify behaviour
+  * [04c5abf] TT#139550 fix vmnotify play/delete
+
+  [ Rene Krenn ]
+  * [67c51b8] TT#144000 fix /api/ncoslnpcarriers rail
+  * [51b7aa4] TT#144000 add lnp_provider form field to /api/ncoslnpcarriers
+
+  [ Javier Rodriguez ]
+  * [f2f0091] TT#146900 correction for time format via /api/voicemails/
+  * [a3da532] TT#146901 adding greet and temp directories into /api/voicemailgreetings for testing reasons
+  * [af1f74f] TT#146901 adding greet and temp directories into /api/voicemailgreetings for PUT/PATCH methods
+
+  [ Flaviu Mates ]
+  * [03278a0] TT#86652 Fix utf8 fax body encoding
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Dec 2021 19:29:36 +0100
+
 ngcp-panel (9.5.3.0+0~mr9.5.3.0) unstable; urgency=medium
 
   [ Victor Tsvetov ]
