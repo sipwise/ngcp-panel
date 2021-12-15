@@ -54,6 +54,7 @@ has_field 'mode' => (
         { label => 'Add', value => 'add' },
         { label => 'Replace', value => 'replace' },
         { label => 'Offline', value => 'offline' },
+        { label => 'Forward', value => 'forward' },
     ],
     element_attr => {
         rel => ['tooltip'],
