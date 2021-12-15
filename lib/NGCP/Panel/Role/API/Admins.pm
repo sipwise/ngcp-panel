@@ -86,7 +86,7 @@ sub hal_links {
     ];
 }
 
-sub process_form_resource{
+sub process_form_resource {
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 
     NGCP::Panel::Utils::API::apply_resource_reseller_id($c, $resource);
@@ -98,13 +98,20 @@ sub process_form_resource{
         $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
     }
 
-    foreach my $f(qw/billing_data call_data is_active is_master is_superuser is_ccare lawful_intercept read_only show_passwords/) {
-        $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' || ( defined $resource->{$f} && ( $resource->{$f} eq 'true' || $resource->{$f} eq '1' ) ) ) ? 1 : 0;
+    foreach my $f (qw/billing_data call_data is_active is_master
+                      is_superuser is_ccare lawful_intercept
+                      read_only show_passwords can_reset_password/) {
+        $resource->{$f} = (ref $resource->{$f} eq 'JSON::true' ||
+                           ( defined $resource->{$f} &&
+                            ( $resource->{$f} eq 'true' || $resource->{$f} eq '1' )
+                           )
+                          ) ? 1 : 0;
     }
+
     return $resource;
 }
 
-sub check_resource{
+sub check_resource {
     my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     #TODO: move to config
     return unless NGCP::Panel::Utils::API::check_resource_reseller_id($self, $c, $resource, $old_resource);
@@ -139,7 +146,7 @@ sub check_duplicate{
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    if($form->field('password')){
+    if ($form->field('password')){
         $form->field('password')->{required} = 0;
     }
     $form //= $self->get_form($c);
@@ -149,16 +156,42 @@ sub update_item {
         resource => $resource,
     );
 
-    if($item->id == $c->user->id) {
+    if ($item->id == $c->user->id) {
         # user cannot modify the following own permissions for security reasons
-        delete $resource->{$_} for qw(login is_master is_active read_only
-                                      show_passwords call_data billing_data);
+        my $own_forbidden = 0;
+        foreach my $k (qw(login role is_master is_active
+                          is_system is_superuser lawful_intercept
+                          read_only show_passwords
+                          call_data billing_data)) {
+            if (defined $old_resource->{$k} && defined $resource->{$k}) {
+                if ($old_resource->{$k} ne $resource->{$k}) {
+                    $own_forbidden = 1;
+                    last;
+                }
+            } elsif (defined $resource->{$k}) {
+                $own_forbidden = 1;
+                last;
+            }
+        }
+        if ($own_forbidden) {
+            $self->error($c, HTTP_FORBIDDEN, "User cannot modify own permissions");
+            return;
+        }
+        delete $resource->{role};
+    } else {
+        $resource = NGCP::Panel::Utils::UserRole::resolve_resource_role($c, $resource);
+        if (defined $resource->{role_id} &&
+            ! NGCP::Panel::Utils::UserRole::has_permission(
+                    $c, $c->user->acl_role->id, $resource->{role_id})) {
+            $self->error($c, HTTP_FORBIDDEN, "Cannot change user role");
+            return;
+        }
     }
 
     my $pass = $resource->{password};
     delete $resource->{password};
-    if(defined $pass && $pass ne $old_resource->{saltedpass}) {
-        unless($c->user->id == $item->id) {
+    if (defined $pass && $pass ne $old_resource->{saltedpass}) {
+        if ($c->user->id != $item->id) {
             $self->error($c, HTTP_FORBIDDEN, "Only own user can change password");
             return;
         }
@@ -166,13 +199,11 @@ sub update_item {
         $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
     }
 
-    if($old_resource->{login} eq NGCP::Panel::Utils::Auth::get_special_admin_login()) {
+    if ($old_resource->{login} eq NGCP::Panel::Utils::Auth::get_special_admin_login()) {
         my $active = $resource->{is_active};
         $resource = $old_resource;
         $resource->{is_active} = $active;
     }
-
-    $resource = NGCP::Panel::Utils::UserRole::resolve_resource_role($c, $resource);
 
     $item->update($resource);
 

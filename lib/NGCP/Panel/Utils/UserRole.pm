@@ -106,4 +106,14 @@ sub resolve_resource_role {
     return $resource;
 }
 
+sub has_permission {
+    my ($c, $own_role_id, $to_role_id) = @_;
+    return 0 unless $own_role_id && $to_role_id;
+
+    return $c->model('DB')->resultset('acl_role_mappings')->search({
+        accessor_id => $own_role_id,
+        has_access_to_id => $to_role_id,
+    })->count() ? 1 : 0;
+}
+
 1;

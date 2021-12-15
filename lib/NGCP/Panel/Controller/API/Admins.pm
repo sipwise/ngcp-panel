@@ -48,6 +48,12 @@ sub create_item {
     }
 
     $resource = NGCP::Panel::Utils::UserRole::resolve_resource_role($c, $resource);
+    unless (defined $resource->{role_id} &&
+            NGCP::Panel::Utils::UserRole::has_permission(
+                $c, $c->user->acl_role->id, $resource->{role_id})) {
+        $self->error($c, HTTP_FORBIDDEN, "Cannot create admin user");
+        return;
+    }
 
     my $item;
     try {

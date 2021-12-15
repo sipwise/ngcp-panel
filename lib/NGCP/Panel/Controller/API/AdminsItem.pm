@@ -6,6 +6,7 @@ use Sipwise::Base;
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Admins/;
 
 use NGCP::Panel::Utils::Auth;
+use NGCP::Panel::Utils::UserRole;
 use HTTP::Status qw(:constants);
 
 sub allowed_methods{
@@ -87,6 +88,12 @@ sub delete_item {
     }
     if($c->user->read_only) {
         $self->error($c, HTTP_FORBIDDEN, "Insufficient permissions");
+        return;
+    }
+
+    unless (NGCP::Panel::Utils::UserRole::has_permission(
+            $c, $c->user->acl_role->id, $item->acl_role->id)) {
+        $self->error($c, HTTP_FORBIDDEN, "Cannot delete user");
         return;
     }
 
