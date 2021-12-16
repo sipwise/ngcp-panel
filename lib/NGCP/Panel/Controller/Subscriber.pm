@@ -2735,10 +2735,10 @@ sub calllist_master :Chained('base') :PathPart('calls') :CaptureArgs(0) :Allowed
         # NO SEARCH FOR UNINDEXED COLUMNS !!!
         { name => "id", int_search => 1, title => $c->loc('#'), },
         { name => "direction", search => 0, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outgoing", "incoming")', },
-        { name => "source_user", strict_search => 1, 'no_column' => 1, },
-        { name => "source_cli", strict_search => 1, title => $c->loc('Caller'), },
-        { name => "destination_user", strict_search => 1, 'no_column' => 1, },
-        { name => "destination_user_in", strict_search => 1, title => $c->loc('Callee'), },
+        { name => "source_user", strict_search => 1, title => $c->loc('Caller'), },
+        { name => "source_cli", strict_search => 1, 'no_column' => 1, },
+        { name => "destination_user", strict_search => 1, title => $c->loc('Callee'), },
+        { name => "destination_user_in", strict_search => 1, 'no_column' => 1, },
         { name => "clir", search => 0, title => $c->loc('CLIR') },
         { name => "source_customer_billing_zones_history.detail", search => 0, title => $c->loc('Billing zone'), }, #index required...
         { name => "call_status", search => 0, title => $c->loc('Status') },
