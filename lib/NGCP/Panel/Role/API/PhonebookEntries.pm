@@ -6,6 +6,7 @@ use Sipwise::Base;
 use parent 'NGCP::Panel::Role::API';
 
 use HTTP::Status qw(:constants);
+use List::Util qw(none any);
 
 sub resource_name{
     return 'phonebookentries';
@@ -86,6 +87,9 @@ sub check_owner_params {
     }
 
     $params //= $self->get_info_data($c);
+
+    # Checking for implicit subscriber - no params provided. subscriber_id can be set up here.
+    &_check_implicit_subscriber($c, $params);
 
     my %owner_params =
         map { $_ => $params->{$_} }
@@ -194,6 +198,17 @@ sub get_subscriber_phonebook_rs {
     })->phonebook;
     my $item_rs = $c->model('DB')->resultset('subscriber_phonebook');
     return ($list_rs,$item_rs);
+}
+
+sub _check_implicit_subscriber {
+    my ($c, $params) = @_;
+
+    if (
+        (none {defined $params->{$_}} qw/reseller_id customer_id subscriber_id/) &&
+        (any {$c->user->roles eq $_} qw/subscriber subscriberadmin/)
+    ) {
+       $params->{subscriber_id} = $c->user->voip_subscriber->id;
+    }
 }
 
 1;
