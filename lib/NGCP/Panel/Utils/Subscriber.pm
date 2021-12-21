@@ -2317,7 +2317,7 @@ sub mark_voicemail_read {
     my $c = $params{c};
     my $voicemail = $params{voicemail};
     my $dir = $voicemail->dir;
-    $dir = ~s/INBOX$/Old/;
+    $dir =~ s/INBOX$/Old/;
     $voicemail->update({ dir => $dir });
     return;
 }
