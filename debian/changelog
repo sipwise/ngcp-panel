@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.16+0~mr9.5.2.16) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [69d5f96] TT#156354 fix a syntax typo when marking voicemail as read
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 Dec 2021 18:41:04 +0100
+
 ngcp-panel (9.5.2.15+0~mr9.5.2.15) unstable; urgency=medium
 
   [ Flaviu Mates ]
