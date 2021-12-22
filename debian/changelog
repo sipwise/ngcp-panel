@@ -1,3 +1,10 @@
+ngcp-panel (10.1.1.11+0~mr10.1.1.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [7e4a5bf] Revert "TT#144300 accept Windows .csv file uploads"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 22 Dec 2021 13:44:25 +0100
+
 ngcp-panel (10.1.1.10+0~mr10.1.1.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
