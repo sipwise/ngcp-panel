@@ -166,13 +166,11 @@ sub upload_csv {
 
     $c->model('DB')->txn_do(sub {
 
-        local $/ = "/n";
         open(my $fh, '<:encoding(utf8)', $data);
 
         while ( my $line = <$fh> ){
             ++$linenum;
             next unless length $line;
-            $line = trim($line);
             unless($csv->parse($line)) {
                 push @fails, $linenum;
                 next;
