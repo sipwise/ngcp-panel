@@ -28,7 +28,6 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::Kamailio qw();
-use NGCP::Panel::Utils::Generic qw(trim);
 
 use JE::Destroyer qw();
 use JE qw();
@@ -317,12 +316,10 @@ sub process_csv {
         c => $c,
         purge => $purge,
     );
-    local $/ = "/n";
     open(my $fh, '<:encoding(utf8)', $data);
     while ( my $line = <$fh> ){
         ++$linenum;
         next unless length $line;
-        $line = trim($line);
         unless($csv->parse($line)) {
             push(@fails,{ linenum => $linenum, });
             next;
