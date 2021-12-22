@@ -8,7 +8,6 @@ use NGCP::Schema;
 use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::Strptime qw();
-use NGCP::Panel::Utils::Generic qw(trim);
 
 use NGCP::Panel::Utils::IntervalTree::Simple;
 
@@ -236,13 +235,11 @@ sub process_billing_fees{
     my $linenum = 0;
     my @fees = ();
     my %zones = ();
-    local $/ = "/n";
     open(my $fh, '<:encoding(utf8)', $data);
     #to don't stop on first failed parse - don't use "while($csv->getline)"
     while ( my $line = <$fh> ){
         ++$linenum;
         next unless length $line;
-        $line = trim($line);
         unless($csv->parse($line)) {
             push @fails, $linenum;
             next;
