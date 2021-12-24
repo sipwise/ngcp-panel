@@ -98,4 +98,74 @@ has_field 'subscriber_id' => (
     },
 );
 
+has_field 'package_after_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::ProfilePackages',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
+has_field 'package_before_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::ProfilePackages',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
+has_field 'profile_after_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::SubscriberProfiles',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
+);
+
+has_field 'profile_before_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::SubscriberProfiles',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
+);
+
+has_field 'contract_balance_after_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CustomerBalances',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
+has_field 'contract_balance_before_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CustomerBalances',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
+has_field 'voucher_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::Vouchers',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
 1;

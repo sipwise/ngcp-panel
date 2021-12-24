@@ -74,6 +74,16 @@ sub hal_from_item {
     return $hal;
 }
 
+sub resource_from_item {
+    my($self, $c, $item) = @_;
+
+    if (ref $item eq 'HASH') {
+        return $item;
+    }
+
+    return { $item->to_hash };
+}
+
 sub item_by_id {
     my ($self, $c, $id) = @_;
     my $item_rs = $self->item_rs($c);

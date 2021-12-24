@@ -1005,13 +1005,17 @@ sub update_preferences {
     my $prov_subscriber = $params{prov_subscriber};
     my $preferences = $params{preferences};
 
-    foreach my $k(keys %{ $preferences } ) {
+    foreach my $k (keys %{ $preferences } ) {
         my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => $k, prov_subscriber => $prov_subscriber);
         if($pref->first && $pref->first->attribute->max_occur == 1) {
             unless(defined $preferences->{$k}) {
                 $pref->first->delete;
             } else {
+                # # contract_sound_set
+                # if ($k eq 'contract_sound_set') {
+                #     next if $pref->first->value;
+                # }
                 $pref->first->update({
                     'value' => $preferences->{$k},
                 });
