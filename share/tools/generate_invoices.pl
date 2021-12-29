@@ -20,10 +20,43 @@ use feature 'state';
 my $opt = {};
 my $opt_cfg = {};
 my $cfg_raw = {};
+
+# XXX: Remove after mr10.5.
+sub old_scalar_option {
+    my ($name, $value) = @_;
+    my $newname = $name =~ tr/_/-/r;
+    $opt->{$name} = $value;
+    warn "$0: option --$name is deprecated; use --$newname instead\n";
+}
+
+# XXX: Remove after mr10.5.
+sub old_array_option {
+    my ($name, $value) = @_;
+    my $newname = $name =~ tr/_/-/r;
+    push @{$opt->{$name}}, $value;
+    warn "$0: option --$name is deprecated; use --$newname instead\n";
+}
+
+
+sub parse_scalar_option {
+    my ($name, $value) = @_;
+    $name =~ tr/-/_/;
+    $opt->{$name} = $value;
+}
+
+sub parse_array_option {
+    my ($name, $value) = @_;
+    $name =~ tr/-/_/;
+    push @{$opt->{$name}}, $value;
+}
+
 my @opt_spec = (
-    'reseller_id=i@',
-    'client_contact_id=i@',
-    'client_contract_id=i@',
+    'reseller_id=i@' => \&old_array_option,
+    'reseller-id=i@' => \&parse_array_option,
+    'client_contact_id=i@' => \&old_array_option,
+    'client-contact-id=i@' => \&parse_array_option,
+    'client_contract_id=i@' => \&old_array_option,
+    'client-contract-id=i@' => \&parse_array_option,
     'stime=s',
     'etime=s',
     'prevmonth',
@@ -31,12 +64,18 @@ my @opt_spec = (
     'send',
     'resend',
     'regenerate',
-    'allow_terminated',
-    'backward_is_active',
-    'update_contract_balance',
-    'update_contract_balance_nonzero',
-    'force_unrated',
-    'no_empty',
+    'allow_terminated' => \&old_scalar_option,
+    'allow-terminated' => \&parse_scalar_option,
+    'backward_is_active' => \&old_scalar_option,
+    'backward-is-active' => \&parse_scalar_option,
+    'update_contract_balance' => \&old_scalar_option,
+    'update-contract-balance' => \&parse_scalar_option,
+    'update_contract_balance_nonzero' => \&old_scalar_option,
+    'update-contract-balance-nonzero' => \&parse_scalar_option,
+    'force_unrated' => \&old_scalar_option,
+    'force-unrated' => \&parse_scalar_option,
+    'no_empty' => \&old_scalar_option,
+    'no-empty' => \&parse_scalar_option,
     'enable',
     'help|?',
     'man'
@@ -47,7 +86,15 @@ my @opt_spec = (
     if(-e $config_file){
         my $cfg2opt = sub{
             my($key, $val) = @_;
-            state $opt_spec = { map{my $k = $_; $k=~s/[^[:alnum:]_].*?$//; $k => $_;} @opt_spec };
+            state $opt_spec = {
+                map {
+                    my $k = $_;
+                    $k =~ s/[^[:alnum:]-].*?$//;
+                    $k => $_;
+                } grep {
+                    ref eq ''
+                } @opt_spec
+            };
             if(!$opt_spec->{$key}){
                 return '';
             }
@@ -93,6 +140,7 @@ my @opt_spec = (
             my ($var, $value) = split(/\s*=\s*/, $_, 2);
             #$opt->{lc $var} = $value;
             my $opt_key = lc $var;
+            $opt_key =~ s/_/-/g;
             $cfg_raw->{$opt_key} = $value;
             $opt_str .= $cfg2opt->($opt_key,$value);
             #$opt->{lc $var} = $value;
@@ -355,7 +403,7 @@ sub check_unrated_calls{
         $stime->epoch,$etime->epoch
     );
     if(@$unrated_calls_info){
-        my $msg = "\n\n\n\n".'There are '.@$unrated_calls_info.' customers which have unrated calls in the '.$stime->ymd.' - '.$etime->ymd.' period. Run '.__FILE__.' script with option --force_unrated to generate invoices anyway.'."\n\n\n\n";
+        my $msg = "\n\n\n\n".'There are '.@$unrated_calls_info.' customers which have unrated calls in the '.$stime->ymd.' - '.$etime->ymd.' period. Run '.__FILE__.' script with option --force-unrated to generate invoices anyway.'."\n\n\n\n";
         my $info = join("\n",map {"Customer: ".sprintf("%5d",$_->{source_account_id})."; Unrated calls: ".sprintf("%5d",$_->{calls_number})."; Period: $_->{start_time_min} - $_->{start_time_max};"} @$unrated_calls_info);
         $logger->debug($msg);
         print $msg;
@@ -697,15 +745,15 @@ All options like resellers, customers, period specification are considered toget
 
 =over 4
 
-=item B<--reseller_id=ID1[,IDn]>
+=item B<--reseller-id=ID1[,IDn]>
 
 Generate invoices only for specified resellers customers
 
-=item B<--client_contact_id=ID1[,IDn]>
+=item B<--client-contact-id=ID1[,IDn]>
 
 Generate invoices only for customers, defined by their contact IDs
 
-=item B<--client_contract_id=ID1[,IDn]>
+=item B<--client-contract-id=ID1[,IDn]>
 
 Generate invoices only for customers, defined by their contract IDs
 
@@ -737,27 +785,29 @@ Makes to send invoices, which haven't been sent yet, to customers. Other options
 
 Makes to send invoices, which have been sent already, to customers. Other options: resellers, customers, period specification will be considered. Default is false.
 
-=item B<--allow_terminated>
+=item B<--allow-terminated>
 
 Generates invoices for terminated contracts too.
 
-=item B<--force_unrated>
+=item B<--force-unrated>
 
 Generate invoices despite unrated calls existence in the period.
 
-=item B<--backward_is_active>
+=item B<--backward-is-active>
 
 Use old is_active logic of invoice_template selection. For internal use.
 
-=item B<--update_contract_balance>
+=item B<--update-contract-balance>
 
 For internal use. Update contract_balances *_balance_interval fields with values according to invoice lists.
 
-=item B<--update_contract_balance_nonzero>
+=item B<--update-contract-balance-nonzero>
 
-For internal use. Configuration for option --update_contract_balance. Allows update contract_balances.[cash|free_time]_balance_interval fields even if old values aren't empty.
+For internal use. Configuration for option --update-contract-balance.
+Allows update contract_balances.[cash|free_time]_balance_interval fields even
+if old values aren't empty.
 
-=item B<--no_empty>
+=item B<--no-empty>
 
 Deny generate invoices for invoices without calls and null permanent fee.
 
