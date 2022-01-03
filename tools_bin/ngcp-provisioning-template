@@ -23,15 +23,17 @@ my @panel_configs = qw(
    /etc/ngcp_panel.conf
    /ngcp_panel.conf
 );
-#  /home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
-#  /usr/local/devel/vagrant-ngcp/ngcp_panel.conf
+#/home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
+#/usr/local/devel/vagrant-ngcp/ngcp_panel.conf
+
 my @provisioning_configs = qw(
    /etc/ngcp-panel/provisioning.conf
 );
-#   /home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
-#   /usr/local/devel/vagrant-ngcp/provisioning.conf
+#/home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
+#/usr/local/devel/vagrant-ngcp/provisioning.conf
+
 my %db = (
-    host => undef, #'192.168.0.29',
+    host => undef, #'192.168.0.96',
     port => 3306,
     user => 'root',
     password => undef,
@@ -45,6 +47,7 @@ pod2usage(1) if $template_name =~ /help|\?/;
 my $help;
 my $log_level;
 Getopt::Long::Configure("pass_through");
+Getopt::Long::Configure("permute");
 GetOptions(
     ( map { ('db_' . $_ . ':s') => \$db{$_}; } keys %db ),
     'log_level:s' => \$log_level,
@@ -63,6 +66,7 @@ if (exists $c->stash->{'provisioning_templates'}->{$template_name}) {
     #my $csv_file = '/home/rkrenn/temp/provisioning_templates/CCS_ICM_Nummern.csv';
     my $purge;
     Getopt::Long::Configure("no_pass_through");
+    Getopt::Long::Configure("no_permute");
     GetOptions(
         ( map { ($_ . ($fields->{$_}->{required} ? '=' : ':') . 's') => \$values->{$_}; } keys %$values ),
         "purge" => \$purge,
