@@ -208,11 +208,17 @@ sub _create_c {
                     my @params = @_;
                     print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(info debug));
                 },
+                warn => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(warn info debug));
+                },
                 error => sub {
                     my $self = shift;
                     my $str = shift;
                     my @params = @_;
-                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(error info debug));
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(error warn info debug));
                 },
             );
         },
@@ -369,7 +375,7 @@ Terminate an existing subscriber with duplicate number/aliases first.
 
 =item B<--log_level>
 
-Verbosity of printed messages while processing (degug, info, error).
+Verbosity of printed messages while processing (debug, info, warn, error).
 
 =back
 
