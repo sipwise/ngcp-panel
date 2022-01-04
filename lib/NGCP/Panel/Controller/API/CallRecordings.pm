@@ -56,6 +56,32 @@ sub query_params {
             },
         },
         {
+            param => 'caller',
+            description => 'Filter by the caller number',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       'recording_metakeys.key' => 'caller',
+                       'recording_metakeys.value' => $q,
+                    };
+                }
+            },
+        },
+        {
+            param => 'callee',
+            description => 'Filter by the callee number',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       'recording_metakeys.key' => 'callee',
+                       'recording_metakeys.value' => $q,
+                    };
+                }
+            },
+        },
+        {
             param => 'start_time',
             description => 'Filter for callrecordings made at a later date than provided datetime.',
             query => {

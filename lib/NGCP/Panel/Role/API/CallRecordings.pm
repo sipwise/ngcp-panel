@@ -40,9 +40,10 @@ sub validate_request {
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('recording_calls');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    my $item_rs = $c->model('DB')->resultset('recording_calls')->search_rs(
+        undef, { prefetch => 'recording_metakeys' });
+
+    if($c->user->roles eq "reseller") {
 
         my $res_rs = $c->model('DB')->resultset('voip_subscribers')->search({
             'contact.reseller_id' => $c->user->reseller_id
@@ -54,8 +55,6 @@ sub _item_rs {
             status => { -in => [qw/completed confirmed/] },
             'recording_metakeys.key' => 'uuid',
             'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
-        },{
-            join => 'recording_metakeys',
         });
     } elsif ($c->user->roles eq "subscriberadmin") {
 
@@ -67,16 +66,12 @@ sub _item_rs {
             status => { -in => [qw/completed confirmed/] },
             'recording_metakeys.key' => 'uuid',
             'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
-        },{
-            join => 'recording_metakeys',
         });
     } elsif ($c->user->roles eq "subscriber") {
         $item_rs = $item_rs->search({
             status => { -in => [qw/completed confirmed/] },
             'recording_metakeys.key' => 'uuid',
             'recording_metakeys.value' => $c->user->uuid,
-        },{
-            join => 'recording_metakeys',
         });
     }
 
@@ -87,10 +82,9 @@ sub _item_rs {
         $item_rs = $item_rs->search({
             'recording_metakeys.key' => 'uuid',
             'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
-        },{
-            join => 'recording_metakeys',
         });
     }
+
     return $item_rs;
 }
 
@@ -117,6 +111,11 @@ sub resource_from_item {
     $resource{id} = int($item->id);
     $resource{status} = $item->status;
     $resource{callid} = $item->call_id;
+
+    my $caller_meta_row = $item->recording_metakeys->search({key => 'caller'})->first;
+    $resource{caller} = $caller_meta_row ? $caller_meta_row->value : undef;
+    my $callee_meta_row = $item->recording_metakeys->search({key => 'callee'})->first;
+    $resource{callee} = $callee_meta_row ? $callee_meta_row->value : undef;
 
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',

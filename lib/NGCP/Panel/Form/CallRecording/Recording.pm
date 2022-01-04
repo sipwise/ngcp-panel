@@ -46,6 +46,22 @@ has_field 'end_time' => (
     },
 );
 
+has_field 'caller' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+    },
+);
+
+has_field 'callee' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
