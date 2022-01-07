@@ -1,3 +1,10 @@
+ngcp-panel (10.2.1.4+0~mr10.2.1.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [44dadee] TT#146102 remove RFC5321/2 checks from passreset API forms
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Jan 2022 16:04:24 +0100
+
 ngcp-panel (10.2.1.3+0~mr10.2.1.3) unstable; urgency=medium
 
   [ Rene Krenn ]
