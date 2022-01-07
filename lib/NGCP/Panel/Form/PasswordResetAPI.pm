@@ -38,24 +38,11 @@ sub validate {
     return unless $c;
 
     my $resource = Storable::dclone($self->values);
-    if ($resource->{type} eq 'administrator') {
-        my $address = $resource->{username}.'@ngcp.local';
-        unless (Email::Valid->address($address)) {
-            my $err = "'username' is not valid.";
-            $c->log->error($err);
-            $self->field('username')->add_error($err);
-        }
-    }
-    elsif ($resource->{type} eq 'subscriber') {
+    $c->log->debug($resource->{type} . " password reset attempt for '$resource->{username}'");
+    if ($resource->{type} eq 'subscriber') {
         my $err;
         if (!$resource->{domain}) {
             $err = "'domain' field is required when requesting a password reset for a subscriber";
-        }
-        else {
-            my $address = $resource->{username}.'@'.$resource->{domain};
-            unless (Email::Valid->address($address)) {
-                $err = "username and domain combination is not valid.";
-            }
         }
         if ($err) {
             $c->log->error($err);
