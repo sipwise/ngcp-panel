@@ -128,6 +128,9 @@ sub sanitize_svg {
     }
     #we do here nothing against TemplateToolkit code invasion - is it correct?
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
+    
+    $$svg_ref =~ s/class="page layer"/class="page"/gi;
+    
     return 1;
 }
 
@@ -158,7 +161,7 @@ sub get_tt {
 sub svg_content{
     my ($c, $content) = @_;
     
-    if(!$content) {
+    unless ($content) {
         #default is the same for all - I would like to move it as something constant to itils
         my $default = 'invoice/default/invoice_template_svg.tt';
         my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
