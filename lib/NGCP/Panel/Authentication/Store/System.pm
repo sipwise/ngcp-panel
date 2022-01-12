@@ -60,6 +60,8 @@ sub find_user {
 
     return unless exists $self->acl->{$username};
 
+    $user->{ctx} = $c;
+
     if (ref($user) eq "HASH") {
         return $self->user_class->new($user);
     } elsif (ref($user) && blessed($user) &&

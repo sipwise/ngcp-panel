@@ -1,6 +1,7 @@
 package NGCP::Panel::Authentication::Store::SystemRole;
 use Sipwise::Base;
 use parent 'Catalyst::Authentication::User::Hash';
+use NGCP::Panel::Authentication::Store::SystemACLRole;
 
 sub roles  {
     my $self = shift;
@@ -21,6 +22,10 @@ sub show_passwords   { 1 };
 sub call_data        { 1 };
 sub billing_data     { 1 };
 sub lawful_intercept { 0 };
+
+sub acl_role {
+    return NGCP::Panel::Authentication::Store::SystemACLRole->new;
+}
 
 1;
 

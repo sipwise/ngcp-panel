@@ -28,6 +28,12 @@ sub validate {
         $c->log->error($err);
         $self->field('lawful_intercept')->add_error($err);
     }
+
+    if (defined $resource->{login} && $resource->{login} eq 'system') {
+        my $err = 'Restricted login definition: ' . $resource->{login};
+        $c->log->error($err);
+        $self->field('login')->add_error($err);
+    }
 }
 
 1;

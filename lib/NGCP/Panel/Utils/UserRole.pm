@@ -108,6 +108,7 @@ sub resolve_resource_role {
 
 sub has_permission {
     my ($c, $own_role_id, $to_role_id) = @_;
+    return 1 if $own_role_id == -1; # NGCP::API::Client user
     return 0 unless $own_role_id && $to_role_id;
 
     return $c->model('DB')->resultset('acl_role_mappings')->search({

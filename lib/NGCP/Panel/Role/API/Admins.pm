@@ -191,7 +191,7 @@ sub update_item {
     my $pass = $resource->{password};
     delete $resource->{password};
     if (defined $pass && $pass ne $old_resource->{saltedpass}) {
-        if ($c->user->id != $item->id) {
+        if ($c->user->acl_role->role ne 'system' && $c->user->id != $item->id) {
             $self->error($c, HTTP_FORBIDDEN, "Only own user can change password");
             return;
         }
