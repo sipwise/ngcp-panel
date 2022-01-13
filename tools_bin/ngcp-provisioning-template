@@ -359,11 +359,11 @@ The database user for the ngcp database to connect to. Only relevant if --db_hos
 
 =item B<--db_password=>I<db-password>
 
-The the database user password (if any) for the ngcp database to connect to. Only relevant if --db_host is specified.
+The database user password (if any) for the ngcp database to connect to. Only relevant if --db_host is specified.
 
 =item B<--file=>I<.csv-filename>
 
-Specify a .csv file to process. Each row repesent form values for one subscriber to create.
+Specify a .csv file to process. Each row represents form values for one subscriber to create.
 
 =item B<--first_name=>I<first-name>
 

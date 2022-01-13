@@ -24,7 +24,7 @@ has_field 'match_mode' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The mode how the the fee\'s source/destination has to match a call\'s source/destination.']
+        title => ['The mode how the fee\'s source/destination has to match a call\'s source/destination.']
     },
 );
 

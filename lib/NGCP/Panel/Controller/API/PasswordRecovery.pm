@@ -146,7 +146,7 @@ sub POST :Allow {
 
         $guard->commit;
 
-        $res = { success => 1, message => 'Password reset successfuly completed.' };
+        $res = { success => 1, message => 'Password reset successfully completed.' };
 
         $c->response->status(HTTP_OK);
         $c->response->body(JSON::to_json($res));

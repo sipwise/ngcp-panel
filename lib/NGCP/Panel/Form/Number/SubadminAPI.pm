@@ -48,7 +48,7 @@ has_field 'is_devid' => (
     type => 'Boolean',
     element_attr => {
         rel => ['tooltip'],
-        title => ['When selected, it is possible to register with the alias and recieve calls directed to the alias only']
+        title => ['When selected, it is possible to register with the alias and receive calls directed to the alias only']
     },
 );
 

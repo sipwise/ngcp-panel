@@ -6893,7 +6893,7 @@ msgid "Save SVG"
 msgstr "Salva SVG"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN)."
+msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt

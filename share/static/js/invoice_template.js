@@ -111,7 +111,7 @@ function savePreviewed( data, callback ){
         }
         
         //$('#load_previewed_control').css('display', 'inline' );
-        //refresh list after saving - there is nothin that can be cahnged in templates list after preview refresh
+        //refresh list after saving - there is nothin that can be changed in templates list after preview refresh
         //refreshAjaxList( 'template', data );
     } );
 }
@@ -129,7 +129,7 @@ function savePreviewedAndShowParsed( data ){
     //    //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
     //    setSvgStringToPreview( httpResponse, q, data )
     //    //$('#load_previewed_control').css('display', 'inline' );
-    //    //refresh list after saving - there is nothin that can be cahnged in templates list after preview refresh
+    //    //refresh list after saving - there is nothin that can be changed in templates list after preview refresh
     //    //refreshAjaxList( 'template', data );
     //} );
 }

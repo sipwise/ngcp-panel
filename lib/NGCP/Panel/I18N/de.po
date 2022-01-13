@@ -10212,7 +10212,7 @@ msgid "Save SVG"
 msgstr "SVG speichern"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN)."
+msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr "Suche nach einer teilweisen Übereinstimmung der User-Provided-Nummer (UPN) mit der E164-Hauptnummer und den Aliasen des Teilnehmers. Bei Übereinstimmung, wird die UPN ohne „allowed_clis“-Überprüfung und Kopieren der Network-Provided-Nummer (NPN) als gültig betrachtet."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

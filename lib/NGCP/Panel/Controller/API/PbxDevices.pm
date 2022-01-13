@@ -68,7 +68,7 @@ sub query_params {
         },
         {
             param => 'display_name',
-            description => 'Search for PBX devices matching a subscriber\'s diplay name pattern (wildcards possible)',
+            description => 'Search for PBX devices matching a subscriber\'s display name pattern (wildcards possible)',
             query => {
                 first => sub {
                     my $q = shift;

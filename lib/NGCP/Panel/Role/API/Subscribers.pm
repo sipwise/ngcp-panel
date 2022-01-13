@@ -78,6 +78,20 @@ sub resource_from_item {
     }
     my $sippassword = $resource{password};
     my $webpassword = $resource{webpassword};
+    # if the webpassword length is 54 or 56 chars and it contains $,
+    # we assume that the password is encrypted,
+    # as we do not have an explicit flag for the password field
+    # whether it's encrypted or not, there is a chance that
+    # if somebody manages to create a 54 chars password containing
+    # '$', it will be detected as false positive, but
+    #  - all webpasswords from mr8.5+ are meant to be encrypted
+    #  - in case of the false positive result, the worse that happens
+    #    the password is not returned to the user in plain-text
+    if ($change_passwords &&
+        $resource{webpassword} && (length $resource{webpassword}) =~ /^(54|56)$/ &&
+        $resource{webpassword} =~ /\$/) {
+            delete $resource{webpassword};
+    }
     if(!$form){
         ($form) = $self->get_form($c);
     }

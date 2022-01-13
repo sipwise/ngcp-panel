@@ -29,7 +29,7 @@ has_field 'is_devid' => (
     order => 98,
     element_attr => {
         rel => ['tooltip'],
-        title => ['When selected, it is possible to register with the alias and recieve calls directed to the alias only']
+        title => ['When selected, it is possible to register with the alias and receive calls directed to the alias only']
     },
 );
 
