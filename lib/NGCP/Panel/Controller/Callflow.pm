@@ -13,12 +13,15 @@ use NGCP::Panel::Utils::Message;
 use HTML::Entities;
 use MIME::Base64 qw(encode_base64url decode_base64url);
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     $c->detach('/denied_page')
         unless($c->config->{features}->{callflow});
+    unless ($c->user->roles eq "admin" || $c->user->call_data) {
+        $c->detach('/denied_page')
+    }
     return 1;
 }
 
