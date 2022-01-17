@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.18+0~mr9.5.2.18) unstable; urgency=medium
+
+  [ Javier Rodriguez ]
+  * [20b12d2] TT#153300 Voicemail 'temp' and 'greet' greetings options for Perl-based Admin Panel
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Jan 2022 17:03:04 +0100
+
 ngcp-panel (9.5.2.17+0~mr9.5.2.17) unstable; urgency=medium
 
   [ Rene Krenn ]
