@@ -23,7 +23,8 @@ function showCallDetails(callId){
             }).css('display','block').find($('.mod_close')).click(function(event) {
                 $('#'+divId).css('display','none');
             });
-        }
+        },
+        'GET'
     );
 }
 </script>

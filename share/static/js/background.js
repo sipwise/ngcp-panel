@@ -1,4 +1,4 @@
-function background(uri,q,callback) {
+function background(uri,q,callback,method) {
 	var xmlHttpReq = false;
 	//alert(uri);
 	//alert(q);
@@ -10,7 +10,10 @@ function background(uri,q,callback) {
 	    xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
 	}
 
-	xmlHttpReq.open('POST', uri, true);
+	if (method == null) {
+		method = 'POST';
+	}
+	xmlHttpReq.open(method, uri, true);
 	xmlHttpReq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	if(callback)
 		xmlHttpReq.onreadystatechange = function(){
@@ -28,7 +31,7 @@ function background(uri,q,callback) {
 
 
 // Background fetches a page into the specified element
-function fetch_into(div, uri, q, callback) {
+function fetch_into(div, uri, q, callback, method) {
 	var xmlHttpReq = false;
 	//alert(uri);
 	//alert(q);
@@ -49,8 +52,10 @@ function fetch_into(div, uri, q, callback) {
 		xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
 	}
     //var fd = new FormData();
-	xmlHttpReq.open('POST', uri, true);
-//	xmlHttpReq.open('GET', uri, true);
+	if (method == null) {
+		method = 'POST';
+	}
+	xmlHttpReq.open(method, uri, true);
 	xmlHttpReq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function() {
 		if (xmlHttpReq.readyState == 4) {
