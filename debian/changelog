@@ -1,3 +1,10 @@
+ngcp-panel (8.5.2.14+0~mr8.5.2.14) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [1080327] TT#159000 fix 403 error when loading call details
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 19 Jan 2022 13:26:36 +0100
+
 ngcp-panel (8.5.2.13+0~mr8.5.2.13) unstable; urgency=medium
 
   [ Rene Krenn ]
