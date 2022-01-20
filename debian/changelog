@@ -1,3 +1,10 @@
+ngcp-panel (7.5.6.9+0~mr7.5.6.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [76329cf] TT#159400 support fraudlimit grater than 1 million
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 20 Jan 2022 11:49:44 +0100
+
 ngcp-panel (7.5.6.8+0~mr7.5.6.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
