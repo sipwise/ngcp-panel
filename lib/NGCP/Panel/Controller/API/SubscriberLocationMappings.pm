@@ -136,6 +136,10 @@ sub POST :Allow {
         }
 
         $resource->{subscriber_id} = $sub->provisioning_voip_subscriber->id;
+        $resource->{location} //= '';
+        $resource->{caller_pattern} //= '.+';
+        $resource->{callee_pattern} //= '.+';
+
         my $item;
         try {
             $item = $c->model('DB')->resultset('voip_subscriber_location_mappings')->create($resource);

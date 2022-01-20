@@ -5824,7 +5824,7 @@ sub create_location_map :Chained('base') :PathPart('preferences/locationmap/crea
         try {
             $location_map_rs->create({
                 subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id,
-                location => $form->field('location')->value,
+                location => $form->field('location')->value // '',
                 caller_pattern => $form->field('caller_pattern')->value // '.+',
                 callee_pattern => $form->field('callee_pattern')->value // '.+',
                 mode => $form->field('mode')->value,
@@ -5882,7 +5882,7 @@ sub edit_location_map :Chained('location_map_base') :PathPart('edit') {
     my $location_map = $c->stash->{location_map};
     my $params = {};
 
-    if(!$posted && $location_map) {
+    if (!$posted && $location_map) {
         $params = {
             'location' => $location_map->location,
             'caller_pattern' => $location_map->caller_pattern,
@@ -5908,7 +5908,7 @@ sub edit_location_map :Chained('location_map_base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $location_map->update({
-                location => $form->field('location')->value,
+                location => $form->field('location')->value // '',
                 caller_pattern => $form->field('caller_pattern')->value // '.+',
                 callee_pattern => $form->field('callee_pattern')->value // '.+',
                 mode => $form->field('mode')->value,

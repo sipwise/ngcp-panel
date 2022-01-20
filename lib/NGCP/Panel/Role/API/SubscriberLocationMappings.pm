@@ -110,7 +110,7 @@ sub update_item {
         return;
     }
     $resource->{subscriber_id} = $sub->provisioning_voip_subscriber->id;
-
+    $resource->{location} //= '';
     $resource->{caller_pattern} //= '.+';
     $resource->{callee_pattern} //= '.+';
 
