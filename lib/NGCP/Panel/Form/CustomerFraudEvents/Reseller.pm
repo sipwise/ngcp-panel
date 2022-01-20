@@ -65,6 +65,7 @@ has_field 'interval_cost' => (
     type => 'Float',
     label => 'Interval cost',
     precision => '2',
+    size => '9',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
