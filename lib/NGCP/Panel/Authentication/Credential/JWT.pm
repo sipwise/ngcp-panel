@@ -40,11 +40,18 @@ sub authenticate {
 
     $c->log->debug("CredentialJWT::authenticate() called from " . $c->request->uri) if $self->debug;
 
-    my $auth_header = $c->req->header('Authorization');
-    return unless ($auth_header);
+    my $token;
+    if ($c->req->uri->path =~ /^\/login_jwt$/) {
+        $c->log->debug("Obtain token from the body") if $self->debug;
+        $token = $c->req->body_data->{jwt} // return;
+    } else {
+        $c->log->debug("Obtain token from the header") if $self->debug;
+        my $auth_header = $c->req->header('Authorization');
+        return unless $auth_header;
 
-    my ($token) = $auth_header =~ m/Bearer\s+(.*)/;
-    return unless ($token);
+        $token = $auth_header =~ m/Bearer\s+(.*)/;
+        return unless $token;
+    }
 
     $c->log->debug("Found token: $token") if $self->debug;
 

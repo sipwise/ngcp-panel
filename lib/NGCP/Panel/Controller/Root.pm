@@ -476,8 +476,9 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
     use Crypt::JWT qw/encode_jwt/;
 
     my $auth_token = $c->req->body_data->{token} // '';
-    my $user = $c->req->body_data->{username} // '';
-    my $pass = $c->req->body_data->{password} // '';
+    my $jwt        = $c->req->body_data->{jwt} // '';
+    my $user       = $c->req->body_data->{username} // '';
+    my $pass       = $c->req->body_data->{password} // '';
     my $ngcp_realm = $c->request->env->{NGCP_REALM} // 'admin';
 
     my $key = $ngcp_realm eq 'admin'
@@ -494,7 +495,8 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
     unless ($key) {
         $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
-        $c->response->body(encode_json({ code => HTTP_INTERNAL_SERVER_ERROR,
+        $c->response->body(encode_json({
+            code => HTTP_INTERNAL_SERVER_ERROR,
             message => "No JWT key has been configured" })."\n");
         $c->log->error("No JWT key has been configured");
         return;
@@ -502,20 +504,35 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
     unless ($ngcp_realm eq 'admin' || $ngcp_realm eq 'subscriber') {
         $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-        $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+        $c->response->body(encode_json({
+            code => HTTP_UNPROCESSABLE_ENTITY,
             message => "Invalid realm" })."\n");
         $c->log->error("Invalid realm");
         return;
     }
 
     my $auth_user;
-    if ($auth_token) {
+    if ($jwt) {
+        my $realm = $ngcp_realm eq 'admin' ? 'api_admin_jwt'
+                                           : 'api_subscriber_jwt';
+        my $res = $c->authenticate({}, $realm);
+        unless ($c->user_exists) {
+            $c->response->status(HTTP_FORBIDDEN);
+            $c->response->body(encode_json({
+                code => HTTP_FORBIDDEN,
+                message => "Forbidden!" })."\n");
+            $c->log->info("Invalid JWT");
+            return;
+        }
+        $auth_user = $c->user;
+    } elsif ($auth_token) {
         my $redis = NGCP::Panel::Utils::Redis::get_redis_connection($c, {database => $c->config->{'Plugin::Session'}->{redis_db}});
 
         unless ($redis) {
             $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
-            $c->response->body(encode_json({ code => HTTP_INTERNAL_SERVER_ERROR,
-            message => "Internal Server Error" })."\n");
+            $c->response->body(encode_json({
+                code => HTTP_INTERNAL_SERVER_ERROR,
+                message => "Internal Server Error" })."\n");
             $c->log->error("Could not connect to Redis");
             return;
         }
@@ -526,9 +543,10 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
         unless ($type && $role && $user_id) {
             $c->response->status(HTTP_FORBIDDEN);
-            $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-                                             message => "Forbidden!" })."\n");
-            $c->log->error("Unknown auth_token");
+            $c->response->body(encode_json({
+                code => HTTP_FORBIDDEN,
+                message => "Forbidden!" })."\n");
+            $c->log->info("Unknown auth_token");
             return;
         }
 
@@ -537,9 +555,10 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         if ($ngcp_realm eq 'admin') {
             unless (grep {$role eq $_} qw/admin reseller ccare ccareadmin/) {
                 $c->response->status(HTTP_FORBIDDEN);
-                $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-                                                 message => "Forbidden!" })."\n");
-                $c->log->error("Wrong auth_token role");
+                $c->response->body(encode_json({
+                    code => HTTP_FORBIDDEN,
+                    message => "Forbidden!" })."\n");
+                $c->log->info("Wrong auth_token role");
                 return;
             }
 
@@ -552,9 +571,10 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         } else {
             unless (grep {$role eq $_} qw/subscriber subscriberadmin/) {
                 $c->response->status(HTTP_FORBIDDEN);
-                $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
-                message => "Forbidden!" })."\n");
-                $c->log->error("Wrong auth_token role");
+                $c->response->body(encode_json({
+                    code => HTTP_FORBIDDEN,
+                    message => "Forbidden!" })."\n");
+                $c->log->info("Wrong auth_token role");
                 return;
             }
 
@@ -571,17 +591,19 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
     } else {
         unless ($user && $pass) {
             $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-            $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+            $c->response->body(encode_json({
+                code => HTTP_UNPROCESSABLE_ENTITY,
                 message => "No username or password given" })."\n");
-            $c->log->error("No username or password given");
+            $c->log->info("No username or password given");
             return;
         }
 
         unless (NGCP::Panel::Utils::Auth::check_password($pass)) {
             $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-            $c->response->body(encode_json({ code => HTTP_UNPROCESSABLE_ENTITY,
+            $c->response->body(encode_json({
+                code => HTTP_UNPROCESSABLE_ENTITY,
                 message => "'password' contains invalid characters" })."\n");
-            $c->log->error("'password' contains invalid characters");
+            $c->log->info("'password' contains invalid characters");
             return;
         }
 
@@ -612,9 +634,10 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
             unless ($usr_salted_pass && $usr_salted_pass eq $auth_user->saltedpass) {
                 $c->response->status(HTTP_FORBIDDEN);
-                $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+                $c->response->body(encode_json({
+                    code => HTTP_FORBIDDEN,
                     message => "User not found" })."\n");
-                $c->log->error("User not found");
+                $c->log->info("User not found");
                 return;
             }
         } else {
@@ -673,6 +696,8 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
     my $result = {};
 
+    my $log_user     = '';
+    my $log_user_id  = '';
     if ($ngcp_realm eq 'admin') {
         if ($auth_user) {
             my $jwt_data = {
@@ -687,13 +712,17 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 extra_headers => { typ => 'JWT' },
             );
             $result->{id} = int($auth_user->id // 0);
+            $result->{expires} = time + $relative_exp if $relative_exp;
         } else {
             $c->response->status(HTTP_FORBIDDEN);
-            $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+            $c->response->body(encode_json({
+                code => HTTP_FORBIDDEN,
                 message => "User not found" })."\n");
-            $c->log->error("User not found");
+            $c->log->info("User not found");
             return;
         }
+        $log_user    = $auth_user->login;
+        $log_user_id = $auth_user->id;
     } else {
         if ($auth_user && $auth_user->voip_subscriber) {
             my $jwt_data = {
@@ -708,14 +737,22 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 extra_headers => { typ => 'JWT' },
             );
             $result->{subscriber_id} = int($auth_user->voip_subscriber->id // 0);
+            $result->{expires} = time + $relative_exp if $relative_exp;
         } else {
             $c->response->status(HTTP_FORBIDDEN);
-            $c->response->body(encode_json({ code => HTTP_FORBIDDEN,
+            $c->response->body(encode_json({
+                code => HTTP_FORBIDDEN,
                 message => "User not found" })."\n");
-            $c->log->error("User not found");
+            $c->log->info("User not found");
             return;
         }
+        $log_user    = $auth_user->webusername;
+        $log_user_id = $auth_user->uuid;
     }
+
+    $c->log->debug(sprintf '%s JWT token for user=%s id=%s realm=%s expires_in_secs=%d',
+                    $jwt ? 'Re-issue' : 'Issue',
+                    $log_user, $log_user_id, $ngcp_realm, $relative_exp // 0);
 
     $c->res->body(encode_json($result));
     $c->res->code(HTTP_OK);  # 200
