@@ -1,3 +1,61 @@
+ngcp-panel (10.4.0.0+0~mr10.4.0.0) unstable; urgency=medium
+
+  [ Oleksandr Duts ]
+  * [e58cb2c] TT#149456 Admins introduce role_id flag
+  * [747af33] TT#151250 Write journal resource params: user_id, reseller_id, role_id, tx_id.
+  * [206877a] TT#149462 Enhance UI admins role usage
+  * [9855b6a] TT#149461 Enhance /api/admins to accept the role data property
+  * [e5dd7e5] TT#129169 API: DELETE /api/admins/:id return wrong http 500
+  * [8b6939a] TT#134106 API: GET autoattendants - fix subscriber access
+  * [581aa09] TT#153501 API: GET phonebookentries - fix subscriber access(422) to own phonebooks
+  * [938eef9] TT#119465 API callrecordings - searchable caller/callee
+  * [0327118] TT#157400 API/UI admins fix authorization for "system" role
+
+  [ Kirill Solomko ]
+  * [16b4dfe] TT#149456 Journal allow empty role_id
+  * [ac94626] TT#149456 fix and improve user role_id retreival, api tests
+  * [f9bb008] TT#149456 fix reseller_id in api-journals.t
+  * [55a8d55] TT#152901 prosody provision ignore error on timeout
+  * [4e309b9] TT#153050 add API soft_expand query parameter
+  * [ca87855] TT#149462 Form/Administrator/Reseller role_id required=0
+  * [e95ed81] TT#154500 improve admin users behaviour
+  * [81ebdb8] Revert "TT#151751 refactor persisting subscriber webpassword"
+  * [822f053] TT#154500 fix administrator form behaviour
+  * [f4154b1] TT#154500 tighten /api/admins roles
+  * [5d9618e] TT#156354 fix a syntax typo when marking voicemail as read
+  * [9dd50e8] TT#158003 make subscriber location mappings 'location' optional
+  * [1fe4382] TT#154353 add JWT token renewal
+
+  [ Rene Krenn ]
+  * [37f748c] TT#151401 invoice: calc totals from CDRs
+  * [5e9066c] TT#151751 refactor persisting subscriber webpassword
+  * [5445c72] TT#144300 accept Windows .csv file uploads
+  * [9a3c3cd] TT#153100 fix subscriber username queryparam search
+  * [8fac1ef] Revert "TT#144300 accept Windows .csv file uploads"
+  * [d9cd2da] TT#155850 CSC callhistory does not anonymize CLIR numbers
+  * [83ffb60] TT#156753 ngcp-provisioning-templates: allow unordered opts
+  * [3804fb9] TT#156753 ngcp-provisioning-templates: support "warn" loglevel
+  * [599dd06] TT#151751 fix plaintext sippassword no longer returned
+  * [741cf22] TT#146102 remove RFC5321/2 checks from passreset API forms
+  * [f3f473b] TT#157700 fix invoice svg rendering broken for 1st detailspage
+  * [d82d93d] TT#71950 fix leftover with 35b568dde
+  * [473e448] TT#156000 enable callflow UI for users with "call_data" flag
+  * [dcce2b8] TT#159000 fix 403 error when loading call details
+
+  [ Alexander Lutay ]
+  * [aac3a16] TT#153950 Add label 'Invoice Template' to Invoice create page
+
+  [ Michael Prokop ]
+  * [35b568d] TT#71950 Fix typos
+
+  [ Guillem Jover ]
+  * [c4faefb] TT#156156 Switch to «-» as the word separator in CLI options
+
+  [ Javier Rodriguez ]
+  * [c3ae96a] TT#153300 Voicemail 'temp' and 'greet' greetings options for Perl-based Admin Panel
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Jan 2022 16:56:30 +0100
+
 ngcp-panel (10.3.0.0+0~mr10.3.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
