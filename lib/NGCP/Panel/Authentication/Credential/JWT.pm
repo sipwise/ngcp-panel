@@ -49,7 +49,7 @@ sub authenticate {
         my $auth_header = $c->req->header('Authorization');
         return unless $auth_header;
 
-        $token = $auth_header =~ m/Bearer\s+(.*)/;
+        ($token) = $auth_header =~ m/Bearer\s+(.*)/;
         return unless $token;
     }
 
