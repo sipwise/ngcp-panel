@@ -1,3 +1,10 @@
+ngcp-panel (10.2.1.5+0~mr10.2.1.5) unstable; urgency=medium
+
+  [ Javier Rodriguez ]
+  * [845ba15] TT#160250 'Calculated fields' label changed to 'Language' label
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 27 Jan 2022 23:37:54 +0100
+
 ngcp-panel (10.2.1.4+0~mr10.2.1.4) unstable; urgency=medium
 
   [ Rene Krenn ]
