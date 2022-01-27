@@ -31,7 +31,7 @@ has_field 'description' => (
 
 has_field 'lang' => (
     type => 'Select',
-    label => 'Calculated fields',
+    label => 'Language',
     options => [
         { value => 'js', label => 'JavaScript' },
         { value => 'perl', label => 'Perl' },
