@@ -46,11 +46,30 @@ pod2usage(2) unless $template_name;
 pod2usage(1) if $template_name =~ /help|\?/;
 my $help;
 my $log_level;
+
+# XXX: Remove after mr10.5.
+sub parse_old_db_option {
+    my ($name, $value) = @_;
+    my $newname = $name =~ tr/_/-/r;
+    $db{$name} = $value;
+    warn "$0: option --$name is deprecated; use --$newname instead\n";
+}
+
+# XXX: Remove after mr10.5.
+sub parse_old_log_level_option {
+    my ($name, $value) = @_;
+    my $newname = $name =~ tr/_/-/r;
+    $log_level = $value;
+    warn "$0: option --$name is deprecated; use --$newname instead\n";
+}
+
 Getopt::Long::Configure("pass_through");
 Getopt::Long::Configure("permute");
 GetOptions(
-    ( map { ('db_' . $_ . ':s') => \$db{$_}; } keys %db ),
-    'log_level:s' => \$log_level,
+    ( map { ('db_' . $_ . ':s') => \&parse_old_db_option } keys %db ),
+    ( map { ('db-' . $_ . ':s') => \$db{$_}; } keys %db ),
+    'log_level:s' => \&parse_old_log_level_option,
+    'log-level:s' => \$log_level,
     "help|?" => \$help,
 ) or pod2usage(2);
 pod2usage(1) if $help;
@@ -327,9 +346,13 @@ ngcp-provisioning-template - Create subscribers with detailed settings according
 
 =head1 SYNOPSIS
 
-B<ngcp-provisioning-template> I<provisioning-template-name> [I<options>]
+For templates defined in config.yml file:
 
-B<ngcp-provisioning-template> I<reseller-name>B</>I<provisioning-template-name> [I<options>]
+E<9>B<ngcp-provisioning-template> "I<provisioning-template-name>" [I<options>]
+
+For templates defined in database:
+
+E<9>B<ngcp-provisioning-template> "I<reseller-name>B</>I<provisioning-template-name>" [I<options>]
 
 =head1 DESCRIPTION
 
@@ -345,35 +368,38 @@ by that template. The form fields can be passed as command line options.
 
 Print a brief help message and exits.
 
-=item B<--db_host=>I<db-host-IP-address>
+=item B<--db-host=>I<db-host-IP-address>
 
 The host of the ngcp database to connect to. If omitted, the database connection settings of ngcp-panel will be used.
 
-=item B<--db_port=>I<db-host-port>
+=item B<--db-port=>I<db-host-port>
 
-The port of the ngcp database to connect to. Only relevant if --db_host is specified.
+The port of the ngcp database to connect to.
+Only relevant if B<--db-host> is specified.
 
-=item B<--db_user=>I<db-username>
+=item B<--db-user=>I<db-username>
 
-The database user for the ngcp database to connect to. Only relevant if --db_host is specified.
+The database user for the ngcp database to connect to.
+Only relevant if B<--db-host> is specified.
 
-=item B<--db_password=>I<db-password>
+=item B<--db-password=>I<db-password>
 
-The the database user password (if any) for the ngcp database to connect to. Only relevant if --db_host is specified.
+The database user password (if any) for the ngcp database to connect to.
+Only relevant if B<--db-host> is specified.
 
-=item B<--file=>I<.csv-filename>
+=item B<--file=>I<csv-filename>
 
-Specify a .csv file to process. Each row repesent form values for one subscriber to create.
+Specify a .csv file to process. Each row represents form values for one subscriber to create.
 
-=item B<--first_name=>I<first-name>
+=item B<--[input-attribute-name]=>I<[attribute-value]>
 
-Provide the value for a form field "first_name" (if you have such in your provisioning template). Only relevant if no --file is specified.
+Provide an input attribute name and its value, as defined within the 'fields' tag in the provisioning template (Attribute must not be internal, i.e. 'calculated' type). Only relevant if no --file is specified.
 
 =item B<--purge>
 
 Terminate an existing subscriber with duplicate number/aliases first.
 
-=item B<--log_level>
+=item B<--log-level>
 
 Verbosity of printed messages while processing (debug, info, warn, error).
 
@@ -381,7 +407,7 @@ Verbosity of printed messages while processing (debug, info, warn, error).
 
 =head1 EXAMPLES
 
-ngcp-provisioning-template "My First Provisioning Template" --first_name="John" --last_name="Doe" --cc="43" --ac="316" --sn="123456" --purge
+ngcp-provisioning-template "My First Provisioning Template" --first-name="John" --last-name="Doe" --cc="43" --ac="316" --sn="123456" --purge
 
 ... runs "My First Provisioning Template" from config.yml using first_name "John", last_name "Doe" etc.
 
