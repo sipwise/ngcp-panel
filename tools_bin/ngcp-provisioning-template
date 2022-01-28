@@ -346,9 +346,13 @@ ngcp-provisioning-template - Create subscribers with detailed settings according
 
 =head1 SYNOPSIS
 
-B<ngcp-provisioning-template> I<provisioning-template-name> [I<options>]
+For templates defined in config.yml file:
 
-B<ngcp-provisioning-template> I<reseller-name>B</>I<provisioning-template-name> [I<options>]
+E<9>B<ngcp-provisioning-template> "I<provisioning-template-name>" [I<options>]
+
+For templates defined in database:
+
+E<9>B<ngcp-provisioning-template> "I<reseller-name>B</>I<provisioning-template-name>" [I<options>]
 
 =head1 DESCRIPTION
 
@@ -383,14 +387,13 @@ Only relevant if B<--db-host> is specified.
 The database user password (if any) for the ngcp database to connect to.
 Only relevant if B<--db-host> is specified.
 
-=item B<--file=>I<.csv-filename>
+=item B<--file=>I<csv-filename>
 
 Specify a .csv file to process. Each row represents form values for one subscriber to create.
 
-=item B<--first-name=>I<first-name>
+=item B<--[input-attribute-name]=>I<[attribute-value]>
 
-Provide the value for a form field "first_name" (if you have such in your
-provisioning template). Only relevant if no --file is specified.
+Provide an input attribute name and its value, as defined within the 'fields' tag in the provisioning template (Attribute must not be internal, i.e. 'calculated' type). Only relevant if no --file is specified.
 
 =item B<--purge>
 
