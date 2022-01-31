@@ -90,10 +90,11 @@ fields:
     label: "Terminate subscriber, if exists:"
     type: Boolean
 contract_contact:
-  identifier: "firstname, lastname"
+  identifier: "firstname, lastname, status"
   reseller: default
   firstname_code: "function() { return row.first_name; }"
   lastname_code: "function() { return row.last_name; }"
+  status: "active"
 contract:
   product: "Basic SIP Account"
   billing_profile: "Default Billing Profile"
