@@ -21,6 +21,10 @@ sub api_description {
 
 sub query_params {
     return [
+        {
+            param => 'subscriber_id',
+            description => 'Filter for header rule sets of a specific subscriber',
+        }
     ];
 }
 

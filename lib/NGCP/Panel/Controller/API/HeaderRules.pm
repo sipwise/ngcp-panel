@@ -36,6 +36,10 @@ sub query_params {
             description => 'Filter for rules belonging to a specific header rule set.',
             query_type  => 'string_eq',
         },
+        {
+            param => 'subscriber_id',
+            description => 'Filter for header rule sets of a specific subscriber',
+        }
     ];
 }
 

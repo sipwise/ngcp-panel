@@ -22,17 +22,29 @@ sub config_allowed_roles {
 
 sub _item_rs {
     my ($self, $c, $type) = @_;
-    my $item_rs;
 
-    if ($c->user->roles eq "admin") {
-        $item_rs = $c->model('DB')->resultset('voip_header_rules');
-    } elsif ($c->user->roles eq "reseller") {
+    my $item_rs = $c->model('DB')->resultset('voip_header_rules')->search_rs(undef, {
+        join => 'ruleset'
+    });
+
+
+    if ($c->user->roles eq "reseller") {
         $item_rs = $c->model('DB')->resultset('voip_header_rules')->search_rs({
-                'ruleset.reseller_id' => $c->user->reseller_id,
-            },{
-                join => 'ruleset'
-            });
+            'ruleset.reseller_id' => $c->user->reseller_id,
+        });
     }
+
+    if (my $subscriber_id = $c->req->param('subscriber_id')) {
+        my $prov_subscriber_id = NGCP::Panel::Utils::Subscriber::billing_to_prov_subscriber_id(
+            c => $c, subscriber_id => $subscriber_id
+        );
+        $item_rs = $item_rs->search_rs(
+            { 'ruleset.subscriber_id' => $prov_subscriber_id });
+    } else {
+        $item_rs = $item_rs->search_rs(
+            { 'ruleset.subscriber_id' => undef });
+    }
+
     return $item_rs;
 }
 
