@@ -2391,11 +2391,13 @@ sub get_usr_preference_rs {
         })->first;
     return unless($pref_rs);
 
+    my $attribute_id = $pref_rs->id;
+
     # filter by allowed attrs from profile
     if ($is_subadmin && $prov_subscriber && $prov_subscriber->voip_subscriber_profile) {
         my $found_attr = $prov_subscriber->voip_subscriber_profile
             ->profile_attributes->search_rs({
-                attribute_id => $pref_rs->id,
+                attribute_id => $attribute_id,
                 })->first;
         unless ($found_attr) {
             $c->log->debug("get_usr_preference_rs skipping attr '$attribute' not in profile");
@@ -2407,8 +2409,10 @@ sub get_usr_preference_rs {
     if($prov_subscriber) {
         $pref_rs = $pref_rs->search({
                 subscriber_id => $prov_subscriber->id,
+                attribute_id  => $attribute_id
             });
     }
+
     return $pref_rs;
 }
 

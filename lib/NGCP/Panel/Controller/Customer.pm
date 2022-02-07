@@ -912,11 +912,21 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     $form->values->{lock} = 0;
                 }
 
+                my $provisioning_voip_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+
+                my $default_contract_sound_set_row = $c->stash->{contract}->voip_sound_sets->search(
+                    { contract_default => 1 })->first;
+
+                if ($default_contract_sound_set_row) {
+                    NGCP::Panel::Utils::Sounds::subcriber_sound_set_update_or_create(
+                        $c, $provisioning_voip_subscriber, $default_contract_sound_set_row->id);
+                }
+
                 NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                     c => $c,
-                    prov_subscriber => $billing_subscriber->provisioning_voip_subscriber,
+                    prov_subscriber => $provisioning_voip_subscriber,
                     level => $form->values->{lock},
-                ) if ($billing_subscriber->provisioning_voip_subscriber);
+                ) if ($provisioning_voip_subscriber);
 
                 NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
 

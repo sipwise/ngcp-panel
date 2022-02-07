@@ -53,17 +53,7 @@ sub update_item_model {
             id => { '!=' => $item->id },
         })->update({ contract_default => 0 });
 
-        foreach my $bill_subscriber($item->contract->voip_subscribers->all) {
-            my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
-            if($prov_subscriber) {
-                my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                    c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set',
-                );
-                unless($pref_rs->first) {
-                    $pref_rs->create({ value => $item->id });
-                }
-            }
-        }
+        NGCP::Panel::Utils::Sounds::contract_sound_set_propagate($c, $item->contract, $item->id);
     }
 
     return $item;
@@ -87,7 +77,7 @@ sub delete_item {
             join => 'attribute',
         })->delete_all; # explicit delete_all, otherwise query fails
     }
-    
+
     $item->delete;
 
     return 1;
