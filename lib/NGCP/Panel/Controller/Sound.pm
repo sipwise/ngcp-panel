@@ -166,9 +166,9 @@ sub edit :Chained('base') :PathPart('edit') {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params->{contract}{id} = delete $params->{contract_id};
     $params = merge($params, $c->session->{created_objects});
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::AdminSet", $c);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller") {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::ResellerSet", $c);
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::CustomerSet", $c);
@@ -190,17 +190,17 @@ sub edit :Chained('base') :PathPart('edit') {
         },
         back_uri => $c->req->uri,
     );
-    if($posted && $form->validated) {
+    if ($posted && $form->validated) {
         try {
-            if($c->user->roles eq "admin") {
+            if ($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 $form->values->{contract_id} = $form->values->{contract}{id} // undef;
-                if(defined $form->values->{contract_id}) {
+                if (defined $form->values->{contract_id}) {
                     $form->values->{contract_default} //= 0;
                 } else {
                     $form->values->{contract_default} = 0;
                 }
-            } elsif($c->user->roles eq "reseller") {
+            } elsif ($c->user->roles eq "reseller") {
                 if(defined $c->stash->{set_result}->contract_id) {
                     $form->values->{contract_default} //= 0;
                 } else {
@@ -213,7 +213,7 @@ sub edit :Chained('base') :PathPart('edit') {
             delete $form->values->{contract};
             $c->model('DB')->txn_do(sub {
                 # if contract default is set, clear old ones first
-                if($c->stash->{set_result}->contract_id && $form->values->{contract_default} == 1) {
+                if ($c->stash->{set_result}->contract_id && $form->values->{contract_default} == 1) {
                     $c->stash->{sets_rs}->search({
                         reseller_id => $c->stash->{set_result}->reseller_id,
                         contract_id => $c->stash->{set_result}->contract_id,
@@ -221,25 +221,12 @@ sub edit :Chained('base') :PathPart('edit') {
                     })->update_all({ contract_default => 0 });
                 }
 
-                my $old_contract_default = $c->stash->{set_result}->contract_default;
                 $c->stash->{set_result}->update($form->values);
 
-                if($c->stash->{set_result}->contract &&
-                   $c->stash->{set_result}->contract_default == 1 && $old_contract_default != 1) {
-                    # go over each subscriber in the contract and set the contract_sound_set
-                    # preference if it doesn't have one set yet
-                    my $contract = $c->stash->{set_result}->contract;
-                    foreach my $bill_subscriber($contract->voip_subscribers->all) {
-                        my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
-                        if($prov_subscriber) {
-                            my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set',
-                            );
-                            unless($pref_rs->first) {
-                                $pref_rs->create({ value => $c->stash->{set_result}->id });
-                            }
-                        }
-                    }
+                if ($c->stash->{set_result}->contract &&
+                   $c->stash->{set_result}->contract_default == 1) {
+                    NGCP::Panel::Utils::Sounds::contract_sound_set_propagate(
+                        $c, $c->stash->{set_result}->contract, $c->stash->{set_result}->id);
                 }
             });
             delete $c->session->{created_objects}->{reseller};
@@ -248,7 +235,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 c    => $c,
                 desc => $c->loc('Sound set successfully updated'),
             );
-        } catch($e) {
+        } catch ($e) {
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
@@ -391,20 +378,8 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
                 my $set = $c->stash->{sets_rs}->create($form->values);
 
                 if($set->contract && $set->contract_default == 1) {
-                    # go over each subscriber in the contract and set the contract_sound_set
-                    # preference if it doesn't have one set yet
-                    my $contract = $set->contract;
-                    foreach my $bill_subscriber($contract->voip_subscribers->all) {
-                        my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
-                        if($prov_subscriber) {
-                            my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set',
-                            );
-                            unless($pref_rs->first) {
-                                $pref_rs->create({ value => $set->id });
-                            }
-                        }
-                    }
+                    NGCP::Panel::Utils::Sounds::contract_sound_set_propagate(
+                        $c, $set->contract, $set->id);
                 }
             });
 
