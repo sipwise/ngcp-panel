@@ -5,6 +5,7 @@ use warnings;
 use IPC::System::Simple qw/capturex/;
 use File::Temp qw/tempfile/;
 use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::Preferences;
 use File::Slurp;
 use File::Basename;
 
@@ -13,7 +14,7 @@ sub transcode_file {
 
     my $out;
     my @conv_args;
-    
+
     ## quite snappy, but breaks SOAP (sigpipe's) and the catalyst devel server
     ## need instead to redirect like below
 
@@ -43,9 +44,9 @@ sub transcode_file {
         };
         # default
     } # SWITCH
-    
+
     $out = capturex([0], "/usr/bin/sox", @conv_args);
-    
+
     return $out;
 }
 
@@ -55,7 +56,7 @@ sub transcode_data {
     print $fh (ref $data ? $$data : $data);
     close $fh;
     my $out = transcode_file($filename, $source_codec, $target_codec);
-    unlink $filename; 
+    unlink $filename;
 
     return \$out;
 }
@@ -64,7 +65,7 @@ sub stash_soundset_list {
     my (%params) = @_;
 
     my $c = $params{c};
-    my $contract = $params{contract}; 
+    my $contract = $params{contract};
 
     my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
     if($contract) {
@@ -101,7 +102,7 @@ sub get_handles_rs {
     my (%params) = @_;
 
     my $c = $params{c};
-    my $set_rs = $params{set_rs}; 
+    my $set_rs = $params{set_rs};
 
     my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
         ->search({
@@ -150,7 +151,7 @@ sub apply_default_soundset_files{
     my (%params) = @_;
 
     my ($c, $lang, $set_id, $handles_rs, $loopplay, $override, $error_ref) = @params{qw/c lang set_id handles_rs loopplay override error_ref/};
-    
+
     $loopplay = $loopplay ? 1 : 0;
 
     my $schema = $c->model('DB');
@@ -216,6 +217,34 @@ sub apply_default_soundset_files{
         my $group_name = $fres->handle->group->name;
         NGCP::Panel::Utils::Sems::clear_audio_cache($c, $fres->set_id,
             $fres->handle->name, $group_name);
+    }
+}
+
+sub contract_sound_set_propagate {
+    my ($c, $contract, $value) = @_;
+
+    for my $bill_subscriber ($contract->voip_subscribers->all) {
+        my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
+        if ($prov_subscriber) {
+            &subcriber_sound_set_update_or_create($c, $prov_subscriber, $value);
+        }
+    }
+}
+
+sub subcriber_sound_set_update_or_create {
+    my ($c, $prov_subscriber, $value) = @_;
+
+    my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(c => $c,
+        prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set',
+    );
+
+    my $row = $pref_rs->first;
+
+    if (!$row) {
+        $pref_rs->create({ value => $value });
+    } else {
+        # Update only undefined sound set value.
+        $row->update({ value => $value }) if ! defined $row->value;
     }
 }
 
