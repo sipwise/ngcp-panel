@@ -518,12 +518,6 @@ sub prepare_resource {
         $preferences->{display_name} = $resource->{display_name}
             if(defined $resource->{display_name});
 
-        my $default_sound_set = $customer->voip_sound_sets
-            ->search({ contract_default => 1 })->first;
-        if($default_sound_set) {
-            $preferences->{contract_sound_set} = $default_sound_set->id;
-        }
-
         # TODO: if we edit the primary of the pilot, will we not get the old primary number here?
         my $base_number = $pilot ? $pilot->primary_number : undef;
         if($base_number) {
@@ -625,12 +619,6 @@ sub create_subscriber {
     $params->{timezone} = $params->{timezone}->{name} if 'HASH' eq ref $params->{timezone};
     if ($params->{timezone} && !NGCP::Panel::Utils::DateTime::is_valid_timezone_name($params->{timezone})) {
         die("invalid timezone name '$params->{timezone}' detected");
-    }
-
-    # if there is a contract default sound set, use it.
-    my $default_sound_set = $contract->voip_sound_sets->search({ contract_default => 1 })->first;
-    if($default_sound_set) {
-        $preferences->{contract_sound_set} = $default_sound_set->id;
     }
 
     my $passlen = $c->config->{security}->{password_min_length} || 8;
@@ -1012,10 +1000,6 @@ sub update_preferences {
             unless(defined $preferences->{$k}) {
                 $pref->first->delete;
             } else {
-                # # contract_sound_set
-                # if ($k eq 'contract_sound_set') {
-                #     next if $pref->first->value;
-                # }
                 $pref->first->update({
                     'value' => $preferences->{$k},
                 });
