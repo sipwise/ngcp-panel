@@ -60,6 +60,8 @@ sub create_item {
                 contract_default => 1,
                 id => { '!=' => $item->id },
             })->update({ contract_default => 0 });
+
+            NGCP::Panel::Utils::Sounds::contract_sound_set_propagate($c, $item->contract, $item->id);
         }
         if ($copy_from_default_params->{copy_from_default}) {
             my $error;
