@@ -1,3 +1,14 @@
+ngcp-panel (10.3.1.2+0~mr10.3.1.2) unstable; urgency=medium
+
+  [ Javier Rodriguez ]
+  * [a951a1d] TT#160850 Fix for Built-In Batch Provisioning Template that Cannot Create A Customer With Several Subscribers
+  * [848b7b7] TT#158350 Enhance information on ngcp-provisioning-template help
+
+  [ Oleksandr Duts ]
+  * [8f8903e] TT#154351 Sound set propagation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 11 Feb 2022 12:30:27 +0100
+
 ngcp-panel (10.3.1.1+0~mr10.3.1.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
