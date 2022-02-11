@@ -1,3 +1,18 @@
+ngcp-panel (10.2.1.7+0~mr10.2.1.7) unstable; urgency=medium
+
+  [ Javier Rodriguez ]
+  * [a184750] TT#160850 Fix for Built-In Batch Provisioning Template that Cannot Create A Customer With Several Subscribers
+  * [254a028] TT#158350 Enhance ngcp-provisioning-template help
+
+  [ Rene Krenn ]
+  * [3cf6554] TT#156753 ngcp-provisioning-templates: allow unordered opts
+  * [89f9574] TT#156753 ngcp-provisioning-templates: support "warn" loglevel
+
+  [ Oleksandr Duts ]
+  * [7f4ca85] TT#154351 Sound set propagation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 11 Feb 2022 12:30:17 +0100
+
 ngcp-panel (10.2.1.6+0~mr10.2.1.6) unstable; urgency=medium
 
   [ Oleksandr Duts ]
