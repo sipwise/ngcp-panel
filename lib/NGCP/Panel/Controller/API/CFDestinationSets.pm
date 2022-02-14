@@ -9,6 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
+use NGCP::Panel::Utils::CallForwards qw();
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
@@ -157,9 +158,18 @@ sub POST :Allow {
         if (! exists $resource->{destinations} ) {
             $resource->{destinations} = [];
         }
-        if (!$self->check_destinations($c, $resource)) {
+        
+        if (!NGCP::Panel::Utils::CallForwards::check_destinations(
+            c => $c,
+            resource => $resource,
+            err_code => sub {
+                my ($err) = @_;
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            },
+        )) {
             last;
         }
+        
         try {
             my $primary_nr_rs = $b_subscriber->primary_number;
             my $number;

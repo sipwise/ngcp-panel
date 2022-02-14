@@ -28,6 +28,7 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::Kamailio qw();
+use NGCP::Panel::Utils::CallForwards qw();
 
 use JE::Destroyer qw();
 use JE qw();
@@ -644,6 +645,17 @@ sub provision_commit_row {
         $context,
         $schema,
     );
+    _init_cf_mappings_context(
+        $c,
+        $context,
+        $schema,
+        $c->stash->{provisioning_templates}->{$template},
+    );
+    _create_cf_mappings(
+        $c,
+        $context,
+        $schema,
+    );
 
     #die();
     $guard->commit;
@@ -703,6 +715,7 @@ sub _init_row_context {
 
     $context->{registrations} = [];
     $context->{trusted_sources} = [];
+    delete $context->{cf_mappings};
 
     delete $context->{reseller};
     delete $context->{billing_profile};
@@ -914,14 +927,15 @@ sub _init_subscriber_context {
 
         $context->{subscriber} = \%subscriber;
         
+        my $item;
         if (scalar @identifiers) {
-            my $e = $schema->resultset('voip_subscribers')->search_rs({
+            $item = $schema->resultset('voip_subscribers')->search_rs({
                 map { $_ => $subscriber{$_}; } @identifiers
             },{
                 join => 'domain',
             })->first;
-            if ($e and 'terminated' ne $e->status) {
-                $subscriber{id} = $e->id;
+            if ($item and 'terminated' ne $item->status) {
+                $subscriber{id} = $item->id;
             } else {
                 delete $subscriber{id};
             }
@@ -940,7 +954,8 @@ sub _init_subscriber_context {
                 die($msg);
             },
             validate_code => sub {
-                my ($r) = @_;
+                my ($res) = @_;
+                #todo
                 return 1;
             },
             getcustomer_code => sub {
@@ -950,6 +965,7 @@ sub _init_subscriber_context {
                     schema => $schema, contract_id => $contract->id) if $contract;
                 return $contract;
             },
+            item => $item,
         );
 
         $c->log->debug("provisioning template - subscriber: " . Dumper($context->{subscriber}));
@@ -1059,6 +1075,23 @@ sub _init_trusted_sources_context {
 
 }
 
+sub _init_cf_mappings_context {
+
+    my ($c, $context, $schema, $template) = @_;
+
+    if (exists $template->{cf_mappings}) {   
+        my %cf_mappings = ();
+        foreach my $col (keys %{$template->{cf_mappings}}) {
+            my ($k,$v) = _calculate($context,$col, $template->{cf_mappings}->{$col});
+            $cf_mappings{$k} = $v;
+        }
+    
+        $context->{cf_mappings} = \%cf_mappings;
+    
+        $c->log->debug("provisioning template - cf mappings: " . Dumper($context->{cf_mappings}));
+    }
+
+}
 
 sub _create_contract_contact {
 
@@ -1069,7 +1102,6 @@ sub _create_contract_contact {
             $context->{contract_contact},
         );
         $context->{contract_contact}->{id} = $contact->id;
-        #$context->{contract}->{contact_id} = $context->{contract_contact}->{id};
 
         $c->log->debug("provisioning template - contract contact id $context->{contract_contact}->{id} created");
     }
@@ -1229,6 +1261,79 @@ sub _create_trusted_sources {
         $schema->resultset('voip_trusted_sources')->create($trusted_source);
         $context->{_dfrd}->{kamailio_trusted_reload} //= 0;
         $context->{_dfrd}->{kamailio_trusted_reload} += 1;
+    }
+
+}
+
+sub _create_cf_mappings {
+
+    my ($c, $context, $schema) = @_;
+    
+    if (exists $context->{cf_mappings}) {
+        my $subscriber = $schema->resultset('voip_subscribers')->find({
+            id => $context->{subscriber}->{id},
+        });
+        
+        $subscriber = NGCP::Panel::Utils::CallForwards::update_cf_mappings(
+            c => $c,
+            resource => $context->{cf_mappings},
+            item => $subscriber,
+            err_code => sub {
+                my ($msg) = @_;
+                die($msg);
+            },
+            validate_mapping_code => sub {
+                my $res = shift;
+                #todo
+                return 1;
+                #return $self->validate_form(
+                #    c => $c,
+                #    form => $form,
+                #    resource => $res,
+                #);
+            },
+            validate_destination_set_code => sub {
+                my $res = shift;
+                #todo
+                return 1;
+                #return $self->validate_form(
+                #    c => $c,
+                #    form => NGCP::Panel::Role::API::CFDestinationSets->get_form($c),
+                #    resource => $res,
+                #);
+            },
+            validate_time_set_code => sub {
+                my $res = shift;
+                #todo
+                return 1;
+                #return $self->validate_form(
+                #    c => $c,
+                #    form => NGCP::Panel::Role::API::CFTimeSets->get_form($c),
+                #    resource => $res,
+                #);
+            },
+            validate_source_set_code => sub {
+                my $res = shift;
+                #todo
+                return 1;
+                #return $self->validate_form(
+                #    c => $c,
+                #    form => NGCP::Panel::Role::API::CFSourceSets->get_form($c),
+                #    resource => $res,
+                #);
+            },
+            validate_bnumber_set_code => sub {
+                my $res = shift;
+                #todo
+                return 1;
+                #return $self->validate_form(
+                #    c => $c,
+                #    form => NGCP::Panel::Role::API::CFBNumberSets->get_form($c),
+                #    resource => $res,
+                #);
+            },
+            params => undef,
+        );
     }
 
 }

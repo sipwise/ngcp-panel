@@ -9,16 +9,17 @@ use Config::General qw();
 use File::Slurp qw();
 use XML::Simple qw();
 
-#use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
-#use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
-#use lib "/usr/local/devel/ngcp-schema/lib";
-#use lib "/usr/local/devel/sipwise-base/lib";
+use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
+use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
+use lib "/usr/local/devel/ngcp-schema/lib";
+use lib "/usr/local/devel/sipwise-base/lib";
 use NGCP::Schema qw();
-#use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
-#use lib "/usr/local/devel/ngcp-panel/lib";
+use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
+use lib "/usr/local/devel/ngcp-panel/lib";
 use NGCP::Panel::Utils::ProvisioningTemplates qw();
 
 my @panel_configs = qw(
+   /home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
    /etc/ngcp-panel/ngcp_panel.conf
    /etc/ngcp_panel.conf
    /ngcp_panel.conf
@@ -27,13 +28,15 @@ my @panel_configs = qw(
 #/usr/local/devel/vagrant-ngcp/ngcp_panel.conf
 
 my @provisioning_configs = qw(
-   /etc/ngcp-panel/provisioning.conf
+   /home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
+   
 );
+#/etc/ngcp-panel/provisioning.conf
 #/home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
 #/usr/local/devel/vagrant-ngcp/provisioning.conf
 
 my %db = (
-    host => undef, #'192.168.0.96',
+    host => '192.168.0.96',
     port => 3306,
     user => 'root',
     password => undef,
@@ -310,7 +313,13 @@ sub _get_schema {
             if (-f $provisioning_config) {
                 my $conf = XML::Simple->new->XMLin($provisioning_config, ForceArray => 1);
                 if ($conf && $conf->{ngcp_connect_info}) {
-                    my $connectors = $conf->{ngcp_connect_info}->[0]->{connectors} // [];
+                    my $connectors;
+                    if (exists $conf->{ngcp_connect_info}->[0]->{connectors}) {
+                         $connectors = $conf->{ngcp_connect_info}->[0]->{connectors};
+                    } else {
+                        $connectors = $conf->{ngcp_connect_info};
+                    }
+                    $connectors //= [];
                     $schema = NGCP::Schema->connect($connectors->[0]);
                     $schema->set_wait_timeout(3600);
                     return $schema;
