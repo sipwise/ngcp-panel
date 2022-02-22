@@ -599,6 +599,9 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
         fields => {},
         back_uri => $c->req->uri,
     );
+
+    my $subscriber_root_url = "https://" . $c->req->uri->host . "/";
+
     if($posted && $form->validated) {
         my $subscriber;
         try {
@@ -635,7 +638,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
             desc => $c->loc('Web password successfully recovered, please re-login.'),
         );
         $c->flash(username => $subscriber->username . '@' . $subscriber->domain->domain);
-        $c->res->redirect($c->uri_for('/login/subscriber'));
+        $c->res->redirect($subscriber_root_url);
         return;
 
     }
@@ -644,7 +647,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
         form => $form,
         edit_flag => 1,
         template => 'subscriber/recoverpassword.tt',
-        close_target => $c->uri_for('/login/subscriber'),
+        close_target => $subscriber_root_url,
     );
 }
 
