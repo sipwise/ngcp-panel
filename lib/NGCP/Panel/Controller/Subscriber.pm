@@ -90,13 +90,13 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     }
 
     $c->stash->{dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => $c->loc('#') },
-        { name => "contract_id", search => 1, title => $c->loc('Contract #') },
-        { name => "contract.contact.email", search => 1, title => $c->loc('Contact Email') },
-        { name => "username", search => 1, title => $c->loc('Username') },
-        { name => "domain.domain", search => 1, title => $c->loc('Domain') },
-        { name => "uuid", search => 1, title => $c->loc('UUID') },
-        { name => "status", search => 1, title => $c->loc('Status') },
+        { name => "id", int_search => 1, title => $c->loc('#') },
+        { name => "contract_id", int_search => 1, title => $c->loc('Contract #') },
+        { name => "contract.contact.email", search => 0, title => $c->loc('Contact Email') },
+        { name => "username", strict_search => 0, title => $c->loc('Username') },
+        { name => "domain.domain", search => 0, title => $c->loc('Domain') },
+        { name => "uuid", strict_search => 0, title => $c->loc('UUID') },
+        { name => "status", search => 0, title => $c->loc('Status') },
         { name => "number", search => 0, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)" },
         #{ name => "provisioning_voip_subscriber.voip_dbaliases.username", search => 1, 'no_column' => 1 },
         { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 1, title => $c->loc('Profile') },
