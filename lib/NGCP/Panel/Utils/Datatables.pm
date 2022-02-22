@@ -238,9 +238,10 @@ sub _resolve_joins {
 
 sub get_search_string_pattern {
 
-    my $c = shift;
+    my ($c,$no_pattern) = @_;
     my $searchString = $c->request->params->{sSearch} // "";
     my $is_pattern = 0;
+    return ($searchString,$is_pattern) if $no_pattern;
     my $searchString_escaped = join('',map {
         my $token = $_;
         if ($token ne '\\\\') {
@@ -253,6 +254,10 @@ sub get_search_string_pattern {
         }
         $token;
     } split(/(\\\\)/,$searchString,-1));
+    if (not $is_pattern and not $no_pattern) {
+        $searchString_escaped .= '%';
+        $is_pattern = 1;
+    }
     return ($searchString_escaped,$is_pattern);
 
 }
@@ -272,7 +277,9 @@ sub _apply_search_filters {
             # avoid amigious column names if we have the same column in different joined tables
             if($col->{search} or $col->{strict_search} or $col->{int_search}){
                 my $is_pattern = 0;
-                (my $searchString_escaped, $is_pattern) = get_search_string_pattern($c);
+                (my $searchString_escaped, $is_pattern) = get_search_string_pattern($c,(
+                    $col->{strict_search} || $col->{int_search}
+                ));
                 if ($is_pattern) {
                     $op = 'like';
                     $search_value = $searchString_escaped;
