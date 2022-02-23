@@ -4,6 +4,7 @@ use warnings;
 
 use Sipwise::Base;
 
+use NGCP::Panel::Utils::Generic;
 use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
 
