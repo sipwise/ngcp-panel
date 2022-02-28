@@ -1,3 +1,13 @@
+ngcp-panel (9.5.5.0+0~mr9.5.5.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [71926cc] TT#156354 fix a syntax typo when marking voicemail as read
+
+  [ Javier Rodriguez ]
+  * [4e9aaf9] TT#153300 Voicemail 'temp' and 'greet' greetings options for Perl-based Admin Panel
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 28 Feb 2022 10:25:50 +0100
+
 ngcp-panel (9.5.4.0+0~mr9.5.4.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
