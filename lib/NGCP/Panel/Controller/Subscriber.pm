@@ -665,67 +665,78 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cfs = {};
 
-    foreach my $type(qw/cfu cfna cft cfb cfs cfr cfo/) {
-        my $maps = $prov_subscriber->voip_cf_mappings
-            ->search({ type => $type });
-        $cfs->{$type} = [];
-        foreach my $map($maps->all) {
-            my @dset = ();
-            my $dset_name = undef;
-            if($map->destination_set) {
-                @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
-                    { order_by => { -asc => 'priority' }})->all;
-                foreach my $d(@dset) {
-                    $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d, $prov_subscriber);
-                }
-                $dset_name = $map->destination_set->name;
+    my $start = time();
+    my $maps = $prov_subscriber->voip_cf_mappings->search(undef,
+        {
+            prefetch => [
+                {destination_set => 'voip_cf_destinations'},
+                {time_set        => 'voip_cf_periods'},
+                {source_set      => 'voip_cf_sources'},
+                {bnumber_set     => 'voip_cf_bnumbers'}
+            ]
+        });
+
+    foreach my $map($maps->all) {
+        my @dset = ();
+        my $dset_name = undef;
+        if($map->destination_set) {
+            @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
+                { order_by => { -asc => 'priority' }})->all;
+            foreach my $d(@dset) {
+                $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d, $prov_subscriber);
             }
-            my @tset = ();
-            my $tset_name = undef;
-            if($map->time_set) {
-                @tset = map { { $_->get_columns } } $map->time_set->voip_cf_periods->all;
-                foreach my $t(@tset) {
-                    $t->{as_string} = NGCP::Panel::Utils::Subscriber::period_as_string($t);
-                }
-                $tset_name = $map->time_set->name;
-            }
-            my @sources = ();
-            my $sset_name = undef;
-            my $sset_mode = undef;
-            if($map->source_set) {
-                @sources = map { { $_->get_columns } } $map->source_set->voip_cf_sources->all;
-                foreach my $s(@sources) {
-                    $s->{as_string} = $s->{source};
-                }
-                $sset_name = $map->source_set->name;
-                $sset_mode = $map->source_set->mode;
-            }
-            my @bnumbers = ();
-            my $bset_name = undef;
-            my $bset_mode = undef;
-            if($map->bnumber_set) {
-                @bnumbers = map { { $_->get_columns } } $map->bnumber_set->voip_cf_bnumbers->all;
-                foreach my $s(@bnumbers) {
-                    $s->{as_string} = $s->{bnumber};
-                }
-                $bset_name = $map->bnumber_set->name;
-                $bset_mode = $map->bnumber_set->mode;
-            }
-            push @{ $cfs->{$type} }, {
-                destinations => \@dset,
-                dset_name => $dset_name,
-                periods => \@tset,
-                tset_name => $tset_name,
-                sources => \@sources,
-                sset_name => $sset_name,
-                sset_mode => $sset_mode,
-                bset_name => $bset_name,
-                bset_mode => $bset_mode,
-                bnumbers => \@bnumbers,
-                enabled => $map->enabled,
-            };
+            $dset_name = $map->destination_set->name;
         }
+        my @tset = ();
+        my $tset_name = undef;
+        if($map->time_set) {
+            @tset = map { { $_->get_columns } } $map->time_set->voip_cf_periods->all;
+            foreach my $t(@tset) {
+                $t->{as_string} = NGCP::Panel::Utils::Subscriber::period_as_string($t);
+            }
+            $tset_name = $map->time_set->name;
+        }
+        my @sources = ();
+        my $sset_name = undef;
+        my $sset_mode = undef;
+        if($map->source_set) {
+            @sources = map { { $_->get_columns } } $map->source_set->voip_cf_sources->all;
+            foreach my $s(@sources) {
+                $s->{as_string} = $s->{source};
+            }
+            $sset_name = $map->source_set->name;
+            $sset_mode = $map->source_set->mode;
+        }
+        my @bnumbers = ();
+        my $bset_name = undef;
+        my $bset_mode = undef;
+        if($map->bnumber_set) {
+            @bnumbers = map { { $_->get_columns } } $map->bnumber_set->voip_cf_bnumbers->all;
+            foreach my $s(@bnumbers) {
+                $s->{as_string} = $s->{bnumber};
+            }
+            $bset_name = $map->bnumber_set->name;
+            $bset_mode = $map->bnumber_set->mode;
+        }
+        push @{ $cfs->{$map->type} }, {
+            destinations => \@dset,
+            dset_name => $dset_name,
+            periods => \@tset,
+            tset_name => $tset_name,
+            sources => \@sources,
+            sset_name => $sset_name,
+            sset_mode => $sset_mode,
+            bset_name => $bset_name,
+            bset_mode => $bset_mode,
+            bnumbers => \@bnumbers,
+            enabled => $map->enabled,
+        };
     }
+
+    my $end = time();
+
+    warn sprintf("Execution Time: %0.02f s\n", $end - $start);
+
     $c->stash(cf_destinations => $cfs);
 
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
