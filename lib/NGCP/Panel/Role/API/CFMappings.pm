@@ -27,14 +27,25 @@ sub hal_from_item {
 
     my $resource = { subscriber_id => $item->id, cfu => [], cfb => [], cfna => [], cft => [], cfs => [], cfr => [], cfo => []};
     my $b_subs_id = $item->id;
-    my $p_subs_id = $item->provisioning_voip_subscriber->id;
+    my $prov_subscriber = $item->provisioning_voip_subscriber;
+    my $p_subs_id = $prov_subscriber->id;
 
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, attribute => 'ringtimeout', prov_subscriber => $item->provisioning_voip_subscriber)->first;
+            c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subscriber)->first;
     $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
 
     unless ($params->{skip_existing}) {
-        for my $mapping ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
+        my $mappings = $prov_subscriber->voip_cf_mappings->search(undef,
+                {
+                    prefetch => [
+                        {destination_set => 'voip_cf_destinations'},
+                        {time_set        => 'voip_cf_periods'},
+                        {source_set      => 'voip_cf_sources'},
+                        {bnumber_set     => 'voip_cf_bnumbers'}
+                    ]
+                }
+            );
+        for my $mapping ($mappings->all) {
             push @{ $resource->{$mapping->type} }, {
                     $mapping->destination_set ? (
                         destinationset => $mapping->destination_set->name,
