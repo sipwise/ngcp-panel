@@ -33,6 +33,22 @@ has_field 'type' => (
     },
 );
 
+has_field 'call_direction' => (
+    type => 'Select',
+    label => 'Call direction',
+    required => 1,
+    options => [
+        { label => 'incoming calls only', value => 'in' },
+        { label => 'outgoing calls only', value => 'out' },
+        { label => 'incoming and outgoing calls', value => 'in_out' },
+    ],
+    default => 'out',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The call directions to include in the invoice.'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -43,7 +59,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name type/],
+    render_list => [qw/name type call_direction/],
 );
 
 has_block 'actions' => (

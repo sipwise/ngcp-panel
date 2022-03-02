@@ -246,14 +246,18 @@ sub get_contract_zonesfees {
     my %params = @_;
 
     my $c = $params{c};
-    my $in = delete $params{in};
-    my $out = delete $params{out};
+    my $call_direction = delete $params{call_direction};
 
     my ($zonecalls_rs_in, $zonecalls_rs_out) = get_contract_zonesfees_rs(%params);
-    my @zones = (
-        $in ? $zonecalls_rs_in->all : (),
-        $out ? $zonecalls_rs_out->all : (),
-    );
+    my @zones = ();
+    if ($call_direction) {
+        if ($call_direction eq "in" or $call_direction eq "in_out") {
+            push(@zones,$zonecalls_rs_in->all);
+        }
+        if ($call_direction eq "out" or $call_direction eq "in_out") {
+            push(@zones,$zonecalls_rs_out->all);
+        }
+    }
 
     my %allzones;
     for my $zone (@zones) {
@@ -283,7 +287,7 @@ sub get_contract_zonesfees {
 
 sub get_contract_calls_rs{
     my %params = @_;
-    (my($c,$customer_contract_id,$stime,$etime)) = @params{qw/c customer_contract_id stime etime/};
+    (my($c,$customer_contract_id,$stime,$etime,$call_direction)) = @params{qw/c customer_contract_id stime etime call_direction/};
 
     $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
     $etime ||= $stime->clone->add( months => 1 );
@@ -295,26 +299,46 @@ sub get_contract_calls_rs{
     my @colnames = @cols;
     push(@cols,qw/source_customer_billing_zones_history.zone source_customer_billing_zones_history.detail/);
     push(@colnames,qw/zone zone_detail/);
-
-    my $calls_rs = $c->model('DB')->resultset('cdr')->search_rs({
-#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
+    
+    my $calls_rs = $c->model('DB')->resultset('cdr')->search({
         'call_status'       => 'ok',
-        'source_user_id'    => { '!=' => '0' },
         'start_time'        =>
             [ -and =>
                 { '>=' => $stime->epoch},
                 { '<=' => $etime->epoch},
             ],
-        'source_account_id' => $customer_contract_id,
-    },{
-        select => \@cols,
-        as => \@colnames,
-        'join' => 'source_customer_billing_zones_history',
-        'order_by'    => 'start_time',
-    });
+        },{
+            select => \@cols,
+            as => \@colnames,
+            'join' => 'source_customer_billing_zones_history',
+            'order_by'    => 'start_time',
+        }
+    );
 
-    #suppression rs decoration at last, after any "select =>"
-    return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
+    if ($call_direction) {
+        if ($call_direction eq "in") {
+            $calls_rs = $calls_rs->search({
+                destination_account_id => $customer_contract_id,
+            });
+            #suppression rs decoration at last, after any "select =>"
+            return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_IN);            
+        } elsif ($call_direction eq "out") {
+            $calls_rs = $calls_rs->search({
+                source_account_id => $customer_contract_id,
+            });
+            #suppression rs decoration at last, after any "select =>"
+            return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+        } elsif ($call_direction eq "in_out") {
+            $calls_rs = $calls_rs->search({
+                -or => [
+                        { source_account_id => $customer_contract_id },
+                        { destination_account_id => $customer_contract_id },
+                    ],
+            });
+            #suppression rs decoration at last, after any "select =>"
+            return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
+        }
+    }
 
 }
 

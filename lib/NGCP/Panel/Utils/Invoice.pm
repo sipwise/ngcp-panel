@@ -77,8 +77,7 @@ sub create_invoice{
         contract_id => $contract_id,
         stime => $stime,
         etime => $etime,
-        in => 0,
-        out => 1,
+        call_direction => $tmpl->call_direction,
         group_by_detail => 1,
     );
     my $calllist_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
@@ -86,6 +85,7 @@ sub create_invoice{
         customer_contract_id => $contract_id,
         stime => $stime,
         etime => $etime,
+        call_direction => $tmpl->call_direction,
     );
     my $calllist = [ map {
         my $call = {$_->get_inflated_columns};
