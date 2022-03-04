@@ -665,7 +665,6 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cfs = {};
 
-    my $start = time();
     my $maps = $prov_subscriber->voip_cf_mappings->search(undef,
         {
             prefetch => [
@@ -732,10 +731,6 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             enabled => $map->enabled,
         };
     }
-
-    my $end = time();
-
-    warn sprintf("Execution Time: %0.02f s\n", $end - $start);
 
     $c->stash(cf_destinations => $cfs);
 
