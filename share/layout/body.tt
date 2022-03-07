@@ -74,7 +74,6 @@
                         <li><a href="?lang=fr"><img src="/img/lang/fr.png" class="ngcp-lang-flag"/> French</a></li>
                         <li><a href="?lang=it"><img src="/img/lang/it.png" class="ngcp-lang-flag"/> Italian</a></li>
                         <li><a href="?lang=es"><img src="/img/lang/es.png" class="ngcp-lang-flag"/> Spanish</a></li>
-                        <li><a href="?lang=ru"><img src="/img/lang/ru.png" class="ngcp-lang-flag"/> Russian</a></li>
                     </ul>
                     </li>
                     <li><a href="[% c.uri_for('/logout') %]">[% c.loc('Logout') %]</a></li>
