@@ -880,13 +880,6 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside//div//a[contains(., "Dashboard")]')) > 0, "Language wasn't changed")
         print("OK")
-        print("Try to change language to Russian...", end="")
-        driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
-        time.sleep(1)
-        driver.find_element_by_xpath('/html/body/div[@class="q-menu q-position-engine scroll"]/div[7]').click()
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//aside//div//a[contains(., "Главная")]')) > 0, "Language wasn't changed")
-        print("OK")
         print("Try to change language back to English...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div/header/div/button[3]').click()
         time.sleep(1)

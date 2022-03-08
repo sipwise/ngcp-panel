@@ -87,21 +87,6 @@ links.locales['da'] = {
 };
 links.locales['da_DK'] = links.locales['da'];
 
-// Russian ===================================================
-links.locales['ru'] = {
-    'MONTHS': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
-    'MONTHS_SHORT': ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
-    'DAYS': ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
-    'DAYS_SHORT': ["Вос", "Пон", "Втo", "Срe", "Чет", "Пят", "Суб"],
-    'ZOOM_IN': "Увeличить",
-    'ZOOM_OUT': "Умeньшить",
-    'MOVE_LEFT': "Сдвинуть налeво",
-    'MOVE_RIGHT': "Сдвинуть направо",
-    'NEW': "Новый",
-    'CREATE_NEW_EVENT': "Создать новоe событиe"
-};
-links.locales['ru_RU'] = links.locales['ru'];
-
 // Spanish ===================================================
 links.locales['es'] = {
     'MONTHS': ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
