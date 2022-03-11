@@ -87,53 +87,44 @@ sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
-    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $subscribers_rs = $self->item_rs($c, "subscribers");
-        (my $total_count, $subscribers_rs, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers_rs);
-        my $subscribers = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c,
-            rs => $subscribers_rs,
-            contract_id_field => 'contract_id');
-        my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my (@embedded, @links, %contract_map);
-        for my $subscriber (@$subscribers) {
-            next unless($subscriber->provisioning_voip_subscriber);
-            my $contract = $subscriber->contract;
-            my $balance; $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                contract => $contract,
-                now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
-            $contract_map{$contract->id} = 1;
-            push @embedded, $self->hal_from_item($c, $subscriber, "subscribers");
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
-            );
-        }
-        $self->delay_commit($c,$guard);
-        push @links,
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            $self->collection_nav_links($c, $page, $rows, $total_count, $c->request->path, $c->request->query_params);
 
-        my $hal = Data::HAL->new(
-            embedded => [@embedded],
-            links => [@links],
+    my $subscribers_rs = $self->item_rs($c, "subscribers");
+    (my $total_count, $subscribers_rs, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers_rs);
+    my $subscribers = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c,
+        rs => $subscribers_rs,
+        contract_id_field => 'contract_id');
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my (@embedded, @links);
+    for my $subscriber (@$subscribers) {
+        next unless($subscriber->provisioning_voip_subscriber);
+        push @embedded, $self->hal_from_item($c, $subscriber, "subscribers");
+        push @links, Data::HAL::Link->new(
+            relation => 'ngcp:'.$self->resource_name,
+            href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
         );
-        $hal->resource({
-            total_count => $total_count,
-        });
-        my $response = HTTP::Response->new(HTTP_OK, undef,
-            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
-        return;
     }
+
+    push @links,
+        Data::HAL::Link->new(
+            relation => 'curies',
+            href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+            name => 'ngcp',
+            templated => true,
+        ),
+        Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+        $self->collection_nav_links($c, $page, $rows, $total_count, $c->request->path, $c->request->query_params);
+
+    my $hal = Data::HAL->new(
+        embedded => [@embedded],
+        links => [@links],
+    );
+    $hal->resource({
+        total_count => $total_count,
+    });
+    my $response = HTTP::Response->new(HTTP_OK, undef,
+        HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
+    $c->response->headers($response->headers);
+    $c->response->body($response->content);
     return;
 }
 

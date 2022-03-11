@@ -329,11 +329,6 @@ sub GET :Allow {
         my (@embedded, @links, %contract_map);
         my ($form) = $self->get_form($c);
         for my $subscriber (@$subscribers) {
-            my $contract = $subscriber->contract;
-            NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                contract => $contract,
-                now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
-            $contract_map{$contract->id} = 1;
             my $resource = $self->resource_from_item($c, $subscriber, $form);
             push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, Data::HAL::Link->new(

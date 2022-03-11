@@ -163,10 +163,11 @@ sub prepare_resource {
         $prefs = $sub_prefs->union($ct_prefs->search({attribute_id => {-not_in => [map {$_->get_column('attribute_id')} $sub_prefs->all]}}));
         $prefs = $prefs->union($dom_prefs->search({attribute_id => {-not_in => [map {$_->get_column('attribute_id')} $prefs->all]}}));
     }
+
     $prefs = $prefs->search({
     }, {
-        join => 'attribute',
-        order_by => { '-asc' => 'id' },
+        prefetch => 'attribute',
+        order_by => { '-asc' => 'me.id' },
     });
 
     my $resource;
