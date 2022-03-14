@@ -155,15 +155,18 @@ sub update_item {
     });
     my $handle;
     if($set->contract_id) {
+        my @group_names = qw/pbx music_on_hold digits custom_announcements/;
         $handle_rs = $handle_rs->search({
-            'group.name' => { 'in' => ['pbx', 'music_on_hold', 'digits'] },
+            'group.name' => { 'in' => \@group_names},
         },{
             join => 'group',
         });
         $handle = $handle_rs->first;
         unless($handle) {
-            $c->log->error("invalid handle '$$resource{handle}', must be in group pbx, music_on_hold or digits for a customer sound set");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must be in group pbx, music_on_hold or digits for a customer sound set");
+            my $must_be_in_string = sprintf("the sound file must be in one of the customer sound set groups: %s",
+                join(', ', @group_names));
+            $c->log->error('invalid handle ' . $resource->{handle} . ' ' . $must_be_in_string);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle $must_be_in_string");
             return;
         }
     } else {
