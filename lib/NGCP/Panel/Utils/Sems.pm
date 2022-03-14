@@ -317,7 +317,7 @@ sub clear_audio_cache {
     my @services;
     if ($group_name eq "pbx" )  {
         @services = (@pbx);
-    } elsif ($group_name =~ /^(music_on_hold|digits)$/) {
+    } elsif ($group_name =~ /^(music_on_hold|digits|custom_announcements)$/) {
         @services = (@pbx, "appserver");
     } elsif ($group_name =~ /^(malicious_call_identification|voucher_recharge|play_balance|conference|calling_card)$/) {
         @services = ("appserver");
