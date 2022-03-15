@@ -1,3 +1,11 @@
+ngcp-panel (9.5.2.19+0~mr9.5.2.19) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [943d5f2] TT#151401 invoice: calc totals from CDRs
+  * [158b961] TT#157700 fix invoice svg rendering broken for 1st detailspage
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 15 Mar 2022 11:47:11 +0100
+
 ngcp-panel (9.5.2.18+0~mr9.5.2.18) unstable; urgency=medium
 
   [ Javier Rodriguez ]
