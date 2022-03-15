@@ -10008,7 +10008,7 @@ msgstr "Eigentümer des Regel-Sets"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rwr dp"
-msgstr "@vtsvetov Alright, thanks"
+msgstr "Rwr dp"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Rwr dp id"
