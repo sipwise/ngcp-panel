@@ -64,10 +64,33 @@ sub create_peer_registration {
 
     $c->log->debug("creating peer registration for subscriber '".$username.'@'.$domain."'");
 
-    my $outbound_sock = _get_outbound_socket($c, $prefs);
-    if($outbound_sock) {
-        $contact = $outbound_sock->{contact};
-        $transport = $outbound_sock->{transport};
+    if ($type eq 'peering') {
+        # outbound_sock preference is only available for peerings
+        my $outbound_sock = _get_outbound_socket($c, $prefs);
+
+        # if the socket is not default, then a precedence for picking
+        # the transport is given to the transport of the outbound socket
+        if($outbound_sock) {
+            $contact = $outbound_sock->{contact};
+            $transport = $outbound_sock->{transport};
+
+        # if the outbound socket is default, then use the transport
+        # of the peering's parameters (Protocol: UDP/TCP/TLS)
+        } else {
+            SWITCH: for ($c->stash->{server_result}->transport) {
+                /^2$/ && do {
+                    $transport = ';transport=tcp';
+                    last SWITCH;
+                };
+                /^3$/ && do {
+                    $transport = ';transport=tls';
+                    last SWITCH;
+                };
+                # default UDP always
+                $transport = ';transport=udp';
+            }
+        }
+        $c->log->debug("transport picked for the outbound peering registration is '$transport'");
     }
 
     # if no specific username defined for the Authorization header
@@ -155,10 +178,33 @@ sub update_peer_registration {
 
     $c->log->debug("trying to update peer registration for subscriber '".$username.'@'.$domain."'");
 
-    my $outbound_sock = _get_outbound_socket($c, $prefs);
-    if($outbound_sock) {
-        $contact = $outbound_sock->{contact};
-        $transport = $outbound_sock->{transport};
+    if ($type eq 'peering') {
+        # outbound_sock preference is only available for peerings
+        my $outbound_sock = _get_outbound_socket($c, $prefs);
+
+        # if the socket is not default, then a precedence for picking
+        # the transport is given to the transport of the outbound socket
+        if($outbound_sock) {
+            $contact = $outbound_sock->{contact};
+            $transport = $outbound_sock->{transport};
+
+        # if the outbound socket is default, then use the transport
+        # of the peering's parameters (Protocol: UDP/TCP/TLS)
+        } else {
+            SWITCH: for ($c->stash->{server_result}->transport) {
+                /^2$/ && do {
+                    $transport = ';transport=tcp';
+                    last SWITCH;
+                };
+                /^3$/ && do {
+                    $transport = ';transport=tls';
+                    last SWITCH;
+                };
+                # default UDP always
+                $transport = ';transport=udp';
+            }
+        }
+        $c->log->debug("transport picked for the outbound peering registration is '$transport'");
     }
 
     use Data::Dumper;
