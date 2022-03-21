@@ -1,3 +1,10 @@
+ngcp-panel (9.5.4.3+0~mr9.5.4.3) unstable; urgency=medium
+
+  [ Oleksandr Duts ]
+  * [fca7895] TT#141101 UI/API fix custom_announcement upload
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Mar 2022 16:17:24 +0100
+
 ngcp-panel (9.5.4.2+0~mr9.5.4.2) unstable; urgency=medium
 
   [ Rene Krenn ]
