@@ -661,6 +661,16 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
                 }
             }
 
+            unless ($c->stash->{server_result}->lcr_gw) {
+                my $err = "Cannot set peer registration, this server is not enabled";
+                NGCP::Panel::Utils::Message::error(
+                    c     => $c,
+                    log   => "Failed to set peer registration: $err",
+                    desc  => $c->loc($err),
+                );
+                return;
+            }
+
             my $prov_peer = {};
             my $type = 'peering';
             $prov_peer->{username} = $c->stash->{server}->{name};
