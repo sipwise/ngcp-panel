@@ -43,22 +43,23 @@ sub overall_status {
 
     my $report = decode_json(NGCP::Panel::Utils::Statistics::get_ngcp_status());
 
+    my $status_level = lc $report->{system_status};
     my %status_map = (
-        ERRORS => {
+        errors => {
             class => 'ngcp-red-error',
             text => $c->loc('Errors'),
         },
-        WARNINGS => {
+        warnings => {
             class => 'ngcp-orange-warning',
             text => $c->loc('Warnings'),
         },
-        OK => {
+        ok => {
             class => 'ngcp-green-ok',
             text => $c->loc('All services running'),
         },
     );
-    my $status = $status_map{$report->{system_status}};
-    $status->{data} = $report->{checks} if $report->{system_status} ne 'OK';
+    my $status = $status_map{$status_level};
+    $status->{problems} = $report->{problems} if $status_level ne 'ok';
 
     return $status;
 }

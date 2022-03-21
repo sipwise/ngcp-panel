@@ -16,7 +16,7 @@ enqueLists.push([{
         //console.log(data);
         var txt = data.widget_data.text;
         var cls = data.widget_data.class;
-        var ngcp_status = data.widget_data.data;
+        var problems = data.widget_data.problems;
         $("#admin_system_overview_lazy_loading").remove();
         $("#admin_system_overview_lazy_items_header").append(
             '<div class="plan-price">' +
@@ -26,7 +26,7 @@ enqueLists.push([{
         $("#admin_system_overview_lazy_items_list").prepend(
             '<li>[% c.loc('Status') %]: <strong id="status_text"></strong></li>'
         );
-        if (ngcp_status) {
+        if (problems) {
             $("#status_text").append(
                 '<a data-toggle="modal" href="#statistics_modal">' + txt + '</a>'
             );
@@ -34,12 +34,17 @@ enqueLists.push([{
         else{
             $("#status_text").append(txt);
         }
-        $.each( ngcp_status, function( i, val ) {
-            $("#statistics_modal_content").append( "<h2>" + val.title + "</h2>" );
-            $.each( val.messages, function( i, message ) {
-                $("#statistics_modal_content").append( "<p>" + message + "</p>" );
+        for (var type in problems) {
+            var last_host = "none";
+            $("#statistics_modal_content").append( "<h2>" + type + " problems detected</h2>" );
+            $.each( problems[type], function( i, problem ) {
+                if (type == "node" && last_host != problem.host) {
+                    $("#statistics_modal_content").append( "<h3>node " + problem.host + " in cluster blade " + problem.blade + "</p>" );
+                    last_host = problem.host;
+                }
+                $("#statistics_modal_content").append( "<p> service " + problem.service + ": " + problem.error + " </p>" );
             });
-        });
+        }
     }
 }]);
 </script>
