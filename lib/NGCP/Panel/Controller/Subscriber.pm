@@ -1110,10 +1110,13 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                 else {
                     $map->update({enabled => $cf_form->field('enabled')->value});
                 }
-                foreach my $pref($cf_preference->all) {
-                    $pref->delete;
+
+                if ($cf_preference->first) {
+                    $cf_preference->first->update({ value => $map->id });
+                } else {
+                    $cf_preference->create({ value => $map->id });
                 }
-                $cf_preference->create({ value => $map->id });
+
                 if($cf_type eq 'cft') {
                     if($ringtimeout_preference->first) {
                         if (!$cf_form->field('enabled')->value) {
@@ -1292,8 +1295,8 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
                         $map->delete;
                     }
-                    $cf_preference->delete_all;
                     unless(@active) {
+                        $cf_preference->delete_all;
                         $ringtimeout_preference->first->delete
                             if($cf_type eq "cft" &&  $ringtimeout_preference->first);
                         NGCP::Panel::Utils::Message::info(
@@ -1308,6 +1311,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         return;
                     }
                 }
+                my $cf_pref_created = 0;
                 foreach my $map(@active) {
                     my $m = $cf_mapping->create({
                         type => $cf_type,
@@ -1317,7 +1321,15 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         bnumber_set_id => $map->field('bnumber_set')->value,
                         enabled => $map->field('enabled')->value,
                     });
-                    $cf_preference->create({ value => $m->id });
+                    if (!$cf_pref_created) {
+                        if ($cf_preference->count != 1) {
+                            $cf_preference->delete_all;
+                            $cf_preference->create({ value => $m->id });
+                        } else {
+                            $cf_preference->first->update({ value => $m->id });
+                        }
+                        $cf_pref_created = 1;
+                    }
                     $autoattendant_count -= NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($m->destination_set);
                 }
                 if ($autoattendant_count > 0) {
@@ -1503,13 +1515,14 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                     [$c->req->captures->[0]], $cf_type);
 
     my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => $cf_type,
     );
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => 'ringtimeout',
     );
 
@@ -1558,8 +1571,6 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 my @fields = $form->field('destination')->fields;
                 unless(@fields) {
                     foreach my $mapping($set->voip_cf_mappings->all) {
-                        my $cf = $cf_preference->find({ value => $mapping->id });
-                        $cf->delete if $cf;
                         $ringtimeout_preference->first->delete
                             if($cf_type eq "cft" && $ringtimeout_preference->first);
                         $mapping->delete;
@@ -1571,6 +1582,11 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                         );
                     }
                     $set->delete;
+                    my $maps = $prov_subscriber->voip_cf_mappings->search;
+                    if (!$maps->first) {
+                        $cf_preference->delete_all;
+                    }
+
                     NGCP::Panel::Utils::Navigation::back_or($c, $fallback, 1);
                     return;
                 }
@@ -1633,24 +1649,22 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 sub preferences_callforward_destinationset_delete :Chained('preferences_callforward_destinationset_base') :PathPart('delete') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => $cf_type,
     );
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => 'ringtimeout',
     );
     my $set =  $c->stash->{destination_set};
-    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             my $autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set);
             foreach my $map($set->voip_cf_mappings->all) {
-                my $cf = $cf_preference->find({ value => $map->id });
-                $cf->delete if $cf;
                 $map->delete;
                 if ($autoattendant) {
                     NGCP::Panel::Utils::Events::insert(
@@ -1665,6 +1679,10 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
                 $ringtimeout_preference->first->delete;
             }
             $set->delete;
+            my $maps = $prov_subscriber->voip_cf_mappings->search;
+            if (!$maps->first) {
+                $cf_preference->delete_all;
+            }
         });
         NGCP::Panel::Utils::Message::info(
             c    => $c,
@@ -1812,9 +1830,10 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
                     [$c->req->captures->[0]], $cf_type);
 
     my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => $cf_type,
     );
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -1859,13 +1878,15 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
                 my @fields = $form->field('source')->fields;
                 unless(@fields) {
                     foreach my $mapping($set->voip_cf_mappings->all) {
-                        my $cf = $cf_preference->find({ value => $mapping->id });
-                        $cf->delete if $cf;
                         $ringtimeout_preference->first->delete
                             if($cf_type eq "cft" && $ringtimeout_preference->first);
                         $mapping->delete;
                     }
                     $set->delete;
+                    my $maps = $prov_subscriber->voip_cf_mappings->search;
+                    if (!$maps->first) {
+                        $cf_preference->delete_all;
+                    }
                     NGCP::Panel::Utils::Navigation::back_or($c, $fallback, 1);
                     return;
                 }
@@ -1916,30 +1937,30 @@ sub preferences_callforward_sourceset_edit :Chained('preferences_callforward_sou
 sub preferences_callforward_sourceset_delete :Chained('preferences_callforward_sourceset_base') :PathPart('delete') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => $cf_type,
     );
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => 'ringtimeout',
     );
     my $set =  $c->stash->{source_set};
-    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
-            foreach my $map($set->voip_cf_mappings->all) {
-                my $cf = $cf_preference->find({ value => $map->id });
-                $cf->delete if $cf;
-                $map->delete;
-            }
+            $set->voip_cf_mappings->delete_all;
             if($cf_type eq "cft" &&
                $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type})->count == 0) {
                 $ringtimeout_preference->first->delete;
             }
             $set->delete;
+            my $maps = $prov_subscriber->voip_cf_mappings->search;
+            if (!$maps->first) {
+                $cf_preference->delete_all;
+            }
         });
         NGCP::Panel::Utils::Message::info(
             c    => $c,
@@ -2087,13 +2108,14 @@ sub preferences_callforward_bnumberset_edit :Chained('preferences_callforward_bn
                     [$c->req->captures->[0]], $cf_type);
 
     my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => $cf_type,
     );
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => 'ringtimeout',
     );
 
@@ -2134,14 +2156,15 @@ sub preferences_callforward_bnumberset_edit :Chained('preferences_callforward_bn
                 my @fields = $form->field('bnumbers')->fields;
                 unless(@fields) {
                     foreach my $mapping($set->voip_cf_mappings->all) {
-                        # delete it here (this has been a design decicion from the beginning for all parts of cfs)
-                        my $cf = $cf_preference->find({ value => $mapping->id });
-                        $cf->delete if $cf;
                         $ringtimeout_preference->first->delete
                            if($cf_type eq "cft" && $ringtimeout_preference->first);
                         $mapping->delete;
                     }
                     $set->delete;
+                    my $maps = $prov_subscriber->voip_cf_mappings->search;
+                    if (!$maps->first) {
+                        $cf_preference->delete_all;
+                    }
                     NGCP::Panel::Utils::Navigation::back_or($c, $fallback, 1);
                     return;
                 }
@@ -2192,30 +2215,31 @@ sub preferences_callforward_bnumberset_edit :Chained('preferences_callforward_bn
 sub preferences_callforward_bnumberset_delete :Chained('preferences_callforward_bnumberset_base') :PathPart('delete') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => $cf_type,
     );
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        c => $c, prov_subscriber => $prov_subscriber,
         attribute => 'ringtimeout',
     );
     my $set =  $c->stash->{bnumber_set};
-    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
-            foreach my $map($set->voip_cf_mappings->all) {
-                my $cf = $cf_preference->find({ value => $map->id });
-                $cf->delete if $cf;
-                $map->delete;
-            }
+            $set->voip_cf_mappings->delete_all;
             if($cf_type eq "cft" &&
                $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type})->count == 0) {
                 $ringtimeout_preference->first->delete;
             }
             $set->delete;
+            my $maps = $prov_subscriber->voip_cf_mappings->search;
+            if (!$maps->first) {
+                $cf_preference->delete_all;
+            }
         });
         NGCP::Panel::Utils::Message::info(
             c    => $c,
