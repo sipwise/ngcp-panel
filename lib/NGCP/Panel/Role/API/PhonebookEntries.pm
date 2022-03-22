@@ -33,6 +33,7 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     my $params = $c->request->query_params;
+
     if ($params) {
         if ($params->{reseller_id}) {
             return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
@@ -41,8 +42,7 @@ sub get_form {
         } elsif ($params->{subscriber_id}) {
             return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::SubscriberAPI", $c);
         }
-    }
-    if ($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "admin") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
     } elsif ($c->user->roles eq "reseller") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
