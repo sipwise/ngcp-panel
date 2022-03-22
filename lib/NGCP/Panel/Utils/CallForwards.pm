@@ -346,13 +346,11 @@ sub update_cf_mappings {
                 $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
             }
             $mappings_rs->delete;
-            for my $type ( qw/cfu cfb cft cfna cfs cfr cfo/) {
-                $cf_preferences{$type}->delete;
-            }
         }
 
         $mappings_rs->populate(\@new_mappings);
         for my $type ( qw/cfu cfb cft cfna cfs cfr cfo/) {
+            my $cf_preference = $cf_preferences{$type};
             my @mapping_ids_by_type = $mappings_rs->search(
                 {
                     type => $type
@@ -363,7 +361,14 @@ sub update_cf_mappings {
                     result_class => 'DBIx::Class::ResultClass::HashRefInflator'
                 }
             )->all();
-            $cf_preferences{$type}->populate(\@mapping_ids_by_type);
+            if (!@mapping_ids_by_type) {
+                $cf_preference->delete;
+            } elsif ($cf_preference->count != 1) {
+                $cf_preference->delete;
+                $cf_preference->create($mapping_ids_by_type[0]);
+            } else {
+                $cf_preference->update($mapping_ids_by_type[0]);
+            }
         }
 
         unless ($params->{add_only}) {
