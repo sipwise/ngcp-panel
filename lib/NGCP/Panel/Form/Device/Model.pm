@@ -457,7 +457,7 @@ has_field 'bootstrap_config_redirect_snom_product_family' => (
         title => ['The Snom device Product Family. Used to create the profile on Snom redirect server.'],
     },
 );
-has_field 'bootstrap_config_redirect_grandstream_cid' => (
+has_field 'bootstrap_config_redirect_grandstream_user' => (
     type => 'Text',
     required => 0,
     label => 'GAPS CID',
@@ -468,7 +468,7 @@ has_field 'bootstrap_config_redirect_grandstream_cid' => (
         title => ['Customer ID for GAPS access. Obtained from Grandstream.'],
     },
 );
-has_field 'bootstrap_config_redirect_grandstream_key' => (
+has_field 'bootstrap_config_redirect_grandstream_password' => (
     type => 'Text',
     required => 0,
     label => 'GAPS Key',
@@ -513,7 +513,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model type extensions_num connectable_models linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile bootstrap_config_redirect_snom_user bootstrap_config_redirect_snom_password bootstrap_config_redirect_snom_profile bootstrap_config_redirect_snom_product_family bootstrap_config_redirect_grandstream_cid bootstrap_config_redirect_grandstream_key bootstrap_config_redirect_ale_user bootstrap_config_redirect_ale_password front_image front_thumbnail mac_image/],
+    render_list => [qw/vendor model type extensions_num connectable_models linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile bootstrap_config_redirect_snom_user bootstrap_config_redirect_snom_password bootstrap_config_redirect_snom_profile bootstrap_config_redirect_snom_product_family bootstrap_config_redirect_grandstream_user bootstrap_config_redirect_grandstream_password bootstrap_config_redirect_ale_user bootstrap_config_redirect_ale_password front_image front_thumbnail mac_image/],
 );
 
 has_block 'actions' => (
