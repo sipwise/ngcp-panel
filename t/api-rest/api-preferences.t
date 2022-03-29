@@ -153,9 +153,7 @@ foreach my $api (@apis){
             {'op' => 'add', 'path' => '/allowed_clis', value => $addmulti_value, mode => 'append' },
         ];
         ($res, $preferences_put->{content}) = $test_machine->request_patch($preferences_patch_op,$preferences->{uri});
-        $test_machine->http_code_msg(200, "check extended patch result: add multi to absent", $res, $preferences_put->{content});
-        (undef, $preferences_new->{content}) = $test_machine->check_item_get($preferences->{uri});
-        is_deeply([@{$preferences_new->{content}->{allowed_clis}}[-4..-1]], $addmulti_value, "check patched allowed_clis: add multi to absent");
+        $test_machine->http_code_msg(422, "check extended patch result: add multi to absent", $res, $preferences_put->{content});
 
         $addmulti_value = ['444','555','666','777','888'];
         $preferences_patch_op = [
