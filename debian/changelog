@@ -1,3 +1,10 @@
+ngcp-panel (9.5.4.5+0~mr9.5.4.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [6bd37d8] TT#168050 fix allowed_cli check for duplicates - fix tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 Mar 2022 18:44:43 +0200
+
 ngcp-panel (9.5.4.4+0~mr9.5.4.4) unstable; urgency=medium
 
   [ Rene Krenn ]
