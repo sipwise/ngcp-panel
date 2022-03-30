@@ -78,7 +78,7 @@ def create_reseller_contract(driver, contractname):
     print("Try to create a new Reseller Contract...", end="")
     wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
     driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div/button[contains(., "Add")]').click()
-    driver.find_element_by_xpath('/html/body//div[@class="q-list"]/a[2]').click()
+    driver.find_element_by_xpath('//*[@data-cy="aui-list-action-menu-item--contract-create-reseller"]').click()
     fill_element(driver, '//*[@id="q-app"]/div//main/form/div//label//div[contains(., "Contact")]/../div/input', "default")
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div//div[@class="q-virtual-scroll__content"]/div[1]')))
     time.sleep(1)
