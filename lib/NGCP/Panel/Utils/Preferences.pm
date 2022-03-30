@@ -165,7 +165,7 @@ sub prepare_resource {
     }
     $prefs = $prefs->search({
     }, {
-        join => 'attribute',
+        prefetch => 'attribute',
         order_by => { '-asc' => 'id' },
     });
 
