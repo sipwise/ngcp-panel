@@ -49,21 +49,29 @@ sub journal_query_params {
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        last unless $self->valid_id($c, $id);
+        my $subscriber = $self->item_by_id($c, $id, "subscribers");
+        last unless $self->resource_exists($c, subscriberpreference => $subscriber);
 
-    return unless $self->valid_id($c, $id);
-    my $subscriber = $self->item_by_id($c, $id, "subscribers");
-    return unless $self->resource_exists($c, subscriberpreference => $subscriber);
+        my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                contract => $subscriber->contract,
+            ); #apply underrun lock level
+        my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
+        $guard->commit; #potential db write ops in hal_from
 
-    my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
-
-    my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-        (map { # XXX Data::HAL must be able to generate links with multiple relations
-            s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r
-            =~ s/rel=self/rel="item self"/r;
-        } $hal->http_headers),
-    ), $hal->as_json);
-    $c->response->headers($response->headers);
-    $c->response->body($response->content);
+        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+            (map { # XXX Data::HAL must be able to generate links with multiple relations
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r
+                =~ s/rel=self/rel="item self"/r;
+            } $hal->http_headers),
+        ), $hal->as_json);
+        $c->response->headers($response->headers);
+        $c->response->body($response->content);
+        return;
+    }
     return;
 }
 
