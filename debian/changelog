@@ -1,3 +1,67 @@
+ngcp-panel (10.5.0.0+0~mr10.5.0.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [e8502ec] TT#122872 selenium: fixing more misaligned buttons
+  * [a15445f] TT#158401 selenium: fixup administrator and reseller tests
+  * [a8fcd1d] TT#158401 selenium: fix multiple obscuring elements
+
+  [ Rene Krenn ]
+  * [641fb8c] TT#159400 support fraudlimit greater than 1 million
+  * [81afa66] TT#159400 support fraudlimit greater than 10 million
+  * [b05628d] TT#81004 support callforwards in provisioning templates
+  * [b61d5c9] TT#81004 fix check CF destination with "timeout" or "priority" vals
+  * [2441d05] TT#81004 fix exports for check CF destinations
+  * [ebfcc70] TT#157700 invoice templates call direction mode
+  * [4df49f5] TT#168050 fix allowed_cli check for duplicates
+  * [e403354] TT#168050 fix allowed_cli check for duplicates - update testcase
+
+  [ Kirill Solomko ]
+  * [ccac7fd] TT#154353 fix JWT retrieval from the header
+  * [52e6622] TT#66577 ui show error when updating peer_auth preferences
+  * [4554155] TT#167400 change call forwardings preference to be distinct
+  * [26c868b] Revert "TT#158252 API GET subscriberpreferences - rm acquire_contract_rowlocks"
+  * [d7c7391] Revert "TT#158252 API GET subscriberpreferences - fix DBI timeout"
+  * [38b48e8] TT#158252 GET /api/subscriberpreferences performance
+
+  [ Oleksandr Duts ]
+  * [ace1698] TT#154550 API topuplogs - expand fields
+  * [a4d3585] TT#160300 API: header[rules,ruleactions,ruleconditions] - subscriber_id filter
+  * [c12d507] TT#158250 API: autoattendats - fix subscriber_id expand under subscriberadmin
+  * [8af29b6] TT#154351 Sound set propagation
+  * [f2ae8c9] TT#163451 API GET headerrules - name, description filtering fix
+  * [55b3310] TT#146250 UI recoverwebpassword - redirect to 443
+  * [f0a5c38] TT#158252 API/UI cfmappings improve performance
+  * [15ae78f] TT#158252 Remove debug info
+  * [a6b5ac9] TT#158252 API GET subscriberpreferences - fix DBI timeout
+  * [9d77ddb] TT#158252 API GET subscriberpreferences - rm acquire_contract_rowlocks
+  * [3b9f19b] TT#141101 UI/API fix custom_announcement upload
+  * [4e7e551] TT#166900 API phonebookentries - fix form creation for empty params
+
+  [ Marco Capetta ]
+  * [940cf00] TT#109104 Add new Location mapping mode: forward
+
+  [ Javier Rodriguez ]
+  * [84a33c9] TT#160250 'Calculated fields' label changed to 'Language' label
+  * [1be9e7f] TT#160850 Fix for Built-In Batch Provisioning Template that Cannot Create A Customer With Several Subscribers
+  * [58c8641] TT#158350 Enhance information on ngcp-provisioning-template help
+  * [78c93e3] TT#115002 Update Spanish Translations for ngcp-panel
+  * [1898fb6] TT#160200 Add grandstream CID/Key options, Using user/password instead of cid/key
+
+  [ Alexander Lutay ]
+  * [0e0cf38] TT#166550 Remove Russian from NGCP
+  * [c460d03] TT#166550 Remove Russian from NGCP, part 2
+
+  [ Michael Prokop ]
+  * [4e6b2a3] TT#137552 Minor fix for german translation
+
+  [ Guillem Jover ]
+  * [194dc6a] TT#167050 Switch system statistics dashboard status to new problems JSON
+
+  [ Donat Zenichev ]
+  * [493ca39] TT#167350 outbound registration: add proper transport handling
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 31 Mar 2022 00:00:35 +0200
+
 ngcp-panel (10.4.0.0+0~mr10.4.0.0) unstable; urgency=medium
 
   [ Oleksandr Duts ]
