@@ -496,13 +496,23 @@ sub update_item {
         );
     } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
         $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
-        $c->log->error("failed to update subscriber, number " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
+        $c->log->error("failed to update subscriber, number " . $c->qs($1) . " already exists");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
         return;
-    } catch($e where { /alias '([^']+)' already exists/ }) {
-        $e =~ /alias '([^']+)' already exists/;
-        $c->log->error("failed to update subscriber, alias " . $c->qs($1) . " already exists"); # TODO: user, message, trace, ...
+    } catch ($e where { /alias \d+ already exists/ }) {
+        $e =~ /alias (\d+) already exists/;
+        $c->log->error("failed to update subscriber, alias " . $c->qs($1) . " already exists");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
+        return;
+    } catch ($e where { /aliases \S+ already exist/ }) {
+        $e =~ /aliases (\S+) already exist/;
+        $c->log->error("failed to update subscriber, aliases " . $c->qs($1) . " already exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Numbers '" . $1 . "' already exist.", "Numbers already exist.");
+        return;
+    } catch ($e where { /more than \d+ provided aliases/ }) {
+        my $err_msg = "more than 10 provided aliases already exist";
+        $c->log->error($err_msg);
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err_msg);
         return;
     }
 
