@@ -1,3 +1,10 @@
+ngcp-panel (9.5.4.6+0~mr9.5.4.6) unstable; urgency=medium
+
+  [ Oleksandr Duts ]
+  * [eea8558] TT#167900 /api/subscribers improve number duplicate checks
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 31 Mar 2022 16:19:45 +0200
+
 ngcp-panel (9.5.4.5+0~mr9.5.4.5) unstable; urgency=medium
 
   [ Rene Krenn ]
