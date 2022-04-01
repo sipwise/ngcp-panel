@@ -442,9 +442,14 @@ sub initiate_password_reset {
         $redis->hset("password_reset:admin::$uuid_string", 'user', $username);
         $redis->hset("password_reset:admin::$uuid_string", 'ip', $c->req->address);
         $redis->expire("password_reset:admin::$uuid_string", 300);
+        
         my $url = $c->req->header('Referer') && $c->req->header('Referer') =~ /\/v2\// ?
-                  $c->req->base . 'v2/recoverpassword?token=' . $uuid_string :
-                  $c->uri_for_action('/login/recover_password')->as_string . '?token=' . $uuid_string;
+                  $c->req->base . 'v2/recoverpassword' :
+                  $c->uri_for_action('/login/recover_password')->as_string;
+        $url= NGCP::Panel::Utils::Email::rewrite_url(
+            $c->config->{contact}->{external_base_url},$url);
+        $url .= '?token=' . $uuid_string;
+        
         NGCP::Panel::Utils::Email::admin_password_reset($c, $admin, $url);
     }
     return {success => 1};
