@@ -8,7 +8,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-
+use NGCP::Panel::Utils::Email qw();
 
 sub allowed_methods{
     return [qw/POST OPTIONS/];
@@ -96,7 +96,12 @@ sub POST :Allow {
                     uuid => $uuid_string,
                     timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch + 300, #expire in 5 minutes
                 });
-                my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
+                
+                my $url = NGCP::Panel::Utils::Email::rewrite_url(
+                    $c->config->{contact}->{external_base_url},
+                    $c->uri_for_action('/subscriber/recover_webpassword')->as_string);
+                $url .= '?uuid=' . $uuid_string;
+                
                 NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
             }
         }

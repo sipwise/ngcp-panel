@@ -470,9 +470,13 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
                 uuid => $uuid_string,
                 timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch + 31536000,
             });
-            my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
+            
+            my $url = NGCP::Panel::Utils::Email::rewrite_url(
+                    $c->config->{contact}->{external_base_url},
+                    $c->uri_for_action('/subscriber/recover_webpassword')->as_string);
+                $url .= '?uuid=' . $uuid_string;
+                
             NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
-
 
         });
         NGCP::Panel::Utils::Message::info(
@@ -533,7 +537,12 @@ sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :
                         uuid => $uuid_string,
                         timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch,
                     });
-                    my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
+                    
+                    my $url = NGCP::Panel::Utils::Email::rewrite_url(
+                        $c->config->{contact}->{external_base_url},
+                        $c->uri_for_action('/subscriber/recover_webpassword')->as_string);
+                    $url .= '?uuid=' . $uuid_string;
+                    
                     NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
                 }
             });
