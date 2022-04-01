@@ -139,6 +139,27 @@ sub process_template{
 #    }
 #    return process_template($c, $tmpl_hash, $vars);
 #}
+
+sub rewrite_url {
+    my ($format,$url) = @_;
+    if (length($url) and length($format)) {
+        if ($url =~ /^(https?):\/\/([^\/]+)(\/.+)?$/i) {
+            my $scheme = $1;
+            my $domain = $2;
+            my $base_path = $3;
+            $base_path =~ s/^\///;
+            my $port;
+            if ($domain =~ /^([^@]*@)?([^:]+)(:\d+)?$/) {
+                $domain = $2;
+                $port = $3;
+                $port =~ s/^://;
+            }
+            $url = sprintf($format,$scheme,$domain,$port,$base_path);
+        }
+    }
+    return $url;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
