@@ -15,11 +15,18 @@ sub allowed_methods {
 
 sub delete_item {
     my($self, $c, $item, $old_resource, $resource, $form) = @_;
-    unless ($item->id == $c->user->id) {
-        $c->log->error("Administrator can only delete its own certificate.");
-        $self->error($c, HTTP_FORBIDDEN, "Administrator can only delete its own certificate.");
+
+    if (
+        $item->id != $c->user->id &&
+        (
+            !$c->user->is_master ||
+            !NGCP::Panel::Utils::UserRole::has_permission($c, $c->user->acl_role->id, $item->acl_role->id)
+        )
+    ){
+        $self->error($c, HTTP_FORBIDDEN, 'Cannot delete certificate');
         return;
     }
+
     try {
         $item->update({
             ssl_client_m_serial => undef,
@@ -30,6 +37,7 @@ sub delete_item {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete administrator certificate.");
         return;
     }
+
     return 1;
 }
 
