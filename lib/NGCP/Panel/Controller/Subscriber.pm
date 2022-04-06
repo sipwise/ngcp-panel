@@ -98,8 +98,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "uuid", search => 1, title => $c->loc('UUID') },
         { name => "status", search => 0, title => $c->loc('Status') },
         { name => "number", search => 0, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)" },
-        #{ name => "provisioning_voip_subscriber.voip_dbaliases.username", search => 1, 'no_column' => 1 },
-        { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 1, title => $c->loc('Profile') },
+        { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 0, title => $c->loc('Profile') },
     ]);
 }
 
@@ -364,7 +363,24 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{subscribers_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{dt_columns}, undef, { 'count_limit' => 1000, });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{dt_columns}, undef, {
+        'count_limit' => 1000,
+        'extra_or' => [ {
+            'me.id' => { in => [ (map { $_->id } $resultset->search({
+                'contact.email' => { like => [ NGCP::Panel::Utils::Datatables::get_search_string_pattern($c) ]->[0] },
+            },{
+                rows => 1001,
+                page => 1,
+                join => { 'contract' => 'contact'},
+            })->all),
+            (map { $_->subscriber->voip_subscriber->id; } $c->model('DB')->resultset('voip_dbaliases')->search({
+                'username' => { like => [ NGCP::Panel::Utils::Datatables::get_search_string_pattern($c) ]->[0] },
+            },{
+                rows => 1001,
+                page => 1,
+            })->all) ] },
+        }, ],
+    });
     $c->detach( $c->view("JSON") );
 }
 
