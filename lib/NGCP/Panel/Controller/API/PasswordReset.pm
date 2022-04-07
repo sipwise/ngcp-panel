@@ -78,6 +78,11 @@ sub POST :Allow {
         }
         elsif($resource->{type} eq 'subscriber') {
             my ($user, $domain) = ($resource->{username}, $resource->{domain});
+
+            if ($user =~ /^([^\@]+)\@([^\@]+)/) {
+                ($user, $domain) = ($1, $2);
+            }
+
             my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
                 username => $user,
                 'domain.domain' => $domain,
