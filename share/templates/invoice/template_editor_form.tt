@@ -37,10 +37,10 @@ function formSerialize(){
 #template_variables_help{
     display:none;
     position:absolute;
-    top:150px;
-    left:100px;
+    top:350px;
+    left:920px;
     width: 250px;
-    height: 500px;   
+    height: 500px;
 }
 .variablekey{
     font-weight:bold;
