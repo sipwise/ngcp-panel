@@ -1,3 +1,12 @@
+ngcp-panel (9.5.3.9+0~mr9.5.3.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [d93593f] TT#147151 fast loading/paging/searching panel datatables
+  * [929ff54] TT#155600 use trailing wildcard in datatable search
+  * [011eb2d] TT#155600 enable (default) prefix search for username, uuid
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Apr 2022 14:18:21 +0200
+
 ngcp-panel (9.5.3.8+0~mr9.5.3.8) unstable; urgency=medium
 
   [ Oleksandr Duts ]
