@@ -1,3 +1,10 @@
+ngcp-panel (9.5.3.10+0~mr9.5.3.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [7022640] TT#170300 support fast subscriber search by alias
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Apr 2022 15:28:06 +0200
+
 ngcp-panel (9.5.3.9+0~mr9.5.3.9) unstable; urgency=medium
 
   [ Rene Krenn ]
