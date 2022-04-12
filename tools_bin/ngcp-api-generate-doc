@@ -1,0 +1,445 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use Pod::Usage qw(pod2usage);
+use Config::General qw();
+use File::Slurp qw();
+use XML::Simple qw();
+
+#use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
+#use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
+#use lib "/usr/local/devel/ngcp-schema/lib";
+#use lib "/usr/local/devel/sipwise-base/lib";
+#use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
+#use lib "/usr/local/devel/ngcp-panel/lib";
+
+use NGCP::Schema::Config qw();
+use NGCP::Schema qw();
+use NGCP::Panel::Controller::API::Root qw();
+
+#use NGCP::Panel::Utils::ConfigFilenames qw();
+
+my @panel_configs = qw(
+   /etc/ngcp-panel/ngcp_panel.conf
+   /etc/ngcp_panel.conf
+   /ngcp_panel.conf
+);
+#/home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
+#/usr/local/devel/vagrant-ngcp/ngcp_panel.conf
+
+my @provisioning_configs = qw(
+   /etc/ngcp-panel/provisioning.conf
+);
+#/etc/ngcp-panel/provisioning.conf
+#/home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
+#/usr/local/devel/vagrant-ngcp/provisioning.conf
+
+my %db = (
+    host => '192.168.0.96',
+    port => 3306,
+    user => 'root',
+    password => undef,
+);
+
+my $help;
+my $log_level;
+my $doc_file;
+my $doc_format = 'json';
+
+GetOptions(
+    ( map { ('db-' . $_ . ':s') => \$db{$_}; } keys %db ),
+    "format:s" => \$doc_format,
+    "file:s" => \$doc_file,
+    'log-level:s' => \$log_level,
+    "help|?" => \$help,
+) or pod2usage(2);
+pod2usage(1) if $help;
+my %mock_objs = ();
+my $c = _create_c();
+
+my $controller = NGCP::Panel::Controller::API::Root->new;
+$controller->GET($c);
+
+_write_file($c->response->body);
+
+exit(0);
+
+sub _write_file {
+
+    my ($str) = @_;
+    if (defined $doc_file) {
+        open(my $fh, '>', $doc_file) or die('cannot open file ' . $doc_file . ': ' . $!);
+        binmode($fh);
+        print $fh $str;
+        close $fh;
+    } else {
+        print $str;
+    }
+
+}
+
+sub _create_c {
+
+    #{
+    #    no strict "refs";  ## no critic (ProhibitNoStrict)
+    #    no warnings 'redefine';
+    #    *{'NGCP::Panel::Utils::ConfigFilenames::get_panel_config_filename'} = sub {
+    #        my $panel_config_file;
+    #        for my $path(@panel_configs) {
+    #            if (-f $path) {
+    #                $panel_config_file = $path;
+    #                last;
+    #            }
+    #        }
+    #        $panel_config_file //= 'etc/ngcp_panel.conf';
+    #        return $panel_config_file;
+    #    };
+    #    *{'NGCP::Panel::Utils::ConfigFilenames::get_provisioning_config_filename'} = sub {
+    #        foreach my $provisioning_config (@provisioning_configs) {
+    #            return $provisioning_config if -f $provisioning_config;
+    #        }
+    #    };
+    #    *{'NGCP::Schema::Config::get_config_filename'} = sub {
+    #        foreach my $provisioning_config (@provisioning_configs) {
+    #            return $provisioning_config if -f $provisioning_config;
+    #        }
+    #    };
+    #}
+    
+    {
+        print "loading panel components ...\n";
+        my $module = 'NGCP::Panel';
+        my $file = $module;
+        $file =~ s[::][/]g;
+        $file .= '.pm';
+        require $file;
+        $module->import;
+    }
+    
+    my $config = _get_panel_config();
+
+    {
+        no strict "refs";  ## no critic (ProhibitNoStrict)
+        *{'NGCP::Schema::set_transaction_isolation'} = sub {
+            my ($self,$level) = @_;
+            return $self->storage->dbh_do(
+                sub {
+                  my ($storage, $dbh, @args) = @_;
+                  $dbh->do("SET TRANSACTION ISOLATION LEVEL " . $args[0]);
+                },
+                $level,
+            );
+        };
+        *{'NGCP::Schema::set_wait_timeout'} = sub {
+            my ($self,$timeout) = @_;
+            return $self->storage->dbh_do(
+                sub {
+                  my ($storage, $dbh, @args) = @_;
+                  $dbh->do("SET SESSION wait_timeout = " . $args[0]);
+                },
+                $timeout,
+            );
+        };
+    }
+    my $db = _get_schema();
+
+    my $req = sub {
+        my $self = shift;
+        return _create_mock('_request',
+            _param => {
+                ($doc_format eq 'swagger-yml' ? ('swagger' => 'yml') : ()),
+                ($doc_format eq 'swagger-json' ? ('swagger' => 'json') : ()),
+                #'oldapidoc' => 1,
+            },
+            _header => {
+                ($doc_format eq 'json' ? ('Accept' => 'application/json') : ())
+            },
+            param => sub {
+                my $self = shift;
+                my $key = shift;
+                return $self->{param}->{$key} if $key;
+                return $self->{param};
+            },
+            path => sub {
+                my $self = shift;
+                return 'api/';
+            },
+            params => sub {
+                my $self = shift;
+                return $self->{param};
+            },
+            query_params => sub {
+                my $self = shift;
+                return $self->{param};
+            },
+            header => sub {
+                my $self = shift;
+                my $key = shift;
+                return $self->{header}->{$key} if $key;
+                return $self->{header};
+            },
+        );
+    };
+    
+    my $res = sub {
+        my $self = shift;
+        return _create_mock('_response',
+            _body => undef,
+            _code => undef,
+            _header => {
+            },
+            body => sub {
+                my $self = shift;
+                if (scalar @_) {
+                    $self->{body} = shift;
+                }
+                return $self->{body};
+            },
+            code => sub {
+                my $self = shift;
+                if (scalar @_) {
+                    $self->{code} = shift;
+                }
+                return $self->{code};
+            },
+            headers => sub {
+                my $self = shift;
+                my $key = shift;
+                return $self->{header}->{$key} if $key;
+                return $self->{header};
+            },
+        );
+    };
+
+    $c = _create_mock('c',
+        _stash => {
+
+        },
+        stash => sub {
+            my $self = shift;
+            my $key = shift;
+            return $self->{stash}->{$key} if $key;
+            return $self->{stash};
+        },
+        _model => {
+            DB => $db,
+        },
+        model => sub {
+            my $self = shift;
+            my $key = shift;
+            return $self->{model}->{$key} if $key;
+            return $self->{model};
+        },
+        log => sub {
+            my $self = shift;
+            return _create_mock('log',
+                debug => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(debug));
+                },
+                info => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(info debug));
+                },
+                warn => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(warn info debug));
+                },
+                error => sub {
+                    my $self = shift;
+                    my $str = shift;
+                    my @params = @_;
+                    print $str . "\n" if ($log_level and grep { $_ eq lc($log_level); } qw(error warn info debug));
+                },
+            );
+        },
+        config => sub {
+            my $self = shift;
+            return $config;
+        },
+        user => sub {
+            my $self = shift;
+            return _create_mock('user',
+                roles => sub {
+                    my $self = shift;
+                    return 'admin';
+                },
+                read_only => sub {
+                    my $self = shift;
+                    return 0;
+                },
+                is_system => sub {
+                    my $self = shift;
+                    return 0;
+                },
+                is_superuser => sub {
+                    my $self = shift;
+                    return 1;
+                },
+            );
+        },
+        loc => sub {
+            my $self = shift;
+            my $str = shift;
+            my @params = @_;
+            for (my $i = 1; $i <= scalar @params; $i++) {
+                my $subst = quotemeta("[_$i]");
+                my $repl = $params[$i - 1];
+                $str =~ s/$subst/$repl/g;
+            }
+            return $str;
+        },
+        detach => sub {
+            my $self = shift;
+            my $sub = shift;
+            my ($package, $filename, $line) = caller;
+            return $package->$sub($self);
+        },
+        view => sub {
+            return 'NGCP::Panel'->view('View::TT');  
+        },
+        request => $req,
+        req => $req,
+        response => $res,
+        res => $res,
+    );
+
+}
+
+sub _create_mock {
+    my $class = shift;
+    return $mock_objs{$class} if exists $mock_objs{$class};
+    my %members = @_;
+    my $obj = bless({},$class);
+    foreach my $member (keys %members) {
+        if ('CODE' eq ref $members{$member}) {
+            no strict "refs";  ## no critic (ProhibitNoStrict)
+            *{$class.'::'.$member} = $members{$member};
+        } else {
+            $obj->{substr($member,1)} = $members{$member};
+        }
+    }
+    $mock_objs{$class} = $obj;
+    return $obj;
+}
+
+sub _get_schema {
+
+    my $schema;
+    if ($db{host}) {
+        $schema = NGCP::Schema->connect({
+            dsn                 => "DBI:mysql:database=provisioning;host=$db{host};port=$db{port}",
+            user                => $db{user},
+            ( exists $db{password} ? (password => $db{password}) : ()),
+            mysql_enable_utf8   => "1",
+            on_connect_do       => "SET NAMES utf8mb4",
+            quote_char          => "`",
+        });
+        $schema->set_wait_timeout(3600);
+        return $schema;
+    } else {
+        foreach my $provisioning_config (@provisioning_configs) {
+            if (-f $provisioning_config) {
+                my $conf = XML::Simple->new->XMLin($provisioning_config, ForceArray => 1);
+                if ($conf && $conf->{ngcp_connect_info}) {
+                    my $connectors;
+                    if (exists $conf->{ngcp_connect_info}->[0]->{connectors}) {
+                         $connectors = $conf->{ngcp_connect_info}->[0]->{connectors};
+                    } else {
+                        $connectors = $conf->{ngcp_connect_info};
+                    }
+                    $connectors //= [];
+                    $schema = NGCP::Schema->connect($connectors->[0]);
+                    $schema->set_wait_timeout(3600);
+                    return $schema;
+                }
+            }
+        }
+        die("no provisioning.conf found\n") unless $schema;
+    }
+
+}
+
+sub _get_panel_config {
+
+    my $config;
+    foreach my $panel_config (@panel_configs) {
+        if( -f $panel_config ){
+            my $catalyst_config = Config::General->new($panel_config);
+            my %config = $catalyst_config->getall();
+            $config = \%config;
+            last;
+        }
+    }
+    die("no ngcp_panel.conf found\n") unless $config;
+    return $config;
+
+}
+
+__END__
+
+=head1 NAME
+
+ngcp-api-generate-doc - generate apidoc output
+
+=head1 SYNOPSIS
+
+E<9>B<ngcp-api-generate-doc> [I<options>]
+
+=head1 DESCRIPTION
+
+This program allows to generate the NGCP Rest-API documentation offline (without running nginx).
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--format=>I<format>
+
+Specify the apidoc format (json/swagger-json/swagger-yml).
+
+=item B<--file=>I<filename>
+
+Specify a file to write the apidoc output to.
+
+=item B<--log-level>
+
+Verbosity of printed messages while processing (debug, info, warn, error).
+
+=back
+
+=head1 AUTHOR
+
+Sipwise Development Team C<< <support@sipwise.com> >>
+
+=head1 LICENSE
+
+This software is Copyright © 2020 by Sipwise GmbH, Austria.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this package.  If not, see <https://www.gnu.org/licenses/>.
+
+=cut
