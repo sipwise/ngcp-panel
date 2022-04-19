@@ -1,3 +1,10 @@
+ngcp-panel (8.5.5.8+0~mr8.5.5.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [c865684] TT#103450 enable lintercept role for interceptions PUT/DELETE
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Apr 2022 14:33:38 +0200
+
 ngcp-panel (8.5.5.7+0~mr8.5.5.7) unstable; urgency=medium
 
   [ Flaviu Mates ]
