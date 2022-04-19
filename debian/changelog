@@ -1,3 +1,10 @@
+ngcp-panel (10.3.1.5+0~mr10.3.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [8fcd69a] TT#146101 add external base url parameter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Apr 2022 14:26:49 +0200
+
 ngcp-panel (10.3.1.4+0~mr10.3.1.4) unstable; urgency=medium
 
   [ Rene Krenn ]
