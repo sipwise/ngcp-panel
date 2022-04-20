@@ -1,3 +1,11 @@
+ngcp-panel (8.5.8.2+0~mr8.5.8.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [973d6ce] TT#103450 enable lintercept role for interceptions PUT/DELETE
+  * [d386f8a] TT#146101 add external base url parameter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 20 Apr 2022 11:31:58 +0200
+
 ngcp-panel (8.5.8.1+0~mr8.5.8.1) unstable; urgency=medium
 
   * New release.
