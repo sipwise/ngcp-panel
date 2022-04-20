@@ -1,3 +1,10 @@
+ngcp-panel (10.3.1.6+0~mr10.3.1.6) unstable; urgency=medium
+
+  [ Oleksandr Duts ]
+  * [72a9aaa] TT#146103 API POST resetpassword - subscriber search fix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 20 Apr 2022 19:23:20 +0200
+
 ngcp-panel (10.3.1.5+0~mr10.3.1.5) unstable; urgency=medium
 
   [ Rene Krenn ]
