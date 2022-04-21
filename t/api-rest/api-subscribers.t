@@ -305,7 +305,6 @@ if($remote_config->{config}->{features}->{cloudpbx}){
 
 
         $terminated_primary_number->{is_devid} = json_true;
-        $terminated_primary_number->{devid_alias} = 'something';
         $test_machine->check_patch2get([ { op => 'replace', path => '/alias_numbers', value => [@{$pilot_local->{content}->{alias_numbers}}, $terminated_primary_number] } ] , $pilot_local->{location},$put2get_check_params);
 
         $aliases = $test_machine->get_collection_hal('numbers', '/api/numbers/?type=alias&subscriber_id='.$pilot_local->{content}->{id}, 1)->{collection};
