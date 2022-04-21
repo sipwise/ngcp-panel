@@ -1,3 +1,10 @@
+ngcp-panel (8.5.8.3+0~mr8.5.8.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [c3cb00b] TT#89200 fix workaround logic for backward-incompatible prefs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 21 Apr 2022 10:36:38 +0200
+
 ngcp-panel (8.5.8.2+0~mr8.5.8.2) unstable; urgency=medium
 
   [ Rene Krenn ]
