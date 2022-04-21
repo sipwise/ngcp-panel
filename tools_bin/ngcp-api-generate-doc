@@ -9,36 +9,22 @@ use Config::General qw();
 use File::Slurp qw();
 use XML::Simple qw();
 
-#use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
-#use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
-#use lib "/usr/local/devel/ngcp-schema/lib";
-#use lib "/usr/local/devel/sipwise-base/lib";
-#use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
-#use lib "/usr/local/devel/ngcp-panel/lib";
-
 use NGCP::Schema::Config qw();
 use NGCP::Schema qw();
 use NGCP::Panel::Controller::API::Root qw();
-
-#use NGCP::Panel::Utils::ConfigFilenames qw();
 
 my @panel_configs = qw(
    /etc/ngcp-panel/ngcp_panel.conf
    /etc/ngcp_panel.conf
    /ngcp_panel.conf
 );
-#/home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
-#/usr/local/devel/vagrant-ngcp/ngcp_panel.conf
 
 my @provisioning_configs = qw(
    /etc/ngcp-panel/provisioning.conf
 );
-#/etc/ngcp-panel/provisioning.conf
-#/home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
-#/usr/local/devel/vagrant-ngcp/provisioning.conf
 
 my %db = (
-    host => '192.168.0.96',
+    host => undef,
     port => 3306,
     user => 'root',
     password => undef,
@@ -82,32 +68,6 @@ sub _write_file {
 }
 
 sub _create_c {
-
-    #{
-    #    no strict "refs";  ## no critic (ProhibitNoStrict)
-    #    no warnings 'redefine';
-    #    *{'NGCP::Panel::Utils::ConfigFilenames::get_panel_config_filename'} = sub {
-    #        my $panel_config_file;
-    #        for my $path(@panel_configs) {
-    #            if (-f $path) {
-    #                $panel_config_file = $path;
-    #                last;
-    #            }
-    #        }
-    #        $panel_config_file //= 'etc/ngcp_panel.conf';
-    #        return $panel_config_file;
-    #    };
-    #    *{'NGCP::Panel::Utils::ConfigFilenames::get_provisioning_config_filename'} = sub {
-    #        foreach my $provisioning_config (@provisioning_configs) {
-    #            return $provisioning_config if -f $provisioning_config;
-    #        }
-    #    };
-    #    *{'NGCP::Schema::Config::get_config_filename'} = sub {
-    #        foreach my $provisioning_config (@provisioning_configs) {
-    #            return $provisioning_config if -f $provisioning_config;
-    #        }
-    #    };
-    #}
     
     {
         print "loading panel components ...\n";
