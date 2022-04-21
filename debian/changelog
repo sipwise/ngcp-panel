@@ -1,3 +1,10 @@
+ngcp-panel (9.5.4.9+0~mr9.5.4.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4753492] TT#171850 fix api-subscribers tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 21 Apr 2022 15:38:59 +0200
+
 ngcp-panel (9.5.4.8+0~mr9.5.4.8) unstable; urgency=medium
 
   [ Oleksandr Duts ]
