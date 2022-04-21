@@ -489,7 +489,7 @@ sub update_item {
         NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
             c => $c,
             schema => $schema,
-            exists $resource->{e164} ? (primary_number => $resource->{e164}) : (),
+            primary_number => $resource->{e164},
             alias_numbers => $alias_numbers,
             reseller_id => $customer->contact->reseller_id,
             subscriber_id => $subscriber->id,
