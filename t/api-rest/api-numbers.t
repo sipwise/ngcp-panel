@@ -68,7 +68,6 @@ $test_machine->check_patch2get({
         location => $number_aliases->[0]->{location},
         content => [
             {'op' => 'replace', 'path' => '/is_devid', 'value' => JSON::true },
-            {'op' => 'replace', 'path' => '/devid_alias', 'value' => '000123456'},
         ],
     });
 
