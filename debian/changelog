@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.22+0~mr9.5.2.22) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [1e599d6] TT#172451 password reset uses webusername
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 22 Apr 2022 17:12:50 +0200
+
 ngcp-panel (9.5.2.21+0~mr9.5.2.21) unstable; urgency=medium
 
   [ Oleksandr Duts ]
