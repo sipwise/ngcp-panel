@@ -1,3 +1,10 @@
+ngcp-panel (9.5.4.11+0~mr9.5.4.11) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4a436db] TT#172451 /api/passwordreset fix provisioning subscriber join
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Apr 2022 13:32:56 +0200
+
 ngcp-panel (9.5.4.10+0~mr9.5.4.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
