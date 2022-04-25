@@ -84,10 +84,10 @@ sub POST :Allow {
             }
 
             my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
-                webusername => $user,
+                'provisioning_voip_subscriber.webusername' => $user,
                 'domain.domain' => $domain,
             },{
-                join => 'domain',
+                join => ['domain', 'provisioning_voip_subscriber'],
             });
 
             if($subscriber) {
