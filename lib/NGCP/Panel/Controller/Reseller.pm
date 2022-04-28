@@ -543,6 +543,7 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             $r{admins} = $billing->resultset('admins')->create({
                 %{ $defaults{admins} },  ## no critic (ProhibitCommaSeparatedStatements)
                 reseller_id => $r{resellers}->id,
+                role_id     => NGCP::Panel::Utils::UserRole::find_row_by_name($c, 'reseller')->id
             });
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
                 contract => $r{contracts},
