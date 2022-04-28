@@ -39,7 +39,7 @@ has_field 'description' => (
     },
 );
 
-has_field 'lang' => (
+has_field 'scripting_lang' => (
     type => 'Select',
     label => 'Language',
     options => [
@@ -123,7 +123,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name description lang yaml/],
+    render_list => [qw/name description scripting_lang yaml/],
 );
 
 has_block 'actions' => (

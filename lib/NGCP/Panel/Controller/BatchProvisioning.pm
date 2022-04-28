@@ -200,6 +200,7 @@ sub create :Chained('template_list') :PathPart('create') :Args(0) {
                 }
                 delete $form->values->{reseller};
             }
+            $form->values->{lang} = delete $form->values->{scripting_lang};
             $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
             my $template = $c->model('DB')->resultset('provisioning_templates')->create($form->values);
 
@@ -244,6 +245,7 @@ sub edit :Chained('template_base') :PathPart('edit') :Args(0) {
         $params = { $c->stash->{template_rs}->first->get_inflated_columns };
     }
     $params->{reseller}{id} = delete $params->{reseller_id};
+    $params->{scripting_lang} = delete $params->{lang};
     $params = merge($params, $c->session->{created_objects});
 
     $c->stash->{old_name} = $c->stash->{provisioning_templates}->{$template}->{name};
@@ -278,6 +280,7 @@ sub edit :Chained('template_base') :PathPart('edit') :Args(0) {
                 delete $form->values->{reseller};
             }
             $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+            $form->values->{lang} = delete $form->values->{scripting_lang};
             $c->stash->{template_rs}->update($form->values);
 
             delete $c->session->{created_objects}->{reseller};

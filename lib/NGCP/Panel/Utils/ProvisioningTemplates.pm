@@ -1588,9 +1588,9 @@ sub _switch_lang {
 
     my ($context, $lang, %code) = @_;
 
-    die('template lang not defined') unless $lang;
-    die("unknown template lang '$lang'") unless exists $code{$lang};
-    die("template lang '$lang' not supported") unless grep { $_ eq $lang} @SUPPORTED_LANGS;
+    die('scripting lang not defined') unless $lang;
+    die("unknown scripting lang '$lang'") unless exists $code{$lang};
+    die("scripting lang '$lang' not supported") unless grep { $_ eq $lang } @SUPPORTED_LANGS;
     return &{$code{$lang}}($context);
 
 }

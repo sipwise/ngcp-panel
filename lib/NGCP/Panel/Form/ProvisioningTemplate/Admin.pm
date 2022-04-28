@@ -15,7 +15,7 @@ has_field 'reseller' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller name description lang yaml/],
+    render_list => [qw/reseller name description scripting_lang yaml/],
 );
 
 1;
