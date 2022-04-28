@@ -1361,6 +1361,7 @@ sub expand_field {
     my $form  = $class->get_form($c) // return;
 
     my $item     = $class->item_by_id($c, $id) // return;
+
     my $item_res = $class->resource_from_item($c, $item, $form);
     my $data     = $class->post_process_hal_resource($c, $item, $item_res, $form);
 

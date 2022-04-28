@@ -56,6 +56,12 @@ has_field 'contract_id' => (
     type => 'PosInteger',
     label => 'The subscriber\'s customer contract.',
     required => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::Customers',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
 );
 
 has_field 'amount' => (

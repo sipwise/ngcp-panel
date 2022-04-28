@@ -118,6 +118,8 @@ sub contract_by_id {
     return $item_rs->find($id);
 }
 
+sub item_by_id { shift->contract_by_id(@_) }
+
 sub update_contract {
     my ($self, $c, $contract, $old_resource, $resource, $form, $now) = @_;
 

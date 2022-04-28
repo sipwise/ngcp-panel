@@ -216,6 +216,8 @@ sub catchup_contract_balances {
     my %params = @_;
     my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun is_create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added/};
 
+    return unless $contract;
+
     my $schema = $c->model('DB');
     $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
