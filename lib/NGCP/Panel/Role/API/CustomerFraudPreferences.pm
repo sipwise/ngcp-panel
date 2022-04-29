@@ -57,14 +57,19 @@ sub resource_from_item {
 
     my ($self, $c, $customer, $form) = @_;
     my $item = $customer->contract_fraud_preference;
+    my $bp_item = $customer->actual_billing_profile->billing_profile;
     my $resource;
-    if ($item) {
-        $resource = { $item->get_inflated_columns };
+
+    my ($prefs, $bp_prefs);
+    $bp_prefs = { $bp_item->get_inflated_columns };
+    $prefs = $item ? { $item->get_inflated_columns } : undef;
+
+    if ($prefs) {
+        $resource = $prefs;
         delete $resource->{contract_id};
         delete $resource->{id};
     } else {
         $resource = {
-            #contract_id => $customer->id,
             fraud_interval_limit => undef,
             fraud_interval_lock => undef,
             fraud_interval_notify => undef,
@@ -73,6 +78,23 @@ sub resource_from_item {
             fraud_daily_notify => undef,
         }
     }
+
+    foreach my $type (qw(interval daily)) {
+        my $prefix = 'fraud_'.$type.'_';
+        my $c_prefix = 'current_fraud_'.$type.'_';
+        $resource->{$c_prefix.'source'} =
+            $prefs && $prefs->{$prefix.'limit'}
+                ? 'customer'
+                : 'billing_profile';
+        my $sel_prefs =
+            $resource->{$c_prefix.'source'} eq 'customer'
+                ? $prefs
+                : $bp_prefs;
+        map {
+            $resource->{$c_prefix.$_} = $sel_prefs->{$prefix.$_}
+        } qw(limit lock notify);
+    }
+
     return $resource;
 
 }
