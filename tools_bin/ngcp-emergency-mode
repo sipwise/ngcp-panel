@@ -37,7 +37,7 @@ use NGCP::API::Client;
 use Config::Simple;
 use TryCatch;
 use Sys::Syslog qw(:standard :macros);
-use IO::Prompt:Tiny qw(prompt);
+use IO::Prompt::Tiny qw(prompt);
 
 openlog($PROGRAM_NAME, "ndelay,pid", LOG_LOCAL0);
 
