@@ -1,3 +1,10 @@
+ngcp-panel (9.5.3.17+0~mr9.5.3.17) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [1ef745f] TT#155850 CSC callhistory does not anonymize CLIR numbers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 04 May 2022 16:03:30 +0200
+
 ngcp-panel (9.5.3.16+0~mr9.5.3.16) unstable; urgency=medium
 
   [ Rene Krenn ]
