@@ -402,8 +402,8 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = c.loc('Edit Meta'), uri = "/invoicetemplate/'+full.id+'/editinfo", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Edit Content'), uri = "/invoicetemplate/'+full.id+'/editcontent", class = 'btn-small btn-tertiary', icon = 'icon-edit' },
+            { name = c.loc('Edit'), uri = "/invoicetemplate/'+full.id+'/editinfo", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Edit Template'), uri = "/invoicetemplate/'+full.id+'/editcontent", class = 'btn-small btn-tertiary', icon = 'icon-edit' },
             { name = c.loc('Delete'), uri = "/invoicetemplate/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
         ];
         helper.top_buttons = [
