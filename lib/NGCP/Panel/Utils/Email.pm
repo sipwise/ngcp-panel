@@ -147,12 +147,12 @@ sub rewrite_url {
             my $scheme = $1;
             my $domain = $2;
             my $base_path = $3;
-            $base_path =~ s/^\///;
+            $base_path =~ s/^\/// if length($base_path);
             my $port;
             if ($domain =~ /^([^@]*@)?([^:]+)(:\d+)?$/) {
                 $domain = $2;
                 $port = $3;
-                $port =~ s/^://;
+                $port =~ s/^:// if length($port);
             }
             $url = sprintf($format,$scheme,$domain,$port,$base_path);
         }
