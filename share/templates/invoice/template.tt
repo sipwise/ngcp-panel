@@ -15,18 +15,9 @@
 
 [% PROCESS "invoice/uri_wrapper_js.tt" %]
 
-<div class="row">
-    <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
-    </span>
-</div>
-
 <div class="row" id="messages">
 [%PROCESS 'helpers/ajax_messages.tt' -%]
 </div>
-
-<div class="ngcp-separator"></div>
-[% back_created = 1 -%]
 
 <div id="template_editor_form">
 [%PROCESS 'invoice/template_editor_form.tt' %]

@@ -6,16 +6,22 @@ function formSerialize(){
     return $('form[id=template_editor]').serialize();
 }
 </script>
+
 <form name="template_editor" id="template_editor" action="[% c.uri_for_action('/invoicetemplate/get_content_ajax', [tmpl.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
 
+[% UNLESS framed -%]
 <span>
-    <a class="btn btn-primary btn-small" onclick="
-    saveTemplate({},
-    	refreshMessagesAjax );void(0);"><i class="icon-download-alt"></i> [% c.loc('Save SVG')%]</a>
+    <a class="btn btn-primary btn-small" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+</span>
+[% back_created = 1 -%]
+[% END -%]
+
+<span>
+    <a class="btn btn-primary btn-small" onclick="saveTemplate({}, refreshMessagesAjax );void(0);"><i class="icon-download-alt"></i>[% c.loc('Save SVG')%]</a>
 </span>
 
 <span>
-<a class="btn btn-primary btn-small" target="_blank" href="[% c.uri_for_action('/invoicetemplate/preview_content', [ tmpl.id ]) %]"><i class="icon-eye-open"></i> [% c.loc('Preview as PDF')%]</a>
+    <a class="btn btn-primary btn-small" target="_blank" href="[% c.uri_for_action('/invoicetemplate/preview_content', [ tmpl.id ]) %]"><i class="icon-eye-open"></i> [% c.loc('Preview as PDF')%]</a>
 </span>
 
 <span id="load_saved_control">
@@ -33,6 +39,7 @@ function formSerialize(){
         });
         void(0);"><i class="icon-info-sign"></i> [% c.loc('Show Variables')%]</a>
 </span>
+
 <style>
 #template_variables_help{
     display:none;
