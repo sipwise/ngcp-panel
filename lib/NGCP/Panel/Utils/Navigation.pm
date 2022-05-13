@@ -81,9 +81,14 @@ sub check_form_buttons {
     delete $form->values->{back} if $posted;
 }
 
+sub select_back_target {
+    my ($c, $alternative_target) = @_;
+    return $c->stash->{close_target} || $alternative_target || $c->req->uri;
+}
+
 sub back_or {
     my ($c, $alternative_target, $nodetach) = @_;
-    my $target = $c->stash->{close_target} || $alternative_target || $c->req->uri;
+    my $target = select_back_target($c, $alternative_target);
     $c->response->redirect($target);
     $c->detach unless($nodetach);
 }

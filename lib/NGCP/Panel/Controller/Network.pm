@@ -182,7 +182,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         params => $c->request->params,
         item => $params,
     );
-    if($posted && $form->validated) {
+
+    if ($posted && $form->validated) {
 
         try {
             $c->model('DB')->schema->txn_do( sub {
@@ -212,8 +213,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     }
 
+    my $target =
+        NGCP::Panel::Utils::Navigation::select_back_target(
+            $c, $c->uri_for('/network')
+    );
+
     $c->stash(
-        close_target => $c->uri_for,
+        close_target => $target,
         edit_flag => 1,
         form => $form
     );
