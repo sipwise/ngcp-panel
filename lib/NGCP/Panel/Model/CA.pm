@@ -67,7 +67,7 @@ sub check_ca_errors {
         $error = "Failed to check CA certificate: $stdout";
     }
     $command = 'openssl verify ' . $c->config->{ssl}->{rest_api_certfile};
-    #$command = 'openssl verify /etc/ngcp-config/ssl/client-auth-ca.crt';
+    #$command = 'openssl verify /etc/ngcp-config/shared-files/ssl/client-auth-ca.crt';
     $c->log->debug($command);
     $stdout = `$command 2>&1` // "";
     if ($stdout =~ m/certificate has expired/) {

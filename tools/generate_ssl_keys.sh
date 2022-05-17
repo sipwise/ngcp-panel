@@ -16,7 +16,7 @@ if [ -z "${1:-}" ] ; then
   echo
   echo "Usage example:
 
-  $0 /etc/ngcp-config/ssl /usr/share/ngcp-panel-tools myserver
+  $0 /etc/ngcp-config/shared-files/ssl /usr/share/ngcp-panel-tools myserver
 "
   exit 1
 fi
