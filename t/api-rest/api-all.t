@@ -213,10 +213,6 @@ sub init_config{#init config
         #'customerzonecosts' => 1,
     #fails with: Unsupported media type 'application/json', accepting text/plain or text/xml only.)
         #'pbxdeviceconfigs' => 1,
-    #fails with: not ok 1131 - rtcapps: check_get2put: check put successful (Unprocessable Entity: Invalid field 'apps'. Must be an array.)
-        #'rtcapps' => 1,
-    #fails with: not ok 1176 - rtcnetworks: check_get2put: check put successful (Unprocessable Entity: Invalid field 'networks'. Must be an array.)
-        #'rtcnetworks' => 1,
 
 #--------- interceptions:
 # No intercept agents configured in ngcp_panel.conf, rejecting request

@@ -314,52 +314,6 @@ sub webfax_ajax :Chained('base') :PathPart('webfax/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-
-sub webphone :Chained('base') :PathPart('webphone') :Args(0) {
-    my ($self, $c) = @_;
-
-    $c->stash(template => 'subscriber/webphone.tt');
-}
-
-sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
-    my ($self, $c) = @_;
-
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $c->detach('/denied_page')
-            unless($c->stash->{subscriber}->contract->contact->reseller_id != $c->user->reseller_id);
-    } elsif($c->user->roles eq "subscriberadmin") {
-        $c->detach('/denied_page')
-            unless($c->stash->{subscriber}->contract_id != $c->user->account_id);
-    } else {
-    }
-
-    my $subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
-
-    # TODO: use from config.yml.
-    # Important: ws vs wss (issues with self-signed certs on cross-domain)
-    my $config = {
-        sip => {
-            # wss/5061 vs ws/5060
-            ws_servers => 'wss://' . $c->request->uri->host . ':' . $c->request->uri->port . '/wss/sip/',
-            uri => 'sip:' . $subscriber->username . '@' . $subscriber->domain->domain,
-            password => $subscriber->password,
-        },
-        xmpp => {
-            # wss/5281 vs ws/5280
-            # - ws causes "insecure" error in firefox
-            # - wss fails if self signed cert is not accepted in firefox/chromium
-            wsURL => 'wss://' . $c->request->uri->host . ':' . $c->request->uri->port . '/wss/xmpp/',
-            jid => $subscriber->username . '@' . $subscriber->domain->domain,
-            server => $subscriber->domain->domain,
-            credentials => { password => $subscriber->password },
-        },
-    };
-
-    $c->stash(aaData => $config);
-    $c->detach( $c->view("JSON") );
-}
-
 sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare)  {
     my ($self, $c) = @_;
 

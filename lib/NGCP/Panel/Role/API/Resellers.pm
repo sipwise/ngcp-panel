@@ -30,8 +30,6 @@ sub resource_from_item {
 
     my %resource = $item->get_inflated_columns;
 
-    $resource{enable_rtc} = $item->rtc_user ? JSON::true : JSON::false;
-
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
@@ -138,25 +136,6 @@ sub update_reseller {
             status => $resource->{status},
             contract_id => $resource->{contract_id},
         });
-
-    eval {
-        NGCP::Panel::Utils::Rtc::modify_reseller_rtc(
-            old_resource => $old_resource,
-            resource => $resource,
-            config => $c->config,
-            reseller_item => $reseller,
-            err_code => sub {
-                my ($msg, $debug) = @_;
-                $c->log->debug($debug) if $debug;
-                $c->log->warn($msg);
-                die $msg,"\n";
-            });
-    };
-    my $rtc_err = $@ // '';
-    if ($rtc_err) {
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Could not modify rtc_user: $rtc_err");
-        return;
-    }
 
     if($old_resource->{status} ne $resource->{status}) {
         NGCP::Panel::Utils::Reseller::_handle_reseller_status_change($c, $reseller);

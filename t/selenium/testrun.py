@@ -921,18 +921,6 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[6]/span[contains(., "Locked")]')) > 0, "Subscriber status was not edited")
         print("OK")
-        print("Try to enable and disable WebRTC...", end="")
-        driver.find_element_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[7]/div').click()
-        driver.implicitly_wait(2)
-        if len(driver.find_elements_by_xpath('/html/body//div[@role="alert"]//div[contains(., "Status code: 400")]')) == 0:
-            self.assertTrue(
-                len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[7]/div[@aria-checked="true"]')) > 0, "WebRTC was not enabled")
-            driver.find_element_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[7]/div').click()
-            self.assertTrue(
-                len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div/table/tbody/tr[1]/td[7]/div[@aria-checked="false"]')) > 0, "WebRTC was not disabled")
-            print("OK")
-        else:
-            print("OK")
         driver.implicitly_wait(10)
         print("Try to open the reseller edit page...", end="")
         driver.find_element_by_xpath('//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[2]/button').click()

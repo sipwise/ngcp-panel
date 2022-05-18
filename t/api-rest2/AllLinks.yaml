@@ -349,26 +349,6 @@
         is:
             code: 200
 
-#check options for /api/rtcapps/
--
-    name: check OPTIONS for /api/rtcapps/
-    type: item
-    method: OPTIONS
-    path: /api/rtcapps/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/rtcapps/
--
-    name: GET /api/rtcapps/
-    type: item
-    method: GET
-    path: /api/rtcapps/
-    conditions:
-        is:
-            code: 200
-
 #check options for /api/callrecordingstreams/
 -
     name: check OPTIONS for /api/callrecordingstreams/
@@ -1329,26 +1309,6 @@
         is:
             code: 200
 
-#check options for /api/rtcsessions/
--
-    name: check OPTIONS for /api/rtcsessions/
-    type: item
-    method: OPTIONS
-    path: /api/rtcsessions/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/rtcsessions/
--
-    name: GET /api/rtcsessions/
-    type: item
-    method: GET
-    path: /api/rtcsessions/
-    conditions:
-        is:
-            code: 200
-
 #check options for /api/invoices/
 -
     name: check OPTIONS for /api/invoices/
@@ -1725,26 +1685,6 @@
     type: item
     method: GET
     path: /api/speeddials/
-    conditions:
-        is:
-            code: 200
-
-#check options for /api/rtcnetworks/
--
-    name: check OPTIONS for /api/rtcnetworks/
-    type: item
-    method: OPTIONS
-    path: /api/rtcnetworks/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/rtcnetworks/
--
-    name: GET /api/rtcnetworks/
-    type: item
-    method: GET
-    path: /api/rtcnetworks/
     conditions:
         is:
             code: 200

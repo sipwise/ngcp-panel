@@ -52,29 +52,24 @@ sub hal_from_item {
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my ($cloudpbx, $sms, $faxserver, $rtcengine, $fileshare, $mobilepush, $csc_show_rtcengine_features);
+    my ($cloudpbx, $sms, $faxserver, $fileshare, $mobilepush);
 
     $cloudpbx = $c->config->{features}->{cloudpbx} // 0;
     $sms = $c->config->{features}->{sms} // 0;
     $faxserver = $c->config->{features}->{faxserver} // 0;
-    $rtcengine = $c->config->{features}->{rtcengine} // 0;
     $fileshare = $c->config->{features}->{fileshare} // 0;
     $mobilepush = $c->config->{features}->{mobilepush} // 0;
-    $csc_show_rtcengine_features = $c->config->{features}->{csc_show_rtcengine_features} // 0;
 
     if($c->user->roles eq "admin") {
         # nothing to be done
     } elsif($c->user->roles eq "reseller") {
-        # TODO: is it correct to just check rtc_user of reseller?
-        $rtcengine &= ($c->user->reseller->rtc_user // 0);
+        # nothing to be done
     } else {
 
         my $customer = $c->user->voip_subscriber->contract;
-        $rtcengine &= ($customer->contact->reseller->rtc_user // 0);
         my $cpbx = ($customer->product->class eq 'pbxaccount') ? 1 : 0;
         $cloudpbx &= $cpbx;
 
-        # TODO: sms and rtcengine are not specially restricted; should it?
         my $profile = $c->user->voip_subscriber_profile;
         if($profile) {
             my $attrs = [ map { $_->attribute->attribute } $profile->profile_attributes->all ];
@@ -90,10 +85,8 @@ sub _item_rs {
         { id => 1, name => 'cloudpbx',                    enabled => $cloudpbx },
         { id => 2, name => 'sms',                         enabled => $sms },
         { id => 3, name => 'faxserver',                   enabled => $faxserver },
-        { id => 4, name => 'rtcengine',                   enabled => $rtcengine },
         { id => 5, name => 'fileshare',                   enabled => $fileshare},
         { id => 6, name => 'mobilepush',                  enabled => $mobilepush},
-        { id => 7, name => 'csc_show_rtcengine_features', enabled => $csc_show_rtcengine_features},
     ];
 
     if($c->req->param('name')) {

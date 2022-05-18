@@ -23,11 +23,6 @@ my $ref = $test->reference_data(
             name => 'my_reseller_admin'
         },
         {
-            resource => 'admins',
-            hints => [{ name => 'rtc reseller admin' }],
-            name => 'my_rtcreseller_admin'
-        },
-        {
             resource => 'subscriberprofiles',
             hints => [{ name => 'subscriber profile' }],
             name => 'my_sub_profile'
@@ -49,7 +44,6 @@ diag("test capabilities as admin");
         cloudpbx => $ENV{HAS_CLOUDPBX} // 0,
         sms => $ENV{HAS_SMS} // 0,
         faxserver => $ENV{HAS_FAXSERVER} // 1,
-        rtcengine => $ENV{HAS_RTCENGINE} // 0,
         fileshare => $ENV{HAS_FILESHARE} // 0,
         mobilepush => $ENV{HAS_MOBILEPUSH} // 0,
     };
@@ -97,8 +91,8 @@ diag("test capabilities as admin");
     }
 }
 
-# test capabilities as reseller without rtcengine enabled
-diag("test capabilities as reseller without rtcengine");
+# test capabilities as reseller
+diag("test capabilities as reseller");
 {
     my $c_reseller = $test->client(
         role => 'reseller',
@@ -110,7 +104,6 @@ diag("test capabilities as reseller without rtcengine");
         cloudpbx => $ENV{HAS_CLOUDPBX} // 0,
         sms => $ENV{HAS_SMS} // 0,
         faxserver => $ENV{HAS_FAXSERVER} // 1,
-        rtcengine => 0,
         fileshare => $ENV{HAS_FILESHARE} // 0,
         mobilepush => $ENV{HAS_MOBILEPUSH} // 0,
     };
@@ -158,67 +151,6 @@ diag("test capabilities as reseller without rtcengine");
     }
 }
 
-# test capabilities as reseller with rtcengine enabled
-diag("test capabilities as reseller with rtcengine");
-{
-    my $c_rtcreseller = $test->client(
-        role => 'reseller',
-        username => $ref->data('my_rtcreseller_admin')->{login},
-        password => "rtcreseller_$sid",
-    );
-
-    my $expected = {
-        cloudpbx => $ENV{HAS_CLOUDPBX} // 0,
-        sms => $ENV{HAS_SMS} // 0,
-        faxserver => $ENV{HAS_FAXSERVER} // 1,
-        rtcengine => $ENV{HAS_RTCENGINE} // 1,
-        fileshare => $ENV{HAS_FILESHARE} // 0,
-        mobilepush => $ENV{HAS_MOBILEPUSH} // 0,
-    };
-
-    my $cap_res = $test->resource(
-        client => $c_rtcreseller,
-        resource => 'capabilities',
-    );
-
-    my $caps = $cap_res->test_get(
-        name => 'fetch capabilities as rtc reseller',
-        expected_links => [],
-        expected_fields => [qw/
-            id name enabled
-        /],
-        expected_result => { code => 200 }
-    );
-
-    my $tmpexpected = clone($expected);
-    my @caps = ();
-    foreach my $cap (@{ $caps->[0]->{_embedded}->{'ngcp:capabilities'} }) {
-        my $name = $cap->{name};
-        my $val = $cap->{enabled} ? 1 : 0;
-        is(exists $expected->{$name}, 1, "returned rtc reseller capability $name is expected");
-        $test->inc_test_count();
-        is($val, $expected->{$name}, "returned rtc reseller capability $name has value $$expected{$name}");
-        $test->inc_test_count();
-        delete $tmpexpected->{$cap->{name}};
-        push @caps, $cap;
-    }
-    is(keys %{ $tmpexpected }, 0, "all expected rtc reseller capabilities seen");
-    $test->inc_test_count();
-
-    foreach my $cap(@caps) {
-        diag("test individual capability $cap->{name} with id $cap->{id} as rtc reseller");
-        my $items = $cap_res->test_get(
-            name => "fetch individual capability $cap->{name} as rtc reseller",
-            item => $cap,
-            expected_links => [],
-            expected_fields => [qw/
-                id name enabled
-            /],
-            expected_result => { code => 200 }
-        );
-    }
-}
-
 diag("test capabilities as pbx subscriber");
 {
     my $c_subscriber = $test->client(
@@ -232,7 +164,6 @@ diag("test capabilities as pbx subscriber");
         cloudpbx => 1,
         sms => $ENV{HAS_SMS} // 0,
         faxserver => $ENV{HAS_FAXSERVER} // 1,
-        rtcengine => 0, 
         fileshare => $ENV{HAS_FILESHARE} // 0,
         mobilepush => $ENV{HAS_MOBILEPUSH} // 0,
     };

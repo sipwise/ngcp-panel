@@ -285,11 +285,6 @@ sub build_data{
                 ],
             },
         },
-        'rtcsessions' => {
-            'data' => {
-                subscriber_id => sub { return shift->get_id('subscribers',@_); },
-            },
-        },
         'topupcash' => {
             'data' => {
                 subscriber_id => sub { return shift->get_id('subscribers',@_); },
