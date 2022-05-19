@@ -32,7 +32,7 @@ sub relation{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    allowed_roles => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
 });
 
 sub GET :Allow {
