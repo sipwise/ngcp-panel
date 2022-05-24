@@ -135,8 +135,13 @@ sub create :Chained('package_list_restricted') :PathPart('create') :Args(0) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/package'));
     }
 
+    my $target =
+        NGCP::Panel::Utils::Navigation::select_back_target(
+            $c, $c->uri_for('/package')
+    );
+
     $c->stash(
-        close_target => $c->uri_for,
+        close_target => $target,
         create_flag => 1,
         form => $form
     );
@@ -238,8 +243,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     }
 
+    my $target =
+        NGCP::Panel::Utils::Navigation::select_back_target(
+            $c, $c->uri_for('/package')
+    );
+
     $c->stash(
-        close_target => $c->uri_for,
+        close_target => $target,
         edit_flag => 1,
         form => $form
     );
