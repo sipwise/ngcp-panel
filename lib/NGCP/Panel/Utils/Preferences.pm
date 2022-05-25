@@ -92,7 +92,7 @@ sub prepare_resource {
     my %profile_allowed_attrs; # for filtering subscriber attrs on its profile
     my $has_profile = 0;
     my $attr = 0;
-    
+
     if ($type eq "active") {
         my $sub_prefs = $item->provisioning_voip_subscriber->voip_usr_preferences->search(undef,{
             columns => [ 'value', 'attribute_id'],
@@ -125,12 +125,12 @@ sub prepare_resource {
 
         $prefs = $sub_prefs->union($ct_prefs->search({attribute_id => {-not_in => [map {$_->get_column('attribute_id')} $sub_prefs->all]}}));
         $prefs = $prefs->union($dom_prefs->search({attribute_id => {-not_in => [map {$_->get_column('attribute_id')} $prefs->all]}}));
-        
+
         $prefs = $prefs->search({
         }, {
             prefetch => 'attribute',
         });
-        
+
     } else {
         if($type eq "subscribers") {
             $prefs = $item->provisioning_voip_subscriber->voip_usr_preferences;
@@ -373,6 +373,8 @@ sub prepare_resource {
         }
     }
 
+    $resource = { map { _rename_transform_out($c,$_) => $resource->{$_}; } keys %$resource };
+
     if($type eq "domains") {
         $resource->{domain_id} = int($item->id);
         $resource->{id} = int($item->id);
@@ -580,6 +582,7 @@ sub update_preferences {
         join => 'attribute',
     });
 
+    $resource = { map { _rename_transform_in($c,$_) => $resource->{$_}; } keys %$resource };
     if($replace) {
         # in case of PUT, we remove all old entries
         try {
@@ -590,6 +593,7 @@ sub update_preferences {
             return;
         };
     } else {
+        $old_resource = { map { _rename_transform_in($c,$_) => $old_resource->{$_}; } keys %$old_resource };
         # in case of PATCH, we remove only those entries marked for removal in the patch
         try {
             foreach my $k(keys %{ $old_resource }) {
@@ -890,7 +894,7 @@ sub update_preferences {
                     unless ($replace) {
                         #in case of PATCH, check duplicates only for new values, since there could already be duplicates in some systems
                         ($old_seen) = array_to_map($old_resource->{$pref},undef,undef,'first');
-                    }   
+                    }
                     my $seen = {};
                     foreach my $allowed_cli (@{$resource->{$pref} // []}) {
                         next if exists $old_seen->{$allowed_cli};
@@ -1021,14 +1025,18 @@ sub _init_transform {
         if (defined $conf) {
             foreach my $p (keys %$conf) {
                 $transform->{$p} = {};
-                foreach my $v (keys %{$conf->{$p}}) {
-                    if ($v =~ /^([a-z0-9_]+)$CODE_SUFFIX_FNAME$/) {
-                        ## no critic (BuiltinFunctions::ProhibitStringyEval)
-                        $transform->{$p}->{$1} = eval($conf->{$p}->{$v});
-                        die("$p '$v': " . $@) if $@;
-                    } else {
-                        $transform->{$p}->{$v} = $conf->{$p}->{$v};                    
+                if ('HASH' eq ref $conf->{$p}) {
+                    foreach my $v (keys %{$conf->{$p}}) {
+                        if ($v =~ /^([a-z0-9_]+)$CODE_SUFFIX_FNAME$/) {
+                            ## no critic (BuiltinFunctions::ProhibitStringyEval)
+                            $transform->{$p}->{$1} = eval($conf->{$p}->{$v});
+                            die("$p '$v': " . $@) if $@;
+                        } else {
+                            $transform->{$p}->{$v} = $conf->{$p}->{$v};
+                        }
                     }
+                } else {
+                    $transform->{$p} = $conf->{$p};
                 }
             }
         }
@@ -1045,6 +1053,17 @@ sub _exists_api_transform_in {
         }
     }
     return 0;
+}
+
+sub _rename_transform_in {
+    my ($c, $pref) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_IN = _init_transform($API_TRANSFORM_IN,$c->config->{preference_in_transformations});
+        if (exists $API_TRANSFORM_IN->{$pref} and not ref $API_TRANSFORM_IN->{$pref}) {
+            return $API_TRANSFORM_IN->{$pref};
+        }
+    }
+    return $pref;
 }
 
 sub _api_transform_in {
@@ -1072,6 +1091,19 @@ sub _api_transform_in {
         }
     }
     return $value;
+}
+
+sub _rename_transform_out {
+    my ($c, $pref) = @_;
+    if ($c->request and $c->request->path =~/^api\//i) {
+        $API_TRANSFORM_OUT = _init_transform($API_TRANSFORM_OUT,$c->config->{preference_out_transformations});
+        use Data::Dumper;
+        $c->log->debug(Dumper($API_TRANSFORM_OUT));
+        if (exists $API_TRANSFORM_OUT->{$pref} and not ref $API_TRANSFORM_OUT->{$pref}) {
+            return $API_TRANSFORM_OUT->{$pref};
+        }
+    }
+    return $pref;
 }
 
 sub _api_transform_out {
@@ -1105,7 +1137,7 @@ sub _check_pref_value {
     my ($c, $meta, $value, $pref_type, $err_code) = @_;
 
     return 1 if _exists_api_transform_in($c,$meta->attribute);
-    
+
     if (!defined $err_code || ref $err_code ne 'CODE') {
         $err_code = sub { };
     }
