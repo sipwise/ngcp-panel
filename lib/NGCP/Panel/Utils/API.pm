@@ -478,7 +478,7 @@ sub _fields_to_swagger_schema {
         }
 
         $p->{description} = $f->{description};
-        if (grep {m/^null$/} @{ $f->{types} // [] }) {
+        unless (grep {m/^null$/} @{ $f->{types} // [] }) {
             push @{ $e->{required} }, $f->{name};
         }
 
