@@ -724,7 +724,7 @@ sub update_preferences {
                 /^rewrite_rule_set$/ && do {
                     my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
                         name => $resource->{$pref},
-                        reseller_id => $reseller_id,
+                        $pref_type ne 'peer_pref' ? (reseller_id => $reseller_id) : (),
                     });
                     unless($rwr_set) {
                         $c->log->error("no rewrite rule set '".$resource->{$pref}."' for reseller id $reseller_id found");
@@ -766,7 +766,7 @@ sub update_preferences {
                 /^header_rule_set$/ && do {
                     my $hdr_set = $c->model('DB')->resultset('voip_header_rule_sets')->find({
                         name => $resource->{$pref},
-                        reseller_id => $reseller_id,
+                        $pref_type ne 'peer_pref' ? (reseller_id => $reseller_id) : (),
                     });
                     unless ($hdr_set) {
                         $c->log->error("no header rule set '".$resource->{$pref}."' for reseller id $reseller_id found");
@@ -824,7 +824,7 @@ sub update_preferences {
                     # TODO: not applicable for domains, but for subs, check for contract_id!
                     my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
                         name => $resource->{$pref},
-                        reseller_id => $reseller_id,
+                        $pref_type ne 'peer_pref' ? (reseller_id => $reseller_id) : (),
                     });
                     unless($set) {
                         $c->log->error("no $pref '".$resource->{$pref}."' for reseller id $reseller_id found");
