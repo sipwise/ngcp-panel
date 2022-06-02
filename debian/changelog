@@ -1,3 +1,17 @@
+ngcp-panel (8.5.10.0+0~mr8.5.10.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [aed2379] TT#146101 add external base url parameter
+  * [16fc4fd] TT#103450 enable lintercept role for interceptions PUT/DELETE
+  * [0839a98] TT#89200 fix workaround logic for backward-incompatible prefs
+  * [a70d9bc] TT#62059 disable bootstrapdatatable html5 statesaving
+
+  [ Guillem Jover ]
+  * [56eac88] TT#175501 ngcp-emergency-mode: Fix IO::Prompt::Tiny import syntax
+  * [b0fbe33] TT#175501 ngcp-emergency-mode: Import JSON module
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 02 Jun 2022 19:56:22 +0200
+
 ngcp-panel (8.5.9.0+0~mr8.5.9.0) unstable; urgency=medium
 
   * New release.
