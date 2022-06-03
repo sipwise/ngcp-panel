@@ -1,3 +1,28 @@
+ngcp-panel (9.5.6.0+0~mr9.5.6.0) unstable; urgency=medium
+
+  [ Oleksandr Duts ]
+  * [fb18274] TT#141101 UI/API fix custom_announcement upload
+  * [84df3c2] TT#167900 /api/subscribers improve number duplicate checks
+  * [e5325ae] TT#146103 API POST resetpassword - subscriber search fix
+
+  [ Rene Krenn ]
+  * [3694928] TT#168050 fix allowed_cli check for duplicates
+  * [b7e5c5d] TT#168050 fix allowed_cli check for duplicates - update testcase
+  * [761801c] TT#168050 fix allowed_cli check for duplicates - fix tests
+  * [8b7f7b1] TT#146101 add external base url parameter
+  * [af98bfa] TT#155850 CSC callhistory does not anonymize CLIR numbers
+
+  [ Kirill Solomko ]
+  * [3ed0f5c] TT#171850 fix api-subscribers tests
+  * [cc8a643] TT#172451 password reset uses webusername
+  * [52dc8db] TT#172451 /api/passwordreset fix provisioning subscriber join
+
+  [ Guillem Jover ]
+  * [012c588] TT#175501 ngcp-emergency-mode: Fix IO::Prompt::Tiny import syntax
+  * [36bdee4] TT#175501 ngcp-emergency-mode: Import JSON module
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 03 Jun 2022 18:10:34 +0200
+
 ngcp-panel (9.5.5.0+0~mr9.5.5.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
