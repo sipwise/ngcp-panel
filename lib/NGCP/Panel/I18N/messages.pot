@@ -5823,6 +5823,10 @@ msgstr ""
 msgid "Header Rule Set"
 msgstr ""
 
+#: share/templates/header/actions_list.tt share/templates/header/conditions_list.tt share/templates/header/rules_list.tt
+msgid "Header Rule Sets"
+msgstr ""
+
 #: share/templates/header/rules_list.tt share/templates/subscriber/header_rules_list.tt
 msgid "Header Rules"
 msgstr ""
@@ -9860,7 +9864,7 @@ msgstr ""
 msgid "Rewrite Rule Set for Source/Destination fields"
 msgstr ""
 
-#: share/templates/rewrite/set_list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_domain_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
+#: share/templates/rewrite/rules_list.tt share/templates/rewrite/set_list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_domain_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Rewrite Rule Sets"
 msgstr ""
 
@@ -10535,7 +10539,7 @@ msgstr ""
 msgid "Sound Set used for system prompts like error announcements etc."
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/sound/list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_domain_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
+#: share/templates/customer/details.tt share/templates/sound/handles_list.tt share/templates/sound/list.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_domain_overview.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Sound Sets"
 msgstr ""
 
@@ -13477,7 +13481,7 @@ msgstr ""
 msgid "Time Set Event"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm share/templates/widgets/admin_topmenu_settings.tt
+#: lib/NGCP/Panel/Controller/Subscriber.pm share/templates/timeset/event_list.tt share/templates/widgets/admin_topmenu_settings.tt
 msgid "Time Sets"
 msgstr ""
 
