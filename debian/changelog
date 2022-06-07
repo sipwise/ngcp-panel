@@ -1,3 +1,69 @@
+ngcp-panel (11.0.0.0+0~mr11.0.0.0) unstable; urgency=medium
+
+  [ Oleksandr Duts ]
+  * [afa9289] TT#167900 /api/subscribers improve number duplicate checks
+  * [a2dfbe8] TT#158900 API DELETE admincerts/:id - master-admin for other admins
+  * [752d81d] TT#146103 API POST resetpassword - subscriber search fix
+  * [ad6a05e] TT#172352 UI fix failed create reseller with default values
+  * [f7d57da] TT#134050 API POST subscribers - doc customer_id field
+
+  [ Kirill Solomko ]
+  * [23796e0] TT#158252 GET /api/subscriberpreferences fix ambiguous id
+  * [f91797c] TT#170500 password reset v2 fix redirect url
+  * [6bdfca9] TT#171850 fix unintentional primary number removal
+  * [e011960] Revert "TT#171850 fix unintentional primary number removal"
+  * [999332d] TT#171850 fix api-subscribers tests
+  * [1954732] TT#172451 password reset uses webusername
+  * [1841d07] TT#172451 /api/passwordreset fix provisioning subscriber join
+  * [68af361] TT#173700 /api/topuplogs expand related fixups
+  * [996cda6] TT#173650 enhance /api/customerfraidpreferences
+  * [dcae99b] TT#177851 BillingNetworks close button (back) target selection
+  * [d3dc152] TT#175000 remove rtcengine logic
+  * [94941ef] TT#177402 /api/capabilities allow ccareadmin, ccare roles
+  * [2efeb70] TT#179800 API peer server preferences fix reliance on reseller_id
+
+  [ Rene Krenn ]
+  * [43d41c0] TT#168050 fix allowed_cli check for duplicates - fix tests
+  * [e1f48f0] TT#155600 use trailing wildcard in datatable search
+  * [f27f58f] TT#155600 enable (default) prefix search for username, uuid
+  * [eac6c2d] TT#146101 add external base url parameter
+  * [a1dc62a] TT#170300 support fast subscriber search by alias
+  * [7760274] TT#113602 tool to generate apidoc off-line WIP
+  * [597f01c] TT#113602 cleanup tool to generate apidoc
+  * [928dcf6] TT#146101 handle undefined port with base url parameter
+  * [66513cb] TT#173900 rename provisioning_template "lang" element
+  * [9d7990e] TT#178050 refactor /api/activesubscriberprefs impl
+  * [8afc819] TT#179700 fix inverted mandatory field ind (swagger)
+
+  [ Nico Schedel ]
+  * [70ce9d3] TT#122872 selenium: fixup admin, contact and login tests
+
+  [ Sergii Leonenko ]
+  * [d93f4d7] TT#170850 Issue - Invoice template variables popup invisible in v2 UI
+
+  [ Alexander Lutay ]
+  * [3f55026] TT#170501 Add placeholder file to prevent HTTP 404 error in console.
+  * [b90bd01] TT#176350 Use common edit logic for Invoice templates
+  * [3b58805] TT#104162 Improve free space usage on ngcp-panel content section
+  * [4e181ef] TT#104162 Improve 'Invoice template' SVG editor layout for v1 and v2
+  * [8250cad] TT#177851 Fix ProfilePackage navigation for close button
+  * [597beac] TT#149450 Add nagivation buttons '... Sets' to return from submenu
+
+  [ Guillem Jover ]
+  * [530ae90] TT#175501 ngcp-emergency-mode: Fix IO::Prompt::Tiny import syntax
+  * [1a62b5c] TT#175501 ngcp-emergency-mode: Import JSON module
+  * [0e5a529] TT#177600 Move SSL certificates under /etc/ngcp-config/shared-files/ssl
+
+  [ Sipwise Jenkins Builder ]
+  * [072e897] TT#4166 I18N dump: snapshot 2021.12.02-01.24.06
+  * [5bdadf3] TT#4166 I18N dump: snapshot 2022.05.14-01.19.21
+  * [6cb0ea0] TT#4166 I18N dump: snapshot 2022.05.19-01.18.41
+
+  [ Michael Prokop ]
+  * [35edfb9] TT#76552 Harden ngcp-panel service
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Jun 2022 11:44:07 +0200
+
 ngcp-panel (10.5.0.0+0~mr10.5.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
