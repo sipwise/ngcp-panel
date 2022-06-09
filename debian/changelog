@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.25+0~mr9.5.2.25) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [be662af] TT#170500 password reset v2 fix redirect url
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Jun 2022 13:18:07 +0200
+
 ngcp-panel (9.5.2.24+0~mr9.5.2.24) unstable; urgency=medium
 
   [ Rene Krenn ]
