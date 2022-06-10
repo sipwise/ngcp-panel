@@ -600,7 +600,14 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
         back_uri => $c->req->uri,
     );
 
-    my $subscriber_root_url = "https://" . $c->req->uri->host . "/";
+    my $subscriber_login_url;
+    
+    if ($c->config->{general}{csc_js_enable} == 1
+        or $c->config->{general}{csc_js_enable} == 2) {
+        $subscriber_login_url = $c->req->base.'v2/#/login';
+    } else {
+        $subscriber_login_url = $c->uri_for('/login/subscriber');
+    }
 
     if($posted && $form->validated) {
         my $subscriber;
@@ -638,7 +645,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
             desc => $c->loc('Web password successfully recovered, please re-login.'),
         );
         $c->flash(username => $subscriber->username . '@' . $subscriber->domain->domain);
-        $c->res->redirect($subscriber_root_url);
+        $c->res->redirect($subscriber_login_url);
         return;
 
     }
@@ -647,7 +654,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
         form => $form,
         edit_flag => 1,
         template => 'subscriber/recoverpassword.tt',
-        close_target => $subscriber_root_url,
+        close_target => $subscriber_login_url,
     );
 }
 
