@@ -1,3 +1,10 @@
+ngcp-panel (9.5.2.26+0~mr9.5.2.26) unstable; urgency=medium
+
+  [ Oleksandr Duts ]
+  * [06a4abb] TT#146250 UI recoverwebpassword - redirect to 443
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Jun 2022 13:19:29 +0200
+
 ngcp-panel (9.5.2.25+0~mr9.5.2.25) unstable; urgency=medium
 
   [ Kirill Solomko ]
