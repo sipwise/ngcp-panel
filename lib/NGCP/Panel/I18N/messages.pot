@@ -6186,7 +6186,7 @@ msgid "If true, calling party number is shown regardles of caller CLIR settings.
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Ignore Call Forward when Hunting"
+msgid "Ignore Members Call Forwards when Hunting"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6206,7 +6206,7 @@ msgid "Ignore preferences \"allowed_ips\" and \"man_allowed_ips\"."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Ignore the Call Forward from a Cloud PBX subscriber when it is called within a huntgroup"
+msgid "Ignore the Members Call Forwards from a Cloud PBX subscriber when it is called within a huntgroup"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
