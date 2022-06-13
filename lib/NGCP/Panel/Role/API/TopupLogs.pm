@@ -17,7 +17,7 @@ sub _item_rs {
 
     my $item_rs = $c->model('DB')->resultset('topup_logs');
     if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{

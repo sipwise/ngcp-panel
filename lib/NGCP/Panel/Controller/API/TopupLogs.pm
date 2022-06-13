@@ -70,7 +70,7 @@ sub query_params {
                 },
                 second => sub { },
             },
-        },        
+        },
         {
             param => 'contract_id',
             description => 'Filter for top-up requests of a specific customer contract.',
@@ -82,7 +82,18 @@ sub query_params {
                 second => sub {},
             },
         },
-       {
+        {
+            param => 'customer_id',
+            description => 'Filter for top-up requests of a specific customer contract.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'me.contract_id' => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
             param => 'subscriber_id',
             description => 'Filter for top-up requests of a specific subscriber.',
             query => {
@@ -93,7 +104,7 @@ sub query_params {
                 second => sub {},
             },
         },
-       {
+        {
             param => 'voucher_id',
             description => 'Filter for top-up requests with a specific voucher.',
             query => {
