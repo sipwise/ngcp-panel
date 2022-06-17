@@ -6,6 +6,7 @@ SCCS
 .git
 _darcs
 .cvsignore
+.vscode
 Descrip.MMS
 DESCRIP.MMS
 descrip.mms

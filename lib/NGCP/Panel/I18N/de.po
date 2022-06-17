@@ -15196,10 +15196,6 @@ msgid "left"
 msgstr "hat den Chat verlassen"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "libinewrate"
-msgstr "libinewrate"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "libswrate"
 msgstr "libswrate"
 

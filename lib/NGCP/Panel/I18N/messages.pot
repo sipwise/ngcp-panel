@@ -15091,10 +15091,6 @@ msgid "left"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "libinewrate"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "libswrate"
 msgstr ""
 

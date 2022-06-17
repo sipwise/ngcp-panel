@@ -130,8 +130,6 @@ Depends:
  sox,
  ${misc:Depends},
  ${perl:Depends},
-Recommends:
- libngcp-rating-inew-perl,
 Description: catalyst based panel application for NGCP
  A completely overhauled provisioning interface for the NGCP system.
 

@@ -7,6 +7,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Utf8;
 use NGCP::Panel::Utils::SMS;
 use NGCP::Panel::Utils::Preferences;
+use UUID;
 
 
 __PACKAGE__->set_config();
@@ -116,21 +117,25 @@ sub create_item {
         return;
     }
     my $test_mode = $c->request->params->{test_mode} // '';
-    my $session;
+
+    my ($uuid, $session_id);
+    UUID::generate($uuid);
+    UUID::unparse($uuid, $session_id);
+
+    my $session = {
+        caller => $resource->{caller},
+        callee => $resource->{callee},
+        status => 'ok',
+        reason => 'accepted',
+        parts  => [],
+        sid    => $session_id,
+        rpc    => $parts,
+        coding => undef,
+    };
+
     my $smsc_peer = 'default';
-    my $pp_billing_performed = 0;
     try {
-        my $parts = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
-        $session = NGCP::Panel::Utils::SMS::init_prepaid_billing(c => $c,
-            prov_subscriber => $subscriber,
-            parts => $parts,
-            caller => $resource->{caller},
-            callee => $resource->{callee}
-        );
-        unless ($session && $session->{status} eq 'ok') {
-            die($session->{reason} //
-                "Internal server error when preparing sms billing");
-        }
+        $session->{parts} = NGCP::Panel::Utils::SMS::get_number_of_parts($resource->{text});
 
         $session->{coding} = NGCP::Panel::Utils::SMS::get_coding($resource->{text});
 
@@ -159,22 +164,11 @@ sub create_item {
 
         }
 
-        NGCP::Panel::Utils::SMS::perform_prepaid_billing(c => $c,
-            session => $session
-        );
-        $pp_billing_performed = 1;
-
         if ($session->{status} eq 'failed') {
             die $session->{reason}."\n";
         }
-
     } catch($e) {
         $c->log->error($e);
-        unless ($pp_billing_performed) {
-            NGCP::Panel::Utils::SMS::cancel_prepaid_billing(c => $c,
-                session => $session
-            );
-        }
         if ($session && $session->{reason} eq 'insufficient credit') {
             $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send the sms");
         } else {

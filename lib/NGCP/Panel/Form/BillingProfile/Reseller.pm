@@ -58,7 +58,6 @@ has_field 'prepaid_library' => (
     type => 'Select',
     options => [
         { value => 'libswrate', label => 'libswrate' },
-        { value => 'libinewrate', label => 'libinewrate' },
     ],
     element_attr => {
         rel => ['tooltip'],
