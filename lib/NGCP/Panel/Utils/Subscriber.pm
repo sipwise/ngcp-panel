@@ -1543,7 +1543,7 @@ sub update_subscriber_numbers {
                 $alias->{e164}->{is_devid} = delete $alias->{is_devid};
             }
 
-            if (defined $current_primary_number && $current_primary_number == $cli) {
+            if (defined $current_primary_number && $current_primary_number eq $cli) {
                 die "alias '" . $c->qs($cli) . "' is already defined as the primary number";
             }
 
