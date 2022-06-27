@@ -129,7 +129,6 @@ sub create_item {
         reason => 'accepted',
         parts  => [],
         sid    => $session_id,
-        rpc    => $parts,
         coding => undef,
     };
 
