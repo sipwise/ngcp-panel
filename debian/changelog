@@ -1,3 +1,10 @@
+ngcp-panel (10.5.2.0+0~mr10.5.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [039fa25] TT#182102 fix subcriber primary number and cli comparsion
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Jun 2022 17:27:37 +0200
+
 ngcp-panel (10.5.1.0+0~mr10.5.1.0) unstable; urgency=medium
 
   [ Oleksandr Duts ]
