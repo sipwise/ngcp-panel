@@ -88,7 +88,7 @@ sub ajax :Chained('list_customer') :PathPart('ajax') :Args(0) {
         my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, contract => $item, now => $now, );
         $result{'billing_profile_name'} = $bm_actual->billing_profile->name if $bm_actual;
         return %result;
-    }, { 
+    }, {
         'count_limit' => 1000,
         'extra_or' => [ {
             'me.id' => { in => [ map { $_->id } $res->search({
@@ -393,7 +393,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         { name => "username", search => 1, title => $c->loc("Name") },
         { name => "provisioning_voip_subscriber.pbx_extension", search => 1, title => $c->loc("Extension") },
         { name => "provisioning_voip_subscriber.pbx_hunt_policy", search => 1, title => $c->loc("Hunt Policy") },
-        { name => "provisioning_voip_subscriber.pbx_hunt_timeout", search => 1, title => $c->loc("Serial Hunt Timeout") },
+        { name => "provisioning_voip_subscriber.pbx_hunt_timeout", search => 1, title => $c->loc("Hunt Timeout") },
     ]);
     my $subscribers_rs = $c->model('DB')->resultset('voip_subscribers')->search({
         contract_id => $contract_id,

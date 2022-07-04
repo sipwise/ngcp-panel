@@ -168,8 +168,8 @@ sub localize {
     $c->loc('Choose the logic for local RTCP feedback (AVPF profile) for the RTP relay');
     $c->loc('CloudPBX Hunt Policy');
     $c->loc('The hunting policy for PBX hunt groups.');
-    $c->loc('CloudPBX Serial Hunt Timeout');
-    $c->loc('The serial timeout for hunting in PBX hunt groups.');
+    $c->loc('CloudPBX Hunt Timeout');
+    $c->loc('The timeout for hunting in PBX hunt groups.');
     $c->loc('CloudPBX Hunt Group List');
     $c->loc('The members (as SIP URIs) of the PBX hunt group.');
     $c->loc('CLI of CloudPBX Pilot Subscriber');
@@ -353,7 +353,7 @@ sub form_strings {
     $c->loc('Day');
     $c->loc('Email');
     $c->loc('Read only');
-    $c->loc('Serial Hunting Timeout');
+    $c->loc('Hunting Timeout');
     $c->loc('External ID');
     $c->loc('Administrative');
     $c->loc('fraud detection threshold per day, specifying cents');

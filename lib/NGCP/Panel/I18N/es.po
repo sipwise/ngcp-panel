@@ -1300,8 +1300,8 @@ msgid "CloudPBX Hunt Policy"
 msgstr "Política de captura del CloudPBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "CloudPBX Serial Hunt Timeout"
-msgstr "Timeout del Serial Hunt del CloudPBX"
+msgid "CloudPBX Hunt Timeout"
+msgstr "Timeout del Hunt del CloudPBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CloudPBX Subscriber"
@@ -6944,8 +6944,8 @@ msgid "Serial #"
 msgstr "# de Serie"
 
 #: lib/NGCP/Panel/Controller/Customer.pm share/templates/subscriber/master.tt
-msgid "Serial Hunt Timeout"
-msgstr "Tiempo de Espera para Caza Secuencial"
+msgid "Hunt Timeout"
+msgstr "Tiempo de espera para la caza"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session Timers"

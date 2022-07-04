@@ -1301,8 +1301,8 @@ msgid "CloudPBX Hunt Policy"
 msgstr "CloudPBX Modalità di Ricerca"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "CloudPBX Serial Hunt Timeout"
-msgstr "CloudPBX Timeout Chiamata in Serie"
+msgid "CloudPBX Hunt Timeout"
+msgstr "CloudPBX Timeout Chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CloudPBX Subscriber"
@@ -6945,8 +6945,8 @@ msgid "Serial #"
 msgstr "Seriale #"
 
 #: lib/NGCP/Panel/Controller/Customer.pm share/templates/subscriber/master.tt
-msgid "Serial Hunt Timeout"
-msgstr "Timeout Ricerca Seriale"
+msgid "Hunt Timeout"
+msgstr "Timeout Ricerca"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Session Timers"
@@ -12672,8 +12672,8 @@ msgstr "si"
 #~ msgid "Force outbound calls to peer"
 #~ msgstr "Forza chiamate in uscita verso i peer"
 
-#~ msgid "Serial Hunting Timeout"
-#~ msgstr "Timeout Chiamata in Serie"
+#~ msgid "Hunting Timeout"
+#~ msgstr "Timeout Chiamata"
 
 #~ msgid "The PBX group id this subscriber belongs to."
 #~ msgstr "L´Id del gruppo PBX a cui questo abbonato appartiene."

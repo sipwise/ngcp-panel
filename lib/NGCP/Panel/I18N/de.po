@@ -2296,8 +2296,8 @@ msgid "CloudPBX Hunt Policy"
 msgstr "CloudPBX-Hunt-Methode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "CloudPBX Serial Hunt Timeout"
-msgstr "CloudPBX-Zeitüberschreitung für serielles Hunting"
+msgid "CloudPBX Hunt Timeout"
+msgstr "CloudPBX-Zeitüberschreitung für Hunting"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CloudPBX Subscriber"
@@ -10312,8 +10312,8 @@ msgid "Serial #"
 msgstr "Serien-#"
 
 #: lib/NGCP/Panel/Controller/Customer.pm share/templates/subscriber/master.tt
-msgid "Serial Hunt Timeout"
-msgstr "Zeitüberschreitung für serielles Hunting"
+msgid "Hunt Timeout"
+msgstr "Zeitüberschreitung für Hunting"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Serial Ringing"
