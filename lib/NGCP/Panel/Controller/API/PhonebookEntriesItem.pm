@@ -8,6 +8,7 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PhonebookE
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
     mandatory_parameters => { 'single' => [qw/reseller_id customer_id subscriber_id/],},
+    allowed_ngcp_types => [qw/carrier sppro/],
 });
 
 sub allowed_methods{
