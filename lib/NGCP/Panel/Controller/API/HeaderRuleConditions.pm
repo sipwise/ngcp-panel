@@ -9,6 +9,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::HeaderRuleCond
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
+    allowed_ngcp_types => [qw/carrier sppro/],
 });
 
 sub allowed_methods {
