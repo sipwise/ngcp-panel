@@ -12,6 +12,7 @@ __PACKAGE__->set_config({
         Default => [qw/admin reseller/],
         Journal => [qw/admin reseller/],
     },
+    allowed_ngcp_types => [qw/carrier sppro/],
     PATCH => { ops => [qw/add replace remove copy/] },
 });
 
