@@ -89,6 +89,7 @@ sub field_list {
     foreach my $pref($pref_rs->all) {
         my $desc = $pref->description;
         push @{ $fields }, 'attribute.'.$pref->attribute => {
+            name => $pref->attribute,
             type => 'Checkbox',
             label => $pref->attribute,
             checkbox_value => $pref->id,
