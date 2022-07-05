@@ -772,6 +772,7 @@ $(function() {
     </div>
     [% END -%]
 
+    [% IF c.config.general.ngcp_type != 'spce' -%]
     [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
            c.user.roles == "admin" || c.user.roles == "reseller" ||
            c.user.roles == "ccareadmin" || c.user.roles == "ccare" -%]
@@ -816,6 +817,7 @@ $(function() {
             </div>
         </div>
     </div>
+    [% END -%]
     [% END -%]
 
 </div>

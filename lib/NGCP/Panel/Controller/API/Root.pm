@@ -101,6 +101,12 @@ sub GET : Allow {
             next unless $user_roles{$role};
         }
 
+        my $allowed_ngcp_types = $full_mod->config->{allowed_ngcp_types} // [];
+        if (@{$allowed_ngcp_types}) {
+            next unless grep { /^\Q$c->config->{general}{ngcp_type}\E$/ }
+                @{$allowed_ngcp_types};
+        }
+
         my $query_params = [];
         if($full_mod->can('query_params')) {
             $query_params = $full_mod->query_params;

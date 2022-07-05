@@ -1574,6 +1574,18 @@ sub post_process_commit{
     return;
 }
 
+sub check_allowed_ngcp_types {
+    my ($self, $c) = @_;
+
+    my $allowed_ngcp_types = $self->get_config('allowed_ngcp_types') // [];
+    if (@{$allowed_ngcp_types} &&
+        !grep { /^\Q$c->config->{general}{ngcp_type}\E$/ }
+            @{$allowed_ngcp_types}) {
+        return;
+    }
+    return 1;
+}
+
 sub validate_request {
     my ($self, $c) = @_;
 
@@ -1672,6 +1684,10 @@ sub item_name{
 
 sub allowed_methods{
     return $_[0]->config->{allowed_methods};
+}
+
+sub allowed_ngcp_types {
+    return $_[0]->config->{allowed_ngcp_types};
 }
 
 #------ /accessors ---
