@@ -962,6 +962,7 @@ $( document ).ready(function() {
     </div>
 [% END -%]
 
+[% IF c.config.general.ngcp_type != 'spce' -%]
 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -1012,6 +1013,7 @@ $( document ).ready(function() {
             </div>
         </div>
     </div>
+[% END -%]
 [% END -%]
 
 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
