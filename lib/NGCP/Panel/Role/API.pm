@@ -1579,8 +1579,7 @@ sub check_allowed_ngcp_types {
 
     my $allowed_ngcp_types = $self->get_config('allowed_ngcp_types') // [];
     if (@{$allowed_ngcp_types} &&
-        !grep { /^\Q$c->config->{general}{ngcp_type}\E$/ }
-            @{$allowed_ngcp_types}) {
+        ! any { $_ eq $c->config->{general}{ngcp_type} } @{$allowed_ngcp_types}) {
         return;
     }
     return 1;
