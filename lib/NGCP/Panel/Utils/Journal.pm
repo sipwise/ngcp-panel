@@ -655,7 +655,7 @@ sub _create_journal {
         }
 
 
-        $journal{reseller_id} = $resource->{reseller_id};
+        $journal{reseller_id} = $resource->{reseller_id} // $c->user->reseller_id;
         $journal{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $c->user);
         $journal{tx_id} = $c->session->{api_request_tx_id};
 
