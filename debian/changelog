@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.4+0~mr10.5.1.4) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [9ef3faa] TT#182101 Fix check_allowed_ngcp_types detection
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Jul 2022 11:42:30 +0200
+
 ngcp-panel (10.5.1.3+0~mr10.5.1.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
