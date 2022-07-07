@@ -1355,10 +1355,33 @@ sub expand_field {
     return unless $expand->{allowed_roles};
     return unless any { $c->user->roles eq $_ } @{$expand->{allowed_roles}};
 
-    my $id    = $resource->{$field} // return $found; # null value but the field exists
-    my $to    = $expand->{to} // $field . '_expand';
+    my $id = $resource->{$field} // return $found; # null value but the field exists
+    my $to = $expand->{to} // $field . '_expand';
     my $class = $expand->{class} // return;
     my $form  = $class->get_form($c) // return;
+
+    if (ref $id eq 'ARRAY') {
+        for (my $i=0; $i<=$#$id; $i++) {
+            my $a_id = $id->[$i];
+            $resource->{$to}[$i] =
+                $self->get_expanded_field_data($c, $expand, $resource, $field, $class, $form, $a_id);
+            if ($subfield) {
+                $found = $self->expand_field($c, $resource->{$to}[$i], $form, $subfield);
+            }
+        }
+    } else {
+        $resource->{$to} =
+            $self->get_expanded_field_data($c, $expand, $resource, $field, $class, $form, $id);
+        if ($subfield) {
+            $found = $self->expand_field($c, $resource->[$to], $form, $subfield);
+        }
+    }
+
+    return defined $found;
+}
+
+sub get_expanded_field_data {
+    my ($self, $c, $expand, $resource, $field, $class, $form, $id) = @_;
 
     my $item     = $class->item_by_id($c, $id) // return;
 
@@ -1369,13 +1392,7 @@ sub expand_field {
         delete @{$data}{@{$remove_fields}};
     }
 
-    $resource->{$to} = $data;
-
-    if ($subfield) {
-        $found = $self->expand_field($c, $resource->{$to}, $form, $subfield);
-    }
-
-    return defined $found;
+    return $data;
 }
 
 sub get_mandatory_params {

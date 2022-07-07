@@ -92,7 +92,7 @@ has_field 'subscriber_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::Subscribers',
-            remove_fields => [qw(password webpassword)],
+            remove_fields => [qw(password webpassword _password _webpassword)],
             allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin)],
         },
     },
@@ -164,6 +164,28 @@ has_field 'voucher_id' => (
         expand => {
             class => 'NGCP::Panel::Role::API::Vouchers',
             allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
+has_field 'pbx_group_ids' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::Subscribers',
+            remove_fields => [qw(password webpassword _password _webpassword)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
+);
+
+has_field 'pbx_groupmember_ids' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::Subscribers',
+            remove_fields => [qw(password webpassword _password _webpassword)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
         },
     },
 );
