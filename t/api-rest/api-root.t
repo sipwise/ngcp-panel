@@ -6,6 +6,7 @@ use JSON qw();
 use Test::More;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
+my $ngcp_type = $ENV{NGCP_TYPE} || "sppro";
 
 my ($ua, $req, $res);
 
@@ -94,10 +95,6 @@ $ua = Test::Collection->new()->ua();
         interceptions => 1,
         invoices => 1,
         invoicetemplates => 1,
-        headerrulesets => 1,
-        headerrules => 1,
-        headerruleconditions => 1,
-        headerruleactions => 1,
         lnpcarriers => 1,
         lnpnumbers => 1,
         ncoslnppatterns => 1,
@@ -132,7 +129,6 @@ $ua = Test::Collection->new()->ua();
         peeringserverpreferencedefs => 1,
         peeringserverpreferences => 1,
         peeringservers => 1,
-        phonebookentries => 1,
         resellerbrandings => 1,
         resellerpreferencedefs => 1,
         resellerpreferences => 1,
@@ -175,6 +171,16 @@ $ua = Test::Collection->new()->ua();
         voicemailsettings => 1,
         vouchers => 1,
     };
+
+    # PRO/Carrier only links
+    if ($ngcp_type eq 'sppro' || $ngcp_type eq 'carrier') {
+        $rels->{phonebookentries} = 1;
+        $rels->{headerrulesets} = 1;
+        $rels->{headerrules} = 1;
+        $rels->{headerruleconditions} = 1;
+        $rels->{headerruleactions} = 1;
+    }
+
     foreach my $link(@links) {
         my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash|managersecretary|userinfo|passwordre(set|covery))"$!;
         like($link, $rex, "check for valid link syntax");
