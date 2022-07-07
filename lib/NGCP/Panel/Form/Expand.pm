@@ -92,7 +92,7 @@ has_field 'subscriber_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::Subscribers',
-            remove_fields => [qw(password webpassword)],
+            remove_fields => [qw(password webpassword _password _webpassword)],
             allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin)],
         },
     },
