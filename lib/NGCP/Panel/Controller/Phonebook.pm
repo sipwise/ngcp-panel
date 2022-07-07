@@ -13,6 +13,10 @@ use NGCP::Panel::Utils::Phonebook;
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    my $ngcp_type = $c->config->{general}{ngcp_type} // '';
+    if ($ngcp_type ne 'sppro' && $ngcp_type ne 'carrier') {
+        $c->detach('/error_page');
+    }
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
