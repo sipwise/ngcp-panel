@@ -24,6 +24,10 @@ if [ -z "${SERVER}" ] ; then
   exit 1
 fi
 
+if [ "${SELECT}" = "stable-pro" ] || [ "${SELECT}" = "stable-carrier" ] ; then
+  SELECT="stable"
+fi
+
 if [ "${SELECT}" = "stable" ] ; then
   echo "Test selection (${NGCP_TYPE}): ${SELECT}"
   SELECT=$(echo ./t/api-rest/api-{all-links,balanceintervals,bannedips,bannedusers,billingfees,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,cfdestinationsets,contracts,conversations,customercontacts,customers,emailtemplates,faxes,journals,headerrulesets,lnp,ncoslevels,pbxdevicemodels,pbxdevices,peeringgroups,peeringrules,peeringinboundrules,peeringservers,preferences,profilepackages,resellers,rewriterules,rewriterulesets,root,soundsets,subscriberregistrations,subscribers,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers,method-override}.t)
