@@ -12,6 +12,7 @@ SERVER="${1:-}"
 SELECT="${2:-all}"
 OUTPUT_DIRECTORY="${3:-/code/}"
 FORMAT="${4:-pretty}"
+NGCP_TYPE="sppro"
 
 if [ -z "${SERVER}" ] ; then
   echo "Usage: $0 <testsystem> [<testset>] [<output_directory>] [junit]" >&2
@@ -24,11 +25,19 @@ if [ -z "${SERVER}" ] ; then
 fi
 
 if [ "${SELECT}" = "stable" ] ; then
-  echo "Test selection: ${SELECT}"
+  echo "Test selection (${NGCP_TYPE}): ${SELECT}"
   SELECT=$(echo ./t/api-rest/api-{all-links,balanceintervals,bannedips,bannedusers,billingfees,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,cfdestinationsets,contracts,conversations,customercontacts,customers,emailtemplates,faxes,journals,headerrulesets,lnp,ncoslevels,pbxdevicemodels,pbxdevices,peeringgroups,peeringrules,peeringinboundrules,peeringservers,preferences,profilepackages,resellers,rewriterules,rewriterulesets,root,soundsets,subscriberregistrations,subscribers,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers,method-override}.t)
+elif [ "${SELECT}" = "stable-ce" ] ; then
+  NGCP_TYPE="spce"
+  echo "Test selection (${NGCP_TYPE}): ${SELECT}"
+  SELECT=$(echo ./t/api-rest/api-{all-links,balanceintervals,bannedips,bannedusers,billingfees,billingnetworks,billingprofiles,billingzones,calllists,calls,cert-auth,cfdestinationsets,contracts,conversations,customercontacts,customers,emailtemplates,faxes,journals,lnp,ncoslevels,pbxdevicemodels,pbxdevices,peeringgroups,peeringrules,peeringinboundrules,peeringservers,preferences,profilepackages,resellers,rewriterules,rewriterulesets,root,soundsets,subscriberregistrations,subscribers,systemcontacts,threads,topuplogs,trustedsources,valid-patch,vouchers,method-override}.t)
 elif [ "${SELECT}" = "fast" ] ; then
-  echo "Test selection: ${SELECT}"
+  echo "Test selection (${NGCP_TYPE}): ${SELECT}"
   SELECT=$(echo ./t/api-rest/api-{bannedips,bannedusers,billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,headerrulesets,ncoslevels,peeringgroups,peeringrules,peeringinboundrules,peeringservers,resellers,rewriterules,root,soundsets,systemcontacts,valid-patch,vouchers,method-override}.t)
+elif [ "${SELECT}" = "fast-ce" ] ; then
+  NGCP_TYPE="spce"
+  echo "Test selection (${NGCP_TYPE}): ${SELECT}"
+  SELECT=$(echo ./t/api-rest/api-{bannedips,bannedusers,billingnetworks,billingzones,calls,cert-auth,cfdestinationsets,ncoslevels,peeringgroups,peeringrules,peeringinboundrules,peeringservers,resellers,rewriterules,root,soundsets,systemcontacts,valid-patch,vouchers,method-override}.t)
 elif [ "${SELECT}" = "all" ] ; then
   echo "Test selection: all"
   SELECT=$(echo ./t/api-rest/*.t)
@@ -42,6 +51,7 @@ echo "Finished main setup, now running tests ..."
 export CATALYST_SERVER_SUB="https://${SERVER}:443"
 export CATALYST_SERVER="https://${SERVER}:1443"
 export NGCP_SESSION_ID="$(printf %03d $((RANDOM % 1000)))$(date +%s)"
+export NGCP_TYPE
 RC=0
 
 if [ "${FORMAT}" = "junit" ] ; then
