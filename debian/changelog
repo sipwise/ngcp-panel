@@ -1,3 +1,13 @@
+ngcp-panel (10.5.1.6+0~mr10.5.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [3de6e80] TT#182053 hide UI /header page access on CE
+  * [e3cec20] TT#182101 hide UI /phonebook page access on CE
+  * [fef40ca] TT#182101 add api-rest/testrunner CE support
+  * [a3b811d] TT#182101 api-rest/testrunner add stable-pro stable-carrier aliases
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Jul 2022 21:24:09 +0200
+
 ngcp-panel (10.5.1.5+0~mr10.5.1.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
