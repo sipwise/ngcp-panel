@@ -92,6 +92,10 @@ $ua = Test::Collection->new()->ua();
         faxes => 1,
         faxrecordings => 1,
         faxserversettings => 1,
+        headerrulesets => 1,
+        headerrules => 1,
+        headerruleconditions => 1,
+        headerruleactions => 1,
         interceptions => 1,
         invoices => 1,
         invoicetemplates => 1,
@@ -129,6 +133,7 @@ $ua = Test::Collection->new()->ua();
         peeringserverpreferencedefs => 1,
         peeringserverpreferences => 1,
         peeringservers => 1,
+        phonebookentries => 1,
         resellerbrandings => 1,
         resellerpreferencedefs => 1,
         resellerpreferences => 1,
@@ -174,11 +179,6 @@ $ua = Test::Collection->new()->ua();
 
     # PRO/Carrier only links
     if ($ngcp_type eq 'sppro' || $ngcp_type eq 'carrier') {
-        $rels->{phonebookentries} = 1;
-        $rels->{headerrulesets} = 1;
-        $rels->{headerrules} = 1;
-        $rels->{headerruleconditions} = 1;
-        $rels->{headerruleactions} = 1;
     }
 
     foreach my $link(@links) {

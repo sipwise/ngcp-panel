@@ -193,7 +193,11 @@ sub get_preference_existen_value{
     if($preference->{name}=~/^rewrite_rule_set$/){
         $res = get_fake_data_created_or_data('rewriterulesets','name');
     }elsif($preference->{name}=~/^header_rule_set$/){
-        $res = get_fake_data_created_or_data('headerrulesets','name');
+        if ($ngcp_type eq 'sppro' || $ngcp_type eq 'carrier') {
+            $res = get_fake_data_created_or_data('headerrulesets','name');
+        } else {
+            $res = 'no_process';
+        }
     }elsif($preference->{name}=~/^(adm_)?(cf_)?ncos$/){
         $res = get_fake_data_created_or_data('ncoslevels','level');
     }elsif($preference->{name}=~/^(contract_)?sound_set$/){
