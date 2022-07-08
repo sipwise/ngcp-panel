@@ -7,6 +7,7 @@ use Test::More;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 my ($netloc) = ($uri =~ m!^https?://(.*)/?.*$!);
+my $ngcp_type = $ENV{NGCP_TYPE} || "sppro";
 
 my ($ua, $req, $res);
 
@@ -41,6 +42,16 @@ $ua = Test::Collection->new()->ua();
         (my ($relname)) = ($link =~ $rex);
         # skip interceptions since there is no longer an LI admin by default
         next if $relname eq "interceptions";
+        my $skip = 0;
+        if ($ngcp_type ne "sppro" && $ngcp_type ne "carrier") {
+            foreach my $pro_only (qw(phonebookentries headerrulesets headerrules headerruleconditions headerruleactions)) {
+                if ($relname eq $pro_only) {
+                    ok(1, "skip '$pro_only' links check as it is a PRO only endpoint");
+                    $skip = 1;
+                }
+            }
+        }
+        next if $skip;
         # now get this rel
         $req = HTTP::Request->new('OPTIONS', "$uri/api/$relname/");
         $res = $ua->request($req);
