@@ -1,3 +1,13 @@
+ngcp-panel (10.5.1.7+0~mr10.5.1.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f059b81] TT#182101 ngcp type related api-rest test fixups
+  * [43acdde] TT#182101 api-preferences fix headerrulesets for CE
+  * [c87d05a] TT#182101 api-preferences.t fix header_rule_set preference processing
+  * [4202505] TT#182101 t/api-rest2 remove HeaderRuleSets from testing
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Jul 2022 18:57:53 +0200
+
 ngcp-panel (10.5.1.6+0~mr10.5.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
