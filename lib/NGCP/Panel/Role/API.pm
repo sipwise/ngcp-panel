@@ -1373,7 +1373,7 @@ sub expand_field {
         $resource->{$to} ||=
             $self->get_expanded_field_data($c, $expand, $resource, $field, $class, $form, $id);
         if ($subfield) {
-            $found = $self->expand_field($c, $resource->[$to], $form, $subfield);
+            $found = $self->expand_field($c, $resource->{$to}, $form, $subfield);
         }
     }
 
