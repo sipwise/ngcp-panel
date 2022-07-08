@@ -1,3 +1,10 @@
+ngcp-panel (9.5.5.4+0~mr9.5.5.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [2172ce0] TT#147151 finish refactoring of avoiding JOIN billing.product
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Jul 2022 14:10:05 +0200
+
 ngcp-panel (9.5.5.3+0~mr9.5.5.3) unstable; urgency=medium
 
   [ Rene Krenn ]
