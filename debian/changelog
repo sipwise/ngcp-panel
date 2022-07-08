@@ -1,3 +1,10 @@
+ngcp-panel (9.5.5.3+0~mr9.5.5.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [a428e04] TT#147151 fast loading/paging/searching panel datatables
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Jul 2022 09:33:35 +0200
+
 ngcp-panel (9.5.5.2+0~mr9.5.5.2) unstable; urgency=medium
 
   [ Rene Krenn ]
