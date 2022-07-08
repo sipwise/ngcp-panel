@@ -12998,10 +12998,6 @@ msgid "The sample rate of the stream (e.g. \"8000\" for 8000Hz)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The serial timeout for hunting in PBX hunt groups."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The service charge amount (in cents) will be subtracted from the voucher amount upon every top-up."
 msgstr ""
 
@@ -13279,6 +13275,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The time the reminder call is triggered."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timeout for hunting in PBX hunt groups."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
