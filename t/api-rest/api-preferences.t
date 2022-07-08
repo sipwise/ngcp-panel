@@ -68,10 +68,9 @@ $fake_data->set_data_from_script({
             emergencymappingcontainer_id  =>  sub { return shift->get_id('emergencymappingcontainers',@_); },
 
             rewriteruleset_id  =>  sub { return shift->get_id('rewriterulesets',@_); },
-            (($ngcp_type eq 'sppro' || $ngcp_type eq 'carrier')
-                ? (headerruleset_id  => sub { return shift->get_id('headerrulesets',@_); })
-                : ()
-            ),
+            headerruleset_id  =>  sub { return ($ngcp_type eq 'sppro' || $ngcp_type eq 'carrier')
+                                                ? shift->get_id('headerrulesets',@_)
+                                                : 1 },
             soundset_id  =>  sub { return shift->get_id('soundsets',@_); },
             orphan_soundset_id  =>  sub { return $fake_data_soundsets->get_id('soundsets',@_); },
             ncoslevel_id  =>  sub { return shift->get_id('ncoslevels',@_); },
@@ -194,9 +193,7 @@ sub get_preference_existen_value{
     if($preference->{name}=~/^rewrite_rule_set$/){
         $res = get_fake_data_created_or_data('rewriterulesets','name');
     }elsif($preference->{name}=~/^header_rule_set$/){
-        if ($ngcp_type eq 'sppro' || $ngcp_type eq 'carrier') {
-            $res = get_fake_data_created_or_data('headerrulesets','name');
-        }
+        $res = get_fake_data_created_or_data('headerrulesets','name');
     }elsif($preference->{name}=~/^(adm_)?(cf_)?ncos$/){
         $res = get_fake_data_created_or_data('ncoslevels','level');
     }elsif($preference->{name}=~/^(contract_)?sound_set$/){
