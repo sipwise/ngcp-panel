@@ -20,26 +20,26 @@ sub transcode_file {
 
     SWITCH: for ($target_codec) {
         /^PCMA$/ && do {
-            @conv_args = ($tmpfile, qw/--type raw --bits 8 --channels 1 -e a-law - rate 8k/);
+            @conv_args = ($tmpfile, qw/--type raw --bits 16 --channels 1 -e a-law - rate 16k/);
             last SWITCH;
         };
         /^WAV$/ && do {
             if ($source_codec eq 'PCMA') {
                 # this can actually only come from inside
                 # certain files will be stored as PCMA (for handles with name "music_on_hold")
-                @conv_args = ( qw/-A --rate 8k --channels 1 --type raw/, $tmpfile, "--type", "wav", "-");
+                @conv_args = ( qw/-A --rate 16k --channels 1 --type raw/, $tmpfile, "--type", "wav", "-");
             }
             else {
-                @conv_args = ($tmpfile, qw/--type wav --bits 16 - rate 8k/);
+                @conv_args = ($tmpfile, qw/--type wav --bits 16 - rate 16k/);
             }
             last SWITCH;
         };
         /^MP3$/ && do {
-            @conv_args = ($tmpfile, qw/--type mp3 --bits 16 - rate 8k/);
+            @conv_args = ($tmpfile, qw/--type mp3 --bits 16 - rate 16k/);
             last SWITCH;
         };
         /^OGG$/ && do {
-            @conv_args = ($tmpfile, qw/--type ogg --bits 16 - rate 8k/);
+            @conv_args = ($tmpfile, qw/--type ogg --bits 16 - rate 16k/);
             last SWITCH;
         };
         # default
