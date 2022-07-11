@@ -63,16 +63,7 @@ sub POST :Allow {
             form => $form,
         );
 
-        if ($resource->{type} eq "pcc") {
-            try {
-                NGCP::Panel::Utils::Sems::party_call_control($c, $resource);
-            } catch($e) {
-                $c->log->error("failed to handle a party call control request: $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                    "Failed to handle a party call control request.");
-                last;
-            }
-        } elsif ($resource->{type} eq "sms") {
+        if ($resource->{type} eq "sms") {
             my $error_msg;
             my $callid = $resource->{callid};
             my $status = $resource->{status};
