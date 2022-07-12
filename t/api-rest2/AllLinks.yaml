@@ -559,26 +559,6 @@
         is:
             code: 200
 
-#check options for /api/headerrules/
--
-    name: check OPTIONS for /api/headerrules/
-    type: item
-    method: OPTIONS
-    path: /api/headerrules/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/headerrules/
--
-    name: GET /api/headerrules/
-    type: item
-    method: GET
-    path: /api/headerrules/
-    conditions:
-        is:
-            code: 200
-
 #check options for /api/customerfraudevents/
 -
     name: check OPTIONS for /api/customerfraudevents/
@@ -1349,26 +1329,6 @@
         is:
             code: 200
 
-#check options for /api/headerruleconditions/
--
-    name: check OPTIONS for /api/headerruleconditions/
-    type: item
-    method: OPTIONS
-    path: /api/headerruleconditions/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/headerruleconditions/
--
-    name: GET /api/headerruleconditions/
-    type: item
-    method: GET
-    path: /api/headerruleconditions/
-    conditions:
-        is:
-            code: 200
-
 #check options for /api/callqueues/
 -
     name: check OPTIONS for /api/callqueues/
@@ -1585,26 +1545,6 @@
     type: item
     method: GET
     path: /api/maliciouscalls/
-    conditions:
-        is:
-            code: 200
-
-#check options for /api/headerrulesets/
--
-    name: check OPTIONS for /api/headerrulesets/
-    type: item
-    method: OPTIONS
-    path: /api/headerrulesets/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/headerrulesets/
--
-    name: GET /api/headerrulesets/
-    type: item
-    method: GET
-    path: /api/headerrulesets/
     conditions:
         is:
             code: 200
@@ -1945,26 +1885,6 @@
     type: item
     method: GET
     path: /api/customerpreferences/
-    conditions:
-        is:
-            code: 200
-
-#check options for /api/headerruleactions/
--
-    name: check OPTIONS for /api/headerruleactions/
-    type: item
-    method: OPTIONS
-    path: /api/headerruleactions/
-    conditions:
-        is:
-            code: 200
-
-#GET /api/headerruleactions/
--
-    name: GET /api/headerruleactions/
-    type: item
-    method: GET
-    path: /api/headerruleactions/
     conditions:
         is:
             code: 200
