@@ -1,3 +1,11 @@
+ngcp-panel (10.5.1.8+0~mr10.5.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a87d52f] TT#182101 t/api-rest2 remove headerrules from AllLinks
+  * [2983732] TT#182101 t/api-rest2 remove phonebookentries from AllLinks
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 13 Jul 2022 11:59:06 +0200
+
 ngcp-panel (10.5.1.7+0~mr10.5.1.7) unstable; urgency=medium
 
   [ Kirill Solomko ]
