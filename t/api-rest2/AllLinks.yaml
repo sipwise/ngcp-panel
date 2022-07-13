@@ -489,16 +489,6 @@
         is:
             code: 200
 
-#check options for /api/phonebookentries/
--
-    name: check OPTIONS for /api/phonebookentries/
-    type: item
-    method: OPTIONS
-    path: /api/phonebookentries/
-    conditions:
-        is:
-            code: 200
-
 #check options for /api/billingzones/
 -
     name: check OPTIONS for /api/billingzones/
