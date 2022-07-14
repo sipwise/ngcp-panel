@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.9+0~mr10.5.1.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [aa78088] TT#185000 increase sound/voicemails sample rate to 16k
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Jul 2022 08:42:38 +0200
+
 ngcp-panel (10.5.1.8+0~mr10.5.1.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
