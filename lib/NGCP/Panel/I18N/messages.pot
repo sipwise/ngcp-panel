@@ -4058,6 +4058,10 @@ msgstr ""
 msgid "Encoding bitrate for Opus codec if 2-channel stereo is in use"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Encoding complexity (compression level) for Opus codec"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "End"
 msgstr ""
@@ -5963,6 +5967,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm share/templates/subscriber/master.tt
 msgid "Hunt Policy"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm share/templates/subscriber/master.tt
+msgid "Hunt Timeout"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8334,6 +8342,10 @@ msgid "Options to lock customer if the monthly limit is exceeded."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Opus encoding complexity"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Opus mono bitrate"
 msgstr ""
 
@@ -10280,10 +10292,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Invoice.pm
 msgid "Serial #"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Customer.pm share/templates/subscriber/master.tt
-msgid "Hunt Timeout"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
