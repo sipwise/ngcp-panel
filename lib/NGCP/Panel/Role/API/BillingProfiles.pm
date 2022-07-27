@@ -23,11 +23,11 @@ sub _item_rs {
                            { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             };
-    if($c->user->roles eq "admin") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $item_rs = $item_rs->search({
             'me.status' => { '!=' => 'terminated' },
         }, $search_xtra);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({
             reseller_id => $c->user->reseller_id,
             'me.status' => { '!=' => 'terminated' },
