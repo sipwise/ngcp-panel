@@ -64,6 +64,8 @@ sub _item_rs {
         # nothing to be done
     } elsif($c->user->roles eq "reseller") {
         # nothing to be done
+    } elsif($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+        # nothing to be done
     } else {
 
         my $customer = $c->user->voip_subscriber->contract;
