@@ -12,7 +12,7 @@ has_field 'billing_profile_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::BillingProfiles',
-            allowed_roles => [qw(admin reseller)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
