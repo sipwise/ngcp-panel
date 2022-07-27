@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.11+0~mr10.5.1.11) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [dfd3156] TT#186503 fix /api/billingprofiles for ccare roles
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 27 Jul 2022 17:42:17 +0200
+
 ngcp-panel (10.5.1.10+0~mr10.5.1.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
