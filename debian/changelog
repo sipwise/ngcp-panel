@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.12+0~mr10.5.1.12) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2b04a8c] TT#186506 ccare roles can expand billing_profile_id
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 27 Jul 2022 18:26:26 +0200
+
 ngcp-panel (10.5.1.11+0~mr10.5.1.11) unstable; urgency=medium
 
   [ Kirill Solomko ]
