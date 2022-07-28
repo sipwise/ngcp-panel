@@ -22,7 +22,7 @@ has_field 'contact_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::CustomerContacts',
-            allowed_roles => [qw(admin reseller)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
@@ -62,7 +62,7 @@ has_field 'profile_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::SubscriberProfiles',
-            allowed_roles => [qw(admin reseller)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
@@ -72,7 +72,7 @@ has_field 'profile_set_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::SubscriberProfileSets',
-            allowed_roles => [qw(admin reseller)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
@@ -103,7 +103,17 @@ has_field 'package_after_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::ProfilePackages',
-            allowed_roles => [qw(admin reseller)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
+has_field 'profile_package_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::ProfilePackages',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
@@ -113,7 +123,7 @@ has_field 'package_before_id' => (
     element_attr => {
         expand => {
             class => 'NGCP::Panel::Role::API::ProfilePackages',
-            allowed_roles => [qw(admin reseller)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
@@ -164,6 +174,58 @@ has_field 'voucher_id' => (
         expand => {
             class => 'NGCP::Panel::Role::API::Vouchers',
             allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
+has_field 'pbx_group_ids' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::Subscribers',
+            remove_fields => [qw(password webpassword _password _webpassword)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
+);
+
+has_field 'pbx_groupmember_ids' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::Subscribers',
+            remove_fields => [qw(password webpassword _password _webpassword)],
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
+);
+
+has_field 'invoice_email_template_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::EmailTemplates',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
+has_field 'passreset_email_template_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::EmailTemplates',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
+has_field 'invoice_template_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::InvoiceTemplates',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
         },
     },
 );
