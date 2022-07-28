@@ -36,8 +36,8 @@ sub journal_query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => {
-        Default => [qw/admin reseller/],
-        Journal => [qw/admin reseller/],
+        Default => [qw/admin reseller ccareadmin ccare/],
+        Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
 
@@ -68,6 +68,11 @@ sub PATCH :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            last;
+        }
+
         my $preference = $self->require_preference($c);
         last unless $preference;
 
@@ -114,6 +119,11 @@ sub PUT :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            last;
+        }
+
         my $preference = $self->require_preference($c);
         last unless $preference;
 
@@ -157,6 +167,11 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        if ($c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            last;
+        }
+
         last unless $self->valid_id($c, $id);
         my $package = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, profilepackage => $package);
