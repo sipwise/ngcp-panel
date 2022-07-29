@@ -14,9 +14,9 @@ use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "admin") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::Admin", $c);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Domain::Reseller", $c);
     }
     return;
@@ -38,7 +38,7 @@ sub resource_from_item {
 
     $resource{id} = int($item->id);
 
-    if ($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $resource{reseller_id} = $item->reseller_id;
     }
 
@@ -77,9 +77,9 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs;
-    if($c->user->roles eq "admin") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $item_rs = $c->model('DB')->resultset('domains');
-    } elsif($c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $c->model('DB')->resultset('domains')->search({
             reseller_id => $c->user->reseller_id,
         });
