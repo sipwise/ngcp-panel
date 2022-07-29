@@ -1,3 +1,10 @@
+ngcp-panel (10.4.1.6+0~mr10.4.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2fb46dc] TT#151504 subscriberadmin can now manage customer phonebook
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Jul 2022 14:46:49 +0200
+
 ngcp-panel (10.4.1.5+0~mr10.4.1.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
