@@ -108,6 +108,21 @@ sub auto :Private {
         return 1;
     }
 
+    # check DB connection
+    eval {
+        my ($res) = $c->model('DB')->storage->dbh->selectrow_array('SELECT 1');
+        unless ($res) {
+            $c->response->status(HTTP_SERVICE_UNAVAILABLE);
+            $c->response->body(q());
+            return;
+        }
+    };
+    if ($@) {
+        $c->response->status(HTTP_SERVICE_UNAVAILABLE);
+        $c->response->body(q());
+        return;
+    }
+
     if(index($c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') == 0) {
         $c->log->debug("Root::auto unauthenticated API request");
         my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // "";
