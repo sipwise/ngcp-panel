@@ -1,3 +1,11 @@
+ngcp-panel (10.5.1.13+0~mr10.5.1.13) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2fe6bb3] TT#65101 enhance ccare roles support
+  * [38978a2] TT#65101 improve expand=all, /api/domains care roles support
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Jul 2022 12:10:55 +0200
+
 ngcp-panel (10.5.1.12+0~mr10.5.1.12) unstable; urgency=medium
 
   [ Kirill Solomko ]
