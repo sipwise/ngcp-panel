@@ -1307,7 +1307,7 @@ sub expand_fields {
     my $soft_expand = $c->req->params->{soft_expand} // 0;
     my $expand_param = $c->req->param('expand') // return 1;
     my $all = $expand_param eq 'all' ? 1 : 0;
-    my @expand_fields = $all ? map { $_->name } $resource_form->fields
+    my @expand_fields = $all ? sort { $a cmp $b } keys %{$resource}
                              : split /,/, $expand_param;
 
     foreach my $field (@expand_fields) {
