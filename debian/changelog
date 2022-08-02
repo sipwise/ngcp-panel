@@ -1,3 +1,11 @@
+ngcp-panel (10.5.1.16+0~mr10.5.1.16) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f89574c] TT#176050 add expand support on array of ids
+  * [02281fb] TT#65101 expand now fills the same key only once
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Aug 2022 17:05:46 +0200
+
 ngcp-panel (10.5.1.15+0~mr10.5.1.15) unstable; urgency=medium
 
   [ Kirill Solomko ]
