@@ -3947,10 +3947,6 @@ msgid "Enable DNS SRV on device when resolving server host"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Enable Party Call Control (PCC) Application to route calls to a remote API server first and continue the call only upon an accepted reply"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Peer Authentication"
 msgstr ""
 
@@ -8629,10 +8625,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Part"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Party Call Control"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
