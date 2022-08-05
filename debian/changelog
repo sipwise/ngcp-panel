@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.17+0~mr10.5.1.17) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [89c0cca] TT#176050 adjust subfield expands
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 05 Aug 2022 09:18:08 +0200
+
 ngcp-panel (10.5.1.16+0~mr10.5.1.16) unstable; urgency=medium
 
   [ Kirill Solomko ]
