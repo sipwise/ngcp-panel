@@ -47,6 +47,7 @@ sub list :Chained('/') :PathPart('emergencymapping') :CaptureArgs(0) {
         { name => "emergency_container.reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
         { name => "code", "search" => 1, "title" => $c->loc("Emergency Number") },
         { name => "prefix", "search" => 1, "title" => $c->loc("Emergency Prefix") },
+        { name => "suffix", "search" => 1, "title" => $c->loc("Emergency Suffix") },
     ]);
 
     $c->stash(template => 'emergencymapping/list.tt');
@@ -361,6 +362,7 @@ sub emergency_mapping_edit :Chained('emergency_mapping_base') :PathPart('edit') 
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 $form->values->{prefix} = undef unless(length $form->values->{prefix});
+                $form->values->{suffix} = undef unless(length $form->values->{suffix});
                 $c->stash->{emergency_mapping_result}->update($form->values);
             });
 

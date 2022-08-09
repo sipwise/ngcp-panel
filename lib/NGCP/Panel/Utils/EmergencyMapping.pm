@@ -12,7 +12,7 @@ sub _insert_batch {
         c => $c,
         schema => $schema,
         do_transaction => 0,
-        query => "REPLACE INTO provisioning.emergency_mappings(emergency_container_id, code, prefix)",
+        query => "REPLACE INTO provisioning.emergency_mappings(emergency_container_id, code, prefix, suffix)",
         data => $mappings,
         chunk_size => $chunk_size
     );
@@ -42,7 +42,7 @@ sub upload_csv {
     });
 
     #my @cols = @{ $c->config->{lnp_csv}->{element_order} };
-    my @cols = qw/name code prefix/;
+    my @cols = qw/name code prefix suffix/;
 
     my @fields ;
     my @fails = ();
@@ -71,7 +71,10 @@ sub upload_csv {
         unless(length $row->{prefix}) {
             $row->{prefix} = undef;
         }
-        push @mappings, [$containers{$k}, $row->{code}, $row->{prefix}];
+        unless(length $row->{suffix}) {
+            $row->{suffix} = undef;
+        }
+        push @mappings, [$containers{$k}, $row->{code}, $row->{prefix}, $row->{suffix}];
 
         if($linenum % $chunk_size == 0) {
             _insert_batch($c, $schema, \@mappings, $chunk_size);
@@ -99,7 +102,7 @@ sub create_csv {
     $emergency_mapping_rs //= $c->stash->{emergency_mapping_rs} // $c->model('DB')->resultset('emergency_mappings');
 
     #my @cols = @{ $c->config->{emergency_mapping_csv}->{element_order} };
-    my @cols = qw/name code prefix/;
+    my @cols = qw/name code prefix suffix/;
 
     
     my $mapping_rs = $emergency_mapping_rs->search_rs({

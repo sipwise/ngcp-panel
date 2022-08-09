@@ -24,6 +24,7 @@ $fake_data->set_data_from_script({
                 emergency_container_id => sub { return shift->get_id('emergencymappingcontainers', @_); },
                 code   => "112",
                 prefix  => "000",
+                suffix  => "321",
             },
             file => [ (tempfile())[1] ],
         },

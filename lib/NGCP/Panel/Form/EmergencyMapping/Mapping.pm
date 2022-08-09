@@ -40,6 +40,16 @@ has_field 'prefix' => (
     },
 );
 
+has_field 'suffix' => (
+    type => 'Text',
+    required => 0,
+    maxlength => 31,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An optional emergency suffix the emergency code is mapped to.']
+    },
+);
+
 
 has_field 'save' => (
     type => 'Submit',
@@ -51,7 +61,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/emergency_container code prefix/],
+    render_list => [qw/emergency_container code prefix suffix/],
 );
 
 has_block 'actions' => (
