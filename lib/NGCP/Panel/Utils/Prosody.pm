@@ -36,7 +36,7 @@ sub activate_domain {
 
 sub deactivate_domain {
     my ($c, $domain) = @_;
-
+    $domain = lc $domain;
     my $t = Net::Telnet->new(Timeout => 5, ErrMode => 'die');
     my $hosts = _load_servers($c);
     my $ok = 1;
