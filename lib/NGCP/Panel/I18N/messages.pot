@@ -890,6 +890,10 @@ msgid "An optional emergency prefix the emergency code is mapped to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An optional emergency suffix the emergency code is mapped to."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional routing number replacing the ported number."
 msgstr ""
 
@@ -3860,6 +3864,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Emergency Provider info"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/EmergencyMapping.pm
+msgid "Emergency Suffix"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11399,6 +11407,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Successfully updated voicemail setting"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Suffix"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
