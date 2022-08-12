@@ -102,7 +102,7 @@ sub DELETE :Allow {
         $guard->commit;
 
         try {
-            $self->xmpp_domain_disable($c, $domain) if $xmpp_reload;
+            $self->xmpp_domain_disable($c, $domain->domain) if $xmpp_reload;
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c) if $sip_reload;
         } catch($e) {
             $c->log->error("failed to deactivate domain: $e"); # TODO: user, message, trace, ...
