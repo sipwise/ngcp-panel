@@ -1415,7 +1415,7 @@ sub update_subscriber_numbers {
                 for my $cfset($prov_subs->voip_cf_destination_sets->all) {
                     for my $cf($cfset->voip_cf_destinations->all) {
                         if($cf->destination =~ /\@fax2mail\.local$/) {
-                            $cf->update({ destination => 'sip:'.$cli.'@fax2mail.local' });
+                            $cf->update({ destination => 'sip:fax='.$cli.'@fax2mail.local' });
                         } elsif($cf->destination =~ /\@conference\.local$/) {
                             $cf->update({ destination => 'sip:conf='.$cli.'@conference.local' });
                         }
@@ -1844,7 +1844,7 @@ sub field_to_destination {
     if($d eq "voicebox") {
         $d = "sip:".$vm_prefix.$number."\@voicebox.local";
     } elsif($d eq "fax2mail") {
-        $d = "sip:$number\@fax2mail.local";
+        $d = "sip:fax=$number\@fax2mail.local";
     } elsif($d eq "conference") {
         $d = "sip:conf=$number\@conference.local";
     } elsif($d eq "callingcard") {

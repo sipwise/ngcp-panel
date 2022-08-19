@@ -221,6 +221,13 @@ sub process_cdr_item {
             $other_normalize = 0;
             $other_skip_domain = 1;
             $resource->{direction} = "out";
+        # rewrite cf to fax2mail to "fax2mail"
+        } elsif ($item->destination_user_in =~ /^fax=/ &&
+           $item->destination_domain_in eq "fax2mail.local") {
+            $resource->{other_cli} = "fax2mail";
+            $other_normalize = 0;
+            $other_skip_domain = 1;
+            $resource->{direction} = "out";
         } else {
             # for intra pbx in calls, use extension as other cli
             if($intra && $src_sub && $src_sub->pbx_extension) {
