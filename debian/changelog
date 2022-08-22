@@ -1,3 +1,65 @@
+ngcp-panel (11.0.1.0+0~mr11.0.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [e4803b5] TT#4166 I18N dump: snapshot 2022.06.08-01.20.26
+  * [4e1bafe] TT#4166 I18N dump: snapshot 2022.06.14-01.17.39
+  * [9844de9] TT#4166 I18N dump: snapshot 2022.07.09-00.21.37
+  * [4653423] TT#4166 I18N dump: snapshot 2022.07.21-00.26.27
+  * [63b04d7] TT#4166 I18N dump: snapshot 2022.08.06-00.40.49
+  * [90e65a0] TT#4166 I18N dump: snapshot 2022.08.13-00.21.34
+
+  [ Kirill Solomko ]
+  * [22eb317] TT#180551 /api/topuplogs add filter by customer_id
+  * [d6463ff] TT#182102 fix subcriber primary number and cli comparsion
+  * [eeeab1a] TT#179901 api SMS remove obsolete rpc part from session
+  * [a614972] TT#174451 fix SubscriberProfile form attribute field list
+  * [09b5897] TT#182101 Phonebook feature is hidden for CE
+  * [a8bc494] TT#182053 Header Manipulations feature is hidden for CE
+  * [f311177] TT#182101 Fix check_allowed_ngcp_types detection
+  * [514989c] TT#184300 journals alawys write reseller_id
+  * [b81c66f] TT#182101 add api-rest/testrunner CE support
+  * [01cb547] TT#182101 api-rest/testrunner add stable-pro stable-carrier aliases
+  * [84910ef] TT#182053 hide UI /header page access on CE
+  * [60a3988] TT#182101 hide UI /phonebook page access on CE
+  * [938f6ba] TT#176050 add expand support on array of ids
+  * [84e698e] TT#176050 adjust subfield expands
+  * [d6c928f] TT#182101 ngcp type related api-rest test fixups
+  * [a60a62c] TT#182101 api-preferences fix headerrulesets for CE
+  * [27c3b7d] TT#182101 api-preferences.t fix header_rule_set preference processing
+  * [f3eafcc] TT#182101 t/api-rest2 remove HeaderRuleSets from testing
+  * [be402b1] TT#182101 t/api-rest2 remove headerrules from AllLinks
+  * [7f59aed] TT#185000 increase sound/voicemails sample rate to 16k
+  * [e1bab24] TT#182101 t/api-rest2 remove phonebookentries from AllLinks
+  * [7e37f4b] TT#186501 fix /api/capabilities for ccare roles
+  * [486b0a1] TT#186503 fix /api/billingprofiles for ccare roles
+  * [5a104c3] TT#186506 ccare roles can expand billing_profile_id
+  * [57a8cef] TT#65101 enhance ccare roles support
+  * [5a18d5f] TT#65101 improve expand=all, /api/domains care roles support
+  * [6b94514] TT#151504 subscriberadmin can now manage customer phonebook
+  * [6e5721c] TT#186950 check db connection
+  * [0555f32] TT#65101 expand now fills the same key only once
+
+  [ Rene Krenn ]
+  * [8ae81b4] TT#180400 redirect password recovery to JS CSC in case of mixed/yes
+  * [d7367fe] TT#174407 support renaming in preference transformations
+
+  [ Marco Capetta ]
+  * [5f316b8] TT#179901 Discontinue iNew dedicated features and code
+
+  [ Antoine Lingat ]
+  * [e3372c9] TT#180900 Update label/desc of pref 'cloud_pbx_hunt_timeout'
+
+  [ Nico Schedel ]
+  * [cd4fb65] TT#122872 selenium: fix admin and customer tests for master
+
+  [ Fabricio Santolin da Silva ]
+  * [adbd256] TT#96652 Add suffix for emergency number.
+
+  [ Victor Seva ]
+  * [78a447f] TT#185701 fix deactivate_domain
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 22 Aug 2022 20:01:57 +0200
+
 ngcp-panel (11.0.0.0+0~mr11.0.0.0) unstable; urgency=medium
 
   [ Oleksandr Duts ]
