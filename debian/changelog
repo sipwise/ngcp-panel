@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.18+0~mr10.5.1.18) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [242ec9e] TT#122872 selenium: fix all tests for mr10.5
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 22 Aug 2022 10:28:44 +0200
+
 ngcp-panel (10.5.1.17+0~mr10.5.1.17) unstable; urgency=medium
 
   [ Kirill Solomko ]
