@@ -2377,7 +2377,7 @@ sub convert_voicemailgreeting{
     #    die('Wrong mime-type '.$mime_type.' for the voicemail greeting. Must be a audio file in the "wav" format');
     #    return;
     #}
-    my @cmd = ( $filepath, '-e', 'gsm', '-b', '16', '-r', '16000', '-c', '1', $filepath_converted);
+    my @cmd = ( $filepath, '-e', 'gsm', '-b', '16', '-r', '8000', '-c', '1', $filepath_converted);
     my $output = '';
     $c->log->debug("cmd=".join(" ", 'sox', @cmd));
     eval {
