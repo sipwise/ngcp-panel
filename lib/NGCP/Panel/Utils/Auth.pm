@@ -134,11 +134,11 @@ sub perform_subscriber_auth {
     if ($pass && $pass =~ /[^[:ascii:]]/) {
         return $res;
     }
-
+    
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
         webusername => $user,
         'voip_subscriber.status' => 'active',
-        'domain.domain' => $domain,
+        ($c->config->{features}->{multidomain} ? ('domain.domain' => $domain) : ()),
         'contract.status' => 'active',
     }, {
         join => ['domain', 'contract', 'voip_subscriber'],

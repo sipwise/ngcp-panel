@@ -659,7 +659,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
             my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
                 webusername => $u,
                 'voip_subscriber.status' => 'active',
-                'domain.domain' => $d,
+                ($c->config->{features}->{multidomain} ? ('domain.domain' => $d) : ()),
                 'contract.status' => 'active',
             }, {
                 join => ['domain', 'contract', 'voip_subscriber'],
