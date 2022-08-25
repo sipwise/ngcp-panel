@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.21+0~mr10.5.1.21) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [5ded6ed] TT#185701 fix deactivate_domain
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 25 Aug 2022 11:49:49 +0200
+
 ngcp-panel (10.5.1.20+0~mr10.5.1.20) unstable; urgency=medium
 
   [ Rene Krenn ]
