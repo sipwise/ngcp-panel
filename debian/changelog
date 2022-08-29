@@ -1,3 +1,10 @@
+ngcp-panel (11.0.1.1+0~mr11.0.1.1) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [30a4944] TT#185000 Wrong sample rate for asterisk greating messages
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Aug 2022 11:34:39 +0200
+
 ngcp-panel (11.0.1.0+0~mr11.0.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
