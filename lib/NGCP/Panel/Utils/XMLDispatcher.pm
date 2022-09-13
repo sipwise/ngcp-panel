@@ -155,6 +155,7 @@ sub sip_domain_reload {
 </methodCall>
 EOF
 
+    sleep(2);
     my @ret = dispatch($c, "proxy-ng", 1, 1, $reload_command); # we're only checking first host here
 
     if (grep { $_->[1] == 0 } @ret) {
