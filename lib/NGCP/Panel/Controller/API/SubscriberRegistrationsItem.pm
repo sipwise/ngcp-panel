@@ -201,7 +201,7 @@ sub delete_item {
 
     my $sub = $self->subscriber_from_item($c, $item);
     return unless($sub);
-    my $aor = $item->username . '@' . $item->domain;
+    my $aor = $item->username . '@' . ($item->domain ? $item->domain : $sub->domain->domain);
     NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
         $aor, $item->contact);
     NGCP::Panel::Utils::Kamailio::flush($c) unless $self->suppress_flush($c);
