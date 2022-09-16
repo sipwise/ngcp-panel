@@ -46,7 +46,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", int_search => 1, title => $c->loc("#") },
-        { name => "external_id", strict_search => 1, title => $c->loc("External #") },
+        { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.reseller.name", search => 0, title => $c->loc("Reseller") },
         { name => "contact.email", search => 0, title => $c->loc("Contact Email") },
         { name => "contact.firstname", search => 0, title => '' },
