@@ -1,3 +1,48 @@
+ngcp-panel (10.5.2.1+0~mr10.5.2.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [819f9fa] TT#174451 fix SubscriberProfile form attribute field list
+  * [be4dc2f] TT#182101 Phonebook feature is hidden for CE
+  * [496d828] TT#182053 Header Manipulations feature is hidden for CE
+  * [f638a12] TT#182101 Fix check_allowed_ngcp_types detection
+  * [d9ecbc6] TT#184300 journals alawys write reseller_id
+  * [5321cd0] TT#182053 hide UI /header page access on CE
+  * [ed7d980] TT#182101 hide UI /phonebook page access on CE
+  * [d37572e] TT#182101 add api-rest/testrunner CE support
+  * [7f584c7] TT#182101 api-rest/testrunner add stable-pro stable-carrier aliases
+  * [2a4abdb] TT#182101 ngcp type related api-rest test fixups
+  * [85a7101] TT#182101 api-preferences fix headerrulesets for CE
+  * [fea8e58] TT#182101 api-preferences.t fix header_rule_set preference processing
+  * [69c1277] TT#182101 t/api-rest2 remove HeaderRuleSets from testing
+  * [f38b660] TT#182101 t/api-rest2 remove headerrules from AllLinks
+  * [ff6603f] TT#182101 t/api-rest2 remove phonebookentries from AllLinks
+  * [d40471b] TT#185000 increase sound/voicemails sample rate to 16k
+  * [185b93e] TT#186501 fix /api/capabilities for ccare roles
+  * [c1ecacd] TT#186503 fix /api/billingprofiles for ccare roles
+  * [f71ac0b] TT#186506 ccare roles can expand billing_profile_id
+  * [334a881] TT#65101 enhance ccare roles support
+  * [3024012] TT#65101 improve expand=all, /api/domains care roles support
+  * [681230f] TT#151504 subscriberadmin can now manage customer phonebook
+  * [14b06c0] TT#186950 check db connection
+  * [1cf5e6e] TT#176050 add expand support on array of ids
+  * [636bf3e] TT#65101 expand now fills the same key only once
+  * [84b448c] TT#176050 adjust subfield expands
+
+  [ Nico Schedel ]
+  * [1880bcb] TT#122872 selenium: fix all tests for mr10.5
+
+  [ Marco Capetta ]
+  * [231a1d3] TT#185000 Wrong sample rate for asterisk greating messages
+
+  [ Victor Seva ]
+  * [87a959c] TT#185701 fix deactivate_domain
+
+  [ Rene Krenn ]
+  * [ab916ce] TT#180400 redirect password recovery to JS CSC in case of mixed/yes
+  * [debd853] TT#188950 ignore domain for subscriber authentication
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Sep 2022 14:36:39 +0200
+
 ngcp-panel (10.5.2.0+0~mr10.5.2.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
