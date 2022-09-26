@@ -1,3 +1,13 @@
+ngcp-panel (11.0.1.2+0~mr11.0.1.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [211b247] MT#55419 enable wildcard search for customer.external_id
+  * [71cbb35] MT#33062 prevent error 500 when deleting registrations
+  * [644956e] MT#55421 fix deleting domains
+  * [e45a794] MT#55418 hide billing mappings with terminated profiles in AUI
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 Sep 2022 12:12:47 +0200
+
 ngcp-panel (11.0.1.1+0~mr11.0.1.1) unstable; urgency=medium
 
   [ Marco Capetta ]
