@@ -563,6 +563,14 @@ sub resource_from_mappings {
     ); #validate_forms uses RFC3339 otherwise, which contains the tz offset part
 
     foreach my $mapping (billing_mappings_ordered($future_only ? future_billing_mappings($contract->billing_mappings) : $contract->billing_mappings)->all) {
+        my $profile = $mapping->billing_profile;
+        if ($profile and 'terminated' eq $profile->status) {
+            next;
+        }
+        my $network = $mapping->network;
+        if ($network and 'terminated' eq $network->status) {
+            next;
+        }
         my %m = $mapping->get_inflated_columns;
         delete $m{id};
         $m{start} = delete $m{start_date};
