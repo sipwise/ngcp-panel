@@ -282,10 +282,6 @@ msgid "A password used for authentication against the peer host."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "A path describing the folder on the NFS server, where the logfiles will be stored."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A peering group the rule belongs to."
 msgstr ""
 
@@ -562,6 +558,14 @@ msgid "Administrative NCOS Level For Call Forward"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Administrative NCOS Set"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Administrative NCOS Set for Call Forward"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Administrative PIN to bypass outbound Block List"
 msgstr ""
 
@@ -653,6 +657,10 @@ msgstr ""
 msgid "Alias numbers"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Subscriber.pm
+msgid "Aliases"
+msgstr ""
+
 #: share/templates/helpers/datatables.tt
 msgid "All"
 msgstr ""
@@ -667,10 +675,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "Allocable?"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Allow Desktop Softphone Autoprovisioning for this subscriber. If disabled, no configuration will be provided to the Desktop Softphone."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -802,10 +806,6 @@ msgid "An Array of source CLI patterns"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "An IP or hostname of an external NFS server which can be used to log data to."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An array of PBX group ids this subscriber belongs to."
 msgstr ""
 
@@ -834,7 +834,7 @@ msgid "An array of hashes, each containing the keys \"slot\" (\"*0 .. *9\") and 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "An array of line/key definitions for this device. Each element is a hash containing the keys name, can_private, can_shared, can_blf and keys (which in turn is an array of hashes having x, y and labelpos allowing top, bottom, left right)."
+msgid "An array of line/key definitions for this device. Each element is a hash containing the keys name, can_private, can_shared, can_blf, can_speeddial, can_forward, can_transfer and keys (which in turn is an array of hashes having x, y and labelpos allowing top, bottom, left right)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2834,23 +2834,23 @@ msgid "Currency"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Current comma-separated list of e-mail addresses for notification"
+msgid "Current comma-separated list of e-mail addresses for notification (readonly)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Current daily lock level"
+msgid "Current daily lock level (readonly)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Current fraud detection threshold per day in cents"
+msgid "Current fraud detection threshold per day in cents (readonly)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Current fraud detection threshold per month in cents"
+msgid "Current fraud detection threshold per month in cents (readonly)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Current lock level"
+msgid "Current lock level (readonly)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3177,10 +3177,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Header.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Controller/PeeringOverview.pm lib/NGCP/Panel/Controller/Rewrite.pm lib/NGCP/Panel/Controller/SubscriberProfile.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm lib/NGCP/Panel/Utils/Sounds.pm share/templates/rewrite/rules_list.tt
 msgid "Description"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Desktop Softphone Autoprovisioning"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -3956,14 +3952,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Session-Timers"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Enable T38 Fax-over-IP"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Enable T38 Fax-over-IP via auto-provisioning if the end device supports it."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5304,11 +5292,7 @@ msgid "Filter Mode for SIP User-Agent Filter List"
 msgstr ""
 
 #: share/templates/helpers/datatables.tt
-msgid "Filter for column values matching the pattern string, e.g. 12*45. The * (wildcard) is implicitly prepended and appended."
-msgstr ""
-
-#: share/templates/helpers/datatables.tt
-msgid "Filter for column values matching the string, e.g. 12345. A leading * (wildcard) can result in long response times."
+msgid "Filter records for values of columns matching either condition:"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5395,7 +5379,7 @@ msgstr ""
 msgid "Format"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Forward"
 msgstr ""
 
@@ -5428,7 +5412,7 @@ msgid "Fraud daily notify"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud daily preferences source (customer or billing_profile)"
+msgid "Fraud daily preferences source (customer or billing_profile) (readonly)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5440,7 +5424,7 @@ msgid "Fraud detection threshold per month in cents"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Fraud preferences interval source (customer or billing_profile)"
+msgid "Fraud preferences interval source (customer or billing_profile) (readonly)"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -6010,10 +5994,6 @@ msgid "IPv4/IPv6 briding mode"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "ISDN Userside"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IVR Slots"
 msgstr ""
 
@@ -6127,6 +6107,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If set, the UPN of the calling party is not checked against the allowed CLIs provisioned for the subscriber if a Diversion or History-Info header that meets the selected criteria has been sent by the calling subscriber. The recommended mode here, for example when connecting external PBX to NGCP, is \"If user in received Diversion or History-Info header is in caller's alias list\", as this validates the forwarding number in received Diversion/History-Info header against subscriber's aliases and is a safer choice than enabling UPN check bypass when any header is present. If any mode other than \"Never\" is selected, the forwarding number in the History-Info header is checked and the History-Info is rewritten if it doesn't match any alias numbers."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If set, the configuration done by the user directly on the phone have priority over the provisioning (attention: not all the phones support this option)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6358,6 +6342,14 @@ msgid "Internal Administrative NCOS Level for Call Forward #"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Administrative NCOS Set #"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Administrative NCOS Set for Call Forward#"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Cal Forward SMS #"
 msgstr ""
 
@@ -6395,6 +6387,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal NCOS Level #"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal NCOS Set #"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7111,11 +7107,23 @@ msgid "Lines/Keys in this range can be used as Busy Lamp Field. Value is accessi
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Lines/Keys in this range can be used as forward. Value is accessible in the config template via phone.lineranges[].lines[].can_forward"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Lines/Keys in this range can be used as regular phone lines. Value is accessible in the config template via phone.lineranges[].lines[].can_private"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Lines/Keys in this range can be used as shared lines. Value is accessible in the config template via phone.lineranges[].lines[].can_shared"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Lines/Keys in this range can be used as speeddial. Value is accessible in the config template via phone.lineranges[].lines[].can_speeddial"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Lines/Keys in this range can be used as transfer. Value is accessible in the config template via phone.lineranges[].lines[].can_transfer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7727,6 +7735,10 @@ msgstr ""
 msgid "NCOS Number Patterns"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "NCOS Set"
+msgstr ""
+
 #. (level_result.level)
 #: share/templates/ncos/pattern_list.tt
 msgid "NCOS details for %1"
@@ -7782,14 +7794,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/NCOS.pm
 msgid "NCOS pattern successfully updated"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "NFS Path"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "NFS Server"
 msgstr ""
 
 #: share/templates/statistics/supportstatus.tt
@@ -8738,10 +8742,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/widgets/admin_peering_overview.tt
 msgid "Peering Group"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Peering Group Tag"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
@@ -10059,50 +10059,6 @@ msgid "SN Prefix"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SNMP Community Name"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SNMP Manager IP"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SNMP System Contact"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SNMP System Location"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SNMP System Name"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SS7 APC"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SS7 Adjacent Point Code."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SS7 DPC"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SS7 Destination Point Code."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SS7 OPC"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "SS7 Own Point Code."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "SU"
 msgstr ""
 
@@ -10139,6 +10095,10 @@ msgid "Same as \"ncos\", but may only be set by administrators and is applied pr
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Same as \"ncos_set\", but may only be set by administrators and is applied prior to the user setting."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Sample rate"
 msgstr ""
 
@@ -10154,8 +10114,20 @@ msgstr ""
 msgid "Save SVG"
 msgstr ""
 
+#: share/templates/helpers/datatables.tt
+msgid "Search by the exact search string value (The * wildcard is considered as a literal string)."
+msgstr ""
+
+#: share/templates/helpers/datatables.tt
+msgid "Search by wildcard pattern. A wildcard is implicitly appended at the end of the search string if no wildcard is used. A leading wildcard prevents using databases indexes (slow)."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN)."
+msgstr ""
+
+#: share/templates/helpers/datatables.tt
+msgid "Search string is converted to an integer value to search for."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10364,6 +10336,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Show Call Forward Destination to Caller"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Show PSTN Destination to Caller"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm lib/NGCP/Panel/Controller/Reseller.pm
@@ -10789,6 +10765,14 @@ msgid "Specifies the Administrative NCOS Level that applies for the Call Forward
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specifies the Administrative NCOS Set that applies for the Call Forward from the user."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specifies the NCOS Set that applies to the user"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies the NCOS level that applies to the user."
 msgstr ""
 
@@ -10842,6 +10826,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Speed Dial Slot"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "SpeedDial"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -11386,11 +11374,23 @@ msgid "Supports Busy Lamp Field"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Supports Forward"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Supports Private Line"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Supports Shared Line"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Supports Speeddial"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Supports Transfer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11514,6 +11514,10 @@ msgid "Tag"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Target number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Template"
 msgstr ""
 
@@ -11555,10 +11559,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The \"timely\" interval in temporal units."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The 'caller_pattern' of a peering group has to match this tag to be considered for outgoing calls."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11607,10 +11607,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The ID of the subscriber to apply rules for"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The IP address of the SNMP manager which is supposed to access this IMG. Only this IP will have access to the SNMP Agent."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -11846,19 +11842,11 @@ msgid "The calling party number in E164 format to match. Regular expressions or 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The chosen Codecs will be used from the IMG to transcode to, in the given order of priority."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The city name of the contact."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The cluster set used for SIP lb and RTP"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The community name, used by the SNMP manager, to access this IMG as an Agent."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -12486,7 +12474,7 @@ msgid "The linerange name to use."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The lines for this pbx device. Required keys are 'linerange' (name of range to use), 'key_num' (key number in line range, starting from 0), 'type' (one of 'private', 'shared', 'blf'), 'subscriber_id' (the subscriber mapped to this key)."
+msgid "The lines for this pbx device. Required keys are 'linerange' (name of range to use), 'key_num' (key number in line range, starting from 0), 'type' (one of 'private', 'shared', 'blf', 'speeddial', 'forward', 'transfer'), 'subscriber_id' (the subscriber mapped to this key)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13202,15 +13190,7 @@ msgid "The sync URI to set the provisioning server of the device (e.g. http://cl
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The system contact, appearing in the output when acting as an SNMP Agent."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The system location, appearing in the output when acting as an SNMP Agent."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The system name, appearing in the output when acting as an SNMP Agent."
+msgid "The target number."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13247,6 +13227,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "The timerange you wanted to delete does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The timeset id to use for this level"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13458,6 +13442,10 @@ msgstr ""
 msgid "Time set \"%1\" - Events"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Time set id"
+msgstr ""
+
 #: share/templates/reseller/details.tt
 msgid "Time sets"
 msgstr ""
@@ -13502,7 +13490,7 @@ msgstr ""
 msgid "Times"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
 msgid "Timeset"
 msgstr ""
 
@@ -13741,6 +13729,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm
+msgid "Transfer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14026,6 +14018,10 @@ msgstr ""
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/edit_webpass.tt
 msgid "User Details for %1@%2"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "User config priority over provisioning"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14331,6 +14327,10 @@ msgid "When ICE support is enabled towards this peer, act as an ICE agent that s
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "When calling PSTN, show the destination number or user back to the calling party."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When checked the subscriber can receive mail2fax emails and dispatch them as faxes."
 msgstr ""
 
@@ -14340,14 +14340,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When selected, it is possible to register with the alias and receive calls directed to the alias only"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "When set to true, the ISDN ports are configured to be the Userside end of an ISDN network. This only has an effect in the ISDN mode."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "When set to true, use the optical link instead of the ISDN ports. This only has an effect in the SS7 or ISDN mode."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14923,6 +14915,10 @@ msgid "foreign calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "forward"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "forwarded"
 msgstr ""
 
@@ -15319,6 +15315,10 @@ msgid "sippeering"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "speeddial"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "start interval upon top-up"
 msgstr ""
 
@@ -15364,6 +15364,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "topright"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "transfer"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
