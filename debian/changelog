@@ -1,3 +1,22 @@
+ngcp-panel (11.2.0.0+0~mr11.2.0.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [b3cb8b5] TT#185000 Wrong sample rate for asterisk greating messages
+
+  [ Rene Krenn ]
+  * [65b5c62] TT#188950 ignore domain for subscriber authentication
+  * [1717064] TT#180400 use v2 subscriber passreset url in emails
+  * [7caf33a] MT#55419 enable wildcard search for customer.external_id
+  * [f75fdcd] MT#33062 prevent error 500 when deleting registrations
+  * [afe80f0] MT#55421 fix deleting domains
+  * [a9f53cd] MT#55418 hide billing mappings with terminated profiles in AUI
+  * [d4d924e] MT#55436 mark concurrent_* fraudpref fields as readonly
+
+  [ Daniel Grotti ]
+  * [878f48a] TT#151207 Save CF destinations to fax2mail with new prefix 'fax='
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 04 Oct 2022 13:51:14 +0200
+
 ngcp-panel (11.1.0.0+0~mr11.1.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
