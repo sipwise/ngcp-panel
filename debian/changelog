@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.25+0~mr10.5.1.25) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [e45ffd7] MT#55538 /api/soundsets allow filtering by customer_id=null
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 06 Oct 2022 11:37:32 +0200
+
 ngcp-panel (10.5.1.24+0~mr10.5.1.24) unstable; urgency=medium
 
   [ Rene Krenn ]
