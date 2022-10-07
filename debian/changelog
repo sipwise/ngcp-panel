@@ -1,3 +1,10 @@
+ngcp-panel (11.0.1.4+0~mr11.0.1.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [8ef2083] MT#55436 mark concurrent_* fraudpref fields as readonly
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Oct 2022 15:33:02 +0200
+
 ngcp-panel (11.0.1.3+0~mr11.0.1.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
