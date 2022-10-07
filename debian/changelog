@@ -1,3 +1,11 @@
+ngcp-panel (10.5.2.4+0~mr10.5.2.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b3cb489] MT#55436 mark concurrent_* fraudpref fields as readonly
+  * [ca53c43] MT#55551 add ccare roles to /api/callforwards
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Oct 2022 15:31:02 +0200
+
 ngcp-panel (10.5.2.3+0~mr10.5.2.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
