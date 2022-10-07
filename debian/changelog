@@ -1,3 +1,10 @@
+ngcp-panel (9.5.5.7+0~mr9.5.5.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [8ed1d5b] MT#55551 add ccare roles to /api/callforwards
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Oct 2022 15:47:43 +0200
+
 ngcp-panel (9.5.5.6+0~mr9.5.5.6) unstable; urgency=medium
 
   [ Rene Krenn ]
