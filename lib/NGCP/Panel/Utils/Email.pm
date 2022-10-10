@@ -30,6 +30,8 @@ sub send_template {
     my ($c, $vars, $subject, $body, $from, $to) = @_;
     my $t = Template->new;
 
+    $c->log->info("Trying to send mail from '" . $c->qs($from) . "' to '" . $c->qs($to) . "'");
+
     my $processed_body = "";
     $t->process(\$body, $vars, \$processed_body) || 
         die "error processing email template body, type=".$t->error->type.", info='".$t->error->info."'";
@@ -57,6 +59,8 @@ sub send_template {
     #    from => $template_processed->{from_email},
     #    to => $template_processed->{to},
     #);
+
+    $c->log->info("Successfully handed over mail from '" . $c->qs($from) . "' to '" . $c->qs($to) . "'");
 
     return 1;
 }
