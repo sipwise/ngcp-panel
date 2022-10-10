@@ -45,6 +45,7 @@ ReadWritePaths=-/ngcp-data/spool/faxserver
 # NOTE: we need r/w access for sendmail usage with exim
 ReadWritePaths=-/var/spool/exim4/
 ReadWritePaths=-/var/log/exim4/
+ReadWritePaths=-/var/mail/
 
 # Service has own user namespace, only root, nobody, and the uid/gid under which the service is running are mapped
 # NOTE: we can't have our own user namespace, as we need proper permissions e.g. to /ngcp-data/spool/faxserver
