@@ -1,3 +1,11 @@
+ngcp-panel (11.0.1.5+0~mr11.0.1.5) unstable; urgency=medium
+
+  [ Michael Prokop ]
+  * [309174e] TT#76552 systemd: reduce hardening for sendmail(1) usage.
+    Thanks to Thomas Georg on spce-user ml for the bug report, and Victor Seva, Richard Fuchs + Rene Krenn for assistance in tracking this down
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Oct 2022 07:55:15 +0200
+
 ngcp-panel (11.0.1.4+0~mr11.0.1.4) unstable; urgency=medium
 
   [ Rene Krenn ]
