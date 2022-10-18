@@ -1,3 +1,10 @@
+ngcp-panel (10.5.2.6+0~mr10.5.2.6) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [6b80dbf] MT#55677 fix for "Unstable ngcp-panel-test-selenium-docker runs with failing tests"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 18 Oct 2022 14:11:38 +0200
+
 ngcp-panel (10.5.2.5+0~mr10.5.2.5) unstable; urgency=medium
 
   [ Michael Prokop ]
