@@ -1,3 +1,20 @@
+ngcp-panel (11.1.1.1+0~mr11.1.1.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [b9e6ee0] MT#55538 /api/soundsets allow filtering by customer_id=null
+
+  [ Rene Krenn ]
+  * [a2d800e] MT#55551 add ccare roles to /api/callforwards
+
+  [ Michael Prokop ]
+  * [504875c] TT#76552 systemd: reduce hardening for sendmail(1) usage.
+    Thanks to Thomas Georg on spce-user ml for the bug report, and Victor Seva, Richard Fuchs + Rene Krenn for assistance in tracking this down
+
+  [ Nico Schedel ]
+  * [6516f4c] MT#55677 fix for "Unstable ngcp-panel-test-selenium-docker runs with failing tests"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 21 Oct 2022 14:38:05 +0200
+
 ngcp-panel (11.1.1.0+0~mr11.1.1.0) unstable; urgency=medium
 
   [ Marco Capetta ]
