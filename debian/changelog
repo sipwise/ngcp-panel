@@ -1,3 +1,12 @@
+ngcp-panel (9.5.5.8+0~mr9.5.5.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f41266a] TT#147151 fix dashboard peering contractbalance sum
+  * [9ef8f7e] TT#147151 fix widget ajax rail for customer costs
+  * [06209a7] TT#147151 fix dashboard ajaxrail for reseller balance sum
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 02 Nov 2022 14:30:16 +0100
+
 ngcp-panel (9.5.5.7+0~mr9.5.5.7) unstable; urgency=medium
 
   [ Rene Krenn ]
