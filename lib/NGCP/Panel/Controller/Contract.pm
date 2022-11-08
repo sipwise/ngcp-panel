@@ -32,6 +32,7 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
           literal_sql => NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping_stmt(c => $c, now => $now, projection => 'billing_profile.name' ) },
         { name => "status", search => 0, title => $c->loc("Status") },
+        { title => $c->loc("Contact Email"), search => 1, no_column => 1 },
     ]);
 
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
