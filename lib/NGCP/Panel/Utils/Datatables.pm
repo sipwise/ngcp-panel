@@ -35,7 +35,7 @@ sub process {
 
     ### Search processing section
 
-    ($rs,my @searchColumns) = _apply_search_filters($c,$rs,$cols,$use_rs_cb,$params->{extra_or});
+    ($rs,my @searchColumns) = _apply_search_filters($c,$rs,$cols,$use_rs_cb,$params->{extra_or},$params->{extra_or_descr});
 
     my $is_set_operations = 0;
     ($displayRecords, $displayRecordCountClipped, $is_set_operations) = _get_count_safe($c,$rs,$params) if (!$use_rs_cb);
@@ -109,6 +109,7 @@ sub process {
         # first, get the fields we're actually showing
         my @displayedFields = ();
         for my $col(@{ $cols }) {
+            next if $col->{no_column};
             next unless $col->{title};
             my $name = get_column_order_name($col);
             push @displayedFields, $name;
@@ -197,9 +198,9 @@ sub process {
 }
 
 sub apply_dt_joins_filters {
-    my ($c,$rs, $cols, $extra_or) = @_;
+    my ($c,$rs, $cols, $extra_or, $extra_or_descr) = @_;
     $rs = _resolve_joins($rs, $cols, undef, 1, 1);
-    ($rs,my @searchColumns) = _apply_search_filters($c, $rs, $cols, $extra_or);
+    ($rs,my @searchColumns) = _apply_search_filters($c, $rs, $cols, $extra_or, $extra_or_descr);
     return $rs;
 }
 
@@ -207,6 +208,7 @@ sub _resolve_joins {
 
     my ($rs, $cols, $aggregate_cols, $skip_aggregates,$join_only) = @_;
     for my $col(@{ $cols }) {
+        next unless $col->{name};
         if ($col->{show_total}) {
             push(@$aggregate_cols, $col) if defined $aggregate_cols;
             next if $skip_aggregates;
@@ -264,7 +266,7 @@ sub get_search_string_pattern {
 
 sub _apply_search_filters {
 
-    my ($c,$rs,$cols,$use_rs_cb,$extra_or) = @_;
+    my ($c,$rs,$cols,$use_rs_cb,$extra_or,$extra_or_descr) = @_;
     # generic searching
     my @searchColumns = ();
     my %conjunctSearchColumns = ();
@@ -273,6 +275,7 @@ sub _apply_search_filters {
     if (length($searchString) && !$use_rs_cb) {
     #for search string from one search input we need to check all columns which contain the 'search' spec (now: qw/search search_lower_column search_upper_column/). so, for example user entered into search input ip address - we don't know that it is ip address, so we check that name like search OR id like search OR search is between network_lower_value and network upper value
         foreach my $col(@{ $cols }) {
+            next unless $col->{name};
             my ($name,$search_value,$op,$convert);
             # avoid amigious column names if we have the same column in different joined tables
             if($col->{search} or $col->{strict_search} or $col->{int_search}){
@@ -352,6 +355,7 @@ sub _apply_search_filters {
             $to_date = NGCP::Panel::Utils::DateTime::from_forminput_string($to_date_in, $c->session->{user_tz});
         }
         foreach my $col(@{ $cols }) {
+            next unless $col->{name};
             # avoid amigious column names if we have the same column in different joined tables
             my $name = _get_joined_column_name_($col->{name});
             if($col->{search_from_epoch} && $from_date) {
@@ -466,6 +470,7 @@ sub set_columns {
 
     for my $col(@{ $cols }) {
         next if defined $col->{accessor};
+        next unless $col->{name};
         $col->{accessor} = $col->{name};
         $col->{accessor} =~ s/\./_/g;
     }
@@ -475,7 +480,7 @@ sub set_columns {
 sub _prune_row {
     my ($user_tz, $columns, %row) = @_;
     while (my ($k,$v) = each %row) {
-        unless (first { $_->{accessor} eq $k && ($_->{title} || $_->{field}) } @{ $columns }) {
+        unless (first { !$_->{no_column} && $_->{accessor} eq $k && ($_->{title} || $_->{field}) } @{ $columns }) {
             delete $row{$k};
             next;
         }

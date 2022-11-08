@@ -57,6 +57,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
           literal_sql => '""' },
         { name => "status", search => 0, title => $c->loc("Status") },
         { name => "max_subscribers", search => 0, title => $c->loc("Max. Subscribers") },
+        { title => $c->loc("Contact Email"), search => 1, no_column => 1 },
     ]);
 
     my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c); #, now => $now);
