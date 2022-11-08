@@ -18,7 +18,7 @@ has 'no_ordering' => ( isa => 'Bool', is => 'rw' );
 has 'no_pagination' => ( isa => 'Bool', is => 'rw', default => 0 );
 has 'only_visible_values' => ( isa => 'Bool', is => 'rw', default => 0 );
 has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
-has 'search_tooltip' => (isa => 'Str', is => 'rw', default => 'Filter for column values matching the pattern string, e.g. 12*45. The * (wildcard) is implicitly prepended and appended.' );
+has 'search_tooltip' => (isa => 'Str', is => 'rw' );
 
 #didn't want to include some complex role related logic here,
 #as these DataTable fields also are used in API
