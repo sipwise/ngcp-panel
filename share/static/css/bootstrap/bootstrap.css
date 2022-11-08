@@ -5332,7 +5332,6 @@ input[type="submit"].btn.btn-mini {
 }
 
 .tooltip-inner {
-  max-width: 200px;
   padding: 8px;
   color: #ffffff;
   text-align: center;
@@ -5341,6 +5340,11 @@ input[type="submit"].btn.btn-mini {
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
+          
+}
+
+.tooltip-inner dl {
+  test-align: left;
 }
 
 .tooltip-arrow {
