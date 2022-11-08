@@ -6,14 +6,27 @@
         helper.custom_renderers = helper.custom_renderers ? helper.custom_renderers : {};
         helper.options = {};
         helper.columns_hidden = {};
-        helper.strict_search = 0;
+        helper.search_tooltip = c.loc('Filter records for values of columns matching either condition:') _ '<dl>';
         FOR col IN helper.dt_columns;
             IF !col.accessor;
                 col.accessor = col.name;
                 col.accessor = col.accessor.replace('\.','_');
             END;
-            IF col.strict_search;
-                helper.strict_search = 1;
+            search_dt = col.title;
+            UNLESS search_dt;
+                search_dt = col.accessor;
+            END;
+            search_dd = '';
+            IF col.search;
+                search_dd = c.loc('Search by wildcard pattern. A wildcard is implicitly appended at the end of the search string if no wildcard is used. A leading wildcard prevents using databases indexes (slow).');
+            ELSIF col.strict_search;
+                search_dd = c.loc('Search by the exact search string value (The * wildcard is considered as a literal string).');
+            ELSIF col.int_search;
+                search_dd = c.loc('Search string is converted to an integer value to search for.');
+            END;
+            IF search_dd;
+                helper.search_tooltip = helper.search_tooltip _ '<dt>' _ search_dt _ '</dt>';
+                helper.search_tooltip = helper.search_tooltip _ '<dd>' _ search_dd _ '</dd>';
             END;
             NEXT UNLESS col.title;
             helper.column_titles.push(col.title);
@@ -30,6 +43,7 @@
                 helper.options.${col.accessor}.dont_skip_empty_data = 1;
             END;
         END;
+        helper.search_tooltip = helper.search_tooltip _ '</dl>';
     END;
     backuri = c.req.uri;
     tmp = backuri.query_param_delete('back');
@@ -38,10 +52,6 @@
     helper.identifier = 0; # make sure we don't use the same identifier twice
     IF search_tooltip;
         helper.search_tooltip = c.loc(search_tooltip);
-    ELSIF helper.strict_search;
-        helper.search_tooltip = c.loc('Filter for column values matching the string, e.g. 12345. A leading * (wildcard) can result in long response times.');
-    ELSE;
-        helper.search_tooltip = c.loc('Filter for column values matching the pattern string, e.g. 12*45. The * (wildcard) is implicitly prepended and appended.');
     END;
 -%]
 
@@ -285,7 +295,9 @@ $(document).ready(function() {
         "initComplete": function(settings, json) {
             if ("[% helper.search_tooltip %]".length > 0) {
                 $( "#[% helper.id_from_name %]_table_filter input" ).tooltip({
-                    title: "[% helper.search_tooltip %]"
+                    title: "[% helper.search_tooltip %]",
+                    html: true,
+                    placement: 'bottom'
                 });
             }
         }
