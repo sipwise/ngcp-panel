@@ -99,6 +99,8 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "status", search => 0, title => $c->loc('Status') },
         { name => "number", search => 0, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)" },
         { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 0, title => $c->loc('Profile') },
+        { title => $c->loc("Contact Email"), search => 1, no_column => 1 },
+        { title => $c->loc("Aliases"), search => 1, no_column => 1 },
     ]);
 }
 
