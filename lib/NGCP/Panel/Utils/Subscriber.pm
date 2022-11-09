@@ -532,6 +532,16 @@ sub prepare_resource {
         $preferences->{ext_contract_id} = $customer->external_id;
     }
 
+    # find and assign default contract sound set (if exists)
+    if (!$item) {
+        my $default_contract_sound_set_row = $customer->voip_sound_sets->search(
+            { contract_default => 1 })->first;
+
+        if ($default_contract_sound_set_row) {
+            $preferences->{contract_sound_set} = $default_contract_sound_set_row->id;
+        }
+    }
+
     my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
         username => $resource->{username},
         domain_id => $resource->{domain_id},
