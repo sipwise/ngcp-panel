@@ -534,7 +534,7 @@ sub update_item {
         profile_set_id => $profile_set ? $profile_set->id : undef,
         profile_id => $profile ? $profile->id : undef,
         pbx_extension => $resource->{pbx_extension},
-        $resource->{administrative} ? (admin => $resource->{administrative}) : (),
+        defined $resource->{administrative} ? (admin => $resource->{administrative}) : (),
     };
     $provisioning_res->{password} = $resource->{password} if exists $resource->{password};
     $provisioning_res->{webpassword} = $resource->{webpassword} if exists $resource->{webpassword};
