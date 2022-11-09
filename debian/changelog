@@ -1,3 +1,11 @@
+ngcp-panel (10.5.2.7+0~mr10.5.2.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [14e9126] MT#55618 /api/subscribers fix default contract_sound_set assignment
+  * [db67a4d] MT#55864 /api/subscribers correctly process administrative flag
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 09 Nov 2022 17:19:29 +0100
+
 ngcp-panel (10.5.2.6+0~mr10.5.2.6) unstable; urgency=medium
 
   [ Nico Schedel ]
