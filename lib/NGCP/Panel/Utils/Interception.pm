@@ -120,7 +120,9 @@ sub subresnum_from_number {
     }
     my $num_rs = $c->model('DB')->resultset('voip_numbers')->search(
         \[ 'concat(cc,ac,sn) = ?', [ {} => $number ]]
-    );
+    )->search({
+        'subscriber_id' => { '!=' => undef },
+    },undef);
     unless($num_rs->first) {
         return 0 unless &{$err_code}("invalid number '" . $c->qs($number) . "'",'number',"Number does not exist");
     }
