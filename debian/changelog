@@ -1,3 +1,10 @@
+ngcp-panel (7.5.5.7+0~mr7.5.5.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [1de25c8] MT#55957 interceptions: consider active subscribers only
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 15 Nov 2022 14:38:40 +0100
+
 ngcp-panel (7.5.5.6+0~mr7.5.5.6) unstable; urgency=medium
 
   [ Flaviu Mates ]
