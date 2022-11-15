@@ -128,23 +128,19 @@ sub resource_from_item {
         $resource{primary_number}->{sn} = $item->primary_number->sn;
         $resource{primary_number}->{number_id} = int($item->primary_number->id);
     }
-    if($item->voip_numbers->count) {
-         $resource{alias_numbers} = [];
-        foreach my $n($item->voip_numbers->all) {
-            my $alias = {
-                cc => $n->cc,
-                ac => $n->ac,
-                sn => $n->sn,
-                number_id => int($n->id),
-            };
-            next if($resource{primary_number} &&
-               compare($resource{primary_number}, $alias));
-            if (defined $n->voip_dbalias) {
-                $alias->{is_devid} = bool $n->voip_dbalias->is_devid;
-            }
-            push @{ $resource{alias_numbers} }, $alias;
-        }
-    }
+
+    @{$resource{alias_numbers}} = $item->voip_numbers->search({
+            -or => [
+                'voip_dbalias.is_primary' => 0,
+                'voip_dbalias.is_primary' => undef,
+            ],
+        },
+        {
+            select => ['cc','ac','sn','id',\'COALESCE(voip_dbalias.is_devid,0)'],
+            as => ['cc','ac','sn','number_id','is_devid'],
+            join => 'voip_dbalias',
+            result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+        })->all;
 
     $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'display_name',
