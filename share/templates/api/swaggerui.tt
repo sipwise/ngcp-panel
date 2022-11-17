@@ -28,10 +28,13 @@
     ];
 -%]
 
-    <h1>Sipwise NGCP HTTP API Documentation (version 2)</h1>
+    <h1>Sipwise NGCP HTTP API Documentation</h1>
     <div class="content">
         <div class ="sipwclass">
-            See the <a href="/api/?oldapidoc=1">old API documentation (version 1) here</a>.
+            See the old API documentation <a href="/api/?oldapidoc=1">here</a>
+        </div>
+        <div class ="sipwclass">
+            NGCP API 2.0 documentation is available <a href="/api/v2">here</a>
         </div>
     <div class="chapter sipwclass">
         <h2 class="nocount">Table of Contents</h2>
