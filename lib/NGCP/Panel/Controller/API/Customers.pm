@@ -77,7 +77,7 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    { 'me.external_id' => $q };
+                    { 'me.external_id' => { like => $q } };
                 },
                 second => sub { },
             },
@@ -99,7 +99,6 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    { 'me.profile_package_id' => $q };
                 },
                 second => sub { },
             },
