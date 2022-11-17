@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.28+0~mr10.5.1.28) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [9e5c81c] MT#55871 /api/subscribers optimise GET alias_numbers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Nov 2022 15:15:19 +0100
+
 ngcp-panel (10.5.1.27+0~mr10.5.1.27) unstable; urgency=medium
 
   [ Kirill Solomko ]
