@@ -88,17 +88,21 @@ sub _item_rs {
         $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
     } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         my $reseller_id = $c->user->reseller_id;
-        $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')
-            ->search_rs({
-                    'reseller_id' => $reseller_id,
-                } , {
-                    join => {'subscriber' => {'contract' => 'contact'} },
-                });
-    } elsif($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
-        $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')
-            ->search_rs({
-                    'subscriber_id' => $c->user->id,
-                });
+        $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')->search_rs({
+            'reseller_id' => $reseller_id,
+        },{
+            join => {'subscriber' => {'contract' => 'contact'} },
+        });
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')->search_rs({
+            'subscriber.account_id' => $c->user->account_id,
+        },{
+            join => 'subscriber',
+        });
+    } elsif ($c->user->roles eq "subscriber") {
+        $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')->search_rs({
+            'subscriber_id' => $c->user->id,
+        });
     }
 
     return $item_rs;
