@@ -8,33 +8,26 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::ResellerBr
 use HTTP::Status qw(:constants);
 
 __PACKAGE__->set_config({
-    GET => {
-        ReturnContentType => 'binary',
-    },
     log_response  => 0,
-    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    allowed_roles => [qw/admin reseller subscriberadmin/],
 });
 
-sub allowed_methods{
+sub allowed_methods {
     return [qw/GET OPTIONS HEAD/];
 }
 
-sub get_item_binary_data{
-    my($self, $c, $id, $item) = @_;
+sub GET :Allow {
+    my($self, $c, $id) = @_;
 
-    my $branding = $item->branding;
+    my $item = $self->item_by_id($c, $id);
 
-    if ($branding && $branding->logo) {
-        my $data = $branding->logo;
-        my $mime_type = $branding->logo_image_type;
-        my $fext = $mime_type; 
-        $fext =~ s/^.*?([a-zA-Z0-9]+)$/$1/;
-        return (\$data, $mime_type, 'reseller_'.$item->id.'_branding_logo.'.$fext);
-    }
-    else{
-        $self->error($c, HTTP_NOT_FOUND, "No branding logo available for this reseller");
+    unless ($item && $item->logo && $item->logo_image_type) {
+        $self->error($c, HTTP_NOT_FOUND, "ResellerBrandingLogo is not found or does not have image/image_type");
         return;
     }
+
+    $c->response->content_type($item->logo_image_type);
+    $c->response->body($item->logo);
 }
 
 1;

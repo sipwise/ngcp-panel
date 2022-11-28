@@ -7,42 +7,66 @@ use HTTP::Status qw(:constants);
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::ResellerBrandingLogos/;
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    log_response  => 0,
+    allowed_roles => [qw/admin reseller subscriberadmin/],
+});
 
-sub config_allowed_roles {
-    return [qw/admin reseller subscriberadmin subscriber/];
-}
-
-sub allowed_methods{
+sub allowed_methods {
     return [qw/GET OPTIONS HEAD/];
 }
 
 sub api_description {
-    return 'Used to download the reseller branding logo image. Returns a binary attachment with the correct content type (e.g. image/jpeg) of the image.';
+    return 'Download the reseller branding logo image. Returns a binary data with the correct content-type (e.g. image/jpeg) of the image.';
 };
+
+sub query_params {
+    return [
+        {
+            param => 'subscriber_id',
+            description => 'Filter for logos that belong to the reseller of the subscriber',
+            new_rs => sub {
+                my ($c, $q, $rs) = @_;
+                return $rs->search_rs({
+                    'voip_subscribers.id' => $c->req->param('subscriber_id')
+                },{
+                    join => { 'reseller' => { 'contacts' => { 'contracts' => 'voip_subscribers' } } }
+                });
+            },
+        },
+        {
+            param => 'reseller_id',
+            description => 'Filter for logos that belong to the reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.reseller_id' => $q };
+                },
+                second => sub {},
+            },
+        },
+    ];
+}
 
 sub GET :Allow {
     my ($self, $c) = @_;
-    my $item = $self->item_rs($c);
 
-    unless($c->req->param('subscriber_id')) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "subscriber_id parameter is mandatory.");
+    if ($c->user->roles eq 'admin') {
+        if (!$c->req->param('subscriber_id') && !$c->req->param('reseller_id')) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "'reseller_id' or 'subscriber_id' parameter is mandatory.");
+            return;
+        }
+    }
+
+    my $item = $self->item_rs($c)->first;
+
+    unless ($item && $item->logo && $item->logo_image_type) {
+        $self->error($c, HTTP_NOT_FOUND, "ResellerBrandingLogo is not found or does not have image/image_type");
         return;
     }
 
-    unless($item->first) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber_id. Subscriber not found.");
-        return;
-    }
-
-    my $branding = $item->first->branding;
-
-    if(!$branding || !$branding->logo) {
-        $self->error($c, HTTP_NOT_FOUND, "No branding logo available for this reseller");
-        return;
-    }
-    $c->response->content_type($branding->logo_image_type);
-    $c->response->body($branding->logo);
+    $c->response->content_type($item->logo_image_type);
+    $c->response->body($item->logo);
 }
 
 1;
