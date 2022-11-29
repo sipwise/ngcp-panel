@@ -69,7 +69,8 @@ sub _item_rs {
 
 sub item_by_id {
     my ($self, $c, $id) = @_;
-    return $self->item_rs($c)->search_rs({'reseller.id' => $id})->first;
+    my $item_rs = $self->item_rs($c);
+    return $item_rs->find($id);
 }
 
 sub resource_from_item {
