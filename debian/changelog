@@ -1,3 +1,10 @@
+ngcp-panel (11.0.1.9+0~mr11.0.1.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a0f64d0] MT#56087 fix /api/callforwards sets auto creation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 02 Dec 2022 13:51:31 +0100
+
 ngcp-panel (11.0.1.8+0~mr11.0.1.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
