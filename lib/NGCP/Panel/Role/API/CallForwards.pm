@@ -292,7 +292,12 @@ sub update_item {
                 }
             } else {
                 if ((defined $resource->{$type}{sources}) && @{ $resource->{$type}{sources}}) {
-                    $sset = $mapping->create_related('source_set', {'name' => "quickset_$type", subscriber_id => $prov_subscriber_id,} );
+                    $sset = $mapping->create_related('source_set', {
+                        name => "quickset_$type",
+                        subscriber_id => $prov_subscriber_id,
+                        mode => $resource->{$type}{sources_mode},
+                        is_regex => $resource->{$type}{sources_is_regex},
+                    });
                     $mapping->update({source_set_id => $sset->id});
                 }
             }
@@ -307,7 +312,12 @@ sub update_item {
                 }
             } else {
                 if ((defined $resource->{$type}{bnumbers}) && @{ $resource->{$type}{bnumbers}}) {
-                    $bset = $mapping->create_related('bnumber_set', {'name' => "quickset_$type", subscriber_id => $prov_subscriber_id,} );
+                    $bset = $mapping->create_related('bnumber_set', {
+                        name => "quickset_$type",
+                        subscriber_id => $prov_subscriber_id,
+                        mode => $resource->{$type}{bnumbers_mode},
+                        is_regex => $resource->{$type}{bnumbers_is_regex},
+                    });
                     $mapping->update({bnumber_set_id => $bset->id});
                 }
             }
@@ -325,6 +335,7 @@ sub update_item {
                     );
                 $dset->voip_cf_destinations->update_or_create($d);
             }
+
             for my $t (@{ $resource->{$type}{times} }) {
                 delete $t->{time_set_id};
                 $tset->voip_cf_periods->update_or_create($t);
