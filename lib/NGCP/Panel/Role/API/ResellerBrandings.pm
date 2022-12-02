@@ -41,7 +41,12 @@ sub config_allowed_roles {
 sub get_form {
     my ($self, $c) = @_;
     #use_fields_for_input_without_param
-    return (NGCP::Panel::Form::get("NGCP::Panel::Form::Reseller::BrandingAPI", $c));
+    return NGCP::Panel::Form::get(
+        $c->user->roles eq "admin"
+            ? "NGCP::Panel::Form::Reseller::BrandingAPIAdmin"
+            : "NGCP::Panel::Form::Reseller::BrandingAPI",
+        $c
+    );
 }
 
 sub _item_rs {

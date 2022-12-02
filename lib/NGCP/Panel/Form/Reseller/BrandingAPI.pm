@@ -3,19 +3,10 @@ package NGCP::Panel::Form::Reseller::BrandingAPI;
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Reseller::Branding';
 
-has_field 'reseller_id' => (
-    type => 'PosInteger',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The reseller who owns the Branding.'],
-    },
-);
-
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller_id logo css csc_color_primary csc_color_secondary/],
+    render_list => [qw/logo css csc_color_primary csc_color_secondary/],
 );
 
 sub update_fields {
