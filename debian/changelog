@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.30+0~mr10.5.1.30) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [8b93dfc] MT#55972 support wildcard search for customer external_id
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 06 Dec 2022 14:04:56 +0100
+
 ngcp-panel (10.5.1.29+0~mr10.5.1.29) unstable; urgency=medium
 
   [ Kirill Solomko ]
