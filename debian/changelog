@@ -1,3 +1,10 @@
+ngcp-panel (9.5.5.9+0~mr9.5.5.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [fcebbcd] MT#55694 MT#55419 provide generated datatable search tooltips
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 06 Dec 2022 14:48:59 +0100
+
 ngcp-panel (9.5.5.8+0~mr9.5.5.8) unstable; urgency=medium
 
   [ Rene Krenn ]
