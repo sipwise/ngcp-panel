@@ -782,8 +782,10 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
     $c->stash->{preference_meta} = $c->model('DB')
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
-     if(($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') &&
-        !$c->stash->{preference_meta}->expose_to_customer) {
+    if (($c->user->roles eq 'subscriberadmin' &&
+         !$c->stash->{preference_meta}->expose_to_customer) ||
+        ($c->user->roles eq 'subscriber' &&
+         !$c->stash->{preference_meta}->expose_to_subscriber)) {
         NGCP::Panel::Utils::Message::error(
             c    => $c,
             type => 'internal',
@@ -845,7 +847,9 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         my $attr = $c->stash->{preference_meta}->attribute;
         if ($c->req->method eq "POST" && $attr && ($attr eq "voicemail_echo_number" || $attr eq "cli")) {
             NGCP::Panel::Utils::Subscriber::update_voicemail_number(
-                schema => $c->model('DB'), subscriber => $c->stash->{subscriber});
+                c => $c,
+                subscriber => $c->stash->{subscriber},
+            );
         }
     } catch($e) {
         NGCP::Panel::Utils::Message::error(
@@ -2648,7 +2652,8 @@ sub load_preference_list :Private {
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         usr_pref => 1,
-        customer_view => (($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') ? 1 : 0)
+        customer_view => ($c->user->roles eq 'subscriberdmin' ? 1 : 0),
+        subscriber_view => ($c->user->roles eq 'subscriber' ? 1 : 0),
     );
 }
 

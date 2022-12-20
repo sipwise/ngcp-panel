@@ -2246,20 +2246,22 @@ sub check_dset_autoattendant_status {
 sub update_voicemail_number {
     my (%params) = @_;
 
-    my $schema = $params{schema};
+    my $c = $params{c};
     my $subscriber = $params{subscriber};
+    my $subscriberadmin = $params{subscriberadmin};
+    my $schema = $c->model('DB');
 
     my $prov_subs = $subscriber->provisioning_voip_subscriber;
     return unless $prov_subs;
     my $voicemail_user = $prov_subs->voicemail_user;
 
     my $echonumber_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        schema => $schema,
+        c => $c,
         prov_subscriber => $prov_subs,
         attribute => 'voicemail_echo_number',
     );
     my $cli_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        schema => $schema,
+        c => $c,
         prov_subscriber => $prov_subs,
         attribute => 'cli',
     );
@@ -2272,10 +2274,12 @@ sub update_voicemail_number {
         $cf_cli = $echo_cli = $subscriber->uuid;
     }
 
-    if (defined $echonumber_pref_rs->first) {
+    if ($echonumber_pref_rs && defined $echonumber_pref_rs->first) {
         $echo_cli = $echonumber_pref_rs->first->value;
-    } elsif (defined $cli_pref_rs->first) {
+    } elsif ($cli_pref_rs && defined $cli_pref_rs->first) {
         $echo_cli = $cli_pref_rs->first->value;
+    } else {
+        return;
     }
 
     if (defined $voicemail_user) {

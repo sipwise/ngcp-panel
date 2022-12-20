@@ -178,8 +178,13 @@ sub prepare_resource {
 
         if ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
             my $attrname = $pref->attribute->attribute;
-            unless ( $pref->attribute->expose_to_customer ) {
+            if ($c->user->roles eq 'subscriberadmin' && ! $pref->attribute->expose_to_customer ) {
                 $c->log->debug("skipping attribute $attrname, not exposing to customer");
+                next;
+            }
+
+            if ($c->user->roles eq 'subscriber' && ! $pref->attribute->expose_to_subscriber ) {
+                $c->log->debug("skipping attribute $attrname, not exposing to subscriber");
                 next;
             }
 
@@ -473,7 +478,9 @@ sub update_preferences {
         $full_rs = $elem->voip_usr_preferences;
         if ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
             $full_rs = $full_rs->search_rs({
-                'attribute.expose_to_customer' => 1,
+                $c->user->roles eq 'subscriberadmin'
+                    ? ('attribute.expose_to_customer' => 1)
+                    : ('attribute.expose_to_subscriber' => 1),
             },{
                 join => 'attribute',
             });
@@ -656,7 +663,9 @@ sub update_preferences {
                         $rs->delete;
                         if ($type eq "subscribers" && ($k eq 'voicemail_echo_number' || $k eq 'cli')) {
                             NGCP::Panel::Utils::Subscriber::update_voicemail_number(
-                                schema => $c->model('DB'), subscriber => $item);
+                                c => $c,
+                                subscriber => $item,
+                            );
                         }
                     }
                 } # SWITCH
@@ -985,7 +994,9 @@ sub update_preferences {
             } # SWITCH
             if ($type eq "subscribers" && ($pref eq 'voicemail_echo_number' || $pref eq 'cli')) {
                 NGCP::Panel::Utils::Subscriber::update_voicemail_number(
-                    schema => $c->model('DB'), subscriber => $item);
+                    c => $c,
+                    subscriber => $item,
+                );
             }
         } catch($e) {
             $c->log->error("failed to update preference for '$accessor': $e");
@@ -1208,6 +1219,7 @@ sub load_preference_list {
     my $profile = $params{sub_profile};
 
     my $customer_view = $params{customer_view} // 0;
+    my $subscriber_view = $params{subscriber_view} // 0;
     my $cloudpbx_enabled = $c->config->{features}{cloudpbx};
 
     my $search_conditions = $params{search_conditions};
@@ -1246,6 +1258,7 @@ sub load_preference_list {
                 -or => ['voip_preferences_enums.usr_pref' => 1,
                     'voip_preferences_enums.usr_pref' => undef]) : (),
             $customer_view ? ('voip_preferences.expose_to_customer' => 1) : (),
+            $subscriber_view ? ('voip_preferences.expose_to_subscriber' => 1) : (),
             $cloudpbx_enabled ? () : ('me.name' => { '!=' => 'Cloud PBX'}),
             }, {
                 prefetch => {'voip_preferences' => 'voip_preferences_enums'},
@@ -2282,7 +2295,6 @@ sub get_preference_rs {
     my ($c, $type, $elem, $attr, $params) = @_;
 
     my $location_id     = $params->{location_id} // undef;
-    my $subscriberadmin = $params->{subscriberadmin} // ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") ? 1 : 0;
 
     my $rs;
     if($type eq "dom") {
@@ -2302,7 +2314,6 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             prov_subscriber => $elem,
-            $subscriberadmin ? (subscriberadmin => 1) : (),
         );
     } elsif($type eq "peer") {
         $rs = get_peer_preference_rs(
@@ -2407,31 +2418,34 @@ sub get_usr_preference_rs {
     my $attribute = $params{attribute};
     my $prov_subscriber = $params{prov_subscriber};
     my $schema = $params{schema} // $c->model('DB');
-    my $is_subadmin = $params{subscriberadmin};
 
     my $pref_rs = $schema->resultset('voip_preferences')->search_rs({
             attribute => $attribute,
             usr_pref => 1,
-            $is_subadmin ? (expose_to_customer => 1) : (),
+            $c->user->roles eq 'subscriberadmin'
+                ? (expose_to_customer => 1) : (),
+            $c->user->roles eq 'subscriber'
+                ? (expose_to_subscriber => 1) : (),
         })->first;
     return unless($pref_rs);
 
     my $attribute_id = $pref_rs->id;
 
     # filter by allowed attrs from profile
-    if ($is_subadmin && $prov_subscriber && $prov_subscriber->voip_subscriber_profile) {
-        my $found_attr = $prov_subscriber->voip_subscriber_profile
-            ->profile_attributes->search_rs({
-                attribute_id => $attribute_id,
-                })->first;
-        unless ($found_attr) {
-            $c->log->debug("get_usr_preference_rs skipping attr '$attribute' not in profile");
-            return;
-        }
+    if (($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') &&
+        $prov_subscriber && $prov_subscriber->voip_subscriber_profile) {
+            my $found_attr = $prov_subscriber->voip_subscriber_profile
+                ->profile_attributes->search_rs({
+                    attribute_id => $attribute_id,
+                    })->first;
+            unless ($found_attr) {
+                $c->log->debug("get_usr_preference_rs skipping attr '$attribute' not in profile");
+                return;
+            }
     }
 
     $pref_rs = $pref_rs->voip_usr_preferences;
-    if($prov_subscriber) {
+    if ($prov_subscriber) {
         $pref_rs = $pref_rs->search({
                 subscriber_id => $prov_subscriber->id,
                 attribute_id  => $attribute_id
@@ -2693,19 +2707,16 @@ sub api_preferences_defs {
     my $schema = $params{schema} // $c->model('DB');
     my $preferences_group = $params{preferences_group};
 
-    my $is_subadmin = ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber');
-
     my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
         internal => { '!=' => 1 }, # also fetch -1 for ncos, rwr
         $preferences_group => 1,
-        $is_subadmin ? (expose_to_customer => 1) : (),
     });
 
     my $resource = {};
     for my $pref($preferences->all) {
         my $fields = { $pref->get_inflated_columns };
         # remove internal fields
-        delete @{$fields}{qw/type attribute expose_to_customer internal peer_pref reseller_pref usr_pref dom_pref contract_pref contract_location_pref prof_pref voip_preference_groups_id id modify_timestamp/};
+        delete @{$fields}{qw/type attribute expose_to_customer expose_to_subscriber internal peer_pref reseller_pref usr_pref dom_pref contract_pref contract_location_pref prof_pref voip_preference_groups_id id modify_timestamp/};
         $fields->{max_occur} = int($fields->{max_occur});
         $fields->{read_only} = JSON::Types::bool($fields->{read_only});
         if($fields->{data_type} eq "enum") {
@@ -2773,6 +2784,7 @@ sub create_dynamic_preference {
     $resource->{dynamic}   = 1;
     $resource->{internal}  = 0;
     $resource->{expose_to_customer} = 1;
+    $resource->{expose_to_subscriber} = 1;
 
     $relations->{autoprov_device_id} = delete $resource->{autoprov_device_id};
     $relations->{reseller_id} = delete $resource->{reseller_id};
