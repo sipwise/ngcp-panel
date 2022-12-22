@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 use File::Type;
 use Readonly;
 use MIME::Base64 qw(decode_base64);
+use List::Util qw(any);
 
 use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
 
@@ -605,6 +606,25 @@ sub update_preferences {
         try {
             foreach my $k(keys %{ $old_resource }) {
                 SWITCH: for ($k) {
+                    /^cli$/ && do {
+                        my $cli = $resource->{$k};
+                        my @allowed_cli_numbers = $c->model('DB')->resultset('voip_dbaliases')->search({
+                            'subscriber.account_id' => $item->contract_id,
+                        },{
+                            select => ['me.username'],
+                            as => ['number'],
+                            join => 'subscriber',
+                            result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+                        })->all;
+                        $c->log->debug("NUMBERS");
+                        unless (any { $_->{number} eq $cli } @allowed_cli_numbers) {
+                            my $err_msg = "Only numbers that belong to the customer can be assigned as 'cli'";
+                            $c->log->error($err_msg);
+                            &$err_code(HTTP_UNPROCESSABLE_ENTITY, $err_msg);
+                            return;
+                        }
+                        last SWITCH;
+                    };
                     # no special treatment for *_sound_set deletion, as id is stored in right name
                     /^rewrite_rule_set$/ && do {
                         unless(exists $resource->{$k}) {
