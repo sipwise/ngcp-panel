@@ -1,3 +1,31 @@
+ngcp-panel (10.5.3.1+0~mr10.5.3.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [bc07de7] MT#55419 enable wildcard search for customer.external_id
+  * [61f5189] MT#33062 prevent error 500 when deleting registrations
+  * [2408fa5] MT#55421 fix deleting domains
+  * [fb05e7b] MT#55418 hide billing mappings with terminated profiles in AUI
+  * [78a6216] MT#55436 mark concurrent_* fraudpref fields as readonly
+  * [4cf1f14] MT#55551 add ccare roles to /api/callforwards
+  * [9d21a5d] MT#55972 support wildcard search for customer external_id
+  * [423e084] MT#55694 MT#55419 provide generated datatable search tooltips
+
+  [ Kirill Solomko ]
+  * [db1b244] MT#55538 /api/soundsets allow filtering by customer_id=null
+  * [02dc26d] MT#55618 /api/subscribers fix default contract_sound_set assignment
+  * [e19303a] MT#55864 /api/subscribers correctly process administrative flag
+  * [c31e221] MT#55871 /api/subscribers optimise GET alias_numbers
+  * [1a1fb8f] MT#56087 fix /api/callforwards sets auto creation
+
+  [ Michael Prokop ]
+  * [aa7c010] TT#76552 systemd: reduce hardening for sendmail(1) usage.
+    Thanks to Thomas Georg on spce-user ml for the bug report, and Victor Seva, Richard Fuchs + Rene Krenn for assistance in tracking this down
+
+  [ Nico Schedel ]
+  * [5920841] MT#55677 fix for "Unstable ngcp-panel-test-selenium-docker runs with failing tests"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 22 Dec 2022 16:20:27 +0100
+
 ngcp-panel (10.5.3.0+0~mr10.5.3.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
