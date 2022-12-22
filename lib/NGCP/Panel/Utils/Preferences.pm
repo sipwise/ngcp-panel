@@ -2418,7 +2418,6 @@ sub get_chained_preference_rs {
                 $preference_type,
                 $preference_elem,
                 $attr,
-                { exists $params->{subscriberadmin} ? (subscriberadmin => $params->{subscriberadmin} ) : () },
             );
             if ($attribute_value_rs->first) {
                 return $attribute_value_rs;
@@ -2435,21 +2434,19 @@ sub get_usr_preference_rs {
     my $attribute = $params{attribute};
     my $prov_subscriber = $params{prov_subscriber};
     my $schema = $params{schema} // $c->model('DB');
+    my $as_admin = $params{as_admin} // 0;
 
     my $pref_rs = $schema->resultset('voip_preferences')->search_rs({
-            attribute => $attribute,
-            usr_pref => 1,
-            $c->user->roles eq 'subscriberadmin'
-                ? (expose_to_customer => 1) : (),
-            $c->user->roles eq 'subscriber'
-                ? (expose_to_subscriber => 1) : (),
-        });
-    unless ($pref_rs && $pref_rs->first) {
-        # an ResultSet object is expected as the return value
-        return $pref_rs;
-    }
+        attribute => $attribute,
+        usr_pref => 1,
+        !$as_admin && $c->user->roles eq 'subscriberadmin'
+            ? (-or => [ expose_to_customer => 1, internal => { '!=' => 0 }  ]) : (),
+        !$as_admin && $c->user->roles eq 'subscriber'
+            ? (-or => [ expose_to_subscriber => 1, internal => { '!=' => 0 } ]) : (),
+    })->first;
+    return unless $pref_rs;
 
-    my $attribute_id = $pref_rs->first->id;
+    my $attribute_id = $pref_rs->id;
 
     # filter by allowed attrs from profile
     if (($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') &&
@@ -2457,11 +2454,11 @@ sub get_usr_preference_rs {
             my $found_attr = $prov_subscriber->voip_subscriber_profile
                 ->profile_attributes->search_rs({
                     attribute_id => $attribute_id,
-                    });
-            return $found_attr unless $found_attr->first;
+                    })->first;
+            return unless $found_attr;
     }
 
-    $pref_rs = $pref_rs->first->voip_usr_preferences;
+    $pref_rs = $pref_rs->voip_usr_preferences;
     if ($prov_subscriber) {
         $pref_rs = $pref_rs->search({
             subscriber_id => $prov_subscriber->id,
@@ -2727,6 +2724,10 @@ sub api_preferences_defs {
     my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
         internal => { '!=' => 1 }, # also fetch -1 for ncos, rwr
         $preferences_group => 1,
+        $c->user->roles eq 'subscriberadmin'
+            ? (expose_to_customer => 1) : (),
+        $c->user->roles eq 'subscriber'
+            ? (expose_to_subscriber => 1) : (),
     });
 
     my $resource = {};

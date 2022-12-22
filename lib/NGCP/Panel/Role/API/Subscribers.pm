@@ -143,7 +143,7 @@ sub resource_from_item {
         })->all;
 
     $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'display_name',
+        c => $c, attribute => 'display_name', as_admin => 1,
         prov_subscriber => $item->provisioning_voip_subscriber);
     if($pref->first && $pref->first->value) {
         $resource{display_name} = $pref->first->value;
