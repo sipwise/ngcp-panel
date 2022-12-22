@@ -180,17 +180,14 @@ sub prepare_resource {
         if ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
             my $attrname = $pref->attribute->attribute;
             if ($c->user->roles eq 'subscriberadmin' && ! $pref->attribute->expose_to_customer ) {
-                $c->log->debug("skipping attribute $attrname, not exposing to customer");
                 next;
             }
 
             if ($c->user->roles eq 'subscriber' && ! $pref->attribute->expose_to_subscriber ) {
-                $c->log->debug("skipping attribute $attrname, not exposing to subscriber");
                 next;
             }
 
             if ($has_profile && !$profile_allowed_attrs{$pref->attribute_id}) {
-                $c->log->debug("skipping attribute $attrname, not in profile");
                 next;
             }
         }
@@ -2446,10 +2443,13 @@ sub get_usr_preference_rs {
                 ? (expose_to_customer => 1) : (),
             $c->user->roles eq 'subscriber'
                 ? (expose_to_subscriber => 1) : (),
-        })->first;
-    return unless($pref_rs);
+        });
+    unless ($pref_rs && $pref_rs->first) {
+        # an ResultSet object is expected as the return value
+        return $pref_rs;
+    }
 
-    my $attribute_id = $pref_rs->id;
+    my $attribute_id = $pref_rs->first->id;
 
     # filter by allowed attrs from profile
     if (($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') &&
@@ -2457,19 +2457,16 @@ sub get_usr_preference_rs {
             my $found_attr = $prov_subscriber->voip_subscriber_profile
                 ->profile_attributes->search_rs({
                     attribute_id => $attribute_id,
-                    })->first;
-            unless ($found_attr) {
-                $c->log->debug("get_usr_preference_rs skipping attr '$attribute' not in profile");
-                return;
-            }
+                    });
+            return $found_attr unless $found_attr->first;
     }
 
-    $pref_rs = $pref_rs->voip_usr_preferences;
+    $pref_rs = $pref_rs->first->voip_usr_preferences;
     if ($prov_subscriber) {
         $pref_rs = $pref_rs->search({
-                subscriber_id => $prov_subscriber->id,
-                attribute_id  => $attribute_id
-            });
+            subscriber_id => $prov_subscriber->id,
+            attribute_id  => $attribute_id
+        });
     }
 
     return $pref_rs;
