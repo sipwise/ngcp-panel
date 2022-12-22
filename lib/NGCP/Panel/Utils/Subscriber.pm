@@ -1317,7 +1317,7 @@ sub update_subscriber_numbers {
                 $cfset->delete;
             }
         }
-        update_voicemail_number(schema => $schema, subscriber => $billing_subs);
+        update_voicemail_number(c => $c, subscriber => $billing_subs);
 
     } elsif(defined $primary_number) {
 
@@ -1420,7 +1420,7 @@ sub update_subscriber_numbers {
                         $acli_pref->create({ value => $cli });
                     }
                 }
-                update_voicemail_number(schema => $schema, subscriber => $billing_subs);
+                update_voicemail_number(c => $c, subscriber => $billing_subs);
 
                 for my $cfset($prov_subs->voip_cf_destination_sets->all) {
                     for my $cf($cfset->voip_cf_destinations->all) {
@@ -1435,7 +1435,7 @@ sub update_subscriber_numbers {
         } else {
             if (defined $billing_subs->primary_number) {
                 $billing_subs->primary_number->delete;
-                update_voicemail_number(schema => $schema, subscriber => $billing_subs);
+                update_voicemail_number(c => $c, subscriber => $billing_subs);
             }
         }
 
