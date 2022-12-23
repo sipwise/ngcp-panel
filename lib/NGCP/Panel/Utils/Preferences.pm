@@ -613,7 +613,6 @@ sub update_preferences {
                             join => 'subscriber',
                             result_class => 'DBIx::Class::ResultClass::HashRefInflator',
                         })->all;
-                        $c->log->debug("NUMBERS");
                         unless (any { $_->{number} eq $cli } @allowed_cli_numbers) {
                             my $err_msg = "Only numbers that belong to the customer can be assigned as 'cli'";
                             $c->log->error($err_msg);
@@ -1652,7 +1651,49 @@ sub create_preference_form {
     if($posted && $form->validated) {
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
         my $attribute = $c->stash->{preference_meta}->attribute;
-        if ($attribute eq "allowed_ips") {
+        if ($attribute eq "cli" && $c->user->roles eq 'subscriberadmin') {
+            my $cli = $form->field($attribute)->value;
+            my @allowed_cli_numbers = $c->model('DB')->resultset('voip_dbaliases')->search({
+                'subscriber.account_id' => $c->stash->{subscriber}->contract_id,
+            },{
+                select => ['me.username'],
+                as => ['number'],
+                join => 'subscriber',
+                result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+            })->all;
+            unless (any { $_->{number} eq $cli } @allowed_cli_numbers) {
+                my $err_msg = "Only numbers that belong to the customer can be assigned as";
+                NGCP::Panel::Utils::Message::error(
+                    c => $c,
+                    error => $err_msg . $attribute,
+                    data  => \%log_data,
+                    desc  => $c->loc($err_msg . ' [_1]', $attribute),
+                );
+                $c->response->redirect($base_uri);
+                return 1;
+            }
+            try {
+                $pref_rs->update_or_create({
+                    id => $preference_id,
+                    attribute_id => $c->stash->{preference_meta}->id,
+                    value => $form->field($attribute)->value,
+                });
+                NGCP::Panel::Utils::Message::info(
+                    c => $c,
+                    data  => \%log_data,
+                    desc  => $c->loc('Preference [_1] successfully updated', $attribute),
+                );
+            } catch($e) {
+               NGCP::Panel::Utils::Message::error(
+                    c => $c,
+                    error => $e,
+                    data  => \%log_data,
+                    desc  => $c->loc('Failed to update preference [_1]', $attribute),
+                );
+            }
+            $c->response->redirect($base_uri);
+            return 1;
+        } elsif ($attribute eq "allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
             }
