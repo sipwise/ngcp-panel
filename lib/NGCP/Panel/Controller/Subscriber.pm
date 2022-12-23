@@ -2705,7 +2705,6 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         c => $c,
         attribute => 'lock',
         prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
-        as_admin => 1,
     );
 }
 
@@ -2718,7 +2717,6 @@ sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/
         c => $c,
         attribute => 'lock',
         prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
-        as_admin => 1,
     );
     my $locklevel = $c->stash->{prov_lock}->first ? $c->stash->{prov_lock}->first->value : 0;
     $c->stash->{prov_lock_string} = NGCP::Panel::Utils::Subscriber::get_lock_string($locklevel);
@@ -2883,7 +2881,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'display_name',
             prov_subscriber => $prov_subscriber,
-            as_admin => 1,
         );
         if($display_pref->first) {
             $params->{display_name} = $display_pref->first->value;
