@@ -1279,12 +1279,6 @@ sub load_preference_list {
             }, {
                 prefetch => {'voip_preferences' => 'voip_preferences_enums'},
             });
-    if($prof_pref) {
-        my @prof_attributes = $profile->profile_attributes->get_column('attribute_id')->all;
-        $pref_rs = $pref_rs->search({
-            'voip_preferences.id' => { in => \@prof_attributes }
-        });
-    }
     if($search_conditions) {
         if('ARRAY' eq ref $search_conditions){
             $pref_rs = $pref_rs->search(@$search_conditions);
