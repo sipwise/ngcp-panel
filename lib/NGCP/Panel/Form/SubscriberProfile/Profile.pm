@@ -84,22 +84,17 @@ sub field_list {
         }
         ],
     });
-    
+
     my $fields = [];
     foreach my $pref($pref_rs->all) {
         my $desc = $pref->description;
-        push @{ $fields }, 'attribute.'.$pref->attribute => {
-            name => $pref->attribute,
-            type => 'Checkbox',
-            label => $pref->attribute,
-            checkbox_value => $pref->id,
-            element_attr => {
-            #    rel => ['tooltip'],
-            #    title => [$pref->description],
-            #    checked => 'checked',
-            },
-            disabled => $c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit} ? 1 : 0,
-        };
+        push @{ $fields }, 'field_'.$pref->attribute => {
+                name => 'attribute.'.$pref->attribute,
+                type => 'Checkbox',
+                label => $pref->attribute,
+                checkbox_value => $pref->id,
+                disabled => $c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit} ? 1 : 0,
+            };
     }
 
     return $fields;

@@ -99,7 +99,7 @@ sub update_item {
         return;
     }
 
-    $resource->{attribute} = delete $resource->{attributes};
+    %{$resource->{attribute}} = map { $_ => 1 } @{ delete $resource->{attributes} };
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
@@ -169,8 +169,8 @@ sub update_item {
         },
         ],
     });
-    foreach my $a(@{ $attributes }) {
-        my $meta = $meta_rs->find({ attribute => $a });
+    foreach my $attr (keys %{$attributes}) {
+        my $meta = $meta_rs->find({ attribute => $attr });
         next unless $meta;
         # mark as seen, so later we can unprovision the remaining ones,
         # which are the ones not set here:
