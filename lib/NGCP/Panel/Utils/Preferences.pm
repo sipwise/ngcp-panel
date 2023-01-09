@@ -604,20 +604,22 @@ sub update_preferences {
             foreach my $k(keys %{ $old_resource }) {
                 SWITCH: for ($k) {
                     /^cli$/ && do {
-                        my $cli = $resource->{$k};
-                        my @allowed_cli_numbers = $c->model('DB')->resultset('voip_dbaliases')->search({
-                            'subscriber.account_id' => $item->contract_id,
-                        },{
-                            select => ['me.username'],
-                            as => ['number'],
-                            join => 'subscriber',
-                            result_class => 'DBIx::Class::ResultClass::HashRefInflator',
-                        })->all;
-                        unless (any { $_->{number} eq $cli } @allowed_cli_numbers) {
-                            my $err_msg = "Only numbers that belong to the customer can be assigned as 'cli'";
-                            $c->log->error($err_msg);
-                            &$err_code(HTTP_UNPROCESSABLE_ENTITY, $err_msg);
-                            return;
+                        if ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+                            my $cli = $resource->{$k};
+                            my @allowed_cli_numbers = $c->model('DB')->resultset('voip_dbaliases')->search({
+                                'subscriber.account_id' => $item->contract_id,
+                            },{
+                                select => ['me.username'],
+                                as => ['number'],
+                                join => 'subscriber',
+                                result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+                            })->all;
+                            unless (any { $_->{number} eq $cli } @allowed_cli_numbers) {
+                                my $err_msg = "Only numbers that belong to the customer can be assigned as 'cli'";
+                                $c->log->error($err_msg);
+                                &$err_code(HTTP_UNPROCESSABLE_ENTITY, $err_msg);
+                                return;
+                            }
                         }
                         last SWITCH;
                     };
