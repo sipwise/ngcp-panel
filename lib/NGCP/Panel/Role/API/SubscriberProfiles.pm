@@ -99,7 +99,10 @@ sub update_item {
         return;
     }
 
-    %{$resource->{attribute}} = map { $_ => 1 } @{ delete $resource->{attributes} };
+    $resource->{attributes} && ref $resource->{attributes} eq 'ARRAY'
+        ? %{$resource->{attribute}} = map { $_ => 1 } @{ delete $resource->{attributes} }
+        : $resource->{attribute} = {};
+
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,

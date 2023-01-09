@@ -1303,7 +1303,7 @@ sub test_subscriberprofile {
     $req->content(JSON::to_json({
         name => "subscriber_profile_".($t-1).'_put',
         profile_set_id => $profileset->{id},
-        attribute => \@attributes,
+        attributes => \@attributes,
         set_default => JSON::false,
         ($mysql_sqlstrict ? (description => "subscriber_profile_description_".($t-1).'_put') : ()),
     }));
