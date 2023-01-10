@@ -93,8 +93,11 @@ sub validate_line_type {
     $field->clear_errors;
     unless($field->value eq 'private' ||
            $field->value eq 'shared' ||
-           $field->value eq 'blf') {
-        my $err_msg = 'Invalid line type, must be private, shared or blf';
+           $field->value eq 'blf'  ||
+           $field->value eq 'speeddial' ||
+           $field->value eq 'forward' ||
+           $field->value eq 'transfer') {
+        my $err_msg = 'Invalid line type, must be private, shared, blf, speeddial, forward or transfer';
         $field->add_error($err_msg);
     }
     return;

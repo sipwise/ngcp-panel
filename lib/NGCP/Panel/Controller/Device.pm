@@ -1003,6 +1003,9 @@ sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) 
         { name => 'can_private', search => 1, title => $c->loc('Private Line') },
         { name => 'can_shared', search => 1, title => $c->loc('Shared Line') },
         { name => 'can_blf', search => 1, title => $c->loc('BLF Key') },
+        { name => 'can_speeddial', search => 1, title => $c->loc('SpeedDial') },
+        { name => 'can_forward', search => 1, title => $c->loc('Forward') },
+        { name => 'can_transfer', search => 1, title => $c->loc('Transfer') },
     ]);
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $cols);
     $c->detach( $c->view("JSON") );

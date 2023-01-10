@@ -22,7 +22,7 @@ __PACKAGE__->set_config({
     }
 });
 
-# curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.png -F mac_image=@sandbox/spa504g-back.png -F front_thumbnail=@sandbox/spa504g-front-small.png -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "can_private":true, "can_shared":true, "can_blf":true, "keys":[{"labelpos":"top", "x":5110, "y":5120},{"labelpos":"top", "x":5310, "y":5320}]}]}' https://localhost:4443/api/pbxdevicemodels/
+# curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.png -F mac_image=@sandbox/spa504g-back.png -F front_thumbnail=@sandbox/spa504g-front-small.png -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "can_private":true, "can_shared":true, "can_blf":true, "can_speeddial":true, "can_forward":true, "can_transfer":true, "keys":[{"labelpos":"top", "x":5110, "y":5120},{"labelpos":"top", "x":5310, "y":5320}]}]}' https://localhost:4443/api/pbxdevicemodels/
 
 sub api_description {
     return 'Specifies a model to be set in <a href="#pbxdeviceconfigs">PbxDeviceConfigs</a>. Use a Content-Type "multipart/form-data", provide front_image, front_thumbnail and mac_image parts with the actual images, and an additional json part with the properties specified below, e.g.: <code>curl -X POST --user $USER -F front_image=@/path/to/front.png -F mac_image=@/path/to/mac.png -F front_thumbnail=@/path/to/front-small.png -F json=\'{"reseller_id":...}\' https://example.org:1443/api/pbxdevicemodels/</code> This resource is read-only to subscriberadmins.';
@@ -62,6 +62,9 @@ sub documentation_sample {
                 can_private => 1,
                 can_shared => 1,
                 can_blf => 1,
+                can_speeddial => 1,
+                can_forward => 1,
+                can_transfer => 1,
                 keys => [
                     {
                         x => 100,

@@ -111,7 +111,7 @@ has_field 'linerange' => (
     wrapper_class => [qw/hfh-rep-block/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['An array of line/key definitions for this device. Each element is a hash containing the keys name, can_private, can_shared, can_blf and keys (which in turn is an array of hashes having x, y and labelpos allowing top, bottom, left right).'],
+        title => ['An array of line/key definitions for this device. Each element is a hash containing the keys name, can_private, can_shared, can_blf, can_speeddial, can_forward, can_transfer and keys (which in turn is an array of hashes having x, y and labelpos allowing top, bottom, left right).'],
     },
 );
 
@@ -156,6 +156,36 @@ has_field 'linerange.can_blf' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible in the config template via phone.lineranges[].lines[].can_blf'],
+    },
+);
+
+has_field 'linerange.can_speeddial' => (
+    type => 'Boolean',
+    label => 'Supports Speeddial',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Lines/Keys in this range can be used as speeddial. Value is accessible in the config template via phone.lineranges[].lines[].can_speeddial'],
+    },
+);
+
+has_field 'linerange.can_forward' => (
+    type => 'Boolean',
+    label => 'Supports Forward',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Lines/Keys in this range can be used as forward. Value is accessible in the config template via phone.lineranges[].lines[].can_forward'],
+    },
+);
+
+has_field 'linerange.can_transfer' => (
+    type => 'Boolean',
+    label => 'Supports Transfer',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Lines/Keys in this range can be used as transfer. Value is accessible in the config template via phone.lineranges[].lines[].can_transfer'],
     },
 );
 

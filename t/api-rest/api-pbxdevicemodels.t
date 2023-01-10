@@ -45,10 +45,13 @@ $fake_data->set_data_from_script({
                             {y => "390", labelpos => "left", x => "510"},
                             {y => "350", labelpos => "left", x => "510"}
                         ],
-                        can_private => "1",
-                        can_shared  => "0",
-                        can_blf     => "0",
-                        name        => "Phone Ports api_test",
+                        can_private   => "1",
+                        can_shared    => "0",
+                        can_blf       => "0",
+                        can_speeddial => "0",
+                        can_forward   => "0",
+                        can_transfer  => "0",
+                        name          => "Phone Ports api_test",
                         #TODO: test duplicate creation #"id"=>1311,
                     },
                     {
@@ -56,11 +59,14 @@ $fake_data->set_data_from_script({
                             {y => "390", labelpos => "left", x => "510"},
                             {y => "350", labelpos => "left", x => "510"}
                         ],
-                        can_private => "1",
-                        can_shared  => "0",
+                        can_private   => "1",
+                        can_shared    => "0",
                         #TODO: If I'm right - now we don't check field values against this, because test for pbxdevice xreation is OK
-                        can_blf     => "0",
-                        name        => "Extra Ports api_test",
+                        can_blf       => "0",
+                        can_speeddial => "0",
+                        can_forward   => "0",
+                        can_transfer  => "0",
+                        name          => "Extra Ports api_test",
                         #TODO: test duplicate creation #"id"=>1311,
                     }
                 ]

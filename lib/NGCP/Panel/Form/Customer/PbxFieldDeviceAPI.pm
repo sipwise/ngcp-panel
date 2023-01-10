@@ -47,7 +47,7 @@ has_field 'lines' => (
     wrapper_class => [qw/hfh-rep-block/],
     element_attr => {
         rel => ['tooltip'],
-        title => ["The lines for this pbx device. Required keys are 'linerange' (name of range to use), 'key_num' (key number in line range, starting from 0), 'type' (one of 'private', 'shared', 'blf'), 'subscriber_id' (the subscriber mapped to this key)."],
+        title => ["The lines for this pbx device. Required keys are 'linerange' (name of range to use), 'key_num' (key number in line range, starting from 0), 'type' (one of 'private', 'shared', 'blf', 'speeddial', 'forward', 'transfer'), 'subscriber_id' (the subscriber mapped to this key)."],
     },
 );
 
@@ -89,6 +89,9 @@ has_field 'lines.type' => (
         { label => "private", value => "private" },
         { label => "shared", value => "shared" },
         { label => "blf", value => "blf" },
+        { label => "speeddial", value => "speeddial" },
+        { label => "forward", value => "forward" },
+        { label => "transfer", value => "transfer" },
     ],
     element_attr => {
         rel => ['tooltip'],

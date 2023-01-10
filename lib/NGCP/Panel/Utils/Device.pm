@@ -91,6 +91,9 @@ sub update_device_model_ranges {
                 $range->{can_private} //= 0;
                 $range->{can_shared} //= 0;
                 $range->{can_blf} //= 0;
+                $range->{can_speeddial} //= 0;
+                $range->{can_forward} //= 0;
+                $range->{can_transfer} //= 0;
                 $range_db->update($range);
             }
         } else {
@@ -116,7 +119,10 @@ sub update_device_model_ranges {
             if($fielddev_line->key_num >= $range_db->num_lines ||
                ($fielddev_line->line_type eq 'private' && !$range_db->can_private) ||
                ($fielddev_line->line_type eq 'shared' && !$range_db->can_shared) ||
-               ($fielddev_line->line_type eq 'blf' && !$range_db->can_blf)) {
+               ($fielddev_line->line_type eq 'blf' && !$range_db->can_blf) ||
+               ($fielddev_line->line_type eq 'speeddial' && !$range_db->can_speeddial) ||
+               ($fielddev_line->line_type eq 'forward' && !$range_db->can_forward) ||
+               ($fielddev_line->line_type eq 'transfer' && !$range_db->can_transfer)) {
 
                $fielddev_line->delete;
            }

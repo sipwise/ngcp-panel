@@ -181,7 +181,7 @@ sub check_resource{
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
             return;
         }
-        foreach my $elem(qw/can_private can_shared can_blf keys/) {
+        foreach my $elem(qw/can_private can_shared can_blf can_speeddial can_forward can_transfer keys/) {
             unless(exists $range->{$elem}) {
                 $c->log->error("missing mandatory attribute '$elem' in a linerange element");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, missing attribute '$elem'");
@@ -237,7 +237,7 @@ sub process_range {
         delete $r->{$f};
     }
     $r->{id} = int($r->{id});
-    foreach my $f(qw/can_private can_shared can_blf/) {
+    foreach my $f(qw/can_private can_shared can_blf can_speeddial can_forward can_transfer/) {
         $r->{$f} = $r->{$f} ? JSON::true : JSON::false;
     }
     $r->{keys} = [];

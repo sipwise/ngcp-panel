@@ -1029,7 +1029,7 @@ function create_ranges_annotations(id,type,ranges){
 [% END -%]
                 '</select>' +
                 '<select class="modeselect" name="line.' + linecmt + '.type" id="line.' + linecmt + '.type">' +
-[% FOR opt IN ["private", "shared", "blf"] -%]
+[% FOR opt IN ["private", "shared", "blf", "speeddial", "forward", "transfer"] -%]
                 (range.can_[% opt %] == "1" ?
                     '<option value="[% opt %]"'+((linekeyCurrent && linekeyCurrent.mode == '[% opt %]' ) ? '  selected="selected"' : '')+'>[% opt %]</option>' : '') +
 [% END -%]
