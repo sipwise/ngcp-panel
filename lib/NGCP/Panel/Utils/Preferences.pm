@@ -2472,13 +2472,13 @@ sub get_usr_preference_rs {
     my $prov_subscriber = $params{prov_subscriber};
     my $schema = $params{schema} // $c->model('DB');
 
-    return unless $prov_subscriber;
-
     my $preference = $schema->resultset('voip_preferences')->find({
         attribute => $attribute,
         usr_pref => 1,
     });
     return unless $preference;
+
+    return $preference->voip_usr_preferences unless $prov_subscriber;
 
     return $preference->voip_usr_preferences->search_rs({
         subscriber_id => $prov_subscriber->id,
