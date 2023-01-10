@@ -22,6 +22,7 @@
     ELSE;
         helper.base_uri = c.uri_for(contract.id,'preferences');
     END;
+    helper.ncos_sets = ncos_sets;
     helper.ncos_levels = ncos_levels;
     helper.emergency_mapping_containers = emergency_mapping_containers;
     helper.location_id = location_id;

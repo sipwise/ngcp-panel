@@ -248,6 +248,25 @@ sub prepare_resource {
                 $processed = 1;
                 last SWITCH;
             };
+            /^(adm_)?(cf_)?ncos_set_id$/ && do {
+                my $pref_name = $pref->attribute->attribute;
+                $pref_name =~ s/_id$//;
+
+                do { $processed = 1; last SWITCH; }
+                    if($attr && !_check_profile($c, $pref_name, \%profile_attrs));
+
+                my $ncos = $schema->resultset('ncos_sets')->find({
+                    id => $pref->value,
+                });
+                if($ncos) {
+                    $resource->{$pref_name} = $ncos->name;
+                } else {
+                    $c->log->error("no ncos set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, although it's stored in preference id ".$pref->id);
+                    # let it slip through
+                }
+                $processed = 1;
+                last SWITCH;
+            };
             /^emergency_mapping_container_id$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
@@ -573,6 +592,7 @@ sub update_preferences {
         rewrite_caller_lnp_dpid rewrite_callee_lnp_dpid
         cdr_export_sclidui_rwrs_id
         ncos_id adm_ncos_id adm_cf_ncos_id
+        ncos_set_id adm_ncos_set_id adm_cf_ncos_set_id
         emergency_mapping_container_id
         sound_set contract_sound_set
         allowed_ips_grp man_allowed_ips_grp
@@ -645,7 +665,7 @@ sub update_preferences {
                         }
                         last SWITCH;
                     };
-                    /^(adm_)?(cf_)?ncos$/ && do {
+                    /^(adm_)?(cf_)?ncos(_set)?$/ && do {
                         unless(exists $resource->{$k}) {
                             my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_id');
                             last SWITCH unless $rs; # unknown resource, just ignore
@@ -824,6 +844,25 @@ sub update_preferences {
                     unless($ncos) {
                         $c->log->error("no ncos level '".$resource->{$pref}."' for reseller id $reseller_id found");
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown ncos_level '".$resource->{$pref}."'");
+                        return;
+                    }
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name);
+                    if($rs->first) {
+                        $rs->first->update({ value => $ncos->id });
+                    } else {
+                        $rs->create({ value => $ncos->id });
+                    }
+                    last SWITCH;
+                };
+                /^(adm_)?(cf_)?ncos_set$/ && do {
+                    my $pref_name = $pref . "_id";
+                    my $ncos = $c->model('DB')->resultset('ncos_sets')->find({
+                        name => $resource->{$pref},
+                        reseller_id => $reseller_id,
+                    });
+                    unless($ncos) {
+                        $c->log->error("no ncos set '".$resource->{$pref}."' for reseller id $reseller_id found");
+                        &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown ncos_set '".$resource->{$pref}."'");
                         return;
                     }
                     my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name);
@@ -1334,6 +1373,24 @@ sub load_preference_list {
                         ->find($pref_values->{adm_cf_ncos_id}) )) {
                     $pref->{adm_cf_ncos_id} = $tmp->id;
                 }
+            } elsif($pref->attribute eq "ncos_set") {
+                if ($pref_values->{ncos_set_id} &&
+                    (my $tmp = $c->stash->{ncos_sets_rs}
+                        ->find($pref_values->{ncos_set_id}) )) {
+                    $pref->{ncos_set_id} = $tmp->id;
+                }
+            } elsif($pref->attribute eq "adm_ncos_set") {
+                if ($pref_values->{adm_ncos_set_id} &&
+                    (my $tmp = $c->stash->{ncos_sets_rs}
+                        ->find($pref_values->{adm_ncos_set_id}) )) {
+                    $pref->{adm_ncos_set_id} = $tmp->id;
+                }
+            } elsif($pref->attribute eq "adm_cf_ncos_set") {
+                if ($pref_values->{adm_cf_ncos_set_id} &&
+                    (my $tmp = $c->stash->{ncos_sets_rs}
+                        ->find($pref_values->{adm_cf_ncos_set_id}) )) {
+                    $pref->{adm_cf_ncos_set_id} = $tmp->id;
+                }
             } elsif($pref->attribute eq "emergency_mapping_container") {
                 if ($pref_values->{emergency_mapping_container_id} &&
                     (my $tmp = $c->stash->{emergency_mapping_containers_rs}
@@ -1475,6 +1532,15 @@ sub create_preference_form {
         if (defined $ncos_id_preference) {
             $preselected_value = $ncos_id_preference->value;
         }
+    } elsif ($c->stash->{preference_meta}->attribute =~ /^((adm_)?(cf_)?ncos_set)$/) {
+        my $ncos_id_preference = $pref_rs->search({
+                'attribute.attribute' => $1.'_id'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $ncos_id_preference) {
+            $preselected_value = $ncos_id_preference->value;
+        }
     } elsif ($c->stash->{preference_meta}->attribute eq "emergency_mapping_container") {
         my $container_id_preference = $pref_rs->search({
                 'attribute.attribute' => 'emergency_mapping_container_id'
@@ -1553,6 +1619,7 @@ sub create_preference_form {
             rwrs_rs => $c->stash->{rwr_sets_rs},
             hdrs_rs => $c->stash->{hdr_sets_rs},
             ncos_rs => $c->stash->{ncos_levels_rs},
+            ncos_sets_rs => $c->stash->{ncos_sets_rs},
             emergency_mapping_containers_rs => $c->stash->{emergency_mapping_containers_rs},
             sound_rs => $c->stash->{sound_sets_rs},
             contract_sound_rs => $c->stash->{contract_sound_sets_rs},
@@ -1560,7 +1627,7 @@ sub create_preference_form {
     });
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
     # we have to translate this form separately since it bypasses caching in NGCP::Panel::Form
-    if ( $c->stash->{preference_meta}->attribute !~ '(ncos|sound_set|emergency_mapping_container)$' ) {
+    if ( $c->stash->{preference_meta}->attribute !~ '(ncos|ncos_set|sound_set|emergency_mapping_container)$' ) {
         NGCP::Panel::Utils::I18N->translate_form($c, $form);
     }
 
@@ -1929,6 +1996,39 @@ sub create_preference_form {
                     $preference->first->update({ value => $selected_level->id });
                 } else {
                     $preference->create({ value => $selected_level->id });
+                }
+                NGCP::Panel::Utils::Message::info(
+                    c => $c,
+                    data => \%log_data,
+                    desc => $c->loc('Preference [_1] successfully updated', $attribute),
+                );
+            } catch($e) {
+                NGCP::Panel::Utils::Message::error(
+                    c => $c,
+                    error => $e,
+                    data  => \%log_data,
+                    desc  => $c->loc('Failed to update preference [_1]', $attribute),
+                );
+                $c->response->redirect($base_uri);
+                return 1;
+            }
+            $c->response->redirect($base_uri);
+            return 1;
+        } elsif ($attribute eq "ncos_set" || $attribute eq "adm_ncos_set" || $attribute eq "adm_cf_ncos_set") {
+            my $selected_set = $c->stash->{ncos_sets_rs}->find(
+                $form->field($attribute)->value
+            );
+            my $attribute_id = $c->model('DB')->resultset('voip_preferences')
+                ->find({attribute => $attribute."_id"})->id;
+
+            try {
+                my $preference = $pref_rs->search({ attribute_id => $attribute_id });
+                if(!defined $selected_set) {
+                    $preference->first->delete if $preference->first;
+                } elsif($preference->first) {
+                    $preference->first->update({ value => $selected_set->id });
+                } else {
+                    $preference->create({ value => $selected_set->id });
                 }
                 NGCP::Panel::Utils::Message::info(
                     c => $c,
@@ -2765,7 +2865,7 @@ sub api_preferences_defs {
                 push @{ $fields->{enum_values} }, $efields;
             }
         }
-        if ($pref->attribute =~ m/^(cdr_export_sclidui_rwrs|rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|emergency_mapping_container|sound_set|contract_sound_set|header_rule_set)$/) {
+        if ($pref->attribute =~ m/^(cdr_export_sclidui_rwrs|rewrite_rule_set|ncos|adm_ncos|adm_cf_ncos|ncos_set|adm_ncos_set|adm_cf_ncos_set|emergency_mapping_container|sound_set|contract_sound_set|header_rule_set)$/) {
             $fields->{data_type} = 'string';
         }
 

@@ -13,6 +13,7 @@
     helper.form = form;
     helper.base_uri = c.uri_for_action('/subscriberprofile/preferences',[profile.profile_set.id, profile.id]);
     helper.rewrite_rule_sets = rwr_sets;
+    helper.ncos_sets = ncos_sets;
     helper.ncos_levels = ncos_levels;
     helper.sound_sets = sound_sets;
     helper.man_aip_grp_rs = man_aip_grp_rs;

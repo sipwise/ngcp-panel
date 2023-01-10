@@ -758,6 +758,12 @@ sub load_preference_list :Private {
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
 
+    my $ncos_sets_rs = $c->model('DB')
+        ->resultset('ncos_sets')
+        ->search_rs({ reseller_id => $reseller_id, });
+    $c->stash(ncos_sets_rs => $ncos_sets_rs,
+              ncos_sets    => [$ncos_sets_rs->all]);
+
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         prof_pref => 1,

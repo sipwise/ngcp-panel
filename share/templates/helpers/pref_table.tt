@@ -105,6 +105,27 @@
                             <option [% (r.adm_cf_ncos_id.defined && r.adm_cf_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level | html %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "ncos_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.ncos_sets -%]
+                            <option [% (r.ncos_set_id.defined && r.ncos_set_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
+                        [% END -%]
+                        </select>
+                    [% ELSIF r.attribute == "adm_ncos_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.ncos_sets -%]
+                            <option [% (r.adm_ncos_set_id.defined && r.adm_ncos_set_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
+                        [% END -%]
+                        </select>
+                    [% ELSIF r.attribute == "adm_cf_ncos_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.ncos_sets -%]
+                            <option [% (r.adm_cf_ncos_set_id.defined && r.adm_cf_ncos_set_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
+                        [% END -%]
+                        </select>
                     [% ELSIF r.attribute == "emergency_mapping_container" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>
