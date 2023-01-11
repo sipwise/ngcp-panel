@@ -200,6 +200,8 @@ sub get_preference_existen_value{
         }
     }elsif($preference->{name}=~/^(adm_)?(cf_)?ncos$/){
         $res = get_fake_data_created_or_data('ncoslevels','level');
+    }elsif($preference->{name}=~/^(adm_)?(cf_)?ncos_set$/){
+        $res = 'no_process';
     }elsif($preference->{name}=~/^(contract_)?sound_set$/){
         if ($api eq 'peeringserver') {
             $res = get_fake_data_created_or_data('orphansoundsets','name');
