@@ -138,7 +138,9 @@ sub DELETE :Allow {
     {
         my $dset = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, destinationset => $dset);
-        
+
+        last unless $self->check_subscriber_can_update_item($c, $dset);
+
         last unless $self->add_delete_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;

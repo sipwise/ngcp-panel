@@ -101,7 +101,12 @@ sub _item_rs {
         });
     } elsif ($c->user->roles eq "subscriber") {
         $item_rs = $c->model('DB')->resultset('voip_cf_destination_sets')->search_rs({
-            'subscriber_id' => $c->user->id,
+            '-or' => [
+                'me.subscriber_id' => $c->user->id,
+                'voip_cf_mappings.subscriber_id' => $c->user->id,
+            ]
+        },{
+            join => 'voip_cf_mappings',
         });
     }
 
@@ -115,21 +120,34 @@ sub item_by_id {
     return $item_rs->find($id);
 }
 
+sub check_subscriber_can_update_item {
+    my ($self, $c, $item) = @_;
+
+    if ($c->user->roles eq 'subscriber' && $c->user->id != $item->subscriber_id) {
+        $self->error($c, HTTP_FORBIDDEN, "This destination set does not belong to the user");
+        return;
+    }
+
+    return 1;
+}
+
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     delete $resource->{id};
     my $schema = $c->model('DB');
 
+    return unless $self->check_subscriber_can_update_item($c, $item);
+
     return unless $self->validate_form(
         c => $c,
         form => $form,
         resource => $resource,
     );
+
     if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         $resource->{subscriber_id} = $c->user->voip_subscriber->id;
     }
-
 
     if (! exists $resource->{destinations} ) {
         $resource->{destinations} = [];

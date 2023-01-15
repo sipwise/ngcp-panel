@@ -37,6 +37,14 @@ sub get_journal_methods{
     return [qw/handle_item_base_journal handle_journals_get handle_journalsitem_get handle_journals_options handle_journalsitem_options handle_journals_head handle_journalsitem_head/];
 }
 
+sub delete_item {
+    my ($self, $c, $item) = @_;
+
+    return unless $self->check_subscriber_can_update_item($c, $item);
+
+    return $self->SUPER::delete_item($c, $item);
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:
