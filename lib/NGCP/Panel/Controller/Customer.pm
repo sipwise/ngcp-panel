@@ -1772,6 +1772,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
             subscriber_id => $line->subscriber_id,
             line => $line->linerange_id . '.' . $line->key_num,
             type => $line->line_type,
+            target_number => $line->target_number,
         };
     }
     $params->{line} = \@lines;
@@ -1850,10 +1851,20 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
 sub pbx_device_lines_update :Private{
     my($self, $c, $schema, $fdev, $lines) = @_;
     my $err = 0;
+
     foreach my $line(@$lines) {
-        next unless($line->field('subscriber_id')->value);
+        my $is_custom_number = 0;
+        my $target_number;
+        if ($line->field('switch') && $line->field('switch')->value) {
+            $is_custom_number = 1;
+            $target_number = $line->field('target_number')->value // next;
+        } else {
+            next unless $line->field('subscriber_id')->value;
+        }
         my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
-            id => $line->field('subscriber_id')->value,
+            $is_custom_number
+                ? (is_pbx_pilot => 1)
+                : (id => $line->field('subscriber_id')->value),
             account_id => $c->stash->{contract}->id,
         });
         unless($prov_subscriber) {
@@ -1876,6 +1887,7 @@ sub pbx_device_lines_update :Private{
                 key_num        => $key_num,
                 line_type      => $type,
                 extension_unit => $unit,
+                target_number  => $target_number,
             });
         }
     }

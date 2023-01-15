@@ -69,6 +69,7 @@ has_field 'line.line' => (
     type => 'Hidden',
     required => 1,
 );
+
 has_field 'line.extension_unit' => (
     type => 'Hidden',
     #we allow also other for of the unit specification, or even no unit - then db value will be 0
@@ -88,6 +89,18 @@ has_field 'line.type' => (
     type => 'Hidden',
     required => 1,
 );
+
+has_field 'line.target_number' => (
+    type => 'PosInteger',
+    type => 'Hidden',
+    required => 0,
+);
+
+has_field 'line.switch' => (
+    type => 'Hidden',
+    required => 0,
+);
+
 sub validate_line_type {
     my ($self, $field) = @_;
     $field->clear_errors;

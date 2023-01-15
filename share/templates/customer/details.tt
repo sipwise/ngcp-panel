@@ -381,7 +381,7 @@ $(function() {
                                 <ul style="list-style-type:none; margin-left:0">
                                 [% FOR line IN dev.autoprov_field_device_lines.all -%]
                                     [% sub = line.provisioning_voip_subscriber.username _ '@' _ line.provisioning_voip_subscriber.domain.domain; -%]
-                                    <li>[% line.autoprov_device_line_range.name %]/[% line.key_num %]: [% line.line_type %]<br/>[% sub %]</li>[% UNLESS loop.last -%]<li>&nbsp;</li>[% END -%]
+                                    <li>[% line.autoprov_device_line_range.name %]/[% line.key_num %]: [% line.line_type %]<br/>[% line.target_number ? line.target_number : sub %]</li>[% UNLESS loop.last -%]<li>&nbsp;</li>[% END -%]
                                 [% END -%]
                                 </ul>
                             </td>
@@ -936,6 +936,87 @@ $(function() {
     {
         width: 60px;
     }
+
+    .annotated input
+    {
+        height: 15px;
+        line-height: 15px;
+        padding: 0;
+        margin: 0;
+        font-size: 11px;
+    }
+    .annotated input.subinput
+    {
+        height: 13px;
+        width: 178px;
+        display: none;
+    }
+
+    .annotated .switch {
+      position: relative;
+      display: inline-block;
+      width: 25px;
+      height: 15px;
+      margin-right: 3px;
+      margin-bottom: 0px;
+      line-height: 15px;
+    }
+
+    .annotated .switch input
+    {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .annotated .slider
+    {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .annotated .slider:before
+    {
+      position: absolute;
+      content: "";
+      height: 15px;
+      width: 15px;
+      left: 0px;
+      bottom: 0px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .annotated input:checked + .slider {
+      background-color: #006600;
+    }
+
+    .annotated input:focus + .slider {
+      box-shadow: 0 0 1px #006600;
+    }
+
+    .annotated input:checked + .slider:before {
+      -webkit-transform: translateX(10px);
+      -ms-transform: translateX(10px);
+      transform: translateX(10px);
+    }
+
+    .annotated .slider.round {
+      border-radius: 10px;
+    }
+
+    .annotated .slider.round:before {
+      border-radius: 50%;
+    }
+
 </style>
 <link rel="stylesheet" href="/css/ngcp-annotate.css">
 <script src="/js/libs/ngcp-annotate.js"></script>
@@ -971,7 +1052,8 @@ if(!linekeys){
           'mode': '[% line.line_type %]',
           'sub': '[% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain%]',
           'subid': [% line.provisioning_voip_subscriber.id %],
-          'ext': '[% line.provisioning_voip_subscriber.pbx_extension%]'
+          'ext': '[% line.provisioning_voip_subscriber.pbx_extension%]',
+          'target_number': '[% line.target_number%]'
         };
     [% END -%]
 }
@@ -1018,11 +1100,18 @@ function create_ranges_annotations(id,type,ranges){
                 status = "assigned";
             }
 [% END -%]
+            var isSwitchOn = linekeyCurrent.target_number ? 'checked' : '';
+            var targetNumber = linekeyCurrent.target_number ? 'value="' + linekeyCurrent.target_number + '"' : ''
             var action = '<i class="fa '+(linekeyCurrent ? 'fa-plus-square' : 'fa-user')+' fa-fw"></i> ' +
+                '<label class="switch">' +
+                '<input type="checkbox" class="switch" ' + isSwitchOn + ' name="line.' + linecmt + '.switch" id="line.' + linecmt + '">' +
+                '<span class="slider round"></span>' +
+                '</label>' +
+                '<input type="text" class="subinput" oninput="this.value = this.value.replace(/[^0-9#*]/, \'\')" name="line.' + linecmt + '.target_number" id="line.' + linecmt + '.target_number" ' + targetNumber + '>' +
                 '<select class="subselect" name="line.' + linecmt + '.subscriber_id" id="line.' + linecmt + '.subscriber_id">' +
                 '<option value="0">'+(linekeyCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
 [% FOR sub IN subscribers.all -%]
-                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.get_column('username_combined') %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
+                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && !linekeyCurrent.target_number && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.get_column('username_combined') %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
 [% END -%]
 [% FOR sub IN pbx_groups.all -%]
                 '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.get_column('username_combined') %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
@@ -1053,6 +1142,26 @@ function create_ranges_annotations(id,type,ranges){
     $("div.annotated").each(function(){
         $(this).find("div.caption").annotate(this);
     });
+
+    $(document).ready(function() {
+        $(document).on("click", ".annotated .switch", function() {
+            let aName = $(this).attr('id');
+            if (aName) {
+                $('input[name="' + aName + '.target_number"]').toggle();
+                $('select[name="' + aName + '.subscriber_id"]').toggle();
+            }
+        });
+        $('.annotated .switch').each(function() {
+            if ($(this).is(':checked')) {
+                let aName = $(this).attr('id');
+                if (aName) {
+                    $('input[name="' + aName + '.target_number"]').toggle();
+                    $('select[name="' + aName + '.subscriber_id"]').toggle();
+                }
+            }
+        });
+    });
+
     //return markup;
 }
 function apply_markup(markup){
@@ -1180,9 +1289,6 @@ function get_extensions_num(){
 }
 $('div.controls #profile_id').change(annotate_profile);
 annotate_profile();
-
-
-
 </script>
 <div id="extensions">
 </div>
