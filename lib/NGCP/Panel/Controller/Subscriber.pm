@@ -1189,11 +1189,18 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
 
-    $c->stash->{cf_destination_sets} = $prov_subscriber->voip_cf_destination_sets
-        ->search_rs(undef,{order_by => 'name'});
-    $c->stash->{cf_time_sets} = $prov_subscriber->voip_cf_time_sets;
-    $c->stash->{cf_source_sets} = $prov_subscriber->voip_cf_source_sets;
-    $c->stash->{cf_bnumber_sets} = $prov_subscriber->voip_cf_bnumber_sets;
+    foreach my $cf_type (qw(destination source time bnumber)) {
+        $c->stash->{'cf_' . $cf_type . '_sets'} = $c->model('DB')->resultset('voip_cf_' . $cf_type . '_sets')->search_rs({
+            '-or' => [
+                'me.subscriber_id' => $c->user->id,
+                'voip_cf_mappings.subscriber_id' => $c->user->id,
+            ]
+        },{
+            distinct => 1,
+            join => 'voip_cf_mappings',
+            order_by => 'me.name',
+        });
+    }
 
     my $posted = ($c->request->method eq 'POST');
 

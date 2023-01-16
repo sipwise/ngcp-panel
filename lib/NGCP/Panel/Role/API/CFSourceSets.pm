@@ -97,6 +97,7 @@ sub _item_rs {
                 'voip_cf_mappings.subscriber_id' => $c->user->id,
             ]
         },{
+            distinct => 1,
             join => 'voip_cf_mappings',
         });
     }

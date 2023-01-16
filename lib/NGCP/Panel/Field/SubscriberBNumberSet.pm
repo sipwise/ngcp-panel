@@ -10,13 +10,15 @@ sub build_options {
     return [] unless $form->ctx;
 
     my $sets = $form->ctx->stash->{cf_bnumber_sets};
+    my $subscriber_id = $form->ctx->stash->{subscriber}->provisioning_voip_subscriber->id;
+
     my @all;
     return \@all unless($sets);
 
     push @all, { label => '<any number>', value => undef};
     foreach my $set($sets->all) {
         my $entry = {};
-        $entry->{label} = $set->name;
+        $entry->{label} = $set->name . ($subscriber_id != $set->subscriber_id ? ' (inherited)' : '');
         $entry->{value} = $set->id;
         push @all, $entry;
     }
