@@ -217,6 +217,11 @@ sub update_item {
 
         $line->{line_type} = delete $line->{type};
 
+        if (defined $line->{target_number} && $line->{target_number} !~ /^[0-9#*]+$/) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'target_number' ($line->{target_number}), can contain only '0-9' numbers and '#','*' characters");
+            return;
+        }
+
         if($oldline) {
             $oldline->update($line);
         } else {

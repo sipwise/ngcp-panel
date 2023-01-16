@@ -100,6 +100,16 @@ has_field 'lines.type' => (
     element_class => [qw/ngcp-linetype-select/],
 );
 
+has_field 'lines.target_number' => (
+    type => 'Text',
+    required => 1,
+    label => 'Linerange',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The target number.'],
+    },
+);
+
 has_field 'lines.deviceid_number_id' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 0,
