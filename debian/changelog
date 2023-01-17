@@ -1,3 +1,61 @@
+ngcp-panel (11.3.0.0+0~mr11.3.0.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a86e868] MT#55538 /api/soundsets allow filtering by customer_id=null
+  * [826d3f1] MT#55618 /api/subscribers fix default contract_sound_set assignment
+  * [507d088] MT#55864 /api/subscribers correctly process administrative flag
+  * [0c4deaa] MT#55871 /api/subscribers optimise GET alias_numbers
+  * [33096f1] MT#55976 /api add link to /api/v2 documentation
+  * [64b71cd] MT#32999 /api/cfmappings subscriberadmin scope of view change
+  * [4c1a9d9] MT#56029 /api/cfbnumbersets subscriberadmin role change
+  * [018dc08] MT#56026 /api/cfsourcesets subscriberadmin role change
+  * [ae32c62] MT#56027 /api/cfdestinationsets subscriberadmin role change
+  * [2904de6] MT#56028 /api/cftimesets subscriberadmin role change
+  * [f942b07] MT#32992 fix /api/resellerbrandnglogos
+  * [4f8603d] MT#56068 /api/resellerbrandings/:id change
+  * [e2afe2e] MT#56087 fix /api/callforwards sets auto creation
+  * [34eeac7] MT#56068 fix /api/resellerbrandings reseller_id field
+  * [f1cc84c] MT#56234 add voip_preferences.expose_to_subscriber support
+  * [b51c0c9] MT#56234 restrict cli preference allowed numbers for subscriberadmin
+  * [8459e03] MT#56234 update_voicemail_number update all use cases
+  * [81d50cd] MT#56234 get_usr_preference_rs changes
+  * [6d48745] MT#56234 susbcriber preferences related changes
+  * [6c179dd] MT#56234 get_usr_preference changes
+  * [8288a30] MT#56234 cli preference edit filter for subscriberadmin
+  * [45d9fb3] MT#56286 fix subscriber profiles form and api update
+  * [b838c5d] MT#56286 render all subscriber profiles with prof_pref = 1
+  * [673ac66] MT#56234 fix cli check for subscriber roles
+  * [766cab0] MT#56286 fix subscriberprofile api attribute field
+  * [9254092] MT#56234 get_usr_preference_rs and prov_subscriber
+  * [80bf560] MT#55687 add ncos_set preferences support
+  * [009b581] MT#55687 api-preferences.t ignore ncos_set preferences
+  * [e90ba9d] MT#56208 allow subscriber role access to cf sets
+  * [519de11] MT#55931 add autoprov field device target_number support
+  * [36974ef] MT#55931 add /api/pbxdevices target_number support
+  * [dee6b60] MT#56208 additional inherited cfs improvements for subscribers
+
+  [ Michael Prokop ]
+  * [3142931] TT#76552 systemd: reduce hardening for sendmail(1) usage.
+    Thanks to Thomas Georg on spce-user ml for the bug report, and Victor Seva, Richard Fuchs + Rene Krenn for assistance in tracking this down
+  * [2b3a18b] TT#76552 send_template: log mail sending actions
+  * [9c58e1c] TT#76552 systemd: allow r/w access to /var/mail
+  * [e8f901a] MT#55524 Update lintian overrides for new lintian behavior
+  * [846b60a] MT#55886 Add dependencies on libdata-page-perl + libio-string-perl
+
+  [ Rene Krenn ]
+  * [67f6063] MT#55551 add ccare roles to /api/callforwards
+  * [ff198ce] MT#55694 MT#55419 provide generated datatable search tooltips
+  * [d6c3ae4] MT#55957 interceptions: consider active subscribers only
+  * [e9367e0] MT#55972 support wildcard search for customer external_id
+
+  [ Nico Schedel ]
+  * [5320543] MT#55677 fix for "Unstable ngcp-panel-test-selenium-docker runs with failing tests"
+
+  [ Marco Capetta ]
+  * [36ae8ce] MT#55931 Add new speeddial, forward, transfer device buttons
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 17 Jan 2023 17:43:37 +0100
+
 ngcp-panel (11.2.0.0+0~mr11.2.0.0) unstable; urgency=medium
 
   [ Marco Capetta ]
