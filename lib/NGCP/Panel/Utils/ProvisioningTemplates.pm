@@ -137,7 +137,7 @@ sub validate_template {
     my ($data,$prefix) = @_;
     $prefix //= 'template: ';
     die($prefix . "not a hash\n") unless 'HASH' eq ref $data;
-    foreach my $section (qw/contract subscriber/) {
+    foreach my $section (qw/subscriber/) {
         die($prefix . "section '$section' required\n") unless exists $data->{$section};
         die($prefix . "section '$section' is not a hash\n") unless 'HASH' eq ref $data->{$section};
     }
@@ -804,7 +804,7 @@ sub _init_contract_context {
         $c->log->debug("provisioning template - contract contact: " . Dumper($context->{contract_contact}));
     }
 
-    {
+    if (exists $template->{contact}) {
         my %contract = ();
         my @identifiers = _get_identifiers($template->{contract});
         foreach my $col (keys %{$template->{contract}}) {
@@ -1097,13 +1097,15 @@ sub _create_contract_contact {
 
     my ($c, $context, $schema) = @_;
 
-    unless ($context->{contract_contact}->{id}) {
-        my $contact = $schema->resultset('contacts')->create(
-            $context->{contract_contact},
-        );
-        $context->{contract_contact}->{id} = $contact->id;
-
-        $c->log->debug("provisioning template - contract contact id $context->{contract_contact}->{id} created");
+    if (exists $context->{contract_contact}) {
+        unless ($context->{contract_contact}->{id}) {
+            my $contact = $schema->resultset('contacts')->create(
+                $context->{contract_contact},
+            );
+            $context->{contract_contact}->{id} = $contact->id;
+    
+            $c->log->debug("provisioning template - contract contact id $context->{contract_contact}->{id} created");
+        }
     }
 
 }
@@ -1112,21 +1114,23 @@ sub _create_contract {
 
     my ($c, $context, $schema) = @_;
 
-    unless ($context->{contract}->{id}) {
-        $context->{contract}->{contact_id} //= $context->{contract_contact}->{id};
-        die("contact_id for contract required") unless $context->{contract}->{contact_id};
-        my $contract = $schema->resultset('contracts')->create(
-            $context->{contract},
-        );
-        $context->{contract}->{id} = $contract->id;
-        NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
-            contract => $contract,
-            mappings_to_create => $context->{_bm},
-        );
-        NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
-             contract => $contract,
-        );
-        $c->log->debug("provisioning template - contract id $context->{contract}->{id} created");
+    if (exists $context->{contract}) {
+        unless ($context->{contract}->{id}) {
+            $context->{contract}->{contact_id} //= $context->{contract_contact}->{id};
+            die("contact_id for contract required") unless $context->{contract}->{contact_id};
+            my $contract = $schema->resultset('contracts')->create(
+                $context->{contract},
+            );
+            $context->{contract}->{id} = $contract->id;
+            NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+                contract => $contract,
+                mappings_to_create => $context->{_bm},
+            );
+            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
+                 contract => $contract,
+            );
+            $c->log->debug("provisioning template - contract id $context->{contract}->{id} created");
+        }
     }
 
 }
