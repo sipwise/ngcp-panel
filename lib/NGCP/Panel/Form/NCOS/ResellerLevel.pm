@@ -30,6 +30,10 @@ has_field 'description' => (
     required => 0,
 );
 
+has_field 'timeset' => (
+    type => '+NGCP::Panel::Field::TimeSet',
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -40,7 +44,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/level mode description/],
+    render_list => [qw/level mode description timeset/],
 );
 
 has_block 'actions' => (

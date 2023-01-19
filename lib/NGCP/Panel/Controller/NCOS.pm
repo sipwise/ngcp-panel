@@ -29,6 +29,7 @@ sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
         { name => 'level', search => 1, title => $c->loc('Level Name') },
         { name => 'mode', search => 1, title => $c->loc('Mode') },
+        { name => 'timeset.name', search => 1, title => $c->loc('Timeset') },
         { name => 'description', search => 1, title => $c->loc('Description') },
     ]);
 
@@ -37,14 +38,20 @@ sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
 
 sub _levels_resultset_admin {
     my ($self, $c) = @_;
-    my $rs = $c->model('DB')->resultset('ncos_levels');
+    my $rs = $c->model('DB')->resultset('ncos_levels')->search({
+    },{
+        join => 'timeset'
+    });
     return $rs;
 }
 
 sub _levels_resultset_reseller {
     my ($self, $c) = @_;
-    my $rs = $c->model('DB')->resultset('admins')
-        ->find($c->user->id)->reseller->ncos_levels;
+    my $rs = $c->model('DB')->resultset('ncos_levels')->search({
+        reseller_id => $c->user->reseller_id
+    },{
+        join => 'timeset'
+    });
     return $rs;
 }
 
@@ -92,6 +99,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $level = $c->stash->{level_result};
     my $params = { $level->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
+    $params->{timeset}{id} = delete $params->{time_set_id};
     $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::AdminLevel", $c);
@@ -108,12 +116,15 @@ sub edit :Chained('base') :PathPart('edit') {
         form => $form,
         fields => {
             'reseller.create' => $c->uri_for('/reseller/create'),
+            'timeset.create' => $c->uri_for('/timeset/create'),
         },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         try {
             $form->values->{reseller_id} = $form->values->{reseller}{id};
+            delete $form->values->{reseller};
+            $form->values->{time_set_id} = $form->values->{timeset}{id};
             delete $form->values->{reseller};
             $level->update($form->values);
             delete $c->session->{created_objects}->{reseller};
@@ -192,6 +203,7 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
         form => $form,
         fields => {
             'reseller.create' => $c->uri_for('/reseller/create'),
+            'timeset.create' => $c->uri_for('/timeset/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -201,6 +213,7 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
             unless($c->user->is_superuser) {
                 $form->values->{reseller}{id} = $c->user->reseller_id;
             }
+            $form->values->{time_set_id} = $form->values->{timeset}{id};
             $level->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
