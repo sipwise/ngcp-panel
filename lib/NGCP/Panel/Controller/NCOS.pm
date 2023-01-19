@@ -126,6 +126,13 @@ sub edit :Chained('base') :PathPart('edit') {
             delete $form->values->{reseller};
             $form->values->{time_set_id} = $form->values->{timeset}{id};
             delete $form->values->{reseller};
+            my $time_set_id = $form->values->{time_set_id};
+            if ($time_set_id) {
+                my $timeset = $c->model('DB')->resultset('voip_time_sets')->find($time_set_id);
+                if ($form->values->{reseller_id} != $timeset->reseller_id) {
+                    die "'timeset reseller_id' is different from the NCOS one";
+                }
+            }
             $level->update($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
@@ -210,10 +217,20 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $level = $c->stash->{levels_rs};
-            unless($c->user->is_superuser) {
+            unless ($c->user->is_superuser) {
                 $form->values->{reseller}{id} = $c->user->reseller_id;
             }
-            $form->values->{time_set_id} = $form->values->{timeset}{id};
+            if ($form->values->{timeset}) {
+                my $time_set_id = $form->values->{timeset}{id};
+                if ($time_set_id) {
+                    my $timeset = $c->model('DB')->resultset('voip_time_sets')->find($time_set_id);
+                    if ($form->values->{reseller}{id} != $timeset->reseller_id) {
+                        die "'timeset reseller_id' is different from the NCOS one";
+                    }
+                }
+            } else {
+                delete $form->values->{timeset};
+            }
             $level->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
