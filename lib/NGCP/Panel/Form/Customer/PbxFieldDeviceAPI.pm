@@ -102,7 +102,7 @@ has_field 'lines.type' => (
 
 has_field 'lines.target_number' => (
     type => 'Text',
-    required => 1,
+    required => 0,
     label => 'Linerange',
     element_attr => {
         rel => ['tooltip'],
