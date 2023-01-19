@@ -88,6 +88,19 @@ sub update_item {
         $resource->{reseller_id} = $c->user->reseller_id;
     }
 
+    if ($resource->{time_set_id}) {
+        my $time_set = $c->model('DB')->resultset('voip_time_sets')->find({
+            id => $resource->{time_set_id},
+            reseller_id => $c->user->reseller_id
+        });
+        if (!$time_set) {
+            my $err = "Time set with id '$resource->{time_set_id}' does not exist or does not belong to this reseller";
+            $c->log->error($err);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            return;
+        }
+    }
+
     my $dup_item = $c->model('DB')->resultset('ncos_levels')->find({
         reseller_id => $resource->{reseller_id},
         level => $resource->{level},

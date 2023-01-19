@@ -140,6 +140,19 @@ sub POST :Allow {
             last;
         }
 
+        if ($resource->{time_set_id}) {
+            my $time_set = $c->model('DB')->resultset('voip_time_sets')->find({
+                id => $resource->{time_set_id},
+                reseller_id => $c->user->reseller_id
+            });
+            if (!$time_set) {
+                my $err = "Time set with id '$resource->{time_set_id}' does not exist or does not belong to this reseller";
+                $c->log->error($err);
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+                last;
+            }
+        }
+
         try {
             $item = $c->model('DB')->resultset('ncos_levels')->create($resource);
         } catch($e) {

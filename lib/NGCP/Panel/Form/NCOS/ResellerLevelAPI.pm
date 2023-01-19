@@ -60,6 +60,15 @@ has_field 'intra_pbx' => (
     },
 );
 
+has_field 'time_set_id' => (
+    type => 'PosInteger',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The timeset id to use for this level']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
