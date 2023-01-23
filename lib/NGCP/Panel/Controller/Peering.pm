@@ -28,7 +28,7 @@ sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'priority', search => 1, title => $c->loc('Priority') },
         { name => 'description', search => 1, title => $c->loc('Description') },
-        { name => 'timeset.name', search => 0, title => $c->loc('Time Set') },
+        { name => 'time_set.name', search => 1, title => $c->loc('Time Set') },
     ]);
     
     $c->stash(template => 'peering/list.tt');
