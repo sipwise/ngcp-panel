@@ -1,3 +1,10 @@
+ngcp-panel (11.0.1.10+0~mr11.0.1.10) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [bf70041] MT#56417 make Provisioning Templates "contract_contact" and "contract" sections optional
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Jan 2023 12:21:42 +0100
+
 ngcp-panel (11.0.1.9+0~mr11.0.1.9) unstable; urgency=medium
 
   [ Kirill Solomko ]
