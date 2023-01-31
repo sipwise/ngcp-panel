@@ -3499,34 +3499,6 @@ msgid "Device profile successfully deleted"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Configuration IP"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Mode"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Optical Link"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Out Codecs"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic RTP IP"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Settings"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Peering.pm
-msgid "Dialogic successfully flashed."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Dir"
 msgstr ""
 
@@ -4784,10 +4756,6 @@ msgstr ""
 msgid "Failed to find voicemail user."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm
-msgid "Failed to flash dialogic"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to generate client certificate."
 msgstr ""
@@ -5361,10 +5329,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "First Name"
-msgstr ""
-
-#: share/templates/peering/preferences.tt
-msgid "Flash Dialogic"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6038,15 +6002,7 @@ msgid "IP successfully unbanned"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "IP that the Dialogic IMG will configure on it's second port for the RTP traffic. Must be different from the SIP IP."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IP transport of the sip packet (TCP/UDP)"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "IP under which the Dialogic IMG's webinterface is accessible for confiuration."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10360,10 +10316,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Set billing profiles by"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Set dialogic mode, which is used to autoprovision configuration on a Dialogic IMG."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm

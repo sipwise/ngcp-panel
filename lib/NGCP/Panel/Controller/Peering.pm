@@ -6,7 +6,6 @@ use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form;
 
-use NGCP::Panel::Utils::DialogicImg;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Preferences;
@@ -449,89 +448,6 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
-    return;
-}
-
-sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') :Args(0) {
-    my ($self, $c) = @_;
-
-    my $config = {
-        ip_sip => $c->stash->{server_result}->ip,
-        ip_client => $c->config->{dialogic}{own_ip},
-    };
-    my $dialogic_group = $c->model('DB')->resultset('voip_preference_groups')->find({
-        name => 'Dialogic Settings',
-        });
-    for my $tmp_pref ($dialogic_group->voip_preferences->all) {
-        my $pref_name = $tmp_pref->attribute;
-        my $cfg_name = $pref_name =~ s/^dialogic_//r;
-        my $peer_pref = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-            c => $c,
-            attribute => $pref_name,
-            peer_host => $c->stash->{server_result},
-        )->first;
-        next unless $peer_pref;
-        $config->{$cfg_name} = $peer_pref->value;
-    }
-
-    if (exists $config->{out_codecs}) {
-        my @new_out_codecs =  map { s/^\s+|\s+$//gr } split(m/,/, $config->{out_codecs});
-        $config->{out_codecs} = \@new_out_codecs;
-    }
-
-    $c->response->header('X-Accel-Buffering' => 'no');
-    $c->response->body('');
-    $c->response->headers->content_type('text/plain');
-
-    try {
-        if ($config->{mode} ne 'none') {
-            my $api = NGCP::Panel::Utils::DialogicImg->new(
-                server => 'https://' . $config->{ip_config},
-            );
-
-            $c->write("Logging in ...\n");
-
-            $api->login( $c->config->{dialogic}{username}, $c->config->{dialogic}{password} );
-            die "Couldn't log in to dialogic." if ($api->appid == 0);
-            my $resp = $api->obtain_lock();
-            die "Couldn't connect to dialogic to obtain lock."
-                unless ($resp->code == 200);
-
-            if ($config->{mode} eq 'sipsip') {
-                $resp = $api->create_all_sipsip($config, sub {
-                        my ($shortlog, $resp) = @_;
-                        $c->write($shortlog);
-                    });
-
-            } elsif ($config->{mode} eq 'sipisdn') {
-                $resp = $api->create_all_sipisdn($config, sub {
-                        my ($shortlog, $resp) = @_;
-                        $c->write($shortlog);
-                    });
-
-            } elsif ($config->{mode} eq 'sipss7') {
-                $resp = $api->create_all_sipss7($config, sub {
-                        my ($shortlog, $resp) = @_;
-                        $c->write($shortlog);
-                    });
-            }
-        } else {
-            $c->write("Dialogic not enabled. Doing nothing.\n");
-        }
-        NGCP::Panel::Utils::Message::info(
-            c    => $c,
-            data => { $c->stash->{server_result}->get_inflated_columns },
-            desc => $c->loc('Dialogic successfully flashed.'),
-        );
-    } catch ($e) {
-        NGCP::Panel::Utils::Message::error(
-            c => $c,
-            error => $e,
-            desc  => $c->loc('Failed to flash dialogic'),
-        );
-        $c->write("Failed to flash dialogic. Probably could not log in.");
-    };
-    #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;
 }
 

@@ -2,7 +2,7 @@
 
 [%
     helper.messages = messages;
-    
+
     helper.edit_preference = edit_preference;
     helper.preference = preference;
     helper.preference_meta = preference_meta;
@@ -18,73 +18,9 @@
 
     helper.top_buttons = [
         { name = c.loc('Back'), uri = c.uri_for(group.id, "servers"), icon = 'icon-arrow-left' },
-        ## Commented the button 'Flash Dialogic' to stop confusing users as
-        ## implementation was never finished and will not be finished (as no longer necessary).
-        ## The code revert is not trivial and unnecessary as ngcp-panel will be deprecated in mr10.5+. 
-        ## Therefore hiding unnecessary button on WEB interface:
-        # { name = c.loc('Flash Dialogic'), uri = "javascript:call_flash_dialogic('" _ c.uri_for_action("/peering/servers_flash_dialogic", [c.req.captures.0, c.req.captures.1]) _ "');", icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/pref_table.tt';
 %]
-
-<script type="text/javascript">
-	function call_flash_dialogic (url) {
-		console.log("calling", url);
-        $("#ngcp-livelog").text('');
-
-        var last_response_len = false;
-        $.ajax(url, {
-            xhrFields: {
-                onprogress: function(e)
-                {
-                    var this_response, response = e.currentTarget.response;
-                    if(last_response_len === false)
-                    {
-                        this_response = response;
-                        last_response_len = response.length;
-                    }
-                    else
-                    {
-                        this_response = response.substring(last_response_len);
-                        last_response_len = response.length;
-                    }
-                    $("#ngcp-livelog").append(this_response);
-                    $("#ngcp-livelog")[0].scrollIntoView(false);
-                    //console.log(this_response);
-                }
-            }
-        })
-        .done(function(data)
-        {
-            console.log('Done');
-            $("#ngcp-livelog").append("\nDone.\nYou can close this window now.");
-            $("#ngcp-livelog")[0].scrollIntoView(false);
-        })
-        .fail(function(data)
-        {
-            console.log('Error: ', data);
-            $("#ngcp-livelog").append("\nError.");
-            $("#ngcp-livelog")[0].scrollIntoView(false);
-        });
-        console.log('Request Sent');
-        $("#ngcp-test-modal").modal('show');
-
-	}
-</script>
-
-<div id="ngcp-test-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Flashing Dialogic ...</h3>
-  </div>
-  <div class="modal-body">
-    <p>Please Wait ...</p>
-    <pre id="ngcp-livelog"></pre>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-  </div>
-</div>
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

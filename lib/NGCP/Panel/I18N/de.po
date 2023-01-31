@@ -3520,34 +3520,6 @@ msgid "Device profile successfully deleted"
 msgstr "Geräte-Profil erfolgreich gelöscht"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Configuration IP"
-msgstr "Dialogic Konfigurations-IP"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Mode"
-msgstr "Dialogic-Modus"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Optical Link"
-msgstr "Dialogic optischer Link"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Out Codecs"
-msgstr "Dialogic ausgehende Codecs"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic RTP IP"
-msgstr "Dialogic RTP IP"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Settings"
-msgstr "Dialogic Einstellungen"
-
-#: lib/NGCP/Panel/Controller/Peering.pm
-msgid "Dialogic successfully flashed."
-msgstr "Dialogic erfolgreich geflasht."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Dir"
 msgstr "Verzeichnis"
 
@@ -4809,10 +4781,6 @@ msgstr "Registriertes Gerät nicht gefunden."
 msgid "Failed to find voicemail user."
 msgstr "Benutzer für Sprachnachricht nicht gefunden."
 
-#: lib/NGCP/Panel/Controller/Peering.pm
-msgid "Failed to flash dialogic"
-msgstr "Dialogic-Flash fehlgeschlagen"
-
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to generate client certificate."
 msgstr "Erstellen des Client-Zertifikats fehlgeschlagen."
@@ -5383,10 +5351,6 @@ msgstr "Firmwarekennung"
 #: lib/NGCP/Panel/Controller/Contact.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "First Name"
 msgstr "Vorname"
-
-#: share/templates/peering/preferences.tt
-msgid "Flash Dialogic"
-msgstr "Flash Dialogic"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Folder"
@@ -6035,16 +5999,8 @@ msgid "IP successfully unbanned"
 msgstr "IP erfolgreich entsperrt"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "IP that the Dialogic IMG will configure on it's second port for the RTP traffic. Must be different from the SIP IP."
-msgstr "IP, die auf dem zweiten Port des Dialogic IMG für den RTP-Verkehr konfigurieren werden soll. Muss sich von der SIP-IP unterscheiden."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IP transport of the sip packet (TCP/UDP)"
 msgstr "IP-Transportprotokoll des SIP-Pakets (TCP/UDP)"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "IP under which the Dialogic IMG's webinterface is accessible for confiuration."
-msgstr "IP, unter der das Webinterface des Dialogic IMG erreichbar ist."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IPv4/IPv6 briding mode"
@@ -10382,10 +10338,6 @@ msgstr "Abrechnungsprofile festlegen"
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Set billing profiles by"
 msgstr "Abrechnungsprofile festlegen nach"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Set dialogic mode, which is used to autoprovision configuration on a Dialogic IMG."
-msgstr "Einstellen des Dialogic-Modus, der für die automatische Bereitstellung (Auto-Provisioning) der Konfiguration auf einem Dialogic IMG verwendet wird."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Set id"

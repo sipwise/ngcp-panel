@@ -2083,34 +2083,6 @@ msgstr "Perfil de Dispositivo no encontrado"
 msgid "Device profile successfully deleted"
 msgstr "Perfil de Dispositivo eliminado con éxito"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Configuration IP"
-msgstr "Configuración IP de Dialogic"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Mode"
-msgstr "Modo Dialogic"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Optical Link"
-msgstr "Enlace Óptico Dialogic"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Out Codecs"
-msgstr "Códecs de Salida Dialogic"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic RTP IP"
-msgstr "IP RTP de Dialogic"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Dialogic Settings"
-msgstr "Ajustes de Dialogic"
-
-#: lib/NGCP/Panel/Controller/Peering.pm
-msgid "Dialogic successfully flashed."
-msgstr "Dialogic se ha actualizado con éxito."
-
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Direction"
 msgstr "Dirección"
@@ -3161,10 +3133,6 @@ msgstr "Fallo al encontrar dispositivo registrado."
 msgid "Failed to find voicemail user."
 msgstr "Fallo al encontrar usuario de buzón."
 
-#: lib/NGCP/Panel/Controller/Peering.pm
-msgid "Failed to flash dialogic"
-msgstr "Fallo en la escritura de firmware Dialogic"
-
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Failed to generate client certificate."
 msgstr "Fallo al generar certificado cliente."
@@ -3700,10 +3668,6 @@ msgstr "Etiqueta del Firmware"
 msgid "First Name"
 msgstr "Nombre"
 
-#: share/templates/peering/preferences.tt
-msgid "Flash Dialogic"
-msgstr "Actualizar Firmware Dialogic"
-
 #: lib/NGCP/Panel/Utils/Voucher.pm
 msgid "For Contract #"
 msgstr "Para el Contrato #"
@@ -4065,14 +4029,6 @@ msgstr "Cabecera IP a utilizar para la comprobación de \"allowed_ips\""
 #: lib/NGCP/Panel/Controller/Security.pm
 msgid "IP successfully unbanned"
 msgstr "IP ha sido refrendada con éxito"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "IP that the Dialogic IMG will configure on it's second port for the RTP traffic. Must be different from the SIP IP."
-msgstr "IP que el IMG de Dialogic configurará en su segundo puerto para el tráfico RTP. Debe ser diferente de la IP SIP."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "IP under which the Dialogic IMG's webinterface is accessible for confiuration."
-msgstr "IP bajo la cual se puede acceder a la interfaz web de Dialogic IMG para su configuración."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "IPv4/IPv6 briding mode"
@@ -6982,10 +6938,6 @@ msgstr "Establecer al valor MIN_SE del SBC. El sistema deplicará 422 si el MIN_
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Set RTP relay mode for this peer/domain/user"
 msgstr "Establece el modo de retransmisión RTP para este peer/dominio/usuario"
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Set dialogic mode, which is used to autoprovision configuration on a Dialogic IMG."
-msgstr "Establece el modo Dialogic, que se utiliza para autoaprovisonar la configuración en una IMG Dialogic."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Set to 'if both parties are behind same NAT' if you want to allow RTP to bypass RTP-Proxy if the SIP UAs are within the same LAN of each other as determined by the 'received' IP address check (peer-to-peer mode)"
