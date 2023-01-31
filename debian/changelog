@@ -1,3 +1,14 @@
+ngcp-panel (11.2.2.0+0~mr11.2.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [307866a] MT#56432 add time set support to ncos levels
+  * [0b18d2c] MT#55931 PbxFieldDevicesAPI form target_number is now optional
+  * [4a93dc5] MT#56432 add timeset field to Form/NCOS/AdminLevel
+  * [fca9e94] MT#56432 UI prevent ncos level timeset to have different reseller_id
+  * [f10405e] MT#56455 fix peering groups timeset relation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 31 Jan 2023 19:45:58 +0100
+
 ngcp-panel (11.2.1.0+0~mr11.2.1.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
