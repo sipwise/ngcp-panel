@@ -1347,7 +1347,6 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
 
             my %sub_preferences_vars = (
                 display_name               => $sub->username,
-                enable_t38                 => 0,
                 concurrent_max             => 0,
                 concurrent_max_per_account => 0,
                 cc                         => '',
