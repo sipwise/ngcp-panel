@@ -1,3 +1,10 @@
+ngcp-panel (11.1.1.8+0~mr11.1.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4d6a93a] MT#56744 audio transcoding fixes
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Feb 2023 13:38:31 +0100
+
 ngcp-panel (11.1.1.7+0~mr11.1.1.7) unstable; urgency=medium
 
   [ Rene Krenn ]
