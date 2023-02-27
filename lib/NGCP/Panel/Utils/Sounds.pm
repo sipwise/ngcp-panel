@@ -2,7 +2,8 @@ package NGCP::Panel::Utils::Sounds;
 use strict;
 use warnings;
 
-use IPC::System::Simple qw/capturex/;
+use English;
+use Capture::Tiny qw(capture);
 use File::Temp qw/tempfile/;
 use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::Preferences;
@@ -12,40 +13,58 @@ use File::Basename;
 sub transcode_file {
     my ($tmpfile, $source_codec, $target_codec) = @_;
 
-    my $out;
+    my $rc = 0;
+    my ($cmd, $out, $err);
+    my $is_gsm = 0;
     my @conv_args;
 
-    ## quite snappy, but breaks SOAP (sigpipe's) and the catalyst devel server
-    ## need instead to redirect like below
+    # check if the wav is gsm 6.10 encoded
+    if (lc($source_codec) eq 'wav') {
+        $cmd = join(' ', '/usr/bin/file', $tmpfile);
+        ($out, $err, $rc) = capture {
+            system($cmd);
+        };
+        if ($out =~ /GSM 6\.10/) {
+            $is_gsm = 1;
+            @conv_args = (qw/--encoding gsm --type sndfile/);
+        }
+    }
 
     SWITCH: for ($target_codec) {
         /^PCMA$/ && do {
-            @conv_args = ($tmpfile, qw/--type raw --bits 16 --channels 1 -e a-law - rate 16k/);
+            @conv_args = (@conv_args, $tmpfile, qw/--type raw --bits 16 --channels 1 -e a-law --rate 16k -/);
             last SWITCH;
         };
         /^WAV$/ && do {
             if ($source_codec eq 'PCMA') {
                 # this can actually only come from inside
                 # certain files will be stored as PCMA (for handles with name "music_on_hold")
-                @conv_args = ( qw/-A --rate 16k --channels 1 --type raw/, $tmpfile, "--type", "wav", "-");
+                @conv_args = (qw/-A --rate 16k --channels 1 --type raw/, $tmpfile, qw/--type wav -/);
             }
             else {
-                @conv_args = ($tmpfile, qw/--type wav --bits 16 - rate 16k/);
+                @conv_args = (@conv_args, $tmpfile, qw/--type wav --bits 16 --rate 16k -/);
             }
             last SWITCH;
         };
         /^MP3$/ && do {
-            @conv_args = ($tmpfile, qw/--type mp3 --bits 16 - rate 16k/);
+            @conv_args = (@conv_args, $tmpfile, qw/--type mp3 --rate 16k -/);
             last SWITCH;
         };
         /^OGG$/ && do {
-            @conv_args = ($tmpfile, qw/--type ogg --bits 16 - rate 16k/);
+            @conv_args = (@conv_args, $tmpfile, qw/--type ogg --rate 16k -/);
             last SWITCH;
         };
         # default
     } # SWITCH
 
-    $out = capturex([0], "/usr/bin/sox", @conv_args);
+    $cmd = join(' ', '/usr/bin/sox', '-V1', @conv_args);
+    ($out, $err, $rc) = capture {
+        system($cmd);
+    };
+
+    if ($rc != 0 && $err) {
+        die "Cannot transcode sound file is_gsm=$is_gsm source_codec=$source_codec target_codec=$target_codec cmd=($cmd) error: $err";
+    }
 
     return $out;
 }
