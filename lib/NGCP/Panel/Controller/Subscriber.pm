@@ -756,7 +756,9 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         my $special_prefs = { check => 1 };
         foreach my $pref(qw/cfu cft cfna cfb cfs cfr cfo
                             speed_dial reminder auto_attendant
-                            voice_mail fax_server/) {
+                            voice_mail fax_server csc_registered_devices
+                            csc_conversations csc_device_provisioning
+                            csc_hunt_groups/) {
             my $preference = $c->model('DB')->resultset('voip_preferences')->find({
                 attribute => $pref,
             });
