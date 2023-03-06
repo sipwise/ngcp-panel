@@ -1380,6 +1380,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 keynum         => $line->key_num,
                 type           => $line->line_type,
                 preferences    => $preferences,
+                target_number  => $line->target_number,
                 %sub_preferences_vars,
             };
             if(!$ldap_attr_set && $linerange->name eq "Full Keys" && $line->line_type eq "private") {
