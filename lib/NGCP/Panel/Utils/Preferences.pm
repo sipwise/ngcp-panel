@@ -12,6 +12,7 @@ use HTTP::Status qw(:constants);
 use File::Type;
 use Readonly;
 use MIME::Base64 qw(decode_base64);
+use List::Util qw(first);
 
 use constant _DYNAMIC_PREFERENCE_PREFIX => '__';
 
@@ -1480,6 +1481,13 @@ sub create_preference_form {
                         if (defined $man_allowed_ips_grp_preference);
                 }
             }
+        }
+    } elsif ($c->stash->{preference_meta}->data_type eq 'enum') {
+        if ($c->stash->{preference}->first) {
+            $preselected_value = $c->stash->{preference}->first->value unless ($c->stash->{preference_meta}->data_type eq 'blob');
+        } else {
+            my $default_val = first { $_->default_val == 1 } @{ $enums };
+            $preselected_value = $default_val ? $default_val->value : undef;
         }
     } elsif ($c->stash->{preference_meta}->max_occur == 1) {
         if ($c->stash->{preference}->first) {
