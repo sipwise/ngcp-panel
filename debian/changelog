@@ -1,3 +1,10 @@
+ngcp-panel (10.5.1.32+0~mr10.5.1.32) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [7a6e8ce] MT#56802 fix preferences default values selection
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Mar 2023 12:57:46 +0100
+
 ngcp-panel (10.5.1.31+0~mr10.5.1.31) unstable; urgency=medium
 
   [ Rene Krenn ]
