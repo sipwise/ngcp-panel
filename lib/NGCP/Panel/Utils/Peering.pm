@@ -7,13 +7,16 @@ use warnings;
 sub _sip_lcr_reload {
     my(%params) = @_;
     my($c) = @params{qw/c/};
-    NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
+
+    foreach my $kam (qw(proxy-ng loadbalancer)) {
+        NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $kam, 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>lcr.reload</methodName>
 <params/>
 </methodCall>
 EOF
+    }
 
     return 1;
 }
