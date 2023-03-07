@@ -64,84 +64,84 @@
                 </td>
                 <td>
                     [% IF r.attribute == "rewrite_rule_set" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.rewrite_rule_sets -%]
                             <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "cdr_export_sclidui_rwrs" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.rewrite_rule_sets -%]
                             <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "header_rule_set" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.header_rule_sets -%]
                             <option [% (r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "ncos" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR level IN helper.ncos_levels -%]
                             <option [% (r.ncos_id.defined && r.ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "adm_ncos" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR level IN helper.ncos_levels -%]
                             <option [% (r.adm_ncos_id.defined && r.adm_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "adm_cf_ncos" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR level IN helper.ncos_levels -%]
                             <option [% (r.adm_cf_ncos_id.defined && r.adm_cf_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "ncos_set" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.ncos_sets -%]
                             <option [% (r.ncos_set_id.defined && r.ncos_set_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "adm_ncos_set" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.ncos_sets -%]
                             <option [% (r.adm_ncos_set_id.defined && r.adm_ncos_set_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "adm_cf_ncos_set" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.ncos_sets -%]
                             <option [% (r.adm_cf_ncos_set_id.defined && r.adm_cf_ncos_set_id == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "emergency_mapping_container" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR container IN helper.emergency_mapping_containers -%]
                             <option [% (r.emergency_mapping_container_id.defined && r.emergency_mapping_container_id == container.id) ? 'selected="selected"' : '' %]>[% container.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "sound_set" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.sound_sets -%]
                             <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
                         [% END -%]
                         </select>
                     [% ELSIF r.attribute == "contract_sound_set" -%]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                             <option>&nbsp;</option>
                         [% FOR set IN helper.contract_sound_sets -%]
                             <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name | html %]</option>
@@ -157,7 +157,7 @@
                         [% END -%]
 
                     [% ELSIF r.data_type == "boolean" %]
-                        <input type="checkbox" disabled="disabled"
+                        <input type="checkbox" autocomplete="off" disabled="disabled"
                             [% IF r.value %]checked="checked"[% END %]/>
                     [% ELSIF r.data_type == "string" || r.data_type == "int" || r.data_type == "blob" %]
                         [% IF r.max_occur == 1 %]
@@ -173,9 +173,9 @@
                             [% END %]
                         [% END %]
                     [% ELSIF r.data_type == "enum" %]
-                        <select disabled="disabled">
+                        <select autocomplete="off" disabled="disabled">
                         [% FOREACH e IN r.enums %]
-                            <option [% IF r.value == e.value || (!r.value.defined && ! e.value.defined) %]selected="selected"[% END %]>[% e.label | html %]</option>
+                            <option [% IF r.value == e.value || (!r.value.defined && e.default_val == 1) || (!r.value.defined && !e.value.defined) %]selected="selected"[% END %]>[% e.label | html %]</option>
                         [% END %]
                         </select>
                     [% END %]
@@ -229,7 +229,7 @@
         <div class="modal-body">
         [% FOREACH net IN helper.aip_grp_rs.all %]
             <div class="row-fluid">
-                <input type="text" value="[% net.ipnet %]" disabled="disabled"></input>
+                <input type="text" value="[% net.ipnet %]" autocomplete="off" disabled="disabled"></input>
             <a class="btn btn-primary pull-right" href="?delete_aig=[% net.id %]"><i class="icon-trash"></i></a>
           </div>
         [% END %]
@@ -242,7 +242,7 @@
         <div class="modal-body">
         [% FOREACH net IN helper.man_aip_grp_rs.all %]
             <div class="row-fluid">
-                <input type="text" value="[% net.ipnet %]" disabled="disabled"></input>
+                <input type="text" value="[% net.ipnet %]" autocomplete="off" disabled="disabled"></input>
             <a class="btn btn-primary pull-right" href="?delete_man_aig=[% net.id %]"><i class="icon-trash"></i></a>
           </div>
         [% END %]
@@ -256,9 +256,9 @@
         [% FOREACH v IN helper.preference_values %]
             <div class="row-fluid">
             [% IF v.disabled %]
-                <input type="text" value="[% v.value %]" disabled="disabled" class="ngcp-entry-disabled"/>
+                <input type="text" value="[% v.value %]" autocomplete="off" disabled="disabled" class="ngcp-entry-disabled"/>
             [% ELSE %]
-                <input type="text" value="[% v.value %]" disabled="disabled"/>
+                <input type="text" value="[% v.value %]" autocomplete="off" disabled="disabled"/>
             [% END %]
             <a class="btn btn-primary pull-right" href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
             [% IF v.disabled %]
