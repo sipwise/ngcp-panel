@@ -171,33 +171,16 @@ sub update_item {
         'me.name' => $resource->{handle},
     });
     my $handle;
-    if($set->contract_id) {
-        my @group_names = qw/pbx music_on_hold digits custom_announcements/;
-        $handle_rs = $handle_rs->search({
-            'group.name' => { 'in' => \@group_names},
-        },{
-            join => 'group',
-        });
-        $handle = $handle_rs->first;
-        unless($handle) {
-            my $must_be_in_string = sprintf("the sound file must be in one of the customer sound set groups: %s",
-                join(', ', @group_names));
-            $c->log->error('invalid handle ' . $resource->{handle} . ' ' . $must_be_in_string);
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle $must_be_in_string");
-            return;
-        }
-    } else {
-        $handle_rs = $handle_rs->search({
-            'group.name' => { 'not in' => ['pbx'] },
-        },{
-            join => 'group',
-        });
-        $handle = $handle_rs->first;
-        unless($handle) {
-            $c->log->error("invalid handle '$$resource{handle}', must not be in group pbx for a system sound set");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Handle must not be in group pbx for a system sound set");
-            return;
-        }
+    $handle_rs = $handle_rs->search({
+        'group.name' => {},
+    },{
+        join => 'group',
+    });
+    $handle = $handle_rs->first;
+    unless($handle) {
+        $c->log->error("invalid handle '$$resource{handle}'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid handle");
+        return;
     }
     $resource->{handle_id} = $handle->id;
 

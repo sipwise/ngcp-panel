@@ -188,12 +188,6 @@ sub get_handles_rs {
             order_by => { -asc => 'handles.name' }
         });
 
-    if($set_rs->contract_id) {
-        $handles_rs = $handles_rs->search({
-            'groups.name' => { '-in' => [qw/pbx music_on_hold digits custom_announcements/] }
-        });
-    }
-
     unless($c->config->{features}->{cloudpbx}) {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
     }
