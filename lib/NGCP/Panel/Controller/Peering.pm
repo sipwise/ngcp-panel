@@ -420,10 +420,13 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
 
 sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
-    
+
     try {
         my $probe = $c->stash->{server_result}->probe;
-        NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+        my $enabled = $c->stash->{server_result}->enabled;
+        if ($enabled) {
+            NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+        }
 
         $c->stash->{server_result}->delete;
         NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
