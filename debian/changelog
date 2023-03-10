@@ -1,3 +1,10 @@
+ngcp-panel (10.5.3.4+0~mr10.5.3.4) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [144a501] MT#56776 Fix peer deletion when not enabled
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Mar 2023 13:10:05 +0100
+
 ngcp-panel (10.5.3.3+0~mr10.5.3.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
