@@ -75,12 +75,24 @@ msgstr ""
 msgid "#"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/Sounds.pm
+msgid "#Contract_id"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Lnp.pm
 msgid "#Numbers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "#Top-ups (timely)"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Sounds.pm
+msgid "#UserContractId"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Sounds.pm
+msgid "#UserRole"
 msgstr ""
 
 #. (mtf_pref.secret_key_renew)
@@ -130,7 +142,27 @@ msgid "%1<span class=\"pull-right\">for %2s</span>"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'CSC Conversations' - An internal flag to be able to map Conversations visibility to subscriber profiles. Not directly used"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'CSC Device Provisioning' - An internal flag to be able to map Device Provisioning visibility to subscriber profiles. Not directly used"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'CSC Hunt Groups' - An internal flag to be able to map Hunt Groups visibility to subscriber profiles. Not directly used"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'CSC Registered Devices' - An internal flag to be able to map Registered Devices visibility to subscriber profiles. Not directly used"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "(Base) IP Address"
+msgstr ""
+
+#: share/templates/sound/handles_list.tt
+msgid "(empty)"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Voucher.pm lib/NGCP/Panel/Utils/Billing.pm lib/NGCP/Panel/Utils/CallList.pm lib/NGCP/Panel/Utils/EmergencyMapping.pm lib/NGCP/Panel/Utils/Lnp.pm lib/NGCP/Panel/Utils/Phonebook.pm
@@ -489,7 +521,7 @@ msgstr ""
 msgid "Actual profile package:"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/sound/handles_list.tt
 msgid "Add"
 msgstr ""
 
@@ -683,6 +715,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Allow calls to foreign domains"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Allow customers to use this sound set"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1544,11 +1580,27 @@ msgid "CPBX Device Firmware Settings"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CSC Conversations"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CSC Device Provisioning"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CSC Hunt Groups"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "CSC Primary Color"
 msgstr ""
 
 #: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "CSC Primary Color: "
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CSC Registered Devices"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4118,6 +4170,14 @@ msgstr ""
 msgid "Exported at"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/Sounds.pm
+msgid "Expose to Customer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Expose to customer"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm
 msgid "Expression"
 msgstr ""
@@ -5123,6 +5183,7 @@ msgstr ""
 msgid "Failed to update sound handle"
 msgstr ""
 
+#. (($parent_loop_err ? " ($parent_loop_err)
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Failed to update sound set"
 msgstr ""
@@ -7062,6 +7123,10 @@ msgstr ""
 msgid "Leave media direction attributes in SDP unchanged"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Legacy Opus mono format"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Level Name"
 msgstr ""
@@ -7363,9 +7428,9 @@ msgstr ""
 msgid "Manage Destination Sets"
 msgstr ""
 
-#. (set_result.name)
+#. (set_result.name, set_result.parent_id ? '(Parent: ' _ set_result.parent.name _ ')
 #: share/templates/sound/handles_list.tt
-msgid "Manage Sound Set %1"
+msgid "Manage Sound Set %1 %2"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8589,6 +8654,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Parallel Ringing"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/Sounds.pm
+msgid "Parent"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Parent sound set that is used to substitute missing sound file of the current one."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Parent sound set. If used, missing sound of the current sound set will used from the parent one (except for those with use_parent = 0)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/HeaderManipulations.pm
@@ -13867,7 +13944,7 @@ msgstr ""
 msgid "Up"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/sound/handles_list.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Upload"
 msgstr ""
 
@@ -13935,6 +14012,10 @@ msgstr ""
 msgid "Use Number instead of Contact first for outbound calls"
 msgstr ""
 
+#: share/templates/sound/handles_list.tt
+msgid "Use Parent"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use Regex"
 msgstr ""
@@ -13952,11 +14033,19 @@ msgid "Use integrated call recording functionality or notify external call recor
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Use legacy non-standard method to signal single-channel Opus. The default is the standards-compliant method of always advertising Opus as a two-channel format while hinting to mono usage as a format parameter."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use octet-aligned mode instead of bandwidth-efficient mode when offering to transcode to AMR-WB."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use octet-aligned mode instead of bandwidth-efficient mode when offering to transcode to AMR."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Use parent"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13973,6 +14062,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use system default sound files"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Use the parent sound set if this sound does not have a file."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14182,6 +14275,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Via Route Set"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "VictoriaMetrics Statistics"
 msgstr ""
 
 #: share/templates/widgets/subscriber_reg_overview.tt
@@ -15152,6 +15249,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "on weekdays"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Sound.pm
+msgid "one of the parent sound sets refers to this one as a parent"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
