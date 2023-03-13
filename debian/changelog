@@ -1,3 +1,20 @@
+ngcp-panel (8.5.2.16+0~mr8.5.2.16) unstable; urgency=medium
+
+  [ Flaviu Mates ]
+  * [b4d6156] TT#114703 Use config flags password_(sip|web)_expose_subadmin in api
+
+  [ Rene Krenn ]
+  * [acd74f1] TT#98650 speedup redis locaction search by id
+  * [9243cf3] TT#105100 fix PATCHing unset webpasswords
+  * [05762fc] TT#105100 check PATCHing unset webpasswords
+  * [af65178] TT#151751 refactor persisting subicriber webpassword
+
+  [ Kirill Solomko ]
+  * [c9f7047] TT#129162 add bcrypt password characters check
+  * [a347c61] TT#129162 fix passwork characters check
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Mar 2023 14:01:09 +0100
+
 ngcp-panel (8.5.2.15+0~mr8.5.2.15) unstable; urgency=medium
 
   [ Rene Krenn ]
