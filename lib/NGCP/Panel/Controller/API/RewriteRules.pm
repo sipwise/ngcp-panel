@@ -24,7 +24,13 @@ sub query_params {
         {
             param => 'description',
             description => 'Filter rules for a certain description (wildcards possible).',
-            query_type  => 'string_like',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'me.description' => { like => $q } };
+                },
+                second => undef,
+            },
         },
         {
             param => 'set_id',
