@@ -1,3 +1,16 @@
+ngcp-panel (10.5.4.1+0~mr10.5.4.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [4176e88] MT#56417 make Provisioning Templates "contract_contact" and "contract" sections optional
+
+  [ Kirill Solomko ]
+  * [afc6a7e] MT#56802 fix preferences default values selection
+
+  [ Marco Capetta ]
+  * [1d2b91f] MT#56776 Fix peer deletion when not enabled
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 15 Mar 2023 16:09:11 +0100
+
 ngcp-panel (10.5.4.0+0~mr10.5.4.0) unstable; urgency=medium
 
   [ Rene Krenn ]
