@@ -444,8 +444,10 @@ $(function() {
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = c.loc('Edit'), uri = "/sound/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Delete'), uri = "/sound/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc("Edit"), uri = "/sound/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit',
+              condition => 'full.user_role != "subscriberadmin" || (full.user_contract_id == full.contract_id)' },
+            { name = c.loc('Delete'), uri = "/sound/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash',
+              condition => 'full.user_role != "subscriberadmin" || (full.user_contract_id == full.contract_id)' },
             { name = c.loc('Files'), uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [

@@ -893,11 +893,32 @@ sub update_preferences {
                     last SWITCH;
                 };
                 /^(contract_)?sound_set$/ && do {
-                    # TODO: not applicable for domains, but for subs, check for contract_id!
-                    my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
+                    my $is_contract_sound_set = $1 ? 1 : 0;
+                    my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({
                         name => $resource->{$pref},
-                        $pref_type ne 'peer_pref' ? (reseller_id => $reseller_id) : (),
                     });
+                    if ($pref_type ne 'peer_pref') {
+                        $set_rs = $set_rs->search({
+                            reseller_id => $reseller_id,
+                        });
+                    }
+                    if ($pref_type eq 'usr_pref' && $c->user->roles eq 'subscriberadmin') {
+                        my $contract_id = $elem->contract->id;
+                        if ($is_contract_sound_set) {
+                            $set_rs = $set_rs->search({
+                                reseller_id => $reseller_id,
+                                contract_id => $contract_id,
+                            });
+                        } else {
+                            $set_rs = $set_rs->search({
+                                'contract_id' => undef,
+                                'reseller_id' => $reseller_id,
+                                'expose_to_customer' => 1,
+                            });
+                        }
+                    }
+
+                    my $set = $set_rs->first;
                     unless($set) {
                         $c->log->error("no $pref '".$resource->{$pref}."' for reseller id $reseller_id found");
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown $pref '".$resource->{$pref}."'");

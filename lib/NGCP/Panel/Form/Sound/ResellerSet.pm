@@ -38,12 +38,30 @@ has_field 'description' => (
     },
 );
 
+has_field 'expose_to_customer' => (
+    type => 'Boolean',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Allow customers to use this sound set'],
+    },
+);
+
 has_field 'contract_default' => (
     type => 'Boolean',
     label => 'Default for Subscribers',
     element_attr => {
         rel => ['tooltip'],
         title => ['If active and a customer is selected, this sound set is used for all existing and new subscribers within this customer if no specific sound set is specified for the subscribers'],
+    },
+);
+
+has_field 'parent' => (
+    type => '+NGCP::Panel::Field::ParentSoundSet',
+    label => 'Parent',
+    validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Parent sound set. If used, missing sound of the current sound set will used from the parent one (except for those with use_parent = 0)'],
     },
 );
 
@@ -57,7 +75,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contract name description contract_default/],
+    render_list => [qw/contract name description expose_to_customer contract_default parent/],
 );
 
 has_block 'actions' => (

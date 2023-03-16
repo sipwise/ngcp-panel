@@ -85,29 +85,73 @@ sub stash_soundset_list {
 
     my $c = $params{c};
     my $contract = $params{contract};
+    my $fetch_parents = $params{fetch_parents} // 0;
 
-    my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
-    if($contract) {
-        $sets_rs = $sets_rs->search({ 'me.contract_id' => $contract->id });
-    }
+    my $sets_rs = $c->model('DB')->resultset('voip_sound_sets')->search({
+    },{
+        join => 'parent',
+    });
 
     my $dt_fields = [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'description', search => 1, title => $c->loc('Description') },
+        { name => 'parent.name', search => 1, title => $c->loc('Parent') },
     ];
 
-    if($c->user->roles eq "admin") {
+    if ($c->user->roles eq "admin") {
         splice @{ $dt_fields }, 1, 0,
             { name => 'reseller.name', search => 1, title => $c->loc('Reseller') };
         splice @{ $dt_fields }, 2, 0,
             { name => 'contract.contact.email', search => 1, title => $c->loc('Customer') };
-    } elsif($c->user->roles eq "reseller") {
+        push @{ $dt_fields },
+            { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') },
+    } elsif ($c->user->roles eq "reseller") {
         splice @{ $dt_fields }, 1, 0,
             { name => 'contract.contact.email', search => 1, title => $c->loc('Customer') };
+        push @{ $dt_fields },
+            { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') },
+
         $sets_rs = $sets_rs->search({ 'me.reseller_id' => $c->user->reseller_id });
-    } elsif($c->user->roles eq "subscriberadmin" && !$contract) {
-        $sets_rs = $sets_rs->search({ 'me.contract_id' => $c->user->account_id });
+
+    }
+
+    if ($contract || $c->user->roles eq "subscriberadmin") {
+        my $contract = $contract;
+        unless ($contract) {
+            my $contract_rs = $c->stash->{contract_rs} //
+                NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB'))->search_rs({
+                    'me.id' => $c->user->account_id,
+                });
+            $contract = $contract_rs->first;
+        }
+
+        my $user_role = $c->user->roles;
+        my $user_contract_id = $contract->id;
+
+        $sets_rs = $sets_rs->search({
+            -or => [
+                'me.contract_id' => $contract->id,
+                -and => [ 'me.contract_id' => undef,
+                          'me.reseller_id' => $contract->contact->reseller_id,
+                          'me.expose_to_customer' => 1,
+                ],
+            ],
+        });
+        if (!$fetch_parents) {
+            $sets_rs = $sets_rs->search({
+            },{
+                '+select' => [ { '' => \[ "select '$user_role'" ], -as => 'user_role' },
+                               { '' => \[ "select '$user_contract_id'" ], -as => 'user_contract_id' },
+                               'me.contract_id' ,
+                             ]
+            });
+        }
+
+        push @{ $dt_fields },
+            { name => 'user_role', visible => 0, search => 0, title => $c->loc('#UserRole') },
+            { name => 'user_contract_id', visible => 0, search => 0, title => $c->loc('#UserContractId') },
+            { name => 'contract_id', visible => 0, search => 0, title => $c->loc('#Contract_id') },
     }
 
     $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $dt_fields);
@@ -126,8 +170,9 @@ sub get_handles_rs {
     my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
         ->search({
         },{
-            select => ['groups.name', \'handles.name', \'handles.id', 'files.filename', 'files.loopplay', 'files.codec', 'files.id'],
-            as => [ 'groupname', 'handlename', 'handleid', 'filename', 'loopplay', 'codec', 'fileid'],
+            select => ['groups.name', \'handles.name', \'handles.id', 'files.filename', 'files.loopplay', 'files.codec', 'files.id',
+                       \'IF(files.use_parent IS NOT NULL, files.use_parent, 1)'],
+            as => [ 'groupname', 'handlename', 'handleid', 'filename', 'loopplay', 'codec', 'fileid', 'use_parent'],
             alias => 'groups',
             from => [
                 { groups => 'provisioning.voip_sound_groups' },
@@ -263,6 +308,49 @@ sub subcriber_sound_set_update_or_create {
         # Update only undefined sound set value.
         $row->update({ value => $value }) if ! defined $row->value;
     }
+}
+
+
+sub check_parent_chain_for_loop {
+    my ($c, $set_id, $parent_id) = @_;
+
+    return 0 if !$set_id;
+    return 0 if !$parent_id;
+    return 1 if $set_id == $parent_id;
+
+    my $rs = $c->model('DB')->resultset('v_sound_set_files')->search({
+        'me.set_id' => $parent_id,
+    });
+    if ($rs->first) {
+        if (my $parent_chain = $rs->first->parent_chain) {
+            my @parents = split /:/, $parent_chain;
+            foreach my $chain_parent_id (@parents) {
+                if ($set_id == $chain_parent_id) {
+                    return 1;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+sub revoke_exposed_sound_set {
+    my ($c, $set_id) = @_;
+
+    my $used_customer_sets_rs = $c->model('DB')->resultset('voip_sound_sets')->search({
+        parent_id => $set_id,
+        contract_id => { '!=' => undef },
+    });
+    $used_customer_sets_rs->update({ parent_id => undef });
+
+    my $used_subscriber_prefs_rs = $c->model('DB')->resultset('voip_usr_preferences')->search({
+        'attribute.attribute' => 'sound_set',
+        value => $set_id,
+    },{
+        join => 'attribute',
+    });
+    $used_subscriber_prefs_rs->delete;
 }
 
 1;

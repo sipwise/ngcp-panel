@@ -15,6 +15,10 @@ has_field 'loopplay' => (
     type => 'Boolean',
 );
 
+has_field 'use_parent' => (
+    type => 'Boolean',
+);
+
 has_field 'soundfile' => (
     type => 'Upload',
     noupdate => 1, #let controller handle the file
@@ -31,7 +35,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/loopplay soundfile/],
+    render_list => [qw/loopplay use_parent soundfile/],
 );
 
 has_block 'actions' => (

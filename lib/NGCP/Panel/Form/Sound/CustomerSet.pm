@@ -30,6 +30,16 @@ has_field 'contract_default' => (
     },
 );
 
+has_field 'parent' => (
+    type => '+NGCP::Panel::Field::ParentSoundSet',
+    label => 'Parent',
+    validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Parent sound set. If used, missing sound of the current sound set will used from the parent one (except for those with use_parent = 0)'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -40,7 +50,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name description contract_default/],
+    render_list => [qw/name description contract_default parent/],
 );
 
 has_block 'actions' => (

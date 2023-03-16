@@ -1,4 +1,6 @@
-[% site_config.title = c.loc('Manage Sound Set [_1]', set_result.name) -%]
+[% site_config.title = c.loc('Manage Sound Set [_1] [_2]', set_result.name, set_result.parent_id ? '(Parent: ' _ set_result.parent.name _ ')' : '') -%]
+
+[% can_edit_handles = ((c.user.roles == 'subscriberadmin' && c.user.account_id == set_result.contract_id) || (c.user.roles != 'subscriberadmin' && !c.user.read_only)) ? 1 : 0 -%]
 
 <div class="row">
     <span>
@@ -39,6 +41,9 @@
             <th>[% c.loc('Name') %]</th>
             <th>[% c.loc('Filename') %]</th>
             <th>[% c.loc('Loop') %]</th>
+            [% IF set_result.parent_id -%]
+            <th>[% c.loc('Use Parent') %]</th>
+            [% END -%]
             [% # one for actions -%]
             <th></th>
         </tr>
@@ -50,21 +55,35 @@
                   [% r.get_column("handlename") %]
                 </td>
                 <td>
-                    [% r.get_column("filename") %]
+                    [% r.get_column("fileid")
+                        ? r.get_column("filename")
+                            ? r.get_column("filename") : c.loc("(empty)")
+                        : ''
+                    %]
                 </td>
                 <td>
                     <input type="checkbox" disabled="disabled" [% r.get_column('loopplay') ? 'checked="checked"' : '' %]>
                 </td>
+                [% IF set_result.parent_id -%]
+                <td>
+                    <input type="checkbox" disabled="disabled" [% r.get_column('use_parent') == 0 ? '' : 'checked="checked"' %]>
+                </td>
+                [% END -%]
                 <td>
                     <div class="sw_actions pull-right">
                         [% IF r.get_column("filename").size -%]
-                            [% UNLESS c.user.read_only -%]
+                            [% IF can_edit_handles -%]
                             <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                             <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> [% c.loc('Delete') %]</a>
                             [% END -%]
                             <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]"><i class="icon-play"></i> [% c.loc('Play') %]</a>
-                        [% ELSIF !c.user.read_only -%]
-                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Upload') %]</a>
+                        [% ELSIF r.get_column("fileid") -%]
+                            [% IF can_edit_handles -%]
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> [% c.loc('Delete') %]</a>
+                            [% END -%]
+                        [% ELSIF can_edit_handles -%]
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Add') %]</a>
                         [% END -%]
                     </div>
                 </td>

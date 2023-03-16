@@ -50,8 +50,15 @@ sub _item_rs {
             join => 'set',
         });
     } elsif ($c->user->roles eq "subscriberadmin") {
+        my $contract = $c->model('DB')->resultset('contracts')->find($c->user->account_id);
         $item_rs = $item_rs->search({
-            'set.contract_id' => $c->user->account_id,
+            -or => [
+                'set.contract_id' => $c->user->account_id,
+                -and => [ 'set.contract_id' => undef,
+                          'set.reseller_id' => $contract->contact->reseller_id,
+                          'set.expose_to_customer' => 1,
+                ],
+            ]
         },{
             join => 'set',
         });
@@ -150,6 +157,14 @@ sub update_item {
         $c->log->error("invalid set_id '$$resource{set_id}'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Sound set does not exist");
         return;
+    }
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        if (!$set->contract_id || $set->contract_id != $c->user->account_id) {
+            $c->log->error("Cannot modify read-only sound file that does not belong to this subscriberadmin");
+            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound file");
+            return;
+        }
     }
 
     my $handle_rs = $c->model('DB')->resultset('voip_sound_handles')->search({

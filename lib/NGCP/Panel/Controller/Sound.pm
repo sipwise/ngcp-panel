@@ -72,6 +72,25 @@ sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     return;
 }
 
+sub parent_sets_list :Chained('/') :PathPart('sound_parent') :CaptureArgs(0) {
+    my ( $self, $c ) = @_;
+
+    if($c->stash->{contract_rs}) {
+        NGCP::Panel::Utils::Sounds::stash_soundset_list(
+            c => $c,
+            fetch_parents => 1,
+            contract => $c->stash->{contract_rs}->first,
+        );
+    } else {
+        NGCP::Panel::Utils::Sounds::stash_soundset_list(
+            c => $c,
+            fetch_parents => 1,
+        );
+    }
+    $c->stash(template => 'sound/list.tt');
+    return;
+}
+
 sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1) {
     my ( $self, $c, $contract_id ) = @_;
 
@@ -123,6 +142,18 @@ sub ajax :Chained('sets_list') :PathPart('ajax') :Args(0) {
     return;
 }
 
+sub parent_ajax :Chained('parent_sets_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{sets_rs};
+    my $parents_rs = $resultset->search({
+        'me.id' => { '!=' => $c->session->{edit_sound_set_id} },
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $parents_rs, $c->stash->{soundset_dt_columns});
+    $c->detach( $c->view("JSON") );
+    return;
+}
+
 sub contract_ajax :Chained('contract_sets_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
 
@@ -160,12 +191,20 @@ sub base :Chained('sets_list') :PathPart('') :CaptureArgs(1) {
 sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
 
+    $self->check_subadmin_set_edit_access($c, $c->stash->{set_result});
+
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $c->stash->{set_result}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params->{contract}{id} = delete $params->{contract_id};
+    $params->{parent}{id} = delete $params->{parent_id};
     $params = merge($params, $c->session->{created_objects});
+
+    $c->session->{edit_sound_set_id} = $c->stash->{set_result}->id;
+
+    $self->check_subadmin_set_edit_access($c, $c->stash->{set_result});
+
     if ($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::AdminSet", $c);
     } elsif ($c->user->roles eq "reseller") {
@@ -191,7 +230,10 @@ sub edit :Chained('base') :PathPart('edit') {
         back_uri => $c->req->uri,
     );
     if ($posted && $form->validated) {
+        my $parent_loop_err;
         try {
+            my $own_id = $c->stash->{set_result}->id;
+            my $parent_id = $form->values->{parent_id} = $form->values->{parent}{id} // undef;
             if ($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 $form->values->{contract_id} = $form->values->{contract}{id} // undef;
@@ -211,7 +253,28 @@ sub edit :Chained('base') :PathPart('edit') {
             }
             delete $form->values->{reseller};
             delete $form->values->{contract};
+            delete $form->values->{parent};
+
+            if (NGCP::Panel::Utils::Sounds::check_parent_chain_for_loop(
+                $c, $own_id, $parent_id)
+            ) {
+                $parent_loop_err =
+                    $c->loc("one of the parent sound sets refers to this one as a parent");
+                die $parent_loop_err;
+            }
+
+            if ($c->user->roles eq 'subscriberadmin' &&
+                $c->stash->{set_result}->contract_id != $c->user->account_id) {
+                    die "an attempt to edit a sound set that does not belong to the subscriberadmin";
+            }
+
             $c->model('DB')->txn_do(sub {
+                if ($c->stash->{set_result}->expose_to_customer == 1 &&
+                    $form->values->{expose_to_customer} == 0) {
+                        # remove this sound set from all parents/prefs on subscriberadmin
+                        NGCP::Panel::Utils::Sounds::revoke_exposed_sound_set($c, $own_id);
+                }
+
                 # if contract default is set, clear old ones first
                 if ($c->stash->{set_result}->contract_id && $form->values->{contract_default} == 1) {
                     $c->stash->{sets_rs}->search({
@@ -239,7 +302,9 @@ sub edit :Chained('base') :PathPart('edit') {
             NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update sound set'),
+                desc  => $c->loc('Failed to update sound set' .
+                    ($parent_loop_err ? " ($parent_loop_err)" : '')
+                ),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
@@ -254,6 +319,8 @@ sub edit :Chained('base') :PathPart('edit') {
 
 sub delete_sound :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
+
+    $self->check_subadmin_set_edit_access($c, $c->stash->{set_result});
 
     try {
 
@@ -341,6 +408,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
     );
     if($posted && $form->validated) {
         try {
+            $form->values->{parent_id} = $form->values->{parent}{id};
             if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 $form->values->{contract_id} = $form->values->{contract}{id} // undef;
@@ -364,6 +432,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
             }
             delete $form->values->{reseller};
             delete $form->values->{contract};
+            delete $form->values->{parent};
 
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
@@ -474,18 +543,24 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
 sub handles_edit :Chained('handles_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
+    $self->check_subadmin_handle_edit_access($c, $c->stash->{file_result});
+
     my $posted = ($c->request->method eq 'POST');
     my $upload = $c->req->upload('soundfile');
-    my %params = (
-        %{ $c->request->params },
-        soundfile => $posted ? $upload : undef,
-    );
+    $c->request->params->{soundfile} = $posted ? $upload : undef;
     my $file_result = $c->stash->{file_result};
+    my $params = {
+        loopplay => $file_result->loopplay // 0,
+        use_parent => $file_result->use_parent // 0,
+    };
+    $params = merge($params, $c->session->{created_objects});
+
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::File", $c);
+
     $form->process(
         posted => $posted,
-        params => \%params,
-        item   => $file_result,
+        params => $c->request->params,
+        item   => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -541,6 +616,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             try {
                 $file_result->update({
                     loopplay => $form->values->{loopplay},
+                    use_parent => $form->values->{use_parent},
                     filename => $filename,
                     data => $soundfile,
                     codec => $target_codec,
@@ -560,6 +636,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             try {
                 $file_result->update({
                     loopplay => $form->values->{loopplay},
+                    use_parent => $form->values->{use_parent},
                 });
                 NGCP::Panel::Utils::Message::info(
                     c    => $c,
@@ -583,6 +660,8 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
 
 sub handles_delete :Chained('handles_base') :PathPart('delete') {
     my ($self, $c) = @_;
+
+    $self->check_subadmin_handle_edit_access($c, $c->stash->{file_result});
 
     try {
         $c->stash->{file_result}->delete;
@@ -614,6 +693,8 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
 
 sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     my ($self, $c) = @_;
+
+    $self->check_subadmin_handle_download_access($c, $c->stash->{file_result});
 
     my $file = $c->stash->{file_result};
     my $filename = $file->filename;
@@ -693,6 +774,60 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
     $c->stash(form => $form);
     $c->stash(edit_default_flag => 1);
     return;
+}
+
+sub check_subadmin_set_edit_access {
+    my ($self, $c, $set) = @_;
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        if ($set->contract_id && $set->contract_id == $c->user->account_id) {
+            return 1;
+        }
+
+        $c->detach('/denied_page');
+    }
+    return 1;
+}
+
+sub check_subadmin_handle_edit_access {
+    my ($self, $c, $file_result) = @_;
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        my $set = $file_result->set;
+
+        if ($set->contract_id && $set->contract_id == $c->user->account_id) {
+            return 1;
+        }
+
+        $c->detach('/denied_page');
+    }
+    return 1;
+}
+
+sub check_subadmin_handle_download_access {
+    my ($self, $c, $file_result) = @_;
+
+    if ($c->user->roles eq 'subscriberadmin') {
+        my $set = $file_result->set;
+
+        my $contract_rs = $c->stash->{contract_rs} //
+            NGCP::Panel::Utils::Contract::get_contract_rs(schema => $c->model('DB'))->search_rs({
+                'me.id' => $c->user->account_id,
+            });
+        my $contract = $contract_rs->first;
+
+        if (!$set->contract_id &&
+            $set->expose_to_customer == 1 &&
+            $set->reseller_id == $contract->contact->reseller_id) {
+            return 1;
+        } elsif ($set->contract_id &&
+                 $set->contract_id == $c->user->account_id) {
+            return 1;
+        }
+
+        $c->detach('/denied_page');
+    }
+    return 1;
 }
 
 1;

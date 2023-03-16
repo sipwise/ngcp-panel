@@ -18,6 +18,16 @@ has_field 'loopplay' => (
     },
 );
 
+has_field 'use_parent' => (
+    type => 'Boolean',
+    required => 0,
+    default => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Use the parent sound set if this sound does not have a file.'],
+    },
+);
+
 has_field 'filename' => (
     type => 'Text',
     required => 1,

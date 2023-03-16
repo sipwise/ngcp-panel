@@ -13,10 +13,18 @@ has_field 'contract_id' => (
     },
 );
 
+has_field 'expose_to_customer' => (
+    type => 'Boolean',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Allow customers to use this sound set'],
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/customer_id name description contract_default copy_from_default language loopplay replace_existing/],
+    render_list => [qw/customer_id name description expose_to_customer contract_default parent_id copy_from_default language loopplay replace_existing/],
 );
 
 
