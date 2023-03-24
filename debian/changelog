@@ -1,3 +1,40 @@
+ngcp-panel (11.3.1.0+0~mr11.3.1.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2a0b8dc] MT#56432 add time set support to ncos levels
+  * [d7d9416] MT#55931 PbxFieldDevicesAPI form target_number is now optional
+  * [ba2894d] MT#56432 add timeset field to Form/NCOS/AdminLevel
+  * [b850771] MT#56432 UI prevent ncos level timeset to have different reseller_id
+  * [fa82bac] MT#56455 fix peering groups timeset relation
+  * [f883192] MT#56744 audio transcoding fixes
+  * [3c1842c] MT#56802 fix preferences default values selection
+  * [44ec794] MT#56693 add parent sound set support
+  * [0a4d5e4] MT#56693 fix parent sound sets list for sound set creation
+
+  [ Rene Krenn ]
+  * [7cbf2f6] MT#56417 make Provisioning Templates "contract_contact" and "contract" sections optional
+  * [a9b1ba8] MT#56917 fix rwr 'description' filter
+
+  [ Marco Capetta ]
+  * [35949e9] MT#56526 Discontinue dialogic setting/provisioning
+  * [549861e] MT#56739 Remove already deprecated preference 'enable_t38'
+  * [257364e] MT#56740 Discontinue jitsi autoprovisioning
+  * [26b63e8] MT#56835 Fix device provisioning when external_number is in use
+  * [0274ab0] MT#56776 Fix peer deletion when not enabled
+  * [16a82cb] MT#56403 Add new internal preferences to show/hide CSC menus
+  * [da628f6] MT#56691 Extend Contract Soundsets with all the announcements
+
+  [ Sipwise Jenkins Builder ]
+  * [241f30e] TT#4166 I18N dump: snapshot 2022.09.28-00.25.51
+
+  [ Guillem Jover ]
+  * [ea51ea0] MT#55124 Hook new VictoriaMetrics statistics dashboard
+
+  [ Alessio Garzi ]
+  * [e1c66a1] MT#56490 Reload lct gw table also on LB
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 24 Mar 2023 13:04:18 +0100
+
 ngcp-panel (11.3.0.0+0~mr11.3.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
