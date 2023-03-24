@@ -175,6 +175,8 @@ sub base :Chained('sets_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
 
+    delete $c->session->{edit_sound_set_id};
+
     my $res = $c->stash->{sets_rs}->find($set_id);
     unless(defined($res)) {
         NGCP::Panel::Utils::Message::error(
@@ -363,6 +365,8 @@ sub delete_sound :Chained('base') :PathPart('delete') {
 
 sub create :Chained('sets_list') :PathPart('create') :Args() {
     my ($self, $c, $contract_id) = @_;
+
+    delete $c->session->{edit_sound_set_id};
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
