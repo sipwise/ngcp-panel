@@ -1518,7 +1518,7 @@ sub create_preference_form {
         if ($c->stash->{preference}->first) {
             $preselected_value = $c->stash->{preference}->first->value unless ($c->stash->{preference_meta}->data_type eq 'blob');
         } else {
-            my $default_val = first { $_->default_val == 1 } @{ $enums };
+            my $default_val = first { $_->default_val; } @{ $enums };
             $preselected_value = $default_val ? $default_val->value : undef;
         }
     } elsif ($c->stash->{preference_meta}->max_occur == 1) {
