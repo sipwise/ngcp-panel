@@ -8661,6 +8661,14 @@ msgid "Parent"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Parent name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Parent sound set name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Parent sound set that is used to substitute missing sound file of the current one."
 msgstr ""
 
@@ -8857,8 +8865,16 @@ msgstr ""
 msgid "Peering Servers"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peering group description"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Peering.pm
 msgid "Peering group does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Peering group name."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm
@@ -11992,6 +12008,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The contract to create the invoice for."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The contract used for this peering group."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
