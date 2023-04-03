@@ -16,7 +16,7 @@ has_field 'reseller_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller_id customer_id name description expose_to_customer contract_default parent_id copy_from_default language loopplay replace_existing/],
+    render_list => [qw/reseller_id customer_id name description expose_to_customer contract_default parent_id parent_name copy_from_default language loopplay replace_existing/],
 );
 
 

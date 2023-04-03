@@ -51,6 +51,15 @@ has_field 'parent_id' => (
     },
 );
 
+
+has_field 'parent_name' => (
+    type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Parent sound set name'],
+    },
+);
+
 has_field 'copy_from_default' => (
     type => 'Boolean',
     label => 'Use system default sound files',
@@ -60,7 +69,7 @@ has_field 'copy_from_default' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name description contract_id contract_default parent_id copy_from_default language loopplay replace_existing/],
+    render_list => [qw/name description contract_id contract_default parent_id parent_name copy_from_default language loopplay replace_existing/],
 );
 
 # TODO: inheritance?

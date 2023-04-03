@@ -30,7 +30,7 @@ has_field 'use_parent' => (
 
 has_field 'filename' => (
     type => 'Text',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
         title => ['The filename of the sound file (for informational purposes only).'],

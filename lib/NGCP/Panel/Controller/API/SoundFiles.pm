@@ -116,16 +116,26 @@ sub POST :Allow {
             if ($upload) {
                 $recording = eval { $upload->slurp };
             }
+            last unless $recording;
             my $json_raw = encode_utf8($c->req->params->{json});
             $resource = JSON::from_json($json_raw, { utf8 => 0 });
         } else {
-            $recording = $self->get_valid_raw_post_data(
-                c => $c,
-                media_type => ['audio/x-wav', 'audio/mpeg', 'audio/ogg'],
-            );
-            $resource = $c->req->query_params;
+            my $ctype = $self->get_content_type($c);
+            if ($ctype eq 'application/json') {
+                $resource = $self->get_valid_post_data(
+                    c => $c,
+                    media_type => 'application/json',
+                );
+                last unless $resource;
+            } else {
+                $recording = $self->get_valid_raw_post_data(
+                    c => $c,
+                    media_type => ['application/json', 'audio/x-wav', 'audio/mpeg', 'audio/ogg'],
+                );
+                last unless $recording;
+                $resource = $c->req->query_params;
+            }
         }
-        last unless $recording;
         $resource->{data} = $recording;
         my $form = $self->get_form($c);
         my $item;

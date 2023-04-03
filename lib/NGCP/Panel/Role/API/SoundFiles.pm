@@ -143,6 +143,12 @@ sub update_item {
 
     $resource->{loopplay} = ($resource->{loopplay} eq "true" || is_int($resource->{loopplay}) && $resource->{loopplay}) ? 1 : 0;
 
+    if ($resource->{data} && !$resource->{filename}) {
+        $c->log->error("filename is required when there is data to upload'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "'filename' cannot be empty during upload");
+        return;
+    }
+
     my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({
         id => $resource->{set_id},
     });
@@ -177,6 +183,7 @@ sub update_item {
         join => 'group',
     });
     $handle = $handle_rs->first;
+    $resource->{handle} //= '';
     unless($handle) {
         $c->log->error("invalid handle '$$resource{handle}'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid handle");
