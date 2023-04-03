@@ -406,7 +406,7 @@ sub _clear_audio_cache_service {
   </methodCall>
 EOF
 
-    if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
+    if (grep { $$_[1] == 0 || ($$_[1] != -1 && $$_[2] !~ m#<value>OK</value>#) } @ret) {  # error
         die "failed to clear SEMS audio cache";
     }
 

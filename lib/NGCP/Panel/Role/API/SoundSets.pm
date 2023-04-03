@@ -18,20 +18,25 @@ sub resource_name{
 sub _item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('voip_sound_sets');
+    my $item_rs = $c->model('DB')->resultset('voip_sound_sets')->search({
+    },{
+        join      => 'parent',
+        '+select' => [ 'parent.name' ],
+        '+as'     => [ 'parent_name' ],
+    });
     if ($c->user->roles eq "admin") {
     } elsif ($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
-            'reseller_id' => $c->user->reseller_id,
+            'me.reseller_id' => $c->user->reseller_id,
         });
     } elsif ($c->user->roles eq "subscriberadmin") {
         my $contract = $c->model('DB')->resultset('contracts')->find($c->user->account_id);
         $item_rs = $item_rs->search_rs({
             -or => [
-                'contract_id' => $c->user->account_id,
-                -and => [ 'contract_id' => undef,
-                          'reseller_id' => $contract->contact->reseller_id,
-                          'expose_to_customer' => 1,
+                'me.contract_id' => $c->user->account_id,
+                -and => [ 'me.contract_id' => undef,
+                          'me.reseller_id' => $contract->contact->reseller_id,
+                          'me.expose_to_customer' => 1,
                 ],
             ]
         });
@@ -97,6 +102,8 @@ sub process_form_resource{
         $resource->{reseller_id} = $c->user->contract->contact->reseller_id;
     }
     $resource->{contract_default} //= 0;
+    delete $resource->{parent_name};
+
     return $resource;
 }
 
