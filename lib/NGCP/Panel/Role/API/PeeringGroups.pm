@@ -24,13 +24,12 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::Group", $c);
+    return NGCP::Panel::Form::get("NGCP::Panel::Form::Peering::GroupAPI", $c);
 }
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
-    my %resource = $item->get_inflated_columns;
-    $resource{contract_id} = delete $resource{peering_contract_id};
+    my $resource = $self->resource_from_item($c, $item);
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -53,15 +52,15 @@ sub hal_from_item {
 
     $self->validate_form(
         c => $c,
-        resource => \%resource,
+        resource => $resource,
         form => $form,
         run => 0,
     );
 
-    $resource{id} = int($item->id);
+    $resource->{id} = int($item->id);
 
-    $self->expand_fields($c, \%resource);
-    $hal->resource({%resource});
+    $self->expand_fields($c, $resource);
+    $hal->resource($resource);
     return $hal;
 }
 
@@ -69,6 +68,23 @@ sub item_by_id {
     my ($self, $c, $id) = @_;
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
+}
+
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my $resource = { $item->get_inflated_columns };
+    $resource->{contract_id} = delete $resource->{peering_contract_id};
+
+    return $resource;
+}
+
+sub process_form_resource {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    $resource->{peering_contract_id} = delete $resource->{contract_id};
+
+    return $resource;
 }
 
 sub update_item {
@@ -80,8 +96,9 @@ sub update_item {
         form => $form,
         resource => $resource,
     );
-    $resource = $form->custom_get_values;
     last unless $resource;
+
+    $resource = $self->process_form_resource($c, $item, $old_resource, $resource, $form);
 
     my $dup_item = $c->model('DB')->resultset('voip_peer_groups')->find({
         name => $resource->{name},
