@@ -59,11 +59,12 @@ sub PATCH :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, peeringgroup => $item);
-        my $old_resource = { $item->get_inflated_columns };
+
+        my $form = $self->get_form($c);
+        my $old_resource = $self->resource_from_item($c, $item, $form);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
@@ -89,9 +90,10 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $item->get_inflated_columns };
 
         my $form = $self->get_form($c);
+        my $old_resource = $self->resource_from_item($c, $item, $form);
+
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 

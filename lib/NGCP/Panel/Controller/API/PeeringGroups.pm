@@ -111,8 +111,10 @@ sub POST :Allow {
             resource => $resource,
             form => $form,
         );
-        $resource = $form->custom_get_values;
         last unless $resource;
+
+        $resource = $self->process_form_resource($c, undef, undef, $resource, $form);
+
         my $item;
         my $dup_item = $c->model('DB')->resultset('voip_peer_groups')->find({
             name => $resource->{name},
