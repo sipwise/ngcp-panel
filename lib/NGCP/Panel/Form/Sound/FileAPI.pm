@@ -11,7 +11,8 @@ has_field 'submitid' => ( type => 'Hidden' );
 
 has_field 'loopplay' => (
     type => 'Boolean',
-    required => 1,
+    required => 0,
+    default => 0,
     element_attr => {
         rel => ['tooltip'],
         title => ['Play file in a loop.'],
