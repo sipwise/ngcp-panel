@@ -122,8 +122,12 @@ sub update_profile {
     #}
 
     $form //= $self->get_form($c);
-    # TODO: for some reason, formhandler lets missing reseller slip thru
-    $resource->{reseller_id} //= undef;
+    if ($c->user->roles eq "reseller") {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    } else {
+        # TODO: for some reason, formhandler lets missing reseller slip thru
+        $resource->{reseller_id} //= undef;
+    }
     return unless $self->validate_form(
         c => $c,
         form => $form,
