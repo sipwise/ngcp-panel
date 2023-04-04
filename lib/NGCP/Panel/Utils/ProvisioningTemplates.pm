@@ -804,7 +804,7 @@ sub _init_contract_context {
         $c->log->debug("provisioning template - contract contact: " . Dumper($context->{contract_contact}));
     }
 
-    if (exists $template->{contact}) {
+    if (exists $template->{contract}) {
         my %contract = ();
         my @identifiers = _get_identifiers($template->{contract});
         foreach my $col (keys %{$template->{contract}}) {
