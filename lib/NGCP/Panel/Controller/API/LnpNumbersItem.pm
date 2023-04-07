@@ -121,7 +121,7 @@ sub DELETE :Allow {
     {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, lnpnumber => $item);
-        $item->delete;
+        $c->model('DB')->resultset('lnp_numbers')->search_rs({ id => $id, },undef)->delete();
 
         $guard->commit;
 
