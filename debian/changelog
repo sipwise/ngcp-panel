@@ -1,3 +1,13 @@
+ngcp-panel (11.3.2.0+0~mr11.3.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f2c6723] MT#56693 parent_name, allow empty sound files, sems audio cache
+  * [2272c70] MT#56693 sound files loopplay change to optional
+  * [80fbc67] MT#57085 fix /api/peeringroups form operations
+  * [8e94c55] MT#57100 avoid where ambiguity for query_types search_eq,search_like
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Apr 2023 10:55:37 +0200
+
 ngcp-panel (11.3.1.0+0~mr11.3.1.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
