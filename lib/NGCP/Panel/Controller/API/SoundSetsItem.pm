@@ -62,6 +62,13 @@ sub update_item_model {
 sub delete_item {
     my ($self, $c, $item) = @_;
 
+    if ($c->user->roles eq 'subscriberadmin' &&
+        (!$item->contract_id || $item->contract_id != $c->user->account_id)) {
+            $c->log->error("Cannot modify read-only sound set that does not belong to this subscriberadmin");
+            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound set");
+            return;
+    }
+
     if($item->contract_id) {
         my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'contract_sound_set',
