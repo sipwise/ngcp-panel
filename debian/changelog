@@ -1,3 +1,10 @@
+ngcp-panel (9.5.6.6+0~mr9.5.6.6) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [08a31fc] MT#57171 speedup DELETE /api/lnpnumbers/id
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 14 Apr 2023 14:32:34 +0200
+
 ngcp-panel (9.5.6.5+0~mr9.5.6.5) unstable; urgency=medium
 
   [ Rene Krenn ]
