@@ -1473,6 +1473,8 @@ sub test_soundset {
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("fetch POSTed test " . $test_label));
     my $soundset = JSON::from_json($res->decoded_content);
+    # virtual and does not exist in the journal
+    delete $soundset->{parent_name};
 
     _test_item_journal_link('soundsets',$soundset,$soundset->{id});
     _test_journal_options_head('soundsets',$soundset->{id});
@@ -1495,6 +1497,8 @@ sub test_soundset {
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("fetch PUT test " . $test_label));
     $soundset = JSON::from_json($res->decoded_content);
+    # virtual and does not exist in the journal
+    delete $soundset->{parent_name};
 
     _test_item_journal_link('soundsets',$soundset,$soundset->{id});
     $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'update',$journals,$journal);
@@ -1511,6 +1515,8 @@ sub test_soundset {
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("fetch PATCHed test " . $test_label));
     $soundset = JSON::from_json($res->decoded_content);
+    # virtual and does not exist in the journal
+    delete $soundset->{parent_name};
 
     _test_item_journal_link('soundsets',$soundset,$soundset->{id});
     $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'update',$journals,$journal);
