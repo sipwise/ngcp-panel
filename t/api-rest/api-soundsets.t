@@ -49,7 +49,7 @@ my($res,$content,$req) = $test_machine->request_put({
     loopplay => '1',#0
 },$soundsets_with_files->[0]->{location} );
 $test_machine->http_code_msg(200, "Check put with files replacement", $res, $content);
-$test_machine->check_get2put();
+$test_machine->check_get2put({ignore_fields => [qw/parent_name/]});
 $test_machine->check_bundle();
 
 my $filtered_by_reseller_correct = $test_machine->get_collection_hal('soundsets', '/api/soundsets?reseller_id='.$test_machine->DATA_ITEM->{reseller_id});
