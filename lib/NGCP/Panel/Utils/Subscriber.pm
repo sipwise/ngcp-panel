@@ -801,7 +801,7 @@ sub create_subscriber {
                 timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch + 31536000,
             });
             my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
-            NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber, $url);
+            NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber, $url, $params);
         }
 
         #if($prov_subscriber->profile_id) {

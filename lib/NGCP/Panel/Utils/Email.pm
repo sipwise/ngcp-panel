@@ -62,7 +62,7 @@ sub send_template {
 }
 
 sub new_subscriber {
-    my ($c, $subscriber, $url) = @_;
+    my ($c, $subscriber, $url, $params) = @_;
 
     my $template = $subscriber->contract->subscriber_email_template;
     return unless($template);
@@ -72,6 +72,16 @@ sub new_subscriber {
     my $vars = {
         url => $url,
         subscriber => $subscriber->username . '@' . $subscriber->domain->domain,
+        
+        username => $params->{username},
+        password => $params->{password},
+        
+        webusername => $params->{webusername},
+        webpassword => $params->{webpassword},
+        
+        cc => $params->{e164}->{cc},
+        ac => $params->{e164}->{ac},
+        sn => $params->{e164}->{sn},
     };
 
     my $body = $template->body;
