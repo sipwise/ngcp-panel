@@ -48,6 +48,16 @@ sub query_params {
                 second => sub { join => 'ruleset' },
             },
         },
+        {
+            param => 'direction',
+            description => 'Filter for rules belonging to a specific direction.',
+            query_type  => 'string_eq',
+        },
+        {
+            param => 'field',
+            description => 'Filter for rules belonging to a specific field (caller or callee).',
+            query_type  => 'string_eq',
+        },
     ];
 }
 
