@@ -1,3 +1,10 @@
+ngcp-panel (11.2.1.6+0~mr11.2.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [3be315b] MT#57216 fix advanced cf sets selection for admins
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 19 Apr 2023 19:08:53 +0200
+
 ngcp-panel (11.2.1.5+0~mr11.2.1.5) unstable; urgency=medium
 
   [ Marco Capetta ]
