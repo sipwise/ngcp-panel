@@ -1109,7 +1109,7 @@ function create_ranges_annotations(id,type,ranges){
                 '<input type="checkbox" class="switch" ' + isSwitchOn + ' name="line.' + linecmt + '.switch" id="line.' + linecmt + '">' +
                 '<span class="slider round"></span>' +
                 '</label>' +
-                '<input type="text" class="subinput" oninput="this.value = this.value.replace(/[^0-9#*]/, \'\')" name="line.' + linecmt + '.target_number" id="line.' + linecmt + '.target_number" ' + targetNumber + '>' +
+                '<input type="text" class="subinput" oninput="this.value = this.value.replace(/[^0-9#*+]/, \'\')" name="line.' + linecmt + '.target_number" id="line.' + linecmt + '.target_number" ' + targetNumber + '>' +
                 '<select class="subselect" name="line.' + linecmt + '.subscriber_id" id="line.' + linecmt + '.subscriber_id">' +
                 '<option value="0">'+(linekeyCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
 [% FOR sub IN subscribers.all -%]
