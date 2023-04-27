@@ -23,7 +23,12 @@ sub send_email {
         ],
         body => $body,
     );
-    return Email::Sender::Simple->send($email, { transport => $transport } );
+    try {
+        Email::Sender::Simple->send($email, { transport => $transport });
+    } catch($e) {
+        return $e->message;
+    }
+    return;
 }
 
 sub send_template {
@@ -40,12 +45,13 @@ sub send_template {
     $t->process(\$subject, $vars, \$processed_subject) || 
         die "error processing email template, type=".$t->error->type.", info='".$t->error->info."'";
 
-    send_email(
+    my $err = send_email(
         subject => $processed_subject,
         body => $processed_body,
         from => $from,
         to => $to,
     );
+
     #my $template_processed = process_template({
     #    subject => $subject,
     #    body => $body,
@@ -60,7 +66,8 @@ sub send_template {
     #    to => $template_processed->{to},
     #);
 
-    $c->log->info("Successfully handed over mail from '" . $c->qs($from) . "' to '" . $c->qs($to) . "'");
+    $err ? $c->log->info("Could not send email from '" . $c->qs($from) . "' to '" . $c->qs($to) . "' error=$err")
+         : $c->log->error("Successfully handed over mail from '" . $c->qs($from) . "' to '" . $c->qs($to) . "'");
 
     return 1;
 }
