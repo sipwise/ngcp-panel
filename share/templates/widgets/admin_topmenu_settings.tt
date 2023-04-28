@@ -29,6 +29,7 @@
         <li><a href="/grafana/d/sip-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('SIP Statistics') %]</a></li>
         <li><a href="/grafana/d/database-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('DB Statistics') %]</a></li>
         <li><a href="/grafana/d/victoriametrics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('VictoriaMetrics Statistics') %]</a></li>
+        <li><a href="/grafana/d/kam-statistics?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('Kamailio Statistics') %]</a></li>
         <li><a href="/grafana/d/cluster-overview?ngcp_grafana_admin=no" class="ngcp-noback-link" target="_blank">[% c.loc('Cluster Overview') %]</a></li>
         [% END -%]
         [% IF c.config.features.callflow -%]
