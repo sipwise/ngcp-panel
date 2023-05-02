@@ -6970,6 +6970,10 @@ msgstr ""
 msgid "June"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Kamailio Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Key"
 msgstr ""
