@@ -192,17 +192,12 @@ sub resource_from_item {
             }
         }
     } else {
-        if ($c->user->roles eq "subscriberadmin" && !$self->subscriberadmin_write_access($c)) {
-            # fields we never want to see
-            foreach my $k(qw/domain_id status profile_id profile_set_id external_id/) {
-                delete $resource{$k};
-            }
-
-            # TODO: make custom filtering configurable!
-            foreach my $k (qw/password webpassword/) {
-                delete $resource{'_' . $k};
-            }
+        # fields we never want to see
+        foreach my $k(qw/profile_set_id external_id/) {
+            delete $resource{$k};
         }
+        delete $resource{'password'} if $c->user->roles eq 'subscriber';
+
         if ($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
             if ($item->id != $c->user->voip_subscriber->id) {
