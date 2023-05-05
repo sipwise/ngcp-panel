@@ -10,6 +10,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Sounds;
+use NGCP::Panel::Utils::Sems;
 
 sub resource_name{
     return 'soundsets';
@@ -180,6 +181,15 @@ sub update_item_model {
 
     if ($old_resource->{expose_to_customer} && !$resource->{expose_to_customer}) {
         NGCP::Panel::Utils::Sounds::revoke_exposed_sound_set($c, $item->id);
+    }
+
+    # invalidate cache of this sound set if parent is changed
+    my $old_parent_id = $old_resource->{parent_id};
+    my $parent_id = $resource->{parent_id};
+    if ((!$old_parent_id && $parent_id) ||
+         ($old_parent_id && !$parent_id) ||
+          $old_parent_id != $parent_id) {
+        NGCP::Panel::Utils::Sems::clear_audio_cache($c, $item->id);
     }
 
     return $item;

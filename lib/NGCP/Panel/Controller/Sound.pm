@@ -235,6 +235,7 @@ sub edit :Chained('base') :PathPart('edit') {
         my $parent_loop_err;
         try {
             my $own_id = $c->stash->{set_result}->id;
+            my $old_parent_id = $c->stash->{set_result}->parent_id;
             my $parent_id = $form->values->{parent_id} = $form->values->{parent}{id} // undef;
             if ($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
@@ -293,6 +294,14 @@ sub edit :Chained('base') :PathPart('edit') {
                     NGCP::Panel::Utils::Sounds::contract_sound_set_propagate(
                         $c, $c->stash->{set_result}->contract, $c->stash->{set_result}->id);
                 }
+
+                # invalidate cache of this sound set if parent is changed
+                if ((!$old_parent_id && $parent_id) ||
+                     ($old_parent_id && !$parent_id) ||
+                      $old_parent_id != $parent_id) {
+                    NGCP::Panel::Utils::Sems::clear_audio_cache($c, $own_id);
+                }
+
             });
             delete $c->session->{created_objects}->{reseller};
             delete $c->session->{created_objects}->{contract};
@@ -329,6 +338,7 @@ sub delete_sound :Chained('base') :PathPart('delete') {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
 
+            my $own_id = $c->stash->{set_result}->id;
             # remove all usr_preferenes where this set is assigned
             if($c->stash->{set_result}->contract_id) {
                 my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -344,6 +354,10 @@ sub delete_sound :Chained('base') :PathPart('delete') {
                     join => 'attribute',
                 })->delete_all; # explicit delete_all, otherwise query fails
             }
+
+            # clear audio cache of the current sound set and
+            # all potentially affected children sets
+            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $own_id);
 
             $c->stash->{set_result}->delete;
         });
@@ -592,19 +606,6 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
 
             my $target_codec = 'WAV';
 
-            # clear audio caches
-            my $group_name = $file_result->handle->group->name;
-            try {
-                NGCP::Panel::Utils::Sems::clear_audio_cache($c, $file_result->set_id, $file_result->handle->name, $group_name);
-            } catch ($e) {
-                NGCP::Panel::Utils::Message::error(
-                    c => $c,
-                    error => "Failed to clear audio cache for " . $group_name . " at appserver",
-                    desc  => $c->loc('Failed to clear audio cache.'),
-                );
-                NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-            }
-
             try {
                 $soundfile = NGCP::Panel::Utils::Sounds::transcode_file(
                     $upload->tempname, 'WAV', $target_codec);
@@ -654,6 +655,20 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 );
             }
         }
+
+        # clear audio caches
+        my $group_name = $file_result->handle->group->name;
+        try {
+            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $file_result->set_id, $file_result->handle->name, $group_name);
+        } catch ($e) {
+            NGCP::Panel::Utils::Message::error(
+                c => $c,
+                error => "Failed to clear audio cache for " . $group_name . " at appserver",
+                desc  => $c->loc('Failed to clear audio cache.'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
+        }
+
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
 
