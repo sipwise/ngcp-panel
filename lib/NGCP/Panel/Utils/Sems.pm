@@ -359,26 +359,31 @@ EOF
 sub clear_audio_cache {
     my ($c, $sound_set_id, $handle_name, $group_name) = @_;
 
-    my @pbx = $c->config->{features}->{cloudpbx} ? ('pbx') : ();
-    my @services;
-    if ($group_name eq "pbx" )  {
-        @services = (@pbx);
-    } elsif ($group_name =~ /^(music_on_hold|digits|custom_announcements)$/) {
-        @services = (@pbx, "appserver");
-    } elsif ($group_name =~ /^(malicious_call_identification|voucher_recharge|play_balance|conference|calling_card)$/) {
-        @services = ("appserver");
+    my $rs = $c->model('DB')->resultset('virtual_child_sound_sets')->search({
+    },{
+        bind => [$sound_set_id],
+    });
+
+    my $count = $rs->count;
+
+    if ($count > 10000) { # invalidate the whole sems audio cache if the amount of child sound sets is too big
+        _clear_audio_cache_service($c, "appserver", undef, undef);
+    } else {
+        my @sound_sets = map { $_->id } $rs->all;
+        _clear_audio_cache_service($c, "appserver", \@sound_sets, $handle_name)
     }
 
-    for my $service (@services) {
-        _clear_audio_cache_service($c, $service, $sound_set_id, $handle_name);
-    }
     return;
 }
 
 sub _clear_audio_cache_service {
-    my ($c, $service, $sound_set_id, $handle_name) = @_;
+    my ($c, $service, $sound_sets, $handle_name) = @_;
 
-    my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $service, 1, 1, <<EOF );
+    my $msg;
+    my $sound_sets_str = $sound_sets ? join(':', @{$sound_sets}) : undef;
+
+    if ($handle_name && $sound_sets_str) {
+        $msg = <<EOF
 <?xml version="1.0"?>
   <methodCall>
     <methodName>postDSMEvent</methodName>
@@ -390,22 +395,68 @@ sub _clear_audio_cache_service {
         <value><array><data>
           <value><array><data>
             <value><string>cmd</string></value>
-            <value><string>clearFile</string></value>
+            <value><string>clearFiles</string></value>
           </data></array></value>
           <value><array><data>
-          <value><string>audio_id</string></value>
+            <value><string>handle_name</string></value>
             <value><string>$handle_name</string></value>
-         </data></array></value>
-         <value><array><data>
-           <value><string>sound_set_id</string></value>
-           <value><string>$sound_set_id</string></value>
-         </data></array></value>
-       </data></array></value>
-     </param>
-   </params>
+          </data></array></value>
+          <value><array><data>
+            <value><string>sound_sets</string></value>
+            <value><string>$sound_sets_str</string></value>
+          </data></array></value>
+        </data></array></value>
+      </param>
+    </params>
   </methodCall>
 EOF
+    } elsif ($sound_sets_str) {
+        $msg = <<EOF
+<?xml version="1.0"?>
+  <methodCall>
+    <methodName>postDSMEvent</methodName>
+    <params>
+      <param>
+        <value><string>sw_audio</string></value>
+      </param>
+      <param>
+        <value><array><data>
+          <value><array><data>
+            <value><string>cmd</string></value>
+            <value><string>clearSets</string></value>
+          </data></array></value>
+          <value><array><data>
+            <value><string>sound_sets</string></value>
+            <value><string>$sound_sets_str</string></value>
+          </data></array></value>
+        </data></array></value>
+      </param>
+    </params>
+  </methodCall>
+EOF
+    } else {
+        $msg = <<EOF
+<?xml version="1.0"?>
+  <methodCall>
+    <methodName>postDSMEvent</methodName>
+    <params>
+      <param>
+        <value><string>sw_audio</string></value>
+      </param>
+      <param>
+        <value><array><data>
+          <value><array><data>
+            <value><string>cmd</string></value>
+            <value><string>clearAll</string></value>
+          </data></array></value>
+        </data></array></value>
+      </param>
+    </params>
+  </methodCall>
+EOF
+    }
 
+    my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, $service, 1, 1, $msg);
     if (grep { $$_[1] == 0 || ($$_[1] != -1 && $$_[2] !~ m#<value>OK</value>#) } @ret) {  # error
         die "failed to clear SEMS audio cache";
     }
