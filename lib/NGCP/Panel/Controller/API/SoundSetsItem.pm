@@ -3,6 +3,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::Sems;
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SoundSets/;
 
@@ -84,6 +85,10 @@ sub delete_item {
             join => 'attribute',
         })->delete_all; # explicit delete_all, otherwise query fails
     }
+
+    # clear audio cache of the current sound set and
+    # and all potentially affected children sets
+    NGCP::Panel::Utils::Sems::clear_audio_cache($c, $item->id);
 
     $item->delete;
 
