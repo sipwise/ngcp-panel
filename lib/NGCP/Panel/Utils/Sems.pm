@@ -97,6 +97,9 @@ sub create_peer_registration {
     # use the value of the peer_auth_user instead
     my $authorization_username = $$prefs{peer_auth_hf_user} // $$prefs{peer_auth_user};
 
+    # if there a specific registrar server defined, provide it. Otherwise use realm's value.
+    my $registrar_server = $$prefs{peer_auth_registrar_server} // $$prefs{peer_auth_realm};
+
     my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
@@ -109,6 +112,7 @@ sub create_peer_registration {
       <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
       <param><value><string>$authorization_username</string></value></param>
       <param><value><string>$type</string></value></param>
+      <param><value><string>$registrar_server</string></value></param>
     </params>
   </methodCall>
 EOF
@@ -219,6 +223,9 @@ sub update_peer_registration {
     # use the value of the peer_auth_user instead
     my $authorization_username = $$prefs{peer_auth_hf_user} // $$prefs{peer_auth_user};
 
+    # if there a specific registrar server defined, provide it. Otherwise use realm's value.
+    my $registrar_server = $$prefs{peer_auth_registrar_server} // $$prefs{peer_auth_realm};
+
     my @ret = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "appserver", $all, 1, <<EOF);
 <?xml version="1.0"?>
   <methodCall>
@@ -231,6 +238,7 @@ sub update_peer_registration {
       <param><value><string>sip:$$prefs{peer_auth_user}\@$contact;uuid=$uuid$transport</string></value></param>
       <param><value><string>$authorization_username</string></value></param>
       <param><value><string>$type</string></value></param>
+      <param><value><string>$registrar_server</string></value></param>
     </params>
   </methodCall>
 EOF
@@ -242,6 +250,9 @@ EOF
     # if no specific username defined for the Authorization header
     # use the value of the peer_auth_user instead
     my $old_authorization_username = $$oldprefs{peer_auth_hf_user} // $$oldprefs{peer_auth_user};
+
+    # if there a specific registrar server defined, provide it. Otherwise use realm's value.
+    my $old_registrar_server = $$oldprefs{peer_auth_registrar_server} // $$oldprefs{peer_auth_realm};
 
     if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
@@ -260,6 +271,7 @@ EOF
           <param><value><string>sip:$$oldprefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
           <param><value><string>$old_authorization_username</string></value></param>
           <param><value><string>$type</string></value></param>
+          <param><value><string>$old_registrar_server</string></value></param>
         </params>
       </methodCall>
 EOF
@@ -328,6 +340,9 @@ EOF
     # use the value of the peer_auth_user instead
     my $old_authorization_username = $$oldprefs{peer_auth_hf_user} // $$oldprefs{peer_auth_user};
 
+    # if there a specific registrar server defined, provide it. Otherwise use realm's value.
+    my $old_registrar_server = $$oldprefs{peer_auth_registrar_server} // $$oldprefs{peer_auth_realm};
+
     if(grep { $$_[1] == 0 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
         $c->log->error("Failed XML-RPC call to appserver: ". Dumper \@ret);
 
@@ -345,6 +360,7 @@ EOF
       <param><value><string>sip:$$oldprefs{peer_auth_user}\@$contact;uuid=$uuid</string></value></param>
       <param><value><string>$old_authorization_username</string></value></param>
       <param><value><string>$type</string></value></param>
+      <param><value><string>$old_registrar_server</string></value></param>
     </params>
   </methodCall>
 EOF

@@ -2778,7 +2778,7 @@ sub update_sems_peer_auth {
 sub get_peer_auth_params {
     my ($c, $prov_subscriber, $prefs) = @_;
 
-    foreach my $attribute (qw/peer_auth_user peer_auth_hf_user peer_auth_realm peer_auth_pass peer_auth_register/){
+    foreach my $attribute (qw/peer_auth_user peer_auth_hf_user peer_auth_realm peer_auth_registrar_server peer_auth_pass peer_auth_register/){
         my $rs;
         $rs = get_usr_preference_rs(
             c => $c,
