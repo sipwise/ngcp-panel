@@ -9517,6 +9517,10 @@ msgstr ""
 msgid "Registered Devices for %1@%2"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Registrar server value is used as a registration R-URI as well as From/To domain in the outbound REGISTER."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Regular expression - longest match"
 msgstr ""
@@ -10847,6 +10851,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specific value for the Authorization username"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specific value for the registrar server"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
