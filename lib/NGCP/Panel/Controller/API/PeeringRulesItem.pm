@@ -81,6 +81,8 @@ sub PATCH :Allow {
         
         $guard->commit;
 
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
@@ -108,6 +110,9 @@ sub PUT :Allow {
         last unless $item;
 
         $guard->commit;
+
+        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
     return;
