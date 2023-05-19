@@ -52,6 +52,7 @@ $fake_data->set_data_from_script({
             status               => 'active',
             pbx_hunt_policy      => 'parallel',
             pbx_hunt_timeout     => '15',
+            pbx_hunt_cancel_mode     => 'cancel',
         },
         'query' => [['username',{'query_type'=> 'string_like'}]],
         'create_special'=> sub {

@@ -12,7 +12,7 @@ has_field 'username' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/username pbx_extension pbx_hunt_policy pbx_hunt_timeout/],
+    render_list => [qw/username pbx_extension pbx_hunt_policy pbx_hunt_timeout pbx_hunt_cancel_mode/],
 );
 
 sub validate_username {

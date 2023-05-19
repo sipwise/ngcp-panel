@@ -24,7 +24,7 @@ has_field 'alias_number_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/pbx_extension pbx_hunt_policy pbx_hunt_timeout alias_number alias_number_add/],
+    render_list => [qw/pbx_extension pbx_hunt_policy pbx_hunt_timeout pbx_hunt_cancel_mode alias_number alias_number_add/],
 );
 
 1;

@@ -395,6 +395,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         { name => "provisioning_voip_subscriber.pbx_extension", search => 1, title => $c->loc("Extension") },
         { name => "provisioning_voip_subscriber.pbx_hunt_policy", search => 1, title => $c->loc("Hunt Policy") },
         { name => "provisioning_voip_subscriber.pbx_hunt_timeout", search => 1, title => $c->loc("Hunt Timeout") },
+        { name => "provisioning_voip_subscriber.pbx_hunt_cancel_mode", search => 1, title => $c->loc("Cancel Mode") },
     ]);
     my $subscribers_rs = $c->model('DB')->resultset('voip_subscribers')->search({
         contract_id => $contract_id,
@@ -1465,6 +1466,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 $preferences->{cloud_pbx} = 1;
                 $preferences->{cloud_pbx_hunt_policy} = $form->values->{pbx_hunt_policy};
                 $preferences->{cloud_pbx_hunt_timeout} = $form->values->{pbx_hunt_timeout};
+                $preferences->{cloud_pbx_hunt_cancel_mode} = $form->values->{pbx_hunt_cancel_mode};
                 $preferences->{cloud_pbx_ext} = $form->values->{pbx_extension};
                 $preferences->{display_name} = ucfirst($form->values->{username});
                 my @events_to_create = ();
@@ -1569,6 +1571,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                         pbx_extension => $form->values->{pbx_extension},
                         pbx_hunt_policy => $form->values->{pbx_hunt_policy},
                         pbx_hunt_timeout => $form->values->{pbx_hunt_timeout},
+                        pbx_hunt_cancel_mode => $form->values->{pbx_hunt_cancel_mode},
                     });
                 NGCP::Panel::Utils::Subscriber::update_preferences(
                     c => $c,
@@ -1576,6 +1579,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                     'preferences'   => {
                         cloud_pbx_hunt_policy  => $form->values->{pbx_hunt_policy},
                         cloud_pbx_hunt_timeout => $form->values->{pbx_hunt_timeout},
+                        cloud_pbx_hunt_cancel_mode => $form->values->{pbx_hunt_cancel_mode},
                     }
                 );
                 my $e164;

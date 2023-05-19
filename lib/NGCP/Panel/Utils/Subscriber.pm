@@ -418,7 +418,7 @@ sub prepare_resource {
     my $preferences = {};
     my $admin = 0;
     unless($customer->product->class eq 'pbxaccount') {
-        for my $pref(qw/is_pbx_group pbx_extension pbx_hunt_policy pbx_hunt_timeout is_pbx_pilot/) {
+        for my $pref(qw/is_pbx_group pbx_extension pbx_hunt_policy pbx_hunt_timeout pbx_hunt_cancel_mode is_pbx_pilot/) {
             delete $resource->{$pref};
         }
         $admin = $resource->{admin} // 0;
@@ -510,8 +510,10 @@ sub prepare_resource {
         if(is_true($resource->{is_pbx_group})) {
             $preferences->{cloud_pbx_hunt_policy}  = $resource->{cloud_pbx_hunt_policy};
             $preferences->{cloud_pbx_hunt_timeout} = $resource->{cloud_pbx_hunt_timeout};
+            $preferences->{cloud_pbx_hunt_cancel_mode} = $resource->{pbx_hunt_cancel_mode};
             $preferences->{cloud_pbx_hunt_policy}  //= $resource->{pbx_hunt_policy};
             $preferences->{cloud_pbx_hunt_timeout} //= $resource->{pbx_hunt_timeout};
+            $preferences->{cloud_pbx_hunt_cancel_mode} //= $resource->{pbx_hunt_cancel_mode};
         }
         $preferences->{cloud_pbx_ext} = $resource->{pbx_extension};
         $preferences->{shared_buddylist_visibility} = 1;
@@ -709,6 +711,7 @@ sub create_subscriber {
             pbx_extension => $params->{pbx_extension},
             pbx_hunt_policy => $params->{pbx_hunt_policy},
             pbx_hunt_timeout => $params->{pbx_hunt_timeout},
+            pbx_hunt_cancel_mode => $params->{pbx_hunt_cancel_mode},
             profile_set_id => $profile_set ? $profile_set->id : undef,
             profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,

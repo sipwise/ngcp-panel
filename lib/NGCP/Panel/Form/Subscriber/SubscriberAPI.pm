@@ -123,7 +123,6 @@ has_field 'pbx_hunt_policy' => (
         title => ["Hunting policy, one of serial, parallel, random, circular."],
     },
 );
-
 has_field 'pbx_hunt_timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     element_attr => {
@@ -131,6 +130,18 @@ has_field 'pbx_hunt_timeout' => (
         title => ['Hunting Timeout'],
     },
 );
+has_field 'pbx_hunt_cancel_mode' => (
+    type => 'Select',
+    options => [
+        { value => 'bye', label => 'bye'},
+        { value => 'cancel', label => 'cancel'},
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ["Termination mode for call legs in the early dialog stage. Can be: bye or cancel."],
+    },
+);
+
 has_field 'cloud_pbx_hunt_policy' => (
     type => 'Select',
     options => [
@@ -144,12 +155,22 @@ has_field 'cloud_pbx_hunt_policy' => (
         title => ["Hunting policy, one of serial, parallel, random, circular."],
     },
 );
-
 has_field 'cloud_pbx_hunt_timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     element_attr => {
         rel => ['tooltip'],
         title => ['Hunting Timeout'],
+    },
+);
+has_field 'cloud_pbx_hunt_cancel_mode' => (
+    type => 'Select',
+    options => [
+        { value => 'bye', label => 'bye'},
+        { value => 'cancel', label => 'cancel'},
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ["Termination mode for call legs in the early dialog stage. Can be: bye or cancel."],
     },
 );
 

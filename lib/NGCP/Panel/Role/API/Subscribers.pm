@@ -67,6 +67,8 @@ sub resource_from_item {
         delete $resource{cloud_pbx_hunt_policy};
         delete $resource{pbx_hunt_timeout};
         delete $resource{cloud_pbx_hunt_timeout};
+        delete $resource{pbx_hunt_cancel_mode};
+        delete $resource{cloud_pbx_hunt_cancel_mode};
     }
     delete $resource{contact_id};
     if($item->contact) {
@@ -540,12 +542,14 @@ sub update_item {
     if(is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
+        $provisioning_res->{pbx_hunt_cancel_mode} = $resource->{pbx_hunt_cancel_mode};
         NGCP::Panel::Utils::Subscriber::update_preferences(
             c => $c,
             prov_subscriber => $prov_subscriber,
             'preferences'   => {
                 cloud_pbx_hunt_policy  => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_policy},
-                cloud_pbx_hunt_timeout => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_timeout},
+                cloud_pbx_hunt_timeout => $resource->{cloud_pbx_hunt_timeout} // $resource->{pbx_hunt_timeout},
+                cloud_pbx_hunt_cancel_mode => $resource->{cloud_pbx_hunt_cancel_mode} // $resource->{pbx_hunt_cancel_mode},
             }
         );
     }

@@ -170,6 +170,8 @@ sub localize {
     $c->loc('The hunting policy for PBX hunt groups.');
     $c->loc('CloudPBX Hunt Timeout');
     $c->loc('The timeout for hunting in PBX hunt groups.');
+    $c->loc('CloudPBX Cancel Mode');
+    $c->loc('This is a termination mode for call legs in the early dialog stage. Can be: bye or cancel.');
     $c->loc('CloudPBX Hunt Group List');
     $c->loc('The members (as SIP URIs) of the PBX hunt group.');
     $c->loc('CLI of CloudPBX Pilot Subscriber');

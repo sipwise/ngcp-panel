@@ -38,6 +38,17 @@ has_field 'pbx_hunt_timeout' => (
     default => 10,
 );
 
+has_field 'pbx_hunt_cancel_mode' => (
+    type => 'Select',
+    required => 1,
+    label => 'Cancel Mode',
+    options => [
+        { label => 'Using Bye', value => 'bye' },
+        { label => 'Using Cancel', value => 'cancel' },
+    ],
+    default => 'cancel',
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -48,7 +59,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/pbx_extension pbx_hunt_policy pbx_hunt_timeout/],
+    render_list => [qw/pbx_extension pbx_hunt_policy pbx_hunt_timeout pbx_hunt_cancel_mode/],
 );
 
 has_block 'actions' => (

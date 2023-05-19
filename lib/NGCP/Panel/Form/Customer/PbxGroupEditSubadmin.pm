@@ -18,7 +18,7 @@ has_field 'alias_select' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/pbx_extension pbx_hunt_policy pbx_hunt_timeout alias_select/],
+    render_list => [qw/pbx_extension pbx_hunt_policy pbx_hunt_timeout pbx_hunt_cancel_mode alias_select/],
 );
 
 sub update_fields {
