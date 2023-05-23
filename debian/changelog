@@ -1,3 +1,10 @@
+ngcp-panel (10.5.3.7+0~mr10.5.3.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [04f052d] MT#57070 ignore undef enum.default_val
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 May 2023 17:37:44 +0200
+
 ngcp-panel (10.5.3.6+0~mr10.5.3.6) unstable; urgency=medium
 
   [ Marco Capetta ]
