@@ -33,6 +33,7 @@ sub template_list :Chained('/') :PathPart('invoicetemplate') :CaptureArgs(0) :Do
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'type', search => 1, title => $c->loc('Type') },
+        { name => 'category', search => 1, title => $c->loc('Category') },
     ]);
 
     $c->stash(template => 'invoice/template_list.tt');
@@ -119,6 +120,7 @@ sub create :Chained('template_list_restricted') :PathPart('create') :Args() {
             }
         }
     }
+    
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -142,6 +144,8 @@ sub create :Chained('template_list_restricted') :PathPart('create') :Args() {
                     $form->values->{reseller_id} = $c->user->reseller_id;
                 }
                 delete $form->values->{reseller};
+                
+                $c->log->debug("roles: " . $c->user->roles);
 
                 my $dup_item = $schema->resultset('invoice_templates')->find({
                     reseller_id => $form->values->{reseller_id},
@@ -152,7 +156,7 @@ sub create :Chained('template_list_restricted') :PathPart('create') :Args() {
                 }
 
                 my $tmpl_params = $form->values;
-                $tmpl_params->{data} //= NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl_params->{data});
+                $tmpl_params->{data} //= NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl_params->{category}, $tmpl_params->{data});
                 my $tmpl = $c->stash->{tmpl_rs}->create($tmpl_params);
 
                 delete $c->session->{created_objects}->{reseller};
@@ -287,7 +291,7 @@ sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0)
     my ($self, $c) = @_;
     my $tmpl = $c->stash->{tmpl};
 
-    my $content = NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl->data);
+    my $content = NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl->category, $tmpl->data);
 
     $c->response->content_type('text/html');
     $c->response->body($content);

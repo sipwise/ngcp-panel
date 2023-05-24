@@ -159,18 +159,20 @@ sub get_tt {
 }
 
 sub svg_content{
-    my ($c, $content) = @_;
+    my ($c, $category, $content) = @_;
     
     unless ($content) {
         #default is the same for all - I would like to move it as something constant to itils
-        my $default = 'invoice/default/invoice_template_svg.tt';
+        my $default = 'invoice/default/' . $category . '_invoice_template_svg.tt';
         my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
 
         try {
             $content = $t->context->insert($default);
         } catch($e) {
             # TODO: handle error!
-            $c and $c->log->error("failed to load default invoice template: $e");
+            my $msg = "failed to load default $category invoice template: $e";
+            $c and $c->log->error($msg);
+            die($msg);
             return;
         }
     }

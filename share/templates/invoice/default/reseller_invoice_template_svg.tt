@@ -6,11 +6,11 @@
 #        money_signs = 3;
         PROCESS "invoice/default/invoice_template_aux.tt";
 
-        money_format(amount=(billprof.interval_charge * 100), comma='.'); fixfee = aux.val;
+        money_format(amount=(billprof.interval_charge), comma='.'); fixfee = aux.val;
         money_format(amount=(zones.totalcost), comma='.'); zonefee = aux.val;
-        money_format(amount=(invoice.amount_net * 100), comma='.'); netfee = aux.val;
-        money_format(amount=(invoice.amount_vat * 100), comma='.'); vatfee = aux.val;
-        money_format(amount=(invoice.amount_total * 100), comma='.'); allfee = aux.val;
+        money_format(amount=(invoice.amount_net), comma='.'); netfee = aux.val;
+        money_format(amount=(invoice.amount_vat), comma='.'); vatfee = aux.val;
+        money_format(amount=(invoice.amount_total), comma='.'); allfee = aux.val;
         cur = billprof.currency;
         p_start = date_format(thedate=invoice.period_start, format='%Y-%m-%d');
         p_end = date_format(thedate=invoice.period_end, format='%Y-%m-%d');
@@ -23,15 +23,15 @@
         <title>Background</title>
 
 
-        <text x="56.7"  y="765.45">[% rescontact.company %]</text>
-        <text x="56.7"  y="779.625">[% rescontact.street %]</text>
-        <text x="56.7"  y="793.8">[% rescontact.postcode %] [% custcontact.city %]</text>
-        <text x="56.7"  y="807.975">[% rescontact.country %]</text>
+        <text x="56.7"  y="765.45">OPERATOR COMPANY</text>
+        <text x="56.7"  y="779.625">OPERATOR STREET</text>
+        <text x="56.7"  y="793.8">OPERATOR POSTCODE OPERATOR CITY</text>
+        <text x="56.7"  y="807.975">OPERATOR COUNTRY</text>
 
-        <text x="538.65" y="765.45" text-anchor="end">Company Reg.Nr.: [% rescontact.comregnum %]</text>
-        <text x="538.65" y="779.625" text-anchor="end">VAT.Nr.: [% rescontact.vatnum %]</text>
-        <text x="538.65" y="793.8" text-anchor="end">IBAN: [% rescontact.iban %]</text>
-        <text x="538.65" y="807.975" text-anchor="end">BIC: [% rescontact.bic %]</text>
+        <text x="538.65" y="765.45" text-anchor="end">Company Reg.Nr.: OPERATOR COMPREGNUM</text>
+        <text x="538.65" y="779.625" text-anchor="end">VAT.Nr.: OPERATOR VATNUM</text>
+        <text x="538.65" y="793.8" text-anchor="end">IBAN: OPERATOR IBAN</text>
+        <text x="538.65" y="807.975" text-anchor="end">BIC: OPERATOR BIC</text>
         <text x="297.675" y="816.48" text-anchor="middle">Page [% aux.page %]</text>
 
 
@@ -44,15 +44,15 @@
         <title>Summary</title>
         <!--{ [% draw_background %] }-->
 
-        <text x="79.38" y="170.1" font-family="Verdana" font-size="8">[% custcontact.firstname %] [% custcontact.lastname %]</text>
-        <text x="79.38" y="181.44" font-family="Verdana" font-size="8">[% custcontact.street %]</text>
-        <text x="79.38" y="192.78" font-family="Verdana" font-size="8">[% custcontact.postcode %] [% custcontact.city %]</text>
-        <text x="79.38" y="204.12" font-family="Verdana" font-size="8">[% custcontact.country %]</text>
+        <text x="79.38" y="170.1" font-family="Verdana" font-size="8">[% contact.company %]</text>
+        <text x="79.38" y="181.44" font-family="Verdana" font-size="8">[% contact.street %]</text>
+        <text x="79.38" y="192.78" font-family="Verdana" font-size="8">[% contact.postcode %] [% contact.city %]</text>
+        <text x="79.38" y="204.12" font-family="Verdana" font-size="8">[% contact.country %]</text>
 
         <text x="538.65" y="141.75"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Invoice Nr.</text>
         <text x="538.65" y="153.09"  text-anchor="end" font-family="Verdana" font-size="8">[% invoice.serial %]</text>
-        <text x="538.65" y="164.43"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Customer Nr.</text>
-        <text x="538.65" y="175.77"  text-anchor="end" font-family="Verdana" font-size="8">[% customer.external_id %]</text>
+        <text x="538.65" y="164.43"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Reseller Contract Nr.</text>
+        <text x="538.65" y="175.77"  text-anchor="end" font-family="Verdana" font-size="8">[% contract.external_id %]</text>
         <text x="538.65" y="187.11"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Invoice Period</text>
         <text x="538.65" y="198.45"  text-anchor="end" font-family="Verdana" font-size="8">[% p_start %] - [% p_end %]</text>
         <text x="538.65" y="209.79"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Date</text>
@@ -60,7 +60,7 @@
 
         <text x="56.7" y="283.5" font-family="Verdana" font-size="12" font-weight="bold">Your Monthly Statement</text>
 
-        <text x="56.7" y="311.85" font-family="Verdana" font-size="8">Dear Customer,</text>
+        <text x="56.7" y="311.85" font-family="Verdana" font-size="8">Dear Reseller,</text>
         <text x="56.7" y="334.53" font-family="Verdana" font-size="8">For our services provided in the period of [% p_start %] to [% p_end %], we invoice the following items:</text>
 
 
@@ -82,7 +82,7 @@
 
 
 
-        <text x="56.7" y="467.775" font-family="Verdana" font-size="8" font-weight="bold">Call Summary</text>
+        <text x="56.7" y="467.775" font-family="Verdana" font-size="8" font-weight="bold">Calls [% invoice.call_direction %] other Platform Resellers and Peers</text>
         <line x1="62.37" y1="473.445" x2="538.65" y2="473.445" style="stroke:#000000;stroke-width:1;" />
         <text x="62.37" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Zone</text>
         <text text-anchor="end" x="283.5" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Quantity</text>
@@ -90,7 +90,7 @@
         <text text-anchor="end" x="538.65" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Total Price in [% cur %]</text>
         <line x1="62.37" y1="490.455" x2="538.65" y2="490.455" style="stroke:#000000;stroke-width:1;" />
 
-        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=62, starty=507, offsety=14, miny=113.4, maxy=709, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=221,anchor='end'},{name='duration',dx=99,timestamp2time=1,anchor='end'},{name='customercost',dx=156,money_cents=1,comma='.',money_signs='3',anchor='end'}]) -%] }-->
+        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=62, starty=507, offsety=14, miny=113.4, maxy=709, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=221,anchor='end'},{name='duration',dx=99,timestamp2time=1,anchor='end'},{name='resellercost',dx=156,money_cents=1,comma='.',money_signs='3',anchor='end'}]) -%] }-->
 
         <!-- firsty-507 means the first y in the group is at 180mm (507px); mandatory to automatically place the footer after the list -->
         <!--{<g class="list-footer firsty-507 lasty-[% aux.lasty %]">}-->
@@ -110,7 +110,7 @@
             <line x1="62.37" y1="564.165" x2="538.65" y2="564.165" style="stroke:#000000;stroke-width:1;" />
             <text x="62.37" y="575.505" font-family="Verdana" font-size="8" font-weight="bold">Total Summary</text>
             <text text-anchor="end" x="538.65" y="575.505" font-family="Verdana" font-size="8" font-weight="bold">[% netfee %]</text>
-            <text x="62.37" y="586.845" font-family="Verdana" font-size="8" font-weight="bold">VAT ([% customer.vat_rate %]%)</text>
+            <text x="62.37" y="586.845" font-family="Verdana" font-size="8" font-weight="bold">VAT ([% contract.vat_rate %]%)</text>
             <text text-anchor="end" x="538.65" y="586.845" font-family="Verdana" font-size="8" font-weight="bold">[% vatfee %]</text>
             <line x1="62.37" y1="592.515" x2="538.65" y2="592.515" style="stroke:#000000;stroke-width:1;" />
             <text x="62.37" y="603.855" font-family="Verdana" font-size="8" font-weight="bold">Amount Due</text>
@@ -124,26 +124,6 @@
         <!--{</g>}-->
 
     </g>
-
-    <!--{ [% newpage %] }-->
-    <g x="0" y="0" class="page" display="none">
-        <title>CallList</title>
-        <!--{ [% draw_background %] }-->
-
-        <text x="56.7" y="141.75" font-family="Verdana" font-size="8" font-weight="bold">Call Details</text>
-        <line x1="62.37" y1="150.255" x2="538.65" y2="150.255" style="stroke:#000000;stroke-width:1;" />
-        <text x="62.37"  y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Start Time</text>
-        <text x="164.43"  y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Duration</text>
-        <text x="232.47"  y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Destination</text>
-        <text x="345.87" y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Zone</text>
-        <text x="459.27" y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Total Amount in [% cur %]</text>
-
-        <line x1="62.37" y1="170.1" x2="538.65" y2="170.1" style="stroke:#000000;stroke-width:1;" />
-
-        <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=62.37, starty=184.275, offsety=14, miny=113.4, maxy=737, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=141.175,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=28.35,prefix='+',masklen=10,mask='xxx'},{name='zone',dx=113.4},{name='source_customer_cost',dx=192.78,money_cents=1,comma='.',anchor='end',money_signs=5}]) -%] }-->
-        
-    </g>
-
 
 </svg>
 <!-- vim: set tabstop=4 syntax=html expandtab: -->

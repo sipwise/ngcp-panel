@@ -21,8 +21,8 @@ has_field 'template' => (
 );
 
 has_field 'contract' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
-    label => 'Customer',
+    type => '+NGCP::Panel::Field::AllContracts',
+    label => 'Contract',
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],

@@ -586,6 +586,48 @@ sub is_valid_noreseller_contact {
     }
 }
 
+sub all_contracts_list :Chained('contract_list') :PathPart('all_contracts') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    $c->stash->{contract_dt_columnsX} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "external_id", search => 1, title => $c->loc("External #") },
+        { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
+        #{ name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
+        #  literal_sql => NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping_stmt(c => $c, now => $now, projection => 'billing_profile.name' ) },
+        { name => "status", search => 1, title => $c->loc("Status") },
+        { name => "product.name", search => 0, title => $c->loc("Product") },
+    ]);
+    
+    my $rs_all_contracts = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'),
+        now => $now,
+        include_terminated => 0,
+    );
+    
+    $c->stash(rs_all_contracts => $rs_all_contracts);
+
+    #my @product_ids = map { $_->id; } $c->model('DB')->resultset('products')->search_rs({ 'class' => ['sippeering'] })->all;
+    #my $base_rs = $c->stash->{contract_select_rs};
+    #$c->stash->{peering_rs} = $base_rs->search({
+    #    'product_id' => { -in => [ @product_ids ] },
+    #});
+
+    $c->stash(ajax_uri => $c->uri_for_action("/contract/all_contracts_ajax"));
+}
+
+sub all_contracts_root :Chained('all_contracts_list') :PathPart('') :Args(0) {
+
+}
+
+sub all_contracts_ajax :Chained('all_contracts_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $rs = $c->stash->{rs_all_contracts};
+    NGCP::Panel::Utils::Datatables::process($c, $rs,  $c->stash->{contract_dt_columnsX});
+    $c->detach( $c->view("JSON") );
+}
 
 1;
 

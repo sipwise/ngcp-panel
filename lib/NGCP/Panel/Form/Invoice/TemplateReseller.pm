@@ -49,6 +49,23 @@ has_field 'call_direction' => (
     },
 );
 
+has_field 'category' => (
+    type => 'Select',
+    label => 'Category',
+    required => 1,
+    options => [
+        { label => 'customer', value => 'customer' },
+        { label => 'peer', value => 'peer' },
+        { label => 'reseller', value => 'reseller' },
+        { label => 'did', value => 'did' },
+    ],
+    default => 'customer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The category of the invoice.'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -59,7 +76,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name type call_direction/],
+    render_list => [qw/name type call_direction category/],
 );
 
 has_block 'actions' => (

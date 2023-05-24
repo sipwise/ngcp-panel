@@ -82,7 +82,7 @@ sub create_item {
     my $period = $form->values->{period};
     my $item;
     try {
-        my($contract_id,$customer,$tmpl,$stime,$etime,$invoice_data) = NGCP::Panel::Utils::Invoice::check_invoice_data($c, {
+        my ($contract,$tmpl,$stime,$etime,$invoice_data) = NGCP::Panel::Utils::Invoice::check_invoice_data($c, {
             contract_id  => $contract_id,
             tmpl_id      => $tmpl_id,
             period_start => $period_start,
@@ -90,8 +90,7 @@ sub create_item {
             period       => $period,
         });
         $item = NGCP::Panel::Utils::Invoice::create_invoice($c,{
-            contract_id  => $contract_id,
-            customer     => $customer,
+            contract     => $contract,
             stime        => $stime,
             etime        => $etime,
             tmpl         => $tmpl,

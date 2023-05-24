@@ -41,8 +41,9 @@ sub inv_list :Chained('/') :PathPart('invoice') :CaptureArgs(0) :Does(ACL) :ACLD
 
     $c->stash->{inv_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
-        { name => 'contract.id', search => 1, title => $c->loc('Customer #') },
-        { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
+        { name => 'contract.id', search => 1, title => $c->loc('Contract #') },
+        { name => 'contract.contact.email', search => 1, title => $c->loc('Contract Email') },
+        { name => 'contract.product.name', search => 1, title => $c->loc('Product #') },
         { name => 'serial', search => 1, title => $c->loc('Serial') },
     ]);
 
@@ -169,9 +170,9 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
             my $tmpl_id = $form->values->{template}{id};
             delete $form->values->{template};
             my $period = delete $form->values->{period};
-            my($customer,$tmpl,$stime,$etime,$invoice_data);
+            my($contract,$tmpl,$stime,$etime,$invoice_data);
 
-            ($contract_id,$customer,$tmpl,$stime,$etime,$invoice_data) = NGCP::Panel::Utils::Invoice::check_invoice_data($c, {
+            ($contract,$tmpl,$stime,$etime,$invoice_data) = NGCP::Panel::Utils::Invoice::check_invoice_data($c, {
                 contract_id  => $contract_id,
                 tmpl_id      => $tmpl_id,
                 period_start => undef,
@@ -182,8 +183,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
             $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 NGCP::Panel::Utils::Invoice::create_invoice($c,{
-                    contract_id  => $contract_id,
-                    customer     => $customer,
+                    contract     => $contract,
                     stime        => $stime,
                     etime        => $etime,
                     tmpl         => $tmpl,

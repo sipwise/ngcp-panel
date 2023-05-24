@@ -174,69 +174,112 @@ sub get_contract_zonesfees_rs {
     my $contract_id = $params{contract_id};
     my $subscriber_uuid = $params{subscriber_uuid};
     my $group_detail = $params{group_by_detail};
-
-    my $zonecalls_rs_out = $c->model('DB')->resultset('cdr')->search( {
-        'call_status'       => 'ok',
-        'source_user_id'    => ($subscriber_uuid || { '!=' => '0' }),
+    my $category = $params{category};
+       
+    my $q = {
+        call_status       => 'ok',
         start_time        =>
             [ -and =>
                 { '>=' => $stime->epoch},
                 { '<=' => $etime->epoch},
             ],
-        source_account_id => $contract_id,
-    },{
+    };
+    
+    my $q_out = { %$q };
+    my $q_in = { %$q };
+    #my $q_intra = { %$q };
+    
+    my $contract = $c->model('DB')->resultset('contracts')->find({ id => $contract_id });
+    my $class;
+    $class = $contract->product()->class() if $contract;
+    if ($class) {
+        if ($class eq 'sippeering' or $class eq 'pstnpeering') {
+            $category = 'carrier' unless $category;
+            $q_out->{source_provider_id} = $contract_id;
+            $q_out->{destination_provider_id} = { '!=' => $contract_id };
+            #$q_out->{source_user_id} = { '=' => '0' };
+            $q_in->{destination_provider_id} = $contract_id;
+            $q_in->{source_provider_id} = { '!=' => $contract_id };
+            #$q_in->{destination_user_id} = { '=' => '0' };
+            #$q_intra->{source_provider_id} = $contract_id;
+            #$q_intra->{destination_provider_id} = $contract_id;
+        } elsif ($class eq 'reseller') {
+            $category = 'reseller' unless $category;
+            $q_out->{source_provider_id} = $contract_id;
+            $q_out->{destination_provider_id} = { '!=' => $contract_id }; #no intra reseller calls
+            #$q_out->{source_user_id} = { '!=' => '0' };
+            $q_in->{destination_provider_id} = $contract_id;
+            $q_in->{source_provider_id} = { '!=' => $contract_id }; #no intra reseller calls
+            #$q_in->{destination_user_id} = { '!=' => '0' };
+            #$q_intra->{source_provider_id} = $contract_id;
+            #$q_intra->{destination_provider_id} = $contract_id;            
+        } elsif ($class eq 'sipaccount' or $class eq 'pbxaccount') {
+            $category = 'customer' unless $category;
+            if ($subscriber_uuid) {
+                $q_out->{source_user_id} = $subscriber_uuid;
+                $q_out->{destination_account_id} = { '!=' => $contract_id };
+                
+                $q_in->{destination_user_id} = $subscriber_uuid;
+                $q_in->{source_account_id} = { '!=' => $contract_id };
+            } else {
+                $q_out->{source_account_id} = $contract_id;
+                $q_out->{destination_account_id} = { '!=' => $contract_id }; #no intra contract calls
+                #$q_out->{source_user_id} = { '!=' => '0' };
+                $q_in->{destination_account_id} = $contract_id;
+                $q_in->{source_account_id} = { '!=' => $contract_id }; #no intra contract calls
+                #$q_in->{destination_user_id} = { '!=' => '0' };
+                #$q_intra->{source_account_id} = $contract_id;
+                #$q_intra->{destination_account_id} = $contract_id;
+            }
+        }
+    }
+    $category = 'carrier' if $category eq 'peer';
+    $category = 'customer' if $category eq 'did';
+    
+    my $zonecalls_rs_out = $c->model('DB')->resultset('cdr')->search($q_out,{
         'select'   => [
             { sum         => 'me.source_customer_cost', -as => 'customercost' },
             { sum         => 'me.source_carrier_cost', -as => 'carriercost' },
             { sum         => 'me.source_reseller_cost', -as => 'resellercost' },
-            { sum         => 'me.source_customer_free_time', -as => 'free_time' },
+            { sum         => "me.source_" . $category . "_free_time", -as => 'free_time' },
             { sum         => 'me.duration', -as => 'duration' },
             { count       => '*', -as => 'number' },
-            'source_customer_billing_zones_history.zone',
-            $group_detail ? 'source_customer_billing_zones_history.detail' : (),
+            "source_" . $category . "_billing_zones_history.zone",
+            $group_detail ? "source_" . $category . "_billing_zones_history.detail" : (),
         ],
         'as' => [
             qw/customercost carriercost resellercost free_time duration number zone/,
             $group_detail ? 'zone_detail' : (),
         ],
-        join        => 'source_customer_billing_zones_history',
+        join        => "source_" . $category . "_billing_zones_history",
         group_by    => [
-            'source_customer_billing_zones_history.zone',
-            $group_detail ? 'source_customer_billing_zones_history.detail' : (),
+            "source_" . $category . "_billing_zones_history.zone",
+            $group_detail ? "source_" . $category . "_billing_zones_history.detail" : (),
         ],
-        order_by    => 'source_customer_billing_zones_history.zone',
+        order_by    => "source_" . $category . "_billing_zones_history.zone",
     } );
 
-    my $zonecalls_rs_in = $c->model('DB')->resultset('cdr')->search( {
-        'call_status'       => 'ok',
-        'destination_user_id'    => ($subscriber_uuid || { '!=' => '0' }),
-        start_time        =>
-            [ -and =>
-                { '>=' => $stime->epoch},
-                { '<=' => $etime->epoch},
-            ],
-        destination_account_id => $contract_id,
-    },{
+    my $zonecalls_rs_in = $c->model('DB')->resultset('cdr')->search($q_in,{
         'select'   => [
             { sum         => 'me.destination_customer_cost', -as => 'customercost' },
             { sum         => 'me.destination_carrier_cost', -as => 'carriercost' },
             { sum         => 'me.destination_reseller_cost', -as => 'resellercost' },
-            { sum         => 'me.destination_customer_free_time', -as => 'free_time' },
+            { sum         => "me.destination_" . $category . "_free_time", -as => 'free_time' },
             { sum         => 'me.duration', -as => 'duration' },
             { count       => '*', -as => 'number' },
-            'destination_customer_billing_zones_history.zone',
-            $group_detail ? 'destination_customer_billing_zones_history.detail' : (),
+            "destination_" . $category . "_billing_zones_history.zone",
+            $group_detail ? "destination_" . $category . "_billing_zones_history.detail" : (),
         ],
         'as' => [
             qw/customercost carriercost resellercost free_time duration number zone/,
             $group_detail ? 'zone_detail' : (),
         ],
-        join        => 'destination_customer_billing_zones_history',
+        join        => "destination_" . $category . "_billing_zones_history",
         group_by    => [
-            'destination_customer_billing_zones_history.zone',
-            $group_detail ? 'destination_customer_billing_zones_history.detail' : (),
+            "destination_" . $category . "_billing_zones_history.zone",
+            $group_detail ? "destination_" . $category . "_billing_zones_history.detail" : (),
         ],
-        order_by    => 'destination_customer_billing_zones_history.zone',
+        order_by    => "destination_" . $category . "_billing_zones_history.zone",
     } );
 
     return ($zonecalls_rs_in, $zonecalls_rs_out);
@@ -285,32 +328,60 @@ sub get_contract_zonesfees {
     return \%allzones;
 }
 
-sub get_contract_calls_rs{
+sub get_contract_calls_rs {
     my %params = @_;
-    (my($c,$customer_contract_id,$stime,$etime,$call_direction)) = @params{qw/c customer_contract_id stime etime call_direction/};
+    my($c,$contract_id,$stime,$etime,$call_direction,$category) = @params{qw/c contract_id stime etime call_direction category/};
 
     $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
     $etime ||= $stime->clone->add( months => 1 );
-
-    my @cols = ();
-    push(@cols,qw/source_user source_domain source_cli destination_user_in/);
-    #push(@cols,NGCP::Panel::Utils::CallList::get_suppression_id_colnames());
-    push(@cols,qw/start_time duration call_type source_customer_cost/);
-    my @colnames = @cols;
-    push(@cols,qw/source_customer_billing_zones_history.zone source_customer_billing_zones_history.detail/);
-    push(@colnames,qw/zone zone_detail/);
     
-    my $calls_rs = $c->model('DB')->resultset('cdr')->search({
+    my $q = {
         'call_status'       => 'ok',
         'start_time'        =>
             [ -and =>
                 { '>=' => $stime->epoch},
                 { '<=' => $etime->epoch},
             ],
-        },{
+        };
+    
+    my $contract = $c->model('DB')->resultset('contracts')->find({ id => $contract_id });
+    my $class;
+    $class = $contract->product()->class() if $contract;
+    my $contract_type;
+    if ($class) {
+        if ($class eq 'sippeering' or $class eq 'pstnpeering') {
+            $category = 'carrier' unless $category;
+            $contract_type = 'provider';
+            #if ($call_direction eq 'in') {
+            #    $call_direction = 'out';
+            #} elsif ($call_direction eq 'out') {
+            #    $call_direction = 'in';
+            #}
+        } elsif ($class eq 'reseller') {
+            $category = 'reseller' unless $category;
+            $contract_type = 'provider';
+        } elsif ($class eq 'sipaccount' or $class eq 'pbxaccount') {
+            $category = 'customer' unless $category;
+            $contract_type = 'account';
+        }
+    }
+    $category = 'carrier' if $category eq 'peer';
+    $category = 'customer' if $category eq 'did';
+
+    my @cols = ();
+    push(@cols,qw/source_user source_domain source_cli destination_user_in/);
+    #push(@cols,NGCP::Panel::Utils::CallList::get_suppression_id_colnames());
+    push(@cols,qw/start_time duration call_type/);
+    push(@cols,'source_' . $category . '_cost');
+    my @colnames = @cols;
+    push(@cols,'source_' . $category . '_billing_zones_history.zone');
+    push(@cols,'source_' . $category . '_billing_zones_history.detail');
+    push(@colnames,qw/zone zone_detail/);
+    
+    my $calls_rs = $c->model('DB')->resultset('cdr')->search($q,{
             select => \@cols,
             as => \@colnames,
-            'join' => 'source_customer_billing_zones_history',
+            'join' => 'source_' . $category . '_billing_zones_history',
             'order_by'    => 'start_time',
         }
     );
@@ -318,21 +389,21 @@ sub get_contract_calls_rs{
     if ($call_direction) {
         if ($call_direction eq "in") {
             $calls_rs = $calls_rs->search({
-                destination_account_id => $customer_contract_id,
+                'destination_' . $contract_type . '_id' => $contract_id,
             });
             #suppression rs decoration at last, after any "select =>"
             return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_IN);            
         } elsif ($call_direction eq "out") {
             $calls_rs = $calls_rs->search({
-                source_account_id => $customer_contract_id,
+                'source_' . $contract_type . '_id' => $contract_id,
             });
             #suppression rs decoration at last, after any "select =>"
             return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
         } elsif ($call_direction eq "in_out") {
             $calls_rs = $calls_rs->search({
                 -or => [
-                        { source_account_id => $customer_contract_id },
-                        { destination_account_id => $customer_contract_id },
+                        { 'source_' . $contract_type . '_id' => $contract_id },
+                        { 'destination_' . $contract_type . '_id' => $contract_id },
                     ],
             });
             #suppression rs decoration at last, after any "select =>"
