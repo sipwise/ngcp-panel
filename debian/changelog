@@ -1,3 +1,12 @@
+ngcp-panel (9.5.7.3+0~mr9.5.7.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f993179] TT#105100 fix PATCHing unset webpasswords
+  * [f32b3e4] TT#105100 check PATCHing unset webpasswords
+  * [d10becf] TT#151751 refactor persisting subscriber webpassword
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 25 May 2023 16:42:20 +0200
+
 ngcp-panel (9.5.7.2+0~mr9.5.7.2) unstable; urgency=medium
 
   [ Marco Capetta ]
