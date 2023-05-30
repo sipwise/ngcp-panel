@@ -784,6 +784,7 @@ sub create_subscriber {
             tz => 'vienna',
         });
         $preferences->{account_id} = $contract->id;
+        $preferences->{reseller_id} = $contract->contact->reseller_id;
         $preferences->{ac} = $params->{e164}{ac}
             if(defined $params->{e164}{ac} && length($params->{e164}{ac}) > 0);
         $preferences->{cc} = $params->{e164}{cc}
