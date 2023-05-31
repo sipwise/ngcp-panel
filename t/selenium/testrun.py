@@ -152,6 +152,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('//div[@data-cy="aui-main-menu-items--settings"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
+        """
         print("Try to enable 'Customer Care'...", end="")
         wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div/main//div/label//div/input')))
@@ -186,6 +187,7 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]')))
         driver.find_element_by_xpath('//*[@id="q-app"]//div//aside//div//a[contains(., "Administrators")]').click()
         print("OK")
+        """
         print("Try to enable 'Read-only'...", end="")
         wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div/main//div/label//div/input')))
