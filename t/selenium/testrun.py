@@ -311,7 +311,6 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('/html/body//div/button[contains(., "Save")]').click()
         wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div/main//div/label//div/input')))
-        fill_element(driver, '/html/body//div/main//div/label//div/input', lasttname)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div//table/tbody/tr[1]/td[contains(., "' + lasttname + '")]')) > 0, "Contact last name was not changed")
         print("OK")
@@ -360,7 +359,6 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('/html/body//div/button[contains(., "Save")]').click()
         wait_for_invisibility(driver, '/html/body//div/main//div/label//div/input[contains(@class, "q-field--disabled")]')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div/main//div/label//div/input')))
-        fill_element(driver, '/html/body//div/main//div/label//div/input', lasttname)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="q-app"]//div//main//div//table/tbody/tr[1]/td[contains(., "' + lasttname + '")]')) > 0, "Contact last name was not changed")
         print("OK")
