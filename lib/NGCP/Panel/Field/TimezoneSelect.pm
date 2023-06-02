@@ -57,6 +57,7 @@ sub deflate_timezone {  # deflate: default value: clean and return empty string
 
     my $c = $self->form->ctx;
     $value = NGCP::Panel::Utils::DateTime::strip_empty_timezone_name($c, $value);
+    $value = NGCP::Panel::Utils::DateTime::get_timezone_link($c, $value);
     return $value;
 }
 

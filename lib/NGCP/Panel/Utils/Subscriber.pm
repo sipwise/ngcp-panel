@@ -627,6 +627,7 @@ sub create_subscriber {
     }
 
     $params->{timezone} = $params->{timezone}->{name} if 'HASH' eq ref $params->{timezone};
+    $params->{timezone} = NGCP::Panel::Utils::DateTime::get_timezone_link($c, $params->{timezone});
     if ($params->{timezone} && !NGCP::Panel::Utils::DateTime::is_valid_timezone_name($params->{timezone})) {
         die("invalid timezone name '$params->{timezone}' detected");
     }
