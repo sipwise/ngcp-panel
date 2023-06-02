@@ -118,6 +118,8 @@ sub POST :Allow {
         $resource->{country} = $resource->{country}{id};
         $resource->{timezone} = $resource->{timezone}{name};
 
+        $resource->{timezone} = NGCP::Panel::Utils::DateTime::get_timezone_link($c, $resource->{timezone});
+
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;

@@ -377,6 +377,12 @@ sub prepare_resource {
 
 }
 
+sub process_form_resource {
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    $resource->{timezone} = NGCP::Panel::Utils::DateTime::get_timezone_link($c, $resource->{timezone});
+}
+
 sub update_item {
     my ($self, $c, $schema, $item, $full_resource, $resource, $form) = @_;
 
@@ -389,6 +395,8 @@ sub update_item {
     my $groups = $full_resource->{groups};
     my $groupmembers = $full_resource->{groupmembers};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+
+    $self->process_form_resource($c, $item, $full_resource, $resource, $form);
 
     if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !is_true($resource->{is_pbx_pilot})) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot revoke is_pbx_pilot status from a subscriber.");
