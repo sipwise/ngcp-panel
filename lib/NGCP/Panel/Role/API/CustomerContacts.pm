@@ -10,6 +10,7 @@ use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::DateTime;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -96,8 +97,16 @@ sub contact_by_id {
     return $contact_rs->find($id);
 }
 
+sub process_form_resource {
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    $resource->{timezone} = NGCP::Panel::Utils::DateTime::get_timezone_link($c, $resource->{timezone});
+}
+
 sub update_contact {
     my ($self, $c, $contact, $old_resource, $resource, $form) = @_;
+
+    $self->process_form_resource($c, $contact, $old_resource, $resource, $form);
 
     $resource->{country}{id} = delete $resource->{country};
     $resource->{timezone}{name} = delete $resource->{timezone};
