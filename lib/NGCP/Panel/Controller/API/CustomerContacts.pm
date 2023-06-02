@@ -129,6 +129,9 @@ sub POST :Allow {
         );
         $resource->{country} = $resource->{country}{id};
         $resource->{timezone} = $resource->{timezone}{name};
+
+        $resource->{timezone} = NGCP::Panel::Utils::DateTime::get_timezone_link($c, $resource->{timezone});
+
         my $reseller_id;
         if($c->user->roles eq "admin") {
             $reseller_id = $resource->{reseller_id};
