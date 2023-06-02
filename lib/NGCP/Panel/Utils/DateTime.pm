@@ -46,6 +46,16 @@ sub strip_empty_timezone_name {
     return $value;
 }
 
+sub get_timezone_link {
+    my ($c, $value) = @_;
+
+    my %links = DateTime::TimeZone->links;
+
+    return $value unless $value;
+
+    return $links{$value} // $value;
+}
+
 sub get_default_timezone_name {
     my($c, $parent_owner_type, $parent_owner_id) = @_;
     $parent_owner_type //= '';
