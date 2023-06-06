@@ -5101,7 +5101,7 @@ sub delete_autoattendant :Chained('autoattendant') :PathPart('delete') :Args(0) 
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
 
-sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') :Args(0) {
+sub edit_autoattendant :Chained('base') :PathPart('preferences/autoattendant/edit') :Args(0) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
