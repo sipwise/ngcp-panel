@@ -199,7 +199,7 @@ sub item_by_id {
 
     my $item_rs = $self->item_rs($c,{ id => $id, });
     my $item = $item_rs->find($id);
-    if ($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+    if ($c->user->roles eq "subscriber") {
         my $sub = $self->subscriber_from_item($c, $item);
         return unless($sub->provisioning_voip_subscriber->id == $c->user->id);
     }
