@@ -1,3 +1,10 @@
+ngcp-panel (8.5.11.2+0~mr8.5.11.2) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [86f8b7f] MT#57469 Fix kamailio lcr reload on PATCH/PUT APIs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 09 Jun 2023 17:15:24 +0200
+
 ngcp-panel (8.5.11.1+0~mr8.5.11.1) unstable; urgency=medium
 
   * New release.
