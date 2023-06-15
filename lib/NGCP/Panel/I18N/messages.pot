@@ -6455,6 +6455,10 @@ msgid "Internal NCOS Set #"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Internal Reseller #'"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Internal Rewrite Rule Set # for Source/Destination fields"
 msgstr ""
 
