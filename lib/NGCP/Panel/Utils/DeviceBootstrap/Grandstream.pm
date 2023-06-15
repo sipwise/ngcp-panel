@@ -29,8 +29,7 @@ sub rpc_server_params{
 
 sub register_content {
     my $self = shift;
-    #TODO: remove actual cid here
-    my $cid = $self->params->{redirect_params}->{cid} // '';
+    my $cid = $self->params->{credentials}->{user};
     $self->{register_content} = 
         '{"cid":"'.$cid
         .'","method":"redirectDefault","params":{"macs":["'
@@ -43,8 +42,9 @@ sub register_content {
 
 sub unregister_content {   
     my $self = shift;
+    my $cid = $self->params->{credentials}->{user};
     $self->{unregister_content} =
-        '{"cid":"'.$self->params->{redirect_params}->{cid}
+        '{"cid":"'.$cid
         .'","method":"unDeviceProvision","params":{"macs":["'
         .$self->content_params->{mac}.'"]}}';
 
@@ -101,7 +101,7 @@ sub get_server_time {
 sub get_request_sign{
     my $self = shift;
     my ($request,$time) = @_;
-    my $key = $self->params->{redirect_params}->{key} // '';
+    my $key = $self->params->{credentials}->{password};
     $time //= $self->get_server_time();
     my $str2sign = $request.$time;
     my ($sign,$sign_error);
