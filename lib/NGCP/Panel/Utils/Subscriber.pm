@@ -2588,15 +2588,17 @@ sub check_pbx_extension_range {
 sub get_sub_username_and_aliases {
     my ($prov_subscriber) = @_;
     my @usernames;
-    push @usernames, $prov_subscriber->username;
-    my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
-        {
-            is_devid => 1,
-            subscriber_id => $prov_subscriber->id,
+    if ($prov_subscriber) {
+        push @usernames, $prov_subscriber->username;
+        my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
+            {
+                is_devid => 1,
+                subscriber_id => $prov_subscriber->id,
+            }
+        );
+        foreach my $devid ($devid_aliases->all) {
+            push @usernames, $devid->username;
         }
-    );
-    foreach my $devid ($devid_aliases->all) {
-        push @usernames, $devid->username;
     }
     return \@usernames;
 }
