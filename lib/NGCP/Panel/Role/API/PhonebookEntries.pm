@@ -89,7 +89,7 @@ sub check_owner_params {
     $params //= $self->get_info_data($c);
 
     # Checking for implicit subscriber - no params provided. subscriber_id can be set up here.
-    &_check_implicit_subscriber($c, $params);
+    &_check_implicit_user($c, $params);
 
     my %owner_params =
         map { $_ => $params->{$_} }
@@ -200,14 +200,16 @@ sub get_subscriber_phonebook_rs {
     return ($list_rs,$item_rs);
 }
 
-sub _check_implicit_subscriber {
+sub _check_implicit_user {
     my ($c, $params) = @_;
 
-    if (
-        (none {defined $params->{$_}} qw/reseller_id customer_id subscriber_id/) &&
-        (any {$c->user->roles eq $_} qw/subscriber subscriberadmin/)
-    ) {
-       $params->{subscriber_id} = $c->user->voip_subscriber->id;
+    if (none {defined $params->{$_}} qw/reseller_id customer_id subscriber_id/) {
+        if ($c->user->roles eq "reseller") {
+            $params->{reseller_id} = $c->user->reseller_id;
+        }
+        elsif (any {$c->user->roles eq $_} qw/subscriber subscriberadmin/) {
+            $params->{subscriber_id} = $c->user->voip_subscriber->id;
+        }
     }
 }
 
