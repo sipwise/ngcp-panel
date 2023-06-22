@@ -1,3 +1,10 @@
+ngcp-panel (11.2.1.9+0~mr11.2.1.9) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [24d7c93] MT#56865 Fix cid/key usage in grandstream provisioning
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 22 Jun 2023 13:55:22 +0200
+
 ngcp-panel (11.2.1.8+0~mr11.2.1.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
