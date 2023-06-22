@@ -13503,6 +13503,10 @@ msgid "The voucher to topup with."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "This is a termination mode for call legs in the early dialog stage. Can be: bye or cancel."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "This is device model preference."
 msgstr ""
 
@@ -15465,6 +15469,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "terminated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "termination mode for early stage legs"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
