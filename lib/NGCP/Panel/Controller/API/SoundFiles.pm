@@ -121,7 +121,7 @@ sub POST :Allow {
             $resource = JSON::from_json($json_raw, { utf8 => 0 });
         } else {
             my $ctype = $self->get_content_type($c);
-            if ($ctype eq 'application/json') {
+            if ($ctype && $ctype eq 'application/json') {
                 $resource = $self->get_valid_post_data(
                     c => $c,
                     media_type => 'application/json',
