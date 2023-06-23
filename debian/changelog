@@ -1,3 +1,10 @@
+ngcp-panel (11.3.1.13+0~mr11.3.1.13) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [551857b] MT#56693 fix /api/soundfiles without Content-Type
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 23 Jun 2023 12:25:40 +0200
+
 ngcp-panel (11.3.1.12+0~mr11.3.1.12) unstable; urgency=medium
 
   [ Marco Capetta ]
