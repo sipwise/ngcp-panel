@@ -2483,15 +2483,19 @@ sub load_preference_list :Private {
 
     my $reseller_id = $c->stash->{contract}->contact->reseller_id;
 
-    my $ncos_levels_rs = $c->model('DB')
-        ->resultset('ncos_levels')
-        ->search_rs({ reseller_id => $reseller_id, });
+    my $ncos_levels_rs = $c->model('DB')->resultset('ncos_levels')->search_rs({
+        reseller_id => $reseller_id,
+        $c->user->roles eq 'subscriberadmin' ? (expose_to_customer => 1) : ()
+    });
+
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
 
-    my $ncos_sets_rs = $c->model('DB')
-        ->resultset('ncos_sets')
-        ->search_rs({ reseller_id => $reseller_id, });
+    my $ncos_sets_rs = $c->model('DB')->resultset('ncos_sets')->search_rs({
+        reseller_id => $reseller_id,
+        $c->user->roles eq 'subscriberadmin' ? (expose_to_customer => 1) : ()
+    });
+
     $c->stash(ncos_sets_rs => $ncos_sets_rs,
               ncos_sets    => [$ncos_sets_rs->all]);
 

@@ -10,6 +10,7 @@ use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::NCOS;
 
 sub _item_rs {
     my ($self, $c) = @_;
@@ -18,6 +19,12 @@ sub _item_rs {
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        my $contract = $c->model('DB')->resultset('contracts')->find($c->user->account_id);
+        $item_rs = $item_rs->search({
+            reseller_id => $contract->contact->reseller_id,
+            expose_to_customer => 1
+        });
     }
     return $item_rs;
 }
@@ -28,6 +35,8 @@ sub get_form {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::AdminLevelAPI", $c);
     } elsif($c->user->roles eq "reseller") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::ResellerLevelAPI", $c);
+    } elsif($c->user->roles eq "subscriberadmin") {
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::SubAdminLevelAPI", $c);
     }
 }
 
@@ -112,6 +121,10 @@ sub update_item {
     }
 
     $item->update($resource);
+
+    if ($old_resource->{expose_to_customer} && !$resource->{expose_to_customer}) {
+        NGCP::Panel::Utils::NCOS::revoke_exposed_ncos_level($c, $item->id);
+    }
 
     return $item;
 }

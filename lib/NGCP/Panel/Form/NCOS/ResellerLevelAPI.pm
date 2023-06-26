@@ -69,6 +69,15 @@ has_field 'time_set_id' => (
     },
 );
 
+has_field 'expose_to_customer' => (
+    type => 'Boolean',
+    label => 'Expose to Customer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Customers can see and use this NCOS Level in their preferences']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:

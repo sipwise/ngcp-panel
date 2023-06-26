@@ -9,6 +9,7 @@ use NGCP::Panel::Form;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
+use NGCP::Panel::Utils::NCOS;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -31,6 +32,7 @@ sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
         { name => 'mode', search => 1, title => $c->loc('Mode') },
         { name => 'timeset.name', search => 1, title => $c->loc('Timeset') },
         { name => 'description', search => 1, title => $c->loc('Description') },
+        { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') },
     ]);
 
     $c->stash(template => 'ncos/list.tt');
@@ -122,6 +124,8 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     if($posted && $form->validated) {
         try {
+            my $old_expose_to_customer = $level->expose_to_customer;
+            my $expose_to_customer = $form->values->{expose_to_customer};
             $form->values->{reseller_id} = $form->values->{reseller}{id};
             delete $form->values->{reseller};
             $form->values->{time_set_id} = $form->values->{timeset}{id};
@@ -134,6 +138,9 @@ sub edit :Chained('base') :PathPart('edit') {
                 }
             }
             $level->update($form->values);
+            if ($old_expose_to_customer && !$expose_to_customer) {
+                NGCP::Panel::Utils::NCOS::revoke_exposed_ncos_level($c, $level->id);
+            }
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message::info(
                 c    => $c,

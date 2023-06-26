@@ -34,6 +34,15 @@ has_field 'timeset' => (
     type => '+NGCP::Panel::Field::TimeSet',
 );
 
+has_field 'expose_to_customer' => (
+    type => 'Boolean',
+    label => 'Expose to Customer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Customers can see and use this NCOS Level in their preferences']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -44,7 +53,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/level mode description timeset/],
+    render_list => [qw/level mode description timeset expose_to_customer/],
 );
 
 has_block 'actions' => (
