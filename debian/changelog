@@ -1,3 +1,57 @@
+ngcp-panel (11.4.1.0+0~mr11.4.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [fd9c003] TT#4166 I18N dump: snapshot 2023.03.23-00.18.21
+  * [c9c2b8b] TT#4166 I18N dump: snapshot 2023.04.04-00.27.21
+  * [479d3cf] TT#4166 I18N dump: snapshot 2023.05.03-00.20.05
+  * [54bc7cc] TT#4166 I18N dump: snapshot 2023.05.11-00.19.16
+  * [0b8979f] TT#4166 I18N dump: snapshot 2023.06.16-00.21.21
+  * [f79c7a5] TT#4166 I18N dump: snapshot 2023.06.23-00.22.39
+
+  [ Kirill Solomko ]
+  * [6a922c5] MT#56693 parent_name, allow empty sound files, sems audio cache
+  * [8ebe7f7] MT#56693 sound files loopplay change to optional
+  * [c5b288a] MT#57085 fix /api/peeringroups form operations
+  * [158def3] MT#56735 /api/billingprofiles fix reseller_id on update
+  * [c58a8b9] MT#57100 avoid where ambiguity for query_types search_eq,search_like
+  * [407d6f3] MT#56693 /api/soundets fix DELETE subscriberadmin access
+  * [eafdd43] MT#56693 fix soundset parent_name related api-journal.t
+  * [8793db1] MT#56693 fix soundset parent_name related api-soundsets.t
+  * [0370507] MT#57155 /api/rewriterules add filter by direction,field
+  * [7bc5ec0] MT#57216 fix advanced cf sets selection for admins
+  * [b566c28] MT#57347 send_email now use try/catch and error message
+  * [8917344] MT#57223 improve sems audio cache invalidation
+  * [391aa3f] MT#57564 convert deprecated timezone names
+  * [19f5c68] MT#56693 fix /api/soundfiles without Content-Type
+  * [9d9c0d0] MT#57580 add expose_to_customer support for NCOS
+
+  [ Rene Krenn ]
+  * [dd9d57c] MT#57070 ignore undef enum.default_val
+  * [70fc4c2] MT#56689 fix provisisoning templates contract creation
+  * [5e2f599] MT#57171 speedup DELETE /api/lnpnumbers/id
+  * [ccec3ef] MT#57186 expose variables to new_subscriber email
+  * [7ad8d0a] MT#57667 fix registration collection failing with terminated subs
+
+  [ Marco Capetta ]
+  * [b013f35] MT#57240 Allow '+' char in device line number definition
+  * [ce6884e] MT#57342 /api/subscribers fix field role inconsistency
+  * [be7193e] MT#57469 Fix kamailio lcr reload on PATCH/PUT APIs
+  * [28340ce] MT#56181 Fix link of AutoAttendant edit slots
+  * [e88d03f] MT#57606 subscriberadmin can manage other subscribers' registrations
+  * [e432dfa] MT#56865 Fix cid/key usage in grandstream provisioning
+  * [7853ae1] MT#57668 Add support for implicit reseller_id on phonebookentries api
+
+  [ Guillem Jover ]
+  * [6a5fb16] MT#57326 Hook new Kamailio statistics dashboard
+
+  [ Donat Zenichev ]
+  * [565c254] MT#57376 Add support of 'peer_auth_registrar_server' preference
+
+  [ Alessio Garzi ]
+  * [c45639a] MT#57447 Set reseller_id preference automatically when an account is created
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 Jun 2023 14:10:56 +0200
+
 ngcp-panel (11.4.0.0+0~mr11.4.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
