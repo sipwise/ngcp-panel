@@ -33,24 +33,28 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     my $params = $c->request->query_params;
+    my $form;
+
+    if ($c->user->roles eq "admin") {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
+    } elsif ($c->user->roles eq "reseller") {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
+    } elsif ($c->user->roles eq 'subscriber' ||
+             $c->user->roles eq 'subscriberadmin') {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::SubscriberAPI", $c);
+    }
 
     if ($params) {
         if ($params->{reseller_id}) {
-            return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
         } elsif ($params->{customer_id}) {
-            return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::CustomerAPI", $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::CustomerAPI", $c);
         } elsif ($params->{subscriber_id}) {
-            return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::SubscriberAPI", $c);
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::SubscriberAPI", $c);
         }
-    } elsif ($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
-    } elsif ($c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::ResellerAPI", $c);
-    } elsif ($c->user->roles eq 'subscriber' ||
-             $c->user->roles eq 'subscriberadmin') {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Phonebook::SubscriberAPI", $c);
     }
-    return;
+
+    return $form;
 }
 
 sub process_hal_resource {
