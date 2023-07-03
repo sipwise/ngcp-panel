@@ -1,3 +1,10 @@
+ngcp-panel (11.3.1.14+0~mr11.3.1.14) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2dad199] MT#57801 /api/phonebookentries fix get_form()
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Jul 2023 13:55:22 +0200
+
 ngcp-panel (11.3.1.13+0~mr11.3.1.13) unstable; urgency=medium
 
   [ Kirill Solomko ]
