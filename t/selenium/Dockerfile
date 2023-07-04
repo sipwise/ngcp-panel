@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2023-06-26
+ENV REFRESHED_AT 2023-07-05
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -20,7 +20,9 @@ RUN apt-get install --assume-yes \
         net-tools \
         procps \
         python3 \
-        python3-pip \
+        python3-coverage \
+        python3-nose2 \
+        python3-selenium \
         tigervnc-standalone-server \
         unzip \
         vim-tiny \
@@ -31,44 +33,35 @@ RUN adduser --disabled-password --gecos=Selenium-User selenium
 
 WORKDIR /home/selenium/
 
-# installing geckodriver (0.29.1)
-RUN wget http://deb.sipwise.com/files/geckodriver-v0.29.1-linux64.tar.gz && \
-    tar xvf geckodriver-v0.29.1-linux64.tar.gz && \
+# installing geckodriver (0.33.0)
+RUN wget http://deb.sipwise.com/files/geckodriver-v0.33.0-linux64.tar.gz && \
+    tar xvf geckodriver-v0.33.0-linux64.tar.gz && \
     ln -s /home/selenium/geckodriver /usr/bin/geckodriver && \
-    rm -f geckodriver-v0.29.1-linux64.tar.gz
+    rm -f geckodriver-v0.33.0-linux64.tar.gz
 
-# installing firefox (lang=en_US) (88.0.1)
-RUN wget http://deb.sipwise.com/files/firefox-88.0.1.tar.bz2 && \
-    tar xvf firefox-88.0.1.tar.bz2 && \
+# installing firefox (lang=en_US) (114.0.2)
+RUN wget http://deb.sipwise.com/files/firefox-114.0.2.tar.bz2 && \
+    tar xvf firefox-114.0.2.tar.bz2 && \
     ln -s /home/selenium/firefox/firefox /usr/bin/firefox && \
-    rm -f firefox-88.0.1.tar.bz2
+    rm -f firefox-114.0.2.tar.bz2
 
-# installing chromedriver (91.0.4472.19)
-RUN wget http://deb.sipwise.com/files/chromedriver_linux64.zip && \
-    unzip chromedriver_linux64.zip && \
-    ln -s /home/selenium/chromedriver /usr/bin/chromedriver && \
-    rm -f chromedriver_linux64.zip
+# installing chromedriver (114.0.5735.90)
+RUN wget http://deb.sipwise.com/files/chromedriver_linux64_114.zip && \
+    unzip chromedriver_linux64_114.zip && \
+    #ln -s /home/selenium/chromedriver /usr/bin/chromedriver && \
+    rm -f chromedriver_linux64114.zip
 
-# installing chrome (91.0.4472.77)
-RUN wget http://deb.sipwise.com/files/google-chrome-stable_current_amd64.deb && \
-    apt install -y ./google-chrome-stable_current_amd64.deb && \
-    rm -f google-chrome-stable_current_amd64.deb
-
-# installing nose2 (0.10.0), coverage (5.5) and selenium (3.141.0) via pip
-# considering to package latest version of python3-nose2/selenium/coverage as .deb package
-# installing coverage first to satisfy dependency for nose2
-RUN wget http://deb.sipwise.com/files/nose2-0.10.0.tar.gz && \
-    wget http://deb.sipwise.com/files/selenium-3.141.0.tar.gz && \
-    wget http://deb.sipwise.com/files/coverage-5.5.tar.gz && \
-    pip3 install --break-system-packages coverage-5.5.tar.gz && \
-    pip3 install --break-system-packages nose2-0.10.0.tar.gz selenium-3.141.0.tar.gz && \
-    rm -f nose2-0.10.0.tar.gz selenium-3.141.0.tar.gz coverage-5.5.tar.gz
+# installing chrome (114.0.5735.198)
+RUN wget http://deb.sipwise.com/files/google-chrome-stable_114_amd64.deb && \
+    apt install -y ./google-chrome-stable_114_amd64.deb && \
+    rm -f google-chrome-stable_114_amd64.deb
 
 RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4 /code/ tap" >/home/selenium/.bash_history
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 
 COPY t/selenium/jenkins_docker_run /home/selenium/
+COPY t/selenium/webdriver_prefs.json /usr/lib/python3/dist-packages/selenium/webdriver/firefox/
 
 ################################################################################
 # Instructions for usage

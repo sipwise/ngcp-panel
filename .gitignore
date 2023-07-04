@@ -45,3 +45,5 @@ api-rest.pretty
 nytprof
 .tags
 .remote-sync.json
+__pycache__
+core
