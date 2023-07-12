@@ -8,6 +8,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::SoundSets/;
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin/],
+    set_transaction_isolation => 'READ COMMITTED',
 });
 
 sub allowed_methods{
