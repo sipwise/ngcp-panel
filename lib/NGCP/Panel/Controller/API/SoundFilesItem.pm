@@ -31,6 +31,7 @@ sub relation{
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin/],
+    set_transaction_isolation => 'READ COMMITTED',
 });
 
 sub GET :Allow {
@@ -57,6 +58,8 @@ sub GET :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
+
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -87,6 +90,8 @@ sub PUT :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -119,6 +124,7 @@ sub PATCH :Allow {
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);

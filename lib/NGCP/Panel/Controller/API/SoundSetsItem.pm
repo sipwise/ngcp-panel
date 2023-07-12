@@ -11,7 +11,8 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller subscriberadmin/],
         Journal => [qw/admin reseller subscriberadmin/],
-    }
+    },
+    set_transaction_isolation => 'READ COMMITTED',
 });
 
 sub allowed_methods{

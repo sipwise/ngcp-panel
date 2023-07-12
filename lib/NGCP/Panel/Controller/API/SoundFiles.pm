@@ -53,6 +53,7 @@ sub relation{
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin/],
+    set_transaction_isolation => 'READ COMMITTED',
 });
 
 sub auto :Private {
@@ -108,6 +109,7 @@ sub GET :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my ($recording, $resource);
