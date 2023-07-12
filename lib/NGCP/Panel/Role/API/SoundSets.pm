@@ -188,7 +188,7 @@ sub update_item_model {
     my $parent_id = $resource->{parent_id};
     if ((!$old_parent_id && $parent_id) ||
          ($old_parent_id && !$parent_id) ||
-          $old_parent_id != $parent_id) {
+         ($old_parent_id && $parent_id && $old_parent_id != $parent_id)) {
         NGCP::Panel::Utils::Sems::clear_audio_cache($c, $item->id);
     }
 

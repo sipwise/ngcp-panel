@@ -271,6 +271,7 @@ sub edit :Chained('base') :PathPart('edit') {
                     die "an attempt to edit a sound set that does not belong to the subscriberadmin";
             }
 
+            $c->model('DB')->set_transaction_isolation('READ COMMITTED');
             $c->model('DB')->txn_do(sub {
                 if ($c->stash->{set_result}->expose_to_customer == 1 &&
                     $form->values->{expose_to_customer} == 0) {
@@ -298,7 +299,7 @@ sub edit :Chained('base') :PathPart('edit') {
                 # invalidate cache of this sound set if parent is changed
                 if ((!$old_parent_id && $parent_id) ||
                      ($old_parent_id && !$parent_id) ||
-                      $old_parent_id != $parent_id) {
+                     ($old_parent_id && $parent_id && $old_parent_id != $parent_id)) {
                     NGCP::Panel::Utils::Sems::clear_audio_cache($c, $own_id);
                 }
 
@@ -336,6 +337,7 @@ sub delete_sound :Chained('base') :PathPart('delete') {
     try {
 
         my $schema = $c->model('DB');
+        $schema->set_transaction_isolation('READ COMMITTED');
         $schema->txn_do(sub {
 
             my $own_id = $c->stash->{set_result}->id;
@@ -453,6 +455,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
             delete $form->values->{parent};
 
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 # if a new contract default is set, clear old ones first
                 if($form->values->{contract_id} && $form->values->{contract_default} == 1) {
@@ -589,7 +592,6 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
 
     if($posted && $form->validated) {
         # only if the form is validated and a POST is issued, insert the sound file in the db
-        $file_result->insert();
         if (defined $upload) {
             my $soundfile = eval { $upload->slurp };
             my $filename = eval { $upload->filename };
@@ -619,12 +621,17 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             }
 
             try {
-                $file_result->update({
-                    loopplay => $form->values->{loopplay},
-                    use_parent => $form->values->{use_parent},
-                    filename => $filename,
-                    data => $soundfile,
-                    codec => $target_codec,
+                my $schema = $c->model('DB');
+                $schema->set_transaction_isolation('READ COMMITTED');
+                $schema->txn_do(sub {
+                    $file_result->insert();
+                    $file_result->update({
+                        loopplay => $form->values->{loopplay},
+                        use_parent => $form->values->{use_parent},
+                        filename => $filename,
+                        data => $soundfile,
+                        codec => $target_codec,
+                    });
                 });
                 NGCP::Panel::Utils::Message::info(
                     c    => $c,
@@ -639,9 +646,14 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             }
         } else {
             try {
-                $file_result->update({
-                    loopplay => $form->values->{loopplay},
-                    use_parent => $form->values->{use_parent},
+                my $schema = $c->model('DB');
+                $schema->set_transaction_isolation('READ COMMITTED');
+                $schema->txn_do(sub {
+                    $file_result->insert();
+                    $file_result->update({
+                        loopplay => $form->values->{loopplay},
+                        use_parent => $form->values->{use_parent},
+                    });
                 });
                 NGCP::Panel::Utils::Message::info(
                     c    => $c,
@@ -683,7 +695,11 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
     $self->check_subadmin_handle_edit_access($c, $c->stash->{file_result});
 
     try {
-        $c->stash->{file_result}->delete;
+        my $schema = $c->model('DB');
+        $schema->set_transaction_isolation('READ COMMITTED');
+        $schema->txn_do(sub {
+            $c->stash->{file_result}->delete;
+        });
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{file_result}->get_inflated_columns },
