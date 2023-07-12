@@ -164,14 +164,20 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'acl'. Must be an array.");
         return;
     }
-    if ($resource->{secret_key} && (!$old_resource->{secret_key} || $old_resource->{secret_key} ne $resource->{secret_key})) {
+
+    my $last_sk_modify = $prov_subs->voip_mail_to_fax_preference
+                            ? $prov_subs->voip_mail_to_fax_preference->last_secret_key_modify
+                            : undef;
+    my $old_secret_key = $prov_subs->voip_mail_to_fax_preference
+                            ? $prov_subs->voip_mail_to_fax_preference->secret_key
+                            : undef;
+
+    if (exists $resource->{secret_key}) {
         $resource->{last_secret_key_modify} = NGCP::Panel::Utils::DateTime::current_local;
-    } elsif ($resource->{last_secret_key_modify} && ($old_resource->{last_secret_key_modify} ne $resource->{last_secret_key_modify})) {
-        #forbid changing modify time
-        $resource->{last_secret_key_modify} = $old_resource->{last_secret_key_modify};
-    } elsif (!$resource->{last_secret_key_modify}) {
-        #delete last_secret_key_modify to prevent automatic conversion to current time when inserting into DB
-        delete $resource->{last_secret_key_modify};
+    } else {
+        $last_sk_modify
+            ? $resource->{last_secret_key_modify} = $last_sk_modify
+            : delete $resource->{last_secret_key_modify};
     }
 
     my %update_fields = %{ $resource };
