@@ -1,3 +1,10 @@
+ngcp-panel (11.4.1.2+0~mr11.4.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [31f4502] MT#57708 sound set/file use READ COMMITTED
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 13 Jul 2023 14:45:24 +0200
+
 ngcp-panel (11.4.1.1+0~mr11.4.1.1) unstable; urgency=medium
 
   [ Mykola Malkov ]
