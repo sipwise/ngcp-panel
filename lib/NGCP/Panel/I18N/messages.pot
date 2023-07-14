@@ -2080,6 +2080,10 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/master.tt
+msgid "Cancel Mode"
+msgstr ""
+
 #. ($special_user_login.'" administrator')
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "Cannot change api key of the \""
@@ -2156,6 +2160,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Cash top-up"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Category"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2272,6 +2280,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Cloud PBX"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Cloud pbx hunt cancel mode"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2498,7 +2510,7 @@ msgstr ""
 msgid "Contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
+#: lib/NGCP/Panel/Controller/Invoice.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contract #"
 msgstr ""
 
@@ -2514,6 +2526,10 @@ msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Contract Balance"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Invoice.pm
+msgid "Contract Email"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2538,6 +2554,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contract id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Invoice.pm
+msgid "Contract not found"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm
@@ -2949,7 +2969,7 @@ msgstr ""
 msgid "Customer"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Controller/Invoice.pm share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt
+#: lib/NGCP/Panel/Controller/Device.pm share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt
 msgid "Customer #"
 msgstr ""
 
@@ -2991,7 +3011,7 @@ msgstr ""
 msgid "Customer Details for #%1 (%2)"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm lib/NGCP/Panel/Controller/Invoice.pm
+#: lib/NGCP/Panel/Controller/Device.pm
 msgid "Customer Email"
 msgstr ""
 
@@ -4820,7 +4840,7 @@ msgstr ""
 msgid "Failed to generate manual ip group sequence"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Utils/Invoice.pm
+#: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Failed to get contract balance."
 msgstr ""
 
@@ -8749,6 +8769,10 @@ msgid "Pbx groupmember ids"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Pbx hunt cancel mode"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Pbx hunt policy"
 msgstr ""
 
@@ -9206,6 +9230,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Utils/DbStrings.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Product"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Invoice.pm
+msgid "Product #"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subprofile/preferences.tt
@@ -9858,6 +9886,14 @@ msgstr ""
 #. (reseller.first.status)
 #: share/templates/reseller/branding.tt share/templates/reseller/details.tt
 msgid "Reseller is <b>%1</b>"
+msgstr ""
+
+#: lib/NGCP/Panel/Form/Invoice/TemplateAdmin.pm
+msgid "Reseller is must be empty for category 'peer' or 'reseller'"
+msgstr ""
+
+#: lib/NGCP/Panel/Form/Invoice/TemplateAdmin.pm
+msgid "Reseller is required for category 'customer' or 'did'"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm
@@ -11667,6 +11703,10 @@ msgid "Terminating pilot subscriber when other subscribers exist is prohibited."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Termination mode for call legs in the early dialog stage. Can be: bye or cancel."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Text"
 msgstr ""
 
@@ -11952,6 +11992,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The calling party number in E164 format to match. Regular expressions or shell patterns can be used depending on the is_regex flag. Use &quot;anonymous&quot; to match suppressed numbers."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The category of the invoice."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13507,6 +13551,10 @@ msgid "The voucher to topup with."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "This is a termination mode for call legs in the early dialog stage. Can be: bye or cancel."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "This is device model preference."
 msgstr ""
 
@@ -14214,6 +14262,14 @@ msgid "Username used to configure bootstrap url on Yealink redirect server. Obta
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Using Bye"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Using Cancel"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Uuid"
 msgstr ""
 
@@ -14792,6 +14848,10 @@ msgid "busy"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "bye"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "call"
 msgstr ""
 
@@ -14908,6 +14968,10 @@ msgid "current month"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "customer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "customer creation date, at 00:00 contract time"
 msgstr ""
 
@@ -14989,6 +15053,10 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "destination"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "did"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/statistics/supportstatus.tt
@@ -15340,6 +15408,10 @@ msgid "pbxaccount"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "peer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "pending"
 msgstr ""
 
@@ -15469,6 +15541,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "terminated"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "termination mode for early stage legs"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
