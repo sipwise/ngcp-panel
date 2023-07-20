@@ -1,3 +1,10 @@
+ngcp-panel (11.3.1.16+0~mr11.3.1.16) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f3b9ff4] MT#56735 /api/billingprofiles fix reseller_id on update
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 20 Jul 2023 10:22:00 +0200
+
 ngcp-panel (11.3.1.15+0~mr11.3.1.15) unstable; urgency=medium
 
   [ Kirill Solomko ]
