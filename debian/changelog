@@ -1,3 +1,15 @@
+ngcp-panel (10.5.6.0+0~mr10.5.6.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [51e549b] MT#57342 /api/subscribers fix field role inconsistency
+  * [1a6567c] MT#57469 Fix kamailio lcr reload on PATCH/PUT APIs
+  * [adf47c1] MT#56181 Fix link of AutoAttendant edit slots
+
+  [ Nico Schedel ]
+  * [40909df] MT#55491 fix tests for mr10.5 point releases
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Jul 2023 12:20:40 +0200
+
 ngcp-panel (10.5.5.0+0~mr10.5.5.0) unstable; urgency=medium
 
   [ Rene Krenn ]
