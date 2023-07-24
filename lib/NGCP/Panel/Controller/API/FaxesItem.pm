@@ -11,13 +11,8 @@ __PACKAGE__->set_config({
 });
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD DELETE/];
 }
-
-#sub delete_item {
-#    my ($self, $c, $item) = @_;
-#    $item->delete;
-#}
 
 1;
 
