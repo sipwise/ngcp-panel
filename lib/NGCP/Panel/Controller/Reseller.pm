@@ -34,8 +34,11 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     $c->stash(
         resellers => $c->model('DB')
             ->resultset('resellers')->search({
-                status => { '!=' => 'terminated' }
+                'me.status' => { '!=' => 'terminated' }
+            },{
+                join => 'contract',
             }),
+
         template => 'reseller/list.tt'
     );
 
@@ -54,6 +57,7 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
         { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
           literal_sql => NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping_stmt(c => $c, projection => 'billing_profile.name' ) },
         { name => "status", search => 1, title => $c->loc("Status") },
+        { name => "max_subscribers", search => 1, title => $c->loc("Max. Subscribers") },
     ]);
 }
 
@@ -147,7 +151,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     $c->detach('/denied_page')
         if($c->user->roles eq "reseller" && $c->user->reseller_id != $reseller_id);
 
-    my $reseller = $c->stash->{resellers}->search_rs({ id => $reseller_id });
+    my $reseller = $c->stash->{resellers}->search_rs({ 'me.id' => $reseller_id });
     unless($reseller->first) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
@@ -233,6 +237,12 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     $c->stash->{timesets_rs} = $reseller->first->time_sets;
     $c->stash->{branding} = $reseller->first->branding;
     $c->stash->{phonebook} = $reseller->first->phonebook;
+
+    if (defined $reseller->first->contract->max_subscribers) {
+        $c->stash->{subscriber_count} = NGCP::Panel::Utils::Reseller::get_subscribers_count(
+            $c, $reseller->first
+        );
+    }
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {

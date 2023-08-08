@@ -200,6 +200,12 @@ sub POST :Allow {
             return;
         }
 
+        if (NGCP::Panel::Utils::Contract::is_peering_product(
+            c => $c, product => $product) && defined $resource->{max_subscribers}) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Peering contract should not have 'max_subscribers' defined.");
+            return;
+        }
+
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;

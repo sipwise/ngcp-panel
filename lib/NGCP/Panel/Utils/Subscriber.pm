@@ -380,7 +380,18 @@ sub prepare_resource {
             status => { '!=' => 'terminated' },
         })->count >= $customer->max_subscribers) {
 
-        &{$err_code}(HTTP_FORBIDDEN, "Maximum number of subscribers reached.");
+        &{$err_code}(HTTP_FORBIDDEN, "Maximum number of customer subscribers reached.");
+        return;
+    }
+
+    my $reseller = $customer->contact->reseller;
+    my $reseller_max_subscribers = $reseller->contract->max_subscribers;
+    if (!$item && defined $reseller_max_subscribers &&
+        NGCP::Panel::Utils::Reseller::get_subscribers_count(
+            $c, $reseller
+        ) >= $reseller_max_subscribers) {
+
+        &{$err_code}(HTTP_FORBIDDEN, "Maximum number of reseller subscribers reached.");
         return;
     }
 

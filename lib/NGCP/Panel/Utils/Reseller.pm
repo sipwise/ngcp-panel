@@ -157,6 +157,18 @@ sub _handle_reseller_status_change {
     }
 }
 
+sub get_subscribers_count {
+    my ($c, $reseller) = @_;
+
+    my $count = $reseller->search_related('contacts', {
+        'voip_subscribers.status' => { -not_in => ['terminated'] }
+    },{
+        join => { contracts => 'voip_subscribers' },
+    })->count;
+
+    return $count;
+}
+
 
 1;
 

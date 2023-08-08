@@ -42,4 +42,14 @@ has_field 'type' => (
     },
 );
 
+has_field 'max_subscribers' => (
+    type => 'PosInteger',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Optionally set the maximum number of subscribers for this contract (reseller only). Leave empty for unlimited.']
+    },
+);
+
+
 1;

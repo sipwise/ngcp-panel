@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Contract::PeeringReseller;
+package NGCP::Panel::Form::Contract::Reseller;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Contract::Base';
@@ -32,10 +32,20 @@ has_field 'billing_profiles.profile' => (
     },
 );
 
+has_field 'max_subscribers' => (
+    type => 'PosInteger',
+    label => 'Max Subscribers',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Optionally set the maximum number of subscribers for this reseller contract. Leave empty for unlimited.']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add status external_id/],
+    render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add status external_id max_subscribers/],
 );
 
 1;

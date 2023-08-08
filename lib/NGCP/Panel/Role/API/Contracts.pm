@@ -168,6 +168,12 @@ sub update_contract {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Peering/reseller contract can't be connected to the prepaid billing profile $prepaid_billing_profile_exist.");
         return;
     }
+
+    if (NGCP::Panel::Utils::Contract::is_peering_product(
+        c => $c, product => $contract->product) && defined $resource->{max_subscribers}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Peering contract should not have 'max_subscribers' defined.");
+        return;
+    }
     $resource->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
 
     if($old_resource->{contact_id} != $resource->{contact_id}) {

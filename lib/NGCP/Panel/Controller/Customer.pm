@@ -19,6 +19,7 @@ use NGCP::Panel::Utils::Voucher;
 use NGCP::Panel::Utils::ContractLocations qw();
 use NGCP::Panel::Utils::Events qw();
 use NGCP::Panel::Utils::Phonebook;
+use NGCP::Panel::Utils::Reseller;
 use Template;
 
 =head1 NAME
@@ -744,15 +745,32 @@ sub details :Chained('base') :PathPart('details') :Args(0) {
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
 
-    if(defined $c->stash->{contract}->max_subscribers &&
+    if (defined $c->stash->{contract}->max_subscribers &&
        $c->stash->{contract}->voip_subscribers
         ->search({ status => { -not_in => ['terminated'] } })
         ->count >= $c->stash->{contract}->max_subscribers) {
 
         NGCP::Panel::Utils::Message::error(
             c => $c,
-            error => "tried to exceed max number of subscribers of " . $c->stash->{contract}->max_subscribers,
-            desc  => $c->loc('Maximum number of subscribers for this customer reached'),
+            error => "tried to exceed max number of customer subscribers: " . $c->stash->{contract}->max_subscribers,
+            desc  => $c->loc('Maximum number of subscribers for this customer is reached'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
+    }
+
+    my $reseller = $c->stash->{contract}->contact->reseller;
+    my $reseller_max_subscribers = $reseller->contract->max_subscribers;
+    if (defined $reseller_max_subscribers &&
+        NGCP::Panel::Utils::Reseller::get_subscribers_count(
+            $c, $reseller
+        ) >= $reseller_max_subscribers) {
+
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => "tried to exceed max number of reseller subscribers: " . $reseller_max_subscribers,
+            desc  => $c->loc('Maximum number of subscribers for this reseller is reached'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])

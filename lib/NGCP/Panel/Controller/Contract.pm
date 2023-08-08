@@ -131,11 +131,15 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $params->{contact}{id} = $contract->contact_id;
         $params->{external_id} = $contract->external_id;
         $params->{status} = $contract->status;
+        $params->{max_subscribers} = $contract->max_subscribers;
     }
     $params = merge($params, $c->session->{created_objects});
     my ($form, $is_peering_reseller);
-    if ( NGCP::Panel::Utils::Contract::is_peering_reseller_contract( c => $c, contract => $contract ) ) {
-        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
+    if ( NGCP::Panel::Utils::Contract::is_peering_product( c => $c, product => $contract->product ) ) {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Peering", $c);
+        $is_peering_reseller = 1;
+    } elsif ( NGCP::Panel::Utils::Contract::is_reseller_product( c => $c, product => $contract->product ) ) {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Reseller", $c);
         $is_peering_reseller = 1;
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Contract", $c);
@@ -355,7 +359,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     }
     $c->stash->{type} = 'sippeering';
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Peering", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -480,6 +484,7 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
         { name => 'billing_profile_name', accessor => "billing_profile_name", search => 0, title => $c->loc('Billing Profile'),
           literal_sql => NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping_stmt(c => $c, now => $now, projection => 'billing_profile.name' ) },
         { name => "status", search => 1, title => $c->loc("Status") },
+        { name => "max_subscribers", search => 1, title => $c->loc("Max. Subscribers") },
     ]);
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $contract_columns);
     $c->detach( $c->view("JSON") );
@@ -496,7 +501,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
     }
     $c->stash->{type} = 'reseller';
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::PeeringReseller", $c);
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Reseller", $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,

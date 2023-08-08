@@ -62,6 +62,15 @@
         </div>
         <div class="accordion-body collapse" id="collapse_contract">
             <div class="accordion-inner">
+        [% IF reseller.first.contract.max_subscribers.defined && subscriber_count < reseller.first.contract.max_subscribers -%]
+            <div class="alert alert-info">
+            [% c.loc('[_1] of maximum [_2] subscribers (including PBX groups) created', subscriber_count, reseller.first.contract.max_subscribers) %]
+            </div>
+        [% ELSIF reseller.first.contract.max_subscribers.defined -%]
+            <div class="alert">
+            [% c.loc('Maximum number of [_1] subscribers (including PBX groups) created', reseller.first.contract.max_subscribers) %]
+            </div>
+        [% END -%]
 [%
     helper.name = c.loc('Contract');
     helper.identifier = "Contract";

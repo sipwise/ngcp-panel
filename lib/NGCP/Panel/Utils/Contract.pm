@@ -432,6 +432,26 @@ sub is_peering_reseller_product {
     return 0;
 }
 
+sub is_peering_product {
+    my %params = @_;
+    my($c, $product) = @params{qw/c product/};
+    if (grep {$product->handle eq $_}
+            ("SIP_PEERING", "PSTN_PEERING")) {
+        return 1;
+    }
+    return 0;
+}
+
+sub is_reseller_product {
+    my %params = @_;
+    my($c, $product) = @params{qw/c product/};
+    if (grep {$product->handle eq $_}
+            ("VOIP_RESELLER")) {
+        return 1;
+    }
+    return 0;
+}
+
 sub acquire_contract_rowlocks {
     my %params = @_;
     my($c,$schema,$rs,$contract_id_field,$contract_ids,$contract_id) = @params{qw/c schema rs contract_id_field contract_ids contract_id/};
