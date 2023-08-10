@@ -136,6 +136,11 @@ msgstr ""
 msgid "%1 of maximum %2 subscribers %3 created"
 msgstr ""
 
+#. (subscriber_count, reseller.first.contract.max_subscribers)
+#: share/templates/reseller/details.tt
+msgid "%1 of maximum %2 subscribers (including PBX groups) created"
+msgstr ""
+
 #. (escaped_cf, d.timeout)
 #: share/templates/subscriber/preferences.tt
 msgid "%1<span class=\"pull-right\">for %2s</span>"
@@ -7553,7 +7558,7 @@ msgstr ""
 msgid "Max subscribers"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm
+#: lib/NGCP/Panel/Controller/Contract.pm lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Max. Subscribers"
 msgstr ""
 
@@ -7576,6 +7581,11 @@ msgstr ""
 #. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt
 msgid "Maximum number of %1 subscribers %2 created"
+msgstr ""
+
+#. (reseller.first.contract.max_subscribers)
+#: share/templates/reseller/details.tt
+msgid "Maximum number of %1 subscribers (including PBX groups) created"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7631,7 +7641,15 @@ msgid "Maximum number of overall (incoming and outgoing) concurrent on-net and o
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Maximum number of subscribers for this customer is reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Maximum number of subscribers for this customer reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Maximum number of subscribers for this reseller is reached"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8387,7 +8405,15 @@ msgid "Optional billing network id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Optionally set the maximum number of subscribers for this contract (reseller only). Leave empty for unlimited."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Optionally set the maximum number of subscribers for this contract. Leave empty for unlimited."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Optionally set the maximum number of subscribers for this reseller contract. Leave empty for unlimited."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
