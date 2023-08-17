@@ -1,3 +1,13 @@
+ngcp-panel (9.5.7.4+0~mr9.5.7.4) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [2a62f10] MT#55491 fix tests for mr9.5 point releases
+
+  [ Rene Krenn ]
+  * [32f706e] MT#57070 ignore undef enum.default_val
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 17 Aug 2023 13:55:26 +0200
+
 ngcp-panel (9.5.7.3+0~mr9.5.7.3) unstable; urgency=medium
 
   [ Rene Krenn ]
