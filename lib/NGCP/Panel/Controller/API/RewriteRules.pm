@@ -69,6 +69,21 @@ sub create_item {
     my $item;
 
     try {
+        unless ($form->values->{priority}) {
+            my $res = $c->model('DB')->resultset('voip_rewrite_rules')->search({
+                set_id => $form->values->{set_id},
+            },{
+                columns => [
+                    { max_priority => \'MAX(priority)' },
+                ]
+            })->first;
+            if ($res) {
+                my %cols = $res->get_inflated_columns;
+                if ($cols{max_priority}) {
+                    $resource->{priority} = $cols{max_priority} + 1;
+                }
+            }
+        }
         $item = $schema->resultset('voip_rewrite_rules')->create($resource);
     } catch($e) {
         $c->log->error("failed to create rewriterule: $e"); # TODO: user, message, trace, ...
