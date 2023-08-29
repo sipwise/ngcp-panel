@@ -7015,6 +7015,10 @@ msgstr ""
 msgid "Key Definition"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "KeyDB Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Keys add"
 msgstr ""
