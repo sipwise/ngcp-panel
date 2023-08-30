@@ -1,3 +1,10 @@
+ngcp-panel (11.2.1.10+0~mr11.2.1.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [52ee74e] MT#57753 fix /api/mailtofaxsettings secret_key change
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 30 Aug 2023 11:51:18 +0200
+
 ngcp-panel (11.2.1.9+0~mr11.2.1.9) unstable; urgency=medium
 
   [ Marco Capetta ]
