@@ -1,3 +1,37 @@
+ngcp-panel (11.5.1.0+0~mr11.5.1.0) unstable; urgency=medium
+
+  [ Sipwise Jenkins Builder ]
+  * [faf5846] TT#4166 I18N dump: snapshot 2023.06.27-00.20.52
+  * [d41dfe0] TT#4166 I18N dump: snapshot 2023.07.15-00.21.03
+  * [ae99153] TT#4166 I18N dump: snapshot 2023.08.11-00.26.05
+  * [2894409] TT#4166 I18N dump: snapshot 2023.08.30-00.21.05
+
+  [ Mykola Malkov ]
+  * [94c1e03] MT#57453 Switch docker image to bookworm
+
+  [ Kirill Solomko ]
+  * [c2fe092] MT#57801 /api/phonebookentries fix get_form()
+  * [22a8e95] MT#57708 sound set/file use READ COMMITTED
+  * [ba78e19] MT#57753 fix /api/mailtofaxsettings secret_key change
+  * [6953de9] MT#33041 add reseller max subscribers support
+  * [b7c2261] MT#57987 /api/rewriterules calculate priority on create
+
+  [ Nico Schedel ]
+  * [a2270e1] MT#57776 update dockerfile to make python tests work on debian 12
+
+  [ Donat Zenichev ]
+  * [fd796a9] MT#56845 HG: introduce new field `Cancel Mode`
+
+  [ Rene Krenn ]
+  * [cde01e7] MT#53849 peer/reseller invoicing
+  * [8fbd46e] MT#57382 DELETE /api/faxes/id
+
+  [ Marco Capetta ]
+  * [967bc58] TT#179901 Discontinue iNew dedicated features and code (part 2)
+  * [837d7ce] MT#56422 Hook new KeyDB statistics dashboard
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 30 Aug 2023 18:04:42 +0200
+
 ngcp-panel (11.5.0.0+0~mr11.5.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
