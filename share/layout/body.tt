@@ -137,7 +137,7 @@
             [% IF c.config.general.ui_enable -%]
               [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' || c.user.roles == 'ccareadmin' || c.user.roles == 'ccare' || c.user.roles == 'lintercept' -%]
                 <div class="nav pull-right">
-                  <b><a href="[% c.uri_for_action('/login_to_v2') -%]/?page=[% c.req.path -%]">[% c.loc('GO TO NEW ADMIN PANEL') -%]</a></b>
+                  <b><a href="[% c.uri_for_action('/login_to_v2') -%]/?page=[% c.escape_uri(c.req.path) -%]">[% c.loc('GO TO NEW ADMIN PANEL') -%]</a></b>
                 </div>
               [% END -%]
             [% END -%]
@@ -220,7 +220,7 @@ var mainWrapperInit = function () {
     });
 
     [%
-        backuri = c.req.uri;
+        backuri = c.escape_uri(c.req.uri);
         tmp = backuri.query_param_delete('back');
     -%]
     $('a').each(function() {
