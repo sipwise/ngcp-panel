@@ -28,6 +28,7 @@ use Catalyst qw/
     Session::State::Cookie
     NGCP::EscapeSensitiveValue
     NGCP::EscapeJs
+    NGCP::EscapeURI
     I18N
 /;
 use Log::Log4perl::Catalyst qw();
