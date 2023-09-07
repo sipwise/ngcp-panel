@@ -1,3 +1,10 @@
+ngcp-panel (10.3.1.7+0~mr10.3.1.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [5931cd7] MT#58157 escape uri refs in body.tt
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Sep 2023 18:45:04 +0200
+
 ngcp-panel (10.3.1.6+0~mr10.3.1.6) unstable; urgency=medium
 
   [ Oleksandr Duts ]
