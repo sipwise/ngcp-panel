@@ -777,6 +777,9 @@ sub process_hal_resource {
             @{$resource}{qw/caller callee/} = @{$resource}{qw/own_cli other_cli/};
         } else {
             @{$resource}{qw/caller callee/} = @{$resource}{qw/other_cli own_cli/};
+            if ($resource->{clir} && $c->user->roles ne 'admin' && $c->user->roles ne 'reseller') {
+                $resource->{caller} = "Anonymous";
+            }
         }
         foreach my $field (qw/type/){
             $resource->{$field} = $item_mock_obj->$field;
