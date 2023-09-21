@@ -1,3 +1,10 @@
+ngcp-panel (9.5.5.15+0~mr9.5.5.15) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [481d923] TT#151401 invoice: calc totals from CDRs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 21 Sep 2023 15:50:08 +0200
+
 ngcp-panel (9.5.5.14+0~mr9.5.5.14) unstable; urgency=medium
 
   [ Kirill Solomko ]
