@@ -332,17 +332,18 @@ sub get_contract_calls_rs {
     my %params = @_;
     my($c,$contract_id,$stime,$etime,$call_direction,$category) = @params{qw/c contract_id stime etime call_direction category/};
 
+    my $target;
+    if ($call_direction) {
+        if ($call_direction eq "in") {
+            $target = 'destination';
+        } elsif ($call_direction eq "out") {
+            $target = 'source';
+        }
+    }
+    return unless $target;
+    
     $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
     $etime ||= $stime->clone->add( months => 1 );
-    
-    my $q = {
-        'call_status'       => 'ok',
-        'start_time'        =>
-            [ -and =>
-                { '>=' => $stime->epoch},
-                { '<=' => $etime->epoch},
-            ],
-        };
     
     my $contract = $c->model('DB')->resultset('contracts')->find({ id => $contract_id });
     my $class;
@@ -367,16 +368,26 @@ sub get_contract_calls_rs {
     }
     $category = 'carrier' if $category eq 'peer';
     $category = 'customer' if $category eq 'did';
+    
+    my $q = {
+        'call_status'       => 'ok',
+        'start_time'        =>
+            [ -and =>
+                { '>=' => $stime->epoch},
+                { '<=' => $etime->epoch},
+            ],
+        $target . '_' . $contract_type . '_id' => $contract_id,
+    };    
 
     my @cols = ();
     push(@cols,qw/source_user source_domain source_cli destination_user_in/);
     #push(@cols,NGCP::Panel::Utils::CallList::get_suppression_id_colnames());
     push(@cols,qw/start_time duration call_type/);
-    push(@cols,'source_' . $category . '_cost');
     my @colnames = @cols;
-    push(@cols,'source_' . $category . '_billing_zones_history.zone');
-    push(@cols,'source_' . $category . '_billing_zones_history.detail');
-    push(@colnames,qw/zone zone_detail/);
+    push(@cols,$target . '_' . $category . '_cost');
+    push(@cols,$target . '_' . $category . '_billing_zones_history.zone');
+    push(@cols,$target . '_' . $category . '_billing_zones_history.detail');
+    push(@colnames,qw/cost zone zone_detail/);
     
     my $calls_rs = $c->model('DB')->resultset('cdr')->search($q,{
             select => \@cols,
@@ -388,26 +399,26 @@ sub get_contract_calls_rs {
 
     if ($call_direction) {
         if ($call_direction eq "in") {
-            $calls_rs = $calls_rs->search({
-                'destination_' . $contract_type . '_id' => $contract_id,
-            });
+            #$calls_rs = $calls_rs->search({
+            #    'destination_' . $contract_type . '_id' => $contract_id,
+            #});
             #suppression rs decoration at last, after any "select =>"
             return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_IN);            
         } elsif ($call_direction eq "out") {
-            $calls_rs = $calls_rs->search({
-                'source_' . $contract_type . '_id' => $contract_id,
-            });
+            #$calls_rs = $calls_rs->search({
+            #    'source_' . $contract_type . '_id' => $contract_id,
+            #});
             #suppression rs decoration at last, after any "select =>"
             return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
-        } elsif ($call_direction eq "in_out") {
-            $calls_rs = $calls_rs->search({
-                -or => [
-                        { 'source_' . $contract_type . '_id' => $contract_id },
-                        { 'destination_' . $contract_type . '_id' => $contract_id },
-                    ],
-            });
-            #suppression rs decoration at last, after any "select =>"
-            return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
+        #} elsif ($call_direction eq "in_out") {
+        #    $calls_rs = $calls_rs->search({
+        #        -or => [
+        #                { 'source_' . $contract_type . '_id' => $contract_id },
+        #                { 'destination_' . $contract_type . '_id' => $contract_id },
+        #            ],
+        #    });
+        #    #suppression rs decoration at last, after any "select =>"
+        #    return NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$calls_rs,NGCP::Panel::Utils::CallList::SUPPRESS_INOUT);
         }
     }
 

@@ -124,24 +124,26 @@ sub create_invoice {
     
     my $calllist = [];
     if ($tmpl->category eq 'customer') {
-        my $calllist_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
-            c => $c,
-            contract_id => $contract->id,
-            stime => $stime,
-            etime => $etime,
-            call_direction => $tmpl->call_direction,
-            category => $tmpl->category,
-        );
-        $calllist = [ map {
-            my $call = {$_->get_inflated_columns};
-            $call->{start_time} = $call->{start_time}->epoch;
-            $call->{destination_user_in} =~s/%23/#/g;
-            #$call->{destination_user_in} = encode_entities($call->{destination_user_in}, '<>&"#');
-            $call->{source_customer_cost} += 0.0; # make sure it's a number
-            $call->{source_reseller_cost} += 0.0 if exists $call->{source_reseller_cost};
-            $call->{source_carrier_cost} += 0.0 if exists $call->{source_carrier_cost};
-            NGCP::Panel::Utils::CallList::suppress_cdr_fields($c,$call,$_);
-        } $calllist_rs->all ];
+        if (my $calllist_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+                c => $c,
+                contract_id => $contract->id,
+                stime => $stime,
+                etime => $etime,
+                call_direction => $tmpl->call_direction,
+                category => $tmpl->category,
+            )) {
+            $calllist = [ map {
+                my $call = {$_->get_inflated_columns};
+                $call->{start_time} = $call->{start_time}->epoch;
+                $call->{destination_user_in} =~s/%23/#/g;
+                #$call->{destination_user_in} = encode_entities($call->{destination_user_in}, '<>&"#');
+                $call->{cost} += 0.0; # make sure it's a number
+                #$call->{source_customer_cost} += 0.0; # make sure it's a number
+                #$call->{source_reseller_cost} += 0.0 if exists $call->{source_reseller_cost};
+                #$call->{source_carrier_cost} += 0.0 if exists $call->{source_carrier_cost};
+                NGCP::Panel::Utils::CallList::suppress_cdr_fields($c,$call,$_);
+            } $calllist_rs->all ];
+        }
     }
 
     my $invoice_amounts = get_invoice_amounts(
