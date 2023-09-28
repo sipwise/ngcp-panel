@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.2+0~mr11.5.1.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9172b16] MT#58337 show destination call costs/zones in invoice callist
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 28 Sep 2023 15:05:55 +0200
+
 ngcp-panel (11.5.1.1+0~mr11.5.1.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
