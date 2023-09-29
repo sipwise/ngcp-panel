@@ -89,7 +89,6 @@ sub prepare_resource {
 
     my $prefs;
     my $blob_rs;
-    my %profile_attrs = (); # for filtering profiles based list
     my %profile_allowed_attrs; # for filtering subscriber attrs on its profile
     my $has_profile = 0;
     my $attr = 0;
@@ -142,8 +141,6 @@ sub prepare_resource {
                 %profile_allowed_attrs = map { $_ => 1 } $profile->profile_attributes->get_column('attribute_id')->all;
             }
         } elsif($type eq "profiles") {
-            $attr = 1;
-            %profile_attrs = map { $_ => 1 } $item->profile_attributes->get_column('attribute_id')->all;
             $prefs = $item->voip_prof_preferences;
         } elsif($type eq "domains") {
             $prefs = $item->provisioning_voip_domain->voip_dom_preferences;
@@ -198,8 +195,6 @@ sub prepare_resource {
                     $processed = 1;
                     last SWITCH;
                 }
-                do { $processed = 1; last SWITCH; }
-                    if($attr && !_check_profile($c, 'rewrite_rule_set', \%profile_attrs));
                 my $col = $pref->attribute->attribute;
                 $col =~ s/^rewrite_//;
                 my $rwr_set = $schema->resultset('voip_rewrite_rule_sets')->find({
@@ -233,9 +228,6 @@ sub prepare_resource {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
 
-                do { $processed = 1; last SWITCH; }
-                    if($attr && !_check_profile($c, $pref_name, \%profile_attrs));
-
                 my $ncos = $schema->resultset('ncos_levels')->find({
                     id => $pref->value,
                 });
@@ -251,9 +243,6 @@ sub prepare_resource {
             /^(adm_)?(cf_)?ncos_set_id$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
-
-                do { $processed = 1; last SWITCH; }
-                    if($attr && !_check_profile($c, $pref_name, \%profile_attrs));
 
                 my $ncos = $schema->resultset('ncos_sets')->find({
                     id => $pref->value,
@@ -271,9 +260,6 @@ sub prepare_resource {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
 
-                do { $processed = 1; last SWITCH; }
-                    if($attr && !_check_profile($c, $pref_name, \%profile_attrs));
-
                 my $container = $schema->resultset('emergency_containers')->find({
                     id => $pref->value,
                 });
@@ -287,10 +273,6 @@ sub prepare_resource {
                 last SWITCH;
             };
             /^(contract_)?sound_set$/ && do {
-                # TODO: not applicable for domains, but for subs, check for contract_id!
-                do { $processed = 1; last SWITCH; }
-                    if($attr && !_check_profile($c, $_, \%profile_attrs));
-
                 my $set = $schema->resultset('voip_sound_sets')->find({
                     id => $pref->value,
                 });
@@ -306,8 +288,7 @@ sub prepare_resource {
             /^(man_)?allowed_ips_grp$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_grp$//;
-                do { $processed = 1; last SWITCH; }
-                    if($attr && !_check_profile($c, $pref_name, \%profile_attrs));
+
                 my $sets = $schema->resultset('voip_allowed_ip_groups')->search({
                     group_id => $pref->value,
                 }, {
@@ -335,9 +316,6 @@ sub prepare_resource {
                 last SWITCH;
             };
             # default
-            if($attr && !$profile_attrs{$pref->attribute->id}) {
-                $processed = 1; last SWITCH;
-            }
             if($pref->attribute->internal != 0) {
                 $processed = 1;
                 last SWITCH;
@@ -2352,15 +2330,6 @@ sub create_preference_form {
               man_aip_grp_rs    => $man_aip_grp_rs,
               preference_values => $preference_values);
 
-    return 1;
-}
-
-sub _check_profile {
-    my ($c, $pref_name, $attr) = @_;
-    my $shown = $c->model('DB')->resultset('voip_preferences')->find({
-        'attribute' => $pref_name
-    });
-    return unless($shown && $attr->{$shown->id});
     return 1;
 }
 
