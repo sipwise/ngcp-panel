@@ -3988,6 +3988,10 @@ msgid "Enable Apple/Google Mobile Push"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable CSTA notification"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Call Deflection"
 msgstr ""
 
@@ -9828,6 +9832,10 @@ msgid "Reply"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Reply code triggering notify"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Report last call as malicious by calling at malicious_call@"
 msgstr ""
 
@@ -10997,6 +11005,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Specifies whether registration at the peer host is desired."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Specify the list of SIP responses to the SIP ping that triggers a CSTA event notification. NOTE: the following reply codes will never trigger an event because they are considered positive answers: 200, 403, 404, 405, 486."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/subscriber/preferences.tt
@@ -14547,6 +14559,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "When ICE support is enabled towards this peer, act as an ICE agent that supports only ICE-lite instead of full ICE."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "When a user fails answering to our SIP ping, trigger a CSTA notification."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
