@@ -1,3 +1,19 @@
+ngcp-panel (9.5.9.0+0~mr9.5.9.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [cb00a6f] MT#57469 Fix kamailio lcr reload on PATCH/PUT APIs
+
+  [ Nico Schedel ]
+  * [3a36a1f] MT#55491 fix tests for mr9.5 point releases
+
+  [ Rene Krenn ]
+  * [2cdbee4] MT#57070 ignore undef enum.default_val
+
+  [ Kirill Solomko ]
+  * [19f4f60] MT#58157 escape uri refs in body.tt
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 02 Oct 2023 12:39:38 +0200
+
 ngcp-panel (9.5.8.0+0~mr9.5.8.0) unstable; urgency=medium
 
   [ Rene Krenn ]
