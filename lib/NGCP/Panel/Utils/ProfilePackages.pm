@@ -1144,8 +1144,12 @@ sub check_underrun_lock_level {
     }
 
     if (defined $resource->{underrun_lock_level}) {
-        unless(defined $resource->{underrun_lock_threshold}){
-            return 0 unless &{$err_code}("If specifying an underrun lock level, 'underrun_lock_threshold' is required.",'underrun_lock_threshold');
+        if (length($resource->{underrun_lock_level})) {
+            unless(defined $resource->{underrun_lock_threshold}){
+                return 0 unless &{$err_code}("If specifying an underrun lock level, 'underrun_lock_threshold' is required.",'underrun_lock_threshold');
+            }
+        } else {
+            undef $resource->{underrun_lock_level};
         }
     }
     return 1;
