@@ -9047,6 +9047,10 @@ msgstr ""
 msgid "Phonebook entry contract id"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Phonebook entry customer id"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Phonebook entry does not exist"
 msgstr ""
