@@ -19,7 +19,7 @@ has_field 'reseller_id' => (
     label => 'Phonebook entry reseller id',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Phonebook entry subscriber id'],
+        title => ['Phonebook entry reseller id'],
     },
 );
 

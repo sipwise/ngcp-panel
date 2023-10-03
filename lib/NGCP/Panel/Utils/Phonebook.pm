@@ -222,11 +222,11 @@ sub upload_csv {
 }
 
 sub download_csv {
-    my ($c, $rs, $owner, $owner_id) = @_;
+    my ($c, $rs, $owner) = @_;
 
     my @cols = qw/name number/;
 
-    if ($owner eq 'admin') {
+    if ($owner eq 'reseller' && $c->user->roles eq 'admin') {
         push @cols, 'reseller_id';
     } elsif ($owner eq 'subscriber') {
         push @cols, 'shared';

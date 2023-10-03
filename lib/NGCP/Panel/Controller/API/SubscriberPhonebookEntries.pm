@@ -1,9 +1,9 @@
-package NGCP::Panel::Controller::API::PhonebookEntries;
+package NGCP::Panel::Controller::API::SubscriberPhonebookEntries;
 
 use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 
-use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PhonebookEntries/;
+use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::SubscriberPhonebookEntries/;
 
 use NGCP::Panel::Utils::Phonebook;
 
@@ -14,16 +14,15 @@ __PACKAGE__->set_config({
         'ResourceContentType' => 'native',
     },
     allowed_roles   => [qw/admin reseller subscriberadmin subscriber/],
-    mandatory_parameters => { 'single' => [qw/reseller_id customer_id subscriber_id/],},
     allowed_ngcp_types => [qw/carrier sppro/],
 });
 
-sub allowed_methods{
+sub allowed_methods {
     return [qw/GET POST OPTIONS HEAD/];
 }
 
 sub api_description {
-    return 'Defines Phonebook number entries. You can POST numbers individually one-by-one using json. To bulk-upload numbers, specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true", like "/api/phonebookentries/?purge_existing=true"';
+    return 'Defines subscriber phonebook entries. You can POST numbers individually one-by-one using json. For bulk uploads specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true"';
 }
 
 sub order_by_cols {
@@ -32,22 +31,6 @@ sub order_by_cols {
 
 sub query_params {
     return [
-        {
-            param => 'reseller_id',
-            description => 'Filter for Phonebook entries belonging to a specific reseeller',
-            query_type => 'string_eq',
-        },
-        {
-            param => 'customer_id',
-            description => 'Filter for Phonebook entries belonging to a specific contract',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { contract_id => $q };
-                },
-                second => sub {},
-            },
-        },
         {
             param => 'subscriber_id',
             description => 'Filter for Phonebook entries belonging to a specific subscriber',
@@ -63,32 +46,35 @@ sub query_params {
             description => 'Filter for Phonebook numbers with a specific name (wildcards possible)',
             query_type => 'string_like',
         },
+        {
+            param => 'shared',
+            description => 'Filter for Phonebook entries that are marked as shared',
+            query_type => 'string_eq',
+        },
     ];
 }
 
 sub check_create_csv :Private {
     my ($self, $c) = @_;
-    return 'phonebookentries_list.csv';
+    return 'subscriber_phonebookentries_list.csv';
 }
 
 sub create_csv :Private {
     my ($self, $c) = @_;
-    my($owner_obj,$owner_type,$owner_parameter,$owner_id) = $self->check_owner_params($c);
-    return unless $owner_obj;
-    my $rs = $self->_item_rs($c);
-    NGCP::Panel::Utils::Phonebook::download_csv($c, $rs, $owner_type, $owner_id);
+    my $rs = $self->item_rs($c);
+    NGCP::Panel::Utils::Phonebook::download_csv($c, $rs, 'subscriber');
 }
 
 sub process_data :Private {
     my ($self, %params) = @_;
     my ($c,$data_ref,$resource,$form,$process_extras) = @params{qw/c data resource form process_extra/}; 
-    my($owner_obj,$owner_type,$owner_parameter,$owner_id) = $self->check_owner_params($c);
-    return unless $owner_obj;
     my $rs = $self->_item_rs($c);
+    my $params = $c->request->params;
+    my $subscriber_id = $params->{'subscriber_id'} // '';
 
     my ($entries, $fails, $text) =
-        NGCP::Panel::Utils::Phonebook::upload_csv($c, $rs, $owner_type, $owner_id,
-            $c->req->params->{purge_existing}, $data_ref);
+        NGCP::Panel::Utils::Phonebook::upload_csv($c, $rs, 'subscriber',
+            $subscriber_id, $params->{purge_existing}, $data_ref);
     $c->log->info( $$text );
 }
 

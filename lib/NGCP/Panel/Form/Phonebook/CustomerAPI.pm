@@ -13,13 +13,13 @@ has_field 'id' => (
     },
 );
 
-has_field 'contract_id' => (
+has_field 'customer_id' => (
     type => 'PosInteger',
     required => 0,
     label => 'Phonebook entry contract id',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Phonebook entry contract id'],
+        title => ['Phonebook entry customer id'],
     },
 );
 

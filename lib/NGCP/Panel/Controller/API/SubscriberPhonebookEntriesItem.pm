@@ -1,13 +1,12 @@
-package NGCP::Panel::Controller::API::PhonebookEntriesItem;
+package NGCP::Panel::Controller::API::SubscriberPhonebookEntriesItem;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
 
-use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PhonebookEntries/;
+use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SubscriberPhonebookEntries/;
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
-    mandatory_parameters => { 'single' => [qw/reseller_id customer_id subscriber_id/],},
     allowed_ngcp_types => [qw/carrier sppro/],
 });
 
