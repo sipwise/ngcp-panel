@@ -13,6 +13,7 @@ use JSON qw(to_json encode_json);
 use YAML::XS qw/Dump/;
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API;
+use List::Util qw(none);
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
 use NGCP::Panel::Utils::Journal qw();
@@ -96,14 +97,14 @@ sub GET : Allow {
 
         my $role = $full_mod->config->{action}->{OPTIONS}->{AllowedRole};
         if($role && ref $role eq "ARRAY") {
-            next unless grep { $user_roles{$_}; } @{ $role };
+            next if none { $user_roles{$_} } @{ $role };
         } elsif ($role) {
             next unless $user_roles{$role};
         }
 
         my $allowed_ngcp_types = $full_mod->config->{allowed_ngcp_types} // [];
         if (@{$allowed_ngcp_types}) {
-            next unless grep { /^\Q$c->config->{general}{ngcp_type}\E$/ }
+            next if none { $_ eq $c->config->{general}{ngcp_type} }
                 @{$allowed_ngcp_types};
         }
 
