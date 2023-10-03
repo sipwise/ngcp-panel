@@ -44,7 +44,7 @@ $ua = Test::Collection->new()->ua();
         next if $relname eq "interceptions";
         my $skip = 0;
         if ($ngcp_type ne "sppro" && $ngcp_type ne "carrier") {
-            foreach my $pro_only (qw(phonebookentries headerrulesets headerrules headerruleconditions headerruleactions)) {
+            foreach my $pro_only (qw(resellerphonebookentries customerphonebookentries subscriberphonebookentries headerrulesets headerrules headerruleconditions headerruleactions)) {
                 if ($relname eq $pro_only) {
                     ok(1, "skip '$pro_only' links check as it is a PRO only endpoint");
                     $skip = 1;
@@ -65,7 +65,9 @@ $ua = Test::Collection->new()->ua();
             next if $relname eq "calllists";
             next if $relname eq "resellerbrandinglogos";
             next if $relname eq "conversations";
-            next if $relname eq "phonebookentries";
+            next if $relname eq "resellerphonebookentries";
+            next if $relname eq "customerphonebookentries";
+            next if $relname eq "subscriberphonebookentries";
             #my $uri = "$uri/api/$relname/";
             #if('conversations' eq $relname){
             #    $uri .= '?type=call';
