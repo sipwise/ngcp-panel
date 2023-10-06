@@ -11,6 +11,7 @@ use IPC::System::Simple qw/capture/;
 use Data::Dumper;
 use Net::Ping;
 use URI::Escape qw(uri_unescape);
+use Encode;
 
 sub send_fax {
     my (%args) = @_;
@@ -94,7 +95,8 @@ sub send_fax {
         $c->log->debug('error to retrieve tempfile of upload: ' . @_) if @_;
     }
     if ($args{data}){
-        $sendfax_args{input} = [\$args{data}];
+        my $text = Encode::encode('UTF-8', $args{data});
+        $sendfax_args{input} = [\$text];
     }
     my $client = new NGCP::Fax;
     use Data::Dumper;
