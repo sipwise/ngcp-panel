@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.5+0~mr11.5.1.5) unstable; urgency=medium
+
+  [ Fabricio Santolin da Silva ]
+  * [a7f6f1a] MT#58468 Fix special characters incorrectly interpreted by paps
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Oct 2023 18:13:02 +0200
+
 ngcp-panel (11.5.1.4+0~mr11.5.1.4) unstable; urgency=medium
 
   [ Kirill Solomko ]
