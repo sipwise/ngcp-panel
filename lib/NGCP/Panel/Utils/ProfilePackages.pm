@@ -1155,6 +1155,25 @@ sub check_underrun_lock_level {
     return 1;
 }
 
+sub check_topup_lock_level {
+    my (%params) = @_;
+    my ($c,$resource,$err_code) = @params{qw/c resource err_code/};
+
+    my $schema = $c->model('DB');
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    if (defined $resource->{topup_lock_level}) {
+        if (length($resource->{topup_lock_level})) {
+            #...
+        } else {
+            undef $resource->{topup_lock_level};
+        }
+    }
+    return 1;
+}
+
 sub check_profiles {
     my (%params) = @_;
     my ($c,$resource,$mappings_to_create,$err_code) = @params{qw/c resource mappings_to_create err_code/};
@@ -1221,6 +1240,7 @@ sub prepare_profile_package {
 
     return 0 unless check_carry_over_mode(c => $c, resource => $resource, err_code => $err_code);
     return 0 unless check_underrun_lock_level(c => $c, resource => $resource, err_code => $err_code);
+    return 0 unless check_topup_lock_level(c => $c, resource => $resource, err_code => $err_code);
 
     return 0 unless check_profiles(c => $c, resource => $resource, mappings_to_create => $mappings_to_create, err_code => $err_code);
 
