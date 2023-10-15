@@ -1,3 +1,28 @@
+ngcp-panel (12.0.2.0+0~mr12.0.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [c826fcc] MT#58157 escape uri refs in body.tt
+  * [0c4800f] MT#58409 /api/profilepreferences fix filtering for admins
+  * [706b472] MT#58430 fix allowed_ngcp_types in API GET
+  * [cec12f7] MT#58333 rework /api/phonebookentries
+  * [75a6a97] MT#58333 add api-rest phonebookentries links, remove tests
+
+  [ Rene Krenn ]
+  * [9d8ac17] MT#58337 show destination call costs/zones in invoice callist
+  * [c73b4e3] MT#58422 fix persisting "don't change" underrun lock level
+
+  [ Sipwise Jenkins Builder ]
+  * [bc62644] TT#4166 I18N dump: snapshot 2023.10.02-22.29.20
+  * [098cd27] TT#4166 I18N dump: snapshot 2023.10.03-22.21.07
+
+  [ Guillem Jover ]
+  * [329b08f] MT#58356 Update packaging for bookworm
+
+  [ Fabricio Santolin da Silva ]
+  * [3c5cf0b] MT#58468 Fix special characters incorrectly interpreted by paps
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 15 Oct 2023 08:24:10 +0200
+
 ngcp-panel (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
