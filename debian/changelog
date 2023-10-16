@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.6+0~mr11.5.1.6) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [d3a5cc1] MT#57129 Anonymize caller in conversation list when clir is equal to 1
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Oct 2023 10:44:46 +0200
+
 ngcp-panel (11.5.1.5+0~mr11.5.1.5) unstable; urgency=medium
 
   [ Fabricio Santolin da Silva ]
