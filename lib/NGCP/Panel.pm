@@ -333,26 +333,23 @@ __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config_file));
 
 # configure Data::HAL depending on our config
 {
-    if ($panel_config->{appearance}{api_embedded_forcearray} || $panel_config->{appearance}{api_links_forcearray}) {
-        require Data::HAL;
-        *{Data::HAL::forcearray_policy} = sub {
-            my ($self, $root, $property_type, $relation, $property) = @_;
-            my $embedded = $root->embedded ? $root->embedded->[0] : undef;
-            if ($embedded
-                && ( (   $property_type eq 'links' &&  $panel_config->{appearance}{api_links_forcearray} )
-                    || ( $property_type eq 'embedded' &&  $panel_config->{appearance}{api_embedded_forcearray}) )
-                && $relation =~/^ngcp:[a-z0-9]+$/
-            ) {
-                return 1;
-            }
-            if (!$embedded
-                && ( ( $property_type eq 'links' &&  $panel_config->{appearance}{api_links_forcearray} ) )
-                && $relation =~/^ngcp:[a-z0-9]+$/
-            ) {
-                return 1;
-            }
-        };
-    }
+    require Data::HAL;
+    *{Data::HAL::forcearray_policy} = sub {
+        my ($self, $root, $property_type, $relation, $property) = @_;
+        my $embedded = $root->embedded ? $root->embedded->[0] : undef;
+        if ($embedded
+            && ( $property_type eq 'links' || $property_type eq 'embedded' )
+            && $relation =~/^ngcp:[a-z0-9]+$/
+        ) {
+            return 1;
+        }
+        if (!$embedded
+            && ( $property_type eq 'links' )
+            && $relation =~/^ngcp:[a-z0-9]+$/
+        ) {
+            return 1;
+        }
+    };
 }
 
 after setup_finalize => sub {
