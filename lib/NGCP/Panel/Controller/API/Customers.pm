@@ -94,11 +94,12 @@ sub query_params {
             },
         },
         {
-            param => 'package_id',
+            param => 'profile_package_id',
             description => 'Filter for customers with specific profile package id',
             query => {
                 first => sub {
                     my $q = shift;
+                    { profile_package_id => $q };
                 },
                 second => sub { },
             },
