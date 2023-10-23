@@ -118,7 +118,7 @@ has_field 'start_time' => (
 );
 
 has_field 'duration' => (
-    type => 'PosInteger',
+    type => 'Text',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
