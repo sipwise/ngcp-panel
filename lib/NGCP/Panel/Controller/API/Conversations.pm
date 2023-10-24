@@ -66,6 +66,14 @@ sub query_params {
             param => 'fax_number_rewrite_mode',
             description => "Force the fax numbers normalization logic (available: 'default', 'extended').",
         },
+        {
+            param => 'caller',
+            description => 'Filter for conversation events by caller (supports patterns with * wildcard).',
+        },
+        {
+            param => 'callee',
+            description => 'Filter for conversation events by callee (supports patterns with * wildcard).',
+        },        
 
     ];
 }
