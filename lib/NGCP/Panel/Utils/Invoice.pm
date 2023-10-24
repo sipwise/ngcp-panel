@@ -65,8 +65,8 @@ sub create_invoice{
         contract => $customer,
         stime => $stime,
         etime => $etime,);
-    $stime = $balance->start;
-    $etime = $balance->end;
+    $stime = NGCP::Panel::Utils::DateTime::convert_tz($balance->start,undef,'UTC',$c);
+    $etime = NGCP::Panel::Utils::DateTime::convert_tz($balance->end,undef,'UTC',$c);
     my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(
         c => $c,
         contract => $customer,
