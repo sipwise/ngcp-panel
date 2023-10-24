@@ -239,9 +239,16 @@ sub _resolve_joins {
 }
 
 sub get_search_string_pattern {
-
+    
     my ($c,$no_pattern) = @_;
-    my $searchString = $c->request->params->{sSearch} // "";
+    return get_search_string_pattern($c->request->params->{sSearch},$no_pattern);
+    
+}
+
+sub escape_search_string_pattern {
+
+    my ($searchString,$no_pattern) = @_;
+    $searchString //= "";
     my $is_pattern = 0;
     return ($searchString,$is_pattern) if $no_pattern;
     my $searchString_escaped = join('',map {
@@ -276,7 +283,7 @@ sub _apply_search_filters {
     #for search string from one search input we need to check all columns which contain the 'search' spec (now: qw/search search_lower_column search_upper_column/). so, for example user entered into search input ip address - we don't know that it is ip address, so we check that name like search OR id like search OR search is between network_lower_value and network upper value
         foreach my $col(@{ $cols }) {
             next unless $col->{name};
-            my ($name,$search_value,$op,$convert);
+            my ($name,$search_value,$op);
             # avoid amigious column names if we have the same column in different joined tables
             if($col->{search} or $col->{strict_search} or $col->{int_search}){
                 my $is_pattern = 0;
