@@ -8,7 +8,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Security;
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin/],
+    allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
 });
 
 sub allowed_methods {
