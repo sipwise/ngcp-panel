@@ -1,3 +1,10 @@
+ngcp-panel (10.5.5.4+0~mr10.5.5.4) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [f1e5333] MT#54356 Fix swagger documentation for 'calllist' api
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Oct 2023 17:34:28 +0200
+
 ngcp-panel (10.5.5.3+0~mr10.5.5.3) unstable; urgency=medium
 
   [ Fabricio Santolin da Silva ]
