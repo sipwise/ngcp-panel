@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.8+0~mr11.5.1.8) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [2f99cea] MT#58596 Enable api soundgroups and soundhandles for subscriber
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Oct 2023 14:08:08 +0200
+
 ngcp-panel (11.5.1.7+0~mr11.5.1.7) unstable; urgency=medium
 
   [ Marco Capetta ]
