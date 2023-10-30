@@ -1,3 +1,15 @@
+ngcp-panel (12.0.3.0+0~mr12.0.3.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [d6dcadc] MT#57129 Anonymize caller in conversation list when clir is equal to 1
+  * [cbf6500] MT#54356 Fix swagger documentation for 'calllist' api
+  * [a4a44a5] MT#58596 Enable api soundgroups and soundhandles for subscriber
+
+  [ Rene Krenn ]
+  * [e3be1f0] MT#58422 fix persisting "don't change" topup lock level
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 30 Oct 2023 17:05:24 +0100
+
 ngcp-panel (12.0.2.0+0~mr12.0.2.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
