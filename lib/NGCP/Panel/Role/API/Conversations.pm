@@ -599,7 +599,7 @@ sub _get_voicemail_rs {
     });
 
     $rs = $self->_apply_timestamp_from_to(
-        s => $rs,
+        rs => $rs,
         params => $params,
         col => 'me.origtime'
     );
