@@ -1860,5 +1860,118 @@ sub return_requested_type {
     }
 }
 
+sub apply_caller_filter {
+    my $self = shift;
+    my %params = @_;
+    my ($rs,$params,$conjunctions,$col) = @params{qw/rs params conjunctions col/};
+
+    if (exists $params->{caller}) {
+        $rs = $rs->search_rs({
+            _wildcard_search(
+                search_string => $params->{caller},
+                search        => 1,
+                exact_search  => _check_wildcard_search($params),
+                int_search    => 0,
+                col_name      => $col,
+                comparison_op => undef,
+                convert_code  => undef,
+                conjunctions  => $conjunctions,
+            )
+        });
+    }
+
+    return $rs;
+}
+
+sub apply_callee_filter {
+    my $self = shift;
+    my %params = @_;
+    my ($rs,$params,$conjunctions,$col) = @params{qw/rs params conjunctions col/};
+
+    if (exists $params->{callee}) {
+        $rs = $rs->search_rs({
+            _wildcard_search(
+                search_string => $params->{callee},
+                search        => 1,
+                exact_search  => _check_wildcard_search($params),
+                int_search    => 0,
+                col_name      => $col,
+                comparison_op => undef,
+                convert_code  => undef,
+                conjunctions  => $conjunctions,
+            )
+        });
+    }
+
+    return $rs;
+}
+
+sub _wildcard_search {
+    my %params = @_;
+    my ($search_string,
+        $search,
+        $exact_search,
+        $int_search,
+        $col_name,
+        $conjunctions,
+        $comparison_op,
+        $convert_code) = @params{qw/
+        search_string
+        search
+        exact_search
+        int_search
+        col_name
+        conjunctions
+        comparison_op
+        convert_code
+    /};
+
+    if ($search or $exact_search or $int_search) {
+        my $is_pattern = 0;
+        my ($search_value,$op);
+        (my $search_string_escaped, $is_pattern) = escape_search_string_pattern(
+            $search_string,( $exact_search || $int_search ));
+        if ($is_pattern) {
+            $op = 'like';
+            $search_value = $search_string_escaped;
+        } elsif ($exact_search) {
+            $op = '=';
+            $search_string_escaped = $search_string;
+            $search_string_escaped =~ s/\\\*/*/g;
+            $search_string_escaped =~ s/\\\\/\\/g;
+            $search_value = $search_string_escaped;
+        } elsif ($int_search) {
+            $op = '=';
+            $search_value = $search_string;
+        } else {
+            $op = 'like';
+            $search_value = '%' . $search_string_escaped . '%';
+        }
+        $op = $comparison_op if (defined $comparison_op);
+        $search_value = $convert_code->($search_string) if (ref $convert_code eq 'CODE');
+        my $stmt;
+        if (defined $search_value) {
+            if (not $int_search or $search_string =~ /^\d{1,10}$/) {
+                return ( %{$conjunctions // {}}, $col_name => { $op => $search_value } );
+            }
+        }
+    }
+    return ();
+}
+
+sub _check_wildcard_search {
+    
+    my $params = shift;
+    my $exact = 1;
+    if (exists $params->{wildcards} and defined $params->{wildcards}) {
+        if ('1' eq $params->{wildcards}
+            or'true' eq lc($params->{wildcards})) {
+            $exact = 0;
+        }
+    }
+    return $exact;
+    
+}
+
 1;
 # vim: set tabstop=4 expandtab:
