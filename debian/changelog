@@ -1,47 +1,12 @@
-ngcp-panel (12.0.3.0+0~mr12.0.3.0) unstable; urgency=medium
-
-  [ Marco Capetta ]
-  * [d6dcadc] MT#57129 Anonymize caller in conversation list when clir is equal to 1
-  * [cbf6500] MT#54356 Fix swagger documentation for 'calllist' api
-  * [a4a44a5] MT#58596 Enable api soundgroups and soundhandles for subscriber
-
-  [ Rene Krenn ]
-  * [e3be1f0] MT#58422 fix persisting "don't change" topup lock level
-
- -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 30 Oct 2023 17:05:24 +0100
-
-ngcp-panel (12.0.2.0+0~mr12.0.2.0) unstable; urgency=medium
-
-  [ Kirill Solomko ]
-  * [c826fcc] MT#58157 escape uri refs in body.tt
-  * [0c4800f] MT#58409 /api/profilepreferences fix filtering for admins
-  * [706b472] MT#58430 fix allowed_ngcp_types in API GET
-  * [cec12f7] MT#58333 rework /api/phonebookentries
-  * [75a6a97] MT#58333 add api-rest phonebookentries links, remove tests
-
-  [ Rene Krenn ]
-  * [9d8ac17] MT#58337 show destination call costs/zones in invoice callist
-  * [c73b4e3] MT#58422 fix persisting "don't change" underrun lock level
-
-  [ Sipwise Jenkins Builder ]
-  * [bc62644] TT#4166 I18N dump: snapshot 2023.10.02-22.29.20
-  * [098cd27] TT#4166 I18N dump: snapshot 2023.10.03-22.21.07
-
-  [ Guillem Jover ]
-  * [329b08f] MT#58356 Update packaging for bookworm
-
-  [ Fabricio Santolin da Silva ]
-  * [3c5cf0b] MT#58468 Fix special characters incorrectly interpreted by paps
-
- -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 15 Oct 2023 08:24:10 +0200
-
-ngcp-panel (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
+ngcp-panel (12.0.0.0+0~mr12.0.0.0) unstable; urgency=medium
 
   [ Sipwise Jenkins Builder ]
   * [faf5846] TT#4166 I18N dump: snapshot 2023.06.27-00.20.52
   * [d41dfe0] TT#4166 I18N dump: snapshot 2023.07.15-00.21.03
   * [ae99153] TT#4166 I18N dump: snapshot 2023.08.11-00.26.05
   * [2894409] TT#4166 I18N dump: snapshot 2023.08.30-00.21.05
+  * [bc62644] TT#4166 I18N dump: snapshot 2023.10.02-22.29.20
+  * [098cd27] TT#4166 I18N dump: snapshot 2023.10.03-22.21.07
 
   [ Mykola Malkov ]
   * [94c1e03] MT#57453 Switch docker image to bookworm
@@ -52,6 +17,11 @@ ngcp-panel (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
   * [ba78e19] MT#57753 fix /api/mailtofaxsettings secret_key change
   * [6953de9] MT#33041 add reseller max subscribers support
   * [b7c2261] MT#57987 /api/rewriterules calculate priority on create
+  * [c826fcc] MT#58157 escape uri refs in body.tt
+  * [0c4800f] MT#58409 /api/profilepreferences fix filtering for admins
+  * [706b472] MT#58430 fix allowed_ngcp_types in API GET
+  * [cec12f7] MT#58333 rework /api/phonebookentries
+  * [75a6a97] MT#58333 add api-rest phonebookentries links, remove tests
 
   [ Nico Schedel ]
   * [a2270e1] MT#57776 update dockerfile to make python tests work on debian 12
@@ -62,12 +32,24 @@ ngcp-panel (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
   [ Rene Krenn ]
   * [cde01e7] MT#53849 peer/reseller invoicing
   * [8fbd46e] MT#57382 DELETE /api/faxes/id
+  * [9d8ac17] MT#58337 show destination call costs/zones in invoice callist
+  * [c73b4e3] MT#58422 fix persisting "don't change" underrun lock level
+  * [e3be1f0] MT#58422 fix persisting "don't change" topup lock level
 
   [ Marco Capetta ]
   * [967bc58] TT#179901 Discontinue iNew dedicated features and code (part 2)
   * [837d7ce] MT#56422 Hook new KeyDB statistics dashboard
+  * [d6dcadc] MT#57129 Anonymize caller in conversation list when clir is equal to 1
+  * [cbf6500] MT#54356 Fix swagger documentation for 'calllist' api
+  * [a4a44a5] MT#58596 Enable api soundgroups and soundhandles for subscriber
 
- -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 30 Aug 2023 18:04:44 +0200
+  [ Guillem Jover ]
+  * [329b08f] MT#58356 Update packaging for bookworm
+
+  [ Fabricio Santolin da Silva ]
+  * [3c5cf0b] MT#58468 Fix special characters incorrectly interpreted by paps
+
+ -- Mykola Malkov <mmalkov@sipwise.com>  Tue, 07 Nov 2023 16:19:37 +0200
 
 ngcp-panel (11.5.0.0+0~mr11.5.0.0) unstable; urgency=medium
 
