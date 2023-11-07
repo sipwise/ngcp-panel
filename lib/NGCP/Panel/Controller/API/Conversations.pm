@@ -68,12 +68,12 @@ sub query_params {
         },
         {
             param => 'caller',
-            description => 'Filter for conversation events by caller (supports patterns with * wildcard).',
+            description => "Filter for conversation events by caller number (append &wildcards=true query parameter to allow patterns using '*' wildcards).",
         },
         {
             param => 'callee',
-            description => 'Filter for conversation events by callee (supports patterns with * wildcard).',
-        },        
+            description => "Filter for conversation events by callee number (append &wildcards=true query parameter to allow patterns using '*' wildcards).",
+        },
 
     ];
 }
