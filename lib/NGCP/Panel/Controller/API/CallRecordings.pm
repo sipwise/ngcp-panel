@@ -57,29 +57,11 @@ sub query_params {
         },
         {
             param => 'caller',
-            description => 'Filter by the caller number',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    {
-                       'recording_metakeys.key' => 'caller',
-                       'recording_metakeys.value' => $q,
-                    };
-                }
-            },
+            description => "Filter by caller number (append &wildcards=true query parameter to allow patterns using '*' wildcards).",
         },
         {
             param => 'callee',
-            description => 'Filter by the callee number',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    {
-                       'recording_metakeys.key' => 'callee',
-                       'recording_metakeys.value' => $q,
-                    };
-                }
-            },
+            description => "Filter by callee number (append &wildcards=true query parameter to allow patterns using '*' wildcards).",
         },
         {
             param => 'start_time',
