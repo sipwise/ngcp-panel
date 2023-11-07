@@ -245,32 +245,6 @@ sub get_search_string_pattern {
     
 }
 
-sub escape_search_string_pattern {
-
-    my ($searchString,$no_pattern) = @_;
-    $searchString //= "";
-    my $is_pattern = 0;
-    return ($searchString,$is_pattern) if $no_pattern;
-    my $searchString_escaped = join('',map {
-        my $token = $_;
-        if ($token ne '\\\\') {
-            $token =~ s/%/\\%/g;
-            $token =~ s/_/\\_/g;
-            if ($token =~ s/(?<!\\)\*/%/g) {
-                $is_pattern = 1;
-            }
-            $token =~ s/\\\*/*/g;
-        }
-        $token;
-    } split(/(\\\\)/,$searchString,-1));
-    if (not $is_pattern and not $no_pattern) {
-        $searchString_escaped .= '%';
-        $is_pattern = 1;
-    }
-    return ($searchString_escaped,$is_pattern);
-
-}
-
 sub _apply_search_filters {
 
     my ($c,$rs,$cols,$use_rs_cb,$extra_or,$extra_or_descr) = @_;
