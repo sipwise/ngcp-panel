@@ -42,6 +42,19 @@ sub _item_rs {
 
     my $item_rs = $c->model('DB')->resultset('recording_calls')->search_rs(
         undef, { prefetch => 'recording_metakeys' });
+    
+    $item_rs = $self->apply_caller_filter(
+        rs => $item_rs,
+        params => $c->req->params,
+        conjunctions => { 'recording_metakeys.key' => 'caller', },
+        col => 'recording_metakeys.value'
+    );
+    $item_rs = $self->apply_callee_filter(
+        rs => $item_rs,
+        params => $c->req->params,
+        conjunctions => { 'recording_metakeys.key' => 'callee', },
+        col => 'recording_metakeys.value'
+    );
 
     if($c->user->roles eq "reseller") {
 
