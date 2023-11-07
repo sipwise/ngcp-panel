@@ -8,9 +8,9 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type array_to_map escape_js escape_uri trim);
-%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim)],
-    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim)]);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type array_to_map escape_js escape_uri trim escape_search_string_pattern);
+%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern)],
+    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern)]);
 
 use Hash::Merge;
 use Data::Compare qw//;
@@ -229,6 +229,32 @@ sub trim {
     my $value = shift;
     $value =~ s/^\s+|\s+$//g;
     return $value;
+}
+
+sub escape_search_string_pattern {
+
+    my ($searchString,$no_pattern) = @_;
+    $searchString //= "";
+    my $is_pattern = 0;
+    return ($searchString,$is_pattern) if $no_pattern;
+    my $searchString_escaped = join('',map {
+        my $token = $_;
+        if ($token ne '\\\\') {
+            $token =~ s/%/\\%/g;
+            $token =~ s/_/\\_/g;
+            if ($token =~ s/(?<!\\)\*/%/g) {
+                $is_pattern = 1;
+            }
+            $token =~ s/\\\*/*/g;
+        }
+        $token;
+    } split(/(\\\\)/,$searchString,-1));
+    if (not $is_pattern and not $no_pattern) {
+        $searchString_escaped .= '%';
+        $is_pattern = 1;
+    }
+    return ($searchString_escaped,$is_pattern);
+
 }
 
 1;
