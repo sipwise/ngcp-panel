@@ -29,6 +29,7 @@ has_block 'fields' => (
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval onpeak_use_free_time offpeak_use_free_time
+        onpeak_extra_rate onpeak_extra_second offpeak_extra_rate offpeak_extra_second aoc_pulse_amount_per_message
         /],
 );
 
