@@ -41,60 +41,79 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('recording_calls')->search_rs(
-        undef, { prefetch => 'recording_metakeys' });
+        undef, undef); #{ prefetch => 'recording_metakeys' }
     
-    $item_rs = $self->apply_caller_filter(
-        rs => $item_rs,
-        params => $c->req->params,
-        conjunctions => { 'recording_metakeys.key' => 'caller', },
-        col => 'recording_metakeys.value'
-    );
-    $item_rs = $self->apply_callee_filter(
-        rs => $item_rs,
-        params => $c->req->params,
-        conjunctions => { 'recording_metakeys.key' => 'callee', },
-        col => 'recording_metakeys.value'
-    );
+    my $join_idx = 0;
 
     if($c->user->roles eq "reseller") {
 
         my $res_rs = $c->model('DB')->resultset('voip_subscribers')->search({
             'contact.reseller_id' => $c->user->reseller_id
-        }, {
+        },{
             join => { 'contract' => 'contact' }
         });
 
+        $join_idx += 1;
         $item_rs = $item_rs->search({
             status => { -in => [qw/completed confirmed/] },
-            'recording_metakeys.key' => 'uuid',
-            'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
-        });
+            $self->get_join_alias('recording_metakeys%s.key',$join_idx) => 'uuid',
+            $self->get_join_alias('recording_metakeys%s.value',$join_idx) => { -in => $res_rs->get_column('uuid')->as_query }
+        },undef);
+        
     } elsif ($c->user->roles eq "subscriberadmin") {
 
         my $res_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
             'account_id' => $c->user->account_id
         });
 
+        $join_idx += 1;
         $item_rs = $item_rs->search({
             status => { -in => [qw/completed confirmed/] },
-            'recording_metakeys.key' => 'uuid',
-            'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
-        });
+            $self->get_join_alias('recording_metakeys%s.key',$join_idx) => 'uuid',
+            $self->get_join_alias('recording_metakeys%s.value',$join_idx) => { -in => $res_rs->get_column('uuid')->as_query }
+        },undef);
+        
     } elsif ($c->user->roles eq "subscriber") {
+        
+        $join_idx += 1;
         $item_rs = $item_rs->search({
             status => { -in => [qw/completed confirmed/] },
-            'recording_metakeys.key' => 'uuid',
-            'recording_metakeys.value' => $c->user->uuid,
-        });
+            $self->get_join_alias('recording_metakeys%s.key',$join_idx) => 'uuid',
+            $self->get_join_alias('recording_metakeys%s.value',$join_idx) => $c->user->uuid,
+        },undef);
+
     }
 
     if($c->req->params->{subscriber_id}) {
         my $res_rs = $c->model('DB')->resultset('voip_subscribers')->search({
             id => $c->req->params->{subscriber_id}
         });
+        
+        $join_idx += 1;
         $item_rs = $item_rs->search({
-            'recording_metakeys.key' => 'uuid',
-            'recording_metakeys.value' => { -in => $res_rs->get_column('uuid')->as_query }
+            $self->get_join_alias('recording_metakeys%s.key',$join_idx) => 'uuid',
+            $self->get_join_alias('recording_metakeys%s.value',$join_idx) => { -in => $res_rs->get_column('uuid')->as_query }
+        },undef);
+
+    }
+    
+    $item_rs = $self->apply_caller_filter(
+        rs => $item_rs,
+        params => $c->req->params,
+        conjunctions => { 'recording_metakeys%s.key' => 'caller', },
+        col => 'recording_metakeys%s.value',
+        join_idx => \$join_idx,
+    );
+    $item_rs = $self->apply_callee_filter(
+        rs => $item_rs,
+        params => $c->req->params,
+        conjunctions => { 'recording_metakeys%s.key' => 'callee', },
+        col => 'recording_metakeys%s.value',
+        join_idx => \$join_idx,
+    );
+    if ($join_idx > 0) {
+        $item_rs = $item_rs->search_rs(undef,{
+            join => [ ('recording_metakeys') x $join_idx ],
         });
     }
 
