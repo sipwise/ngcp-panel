@@ -1088,7 +1088,7 @@ sub item_rs {
     return unless($item_rs);
 
     if ($self->can('query_params')) {
-        return $self->apply_query_params($orig_params[0],$self->query_params,$item_rs);
+        return $self->apply_query_params($orig_params[0],$self->query_params(),$item_rs);
     }
 
     return $item_rs;
@@ -1108,7 +1108,6 @@ sub apply_query_params {
         #the only reason not to do this is a security
         next unless($p[0]->{query} || $p[0]->{query_type} || $p[0]->{new_rs}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
-        $q =~ s/\*/\%/g;
         $q = undef if $q eq "NULL"; # IS NULL translation
         if(@p) {
             if (defined $p[0]->{new_rs}) {
@@ -1162,11 +1161,21 @@ sub get_query_callbacks{
         if ($param !~ /\./) {
             $param = 'me.' . $param;
         }
-        if('string_like' eq $p[0]->{query_type}){
-            $sub_where = sub {my ($q, $c) = @_; { $param => { like => $q } };};
-        }elsif('string_eq' eq $p[0]->{query_type}){
+        
+        if ('string_like' eq $p[0]->{query_type}) {
+            $sub_where = sub {my ($q, $c) = @_; $q =~ s/\*/\%/g; { $param => { like => $q } }; };
+        } elsif ('string_eq' eq $p[0]->{query_type}) {
             $sub_where = sub {my ($q, $c) = @_; { $param => $q };};
+        } elsif ('wildcard' eq $p[0]->{query_type}) {
+            $sub_where = sub {my ($q, $c) = @_; { wildcard_search(
+                search_string => $q,
+                search        => 1,
+                exact_search  => check_wildcard_search($c->req->params),
+                int_search    => 0,
+                col_name      => $param,
+            ) };};
         }
+        
     }
     if($p[0]->{query}){
         $sub_where //= $p[0]->{query}->{first};
@@ -1867,21 +1876,23 @@ sub return_requested_type {
 sub apply_caller_filter {
     my $self = shift;
     my %params = @_;
-    my ($rs,$params,$conjunctions,$col) = @params{qw/rs params conjunctions col/};
+    my ($rs,$params,$conjunctions,$col,$joins,$join_idx) = @params{qw/rs params conjunctions col joins join_idx/};
 
     if (exists $params->{caller}) {
+        $$join_idx += 1 if $join_idx;
+        my %search = wildcard_search(
+            search_string => $params->{caller},
+            search        => 1,
+            exact_search  => check_wildcard_search($params),
+            int_search    => 0,
+            col_name      => $col,
+            comparison_op => undef,
+            convert_code  => undef,
+            conjunctions  => $conjunctions,
+        );
         $rs = $rs->search_rs({
-            _wildcard_search(
-                search_string => $params->{caller},
-                search        => 1,
-                exact_search  => _check_wildcard_search($params),
-                int_search    => 0,
-                col_name      => $col,
-                comparison_op => undef,
-                convert_code  => undef,
-                conjunctions  => $conjunctions,
-            )
-        });
+            map { $self->get_join_alias($_,$$join_idx) => $search{$_}; } keys %search 
+        },$joins);
     }
 
     return $rs;
@@ -1890,27 +1901,40 @@ sub apply_caller_filter {
 sub apply_callee_filter {
     my $self = shift;
     my %params = @_;
-    my ($rs,$params,$conjunctions,$col) = @params{qw/rs params conjunctions col/};
+    my ($rs,$params,$conjunctions,$col,$joins,$join_idx) = @params{qw/rs params conjunctions col joins join_idx/};
 
     if (exists $params->{callee}) {
+        $$join_idx += 1 if $join_idx;
+        my %search = wildcard_search(
+            search_string => $params->{callee},
+            search        => 1,
+            exact_search  => check_wildcard_search($params),
+            int_search    => 0,
+            col_name      => $col,
+            comparison_op => undef,
+            convert_code  => undef,
+            conjunctions  => $conjunctions,
+        );
         $rs = $rs->search_rs({
-            _wildcard_search(
-                search_string => $params->{callee},
-                search        => 1,
-                exact_search  => _check_wildcard_search($params),
-                int_search    => 0,
-                col_name      => $col,
-                comparison_op => undef,
-                convert_code  => undef,
-                conjunctions  => $conjunctions,
-            )
-        });
+            map { $self->get_join_alias($_,$$join_idx) => $search{$_}; } keys %search 
+        },$joins);
     }
 
     return $rs;
 }
 
-sub _wildcard_search {
+sub get_join_alias {
+    
+    my $self = shift;
+    my ($alias_pattern,$join_idx) = @_;
+    if (defined $join_idx and $join_idx > 1) {
+        return sprintf($alias_pattern,'_' . $join_idx);
+    }
+    return sprintf($alias_pattern,'');
+    
+}
+
+sub wildcard_search {
     my %params = @_;
     my ($search_string,
         $search,
@@ -1963,7 +1987,7 @@ sub _wildcard_search {
     return ();
 }
 
-sub _check_wildcard_search {
+sub check_wildcard_search {
     
     my $params = shift;
     my $exact = 1;

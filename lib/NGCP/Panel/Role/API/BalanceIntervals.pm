@@ -155,7 +155,7 @@ sub balances_rs {
         contract => $contract,
         now => $now);
 
-    return $self->apply_query_params($c,$self->can('query_params') ? $self->query_params : {},$contract->contract_balances);
+    return $self->apply_query_params($c,$self->can('query_params') ? $self->query_params() : {},$contract->contract_balances);
 
 }
 

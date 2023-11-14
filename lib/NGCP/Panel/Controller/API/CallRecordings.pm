@@ -48,12 +48,7 @@ sub query_params {
         {
             param => 'call_id',
             description => 'Filter for callrecordings belonging to a specific call',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.call_id' => $q };
-                }
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'caller',
