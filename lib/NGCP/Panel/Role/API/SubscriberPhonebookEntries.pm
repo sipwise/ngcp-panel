@@ -92,6 +92,7 @@ sub check_resource {
     }
 
     my $exists = $schema->resultset('subscriber_phonebook')->search({
+        $item ? (id => { '!=' => $item->id }) : (),
         number => $resource->{number},
         subscriber_id => $resource->{subscriber_id},
     })->first;
