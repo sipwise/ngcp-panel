@@ -3177,6 +3177,10 @@ msgid "Define the way \"advice of charge\" message will be sent."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Define what type of connection to use in case of Office-Hours and Early Rejects. If set to 'early' the announcement is played with early media (183). If set to 'established' the announcement is played after a 200 OK."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Defines a default caller LNP prefix which is written into CDRs if no LNP entry is found for the caller number in the LNP database. This prefix is NOT used for routing purposes like rewrite rules, only for CDR tagging."
 msgstr ""
 
@@ -8286,6 +8290,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Offer optional opportunistic SRTP (OSRTP, RFC 8643) to the called party."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Office-Hours and Early Reject announcement connection type"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
