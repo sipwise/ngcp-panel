@@ -1,3 +1,15 @@
+ngcp-panel (11.5.1.9+0~mr11.5.1.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [fa3ee96] MT#58346 caller/callee filters for conversations
+  * [eac4907] MT#58346 fix panel datatable filtering
+  * [39f9eaa] MT#58346 fix conversations voicemail timestamp filter
+  * [d8ac622] MT#56239 api general caller/callee wildcard search support
+  * [b7482ee] MT#56239 api/callrecordings support filtering multiple metakeys
+  * [cf20a2f] MT#56239 avoid ambersand symbol in apidoc descriptions
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 15 Nov 2023 15:48:34 +0100
+
 ngcp-panel (11.5.1.8+0~mr11.5.1.8) unstable; urgency=medium
 
   [ Marco Capetta ]
