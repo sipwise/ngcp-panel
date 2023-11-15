@@ -86,6 +86,7 @@ sub check_resource {
     }
 
     my $exists = $schema->resultset('contract_phonebook')->search({
+        $item ? (id => { '!=' => $item->id }) : (),
         number => $resource->{number},
         contract_id => $resource->{contract_id},
     })->first;
