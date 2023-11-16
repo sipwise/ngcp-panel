@@ -57,13 +57,7 @@ sub query_params {
         {
             param => 'username',
             description => 'Search for specific SIP username',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { 'me.username' => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'webusername',
@@ -80,10 +74,10 @@ sub query_params {
         },
         {
             param => 'domain',
-            description => 'Filter for subscribers in specific domain',
+            description => 'Filter for subscribers in specific domain pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     return { 'domain.domain' => { like => $q } };
                 },
                 second => sub {
@@ -107,10 +101,10 @@ sub query_params {
         },
         {
             param => 'customer_external_id',
-            description => 'Filter for subscribers of a specific customer external_id.',
+            description => 'Filter for subscribers of a specific customer external_id pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     return { 'contract.external_id' => { like => $q } };
                 },
                 second => sub {
@@ -120,10 +114,10 @@ sub query_params {
         },
         {
             param => 'subscriber_external_id',
-            description => 'Filter for subscribers by subscriber\'s external_id.',
+            description => 'Filter for subscribers by subscriber\'s external_id pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     return { 'me.external_id' => { like => $q } };
                 },
                 second => sub {
@@ -184,12 +178,12 @@ sub query_params {
         },
         {
             param => 'alias',
-            description => 'Filter for subscribers who has specified alias.',
+            description => 'Filter for subscribers who has specified alias pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     {
-                        'voip_dbaliases.username' => { like => '%'.$q.'%' },
+                        'voip_dbaliases.username' => { like => $q },
                     };
                 },
                 second => sub {
@@ -226,11 +220,11 @@ sub query_params {
         },
         {
             param => 'primary_number',
-            description => 'Filter for subscribers of contracts with a specific primary number',
+            description => 'Filter for subscribers of contracts with a specific primary number pattern',
             query => {
                 first => sub {
-                    my $q = shift;
-                    { \['concat(primary_number.cc, primary_number.ac, primary_number.sn) like ?', "%$q%"] };
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    { \['concat(primary_number.cc, primary_number.ac, primary_number.sn) like ?', $q ] };
 
                 },
                 second => sub {
@@ -243,8 +237,8 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific PBX extension',
             query => {
                 first => sub {
-                    my $q = shift;
-                    { 'provisioning_voip_subscriber.pbx_extension' => { like => "%$q%" } };
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    { 'provisioning_voip_subscriber.pbx_extension' => { like => $q } };
 
                 },
                 second => sub {
@@ -257,10 +251,10 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific display name',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     {
                         'attribute.attribute' => 'display_name',
-                        'voip_usr_preferences.value' => { like => "%$q%" }
+                        'voip_usr_preferences.value' => { like => $q }
                     };
 
                 },

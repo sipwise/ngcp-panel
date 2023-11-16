@@ -37,8 +37,8 @@ sub query_params {
         },
         {
             param => 'name',
-            description => 'Filter for items matching a Time Set name pattern',
-            query_type => 'string_like',
+            description => 'Filter for items by Time Set name',
+            query_type => 'wildcard',
         },
     ];
 }

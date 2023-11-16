@@ -35,35 +35,17 @@ sub query_params {
         {
             param => 'name',
             description => 'Filter for peering server name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'host',
             description => 'Filter for peering server host',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { host => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'ip',
             description => 'Filter for peering server ip',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { host => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'enabled',

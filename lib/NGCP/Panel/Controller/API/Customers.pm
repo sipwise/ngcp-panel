@@ -74,13 +74,7 @@ sub query_params {
         {
             param => 'external_id',
             description => 'Filter for customer with specific external_id',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.external_id' => { like => $q } };
-                },
-                second => sub { },
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'contact_id',
