@@ -230,4 +230,14 @@ has_field 'invoice_template_id' => (
     },
 );
 
+has_field 'billing_zone_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::BillingZones',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
 1;
