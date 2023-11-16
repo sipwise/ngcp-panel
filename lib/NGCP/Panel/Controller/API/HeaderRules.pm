@@ -24,21 +24,13 @@ sub query_params {
     return [
         {
             param => 'name',
-            description => 'Filter for header rules with a specific name (wildcard pattern allowed)',
-            query => {
-                first => sub {
-                    +{ 'me.name' => { like => shift } };
-                }
-            },
+            description => 'Filter for header rules with a specific name',
+            query_type => 'wildcard',
         },
         {
             param => 'description',
-            description => 'Filter rules for a certain description (wildcards possible).',
-            query => {
-                first => sub {
-                    +{ 'me.description' => { like => shift } };
-                }
-            },
+            description => 'Filter rules for a certain description',
+            query_type => 'wildcard',
         },
         {
             param => 'set_id',

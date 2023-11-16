@@ -40,14 +40,15 @@ sub query_params {
                 second => sub { },
             },
         },
-        {
+        YYYY{
             param => 'folder',
             description => 'Filter for voicemails in a specific folder (one of INBOX, Old, Friends, Family, Cust1 to Cust4)',
             query => {
                 first => sub {
                     my $q = shift;
+                    ($q, my $is_pattern) = escape_search_string_pattern('*/' . $q);
                     # join is already done in get_item_rs
-                    { 'me.dir' => { like => '%/'.$q } };
+                    { 'me.dir' => { like => $q } };
                 },
                 second => sub { },
             },
