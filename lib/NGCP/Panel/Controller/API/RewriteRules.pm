@@ -23,14 +23,8 @@ sub query_params {
     return [
         {
             param => 'description',
-            description => 'Filter rules for a certain description (wildcards possible).',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { 'me.description' => { like => $q } };
-                },
-                second => undef,
-            },
+            description => 'Filter rules for a certain description',
+            query_type => 'wildcard',
         },
         {
             param => 'set_id',

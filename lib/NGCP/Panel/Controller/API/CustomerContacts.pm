@@ -23,14 +23,8 @@ sub query_params {
     return [
         {
             param => 'email',
-            description => 'Filter for contacts matching an email pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { email => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for contacts for the email address',
+            query_type => 'wildcard',
         },
         {
             param => 'reseller_id',

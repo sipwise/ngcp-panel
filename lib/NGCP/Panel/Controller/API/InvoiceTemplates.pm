@@ -34,13 +34,7 @@ sub query_params {
         {
             param => 'name',
             description => 'Filter for invoice templates with a specific name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.name' => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
     ];
 }
