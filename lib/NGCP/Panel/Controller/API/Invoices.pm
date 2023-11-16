@@ -66,8 +66,8 @@ sub query_params {
         },
         {
             param => 'serial',
-            description => 'Filter for invoices matching a serial (patterns allowed)',
-            query_type  => 'string_like',
+            description => 'Filter for invoices matching a serial',
+            query_type  => 'wildcard',
         },
     ];
 }

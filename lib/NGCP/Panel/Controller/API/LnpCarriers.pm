@@ -23,25 +23,13 @@ sub query_params {
     return [
         {
             param => 'prefix',
-            description => 'Filter for LNP carriers with a specific prefix (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { prefix => { like =>  $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for LNP carriers with a specific prefix',
+            query_type  => 'wildcard',
         },
         {
             param => 'name',
-            description => 'Filter for LNP carriers with a specific name (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for LNP carriers with a specific name',
+            query_type  => 'wildcard',
         },
     ];
 }

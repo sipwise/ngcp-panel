@@ -23,26 +23,14 @@ sub api_description {
 sub query_params {
     return [
         {
-            param => 'name',
+            param => 'model',
             description => 'Filter for peering group name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'description',
             description => 'Filter for peering group description',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { description => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
     ];
 }

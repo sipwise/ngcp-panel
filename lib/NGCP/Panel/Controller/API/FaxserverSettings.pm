@@ -24,7 +24,7 @@ sub query_params {
             description => 'Filter for items (subscribers) where name or password field match given pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     return { '-or' => [
                             { 'voip_fax_preference.name' => { like => $q } },
                             { 'voip_fax_preference.password' => { like => $q } },
