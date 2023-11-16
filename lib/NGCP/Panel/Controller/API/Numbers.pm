@@ -60,17 +60,17 @@ sub query_params {
         {
             param => 'ac',
             description => 'Filter for ac field of the number.',
-            query_type => 'string_like',
+            query_type => 'wildcard',
         },
         {
             param => 'cc',
             description => 'Filter for cc field c the number.',
-            query_type => 'string_like',
+            query_type => 'wildcard',
         },
         {
             param => 'sn',
             description => 'Filter for sn field c the number.',
-            query_type => 'string_like',
+            query_type => 'wildcard',
         },
         {
             param => 'type',

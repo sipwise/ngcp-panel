@@ -23,8 +23,8 @@ sub query_params {
     return [
         {
             param => 'description',
-            description => 'Filter rules for a certain description (wildcards possible).',
-            query_type  => 'string_like',
+            description => 'Filter rules for a certain description',
+            query_type => 'wildcard',
         },
         {
             param => 'set_id',

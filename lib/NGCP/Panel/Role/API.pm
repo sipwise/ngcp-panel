@@ -1170,6 +1170,14 @@ sub get_query_callbacks{
             $sub_where = sub {my ($q, $c) = @_; { wildcard_search(
                 search_string => $q,
                 search        => 1,
+                exact_search  => 0,
+                int_search    => 0,
+                col_name      => $param,
+            ) };};
+        } elsif ('wildcard_optional' eq $p[0]->{query_type}) {
+            $sub_where = sub {my ($q, $c) = @_; { wildcard_search(
+                search_string => $q,
+                search        => 1,
                 exact_search  => check_wildcard_search($c->req->params),
                 int_search    => 0,
                 col_name      => $param,

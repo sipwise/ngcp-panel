@@ -46,13 +46,7 @@ sub query_params {
         {
             param => 'type',
             description => 'Filter for events of a specific type.',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { type => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'timestamp_from',

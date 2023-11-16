@@ -35,13 +35,13 @@ sub query_params {
         },
         {
             param => 'name',
-            description => 'Filter for header rule sets with a specific name (wildcard pattern allowed)',
-            query_type => 'string_like',
+            description => 'Filter for header rule sets with a specific name',
+            query_type => 'wildcard',
         },
         {
             param => 'description',
-            description => 'Filter header rule sets for a certain description (wildcard pattern allowed).',
-            query_type => 'string_like',
+            description => 'Filter header rule sets for a certain description',
+            query_type => 'wildcard',
         },
     ];
 }
