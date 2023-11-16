@@ -34,13 +34,7 @@ sub query_params {
         {
             param => 'level',
             description => 'Filter for levels matching the given pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { level => { like => $q } };
-                },
-                second => sub { },
-            },
+            query_type  => 'wildcard',
         },
     ];
 }

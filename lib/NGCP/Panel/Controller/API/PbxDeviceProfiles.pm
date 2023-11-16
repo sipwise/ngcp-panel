@@ -22,25 +22,13 @@ sub query_params {
     return [
         {
             param => 'name',
-            description => 'Filter for profiles matching a name pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for profiles by name',
+            query_type => 'wildcard',
         },
         {
             param => 'config_id',
-            description => 'Filter for profiles matching a config_id',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'config_id' => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for profiles by config_id',
+            query_type => 'wildcard',
         },
     ];
 }

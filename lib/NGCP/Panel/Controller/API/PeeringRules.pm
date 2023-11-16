@@ -39,13 +39,7 @@ sub query_params {
         {
             param => 'description',
             description => 'Filter for peering rules description',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { description => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'enabled',

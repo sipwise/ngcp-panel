@@ -35,14 +35,8 @@ sub query_params {
         },
         {
             param => 'name',
-            description => 'Filter for customer locations matching a name pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for customer locations by name',
+            query_type => 'wildcard',
         },
     ];
 }

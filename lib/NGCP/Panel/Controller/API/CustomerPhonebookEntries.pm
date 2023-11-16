@@ -44,13 +44,13 @@ sub query_params {
         },
         {
             param => 'number',
-            description => 'Filter for Phonebook numbers with a specific number (wildcards possible)',
-            query_type => 'string_like',
+            description => 'Filter for Phonebook numbers with a specific number',
+            query_type => 'wildcard',
         },
         {
             param => 'name',
-            description => 'Filter for Phonebook numbers with a specific name (wildcards possible)',
-            query_type => 'string_like',
+            description => 'Filter for Phonebook numbers with a specific name',
+            query_type => 'wildcard',
         },
     ];
 }

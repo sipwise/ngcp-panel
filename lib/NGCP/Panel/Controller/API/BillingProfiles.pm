@@ -36,24 +36,12 @@ sub query_params {
         {
             param => 'handle',
             description => 'Filter for billing profiles with a specific handle',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { handle => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'name',
             description => 'Filter for billing profiles with a specific name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
     ];
 }
