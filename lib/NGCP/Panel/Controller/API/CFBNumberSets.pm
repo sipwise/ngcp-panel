@@ -37,13 +37,7 @@ sub query_params {
         {
             param => 'name',
             description => 'Filter for items matching a B-Number Set name pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
     ];
 }

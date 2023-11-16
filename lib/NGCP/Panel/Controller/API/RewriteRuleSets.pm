@@ -29,13 +29,13 @@ sub query_params {
         },
         {
             param => 'description',
-            description => 'Filter rulesets for a certain description (wildcards possible).',
-            query_type => 'string_like',
+            description => 'Filter rulesets for a certain description',
+            query_type => 'wildcard',
          },
         {
             param => 'name',
-            description => 'Filter rulesets for a certain name (wildcards possible).',
-            query_type => 'string_like',
+            description => 'Filter rulesets for a certain name',
+            query_type => 'wildcard',
         },
     ];
 }

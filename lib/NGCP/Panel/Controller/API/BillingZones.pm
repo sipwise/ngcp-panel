@@ -34,13 +34,7 @@ sub query_params {
         {
             param => 'zone',
             description => 'Filter for zone name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { zone => { like => '%'.$q.'%' } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
     ];
 }

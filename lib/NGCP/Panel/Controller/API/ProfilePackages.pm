@@ -36,20 +36,14 @@ sub query_params {
         {
             param => 'name',
             description => 'Filter for profile packages with a specific name',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'profile_name',
-            description => 'Filter for profile packages containing a billing profile with specific name',
+            description => 'Filter for profile packages containing a billing profile with specific name pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     { 'billing_profile.name' => { like => $q } };
                 },
                 second => sub {
@@ -60,10 +54,10 @@ sub query_params {
         },
         {
             param => 'network_name',
-            description => 'Filter for profile packages containing a billing network with specific name',
+            description => 'Filter for profile packages containing a billing network with specific name pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     { 'billing_network.name' => { like => $q } };
                 },
                 second => sub {
