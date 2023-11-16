@@ -109,7 +109,11 @@ See description how to obtain properties, if any.
 
 <ul id="[% id %]-qparams">
 [% FOREACH f IN col.query_params -%]
+[% IF f.query_type = 'wildcard' -%]
+    <li><b>[% f.param %]</b>: [% f.description _ ' ' _ ' (prefix search, * wildcards supported, note that leading or intermediate wildcards can be slow)' %]</li>
+[% ELSE -%]
     <li><b>[% f.param %]</b>: [% f.description %]</li>
+[% END -%]
 [% END -%]
     <li><b>order_by</b>: Order collection by a specific attribute. Possible values are: <i>[% col.sorting_cols.sort.join(', ') %]</i></li>
     <li><b>order_by_direction</b>: Direction which the collection should be ordered by. Possible values are: <i>asc (default), desc</i></li>

@@ -37,14 +37,8 @@ sub query_params {
         },
         {
             param => 'number',
-            description => 'Filter for LNP numbers with a specific number (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.number' => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for LNP numbers with a specific number',
+            query_type  => 'wildcard',
         },
         {
             param => 'actual',

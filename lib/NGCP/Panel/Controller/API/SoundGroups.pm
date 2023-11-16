@@ -24,7 +24,7 @@ sub query_params {
         {
             param => 'name',
             description => 'Filter for sound groups with a specific name',
-            query_type => 'string_like',
+            query_type => 'wildcard',
         },
     ];
 }

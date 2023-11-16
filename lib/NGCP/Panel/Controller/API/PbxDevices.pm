@@ -44,21 +44,21 @@ sub query_params {
         },
         {
             param => 'identifier',
-            description => 'Search for PBX devices matching an identifier/MAC pattern (wildcards possible)',
-            query_type => 'string_like',
+            description => 'Search for PBX devices matching an identifier/MAC pattern',
+            query_type => 'wildcard',
         },
         {
             param => 'station_name',
-            description => 'Search for PBX devices matching a station_name pattern (wildcards possible)',
-            query_type => 'string_like',
+            description => 'Search for PBX devices matching a station_name pattern',
+            query_type => 'wildcard',
         },
         {
             param => 'pbx_extension',
-            description => 'Search for PBX devices matching a subscriber\'s extension pattern (wildcards possible)',
+            description => 'Search for PBX devices matching a subscriber\'s extension pattern',
             query => {
                 first => sub {
-                    my $q = shift;
-                    { 'provisioning_voip_subscriber.pbx_extension' => { like => "$q%" } };
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    { 'provisioning_voip_subscriber.pbx_extension' => { like => $q } };
 
                 },
                 second => sub {
@@ -68,13 +68,13 @@ sub query_params {
         },
         {
             param => 'display_name',
-            description => 'Search for PBX devices matching a subscriber\'s display name pattern (wildcards possible)',
+            description => 'Search for PBX devices matching a subscriber\'s display name pattern',
             query => {
                 first => sub {
-                    my $q = shift;
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
                     {
                         'attribute.attribute' => 'display_name',
-                        'voip_usr_preferences.value' => { like => "$q%" }
+                        'voip_usr_preferences.value' => { like => $q }
                     };
 
                 },
