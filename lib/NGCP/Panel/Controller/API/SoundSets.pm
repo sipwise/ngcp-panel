@@ -39,8 +39,8 @@ sub query_params {
         },
         {
             param => 'name',
-            description => 'Filter for sound sets with a specific name (wildcard pattern allowed)',
-            query_type => 'string_like',
+            description => 'Filter for sound sets with a specific name',
+            query_type => 'wildcard',
         },
     ];
 }

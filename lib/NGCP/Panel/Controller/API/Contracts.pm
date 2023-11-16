@@ -49,13 +49,7 @@ sub query_params {
         {
             param => 'external_id',
             description => 'Filter for contracts with a specific external id',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { 'me.external_id' => { like => $q } };
-                },
-                second => sub {},
-            },
+            query_type => 'wildcard',
         },
         {
             param => 'type',

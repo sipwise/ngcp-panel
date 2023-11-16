@@ -28,14 +28,8 @@ sub query_params {
         },
         {
             param => 'domain',
-            description => 'Filter for domains matching the given pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { domain => { like => $q } };
-                },
-                second => sub { },
-            },
+            description => 'Filter for for a domain name',
+            query_type => 'wildcard',
         },
     ];
 }
