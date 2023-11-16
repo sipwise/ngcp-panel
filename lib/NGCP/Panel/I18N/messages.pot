@@ -1319,6 +1319,10 @@ msgstr ""
 msgid "Billing zone does not exist!"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Billing zone id"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm
 msgid "Billing zone successfully deleted"
 msgstr ""
