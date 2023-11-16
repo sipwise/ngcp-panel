@@ -42,8 +42,8 @@ sub query_params {
         },
         {
             param => 'model',
-            description => 'Filter for models matching a model name pattern',
-            query_type => 'string_like',
+            description => 'Filter for models by name',
+            query_type => 'wildcard',
         },
     ];
 }

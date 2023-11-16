@@ -29,8 +29,8 @@ sub query_params {
         },
         {
             param => 'login',
-            description => 'Filter for admins with a specific login (wildcards possible)',
-            query_type => 'string_like',
+            description => 'Filter for admins with a specific login', # (wildcards possible)',
+            query_type => 'wildcard',
         },
     ];
 }

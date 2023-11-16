@@ -51,14 +51,8 @@ sub query_params {
         },
         {
             param => 'code',
-            description => 'Filter for mappings with a specific code (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { code => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for mappings with a specific code',
+            query_type => 'wildcard',
         },
     ];
 }
