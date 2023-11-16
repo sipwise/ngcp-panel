@@ -23,14 +23,8 @@ sub query_params {
     return [
         {
             param => 'name',
-            description => 'Filter for emergency mapping containers with a specific name (wildcards possible)',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for emergency mapping containers with a specific name',
+            query_type => 'wildcard',
         },
         {
             param => 'reseller_id',

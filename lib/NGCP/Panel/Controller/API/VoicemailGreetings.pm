@@ -62,8 +62,9 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
+                    ($q, my $is_pattern) = escape_search_string_pattern('/var/spool/asterisk/voicemail/*/' . $q);
                     return {
-                        'me.dir' => { like => '/var/spool/asterisk/voicemail/%/'.$q },
+                        'me.dir' => { like => $q },
                     };
                 },
                 second => sub {},

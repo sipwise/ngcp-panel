@@ -249,9 +249,15 @@ sub escape_search_string_pattern {
         }
         $token;
     } split(/(\\\\)/,$searchString,-1));
-    if (not $is_pattern and not $no_pattern) {
-        $searchString_escaped .= '%';
-        $is_pattern = 1;
+    if (not $is_pattern and not $no_pattern and length($searchString_escaped) > 0) {
+        #if ($append) {
+            $searchString_escaped .= '%';
+            $is_pattern = 1;
+        #}
+        #if ($prepend) {
+        #    $searchString_escaped = '%' . $searchString_escaped;
+        #    $is_pattern = 1;
+        #}
     }
     return ($searchString_escaped,$is_pattern);
 

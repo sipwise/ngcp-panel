@@ -24,14 +24,8 @@ sub query_params {
     return [
         {
             param => 'name',
-            description => 'Filter for resellers matching the given name pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { name => { like => $q } };
-                },
-                second => sub {},
-            },
+            description => 'Filter for resellers by name',
+            query_type => 'wildcard',
         },
         {
             param => 'status',
