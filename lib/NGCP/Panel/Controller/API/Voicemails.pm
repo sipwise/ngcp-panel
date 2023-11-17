@@ -40,7 +40,7 @@ sub query_params {
                 second => sub { },
             },
         },
-        YYYY{
+        {
             param => 'folder',
             description => 'Filter for voicemails in a specific folder (one of INBOX, Old, Friends, Family, Cust1 to Cust4)',
             query => {
