@@ -12,7 +12,7 @@ my$test_collection = new Test::Collection(
     DEBUG => 1,
 );
 $test_collection->DEBUG_ONLY(0);
-my $profiles = $test_collection->get_collection_hal('pbxdeviceprofiles','/api/pbxdeviceprofiles/?name='.uri_escape('%two%'));
+my $profiles = $test_collection->get_collection_hal('pbxdeviceprofiles','/api/pbxdeviceprofiles/?name='.uri_escape('*two*'));
 $test_collection->DEBUG_ONLY(1);
 if($profiles && $profiles->{total_count}){
     foreach my $profile(@{$profiles->{collection}}){
@@ -27,7 +27,7 @@ if($profiles && $profiles->{total_count}){
 
 $test_collection->name('pbxdevicemodels');
 $test_collection->DEBUG_ONLY(0);
-my $models = $test_collection->get_collection_hal('pbxdevicemodels','/api/pbxdevicemodels/?model='.uri_escape('%two%'));
+my $models = $test_collection->get_collection_hal('pbxdevicemodels','/api/pbxdevicemodels/?model='.uri_escape('*two*'));
 $test_collection->DEBUG_ONLY(1);
 if($models && $models->{total_count}){
     foreach my $model(@{$models->{collection}}){
