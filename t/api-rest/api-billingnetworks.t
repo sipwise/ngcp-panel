@@ -171,7 +171,7 @@ done_testing;
 sub _filter_by_ip {
     
     my ($ip,$expected,$version) = @_;
-    $req = HTTP::Request->new('GET', $uri.'/api/billingnetworks/?page=1&rows=5&ip='.$ip.'&name='.URI::Escape::uri_escape('%').$t);
+    $req = HTTP::Request->new('GET', $uri.'/api/billingnetworks/?page=1&rows=5&ip='.$ip.'&name='.URI::Escape::uri_escape('*').$t);
     $res = $ua->request($req);
     is($res->code, 200, "filter for $version ip ".$ip);
     my $collection = JSON::from_json($res->decoded_content);
