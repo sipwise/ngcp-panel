@@ -189,7 +189,7 @@ my %package_map = ();
         push(@profile_packages,_post_profile_package());
     }
     
-    $req = HTTP::Request->new('GET', $uri.'/api/profilepackages/?page=1&rows=5&network_name='.URI::Escape::uri_escape('%')."network $t");
+    $req = HTTP::Request->new('GET', $uri.'/api/profilepackages/?page=1&rows=5&network_name='.URI::Escape::uri_escape('*')."network $t");
     $res = $ua->request($req);
     is($res->code, 200, "filter packages by network name");
     my $collection = JSON::from_json($res->decoded_content);
