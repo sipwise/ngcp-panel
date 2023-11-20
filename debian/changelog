@@ -1,3 +1,26 @@
+ngcp-panel (10.5.7.0+0~mr10.5.7.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [53f28f4] MT#58157 escape uri refs in body.tt
+  * [d9ee558] MT#57100 avoid where ambiguity for query_types search_eq,search_like
+
+  [ Fabricio Santolin da Silva ]
+  * [b2529fb] MT#58468 Fix special characters incorrectly interpreted by paps
+
+  [ Marco Capetta ]
+  * [77232ab] MT#54356 Fix swagger documentation for 'calllist' api
+
+  [ Rene Krenn ]
+  * [f5b6615] MT#58346 caller/callee filters for conversations
+  * [eb7d5ca] MT#58346 fix panel datatable filtering
+  * [b1c216e] MT#58346 fix conversations voicemail timestamp filter
+  * [f9dc78a] MT#56239 api general caller/callee wildcard search support
+  * [c57231d] MT#56239 api/callrecordings support filtering multiple metakeys
+  * [b62da79] MT#56239 avoid ambersand symbol in apidoc descriptions
+  * [827fbd1] MT#57070 ignore undef enum.default_val
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Nov 2023 16:38:04 +0100
+
 ngcp-panel (10.5.6.0+0~mr10.5.6.0) unstable; urgency=medium
 
   [ Marco Capetta ]
