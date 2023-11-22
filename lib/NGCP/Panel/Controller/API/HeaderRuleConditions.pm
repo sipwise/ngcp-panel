@@ -23,9 +23,15 @@ sub api_description {
 sub query_params {
     return [
         {
-            param => 'subscriber_id',
-            description => 'Filter for header rule sets of a specific subscriber',
-        }
+            param => 'set_id',
+            description => 'Filter for header rule conditions of a specific header rule set',
+            query_type => 'string_eq',
+        },
+        {
+            param => 'rule_id',
+            description => 'Filter for header rule conditions of a specific header rule',
+            query_type => 'string_eq',
+        },
     ];
 }
 
