@@ -1,3 +1,36 @@
+ngcp-panel (12.1.1.0+0~mr12.1.1.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [a7f82c2] MT#57129 Anonymize caller in conversation list when clir is equal to 1
+  * [958e40e] MT#54356 Fix swagger documentation for 'calllist' api
+  * [f8fd17b] MT#58596 Enable api soundgroups and soundhandles for subscriber
+  * [a0b7867] MT#56895 Deprecate 'api_embedded_forcearray' and 'api_links_forcearray' params
+
+  [ Rene Krenn ]
+  * [0bdd78e] MT#58422 fix persisting "don't change" topup lock level
+  * [f6b934b] MT#58485 invoice: use UTC tz when filtering for start_time
+  * [ae612eb] MT#58346 caller/callee filters for conversations
+  * [d546387] MT#58346 fix panel datatable filtering
+  * [5eff060] MT#58346 fix conversations voicemail timestamp filter
+  * [9c3a549] MT#56239 api general caller/callee wildcard search support
+  * [7370f0e] MT#58675 add /api/billingfees missing fields
+  * [8e82715] MT#56239 api/callrecordings support filtering multiple metakeys
+  * [71480ac] MT#56239 avoid ambersand symbol in apidoc descriptions
+  * [308a974] MT#58762 harmonize restapi wildcard filters
+  * [bbb964f] MT#58765 expand zones in billing fees response
+  * [aa2d07e] MT#58762 adjust restpi tests to harmonized wildcard filters
+
+  [ Kirill Solomko ]
+  * [1aef2d5] MT#58581 /api/customers fix filter by profile_package_id
+  * [1231cae] MT#58746 /api/phonebookentries fix duplicate check
+  * [08fb96c] MT#58813 adjust header rule conditions/actions filters
+
+  [ Sipwise Jenkins Builder ]
+  * [0430303] TT#4166 I18N dump: snapshot 2023.11.15-23.20.49
+  * [ec9b58a] TT#4166 I18N dump: snapshot 2023.11.16-23.20.45
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Nov 2023 13:37:14 +0100
+
 ngcp-panel (12.1.0.0+0~mr12.1.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
