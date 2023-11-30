@@ -79,12 +79,12 @@ sub check_resource {
     my ($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     my $schema = $c->model('DB');
 
-    unless (defined $resource->{rule_id}) {
+    unless ($resource->{rule_id}) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'rule_id'");
         return;
     }
 
-    if (!defined $resource->{rwr_set_id} && (defined $resource->{rwr_dp} || defined $resource->{rwr_dp_id})) {
+    if (!$resource->{rwr_set_id} && (defined $resource->{rwr_dp} || defined $resource->{rwr_dp_id})) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing 'rwr_set_id' (when rwr_dp is set).");
         return;
     }
