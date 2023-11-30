@@ -1,3 +1,20 @@
+ngcp-panel (12.0.1.3+0~mr12.0.1.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [d55f334] MT#58346 caller/callee filters for conversations
+  * [e0319a7] MT#58346 fix panel datatable filtering
+  * [4a664af] MT#58346 fix conversations voicemail timestamp filter
+  * [c1e3152] MT#56239 api general caller/callee wildcard search support
+  * [f6c2c73] MT#56239 api/callrecordings support filtering multiple metakeys
+  * [343c972] MT#56239 avoid ambersand symbol in apidoc descriptions
+  * [f147773] MT#58762 harmonize restapi wildcard filters
+  * [07a4354] MT#58762 adjust restpi tests to harmonized wildcard filters
+
+  [ Marco Capetta ]
+  * [855d740] MT#58762 Fix typo in swagger documentation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 30 Nov 2023 10:53:38 +0100
+
 ngcp-panel (12.0.1.2+0~mr12.0.1.2) unstable; urgency=medium
 
   [ Kirill Solomko ]
