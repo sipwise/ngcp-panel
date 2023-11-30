@@ -240,4 +240,14 @@ has_field 'billing_zone_id' => (
     },
 );
 
+has_field 'rwr_set_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::RewriteRuleSets',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
 1;

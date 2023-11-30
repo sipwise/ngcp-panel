@@ -15,6 +15,16 @@ has_field 'rwr_dp' => (
     required => 0,
 );
 
+has_field 'rwr_set_id' => (
+    type => 'PosInteger',
+    required => 0,
+);
+
+has_field 'rule_id' => (
+    type => 'PosInteger',
+    required => 0,
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
