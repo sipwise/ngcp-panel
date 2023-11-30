@@ -1,3 +1,14 @@
+ngcp-panel (10.5.2.19+0~mr10.5.2.19) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [a16d273] MT#58762 harmonize restapi wildcard filters
+  * [6def75d] MT#58762 adjust restpi tests to harmonized wildcard filters
+
+  [ Marco Capetta ]
+  * [a1820ec] MT#58762 Fix typo in swagger documentation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 30 Nov 2023 11:16:24 +0100
+
 ngcp-panel (10.5.2.18+0~mr10.5.2.18) unstable; urgency=medium
 
   [ Rene Krenn ]
