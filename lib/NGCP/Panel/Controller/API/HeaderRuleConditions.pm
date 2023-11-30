@@ -41,6 +41,7 @@ sub create_item {
     my $item;
     my $schema = $c->model('DB');
     try {
+        $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
         $item = $schema->resultset('voip_header_rule_conditions')
                         ->create($resource);
         NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(

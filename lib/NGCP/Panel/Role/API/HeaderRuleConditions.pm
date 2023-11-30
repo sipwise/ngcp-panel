@@ -95,6 +95,25 @@ sub resource_from_item {
     return \%resource;
 }
 
+sub pre_process_form_resource {
+    my ($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    if (my $values = $resource->{values}) {
+        my @adjusted_values;
+        if ($#$values >= 0) {
+            my $check = $values->[0];
+            if (!ref $check) {
+                foreach my $value (@{$values}) {
+                    push @adjusted_values, { 'value' => $value };
+                }
+                $resource->{values} = \@adjusted_values;
+            }
+        }
+    }
+
+    return $resource;
+}
+
 sub check_resource {
     my ($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     my $schema = $c->model('DB');
