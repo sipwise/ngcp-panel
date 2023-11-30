@@ -109,7 +109,7 @@ See description how to obtain properties, if any.
 
 <ul id="[% id %]-qparams">
 [% FOREACH f IN col.query_params -%]
-[% IF f.query_type = 'wildcard' -%]
+[% IF f.query_type == 'wildcard' -%]
     <li><b>[% f.param %]</b>: [% f.description _ ' ' _ ' (prefix search, * wildcards supported, note that leading or intermediate wildcards can be slow)' %]</li>
 [% ELSE -%]
     <li><b>[% f.param %]</b>: [% f.description %]</li>
