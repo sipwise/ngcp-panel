@@ -1,3 +1,16 @@
+ngcp-panel (8.5.13.0+0~mr8.5.13.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [2c00e18] MT#57469 Fix kamailio lcr reload on PATCH/PUT APIs
+
+  [ Kirill Solomko ]
+  * [e3d4ec0] MT#58157 escape uri refs in body.tt
+
+  [ Fabricio Santolin da Silva ]
+  * [e1b0f4c] MT#58468 Fix special characters incorrectly interpreted by paps
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Dec 2023 08:09:52 +0100
+
 ngcp-panel (8.5.12.0+0~mr8.5.12.0) unstable; urgency=medium
 
   * New release.
