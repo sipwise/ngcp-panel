@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.11+0~mr11.5.1.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9212701] MT#58936 direction filter param for /api/customerzonecosts
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Dec 2023 14:05:20 +0100
+
 ngcp-panel (11.5.1.10+0~mr11.5.1.10) unstable; urgency=medium
 
   [ Rene Krenn ]
