@@ -367,7 +367,7 @@
         {
             my ($retained) = @_;
 
-            $retained->{eventhistory_path} = "api/events/?page=1&rows=10&order_by_direction=asc&order_by=id&subscriber_id=$retained->{subscriber_id}&type=%ivr";
+            $retained->{eventhistory_path} = "api/events/?page=1&rows=10&order_by_direction=asc&order_by=id&subscriber_id=$retained->{subscriber_id}&type=*ivr";
 
             $retained->{expected_events} = [
                 { subscriber_id => $retained->{subscriber}->{id}, type => "start_ivr" },
