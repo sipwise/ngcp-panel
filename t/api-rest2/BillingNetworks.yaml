@@ -554,7 +554,7 @@
     name: compare filtered collection
     type: item
     method: GET
-    path: '/api/billingnetworks/?page=1&rows=5&ip=fdfe::5a55:caff:fefa:9089&name=%25${unique_id}'
+    path: '/api/billingnetworks/?page=1&rows=5&ip=fdfe::5a55:caff:fefa:9089&name=*%25*${unique_id}'
     retain:
         collection: body
     perl_code: !!perl/code |
@@ -575,7 +575,7 @@
     name: compare filtered collection
     type: item
     method: GET
-    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.4.0&name=%25${unique_id}'
+    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.4.0&name=*${unique_id}'
     retain:
         collection: body
     perl_code: !!perl/code |
@@ -596,7 +596,7 @@
     name: compare filtered collection
     type: item
     method: GET
-    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.4.64&name=%25${unique_id}'
+    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.4.64&name=*${unique_id}'
     retain:
         collection: body
     perl_code: !!perl/code |
@@ -617,7 +617,7 @@
     name: compare filtered collection
     type: item
     method: GET
-    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.5.255&name=%25${unique_id}'
+    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.5.255&name=*${unique_id}'
     retain:
         collection: body
     perl_code: !!perl/code |
@@ -638,7 +638,7 @@
     name: compare filtered collection
     type: item
     method: GET
-    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.6.255&name=%25${unique_id}'
+    path: '/api/billingnetworks/?page=1&rows=5&ip=10.0.6.255&name=*${unique_id}'
     retain:
         collection: body
     perl_code: !!perl/code |
