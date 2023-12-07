@@ -81,8 +81,7 @@ sub resource_from_item {
         stime => $stime,
         etime => $etime,
         subscriber_uuid => $subscriber_uuid,
-        direction => ($c->request->query_params->{direction} ? $c->request->query_params->{direction} : 'in_out'),
-        category => 'customer',
+        call_direction => ($c->request->query_params->{direction} ? $c->request->query_params->{direction} : 'in_out'),
         group_by_detail => 0,
     );
 
