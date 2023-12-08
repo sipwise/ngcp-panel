@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.12+0~mr11.5.1.12) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e4a0067] MT#58936 fix customerzonecosts resourcename
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 Dec 2023 13:42:28 +0100
+
 ngcp-panel (11.5.1.11+0~mr11.5.1.11) unstable; urgency=medium
 
   [ Rene Krenn ]
