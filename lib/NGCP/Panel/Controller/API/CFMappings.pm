@@ -35,7 +35,7 @@ sub documentation_sample {
         }],
         cfna => [],
         cft => [],
-        cft_ringtimeout => "200",
+        cft_ringtimeout => 200,
         cfu => [],
         cfs => [],
         cfr => [],
