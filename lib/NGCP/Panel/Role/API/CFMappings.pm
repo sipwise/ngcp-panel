@@ -112,7 +112,7 @@ sub hal_from_item {
         resource => $resource,
         run => 0,
     );
-    $resource->{cft_ringtimeout} = $ringtimeout_preference;
+    $resource->{cft_ringtimeout} = (length($ringtimeout_preference) ? $ringtimeout_preference + 0 : undef);
     $resource->{id} = int($item->id);
 
     $self->expand_fields($c, $resource);
