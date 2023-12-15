@@ -74,7 +74,7 @@ sub process_data :Private {
     my $customer_id = $params->{'customer_id'} // '';
 
     my ($entries, $fails, $text) =
-        NGCP::Panel::Utils::Phonebook::upload_csv($c, $rs, 'customer',
+        NGCP::Panel::Utils::Phonebook::upload_csv($c, $rs, 'contract',
             $customer_id, $params->{purge_existing}, $data_ref);
     $c->log->info( $$text );
 }

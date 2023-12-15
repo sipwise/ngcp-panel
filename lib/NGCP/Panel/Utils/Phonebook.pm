@@ -158,13 +158,115 @@ sub upload_csv {
 
     my $csv = Text::CSV_XS->new({ allow_whitespace => 1, binary => 1, keep_meta_info => 1 });
 
+    my $schema = $c->model('DB');
+
     my @cols = qw/name number/;
     my @fields ;
     my @fails = ();
     my $linenum = 0;
     my @entries;
 
-    $c->model('DB')->txn_do(sub {
+    my $no_access = 0;
+    my %contract_ids;
+    my %subscriber_ids;
+    # check user access to owner_id
+    if ($c->user->roles eq 'reseller') {
+        if ($owner_id && $owner eq 'reseller' && $owner_id != $c->user->reseller_id) {
+            $no_access = 1;
+        } elsif ($owner eq 'contract') {
+            my $found = 0;
+            foreach my $row ($schema->resultset('contracts')->search({
+                'contact.reseller_id' => $c->user->reseller_id,
+            },{
+                select => ['me.id'],
+                as => ['id'],
+                join => 'contact',
+                result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+            })->all) {
+                my $id = $row->{id};
+                if ($owner_id) {
+                    if ($id == $owner_id) {
+                        $found = 1;
+                        last;
+                    }
+                } else {
+                    $contract_ids{$id} = 1;
+                }
+            }
+            if ($owner_id) {
+                $no_access = 1 unless $found;
+            }
+        } elsif ($owner eq 'subscriber') {
+            my $found = 0;
+            foreach my $row ($schema->resultset('voip_subscribers')->search({
+                'contact.reseller_id' => $c->user->reseller_id,
+            },{
+                select => ['me.id'],
+                as => ['id'],
+                join => { 'contract' => 'contact' },
+                result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+            })->all) {
+                my $id = $row->{id};
+                if ($owner_id) {
+                    if ($id == $owner_id) {
+                        $found = 1;
+                        last;
+                    }
+                } else {
+                    $subscriber_ids{$id} = 1;
+                }
+            }
+            if ($owner_id) {
+                $no_access = 1 unless $found;
+            }
+        }
+    } elsif ($c->user->roles eq 'subscriberadmin') {
+        if ($owner_id && $owner eq 'reseller') {
+            $no_access = 1;
+        } elsif ($owner_id && $owner eq 'contract' && $owner_id != $c->user->account_id) {
+            $no_access = 1;
+        } elsif ($owner eq 'subscriber') {
+            my $found = 0;
+            foreach my $row ($schema->resultset('voip_subscribers')->search({
+                'contract_id' => $c->user->account_id,
+            },{
+                select => ['me.id'],
+                as => ['id'],
+                result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+            })->all) {
+                my $id = $row->{id};
+                if ($owner_id) {
+                    if ($id == $owner_id) {
+                        $found = 1;
+                        last;
+                    }
+                } else {
+                    $subscriber_ids{$id} = 1;
+                }
+            }
+            if ($owner_id) {
+                $no_access = 1 unless $found;
+            }
+        }
+    } elsif ($owner_id && $c->user->roles eq 'subscriber') {
+        if ($owner eq 'reseller') {
+            $no_access = 1;
+        } elsif ($owner eq 'contract') {
+            $no_access = 1;
+        } elsif ($owner eq 'subscriber' && $owner_id != $c->user->voip_subscriber->id) {
+            $no_access = 1;
+        }
+    }
+
+    if ($no_access) {
+        my $accepted = 0;
+        my (@entries, @fails);
+        my $text = 'Phonebook entries upload failed: ';
+           $text .= "user does not have access to $owner with id $owner_id\n";
+        return (\@entries, \@fails, \$text);
+    }
+
+    $schema->txn_do(sub {
 
         open(my $fh, '<:encoding(utf8)', $data);
 
@@ -178,26 +280,102 @@ sub upload_csv {
             @fields = $csv->fields();
 
             my $row = {};
-            # name,number
-            if (scalar @fields == 2) {
-                @{$row}{@cols} = @fields;
-            # name,number,reseller_id (in case of admin uploads)
-            } elsif ($c->user->roles eq "admin" &&
-                     $owner eq 'reseller' && scalar @fields == 3) {
-                @{$row}{@cols,'reseller_id'} = @fields;
-            # name,number,shared
-            } elsif ($owner eq 'subscriber' && scalar @fields == 3) {
-                @{$row}{@cols,'shared'} = @fields;
-            # hmmm
+
+            if ($owner_id) {
+                # name,number
+                if ($owner ne 'subscriber' && scalar @fields >= 2) {
+                    @{$row}{@cols} = splice @fields, 0, 2;
+                # name,number,shared
+                } elsif ($owner eq 'subscriber' && scalar @fields >= 3) {
+                    my $shared = int($fields[2]);
+                    if ($shared != 1 && $shared != 0) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    @{$row}{@cols,'shared'} = splice @fields, 0, 3;
+                } else {
+                    push @fails, $linenum;
+                    next;
+                }
+                $row->{$owner.'_id'} = $owner_id;
             } else {
-                push @fails, $linenum;
-                next;
+                if ($owner eq 'reseller') {
+                    # name,number,reseller_id
+                    if (scalar @fields != 3) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    my $reseller_id_f = int($fields[2]);
+                    if ($c->user->roles eq 'admin') {
+                        @{$row}{@cols,'reseller_id'} = @fields;
+                    } elsif ($c->user->roles eq 'reseller' &&
+                             $reseller_id_f == $c->user->reseller_id) {
+                        @{$row}{@cols,'reseller_id'} = @fields;
+                    } else {
+                        push @fails, $linenum;
+                        next;
+                    }
+                } elsif ($owner eq 'contract') {
+                    # name,number,contract_id
+                    if (scalar @fields != 3) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    my $contract_id_f = int($fields[2]);
+                    if ($c->user->roles eq 'admin') {
+                        @{$row}{@cols,'contract_id'} = @fields;
+                    } elsif ($c->user->roles eq 'reseller' &&
+                             exists $contract_ids{$contract_id_f}) {
+                        @{$row}{@cols,'contract_id'} = @fields;
+                    } elsif ($c->user->roles eq 'subscriberadmin' &&
+                             $contract_id_f == $c->user->account_id) {
+                        @{$row}{@cols,'contract_id'} = @fields;
+                    } else {
+                        push @fails, $linenum;
+                        next;
+                    }
+                } elsif ($owner eq 'subscriber') {
+                    # name,number,shared,subscriber_id
+                    if (scalar @fields != 4) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    my $subscriber_id_f = int($fields[3]);
+                    my $shared = int($fields[2]);
+                    if ($shared != 1 && $shared != 0) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    if ($c->user->roles eq 'admin') {
+                        @{$row}{@cols,'shared','subscriber_id'} = @fields;
+                    } elsif ($c->user->roles eq 'reseller' &&
+                             exists $subscriber_ids{$subscriber_id_f}) {
+                        @{$row}{@cols,'shared','subscriber_id'} = @fields;
+                    } elsif ($c->user->roles eq 'subscriberadmin' &&
+                             exists $subscriber_ids{$subscriber_id_f}) {
+                        @{$row}{@cols,'shared','subscriber_id'} = @fields;
+                    } elsif ($c->user->roles eq 'subscriber' &&
+                             $subscriber_id_f == $c->user->voip_subscriber->id) {
+                        @{$row}{@cols,'shared','subscriber_id'} = @fields;
+                    } else {
+                        push @fails, $linenum;
+                        next;
+                    }
+                } else {
+                    push @fails, $linenum;
+                    next;
+                }
             }
-            $row->{$owner.'_id'} //= $owner_id;
-            push @entries, $row;
+
             unless ($purge) {
-                $rs->update_or_create($row,{key=>'rel_u_idx'});
+                try {
+                    $rs->update_or_create($row,{key=>'rel_u_idx'});
+                } catch($e) {
+                    push @fails, $linenum;
+                    next;
+                }
             }
+            push @entries, $row;
         }
 
         if ($purge) {
