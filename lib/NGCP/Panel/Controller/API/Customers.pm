@@ -35,6 +35,19 @@ sub documentation_sample {
 sub query_params {
     my $params = [
         {
+            param => 'type',
+            description => 'Filter for customers with a specific type (sipaccount or pbxaccount)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'product.class' => $q };
+                },
+                second => sub {
+                    { join => 'product' };
+                },
+            },
+        },
+        {
             param => 'status',
             description => 'Filter for customers with a specific status (comma-separated list of statuses to include possible)',
             query => {
