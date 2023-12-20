@@ -23,7 +23,7 @@ sub api_description {
 sub query_params {
     return [
         {
-            param => 'model',
+            param => 'name',
             description => 'Filter for peering group name',
             query_type => 'wildcard',
         },
