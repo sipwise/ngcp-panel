@@ -1,3 +1,12 @@
+ngcp-panel (10.5.6.3+0~mr10.5.6.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [5a55763] MT#58762 adjust restpi tests v2 to harmonized wildcard filters
+  * [46029ac] MT#58762 adjust restpi tests v2 to harmonized wildcard filters #1
+  * [85be902] MT#59025 fix peering groups name filter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 21 Dec 2023 11:10:40 +0100
+
 ngcp-panel (10.5.6.2+0~mr10.5.6.2) unstable; urgency=medium
 
   [ Rene Krenn ]
