@@ -1,3 +1,25 @@
+ngcp-panel (12.2.1.0+0~mr12.2.1.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [1474584] MT#58762 Fix typo in swagger documentation
+
+  [ Kirill Solomko ]
+  * [f399f3c] MT#58826 enable expand by rwr_set_id
+  * [8985839] MT#58834 fix headerrule conditions/actions dp_id check
+  * [462bfed] MT#58861 /api/headerruleconditions accept values as a list of strings
+  * [1dabb60] MT#58989 /api/customers add type query param
+  * [b6b453d] MT#59001 improve phonebook csv upload
+
+  [ Rene Krenn ]
+  * [853bc9f] MT#58936 direction filter param for /api/customerzonecosts
+  * [bad2e32] MT#58762 adjust restpi tests v2 to harmonized wildcard filters
+  * [73a967b] MT#58762 adjust restpi tests v2 to harmonized wildcard filters #1
+  * [2101e22] MT#58936 fix customerzonecosts resourcename
+  * [cc8fd89] MT#58890 force cft_ringtimeout as number
+  * [1e9f223] MT#59025 fix peering groups name filter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jan 2024 14:47:33 +0100
+
 ngcp-panel (12.2.0.0+0~mr12.2.0.0) unstable; urgency=medium
 
   [ Marco Capetta ]
