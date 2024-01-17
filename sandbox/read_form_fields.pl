@@ -5,21 +5,17 @@ use Data::Printer;
 use NGCP::Panel::Form::BillingFee;
 
 sub field_to_json {
-	my $name = shift;
+	local $_ = shift;
 
-	given($name) {
-		when(/Float|Integer|Money|PosInteger|Minute|Hour|MonthDay|Year/) {
-			return "Number";
+	if (/Float|Integer|Money|PosInteger|Minute|Hour|MonthDay|Year/) {
+		return "Number";
+	} elsif (/Boolean/) {
+		return "Boolean";
 		}
-		when(/Boolean/) {
-			return "Boolean";
-		}
-		when(/Repeatable/) {
-			return "Array";
-		}
-		default {
-			return "String";
-		}
+	} elsif (/Repeatable/) {
+		return "Array";
+	} else {
+		return "String";
 	}
 }
 
