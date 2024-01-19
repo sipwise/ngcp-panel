@@ -72,6 +72,18 @@ sub query_params {
             },
         },
         {
+            param => 'call_id',
+            description => 'Filter for a particular call_id prefix and sort by call leg depth.',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                return $rs->search_rs({
+                    call_id => { like => $q.'%' },
+                },{
+                    order_by => { '-asc' => [ \'length(call_id)', 'start_time', ], },
+                });
+            },
+        },        
+        {
             param => 'alias_field',
             description => 'Set this parameter for example to "gpp0" if you store alias numbers in the gpp0 preference and want to have that value shown as other CLI for calls from or to such a local subscriber.',
             query => {
@@ -233,18 +245,6 @@ sub query_params {
                     { init_time => { '<=' => $dt->epoch } };
                 },
                 second => sub {},
-            },
-        },
-        {
-            param => 'call_id',
-            description => 'Filter for a particular call_id prefix and sort by call leg depth.',
-            new_rs => sub {
-                my ($c,$q,$rs) = @_;
-                return $rs->search_rs({
-                    call_id => { like => $q.'%' },
-                },{
-                    order_by => { '-asc' => [ \'length(call_id)', 'start_time', ], },
-                });
             },
         },
         {
