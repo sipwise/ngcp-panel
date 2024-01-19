@@ -1102,71 +1102,73 @@ sub apply_query_params {
         return $item_rs;
     }
 
-    foreach my $param(_get_sorted_query_params($c,$query_params)) {
-        my @p = grep { $_->{param} eq $param } @{ $query_params };
-        #todo: we can generate default filters for all item_rs fields here
-        #the only reason not to do this is a security
-        next unless($p[0]->{query} || $p[0]->{query_type} || $p[0]->{new_rs}); # skip "dummy" query parameters
-        my $q = $c->req->query_params->{$param}; # TODO: arrayref?
+    foreach my $param (reverse _get_sorted_query_params($c,$query_params)) {
+        my $p = $param;
+        $p = $p->{param} if ref $p;
+        my $q = $c->req->query_params->{$p};
         $q = undef if $q eq "NULL"; # IS NULL translation
-        if(@p) {
-            if (defined $p[0]->{new_rs}) {
-                #compose fresh rs based on current, to support set operations with filters:
-                $item_rs = $p[0]->{new_rs}($c,$q,$item_rs);
-            } elsif (defined $p[0]->{query} || defined $p[0]->{query_type}) {
-                #regular chaining:
-                my($sub_where,$sub_attributes) = $self->get_query_callbacks(\@p);
-                $item_rs = $item_rs->search($sub_where->($q,$c), $sub_attributes->($q,$c));
-            }
+        next unless ref $param; # skip unknown query parameters
+        next unless($param->{query} || $param->{query_type} || $param->{new_rs}); # skip dummy query parameters
+        if (defined $param->{new_rs}) {
+            #compose fresh rs based on current, to support set operations with filters:
+            $item_rs = $param->{new_rs}($c,$q,$item_rs);
+        } elsif (defined $param->{query} || defined $param->{query_type}) {
+            #regular chaining:
+            my($sub_where,$sub_attributes) = $self->get_query_callbacks($param);
+            $item_rs = $item_rs->search($sub_where->($q,$c), $sub_attributes->($q,$c));
         }
     }
+    
     #use DBIx::Class::Helper::ResultSet::Explain qw();
     #use Data::Dumper;
     #$c->log->debug(Dumper(DBIx::Class::Helper::ResultSet::Explain::explain($item_rs)));
+    
     return $item_rs;
 }
 
 sub _get_sorted_query_params {
 
     my ($c,$query_params) = @_;
-    #use Data::Dumper;
-    #$c->log->debug('request params: ' . Dumper($c->req->query_params));
-    #$c->log->debug('request param keys: ' . Dumper(keys %{$c->req->query_params}));
-    #$c->log->debug('supported filters: ' . Dumper($query_params));
-    my %query_params_map = ();
+    
+    my %unknown = %{$c->req->query_params};
+    my @sorted = ();
+    
+    # 1. add non-dummy query paramaters found:
+    #   keep order of query params as defined in the source, but put those with new_rs
+    #   at the beginning (narrow part results as much as possible as early as possible)
     if (defined $query_params) {
-        foreach my $param (@$query_params) {
+        foreach my $param (sort { (not exists $a->{new_rs}) <=> (not exists $b->{new_rs}); } @$query_params) {
             if (exists $param->{param} and defined $param->{param}) {
-                $query_params_map{$param->{param}} = $param;
+                my $p = $param->{param};
+                if (exists $c->req->query_params->{$p}){
+                    push(@sorted,$param);
+                    delete $unknown{$p};
+                }
             }
         }
     }
-    #$c->log->debug('supported filter map: ' . Dumper(\%query_params_map));
-    my @sorted = sort {
-        (exists $query_params_map{$a} and exists $query_params_map{$a}->{new_rs}) <=> (exists $query_params_map{$b} and exists $query_params_map{$b}->{new_rs});
-    } keys %{$c->req->query_params};
-    #$c->log->debug('request params: ' . Dumper($c->req->query_params));
-    #$c->log->debug('request params sorted: ' . Dumper(\@sorted));
+    
+    # 2. add unknown query parameters:
+    push(@sorted, keys %unknown);
+    
     return @sorted;
 
 }
 
-sub get_query_callbacks{
-    my ($self, $query_param_spec) = @_;
-    #while believe that there is only one parameter
-    my @p = @$query_param_spec;
+sub get_query_callbacks {
+    my ($self, $param) = @_;
     my($sub_where,$sub_attributes);
-    if($p[0]->{query_type}){
-        my $param = $p[0]->{param};
+    if ($param->{query_type}){
+        my $param = $param->{param};
         if ($param !~ /\./) {
             $param = 'me.' . $param;
         }
         
-        if ('string_like' eq $p[0]->{query_type}) {
+        if ('string_like' eq $param->{query_type}) {
             $sub_where = sub {my ($q, $c) = @_; $q =~ s/\*/\%/g; { $param => { like => $q } }; };
-        } elsif ('string_eq' eq $p[0]->{query_type}) {
+        } elsif ('string_eq' eq $param->{query_type}) {
             $sub_where = sub {my ($q, $c) = @_; { $param => $q };};
-        } elsif ('wildcard' eq $p[0]->{query_type}) {
+        } elsif ('wildcard' eq $param->{query_type}) {
             $sub_where = sub {my ($q, $c) = @_; { wildcard_search(
                 search_string => $q,
                 search        => 1,
@@ -1174,7 +1176,7 @@ sub get_query_callbacks{
                 int_search    => 0,
                 col_name      => $param,
             ) };};
-        } elsif ('wildcard_optional' eq $p[0]->{query_type}) {
+        } elsif ('wildcard_optional' eq $param->{query_type}) {
             $sub_where = sub {my ($q, $c) = @_; { wildcard_search(
                 search_string => $q,
                 search        => 1,
@@ -1185,9 +1187,9 @@ sub get_query_callbacks{
         }
         
     }
-    if($p[0]->{query}){
-        $sub_where //= $p[0]->{query}->{first};
-        $sub_attributes = $p[0]->{query}->{second};
+    if($param->{query}){
+        $sub_where //= $param->{query}->{first};
+        $sub_attributes = $param->{query}->{second};
     }
     $sub_attributes //= sub {};
     return ($sub_where,$sub_attributes);
