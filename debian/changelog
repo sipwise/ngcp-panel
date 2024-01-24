@@ -1,3 +1,10 @@
+ngcp-panel (10.5.5.9+0~mr10.5.5.9) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [78e0283] MT#59216 restore appending wildcard behaviour
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 24 Jan 2024 04:37:34 +0100
+
 ngcp-panel (10.5.5.8+0~mr10.5.5.8) unstable; urgency=medium
 
   [ Rene Krenn ]
