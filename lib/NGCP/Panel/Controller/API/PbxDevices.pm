@@ -57,7 +57,7 @@ sub query_params {
             description => 'Search for PBX devices matching a subscriber\'s extension pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
                     { 'provisioning_voip_subscriber.pbx_extension' => { like => $q } };
 
                 },
