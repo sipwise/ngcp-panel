@@ -66,12 +66,12 @@ sub create_item {
         }
         if ($copy_from_default_params->{copy_from_default}) {
             my $error;
-            my $handles_rs = NGCP::Panel::Utils::Sounds::get_handles_rs(c => $c, set_rs => $item);
+            my $file_handles = NGCP::Panel::Utils::Sounds::get_file_handles(c => $c, set_id => $item->id);
             NGCP::Panel::Utils::Sounds::apply_default_soundset_files(
                 c          => $c,
                 lang       => $copy_from_default_params->{language},
                 set_id     => $item->id,
-                handles_rs => $handles_rs,
+                file_handles => $file_handles,
                 loopplay   => $copy_from_default_params->{loopplay},
                 override   => $copy_from_default_params->{replace_existing},
                 error_ref  => \$error,
