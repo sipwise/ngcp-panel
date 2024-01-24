@@ -233,7 +233,7 @@ sub trim {
 
 sub escape_search_string_pattern {
 
-    my ($searchString,$no_pattern) = @_;
+    my ($searchString,$no_pattern,$append,$prepend) = @_;
     $searchString //= "";
     my $is_pattern = 0;
     return ($searchString,$is_pattern) if $no_pattern;
@@ -250,14 +250,14 @@ sub escape_search_string_pattern {
         $token;
     } split(/(\\\\)/,$searchString,-1));
     if (not $is_pattern and not $no_pattern and length($searchString_escaped) > 0) {
-        #if ($append) {
+        if ($append) {
             $searchString_escaped .= '%';
             $is_pattern = 1;
-        #}
-        #if ($prepend) {
-        #    $searchString_escaped = '%' . $searchString_escaped;
-        #    $is_pattern = 1;
-        #}
+        }
+        if ($prepend) {
+            $searchString_escaped = '%' . $searchString_escaped;
+            $is_pattern = 1;
+        }
     }
     return ($searchString_escaped,$is_pattern);
 
