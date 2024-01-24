@@ -161,64 +161,87 @@ sub stash_soundset_list {
     return;
 }
 
-sub get_handles_rs {
+sub get_file_handles {
     my (%params) = @_;
 
     my $c = $params{c};
-    my $set_rs = $params{set_rs};
+    my $set_id = $params{set_id};
 
-    my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
-        ->search({
-        },{
-            select => ['groups.name', \'handles.name', \'handles.id', 'files.filename', 'files.loopplay', 'files.codec', 'files.id',
-                       \'IF(files.use_parent IS NOT NULL, files.use_parent, 1)'],
-            as => [ 'groupname', 'handlename', 'handleid', 'filename', 'loopplay', 'codec', 'fileid', 'use_parent'],
-            alias => 'groups',
-            from => [
-                { groups => 'provisioning.voip_sound_groups' },
-                [
-                    { handles => 'provisioning.voip_sound_handles', -join_type=>'left'},
-                    { 'groups.id' => 'handles.group_id'},
-                ],
-                [
-                    { files => 'provisioning.voip_sound_files', -join_type => 'left'},
-                    { 'handles.id' => { '=' => \'files.handle_id'}, 'files.set_id' => $set_rs->id},
-                ],
-            ],
-            order_by => { -asc => 'handles.name' }
-        });
+    my @file_handles = ();
+
+    my $handles_rs = $c->model('DB')->resultset('voip_sound_handles')->search({
+    },{
+        alias => 'handles',
+        select => [
+            'group.name','handles.name', 'handles.id',
+        ],
+        as => [
+            'group_name', 'handle_name', 'handle_id',
+        ],
+        join => 'group',
+        order_by => { -asc => 'handles.name' }
+    });
 
     unless($c->config->{features}->{cloudpbx}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
+        $handles_rs = $handles_rs->search({ 'group.name' => { '!=' => 'pbx' } });
     }
     unless($c->config->{features}->{cloudpbx} || $c->config->{features}->{musiconhold}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'music_on_hold' } });
+        $handles_rs = $handles_rs->search({ 'group.name' => { '!=' => 'music_on_hold' } });
     }
     unless($c->config->{features}->{callingcard}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'calling_card' } });
+        $handles_rs = $handles_rs->search({ 'group.name' => { '!=' => 'calling_card' } });
     }
     unless($c->config->{features}->{mobilepush}) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'mobile_push' } });
+        $handles_rs = $handles_rs->search({ 'group.name' => { '!=' => 'mobile_push' } });
     }
-    return $handles_rs;
+
+    my $files_rs = $c->model('DB')->resultset('voip_sound_files')->search({
+        'me.set_id' => $set_id,
+    });
+
+    my %files = ();
+
+    foreach my $file ($files_rs->all) {
+        $files{$file->handle_id} = {
+            filename => $file->filename,
+            loopplay => $file->loopplay,
+            codec    => $file->codec,
+            file_id  => $file->id,
+            use_parent => $file->use_parent // 1,
+        }
+    }
+
+    foreach my $handle ($handles_rs->all) {
+        my %file_handle = $handle->get_inflated_columns;
+        my $file = $files{$file_handle{handle_id}} // {
+            filename => undef,
+            loopplay => undef,
+            codec    => undef,
+            file_id  => undef,
+            use_parent => undef,
+        };
+        push @file_handles, {%file_handle, %{$file}};
+    }
+
+    return \@file_handles;
 }
 
 sub apply_default_soundset_files{
     my (%params) = @_;
 
-    my ($c, $lang, $set_id, $handles_rs, $loopplay, $override, $error_ref) = @params{qw/c lang set_id handles_rs loopplay override error_ref/};
+    my ($c, $lang, $set_id, $file_handles, $loopplay, $override, $error_ref) = @params{qw/c lang set_id file_handles loopplay override error_ref/};
 
     $loopplay = $loopplay ? 1 : 0;
 
     my $schema = $c->model('DB');
 
     my $base = "/var/lib/ngcp-soundsets";
-    foreach my $h($handles_rs->all) {
-        my $hname = $h->get_column("handlename");
+    foreach my $h (@{$file_handles}) {
+        my $handle_name = $h->{handle_name};
         my @paths = (
-            "$base/system/$lang/$hname.wav",
-            "$base/customer/$lang/$hname.wav",
-            "/var/lib/asterisk/sounds/$lang/digits/$hname.wav",
+            "$base/system/$lang/$handle_name.wav",
+            "$base/customer/$lang/$handle_name.wav",
+            "/var/lib/asterisk/sounds/$lang/digits/$handle_name.wav",
         );
         my $path;
         foreach my $p(@paths) {
@@ -231,8 +254,8 @@ sub apply_default_soundset_files{
 
         my $data_ref;
         my $codec = 'WAV';
-        my $handle_id = $h->get_column("handleid");
-        my $file_id = $h->get_column("fileid");
+        my $handle_id = $h->{handle_id};
+        my $file_id = $h->{file_id};
         my $fres;
         my $fname = basename($path);
 
@@ -243,7 +266,7 @@ sub apply_default_soundset_files{
         }
         if (defined $file_id) {
             if ($override) {
-                $c->log->debug("override $path as $hname for existing id $file_id");
+                $c->log->debug("override $path as $handle_name for existing id $file_id");
 
                 $fres = $schema->resultset('voip_sound_files')->find($file_id);
                 $fres->update({
@@ -252,10 +275,10 @@ sub apply_default_soundset_files{
                         loopplay => $loopplay,
                     });
             } else {
-                $c->log->debug("skip $path as $hname exists via id $file_id and override is not set");
+                $c->log->debug("skip $path as $handle_name exists via id $file_id and override is not set");
             }
         } else {
-            $c->log->debug("inserting $path as $hname with new id");
+            $c->log->debug("inserting $path as $handle_name with new id");
 
             $fres = $schema->resultset('voip_sound_files')
                 ->create({

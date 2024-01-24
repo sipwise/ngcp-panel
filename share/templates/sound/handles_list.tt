@@ -52,38 +52,38 @@
         [% FOREACH r IN group.value %]
             <tr class="sw_action_row">
                 <td>
-                  [% r.get_column("handlename") %]
+                  [% r.handle_name %]
                 </td>
                 <td>
-                    [% r.get_column("fileid")
-                        ? r.get_column("filename")
-                            ? r.get_column("filename") : c.loc("(empty)")
+                    [% r.file_id
+                        ? r.filename
+                            ? r.filename : c.loc("(empty)")
                         : ''
                     %]
                 </td>
                 <td>
-                    <input type="checkbox" disabled="disabled" [% r.get_column('loopplay') ? 'checked="checked"' : '' %]>
+                    <input type="checkbox" disabled="disabled" [% r.loopplay ? 'checked="checked"' : '' %]>
                 </td>
                 [% IF set_result.parent_id -%]
                 <td>
-                    <input type="checkbox" disabled="disabled" [% r.get_column('use_parent') == 0 ? '' : 'checked="checked"' %]>
+                    <input type="checkbox" disabled="disabled" [% r.use_parent == 0 ? '' : 'checked="checked"' %]>
                 </td>
                 [% END -%]
                 <td>
                     <div class="sw_actions pull-right">
-                        [% IF r.get_column("filename").size -%]
+                        [% IF r.filename.size -%]
                             [% IF can_edit_handles -%]
-                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
-                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> [% c.loc('Delete') %]</a>
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.handle_id _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.handle_id _ "/delete" %]"><i class="icon-edit"></i> [% c.loc('Delete') %]</a>
                             [% END -%]
-                            <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]"><i class="icon-play"></i> [% c.loc('Play') %]</a>
-                        [% ELSIF r.get_column("fileid") -%]
+                            <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.handle_id]) %]"><i class="icon-play"></i> [% c.loc('Play') %]</a>
+                        [% ELSIF r.file_id -%]
                             [% IF can_edit_handles -%]
-                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
-                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> [% c.loc('Delete') %]</a>
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.handle_id _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.handle_id _ "/delete" %]"><i class="icon-edit"></i> [% c.loc('Delete') %]</a>
                             [% END -%]
                         [% ELSIF can_edit_handles -%]
-                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Add') %]</a>
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.handle_id _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Add') %]</a>
                         [% END -%]
                     </div>
                 </td>
