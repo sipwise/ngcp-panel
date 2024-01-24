@@ -11,6 +11,7 @@ use File::Type;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Sems;
+use List::Util qw(any);
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -504,18 +505,18 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     $c->stash(handles_base_uri =>
         $c->uri_for_action("/sound/handles_root", [$c->req->captures->[0]]));
 
-    my $handles_rs = NGCP::Panel::Utils::Sounds::get_handles_rs(c => $c, set_rs => $c->stash->{set_result});
-
-    my @rows = $handles_rs->all;
+    my $set_id = $c->stash->{set_result}->id;
+    my $file_handles = NGCP::Panel::Utils::Sounds::get_file_handles(c => $c, set_id => $set_id);
 
     my %groups;
-    for my $handle (@rows) {
-        $groups{ $handle->get_column('groupname') } = []
-            unless exists $groups{ $handle->get_column('groupname') };
-        push @{ $groups{ $handle->get_column('groupname') } }, $handle;
+    for my $handle (@{$file_handles}) {
+        my $group_name = $handle->{group_name};
+        my $group = $groups{$group_name} //= [];
+        push @{$group}, $handle;
     }
+
     $c->stash(sound_groups => \%groups);
-    $c->stash(handles_rs => $handles_rs);
+    $c->stash(file_handles => $file_handles);
 
     $c->stash(has_edit => 1);
     $c->stash(has_delete => 1);
@@ -538,8 +539,9 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
-    my @tmph = $c->stash->{handles_rs}->all;
-    unless($c->stash->{handles_rs}->find({ 'handles.id' => $handle_id })) {
+    my $file_handles = $c->stash->{file_handles};
+    my $handle_exists = any { $_->{handle_id} == $handle_id } @{$file_handles};
+    unless ($handle_exists) {
         NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Sound handle id does not exist',
@@ -783,7 +785,7 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                     c          => $c,
                     lang       => $form->params->{language},
                     set_id     => $c->stash->{set_result}->id,
-                    handles_rs => $c->stash->{handles_rs},
+                    file_handles => $c->stash->{file_handles},
                     loopplay   => $form->params->{loopplay},
                     override   => $form->params->{replace_existing},
                     error_ref  => \$error,
