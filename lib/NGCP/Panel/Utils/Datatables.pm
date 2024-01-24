@@ -241,7 +241,7 @@ sub _resolve_joins {
 sub get_search_string_pattern {
     
     my ($c,$no_pattern) = @_;
-    return escape_search_string_pattern($c->request->params->{sSearch},$no_pattern);
+    return escape_search_string_pattern($c->request->params->{sSearch},$no_pattern,1,0);
     
 }
 

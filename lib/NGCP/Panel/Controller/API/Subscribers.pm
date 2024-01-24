@@ -181,7 +181,7 @@ sub query_params {
             description => 'Filter for subscribers who has specified alias pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
                     {
                         'voip_dbaliases.username' => { like => $q },
                     };
@@ -223,7 +223,7 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific primary number pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
                     { \['concat(primary_number.cc, primary_number.ac, primary_number.sn) like ?', $q ] };
 
                 },
@@ -237,7 +237,7 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific PBX extension',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
                     { 'provisioning_voip_subscriber.pbx_extension' => { like => $q } };
 
                 },
