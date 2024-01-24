@@ -1,3 +1,10 @@
+ngcp-panel (12.0.1.5+0~mr12.0.1.5) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [fcfcb61] MT#58709 rework NGCP::Utils::Sound::get_handlers_rs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 24 Jan 2024 19:01:18 +0100
+
 ngcp-panel (12.0.1.4+0~mr12.0.1.4) unstable; urgency=medium
 
   [ Rene Krenn ]
