@@ -1114,7 +1114,7 @@ sub apply_query_params {
             $item_rs = $param->{new_rs}($c,$q,$item_rs);
         } elsif (defined $param->{query} || defined $param->{query_type}) {
             #regular chaining:
-            my($sub_where,$sub_attributes) = $self->get_query_callbacks($param);
+            my($sub_where,$sub_attributes) = $self->get_query_callbacks($p);
             $item_rs = $item_rs->search($sub_where->($q,$c), $sub_attributes->($q,$c));
         }
     }
