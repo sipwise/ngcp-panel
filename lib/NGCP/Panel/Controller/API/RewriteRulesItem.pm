@@ -7,7 +7,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use HTTP::Status qw(:constants);
 
 __PACKAGE__->set_config({
-    own_transaction_control => { PUT => 1 },
+    own_transaction_control => { PUT => 1, PATCH => 1, DELETE => 1 },
 });
 
 sub allowed_methods{
