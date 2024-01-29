@@ -1,3 +1,10 @@
+ngcp-panel (12.0.1.6+0~mr12.0.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [09dfc37] MT#59238 fix rewrite rules transaction control for PATCH,DELETE
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Jan 2024 17:33:16 +0100
+
 ngcp-panel (12.0.1.5+0~mr12.0.1.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
