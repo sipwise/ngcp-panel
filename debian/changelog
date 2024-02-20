@@ -1,3 +1,14 @@
+ngcp-panel (12.2.1.4+0~mr12.2.1.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [05f0856] MT#59216 restore appending wildcard behaviour
+  * [c4b867f] MT#56817 MT#56362 fix errors from nondetermistic query param ordering
+  * [5d27c6a] MT#56817 MT#56362 fix query param sorting for rs chained the regular way
+  * [f6e8550] MT#56817 MT#56362 fix query param sorting for regulary chained rs
+  * [4094253] MT#59434 always take aliases from voip_numbers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Feb 2024 16:11:43 +0100
+
 ngcp-panel (12.2.1.3+0~mr12.2.1.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
