@@ -131,18 +131,27 @@ sub resource_from_item {
         $resource{primary_number}->{number_id} = int($item->primary_number->id);
     }
 
-    @{$resource{alias_numbers}} = $item->voip_numbers->search({
-            -or => [
-                'voip_dbalias.is_primary' => 0,
-                'voip_dbalias.is_primary' => undef,
-            ],
-        },
-        {
-            select => ['cc','ac','sn','id',\'COALESCE(voip_dbalias.is_devid,0)'],
-            as => ['cc','ac','sn','number_id','is_devid'],
-            join => 'voip_dbalias',
-            result_class => 'DBIx::Class::ResultClass::HashRefInflator',
-        })->all;
+    my @aliases = ();
+    if($item->voip_numbers->first) {
+        foreach my $n ($item->voip_numbers->search(undef,{
+                prefetch => 'voip_dbalias',
+            })->all) {
+            my $alias = {
+                cc => $n->cc,
+                ac => $n->ac,
+                sn => $n->sn,
+                number_id => int($n->id),
+            };
+            next if ($resource{primary_number} && $resource{primary_number}->{number_id} == $alias->{number_id});
+            $alias->{is_devid} = 0;
+            if (defined $n->voip_dbalias) {
+                $alias->{is_devid} = $n->voip_dbalias->is_devid;
+            }
+            $alias->{is_devid} = bool $alias->{is_devid};
+            push(@aliases, $alias);
+        }
+    }
+    $resource{alias_numbers} = \@aliases;
 
     $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'display_name',
