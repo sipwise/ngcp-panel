@@ -73,6 +73,15 @@ sub create_invoice {
         contract => $contract,
         stime => $stime,
         etime => $etime,);
+
+    unless ($balance) {
+        die {
+            showdetails => $c->loc('period start=[_1] end=[_2].', $stime, $etime),
+            error => 'Could not find active balance.',
+            httpcode => HTTP_UNPROCESSABLE_ENTITY,
+        };
+    }
+
     $stime = NGCP::Panel::Utils::DateTime::convert_tz($balance->start,undef,'UTC',$c);
     $etime = NGCP::Panel::Utils::DateTime::convert_tz($balance->end,undef,'UTC',$c);
     my $bm_actual = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(
