@@ -10654,6 +10654,10 @@ msgstr ""
 msgid "Snom profile"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Socket"
+msgstr ""
+
 #: share/templates/error_page.tt
 msgid "Sorry!"
 msgstr ""
@@ -15475,6 +15479,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "pending"
+msgstr ""
+
+#. ($stime, $etime)
+#: lib/NGCP/Panel/Utils/Invoice.pm
+msgid "period start=%1 end=%2."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
