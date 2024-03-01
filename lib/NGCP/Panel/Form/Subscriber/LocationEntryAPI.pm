@@ -41,6 +41,15 @@ has_field 'received' => (
     },
 );
 
+has_field 'socket' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Points to the LB interface from which the incoming calls to this registration should be sent out.']
+    },
+);
+
 1;
 
 __END__
