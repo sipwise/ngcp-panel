@@ -1983,7 +1983,9 @@ sub wildcard_search {
             $search_value = $search_string;
         } else {
             $op = 'like';
-            $search_value = '%' . $search_string_escaped . '%';
+            unless ($c->request->path =~/^api\//i) {
+                $search_value = '%' . $search_string_escaped . '%';
+            }
         }
         $op = $comparison_op if (defined $comparison_op);
         $search_value = $convert_code->($search_string) if (ref $convert_code eq 'CODE');
