@@ -26,7 +26,7 @@ $res = $client->call('create_interception',
                 'number' => '439991001',
                 'cc_required' => 0,
                 'iri_delivery' => array(
-                    'host' => '1.2.3.4',
+                    'host' => '203.0.113.42',
                     'port' => 1234,
                 ),
             )
@@ -68,11 +68,11 @@ $res = $client->call('update_interception',
                 'data' => array(
                     'cc_required' => 1,
                     'iri_delivery' => array(
-                        'host' => '1.2.3.5',
+                        'host' => '203.0.113.43',
                         'port' => 1234,
                     ),
                     'cc_delivery' => array(
-                        'host' => '1.2.3.6',
+                        'host' => '203.0.113.44',
                         'port' => 1236,
                     )
                 )

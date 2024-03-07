@@ -15,8 +15,8 @@ if [ -z "${1:-}" ] ; then
   echo
   echo "Usage examples:
 
-  $0 1.2.3.4
-  $0 1.2.3.4 /code/ tap"
+  $0 203.0.113.42
+  $0 203.0.113.42 /code/ tap"
   exit 1
 fi
 

@@ -141,7 +141,7 @@
     content:
         subscriber_id: ${subscriber_id}
         protocol: 'UDP'
-        src_ip: '1.2.3.4'
+        src_ip: '203.0.113.42'
         from_pattern: '^sip:test@example.org'
     retain:
         trustedsources_path1: header.location
@@ -160,7 +160,7 @@
     content:
         subscriber_id: ${subscriber_id}
         protocol: 'UDP'
-        src_ip: '1.2.3.5'
+        src_ip: '203.0.113.43'
         from_pattern: '^sip:test@example.org'
     retain:
         trustedsources_path2: header.location
@@ -179,7 +179,7 @@
     content:
         subscriber_id: ${subscriber_id}
         protocol: 'UDP'
-        src_ip: '1.2.3.6'
+        src_ip: '203.0.113.44'
         from_pattern: '^sip:test@example.org'
     retain:
         trustedsources_path3: header.location

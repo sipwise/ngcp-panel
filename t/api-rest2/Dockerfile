@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2023-06-26
+ENV REFRESHED_AT 2024-03-07
 
 # files that get-code generates
 COPY t/api-rest/sources.list.d/builddeps.list /etc/apt/sources.list.d/
@@ -24,7 +24,7 @@ RUN apt-get update && \
       libyaml-libyaml-perl \
       && echo "Done"
 
-RUN echo "cd /code && ./t/api-rest2/testrunner 1.2.3.4" > /root/.bash_history
+RUN echo "cd /code && ./t/api-rest2/testrunner 203.0.113.42" > /root/.bash_history
 
 WORKDIR /code/
 

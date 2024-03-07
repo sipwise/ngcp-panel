@@ -20,7 +20,7 @@ $fake_data->set_data_from_script({
         data => {
             subscriber_id => sub { return shift->get_id('subscribers',@_); },
             protocol => 'UDP',
-            src_ip => '1.2.3.4',
+            src_ip => '203.0.113.42',
             from_pattern => '^sip:test@example.org',
         },
         query => ['subscriber_id'],
@@ -32,7 +32,7 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('trustedsources'));
 
 $test_machine->form_data_item( );
 # create 3 new field pbx devices from DATA_ITEM
-$test_machine->check_create_correct( 3, sub{ $_[0]->{src_ip} = sprintf('1.2.3.%d', $_[1]->{i}); } );
+$test_machine->check_create_correct( 3, sub{ $_[0]->{src_ip} = sprintf('203.0.113.%d', $_[1]->{i}); } );
 $test_machine->check_get2put();
 $test_machine->check_bundle();
 $test_machine->clear_test_data_all();

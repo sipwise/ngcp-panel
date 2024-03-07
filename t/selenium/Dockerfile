@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2023-07-05
+ENV REFRESHED_AT 2024-03-07
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -56,7 +56,7 @@ RUN wget http://deb.sipwise.com/files/google-chrome-stable_114_amd64.deb && \
     apt install -y ./google-chrome-stable_114_amd64.deb && \
     rm -f google-chrome-stable_114_amd64.deb
 
-RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4 /code/ tap" >/home/selenium/.bash_history
+RUN echo "cd /code && ./t/selenium/testrunner 203.0.113.42 /code/ tap" >/home/selenium/.bash_history
 RUN echo "su - selenium" >/root/.bash_history
 EXPOSE 5999
 

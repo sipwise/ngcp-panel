@@ -39,7 +39,7 @@ A completely overhauled provisioning interface for the NGCP system.
 
     ./Build testcover
     ./Build test_api
-    ./Build test_api --schema-base-dir=path/to/schema --server=https://1.2.3.4:1443
+    ./Build test_api --schema-base-dir=path/to/schema --server=https://203.0.113.42:1443
 
 =head2 Options
 
