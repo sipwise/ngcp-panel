@@ -1293,12 +1293,32 @@ sub update_subscriber_numbers {
 
     my $primary_number_old = defined $billing_subs->primary_number ? { $billing_subs->primary_number->get_inflated_columns } : undef;
 
+    my $old_pri_cli;
+    if (defined $billing_subs->primary_number) {
+        my $old_cc = $billing_subs->primary_number->cc;
+        my $old_ac = ($billing_subs->primary_number->ac // '');
+        my $old_sn = $billing_subs->primary_number->sn;
+        $old_pri_cli = $old_cc . ($old_ac // '') . $old_sn;
+    }
+
+    my $new_pri_cli;
+    if ($primary_number && ref $primary_number eq 'HASH') {
+        my $new_cc = $primary_number->{cc};
+        my $new_ac = $primary_number->{ac};
+        my $new_sn = $primary_number->{sn};
+        $new_pri_cli = $new_cc . ($new_ac // '') . $new_sn;
+    }
+
+    my $same_primary_number = $old_pri_cli && $new_pri_cli && $old_pri_cli eq $new_pri_cli;
+
     my $acli_pref;
     $acli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'allowed_clis', prov_subscriber => $prov_subs)
         if($prov_subs && $c->config->{numbermanagement}->{auto_allow_cli});
 
-    if(exists $params{primary_number} && !defined $primary_number) {
+    if ($same_primary_number) {
+        # skip primary number processing for the same number
+    } elsif (exists $params{primary_number} && !defined $primary_number) {
         $billing_subs->update({
             primary_number_id => undef,
         });
@@ -1335,7 +1355,7 @@ sub update_subscriber_numbers {
         }
         update_voicemail_number(c => $c, subscriber => $billing_subs);
 
-    } elsif(defined $primary_number) {
+    } elsif (defined $primary_number) {
 
         my $old_cc;
         my $old_ac;
