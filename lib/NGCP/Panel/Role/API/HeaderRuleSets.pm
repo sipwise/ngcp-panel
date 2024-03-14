@@ -28,7 +28,7 @@ sub get_form {
 }
 
 sub _item_rs {
-    my ($self, $c, $type) = @_;
+    my ($self, $c, $by_id) = @_;
     my $item_rs;
 
     if ($c->user->roles eq "admin") {
@@ -43,11 +43,17 @@ sub _item_rs {
         );
         $item_rs = $item_rs->search_rs(
                     { subscriber_id => $prov_subscriber_id });
-    } else {
+    } elsif (!$by_id) {
         $item_rs = $item_rs->search_rs(
                     { subscriber_id => undef });
     }
     return $item_rs;
+}
+
+sub item_by_id {
+    my ($self, $c, $id) = @_;
+    my $item_rs = $self->item_rs($c, 1);
+    return $item_rs->find($id);
 }
 
 sub post_process_hal_resource {
@@ -56,7 +62,7 @@ sub post_process_hal_resource {
         my $subscriber_id = NGCP::Panel::Utils::Subscriber::prov_to_billing_subscriber_id(
             c => $c, subscriber_id => $resource->{subscriber_id}
         );
-        $resource->{subscriber_id} = $subscriber_id // 0;
+        $resource->{subscriber_id} = $subscriber_id // undef;
     }
     return $resource;
 }

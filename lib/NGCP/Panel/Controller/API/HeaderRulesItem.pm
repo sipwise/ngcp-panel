@@ -32,8 +32,17 @@ sub get_journal_methods {
 sub delete_item {
     my ($self, $c, $item) = @_;
 
-    my $set_id = $item->ruleset->id;
+    my $ruleset = $item->ruleset;
+    my $set_id = $ruleset->id;
+    my $subscriber_id = $ruleset->subscriber_id;
     my $res = $self->SUPER::delete_item($c, $item);
+
+    if ($ruleset->subscriber_id) {
+        $ruleset->discard_changes;
+        if (!$ruleset->voip_header_rules->count()) {
+           $ruleset->delete;
+        }
+    }
 
     NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
         c => $c, set_id => $set_id

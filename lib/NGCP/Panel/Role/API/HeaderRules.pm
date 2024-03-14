@@ -21,12 +21,11 @@ sub config_allowed_roles {
 }
 
 sub _item_rs {
-    my ($self, $c, $type) = @_;
+    my ($self, $c, $by_id) = @_;
 
     my $item_rs = $c->model('DB')->resultset('voip_header_rules')->search_rs(undef, {
         join => 'ruleset'
     });
-
 
     if ($c->user->roles eq "reseller") {
         $item_rs = $c->model('DB')->resultset('voip_header_rules')->search_rs({
@@ -40,12 +39,18 @@ sub _item_rs {
         );
         $item_rs = $item_rs->search_rs(
             { 'ruleset.subscriber_id' => $prov_subscriber_id });
-    } else {
+    } elsif (!$by_id) {
         $item_rs = $item_rs->search_rs(
             { 'ruleset.subscriber_id' => undef });
     }
 
     return $item_rs;
+}
+
+sub item_by_id {
+    my ($self, $c, $id) = @_;
+    my $item_rs = $self->item_rs($c, 1);
+    return $item_rs->find($id);
 }
 
 sub get_form {
@@ -64,8 +69,8 @@ sub check_resource {
     my ($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     my $schema = $c->model('DB');
 
-    unless (defined $resource->{set_id}) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'set_id'");
+    unless ($resource->{set_id} || $resource->{subscriber_id}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'set_id' or 'subscriber_id'");
         return;
     }
 
@@ -74,16 +79,33 @@ sub check_resource {
         $reseller_id = $c->user->reseller_id;
     }
 
-    my $ruleset = $schema->resultset('voip_header_rule_sets')->find({
-        id => $resource->{set_id},
-        ($reseller_id ? (reseller_id => $reseller_id) : ()),
-    });
-    unless ($ruleset) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'set_id'.");
-        return;
+    if ($resource->{set_id}) {
+        my $ruleset = $schema->resultset('voip_header_rule_sets')->find({
+            id => $resource->{set_id},
+            ($reseller_id ? (reseller_id => $reseller_id) : ()),
+        });
+        unless ($ruleset) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'set_id'.");
+            return;
+        }
+        $c->stash->{checked}->{ruleset} = $ruleset;
     }
 
-    $c->stash->{checked}->{ruleset} = $ruleset;
+    if ($resource->{subscriber_id}) {
+        my $sub = $schema->resultset('voip_subscribers')->find({
+            id => $resource->{subscriber_id},
+            status => { '!=' => 'terminated' },
+            ($reseller_id
+                ? ('contract.contact.reseller_id' => $reseller_id)
+                : ()),
+        },{
+            join => { 'contract' => 'contact' },
+        });
+        unless ($sub) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'");
+            return;
+        }
+    }
 
     return 1;
 }

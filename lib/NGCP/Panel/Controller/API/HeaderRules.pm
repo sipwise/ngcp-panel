@@ -39,7 +39,7 @@ sub query_params {
         },
         {
             param => 'subscriber_id',
-            description => 'Filter for header rule sets of a specific subscriber',
+            description => 'Filter for header rules of a specific subscriber',
         }
     ];
 }
@@ -49,10 +49,46 @@ sub create_item {
 
     my $item;
     my $schema = $c->model('DB');
+
     try {
         my $header_actions = delete $resource->{actions};
         my $header_conditions = delete $resource->{conditions};
+        my $subscriber_id = delete $resource->{subscriber_id};
+
+        my $set;
+        if ($subscriber_id) {
+            my $sub = $schema->resultset('voip_subscribers')->find($subscriber_id);
+            my $prov_sub = $sub->provisioning_voip_subscriber;
+            my $reseller_id = $sub->contract->contact->reseller_id;
+            $set = $schema->resultset('voip_header_rule_sets')->search({
+                subscriber_id => $prov_sub->id,
+            })->first;
+            unless ($set) {
+                $set = $schema->resultset('voip_header_rule_sets')->create({
+                    name => 'subscriber_'.$subscriber_id,
+                    subscriber_id => $prov_sub->id,
+                    reseller_id => $reseller_id,
+                    description => '',
+                });
+            }
+            $resource->{set_id} = $set->id;
+        } else {
+            $set = $schema->resultset('voip_header_rule_sets')->find($resource->{set_id});
+        }
+
+        my $existing_item = $schema->resultset('voip_header_rules')->search({
+            name => $resource->{name},
+            set_id => $set->id,
+        })->first;
+
+        if ($existing_item) {
+            $c->log->error("header rule with name '$$resource{name}' already exists");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Header rule with this name already exists");
+            return;
+        }
+
         $item = $schema->resultset('voip_header_rules')->create($resource);
+
         if ($header_actions) {
             foreach my $action (@$header_actions) {
                 $action->{rule_id} = $item->id;
@@ -65,6 +101,7 @@ sub create_item {
                 my $action_result = $schema->resultset('voip_header_rule_actions')->create($action);
             }
         }
+
         if ($header_conditions) {
             foreach my $condition (@$header_conditions) {
                 $condition->{rule_id} = $item->id;
@@ -77,6 +114,7 @@ sub create_item {
                 my $condition_result = $schema->resultset('voip_header_rule_conditions')->create($condition);
             }
         }
+
         NGCP::Panel::Utils::HeaderManipulations::invalidate_ruleset(
             c => $c, set_id => $item->ruleset->id
         );
