@@ -1,3 +1,35 @@
+ngcp-panel (12.4.0.0+0~mr12.4.0.0) unstable; urgency=medium
+
+  [ Guillem Jover ]
+  * [a87bf2b] MT#59163 Stop using deprecated given/when perl construct
+
+  [ Kirill Solomko ]
+  * [a4d54b1] MT#58709 rework NGCP::Utils::Sound::get_handlers_rs
+  * [80f8b1d] MT#59238 fix rewrite rules transaction control for PATCH,DELETE
+  * [0202996] MT#59537 create_invoice() add existing balance check
+  * [7aeaf0f] MT#59363 /api/subscriberregistrations change socket field to Text
+  * [1fb8d04] MT#59615 /api/subscribers skip primary number processing if unchanged
+  * [aef4c89] MT#59662 enhance subscriber assigned header rules/sets handling
+
+  [ Rene Krenn ]
+  * [a15d008] MT#56817 MT#56362 fix errors from nondetermistic query param ordering
+  * [672a311] MT#59216 restore appending wildcard behaviour
+  * [aae0b7e] MT#56817 MT#56362 fix query param sorting for rs chained the regular way
+  * [c837dc1] MT#56817 MT#56362 fix query param sorting for regulary chained rs
+  * [740bb76] MT#59434 always take aliases from voip_numbers
+  * [48b71e6] MT#59363 fix /api/domains/?domain= filter pattern behaviour
+  * [aa67602] MT#59363 retain trailing+leading wildcard for legacy panel only
+  * [9ba93e6] MT#59597 remove trailing+leading % entirely for "wildcard" param types
+  * [868e265] MT#59597 fix remove trailing+leading % entirely for "wildcard" params
+
+  [ Sipwise Jenkins Builder ]
+  * [56c0d86] TT#4166 I18N dump: snapshot 2024.03.01-23.20.50
+
+  [ Michael Prokop ]
+  * [3ccdaaa] MT#59492 Use reserved IPs following RFC5737
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 15 Mar 2024 08:48:41 +0100
+
 ngcp-panel (12.3.0.0+0~mr12.3.0.0) unstable; urgency=medium
 
   [ Marco Capetta ]
