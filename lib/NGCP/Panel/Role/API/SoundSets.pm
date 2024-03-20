@@ -116,8 +116,8 @@ sub check_resource{
         id => $resource->{reseller_id},
     });
     unless($reseller) {
-        $c->log->error("invalid reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Reseller does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Reseller does not exist",
+                     "invalid reseller_id '$$resource{reseller_id}'");
         return;
     }
     my $customer;
@@ -129,34 +129,34 @@ sub check_resource{
             join => 'contact',
         });
         unless($customer) {
-            $c->log->error("invalid customer_id '$$resource{contract_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer does not exist",
+                         "invalid customer_id '$$resource{contract_id}'");
             return;
         }
         unless($customer->contact->reseller_id == $reseller->id) {
-            $c->log->error("customer_id '$$resource{contract_id}' doesn't belong to reseller_id '$$resource{reseller_id}"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller for customer");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller for customer",
+                         "customer_id '$$resource{contract_id}' doesn't belong to reseller_id '$$resource{reseller_id}");
             return;
         }
     }
 
     if ($c->user->roles eq 'subscriberadmin' && $c->request->method ne 'POST' &&
         (!$old_resource->{contract_id} || $old_resource->{contract_id} != $c->user->account_id)) {
-            $c->log->error("Cannot modify read-only sound set that does not belong to this subscriberadmin");
-            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound set");
+            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound set",
+                         "Cannot modify read-only sound set that does not belong to this subscriberadmin");
             return;
     }
 
     if ($resource->{parent_id}) {
         my $parent = $c->model('DB')->resultset('voip_sound_sets')->find($resource->{parent_id});
         if (!$parent) {
-            $c->log->error("Invalid parent_id '$$resource{parent_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Parent sound set does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Parent sound set does not exist",
+                         "Invalid parent_id '$$resource{parent_id}'");
             return;
         }
         if ($c->user->roles ne 'admin' && $reseller->id != $parent->reseller_id) {
-            $c->log->error("parent_id '$$resource{parent_id}' doesn't belong to reseller_id '$$resource{reseller_id}");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller for parent sound set");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller for parent sound set",
+                         "parent_id '$$resource{parent_id}' doesn't belong to reseller_id '$$resource{reseller_id}");
             return;
         }
         if ($c->req->method eq 'PUT' || $c->req->method eq 'PATCH') {
@@ -164,8 +164,8 @@ sub check_resource{
                 $c, $old_resource->{id}, $resource->{parent_id}
             );
             if ($loop) {
-                $c->log->error("parent_id '$$resource{parent_id}' one of the parent sound sets refers to this one as a parent");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot use the parent sound set");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot use the parent sound set",
+                             "parent_id '$$resource{parent_id}' one of the parent sound sets refers to this one as a parent");
                 return;
             }
         }

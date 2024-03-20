@@ -21,8 +21,8 @@ sub delete_item {
         try {
             $item->delete;
         } catch($e) {
-            $c->log->error("Failed to delete rewriterule with id '".$item->id."': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to delete rewriterule with id '".$item->id."'", $e);
             return;
         }
         $guard->commit;
@@ -41,8 +41,8 @@ sub update_item_model {
         try {
             $item->update($resource);
         } catch($e) {
-            $c->log->error("Failed to update rewriterule with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to update rewriterule with id '$id'", $e);
             die;
         }
         $guard->commit;

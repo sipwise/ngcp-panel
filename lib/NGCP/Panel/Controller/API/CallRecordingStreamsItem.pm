@@ -65,8 +65,7 @@ sub DELETE :Allow {
             unlink($item->full_filename);
             $item->delete;
         } catch($e) {
-            $c->log->error("Failed to delete stream: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete stream.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete stream.", $e);
             last;
         }
         $guard->commit;

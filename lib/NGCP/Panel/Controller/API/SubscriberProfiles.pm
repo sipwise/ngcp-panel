@@ -111,8 +111,8 @@ sub POST :Allow {
     }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-        $c->log->error("profile creation by reseller forbidden via config");
-        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile creation forbidden for resellers.");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile creation forbidden for resellers.",
+                     "profile creation by reseller forbidden via config");
         return;
     }
 
@@ -146,8 +146,8 @@ sub POST :Allow {
         }
         $set = $set->find($resource->{set_id});
         unless($set) {
-            $c->log->error("subscriber profile set with id '$$resource{set_id}' does not exist"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'profile_set_id', does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'profile_set_id', does not exist",
+                         "subscriber profile set with id '$$resource{set_id}' does not exist");
             last;
         }
 
@@ -156,8 +156,9 @@ sub POST :Allow {
             name => $resource->{name},
         });
         if($item) {
-            $c->log->error("subscriber profile with name '$$resource{name}' already exists for profile_set_id '$$resource{set_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber profile with this name already exists for this profile set");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                         "Subscriber profile with this name already exists for this profile set",
+                         "subscriber profile with name '$$resource{name}' already exists for profile_set_id '$$resource{set_id}'");
             last;
         }
         if($resource->{set_default}) {
@@ -188,8 +189,7 @@ sub POST :Allow {
                 $item->profile_attributes->create({ attribute_id => $meta->id });
             }
         } catch($e) {
-            $c->log->error("failed to create subscriber profile: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile.", $e);
             last;
         }
 

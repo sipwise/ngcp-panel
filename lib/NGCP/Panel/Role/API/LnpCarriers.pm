@@ -79,8 +79,8 @@ sub update_item {
         name => $resource->{name},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("lnp carrier with name '$$resource{name}' already exists"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier with this name already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier with this name already exists",
+                     "lnp carrier with name '$$resource{name}' already exists");
         return;
     }
 

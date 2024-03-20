@@ -131,13 +131,13 @@ sub check_duplicate{
         });
     }
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {
-        $c->log->error("admin with login '$$resource{login}' already exists");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this login already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this login already exists",
+                     "admin with login '$$resource{login}' already exists");
         return;
     }
     elsif ($existing_email && (!$item || $item->id != $existing_email->id)) {
-        $c->log->error("admin with email '$$resource{email}' already exists");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this email already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Admin with this email already exists",
+                     "admin with email '$$resource{email}' already exists");
         return;
     }
     return 1;

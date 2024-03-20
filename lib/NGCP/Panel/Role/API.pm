@@ -348,15 +348,18 @@ sub validate_fields {
 }
 
 sub error {
-    my ($self, $c, $code, $message, $insensitive_message) = @_;
+    my ($self, $c, $code, $message, @errors) = @_;
 
-    my $msg = $insensitive_message // $message;
-    $c->log->error("error $code - $msg"); # TODO: user, trace etc
+    # code -> returned as HTTP code in the reply
+    # message -> returned as HTTP message in the reply
+    # errors -> contain errors for internal logging, last element often contains a DBIx exception
+
+    $c->error(['', @errors]);
 
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
-    $c->stash(api_error_message => $message);
+
     return;
 }
 
@@ -1057,14 +1060,15 @@ sub log_response {
     $c->response->content_type('')
         if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
     my $rc = '';
-    if (@{ $c->error }) {
-        my $msg = join ', ', @{ $c->error };
-        $rc = NGCP::Panel::Utils::Message::error(
-            c    => $c,
-            type => 'api_response',
-            log  => $msg,
-        );
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+    if ($c->has_errors) {
+        my $msg = join ', ', splice @{$c->error}, 1;
+        if ($msg) {
+            $rc = NGCP::Panel::Utils::Message::error(
+                c    => $c,
+                type => 'api_response',
+                log  => $msg,
+            );
+        }
         $c->clear_errors;
     }
     my ($response_body, $params_data) = $self->filter_log_response(
@@ -1641,8 +1645,8 @@ sub validate_request {
 
 #------ /dummy & default accessors methods
 
-sub check_transaction_control{
-    my ($self, $c, $action, $step, %params) = @_;
+sub check_transaction_control {
+    my ($self, $c, $action, $step) = @_;
     my $res = 1;
     my $transaction_config = $self->get_config('own_transaction_control');
     if (!$transaction_config) {
@@ -1658,13 +1662,12 @@ sub check_transaction_control{
     return $res;
 }
 
-sub get_transaction_control{
-    my $self = shift;
-    my($c, $action, $step, %params) = @_;
-    my $schema = $params{schema} // $c->model('DB');
-    $action //= uc $c->request->method;
-    $step //= 'init';
-    if($self->check_transaction_control($c, $action, $step, %params)){
+sub start_transaction {
+    my ($self, $c) = @_;
+    my $schema = $c->model('DB');
+    my $action = uc $c->request->method;
+    my $step = 'start';
+    if ($self->check_transaction_control($c, $action, $step)) {
         #todo: put it into class variables?
         my $til_config = $self->get_config('set_transaction_isolation');
         if ($til_config) {
@@ -1675,22 +1678,18 @@ sub get_transaction_control{
                 : 'READ COMMITTED';
             $c->model('DB')->set_transaction_isolation($transaction_isolation_level);
         }
-        $c->stash->{transaction_quard} = $schema->txn_scope_guard;
-        return $c->stash->{transaction_quard};
+        return $schema->txn_scope_guard;
     }
     return;
 }
 
-sub complete_transaction{
-    my $self = shift;
-    my($c, $action, $step, %params) = @_;
-    my $schema = $params{schema} // $c->model('DB');
-    my $guard = $params{guard} // $c->stash->{transaction_quard};
-    $action //= uc $c->request->method;
-    $step //= 'commit';
-    if($self->check_transaction_control($c, $action, $step, %params)){
+sub commit_transaction {
+    my ($self, $c, $guard) = @_;
+    my $schema = $c->model('DB');
+    my $action = uc $c->request->method;
+    my $step = 'commit';
+    if ($self->check_transaction_control($c, $action, $step)) {
         $guard->commit;
-        $c->stash->{transaction_quard} = undef;
     }
     return;
 }
@@ -2009,6 +2008,28 @@ sub check_wildcard_search {
     }
     return $exact;
     
+}
+
+sub check_deadlock {
+    my ($self, $c, $error) = @_;
+    my $max_attempts = 2;
+
+    return 0 unless $error;
+
+    #my $lock_retry = $error =~ /Lock wait timeout exceeded; try restarting transaction/;
+    my $deadlock_retry = $error =~ /Deadlock found when trying to get lock; try restarting transaction/;
+
+    return 0 unless $deadlock_retry;
+
+    my $attempt = $c->stash->{deadlock_retry_attempt} //= 1;
+    return 0 if $attempt > $max_attempts;
+    NGCP::Panel::Utils::Message::info(
+        c    => $c,
+        type => 'api_retry',
+        log  => "deadlock detected, retry transaction attempt=$attempt/$max_attempts",
+    );
+    $c->stash->{deadlock_retry_attempt} = $attempt+1;
+    return 1;
 }
 
 1;

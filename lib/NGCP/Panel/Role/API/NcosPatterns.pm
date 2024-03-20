@@ -92,8 +92,9 @@ sub update_item {
     }
     my $level = $level_rs->first;
     unless($level) {
-        $c->log->error("invalid ncos_level_id '$$resource{ncos_level_id}' for reseller_id '$$resource{reseller_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_level_id, level does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                     "Invalid ncos_level_id, level does not exist",
+                     "invalid ncos_level_id '$$resource{ncos_level_id}' for reseller_id '$$resource{reseller_id}'");
         return;
     }
 
@@ -101,8 +102,8 @@ sub update_item {
         pattern => $resource->{pattern},
     })->first;
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("ncos pattern '$$resource{pattern}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS pattern already exists for given ncos level");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS pattern already exists for given ncos level",
+                     "ncos pattern '$$resource{pattern}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
         return;
     }
 

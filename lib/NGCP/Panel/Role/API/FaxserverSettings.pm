@@ -55,8 +55,8 @@ sub resource_from_item{
 
     my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $item->id);
     unless($billing_subscriber) {
-        $c->log->error("invalid subscriber id $item->id for fax send");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.",
+                     "invalid subscriber id $item->id for fax send");
         return;
     }
     my $prov_subs = $item->provisioning_voip_subscriber;
@@ -68,7 +68,8 @@ sub resource_from_item{
             $fax_preference = $prov_subs->create_related('voip_fax_preference', {});
             $fax_preference->discard_changes; # reload
         } catch($e) {
-            $c->log->error("Error creating empty fax_preference on get");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Error creating empty fax_preference on get", $e);
         };
     }
 

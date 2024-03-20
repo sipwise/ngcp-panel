@@ -124,8 +124,8 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, emergencymappingcontainer => $item);
         my $mapping_count = $item->emergency_mappings->count;
         if ($mapping_count > 0) {
-            $c->log->error("failed to delete emergency mapping container, there are still $mapping_count emergency mappings linked to it.");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete emergency mapping container.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete emergency mapping container.",
+                         "failed to delete emergency mapping container, there are still $mapping_count emergency mappings linked to it.");
             last;
         }
         $item->delete;

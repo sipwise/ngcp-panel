@@ -12,6 +12,10 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::Peering;
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PeeringGroups/;#Catalyst::Controller
 
+__PACKAGE__->set_config({
+    own_transaction_control => { POST => 1 },
+});
+
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
@@ -81,55 +85,32 @@ sub GET :Allow {
     return;
 }
 
-sub POST :Allow {
-    my ($self, $c) = @_;
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
 
+    my $item;
     my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $resource = $self->get_valid_post_data(
-            c => $c,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-
-        my $form = $self->get_form($c);
-
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        last unless $resource;
-
-        $resource = $self->process_form_resource($c, undef, undef, $resource, $form);
-
-        my $item;
+    try {
         my $dup_item = $c->model('DB')->resultset('voip_peer_groups')->find({
             name => $resource->{name},
         });
-        if($dup_item) {
-            $c->log->error("peering group with name '$$resource{name}' already exists"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Peering group with this name already exists");
-            last;
+
+        if ($dup_item) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Peering group with this name already exists",
+                         "peering group with name '$$resource{name}' already exists");
+            return;
         }
 
-        try {
-            $item = $c->model('DB')->resultset('voip_peer_groups')->create($resource);
-        } catch($e){
-            $c->log->error("failed to create peering group: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering group.");
-            last;
-        }
+        $item = $c->model('DB')->resultset('voip_peer_groups')->create($resource);
 
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
-
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
-        $c->response->body(q());
+    } catch($e) {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering group.", $e);
+        return;
     }
-    return;
+    NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+    return $item;
 }
 
 1;

@@ -149,8 +149,8 @@ sub DELETE :Allow {
         try {
             $dset->delete;
         } catch($e) {
-            $c->log->error("Failed to delete cfdestinationset with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to delete cfdestinationset with id '$id'", $e);
             last;
         }
         $guard->commit;

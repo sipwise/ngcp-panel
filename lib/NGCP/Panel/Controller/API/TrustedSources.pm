@@ -129,8 +129,8 @@ sub POST :Allow {
         }
         my $sub = $sub_rs->first;
         unless($sub && $sub->provisioning_voip_subscriber) {
-            $c->log->error("invalid subscriber_id '$$resource{subscriber_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist",
+                         "invalid subscriber_id '$$resource{subscriber_id}'");
             last;
         }
 
@@ -140,8 +140,7 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('voip_trusted_sources')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create trusted source: " . $c->qs($e)); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create trusted source.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create trusted source.", $c->qs($e));
             last;
         }
 
@@ -159,8 +158,7 @@ sub POST :Allow {
                 die "XMLRPC failed";
             }
         } catch($e) {
-            $c->log->error("failed to reload kamailio: $e. Trusted source created");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was created");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was created", $e);
             $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
             last;
         }

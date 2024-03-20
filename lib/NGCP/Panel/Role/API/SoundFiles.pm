@@ -27,8 +27,7 @@ sub transcode_data {
         unlink($filename);
     } catch($e) {
         unlink($filename);
-        $c->log->error("failed to transcode file: $e");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to transcode file");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to transcode file", $e);
         return;
     }
     return $resource;
@@ -144,8 +143,8 @@ sub update_item {
     $resource->{loopplay} = ($resource->{loopplay} eq "true" || is_int($resource->{loopplay}) && $resource->{loopplay}) ? 1 : 0;
 
     if ($resource->{data} && !$resource->{filename}) {
-        $c->log->error("filename is required when there is data to upload'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "'filename' cannot be empty during upload");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "'filename' cannot be empty during upload",
+                     "filename is required when there is data to upload'");
         return;
     }
 
@@ -160,15 +159,15 @@ sub update_item {
     }
     my $set = $set_rs->first;
     unless($set) {
-        $c->log->error("invalid set_id '$$resource{set_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Sound set does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Sound set does not exist",
+                     "invalid set_id '$$resource{set_id}'");
         return;
     }
 
     if ($c->user->roles eq 'subscriberadmin') {
         if (!$set->contract_id || $set->contract_id != $c->user->account_id) {
-            $c->log->error("Cannot modify read-only sound file that does not belong to this subscriberadmin");
-            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound file");
+            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound file",
+                         "Cannot modify read-only sound file that does not belong to this subscriberadmin");
             return;
         }
     }
@@ -185,8 +184,8 @@ sub update_item {
     $handle = $handle_rs->first;
     $resource->{handle} //= '';
     unless($handle) {
-        $c->log->error("invalid handle '$$resource{handle}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid handle");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid handle",
+                     "invalid handle '$$resource{handle}'");
         return;
     }
     $resource->{handle_id} = $handle->id;
@@ -196,8 +195,8 @@ sub update_item {
     try {
         NGCP::Panel::Utils::Sems::clear_audio_cache($c, $set->id, $handle->name, $group_name);
     } catch ($e) {
-        $c->log->error("Failed to clear audio cache for " . $group_name . " at appserver",);
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to clear audio cache.');
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to clear audio cache.',
+                     "Failed to clear audio cache for " . $group_name . " at appserver",);
         return;
     }
 
@@ -207,7 +206,6 @@ sub update_item {
         $resource->{data} = $recording;
         $resource = $self->transcode_data($c, $from_codec, $resource);
         unless ($resource) {
-            $c->log->error("Failed to transcode sound file",);
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to transcode sound file');
             return;
         }
@@ -222,8 +220,7 @@ sub update_item {
             $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
         }
     } catch($e) {
-        $c->log->error("failed to create soundfile: $e"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.", $e);
         return;
     }
 

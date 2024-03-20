@@ -445,17 +445,17 @@ sub POST :Allow {
                 $log_error = "failed to create subscriber, webusername-domain combination " . $c->qs($1) . " already exists";
                 @http_errors = ("Webusername-Domain combination '" . $1 . "' already exists.", "Webusername-Domain combination already exists.");
             }
-            $c->log->error($log_error); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $http_errors[0], $http_errors[1]);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $http_errors[0], $http_errors[1], $log_error);
             last;
         } catch($e) {
             if (ref $error_info->{extended} eq 'HASH' && $error_info->{extended}->{response_code}) {
-                $c->log->error($error_info->{extended}->{error}); # TODO: user, message, trace, ...
-                $self->error($c, $error_info->{extended}->{response_code}, $error_info->{extended}->{description});
+                $self->error($c,
+                             $error_info->{extended}->{response_code},
+                             $error_info->{extended}->{description},
+                             $error_info->{extended}->{error});
                 last;
             } else {
-                $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber: $e");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber", $e);
                 last;
             }
         }

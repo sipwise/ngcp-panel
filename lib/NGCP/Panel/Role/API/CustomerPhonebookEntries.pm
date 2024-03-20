@@ -73,14 +73,12 @@ sub check_resource {
         }
 
         unless ($check_rs->first) {
-            $c->log->error("Invalid 'customer_id'");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'customer_id'");
             return;
         }
     }
 
     unless ($resource->{contract_id}) {
-        $c->log->error("Required 'customer_id'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required 'customer_id'");
         return;
     }
@@ -92,7 +90,6 @@ sub check_resource {
     })->first;
 
     if ($exists) {
-        $c->log->error("Duplicate entry 'customer_id-number");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Duplicate entry 'customer_id-number");
         return;
     }

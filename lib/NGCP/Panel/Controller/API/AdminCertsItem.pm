@@ -33,8 +33,7 @@ sub delete_item {
             ssl_client_certificate => undef,
         });
     } catch($e) {
-        $c->log->error("failed to delete administrator certificate: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete administrator certificate.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete administrator certificate.", $e);
         return;
     }
 

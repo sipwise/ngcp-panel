@@ -116,8 +116,8 @@ sub check_duplicate {
         name => $resource->{name},
     });
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {
-        $c->log->error("time_set name '$$resource{name}' already exists");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "time_set with this name already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "time_set with this name already exists",
+                     "time_set name '$$resource{name}' already exists");
         return;
     }
     return 1;
@@ -134,8 +134,7 @@ sub update_item_model {
         );
         $item->discard_changes;
     } catch($e) {
-        $c->log->error("failed to update timeset: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update timesets.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update timesets.", $e);
         return;
     };
 

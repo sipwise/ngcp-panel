@@ -152,7 +152,6 @@ sub update_contract {
         now => $now,
         err_code => sub {
             my ($err) = @_;
-            #$c->log->error($err);
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
         });
     delete $resource->{type};
@@ -230,11 +229,9 @@ sub update_contract {
         return $contract;
         # TODO: what about changed product, do we allow it?
     } catch($e) {
-        $c->log->error("Failed to update contract id '".$contract->id."': $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                     "Failed to update contract id '".$contract->id."'", $e);
     };
-
-
 }
 
 1;

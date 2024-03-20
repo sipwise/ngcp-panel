@@ -82,8 +82,7 @@ sub create_item {
         })->first;
 
         if ($existing_item) {
-            $c->log->error("header rule with name '$$resource{name}' already exists");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Header rule with this name already exists");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Header rule with this name already exists", "name=$$resource{name}");
             return;
         }
 
@@ -119,8 +118,7 @@ sub create_item {
             c => $c, set_id => $item->ruleset->id
         );
     } catch($e) {
-        $c->log->error("failed to create a header rule: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule.", $e);
         return;
     }
 

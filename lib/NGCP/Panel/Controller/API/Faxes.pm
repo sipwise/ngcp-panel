@@ -94,23 +94,21 @@ sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
 
     if (!$c->config->{features}->{faxserver}) {
-        $c->log->error("faxserver feature is not active.");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Faxserver feature is not active.");
         return;
     }
 
     my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $resource->{subscriber_id});
     unless($billing_subscriber) {
-        $c->log->error("invalid subscriber id $$resource{subscriber_id} for fax send");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.",
+                     "invalid subscriber id $$resource{subscriber_id} for fax send");
         return;
     }
     my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
     return unless $prov_subscriber;
     my $faxpref = $prov_subscriber->voip_fax_preference;
     unless ($faxpref && $faxpref->active){
-        $c->log->error("invalid subscriber fax preferences");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid  subscriber fax preferences");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber fax preferences");
         return;
     }
     try {
@@ -125,8 +123,7 @@ sub create_item {
         $c->log->debug("faxserver output:\n");
         $c->log->debug($output);
     } catch($e) {
-        $c->log->error("failed to send fax: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error", "failed to send fax", $e);
         return;
     };
     return;

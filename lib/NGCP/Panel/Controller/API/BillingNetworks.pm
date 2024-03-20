@@ -157,8 +157,7 @@ sub POST :Allow {
                 $bn->create_related("billing_network_blocks", $block);
             }
         } catch($e) {
-            $c->log->error("failed to create billingnetwork: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billingnetwork.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billingnetwork.", $e);
             return;
         };
         

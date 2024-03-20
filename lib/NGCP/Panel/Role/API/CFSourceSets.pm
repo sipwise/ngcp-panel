@@ -186,8 +186,7 @@ sub update_item {
         }
         $item->discard_changes;
     } catch($e) {
-        $c->log->error("failed to create cfsourceset: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfsourceset.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfsourceset.", $e);
         return;
     };
 
@@ -258,8 +257,8 @@ sub check_duplicate {
         subscriber_id => $subscriber->id
     })->first;
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {
-        $c->log->error("source_set name '$$resource{name}' already exists");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A Sourceset with this name already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A Sourceset with this name already exists",
+                     "source_set name '$$resource{name}' already exists");
         return;
     }
     return 1;

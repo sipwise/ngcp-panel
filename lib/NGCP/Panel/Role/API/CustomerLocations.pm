@@ -116,7 +116,7 @@ sub update_item {
         }
         $item->discard_changes;
     } catch($e) {
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer location.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer location.", $e);
         return;
     };
 

@@ -189,8 +189,8 @@ sub DELETE :Allow {
                     });
                     $contact->discard_changes();
                 } catch($e) {
-                    $c->log->error("Failed to terminate contact id '".$contact->id."': $e");
-                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.",
+                                 "Failed to terminate contact id '".$contact->id."'", $e);
                     last;
                 };
                 my $form = $self->get_form($c);

@@ -110,8 +110,8 @@ sub POST :Allow {
     }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-        $c->log->error("profile set creation by reseller forbidden via config");
-        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set creation forbidden for resellers.");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set creation forbidden for resellers.",
+                     "profile set creation by reseller forbidden via config");
         return;
     }
 
@@ -141,16 +141,16 @@ sub POST :Allow {
             name => $resource->{name},
         });
         if($item) {
-            $c->log->error("subscriber profile set with name '$$resource{name}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber profile set with this name already exists for this reseller");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                         "Subscriber profile set with this name already exists for this reseller",
+                         "subscriber profile set with name '$$resource{name}' already exists for reseller_id '$$resource{reseller_id}'");
             last;
         }
 
         try {
             $item = $c->model('DB')->resultset('voip_subscriber_profile_sets')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create subscriber profile set: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile set.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile set.", $e);
             last;
         }
         
