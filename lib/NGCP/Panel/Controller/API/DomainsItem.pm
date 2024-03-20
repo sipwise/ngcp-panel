@@ -105,8 +105,7 @@ sub DELETE :Allow {
             $self->xmpp_domain_disable($c, $domain->domain) if $xmpp_reload;
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c) if $sip_reload;
         } catch($e) {
-            $c->log->error("failed to deactivate domain: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.", $e);
             last;
         }
 

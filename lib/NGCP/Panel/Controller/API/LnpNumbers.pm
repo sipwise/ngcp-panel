@@ -183,8 +183,8 @@ sub POST :Allow {
                 $c->response->body(q());
 
             } catch($e) {
-                $c->log->error("failed to upload csv: $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                             "failed to upload csv", $e);
                 last;
             };
         } else {
@@ -208,8 +208,8 @@ sub POST :Allow {
 
             my $carrier = $c->model('DB')->resultset('lnp_providers')->find($resource->{lnp_provider_id});
             unless($carrier) {
-                $c->log->error("invalid carrier_id '$$resource{lnp_provider_id}'");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp carrier_id does not exist");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "lnp carrier_id does not exist",
+                             "invalid carrier_id '$$resource{lnp_provider_id}'");
                 last;
             }
             # revert "MT#20027: the actual lnp number must be unique across lnp_providers"
@@ -218,8 +218,7 @@ sub POST :Allow {
             try {
                 $item = $c->model('DB')->resultset('lnp_numbers')->create($resource);
             } catch($e) {
-                $c->log->error("failed to create lnp number: $e"); # TODO: user, message, trace, ...
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create lnp number.");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create lnp number.", $e);
                 last;
             }
 
@@ -240,7 +239,6 @@ sub DELETE :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         unless (exists $c->req->query_params->{number}) {
-            $c->log->error("number query parameter required"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "number query parameter required.");
             last;
         }

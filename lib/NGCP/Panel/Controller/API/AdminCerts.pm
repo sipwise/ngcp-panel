@@ -65,7 +65,7 @@ sub create_item {
     my $err;
     my $res = NGCP::Panel::Utils::Auth::generate_client_cert($c, $admin, sub {
         my $e = shift;
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to generate client certificate");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to generate client certificate", $e);
         $err = 1;
     });
     return if $err;

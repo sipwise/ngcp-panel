@@ -58,8 +58,8 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         unless($c->user->billing_data) {
-            $c->log->error("user does not have billing data rights");
-            $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to create voucher");
+            $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to create voucher",
+                         "user does not have billing data rights");
             last;
         }
     
@@ -83,9 +83,8 @@ sub POST :Allow {
                     resource => $resource,
                     entities => $entities,
                     err_code => sub {
-                        my ($err) = @_;
-                        #$c->log->error($err);
-                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+                            my ($err) = @_;
+                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
                         },
                     );
        
@@ -104,8 +103,7 @@ sub POST :Allow {
                 used_at => $now,
             });
         } catch($e) {
-            $c->log->error("failed to create voucher topup: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher topup.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher topup.", $e);
             last;
         }
 
@@ -129,7 +127,7 @@ sub POST :Allow {
                 is_success => $success
             );
         } catch($e) {
-            $c->log->error("failed to create topup log record: $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher topup.", $e);
             last;
         }
         $guard->commit;

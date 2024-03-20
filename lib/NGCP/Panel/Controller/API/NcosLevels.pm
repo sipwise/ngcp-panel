@@ -133,8 +133,8 @@ sub POST :Allow {
             level => $resource->{level},
         });
         if($item) {
-            $c->log->error("ncos level '$$resource{level}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS level already exists for this reseller");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS level already exists for this reseller",
+                         "ncos level '$$resource{level}' already exists for reseller_id '$$resource{reseller_id}'");
             last;
         }
 
@@ -145,7 +145,6 @@ sub POST :Allow {
             });
             if (!$time_set) {
                 my $err = "Time set with id '$resource->{time_set_id}' does not exist or does not belong to this reseller";
-                $c->log->error($err);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
                 last;
             }
@@ -154,8 +153,7 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('ncos_levels')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create ncos level: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos level.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos level.", $e);
             last;
         }
 

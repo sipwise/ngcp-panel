@@ -139,8 +139,7 @@ sub POST :Allow {
 
         my ($sub, $reseller, $voip_number) = NGCP::Panel::Utils::Interception::subresnum_from_number($c, $resource->{number}, sub {
             my ($msg,$field,$response) = @_;
-            $c->log->error($msg);
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $response);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $response, $msg);
             return 0;
         });
         last unless($sub && $reseller);
@@ -151,12 +150,10 @@ sub POST :Allow {
         $resource->{sip_domain} = $sub->domain->domain;
 
         if($resource->{x3_required} && (!defined $resource->{x3_host} || !defined $resource->{x3_port})) {
-            $c->log->error("Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
             last;
         }
         if (defined $resource->{x3_port} && !is_int($resource->{x3_port})) {
-            $c->log->error("Parameter 'x3_port' should be an integer");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Parameter 'x3_port' should be an integer");
             last;
         }
@@ -191,8 +188,7 @@ sub POST :Allow {
             });
             die "Failed to populate capture agents\n" unless($res);
         } catch($e) {
-            $c->log->error("failed to create interception: " . $c->qs($e)); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create interception");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create interception", $c->qs($e));
             last;
         }
 

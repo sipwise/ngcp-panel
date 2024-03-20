@@ -98,8 +98,8 @@ sub POST :Allow {
     my ($self, $c) = @_;
 
     if ($c->user->roles eq 'subscriberadmin') {
-        $c->log->error("role subscriberadmin cannot create pbxdeviceprofiles");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot create pbxdeviceprofile.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot create pbxdeviceprofile.",
+                     "role subscriberadmin cannot create pbxdeviceprofiles");
         return;
     }
 
@@ -124,8 +124,9 @@ sub POST :Allow {
             name => $resource->{name},
         });
         if($item) {
-            $c->log->error("Pbx device profile with name '$$resource{name}' already exists for config_id '$$resource{config_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device profile with this name already exists for this config");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                         "Pbx device profile with this name already exists for this config",
+                         "Pbx device profile with name '$$resource{name}' already exists for config_id '$$resource{config_id}'");
             last;
         }
         my $config_rs = $c->model('DB')->resultset('autoprov_configs')->search({
@@ -141,16 +142,15 @@ sub POST :Allow {
         }
         my $config = $config_rs->first;
         unless($config) {
-            $c->log->error("Pbx device config with confg_id '$$resource{config_id}' does not exist");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device config does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device config does not exist",
+                         "Pbx device config with confg_id '$$resource{config_id}' does not exist");
             last;
         }
 
         try {
             $item = $config->autoprov_profiles->create($resource);
         } catch($e) {
-            $c->log->error("failed to create pbx device profile: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbx device profile.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbx device profile.", $e);
             last;
         }
 

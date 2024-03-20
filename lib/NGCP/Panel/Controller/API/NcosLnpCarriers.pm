@@ -128,8 +128,8 @@ sub POST :Allow {
             $resource->{ncos_level_id},
         );
         unless($level) {
-            $c->log->error("invalid ncos_level_id '$$resource{ncos_level_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_level_id, level does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_level_id, level does not exist",
+                         "invalid ncos_level_id '$$resource{ncos_level_id}'");
             return;
         }
 
@@ -137,8 +137,9 @@ sub POST :Allow {
             lnp_provider_id => $resource->{lnp_provider_id},
         })->first;
         if($dup_item) {
-            $c->log->error("ncos lnp entry with carrier '$$resource{lnp_provider_id}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS lnp entry already exists for given ncos level");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 
+                         "NCOS lnp entry already exists for given ncos level",
+                         "ncos lnp entry with carrier '$$resource{lnp_provider_id}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
             return;
         }
 
@@ -146,8 +147,7 @@ sub POST :Allow {
         try {
             $item = $level->ncos_lnp_lists->create($resource);
         } catch($e) {
-            $c->log->error("failed to create ncos lnp entry: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos lnp entry.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos lnp entry.", $e);
             last;
         }
 

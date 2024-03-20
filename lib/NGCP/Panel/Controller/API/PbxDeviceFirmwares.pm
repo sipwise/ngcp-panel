@@ -147,8 +147,8 @@ sub POST :Allow {
         }
         my $model = $model_rs->first;
         unless($model) {
-            $c->log->error("invalid device_id '$$resource{device_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device model does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device model does not exist",
+                         "invalid device_id '$$resource{device_id}'");
             last;
         }
 
@@ -163,8 +163,7 @@ sub POST :Allow {
                 );
             }
         } catch($e) {
-            $c->log->error("failed to create pbxdevicefirmware: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdevicefirmware.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdevicefirmware.", $e);
             last;
         }
 

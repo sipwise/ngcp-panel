@@ -59,8 +59,7 @@ sub create_item {
     try {
         $item = $c->model('DB')->resultset('admins')->create($resource);
     } catch($e) {
-        $c->log->error("failed to create admin: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create admin.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create admin.", $e);
         return;
     }
 

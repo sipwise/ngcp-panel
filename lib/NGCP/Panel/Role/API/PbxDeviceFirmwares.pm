@@ -104,8 +104,8 @@ sub update_item {
     }
     my $model = $model_rs->first;
     unless($model) {
-        $c->log->error("invalid device_id '$$resource{device_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device model does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device model does not exist",
+                     "invalid device_id '$$resource{device_id}'");
         return;
     }
 

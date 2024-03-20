@@ -79,8 +79,8 @@ sub update_item {
         name => $resource->{name},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("peering server with name '$$resource{name}' already exists"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering server with this name already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering server with this name already exists",
+                     "peering server with name '$$resource{name}' already exists");
         return;
     }
 

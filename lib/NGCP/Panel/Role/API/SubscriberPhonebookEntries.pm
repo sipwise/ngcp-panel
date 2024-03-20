@@ -75,7 +75,6 @@ sub check_resource {
         }
 
         unless ($check_rs->first) {
-            $c->log->error("Invalid 'subscriber_id'");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'");
             return;
         }
@@ -86,7 +85,6 @@ sub check_resource {
     }
 
     unless ($resource->{subscriber_id}) {
-        $c->log->error("Required 'subscriber_id'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required 'subscriber_id'");
         return;
     }
@@ -98,7 +96,6 @@ sub check_resource {
     })->first;
 
     if ($exists) {
-        $c->log->error("Duplicate entry 'subscriber_id-number");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Duplicate entry 'subscriber_id-number");
         return;
     }

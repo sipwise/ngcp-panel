@@ -150,8 +150,8 @@ sub DELETE :Allow {
         try {
             $prov_subs->voip_cc_mappings->delete;
         } catch($e) {
-            $c->log->error("Failed to delete ccmapentries with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to delete ccmapentries with id '$id'", $e);
             last;
         }
         $guard->commit;

@@ -75,7 +75,6 @@ sub update_item {
         resource => $resource,
     );
     unless($c->model('DB')->resultset('voip_peer_groups')->find($resource->{group_id})) {
-        $c->log->error("peering group $$resource{group_id} does not exist");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering group $$resource{group_id} does not exist");
         return;
     }
@@ -89,7 +88,6 @@ sub update_item {
         priority => $resource->{priority},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("peering rule already exists"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule already exists");
         return;
     }
@@ -100,7 +98,6 @@ sub update_item {
         },
         {}
     )->count) {
-        $c->log->error("peering rule priority $$resource{priority} already exists for this group");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule priority $$resource{priority} already exists for this group");
         return;
     }

@@ -87,15 +87,13 @@ sub POST :Allow {
                     })->first;
                 }
             } catch($e) {
-                $c->log->error("failed to handle a party call control request: $e");
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                    "Failed to handle a party call control request.");
+                    "Failed to handle a party call control request.", $e);
                 last;
             }
             unless($sms) {
-                $c->log->error("failed to find sms with id " . $c->qs($callid) . " and token $token");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                    "Failed to find sms with callid " . $c->qs($callid) . " and given token");
+                    "Failed to find sms with callid " . $c->qs($callid) . " and given token", $token);
                 last;
             }
             if($status eq "ACCEPT") {
@@ -120,9 +118,8 @@ sub POST :Allow {
                     );
                     $sms->update({ pcc_status => "complete" });
                 } catch($e) {
-                    $c->log->error("failed to handle a party call control request: $e");
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                        "Failed to handle a party call control request.");
+                        "Failed to handle a party call control request.", $e);
                     last;
                 }
             } else {
@@ -130,9 +127,8 @@ sub POST :Allow {
                 try {
                     $sms->update({ pcc_status => "complete" });
                 } catch($e) {
-                    $c->log->error("failed to handle a party call control request: $e");
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                        "Failed to handle a party call control request.");
+                        "Failed to handle a party call control request.", $e);
                     last;
                 }
             }

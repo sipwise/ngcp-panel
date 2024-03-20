@@ -170,7 +170,6 @@ sub POST :Allow {
             mappings_to_create => $mappings_to_create,
             err_code => sub {
                 my ($err) = @_;
-                #$c->log->error($err);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
             });
              
@@ -181,8 +180,7 @@ sub POST :Allow {
                 $profile_package->profiles->create($mapping); 
             }
         } catch($e) {
-            $c->log->error("failed to create profile package: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create profile package.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create profile package.", $e);
             last;
         }
         

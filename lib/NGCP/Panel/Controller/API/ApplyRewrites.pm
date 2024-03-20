@@ -72,13 +72,13 @@ sub POST :Allow {
         }
         my $subscriber = $subscriber_rs->first;
         unless($subscriber) {
-            $c->log->error("invalid subscriber id $$resource{subscriber_id} for outbound call");
-            $self->error($c, HTTP_NOT_FOUND, "Calling subscriber not found.");
+            $self->error($c, HTTP_NOT_FOUND, "Calling subscriber not found.",
+                         "invalid subscriber id $$resource{subscriber_id} for outbound call");
             last;
         }
         if (($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") && $subscriber->provisioning_voip_subscriber->id != $c->user->id) {
-            $c->log->error("Insuficient permissions to apply rewrites for subscriber id $$resource{subscriber_id}");
-            $self->error($c, HTTP_FORBIDDEN, "Insuficient permissions.");
+            $self->error($c, HTTP_FORBIDDEN, "Insuficient permissions.",
+                         "Insuficient permissions to apply rewrites for subscriber id $$resource{subscriber_id}");
             return;
         }
 
@@ -101,8 +101,7 @@ sub POST :Allow {
                 push @result, $normalized;
             }
         } catch($e) {
-            $c->log->error("failed to rewrite number: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to rewrite number.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to rewrite number.", $e);
             last;
         }
 

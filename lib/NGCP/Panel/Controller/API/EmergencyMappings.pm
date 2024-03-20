@@ -168,12 +168,10 @@ sub POST :Allow {
                     $resource->{reseller_id} = $c->user->reseller_id;
                 } else {
                     unless(defined $resource->{reseller_id}) {
-                        $c->log->error("Missing reseller_id");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "missing reseller_id parameter");
                         last;
                     }
                     unless($schema->resultset('resellers')->find($resource->{reseller_id})) {
-                        $c->log->error("Invalid reseller_id '$$resource{reseller_id}'");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "invalid reseller_id '$$resource{reseller_id}'");
                         last;
                     }
@@ -204,8 +202,8 @@ sub POST :Allow {
                 $c->response->body(q());
 
             } catch($e) {
-                $c->log->error("failed to upload csv: $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                             "failed to upload csv", $e);
                 last;
             };
         } else {
@@ -220,16 +218,17 @@ sub POST :Allow {
 
             my $container = $c->model('DB')->resultset('emergency_containers')->find($resource->{emergency_container_id});
             unless($container) {
-                $c->log->error("invalid emergency container id '$$resource{emergency_container_id}'");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "emergency container id does not exist");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "emergency container id does not exist",
+                             "invalid emergency container id '$$resource{emergency_container_id}'");
                 last;
             }
             if ($c->model('DB')->resultset('emergency_mappings')->search({
                     emergency_container_id => $container->id,
                     code => $resource->{code}
                 },undef)->count > 0) {
-                $c->log->error("Emergency mapping code '$$resource{code}' already defined for emergency container id '$$resource{emergency_container_id}'");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "emergency mapping code already exists for emergency container");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                             "Emergency mapping code already exists for emergency container",
+                             "Emergency mapping code '$$resource{code}' already defined for emergency container id '$$resource{emergency_container_id}'");
                 last;
             }
 
@@ -237,8 +236,7 @@ sub POST :Allow {
             try {
                 $item = $c->model('DB')->resultset('emergency_mappings')->create($resource);
             } catch($e) {
-                $c->log->error("failed to create emergency mapping: $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create emergency mapping.");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create emergency mapping.", $e);
                 last;
             }
 

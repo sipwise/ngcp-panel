@@ -116,8 +116,8 @@ sub POST :Allow {
             name => $resource->{name},
         });
         if($dup_item) {
-            $c->log->error("lnp carrier with name '$$resource{name}' already exists"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier with this name already exists");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier with this name already exists",
+                         "lnp carrier with name '$$resource{name}' already exists");
             return;
         }
 
@@ -125,8 +125,7 @@ sub POST :Allow {
         try {
             $item = $schema->resultset('lnp_providers')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create lnp carrier: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create lnp carrier.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create lnp carrier.", $e);
             last;
         }
         

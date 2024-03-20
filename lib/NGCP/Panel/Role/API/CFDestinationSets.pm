@@ -215,8 +215,7 @@ sub update_item {
             );
         }
     } catch($e) {
-        $c->log->error("failed to create cfdestinationset: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfdestinationset.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfdestinationset.", $e);
         return;
     };
 

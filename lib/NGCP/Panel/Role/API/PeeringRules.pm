@@ -81,7 +81,6 @@ sub update_item {
         callee_prefix => $resource->{callee_prefix},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("peering rule already exists"); # TODO: user, message, trace, ...
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule already exists");
         return;
     }

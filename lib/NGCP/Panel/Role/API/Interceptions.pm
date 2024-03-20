@@ -128,8 +128,7 @@ sub update_item {
 
     my ($sub, $reseller, $voip_number) = NGCP::Panel::Utils::Interception::subresnum_from_number($c, $resource->{number}, sub {
         my ($msg,$field,$response) = @_;
-		$c->log->error($msg);
-		$self->error($c, HTTP_UNPROCESSABLE_ENTITY, $response);
+		$self->error($c, HTTP_UNPROCESSABLE_ENTITY, $response, $msg);
         return 0;
     });
     return unless($sub && $reseller);
@@ -139,17 +138,15 @@ sub update_item {
     $resource->{sip_domain} = $sub->domain->domain;
 
     if($resource->{liid} && ($old_resource->{liid} ne $resource->{liid})) {
-        $c->log->error("Attempt to change liid: ".$old_resource->{liid}." => ".$resource->{liid}.";");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "liid can not be changed");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "liid can not be changed",
+                     "Attempt to change liid: ".$old_resource->{liid}." => ".$resource->{liid}.";");
         return;
     }
     if($resource->{x3_required} && (!defined $resource->{x3_host} || !defined $resource->{x3_port})) {
-        $c->log->error("Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing parameter 'x3_host' or 'x3_port' with 'x3_required' activated");
         return;
     }
     if (defined $resource->{x3_port} && !is_int($resource->{x3_port})) {
-        $c->log->error("Parameter 'x3_port' should be an integer");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Parameter 'x3_port' should be an integer");
         last;
     }
@@ -174,7 +171,6 @@ sub update_item {
         cc_delivery_port => $resource->{cc_delivery_port},
     });
     unless($res) {
-        $c->log->error("failed to update capture agents");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
         last;
     }

@@ -266,8 +266,7 @@ sub update_item {
 
         $dset->discard_changes if $dset; # update destinations
     } catch($e) {
-        $c->log->error("Error Updating '$cf_type': $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$cf_type' could not be updated.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$cf_type' could not be updated.", $e);
         return;
     }
 

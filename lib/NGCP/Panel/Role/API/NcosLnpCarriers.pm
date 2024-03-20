@@ -89,8 +89,8 @@ sub update_item {
         $resource->{ncos_level_id},
     );
     unless($level) {
-        $c->log->error("invalid ncos_level_id '$$resource{ncos_level_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_level_id, level does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_level_id, level does not exist",
+                     "invalid ncos_level_id '$$resource{ncos_level_id}'");
         return;
     }
 
@@ -98,8 +98,8 @@ sub update_item {
         lnp_provider_id => $resource->{lnp_provider_id},
     })->first;
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("ncos lnp carrier '$$resource{lnp_provider_id}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS lnp entry already exists for given ncos level");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS lnp entry already exists for given ncos level",
+                     "ncos lnp carrier '$$resource{lnp_provider_id}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
         return;
     }
 
