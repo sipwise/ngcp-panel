@@ -138,8 +138,7 @@ sub create_item {
             return $self->hal_from_item($c, $_sset, "cfsourcesets");
         });
     } catch($e) {
-        $c->log->error("failed to create source_set: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create source_set.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create source_set.", $e);
         return;
     }
 

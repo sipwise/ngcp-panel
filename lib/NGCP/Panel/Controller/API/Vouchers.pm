@@ -111,8 +111,8 @@ sub POST :Allow {
     my ($self, $c) = @_;
 
     unless($c->user->billing_data) {
-        $c->log->error("user does not have billing data rights");
-        $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to create voucher");
+        $self->error($c, HTTP_FORBIDDEN, "Insufficient rights to create voucher",
+                     "user does not have billing data rights");
         return;
     }
 
@@ -142,8 +142,8 @@ sub POST :Allow {
             code => $code,
         });
         if($item) {
-            $c->log->error("voucher with code '$$resource{code}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Voucher with this code already exists for this reseller");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Voucher with this code already exists for this reseller",
+                         "voucher with code '$$resource{code}' already exists for reseller_id '$$resource{reseller_id}'");
             last;
         }
         $resource->{code} = $code;
@@ -153,8 +153,7 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('vouchers')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create voucher: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher.", $e);
             last;
         }
 

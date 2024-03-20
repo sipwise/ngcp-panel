@@ -41,7 +41,7 @@ sub rest_prepare_request {
     };
     my $company_url;
 
-    my $tx_id = $c->session->{api_request_tx_id} //
+    my $tx_id = $c->stash->{api_request_tx_id} //
                 uc Data::UUID->create_str() =~ s/-//gr;
 
     $self->{rpc_server_params} //= $self->rpc_server_params;

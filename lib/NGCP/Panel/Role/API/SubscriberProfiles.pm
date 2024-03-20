@@ -120,8 +120,8 @@ sub update_item {
     $set = $set->find($resource->{set_id});
 
     unless($set) {
-        $c->log->error("subscriber profile set id '$$resource{set_id}' does not exist"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'profile_set_id', does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'profile_set_id', does not exist",
+                     "subscriber profile set id '$$resource{set_id}' does not exist");
         return;
     }
 
@@ -129,8 +129,9 @@ sub update_item {
         name => $resource->{name},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("subscriber profile with name '$$resource{name}' already exists for profile_set_id '$$resource{set_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber profile with this name already exists for this profile set");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                     "Subscriber profile with this name already exists for this profile set",
+                     "subscriber profile with name '$$resource{name}' already exists for profile_set_id '$$resource{set_id}'");
         return;
     }
 

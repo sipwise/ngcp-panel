@@ -167,12 +167,11 @@ sub create_item {
             die $session->{reason}."\n";
         }
     } catch($e) {
-        $c->log->error($e);
         if ($session && $session->{reason} eq 'insufficient credit') {
-            $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send the sms");
+            $self->error($c, HTTP_PAYMENT_REQUIRED, "Not enough credit to send the sms", $e);
         } else {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
-                "An internal error has occurred when sending the sms, please contact the platform administrator or try again later");
+                "An internal error has occurred when sending the sms, please contact the platform administrator or try again later", $e);
         }
     }
 

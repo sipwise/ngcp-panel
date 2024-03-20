@@ -24,8 +24,8 @@ sub delete_item {
             $item->voip_rewrite_rules->delete;
             $item->delete;
         } catch($e) {
-            $c->log->error("Failed to delete rewriteruleset with id '".$item->id."': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to delete rewriteruleset with id '".$item->id."'", $e);
             last;
         }
         $guard->commit;
@@ -48,8 +48,8 @@ sub update_item_model {
                 $self->update_rewriterules( $c, $item, $form, $rewriterules );
             }
         } catch($e) {
-            $c->log->error("Failed to update rewriterule with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to update rewriterule with id '$id'", $e);
             die;
         }
         $guard->commit;

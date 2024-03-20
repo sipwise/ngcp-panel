@@ -140,8 +140,7 @@ sub POST :Allow {
         try {
             $zone = $profile->billing_zones->create($resource);
         } catch($e) {
-            $c->log->error("failed to create billing zone: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing zone.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing zone.", $e);
             last;
         }
         

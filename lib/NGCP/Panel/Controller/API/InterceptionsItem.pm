@@ -156,7 +156,6 @@ sub DELETE :Allow {
         });
         my $res = NGCP::Panel::Utils::Interception::request($c, 'DELETE', $uuid);
         unless($res) {
-            $c->log->error("failed to update capture agents");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update capture agents");
             last;
         }

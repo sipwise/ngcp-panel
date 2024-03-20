@@ -66,8 +66,8 @@ sub delete_item {
 
     if ($c->user->roles eq 'subscriberadmin' &&
         (!$item->contract_id || $item->contract_id != $c->user->account_id)) {
-            $c->log->error("Cannot modify read-only sound set that does not belong to this subscriberadmin");
-            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound set");
+            $self->error($c, HTTP_FORBIDDEN, "Cannot modify read-only sound set",
+                         "does not belong to this subscriberadmin");
             return;
     }
 

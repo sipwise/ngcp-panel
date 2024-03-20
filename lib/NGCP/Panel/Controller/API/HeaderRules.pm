@@ -81,8 +81,7 @@ sub create_item {
             c => $c, set_id => $item->ruleset->id
         );
     } catch($e) {
-        $c->log->error("failed to create a header rule: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule.", $e);
         return;
     }
 

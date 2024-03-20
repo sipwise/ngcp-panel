@@ -204,8 +204,7 @@ sub update_item {
             map { $_ => $resource->{$_} } qw(notify_status notified_at)
         })->discard_changes;
     } catch($e) {
-        $c->log->error("failed to update customer fraud event: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update customer fraud event.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update customer fraud event.", $e);
         return;
     };
 

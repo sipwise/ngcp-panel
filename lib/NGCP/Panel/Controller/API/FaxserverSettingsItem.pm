@@ -36,8 +36,8 @@ sub update_item_model {
 
     my $billing_subscriber = NGCP::Panel::Utils::API::Subscribers::get_active_subscriber($self, $c, $item->id);
     unless($billing_subscriber) {
-        $c->log->error("invalid subscriber id $item->id for fax send");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Fax subscriber not found.",
+                     "invalid subscriber id $item->id for fax send");
         return;
     }
     delete $resource->{id};
@@ -67,8 +67,7 @@ sub update_item_model {
             $destinations_rs->create($dest);
         }
     } catch($e) {
-        $c->log->error("Error Updating faxserversettings: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "faxserversettings could not be updated.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "faxserversettings could not be updated.", $e);
         return;
     };
 

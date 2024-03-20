@@ -129,8 +129,8 @@ sub POST :Allow {
         }
         my $level = $level_rs->first;
         unless($level) {
-            $c->log->error("invalid ncos_level_id '$$resource{ncos_level_id}' for reseller_id '$$resource{reseller_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_level_id, level does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_level_id, level does not exist",
+                         "invalid ncos_level_id '$$resource{ncos_level_id}' for reseller_id '$$resource{reseller_id}'");
             return;
         }
 
@@ -138,8 +138,8 @@ sub POST :Allow {
             pattern => $resource->{pattern},
         })->first;
         if($dup_item) {
-            $c->log->error("ncos pattern '$$resource{pattern}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS pattern already exists for given ncos level");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS pattern already exists for given ncos level",
+                         "ncos pattern '$$resource{pattern}' already exists for ncos_level_id '$$resource{ncos_level_id}'");
             return;
         }
 
@@ -147,8 +147,7 @@ sub POST :Allow {
         try {
             $item = $level->ncos_pattern_lists->create($resource);
         } catch($e) {
-            $c->log->error("failed to create ncos level: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos level.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create ncos level.", $e);
             last;
         }
 

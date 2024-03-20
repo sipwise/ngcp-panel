@@ -80,8 +80,7 @@ sub create_item {
         }
         $item = $schema->resultset('voip_rewrite_rules')->create($resource);
     } catch($e) {
-        $c->log->error("failed to create rewriterule: $e"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriterule.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriterule.", $e);
         return;
     }
     $guard->commit;

@@ -146,8 +146,8 @@ sub POST :Allow {
         }
         my $model = $model_rs->first;
         unless($model) {
-            $c->log->error("invalid device_id '$$resource{device_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device model does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device model does not exist",
+                         "invalid device_id '$$resource{device_id}'");
             last;
         }
 
@@ -158,8 +158,7 @@ sub POST :Allow {
         try {
             $item = $model->autoprov_configs->create($resource);
         } catch($e) {
-            $c->log->error("failed to create pbxdeviceconfig: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdeviceconfig.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdeviceconfig.", $e);
             last;
         }
 

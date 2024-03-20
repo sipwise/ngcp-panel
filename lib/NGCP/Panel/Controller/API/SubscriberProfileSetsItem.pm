@@ -72,8 +72,8 @@ sub PATCH :Allow {
     }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-        $c->log->error("profile set modification by reseller forbidden via config");
-        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set modification forbidden for resellers.");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set modification forbidden for resellers.",
+                     "profile set modification by reseller forbidden via config");
         return;
     }
 
@@ -118,8 +118,8 @@ sub PUT :Allow {
     }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-        $c->log->error("profile set modification by reseller forbidden via config");
-        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set modification forbidden for resellers.");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set modification forbidden for resellers.",
+                     "profile set modification by reseller forbidden via config");
         return;
     }
 
@@ -160,8 +160,8 @@ sub DELETE :Allow {
     }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-        $c->log->error("profile set deletion by reseller forbidden via config");
-        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set deletion forbidden for resellers.");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile set deletion forbidden for resellers.",
+                     "profile set deletion by reseller forbidden via config");
         return;
     }
 

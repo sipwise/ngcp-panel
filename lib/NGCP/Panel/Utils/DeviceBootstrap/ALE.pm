@@ -37,7 +37,7 @@ sub rest_prepare_request {
     $self->{rpc_server_params} //= $self->rpc_server_params;
     my $cfg = $self->{rpc_server_params};
 
-    my $tx_id = $c->session->{api_request_tx_id} //
+    my $tx_id = $c->stash->{api_request_tx_id} //
                 uc Data::UUID->create_str() =~ s/-//gr;
 
     $c->log->debug($self->to_log({ name   => 'ALE prepare request',

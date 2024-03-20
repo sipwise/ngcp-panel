@@ -105,8 +105,8 @@ sub update_item {
     }
     my $sub = $sub_rs->first;
     unless($sub && $sub->provisioning_voip_subscriber) {
-        $c->log->error("invalid subscriber_id '$$resource{subscriber_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist",
+                     "invalid subscriber_id '$$resource{subscriber_id}'");
         return;
     }
     $resource->{subscriber_id} = $sub->provisioning_voip_subscriber->id;

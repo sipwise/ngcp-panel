@@ -152,8 +152,8 @@ sub DELETE :Allow {
             NGCP::Panel::Utils::DeviceBootstrap::dispatch($c, 'unregister', $device, $device->identifier);
             $device->delete;
         } catch($e) {
-            $c->log->error("Failed to delete pbx field device with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to delete pbx field device with id '$id'", $e);
             last;
         }
         $guard->commit;

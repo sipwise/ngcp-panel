@@ -123,8 +123,8 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, lnpcarrier => $item);
         my $number_count = $item->lnp_numbers->count;
         if ($number_count > 0) {
-            $c->log->error("failed to delete lnp carrier, there are still $number_count lnp numbers linked to it.");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete lnp carrier.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete lnp carrier.",
+                         "failed to delete lnp carrier, there are still $number_count lnp numbers linked to it.");
             last;
         }
         $item->delete;

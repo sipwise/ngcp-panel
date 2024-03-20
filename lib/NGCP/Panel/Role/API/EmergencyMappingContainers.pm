@@ -90,8 +90,8 @@ sub update_item {
 
     my $reseller_item = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
     unless($reseller_item) {
-        $c->log->error("reseller id '$$resource{reseller_id}' does not exist");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Reseller id does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Reseller id does not exist",
+                     "reseller id '$$resource{reseller_id}' does not exist");
         return;
     }
 
@@ -100,8 +100,8 @@ sub update_item {
         name => $resource->{name},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("emergency mapping container with name '$$resource{name}' already exists for this reseller");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Emergency mapping container with this name already exists for this reseller");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Emergency mapping container with this name already exists for this reseller",
+                     "emergency mapping container with name '$$resource{name}' already exists for this reseller");
         return;
     }
 

@@ -142,8 +142,8 @@ sub DELETE :Allow {
         try {
             $cl->delete;
         } catch($e) {
-            $c->log->error("Failed to delete customre location with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to delete customre location with id '$id'", $e);
             last;
         }
         $guard->commit;

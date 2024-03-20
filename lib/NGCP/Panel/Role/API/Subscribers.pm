@@ -193,7 +193,7 @@ sub resource_from_item {
                     }
                 };
                 if ($@) {
-                    $c->log->error("Failed to encrypt $k: " . $@);
+                    $c->error("Failed to encrypt $k: " . $@);
                     delete $resource{'_' . $k};
                 }
             }
@@ -434,8 +434,8 @@ sub update_item {
                 NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
                 return $subscriber;
             } catch($e) {
-                $c->log->error("failed to terminate subscriber id ".$subscriber->id . ": $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber",
+                             "failed to terminate subscriber id ".$subscriber->id, $e);
                 return;
             }
         }
@@ -447,15 +447,14 @@ sub update_item {
             level => $resource->{lock} || 0,
         );
     } catch($e) {
-        $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock",
+                     "failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock}, $e);
         return;
     };
 
     my ($error,$profile_set,$profile) = NGCP::Panel::Utils::Subscriber::check_profile_set_and_profile($c, $resource, $subscriber);
     if ($error) {
-        $c->log->error($error->{error});
-        $self->error($c, $error->{response_code}, $error->{description});
+        $self->error($c, $error->{response_code}, $error->{description}, $error->{error});
         return;
     }
 
@@ -506,22 +505,21 @@ sub update_item {
         );
     } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
         $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
-        $c->log->error("failed to update subscriber, number " . $c->qs($1) . " already exists");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.",
+                     "failed to update subscriber, number " . $c->qs($1) . " already exists");
         return;
     } catch ($e where { /alias \d+ already exists/ }) {
         $e =~ /alias (\d+) already exists/;
-        $c->log->error("failed to update subscriber, alias " . $c->qs($1) . " already exists");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.",
+                     "failed to update subscriber, alias " . $c->qs($1) . " already exists");
         return;
     } catch ($e where { /aliases \S+ already exist/ }) {
         $e =~ /aliases (\S+) already exist/;
-        $c->log->error("failed to update subscriber, aliases " . $c->qs($1) . " already exist");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Numbers '" . $1 . "' already exist.", "Numbers already exist.");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Numbers '" . $1 . "' already exist.", "Numbers already exist.",
+                     "failed to update subscriber, aliases " . $c->qs($1) . " already exist");
         return;
     } catch ($e where { /more than \d+ provided aliases/ }) {
         my $err_msg = "more than 10 provided aliases already exist";
-        $c->log->error($err_msg);
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err_msg);
         return;
     }

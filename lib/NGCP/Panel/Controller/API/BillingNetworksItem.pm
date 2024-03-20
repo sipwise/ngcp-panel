@@ -153,8 +153,8 @@ sub DELETE :Allow {
                 status => 'terminated'
             });
        } catch($e) {
-           $c->log->error("Failed to terminate billingnetwork with id '$id': $e");
-           $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+           $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                        "Failed to terminate billingnetwork with id '$id'", $e);
            last;
        }
        $guard->commit;

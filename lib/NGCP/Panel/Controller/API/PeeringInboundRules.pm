@@ -129,7 +129,6 @@ sub POST :Allow {
             form => $form,
         );
         unless($c->model('DB')->resultset('voip_peer_groups')->find($resource->{group_id})) {
-            $c->log->error("peering group $$resource{group_id} does not exist");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering group $$resource{group_id} does not exist");
             last;
         }
@@ -143,7 +142,6 @@ sub POST :Allow {
             priority => $resource->{priority},
         });
         if($dup_item) {
-            $c->log->error("peering rule already exists"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule already exists");
             last;
         }
@@ -154,7 +152,6 @@ sub POST :Allow {
             {}
         );
         if($prio_rs->count) {
-            $c->log->error("peering rule priority $$resource{priority} already exists for this group");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule priority $$resource{priority} already exists for this group");
             last;
         }
@@ -165,8 +162,7 @@ sub POST :Allow {
                 has_inbound_rules => 1
             });
         } catch($e) {
-            $c->log->error("failed to create peering rule: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering rule.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering rule.", $e);
             last;
         }
 

@@ -126,8 +126,7 @@ sub update_item {
             });
         }
     } catch($e) {
-        $c->log->error("failed to update autoattendants: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update autoattendants.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update autoattendants.", $e);
         return;
     };
 

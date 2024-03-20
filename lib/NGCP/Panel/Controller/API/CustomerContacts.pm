@@ -150,8 +150,7 @@ sub POST :Allow {
         try {
             $contact = $c->model('DB')->resultset('contacts')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create contact: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contact.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contact.", $e);
             last;
         }
         
