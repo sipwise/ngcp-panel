@@ -129,42 +129,16 @@ sub GET :Allow {
     return;
 }
 
-sub POST :Allow {
-    my ($self, $c) = @_;
+sub create_item {
+    my ($self, $c, $resource, $form, $process_extras) = @_;
 
-    {
-        my ($item, $resource);
+    my $item;
 
-        $resource = $self->get_valid_post_data(
-            c => $c,
-            media_type => 'application/json',
-        );
-        last unless $resource;
+    my $create = 1;
 
-        my $form = $self->get_form($c);
-        my $create = 1;
+    return unless $self->update_item($c, "new", undef, $resource, $form, $create);
 
-        my ($guard, $txn_ok) = ($c->model('DB')->txn_scope_guard, 0);
-        {
-            last unless $self->update_item($c, "new", undef, $resource, $form, $create);
-
-            $guard->commit;
-            $txn_ok = 1;
-        }
-        last unless $txn_ok;
-
-        $item = $self->fetch_item($c, $resource, $form, $item);
-
-        if ($item) {
-            $c->response->status(HTTP_CREATED);
-            $c->response->header(Location => sprintf('/%s%s', $c->request->path, $item->id));
-            $c->response->body(q());
-        } else {
-            $c->response->status(HTTP_CREATED);
-            $c->response->body(q());
-        }
-    }
-    return;
+    return $self->fetch_item($c, $resource, $form, $item);
 }
 
 1;

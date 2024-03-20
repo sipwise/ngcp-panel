@@ -141,7 +141,6 @@ sub POST :Allow {
         });
 
         if ($dup_item) {
-            $c->log->error("peering rule already exists");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering rule already exists");
             return;
         }
@@ -149,8 +148,7 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('voip_peer_rules')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create peering rule: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering rule.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering rule.", $e);
             last;
         }
 

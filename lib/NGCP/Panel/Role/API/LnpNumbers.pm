@@ -87,8 +87,8 @@ sub update_item {
 
     my $carrier = $c->model('DB')->resultset('lnp_providers')->find($resource->{lnp_provider_id});
     unless($carrier) {
-        $c->log->error("invalid carrier_id '$$resource{lnp_provider_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "LNP carrier_id does not exist",
+                     "invalid carrier_id '$$resource{lnp_provider_id}'");
         return;
     }
 

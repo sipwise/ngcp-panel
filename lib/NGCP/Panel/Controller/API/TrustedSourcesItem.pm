@@ -98,8 +98,7 @@ sub PATCH :Allow {
                 die "XMLRPC failed";
             }
         } catch($e) {
-            $c->log->error("failed to reload kamailio: $e. Trusted source modified.");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.", $e);
             last;
         }
 
@@ -152,8 +151,7 @@ sub PUT :Allow {
                 die "XMLRPC failed";
             }
         } catch($e) {
-            $c->log->error("failed to reload kamailio: $e. Trusted source modified.");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was modified.", $e);
             # TODO: do we still want to return the modified item here?
             last;
         }
@@ -199,8 +197,7 @@ sub DELETE :Allow {
                 die "XMLRPC failed";
             }
         } catch($e) {
-            $c->log->error("failed to reload kamailio: $e. Trusted source deleted.");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was deleted.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to reload kamailio. Trusted source was deleted.", $e);
             last;
         }
 

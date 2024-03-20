@@ -165,7 +165,7 @@ sub update_item {
         });
         $customer = $item->contract;
     } catch($e) {
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to set customer fraud preference: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to set customer fraud preference", $e);
         return;
     };
 

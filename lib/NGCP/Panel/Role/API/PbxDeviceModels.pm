@@ -163,41 +163,41 @@ sub check_resource{
 
     my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
     unless($reseller) {
-        $c->log->error("invalid reseller_id '".((defined $resource->{reseller_id})?$resource->{reseller_id} : "undefined")."', does not exist");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist",
+                     "invalid reseller_id '".((defined $resource->{reseller_id})?$resource->{reseller_id} : "undefined")."', does not exist");
         return;
     }
 
     my $linerange = $resource->{linerange};
     unless(ref $linerange eq "ARRAY") {
-        $c->log->error("linerange must be array");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange parameter, must be array");
         return;
     }
     foreach my $range(@{ $linerange }) {
 
         unless(ref $range eq "HASH") {
-            $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash",
+                         "all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
             return;
         }
         foreach my $elem(qw/can_private can_shared can_blf can_speeddial can_forward can_transfer keys/) {
             unless(exists $range->{$elem}) {
-                $c->log->error("missing mandatory attribute '$elem' in a linerange element");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, missing attribute '$elem'");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                             "Invalid range definition inside linerange parameter, missing attribute '$elem'",
+                             "missing mandatory attribute '$elem' in a linerange element");
                 return;
             }
         }
         unless(ref $range->{keys} eq "ARRAY") {
-            $c->log->error("linerange.keys must be array");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange.keys parameter, must be array");
             #last? not next?
             return;
         }
         foreach my $label(@{ $range->{keys} }) {
             unless(ref $label eq "HASH") {
-                $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                             "Invalid range definition inside linerange parameter, all must be hash",
+                             "all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
                 return;
             }
         }
@@ -215,8 +215,8 @@ sub check_duplicate{
         model => $resource->{model},
     });
     if($existing_item && (!$item || $item->id != $existing_item->id)) {
-        $c->log->error("device model with vendor '$$resource{vendor}' and model '$$resource{model}'already exists for reseller_id '$$resource{reseller_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Device model already exists for this reseller");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Device model already exists for this reseller",
+                     "device model with vendor '$$resource{vendor}' and model '$$resource{model}'already exists for reseller_id '$$resource{reseller_id}'");
         return;
     }
     return 1;

@@ -86,8 +86,8 @@ sub update_item {
     });
     my $lnp_list = $lnp_list_rs->first;
     unless($lnp_list) {
-        $c->log->error("invalid ncos_lnp_list_id '$$resource{ncos_lnp_list_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_lnp_list_id, lnp list does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_lnp_list_id, lnp list does not exist",
+                     "invalid ncos_lnp_list_id '$$resource{ncos_lnp_list_id}'");
         return;
     }
 
@@ -95,8 +95,8 @@ sub update_item {
         pattern => $resource->{pattern},
     })->first;
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("ncos pattern '$$resource{pattern}' already exists for ncos_lnp_list_id '$$resource{ncos_lnp_list_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS pattern already exists for given ncos lnp list id");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS pattern already exists for given ncos lnp list id",
+                     "ncos pattern '$$resource{pattern}' already exists for ncos_lnp_list_id '$$resource{ncos_lnp_list_id}'");
         return;
     }
 

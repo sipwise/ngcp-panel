@@ -104,7 +104,6 @@ sub update_item {
         });
         if (!$time_set) {
             my $err = "Time set with id '$resource->{time_set_id}' does not exist or does not belong to this reseller";
-            $c->log->error($err);
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
             return;
         }
@@ -115,8 +114,8 @@ sub update_item {
         level => $resource->{level},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("ncos level '$$resource{level}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS level already exists for this reseller");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "NCOS level already exists for this reseller",
+                     "ncos level '$$resource{level}' already exists for reseller_id '$$resource{reseller_id}'");
         return;
     }
 

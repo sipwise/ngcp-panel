@@ -15,6 +15,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use TryCatch;
+
 ##### --------- common part
 
 sub auto :Private {
@@ -253,148 +254,267 @@ sub get {
 
 sub patch {
     my ($self, $c, $id) = @_;
-    my $guard = $self->get_transaction_control($c);
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
+    my $preference = $self->require_preference($c);
+    return unless $preference;
 
-        my ($form, $process_extras);
-        ($form) = $self->get_form($c, 'edit');
+    my ($form, $process_extras);
+    $form = $self->get_form($c, 'edit');
 
-        my $method_config =  $self->get_config('action')->{PATCH};
-        my $patch_ops = ref $method_config eq 'HASH' && defined $method_config->{ops} ? $method_config->{ops} : [qw/replace copy/];
-        my $json = $self->get_valid_patch_data(
-            c          => $c,
-            id         => $id,
-            media_type => 'application/json-patch+json',
-            form       => $form,
-            ops        => $patch_ops,
-        );
-        last unless $json;
-
-        my $item = $self->item_by_id_valid($c, $id);
-        last unless $item;
-        my $old_resource = $self->resource_from_item($c, $item);
-        #$old_resource = clone($old_resource);
-        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
-        my $resource = $self->apply_patch($c, $old_resource, $json);
-        last unless $resource;
-
-        ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
-        last unless $item;
-
-        my $hal;
-        ($hal,$id) = $self->get_journal_item_hal($c, $item, { form => $form });
-        last unless $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });
-
-        $self->complete_transaction($c);
-        $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
-
-        $self->return_representation($c,
-            'item' => $item,
-            'form' => $form,
-            #hal may be empty if we don't need it for journal.
-            #Then it will be taken from item and form
-            'hal'  => $hal,
-            'preference' => $preference,
-        );
+    my $method_config =  $self->get_config('action')->{PATCH};
+    my $patch_ops = ref $method_config eq 'HASH' && defined $method_config->{ops} ? $method_config->{ops} : [qw/replace copy/];
+    my $json = $self->get_valid_patch_data(
+        c          => $c,
+        id         => $id,
+        media_type => 'application/json-patch+json',
+        form       => $form,
+        ops        => $patch_ops,
+    );
+    unless ($json) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                     '#get_valid_patch_data') unless $c->has_errors;
+        return;
     }
+
+    my ($item, $old_resource, $resource, $hal, $hal_id);
+
+    TX_START:
+    try {
+        $c->clear_errors;
+        # re-request form as it apparently gets changed within the transaction in overloaded update_item() for instance
+        $form = $self->get_form($c, 'edit');
+
+        my $guard = $self->start_transaction($c);
+        {
+            $item = $self->item_by_id_valid($c, $id);
+            unless ($item) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                             '#item_by_id_valid') unless $c->has_errors;
+                goto TX_END;
+            }
+
+            $old_resource = $self->resource_from_item($c, $item);
+            #$old_resource = clone($old_resource);
+            ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
+            $resource = $self->apply_patch($c, $old_resource, $json);
+            unless ($resource) {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                             '#apply_patch') unless $c->has_errors;
+                goto TX_END;
+            }
+
+            ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+            unless ($item) {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                             '#update_item') unless $c->has_errors;
+                goto TX_END;
+            }
+
+            ($hal, $hal_id) = $self->get_journal_item_hal($c, $item, { form => $form });
+            unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                             '#add_journal_item_hal') unless $c->has_errors;
+                goto TX_END;
+            }
+
+            $self->commit_transaction($c, $guard);
+        }
+
+        TX_END:
+        if ($c->has_errors) { # something went wrong without triggering an exception
+            $self->check_deadlock($c, $c->last_error) and goto TX_START;
+            return;
+        }
+    } catch($e) {
+        $self->check_deadlock($c, $e) and goto TX_START;
+        unless ($c->has_errors) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
+        }
+        return;
+    }
+
+    $self->post_process_commit($c, 'patch', $item, $old_resource, $resource, $form, $process_extras);
+
+    return if $c->has_errors;
+
+    $self->return_representation($c,
+        'item' => $item,
+        'form' => $form,
+        #hal may be empty if we don't need it for journal.
+        #Then it will be taken from item and form
+        'hal'  => $hal,
+        'preference' => $preference,
+    );
+
     return;
 }
 
 sub put {
     my ($self, $c, $id) = @_;
-    my $guard = $self->get_transaction_control($c);
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
 
-        #$old_resource = clone($old_resource);
-        ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
-        my ($form, $process_extras);
-        ($form) = $self->get_form($c, 'edit');
+    my $preference = $self->require_preference($c);
+    return unless $preference;
 
-        my $item = $self->item_by_id_valid($c, $id);
-        last unless $item;
-        my $method_config = $self->get_config('action')->{PUT};
-        my ($resource, $data, $non_json_data) = $self->get_valid_data(
-            c          => $c,
-            id         => $id,
-            method     => 'PUT',
-            media_type => $method_config->{ContentType} // 'application/json',
-            uploads    => $method_config->{Uploads} // [] ,
-            form       => $form,
-        );
-        last unless $resource;
-        my $old_resource = $self->resource_from_item($c, $item);
+    #$old_resource = clone($old_resource);
+    ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
+    my ($form, $process_extras);
+    $form = $self->get_form($c, 'edit');
 
-        my ($data_processed_result);
-        if (!$non_json_data || !$data) {
-            ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
-            last unless $item;
-        } else {
-            try {
-                #$processed_ok(array), $processed_failed(array), $info, $error
-                $data_processed_result = $self->process_data(
-                    c        => $c,
-                    item     => $item,
-                    data     => \$data,
-                    resource => $resource,
-                    form     => $form,
-                    process_extras => $process_extras,
-                );
-            } catch($e) {
-                $c->log->error("failed to process non json data: $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-                last;
-            };
+    my $method_config = $self->get_config('action')->{PUT};
+    my ($resource, $data, $non_json_data) = $self->get_valid_data(
+        c          => $c,
+        id         => $id,
+        method     => 'PUT',
+        media_type => $method_config->{ContentType} // 'application/json',
+        uploads    => $method_config->{Uploads} // [] ,
+        form       => $form,
+    );
+    unless ($resource) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                     '#get_valid_data') unless $c->has_errors;
+        return;
+    }
+
+    my ($item, $old_resource, $hal, $hal_id);
+
+    TX_START:
+    try {
+        $c->clear_errors;
+        # re-request form as it apparently gets changed within the transaction in overloaded update_item() for instance
+        $form = $self->get_form($c, 'edit');
+
+        my $guard = $self->start_transaction($c);
+        {
+            $item = $self->item_by_id_valid($c, $id);
+            unless ($item) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                             '#item_by_id_valid') unless $c->has_errors;
+                goto TX_END;
+            }
+
+            $old_resource = $self->resource_from_item($c, $item);
+
+            my ($data_processed_result);
+            if (!$non_json_data || !$data) {
+                ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+                unless ($item) {
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                                 '#update_item') unless $c->has_errors;
+                    goto TX_END;
+                }
+            } else {
+                try {
+                    #$processed_ok(array), $processed_failed(array), $info, $error
+                    $data_processed_result = $self->process_data(
+                        c        => $c,
+                        item     => $item,
+                        data     => \$data,
+                        resource => $resource,
+                        form     => $form,
+                        process_extras => $process_extras,
+                    );
+                } catch($e) {
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                                 "failed to process non json data", $e);
+                    goto TX_END;
+                };
+            }
+
+            ($hal, $hal_id) = $self->get_journal_item_hal($c, $item, { form => $form });
+            unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                             '#add_journal_item_hal') unless $c->has_errors;
+                goto TX_END;
+            }
+
+            $self->commit_transaction($c, $guard);
         }
 
-        my $hal;
-        ($hal,$id) = $self->get_journal_item_hal($c, $item, { form => $form });
-        last unless $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });       
-        
-        $self->complete_transaction($c);
-        $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
-        $self->return_representation($c,
-            #hal may be empty if we don't need it for journal.
-            #Then it will be taken from item and form
-            'hal'  => $hal,
-            'item' => $item,
-            'form' => $form,
-            'preference' => $preference,
-        );
+        TX_END:
+        if ($c->has_errors) { # something went wrong without triggering an exception
+            $self->check_deadlock($c, $c->last_error) and goto TX_START;
+            return;
+        }
+    } catch($e) {
+        $self->check_deadlock($c, $e) and goto TX_START;
+        unless ($c->has_errors) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
+        }
+        return;
     }
+
+    $self->post_process_commit($c, 'put', $item, $old_resource, $resource, $form, $process_extras);
+
+    return if $c->has_errors;
+
+    $self->return_representation($c,
+        #hal may be empty if we don't need it for journal.
+        #Then i will be taken from item and form
+        'hal'  => $hal,
+        'item' => $item,
+        'form' => $form,
+        'preference' => $preference,
+    );
+
     return;
 }
 
 sub delete {  ## no critic (ProhibitBuiltinHomonyms)
     my ($self, $c, $id) = @_;
 
-    my $guard = $self->get_transaction_control($c);
-    {
-        my $item = $self->item_by_id_valid($c, $id);
-        last unless $item;
+    my ($item, $hal, $hal_id);
 
-        my $hal;
-        ($hal,$id) = $self->get_journal_item_hal($c, $item);
-        #here we left space for information that checking failed and we decided not to delete item
-        if ($self->delete_item($c, $item)) {
-            $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });
-        } else {
-            return;
+    TX_START:
+    try {
+        my $guard = $self->start_transaction($c);
+        {
+            $item = $self->item_by_id_valid($c, $id);
+            unless ($item) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                             '#item_by_id_valid');
+                goto TX_END;
+            }
+
+            ($hal, $hal_id) = $self->get_journal_item_hal($c, $item);
+            #here we left space for information that checking failed and we decided not to delete item
+            if ($self->delete_item($c, $item)) {
+                unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                                 '#add_journal_item_hal');
+                    goto TX_END;
+                }
+            } else {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                             'non 1 return from $self->delete_item()');
+                goto TX_END;
+            }
+
+            $self->commit_transaction($c, $guard);
         }
 
-        $self->complete_transaction($c);
-        $self->post_process_commit($c, 'delete', $item);
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
+        TX_END:
+        if ($c->has_errors) { # something went wrong without triggering an exception
+            $self->check_deadlock($c, $c->last_error) and goto TX_START;
+            return;
+        }
+    } catch($e) {
+        $self->check_deadlock($c, $e) and goto TX_START;
+        unless ($c->has_errors) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
+        }
+        return;
     }
+
+    $self->post_process_commit($c, 'delete', $item);
+
+    return if $c->has_errors;
+
+    $c->response->status(HTTP_NO_CONTENT);
+    $c->response->body(q());
+
     return;
 }
 
-sub delete_item{
+sub delete_item {
     my($self, $c, $item) = @_;
     $item->delete();
     return 1;

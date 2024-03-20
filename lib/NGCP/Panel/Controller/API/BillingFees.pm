@@ -176,8 +176,8 @@ sub POST :Allow {
                 $c->response->body(q());
 
             } catch($e) {
-                $c->log->error("failed to upload csv: $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                             "failed to upload csv", $e);
                 last;
             };
         } else {
@@ -207,8 +207,7 @@ sub POST :Allow {
                     return_created => 1,
                 )->[0];
             } catch($e) {
-                $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.", $e);
                 last;
             }
             $guard->commit;

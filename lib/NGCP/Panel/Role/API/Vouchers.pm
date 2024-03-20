@@ -114,8 +114,8 @@ sub update_item {
         code => $code,
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("voucher with code '$$resource{code}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Voucher with this code already exists for this reseller");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Voucher with this code already exists for this reseller",
+                     "voucher with code '$$resource{code}' already exists for reseller_id '$$resource{reseller_id}'");
         return;
     }
     $resource->{code} = $code;

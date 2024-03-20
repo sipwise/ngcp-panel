@@ -154,8 +154,7 @@ sub POST :Allow {
                 domain => $resource->{domain}
             });
         } catch($e) {
-            $c->log->error("failed to create domain: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create domain.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create domain.", $e);
             last;
         }
 
@@ -171,8 +170,7 @@ sub POST :Allow {
             $self->xmpp_domain_reload($c, $resource->{domain}) if $xmpp_reload;
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $resource->{domain}) if ($sip_reload);
         } catch($e) {
-            $c->log->error("failed to activate domain: $e. Domain created"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created", $e);
             $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));
             last;
         }

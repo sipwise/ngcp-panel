@@ -148,8 +148,8 @@ sub DELETE :Allow {
     }
 
     if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-        $c->log->error("profile deletion by reseller forbidden via config");
-        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile deletion forbidden for resellers.");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile deletion forbidden for resellers.",
+                     "profile deletion by reseller forbidden via config");
         return;
     }
 

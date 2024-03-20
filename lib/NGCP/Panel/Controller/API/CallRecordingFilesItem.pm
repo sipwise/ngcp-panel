@@ -44,8 +44,7 @@ sub GET :Allow {
         try {
             $data = read_file($item->full_filename);
         } catch($e) {
-            $c->log->error("Failed to read stream file: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to read stream file.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to read stream file.", $e);
             last;
         }
         my $mime_type;

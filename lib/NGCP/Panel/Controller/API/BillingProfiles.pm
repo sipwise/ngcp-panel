@@ -182,12 +182,10 @@ sub POST :Allow {
                 $log_error = "failed to create subscriber, reseller-billing profile combination " . $c->qs($1) . " already exists";
                 @http_errors = ("Reseller-Billing Profile name combination '" . $1 . "' already exists.", "Reseller-Billing Profile name combination already exists.");
             }
-            $c->log->error($log_error); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $http_errors[0], $http_errors[1]);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $http_errors[0], $http_errors[1], $log_error);
             last;
         } catch($e) {
-            $c->log->error("failed to create billing profile: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.", $e);
             last;
         }
 

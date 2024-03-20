@@ -91,16 +91,16 @@ sub update_item {
 
     my $container = $c->model('DB')->resultset('emergency_containers')->find($resource->{emergency_container_id});
     unless($container) {
-        $c->log->error("invalid emergency container id '$$resource{emergency_container_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Emergency container id does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Emergency container id does not exist",
+                     "invalid emergency container id '$$resource{emergency_container_id}'");
         return;
     }
     if ($old_resource->{code} ne $resource->{code} && $c->model('DB')->resultset('emergency_mappings')->search({
             emergency_container_id => $container->id,
             code => $resource->{code}
         },undef)->count > 0) {
-        $c->log->error("Emergency mapping code '$$resource{code}' already exists for container id '$$resource{emergency_container_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "emergency mapping code already exists for emergency container");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "emergency mapping code already exists for emergency container",
+                     "Emergency mapping code '$$resource{code}' already exists for container id '$$resource{emergency_container_id}'");
         return;
     }
 

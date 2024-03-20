@@ -129,8 +129,8 @@ sub POST :Allow {
         my $sub = $sub_rs->first;
         unless($sub && $sub->provisioning_voip_subscriber) {
             my $debug_sid = $resource->{subscriber_id} // '(undef)';
-            $c->log->error("invalid subscriber_id '$debug_sid'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist",
+                         "invalid subscriber_id '$debug_sid'");
             last;
         }
 
@@ -149,8 +149,7 @@ sub POST :Allow {
                 prov_subscriber => $sub->provisioning_voip_subscriber);
             $upnr_pref_rs->create({ value => $item->id });
         } catch($e) {
-            $c->log->error("failed to create UPN rewrite set: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create UPN rewrite set.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create UPN rewrite set.", $e);
             last;
         }
 

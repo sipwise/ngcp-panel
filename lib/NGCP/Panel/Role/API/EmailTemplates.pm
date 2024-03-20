@@ -96,8 +96,8 @@ sub update_item {
         name => $resource->{name},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("email template with name '$$resource{name}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Email template with this name already exists for this reseller");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Email template with this name already exists for this reseller",
+                     "email template with name '$$resource{name}' already exists for reseller_id '$$resource{reseller_id}'");
         return;
     }
 

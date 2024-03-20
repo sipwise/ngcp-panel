@@ -244,69 +244,121 @@ sub get {
 sub post {
     my ($self) = shift;
     my ($c) = @_;
-    my $guard = $self->get_transaction_control($c);
-    {
-        #instead of type parameter get_form can check request method
-        my ($form) = $self->get_form($c, 'add');
-        my $method_config = $self->get_config('action')->{POST};
-        my $process_extras= {};
-        my ($resource, $data, $non_json_data) = $self->get_valid_data(
-            c                   => $c,
-            method              => 'POST',
-            media_type          => $method_config->{ContentType} // 'application/json',
-            uploads             => $method_config->{Uploads} // [] ,
-            form                => $form,
-            resource_media_type => $method_config->{ResourceContentType},
-        );
-        last unless $resource;
-        my ($item,$data_processed_result,$hal,$id);
-        if (!$non_json_data || !$data) {
-            delete $resource->{purge_existing};
-            last unless $self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras);
-            last unless $self->validate_form(
-                c => $c,
-                resource => $resource,
-                form => $form,
+
+    my $method_config = $self->get_config('action')->{POST};
+    my $process_extras= {};
+    my ($resource, $item, $form, $hal, $hal_id);
+
+    TX_START:
+    try {
+        $c->clear_errors;
+        $form = $self->get_form($c, 'add');
+
+        my $guard = $self->start_transaction($c);
+        {
+            my ($data, $non_json_data);
+            ($resource, $data, $non_json_data) = $self->get_valid_data(
+                c                   => $c,
+                method              => 'POST',
+                media_type          => $method_config->{ContentType} // 'application/json',
+                uploads             => $method_config->{Uploads} // [] ,
+                form                => $form,
+                resource_media_type => $method_config->{ResourceContentType},
             );
-            last unless $self->process_form_resource($c, undef, undef, $resource, $form, $process_extras);
-            last unless $resource;
-            last unless $self->check_duplicate($c, undef, undef, $resource, $form, $process_extras);
-            last unless $self->check_resource($c, undef, undef, $resource, $form, $process_extras);
+            unless ($resource) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                             '#get_valid_data') unless $c->has_errors;
+                goto TX_END;
+            }
 
-            $item = $self->create_item($c, $resource, $form, $process_extras);
-            last unless $item || $self->get_config('no_item_created');
+            if (!$non_json_data || !$data) {
+                delete $resource->{purge_existing};
 
-            ($hal, $id) = $self->get_journal_item_hal($c, $item, { form => $form });
-            last unless $self->add_journal_item_hal($c, { hal => $hal, ($id ? ( id => $id, ) : ()) });
+                unless ($self->pre_process_form_resource($c, undef, undef, $resource, $form, $process_extras)) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                                 '#pre_process_form_resource') unless $c->has_errors;
+                    goto TX_END;
+                }
 
-        } else {
-            try {
-                #$processed_ok(array), $processed_failed(array), $info, $error
-                $data_processed_result = $self->process_data(
-                    c        => $c,
-                    data     => \$data,
+                return unless $self->validate_form(
+                    c => $c,
                     resource => $resource,
-                    form     => $form,
-                    process_extras => $process_extras,
+                    form => $form,
                 );
-            } catch($e) {
-                $c->log->error("failed to process non json data: $e");
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-                last;
-            };
+
+                unless ($self->process_form_resource($c, undef, undef, $resource, $form, $process_extras)) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                                 '#pre_process_form_resource') unless $c->has_errors;
+                    goto TX_END;
+                }
+
+                unless ($self->check_duplicate($c, undef, undef, $resource, $form, $process_extras)) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                                 '#check_duplicates') unless $c->has_errors;
+                    goto TX_END;
+                }
+
+                unless ($self->check_resource($c, undef, undef, $resource, $form, $process_extras)) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                                 '#check_resource') unless $c->has_errors;
+                    goto TX_END;
+                }
+
+                $item = $self->create_item($c, $resource, $form, $process_extras);
+                unless ($item || $self->get_config('no_item_created')) {
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                                 '#create_item') unless $c->has_errors;
+                    goto TX_END;
+                }
+
+                ($hal, $hal_id) = $self->get_journal_item_hal($c, $item, { form => $form });
+                unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                                 '#add_journal_item_hal') unless $c->has_errors;
+                    goto TX_END;
+                }
+            } else {
+                try {
+                    #$processed_ok(array), $processed_failed(array), $info, $error
+                    my $data_processed_result = $self->process_data(
+                        c        => $c,
+                        data     => \$data,
+                        resource => $resource,
+                        form     => $form,
+                        process_extras => $process_extras,
+                    );
+                } catch($e) {
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                                 "failed to process non json data", $e);
+                    return;
+                };
+            }
+            $self->commit_transaction($c, $guard);
         }
-        $self->complete_transaction($c);
 
-        $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
-
-        return if defined $c->stash->{api_error_message};
-
-        $self->return_representation_post($c,
-            'hal'  => $hal,
-            'item' => $item,
-            'form' => $form
-        );
+        TX_END:
+        if ($c->has_errors) { # something went wrong without triggering an exception
+            $self->check_deadlock($c, $c->last_error) and goto TX_START;
+            return;
+        }
+    } catch($e) {
+        $self->check_deadlock($c, $e) and goto TX_START;
+        unless ($c->has_errors) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
+        }
+        return;
     }
+
+    $self->post_process_commit($c, 'create', $item, undef, $resource, $form, $process_extras);
+
+    return if $c->has_errors;
+
+    $self->return_representation_post($c,
+        'hal'  => $hal,
+        'item' => $item,
+        'form' => $form
+    );
+
     return;
 }
 

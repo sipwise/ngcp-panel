@@ -153,7 +153,6 @@ sub update_item {
             mappings_to_create => $mappings_to_create,
             err_code => sub {
                 my ($err) = @_;
-                #$c->log->error($err);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
             });
     
@@ -165,8 +164,7 @@ sub update_item {
         }
         $item->discard_changes;
     } catch($e) {
-        $c->log->error("failed to create profilepackage: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create profilepackage.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create profilepackage.", $e);
         return;
     };
     

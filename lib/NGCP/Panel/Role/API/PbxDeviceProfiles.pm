@@ -99,8 +99,8 @@ sub update_item {
         name => $resource->{name},
     });
     if($dup_item && $dup_item->id != $item->id) {
-        $c->log->error("Pbx device profile with name '$$resource{name}' already exists for config_id '$$resource{config_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device profile with this name already exists for this config");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device profile with this name already exists for this config",
+                     "Pbx device profile with name '$$resource{name}' already exists for config_id '$$resource{config_id}'");
         last;
     }
     my $config_rs = $c->model('DB')->resultset('autoprov_configs')->search({
@@ -116,8 +116,8 @@ sub update_item {
     }
     my $config = $config_rs->first;
     unless($config) {
-        $c->log->error("Pbx device config with confg_id '$$resource{config_id}' does not exist");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device config does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device config does not exist",
+                     "Pbx device config with confg_id '$$resource{config_id}' does not exist");
         last;
     }
 

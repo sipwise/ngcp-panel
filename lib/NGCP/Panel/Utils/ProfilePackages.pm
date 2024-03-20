@@ -555,7 +555,7 @@ sub create_topup_log_record {
     } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
         $username = $c->user->webusername . '@' . $c->user->domain->domain;
     }
-    $message //= $c->stash->{api_error_message} // $c->stash->{panel_error_message};
+    $message //= $c->has_errors ? join(', ', @{$c->error}) : ($c->stash->{panel_error_message} // '');
 
     return $c->model('DB')->resultset('topup_logs')->create({
         username => $username,

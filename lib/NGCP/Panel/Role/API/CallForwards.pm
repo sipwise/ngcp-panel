@@ -119,6 +119,17 @@ sub item_by_id {
     return $self->item_rs($c)->search_rs({'me.id' => $id})->first;
 }
 
+sub resource_from_item {
+    my($self, $c, $item) = @_;
+
+    return $self->hal_from_item($c, $item)->resource;
+}
+
+sub get_journal_item_hal {
+    my ($self, $c, $item, $params) = @_;
+    return ($self->hal_from_item($c, $item), $item->id);
+}
+
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
@@ -145,17 +156,14 @@ sub update_item {
         next unless ($allowed_prefs->{$type});
         for my $d (@{ $resource->{$type}{destinations} }) {
             if (exists $d->{timeout} && ! is_int($d->{timeout})) {
-                $c->log->error("Invalid timeout in '$type'");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid timeout in '$type'");
                 return;
             }
             if (defined $d->{announcement_id}) {
                 if('customhours' ne $d->{destination}){
-                    $c->log->error("Invalid parameter 'announcement_id' for the destination '".$c->qs($d->{destination})."' in '$type'");
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'announcement_id' for the destination '".$c->qs($d->{destination})."' in '$type'");
                     return;
                 }elsif(! is_int($d->{announcement_id})){
-                    $c->log->error("Invalid announcement_id in '$type'");
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid announcement_id in '$type'");
                     return;
                 }elsif(! $c->model('DB')->resultset('voip_sound_handles')->search_rs({
@@ -165,7 +173,6 @@ sub update_item {
                         'join' => 'group'
                     }
                 )->first() ){
-                    $c->log->error("Unknown announcement_id in '$type'");
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown announcement_id in '$type'");
                     return;
                 }
@@ -380,8 +387,7 @@ sub update_item {
             }
             
         } catch($e) {
-            $c->log->error("Error Updating '$type': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$type' could not be updated.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$type' could not be updated.", $e);
             return;
         }
     }

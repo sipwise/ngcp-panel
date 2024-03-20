@@ -163,8 +163,7 @@ sub POST :Allow {
             });
             NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
         } catch($e) {
-            $c->log->error("failed to create reseller: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.", $e);
             last;
         }
         

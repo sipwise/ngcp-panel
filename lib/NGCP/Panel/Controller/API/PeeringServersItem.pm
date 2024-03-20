@@ -94,8 +94,8 @@ sub PATCH :Allow {
             }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
         } catch($e) {
-            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
+                         "failed to reload kamailio cache", $e);
             last;
         }
 
@@ -152,8 +152,8 @@ sub PUT :Allow {
             }
             NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
         } catch($e) {
-            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
+                         "failed to reload kamailio cache", $e);
             last;
         }
 
@@ -198,8 +198,8 @@ sub DELETE :Allow {
                 NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             }
         } catch($e) {
-            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
+                         "failed to reload kamailio cache", $e);
             last;
         }
 

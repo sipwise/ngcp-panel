@@ -147,8 +147,8 @@ sub DELETE :Allow {
         try {
             $item = $self->update_item($c, $item, $old_resource, $resource, $form, $preference);
         } catch($e) {
-            $c->log->error("Failed to delete manager secretary callforward with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to delete manager secretary callforward with id '$id'", $e);
             last;
         }
 

@@ -78,8 +78,7 @@ sub create_item {
             );
         }
     } catch($e) {
-        $c->log->error("failed to create soundset: $e"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundset.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundset.", $e);
         return;
     }
 
