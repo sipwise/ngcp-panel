@@ -260,19 +260,22 @@ sub model_from_profile_id {
     }
     my $profile = $profile_rs->first;
     unless($profile) {
-        $c->log->error("failed to find device profile with id 'profile_id'");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_id, device profile does not exist.");
         return;
     }
     my $config = $profile->config;
     unless($config) {
-        $c->log->error("device profile with id '" . $profile->id . "' doesn't have a config");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_id, device profile does not have a config.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+            "Invalid profile_id, device profile does not have a config.",
+            "device profile with id '" . $profile->id . "' doesn't have a config",
+        );
         return;
     }
     unless($config->device) {
-        $c->log->error("device config id '" . $config->id . "' doesn't have a device model");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_id, device profile config does not have a device model.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR,
+            "Invalid profile_id, device profile config does not have a device model.",
+            "device config id '" . $config->id . "' doesn't have a device model",
+        );
         return;
     }
 

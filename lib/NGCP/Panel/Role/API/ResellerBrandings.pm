@@ -126,8 +126,8 @@ sub check_resource{
 
     my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
     unless($reseller) {
-        $c->log->error("invalid reseller_id '".((defined $resource->{reseller_id})?$resource->{reseller_id} : "undefined")."', does not exist");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist",
+                     "invalid reseller_id '".((defined $resource->{reseller_id})?$resource->{reseller_id} : "undefined")."', does not exist");
         return;
     }
 
@@ -142,8 +142,8 @@ sub check_duplicate{
         reseller_id => $resource->{reseller_id},
     });
     if($existing_item && (!$item || $item->id != $existing_item->id)) {
-        $c->log->error("Branding already exists for reseller_id '$$resource{reseller_id}'");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Branding already exists for this reseller");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Branding already exists for this reseller",
+                     "Branding already exists for reseller_id '$$resource{reseller_id}'");
         return;
     }
     return 1;

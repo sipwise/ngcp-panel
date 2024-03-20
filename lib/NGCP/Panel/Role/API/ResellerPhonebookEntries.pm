@@ -51,14 +51,12 @@ sub check_resource {
         });
 
         unless ($check_rs->first) {
-            $c->log->error("Invalid 'reseller_id'");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
             return;
         }
     }
 
     unless ($resource->{reseller_id}) {
-        $c->log->error("Required 'reseller_id'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required 'reseller_id'");
         return;
     }
@@ -70,7 +68,6 @@ sub check_resource {
     })->first;
 
     if ($exists) {
-        $c->log->error("Duplicate entry 'reseller_id-number");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Duplicate entry 'reseller_id-number");
         return;
     }

@@ -126,8 +126,9 @@ sub POST :Allow {
             name => $resource->{name},
         });
         if($dup_item) {
-            $c->log->error("emergency mapping container with name '$$resource{name}' already exists for this reseller");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "emergency mapping container with this name already exists for this reseller");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                         "emergency mapping container with this name already exists for this reseller",
+                         "emergency mapping container with name '$$resource{name}' already exists for this reseller");
             return;
         }
 
@@ -135,8 +136,7 @@ sub POST :Allow {
         try {
             $item = $schema->resultset('emergency_containers')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create emergency mapping container: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create emergency mapping container.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create emergency mapping container.", $e);
             last;
         }
         

@@ -20,7 +20,7 @@ sub _get_redis {
     if (defined $select) {
         $stash_key .= '_' . $select;
     } else {
-        $c->log->error("redis store not specified");
+        $c->error("redis store not specified");
         return;
     }
     my $redis = $c->stash->{$stash_key};
@@ -32,13 +32,13 @@ sub _get_redis {
                 cnx_timeout => 3,
             );
             unless ($redis) {
-                $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
+                $c->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
                 return;
             }
             $redis->select($select) if defined $select;
             $c->stash($stash_key => $redis);
         } catch($e) {
-            $c->log->error("Failed to fetch callqueue information from redis: $e");
+            $c->error("Failed to fetch callqueue information from redis: $e");
             return;
         }
     }

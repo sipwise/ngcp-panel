@@ -372,11 +372,7 @@ sub post {
             $c->response->header(Location => sprintf('%s%d', NGCP::Panel::Role::API::Subscribers::dispatch_path(), $context->{subscriber}->{id}));
         } catch($e) {
             NGCP::Panel::Utils::ProvisioningTemplates::provision_cleanup($c, $context);
-            $c->log->error(sprintf("Provisioning template '%s' failed: %s",
-                $id,
-                $e,
-            ));
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, $e);
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Provisioning template '$id' failed", $e);
             return;
         }
     } else {
@@ -387,15 +383,15 @@ sub post {
                 purge => $purge,
             );
             if (scalar @$errors) {
-                $c->log->error(sprintf('CSV file (%d lines) processed, %d error(s).', $linecount, scalar @$errors));
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                             sprintf('CSV file (%d lines) processed, %d error(s).', $linecount, scalar @$errors));
                 return;
             } else {
                 $c->log->debug(sprintf('CSV file (%d lines) processed, %d error(s).', $linecount, 0));
             }
         } catch($e) {
-            $c->log->error("failed to process CSV file: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "failed to process CSV file", $e);
             return;
         }
     }

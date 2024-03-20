@@ -126,8 +126,8 @@ sub update_item {
         pref_list => ['reminder'],
     );
     unless ($allowed_prefs->{reminder}) {
-        $c->log->error("Not permitted to edit reminder via subscriber profile");
-        $self->error($c, HTTP_FORBIDDEN, "Not permitted to edit reminder");
+        $self->error($c, HTTP_FORBIDDEN, "Not permitted to edit reminder",
+                     "Not permitted to edit reminder via subscriber profile");
         return;
     }
 
@@ -138,8 +138,8 @@ sub update_item {
         id => { '!=' => $item->id },
     })->count;
     if($dup) {
-        $c->log->error("already existing reminder for subscriber_id '$$resource{subscriber_id}'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already has a reminder");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already has a reminder",
+                     "already existing reminder for subscriber_id '$$resource{subscriber_id}'");
         return;
     }
 
@@ -174,8 +174,8 @@ sub get_subscriber_by_id {
     }
     my $sub = $sub_rs->first;
     unless ($sub && $sub->provisioning_voip_subscriber) {
-        $c->log->error("invalid subscriber_id '$subscriber_id'"); # TODO: user, message, trace, ...
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist",
+                     "invalid subscriber_id '$subscriber_id'");
         return;
     }
     return $sub;

@@ -23,14 +23,21 @@ sub get_log_params {
         $called = sprintf 'API[%s]/%s',
                           $c->request->method,
                           $c->request->path;
-        $c->session->{api_request_tx_id} = $log_tx_id;
+        $c->stash->{api_request_tx_id} = $log_tx_id;
     } elsif ($type eq 'api_response') {
         $called = sprintf 'API[%s %d]/%s',
                           $c->request->method,
                           $c->response->code,
                           $c->request->path;
-        if ($c->session->{api_request_tx_id}) {
-            $log_tx_id = $c->session->{api_request_tx_id};
+        if ($c->stash->{api_request_tx_id}) {
+            $log_tx_id = $c->stash->{api_request_tx_id};
+        }
+    } elsif ($type eq 'api_retry') {
+        $called = sprintf 'API[%s]/%s',
+                          $c->request->method,
+                          $c->request->path;
+        if ($c->stash->{api_request_tx_id}) {
+            $log_tx_id = $c->stash->{api_request_tx_id};
         }
     } else {
         my $caller = (caller 2)[3];

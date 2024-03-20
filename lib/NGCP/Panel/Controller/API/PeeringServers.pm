@@ -142,8 +142,8 @@ sub POST :Allow {
             name => $resource->{name},
         });
         if($dup_item) {
-            $c->log->error("peering server with name '$$resource{name}' already exists"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering server with this name already exists");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "peering server with this name already exists",
+                         "peering server with name '$$resource{name}' already exists");
             return;
         }
 
@@ -153,8 +153,7 @@ sub POST :Allow {
                 NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             }
         } catch($e) {
-            $c->log->error("failed to create peering server: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.", $e);
             last;
         }
 
@@ -167,8 +166,8 @@ sub POST :Allow {
                 NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
             }
         } catch($e) {
-            $c->log->error("failed to reload kamailio cache: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
+                         "failed to reload kamailio cache", $e);
             last;
         }
 

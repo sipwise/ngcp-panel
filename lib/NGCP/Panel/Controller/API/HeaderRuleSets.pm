@@ -95,8 +95,7 @@ sub create_item {
             );
         }
     } catch($e) {
-        $c->log->error("failed to create a header rule set: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule set.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a header rule set.", $e);
         return;
     }
 

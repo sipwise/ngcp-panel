@@ -35,7 +35,7 @@ sub hal_from_item {
             $mtf_preference = $prov_subs->create_related('voip_mail_to_fax_preference', {});
             $mtf_preference->discard_changes; # reload
         } catch($e) {
-            $c->log->error("Error creating empty mail_to_fax_preference on get");
+            $c->error('Error creating empty mail_to_fax_preference on get');
         };
     }
 
@@ -198,8 +198,7 @@ sub update_item {
             $acl_rs->create($acl);
         }
     } catch($e) {
-        $c->log->error("Error Updating mailtofaxsettings: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "mailtofaxsettings could not be updated.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "mailtofaxsettings could not be updated.", $e);
         return;
     };
 

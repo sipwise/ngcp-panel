@@ -93,7 +93,7 @@ sub resource_from_item {
             $resource->{$k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource->{$k});
         };
         if ($@) {
-            $c->log->error("Failed to encrypt $k '$resource->{$k}': " . $@);
+            $c->error("Failed to encrypt $k '$resource->{$k}': " . $@);
             delete $resource->{$k};
         }
     }
@@ -119,7 +119,7 @@ sub update_item {
             $resource->{$k} = NGCP::Panel::Utils::Encryption::decrypt_rsa($c,$resource->{$k});
         };
         if ($@) {
-            $c->log->error("Failed to encrypt $k '$resource->{$k}': " . $@);
+            $c->error("Failed to encrypt $k '$resource->{$k}': " . $@);
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to encrypt $k.");
             return;
         }

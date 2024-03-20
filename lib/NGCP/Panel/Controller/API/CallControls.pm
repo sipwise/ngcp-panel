@@ -75,8 +75,8 @@ sub POST :Allow {
         }
         my $subscriber = $subscriber_rs->first;
         unless($subscriber) {
-            $c->log->error("invalid subscriber id $$resource{subscriber_id} for outbound call");
-            $self->error($c, HTTP_NOT_FOUND, "Calling subscriber not found.");
+            $self->error($c, HTTP_NOT_FOUND, "Calling subscriber not found.",
+                         "invalid subscriber id $$resource{subscriber_id} for outbound call");
             last;
         }
 
@@ -87,8 +87,7 @@ sub POST :Allow {
             NGCP::Panel::Utils::Sems::dial_out($c, $subscriber->provisioning_voip_subscriber,
                 $callee_user, $callee_domain);
         } catch($e) {
-            $c->log->error("failed to dial out: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create call.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create call.", $e);
             last;
         }
 

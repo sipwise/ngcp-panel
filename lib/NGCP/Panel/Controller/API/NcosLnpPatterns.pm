@@ -111,15 +111,14 @@ sub create_item {
         });
         my $lnp_list = $lnp_list_rs->first;
         unless($lnp_list) {
-            $c->log->error("invalid ncos_lnp_list_id '$$resource{ncos_lnp_list_id}'");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_lnp_list_id, lnp list does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid ncos_lnp_list_id, lnp list does not exist",
+                         "invalid ncos_lnp_list_id '$$resource{ncos_lnp_list_id}'");
             return;
         }
 
         $item = $lnp_list->ncos_lnp_pattern_lists->create($resource);
     } catch($e) {
-        $c->log->error("failed to create a ncos lnp carrier pattern: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a ncos lnp carrier pattern.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create a ncos lnp carrier pattern.", $e);
         return;
     }
 

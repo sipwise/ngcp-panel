@@ -245,7 +245,6 @@ sub POST :Allow {
             mappings_to_create => $mappings_to_create,
             err_code => sub {
                 my ($err) = @_;
-                #$c->log->error($err);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
             });
 
@@ -266,8 +265,8 @@ sub POST :Allow {
             $customer = $schema->resultset('contracts')->create($resource);
             $c->log->debug("customer id " . $customer->id . " created");
         } catch($e) {
-            $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.",
+                         "failed to create customer contract", $e);
             last;
         }
 
@@ -301,8 +300,8 @@ sub POST :Allow {
                 contract => $customer,
             );
         } catch($e) {
-            $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.",
+                         "failed to create customer contract", $e);
             last;
         }
 

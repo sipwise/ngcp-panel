@@ -140,8 +140,8 @@ sub POST :Allow {
             pref_list => ['reminder'],
         );
         unless ($allowed_prefs->{reminder}) {
-            $c->log->error("Not permitted to create reminder for this subscriber via subscriber profile");
-            $self->error($c, HTTP_FORBIDDEN, "Not permitted to create reminder");
+            $self->error($c, HTTP_FORBIDDEN, "Not permitted to create reminder",
+                         "Not permitted to create reminder for this subscriber via subscriber profile");
             return;
         }
 
@@ -150,16 +150,15 @@ sub POST :Allow {
             subscriber_id => $resource->{subscriber_id},
         });
         if($item) {
-            $c->log->error("reminder already exists for subscriber_id '$$resource{subscriber_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Reminder already exists for this subscriber");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Reminder already exists for this subscriber",
+                         "reminder already exists for subscriber_id '$$resource{subscriber_id}'");
             last;
         }
 
         try {
             $item = $c->model('DB')->resultset('voip_reminder')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create reminder: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reminder.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reminder.", $e);
             last;
         }
 

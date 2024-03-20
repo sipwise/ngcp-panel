@@ -45,21 +45,19 @@ sub create_item {
     my $schema = $c->model('DB');
     my $item;
     my $guard = $schema->txn_scope_guard;
-    {
+    try {
         my $rewriterules = delete $resource->{rewriterules};
-        try {
-            $item = $schema->resultset('voip_rewrite_rule_sets')->create($resource);
-        } catch($e) {
-            $c->log->error("failed to create rewriteruleset: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriteruleset.");
-            return;
-        }
+        $item = $schema->resultset('voip_rewrite_rule_sets')->create($resource);
         if ($rewriterules) {
             $self->update_rewriterules( $c, $item, $form, $rewriterules );
         }
-        $guard->commit;
-        NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
+    } catch($e) {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriteruleset.", $e);
+        return;
     }
+    $guard->commit;
+    NGCP::Panel::Utils::Rewrite::sip_dialplan_reload($c);
+
     return $item;
 }
 

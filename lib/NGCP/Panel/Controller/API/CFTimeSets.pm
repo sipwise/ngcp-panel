@@ -162,8 +162,7 @@ sub POST :Allow {
                 $tset->create_related("voip_cf_periods", $t);
             }
         } catch($e) {
-            $c->log->error("failed to create cftimeset: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cftimeset.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cftimeset.", $e);
             last;
         }
 

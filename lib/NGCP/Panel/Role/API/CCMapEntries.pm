@@ -120,8 +120,7 @@ sub update_item {
             });
         }
     } catch($e) {
-        $c->log->error("Error Updating ccmapentry for $uuid: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CCMapEntry could not be updated.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CCMapEntry could not be updated.", $e);
         return;
     };
 

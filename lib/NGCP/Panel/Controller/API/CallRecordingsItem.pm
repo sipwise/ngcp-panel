@@ -26,8 +26,7 @@ sub delete_item {
             force_delete => $c->request->params->{force_delete},
         );
     } catch($e) {
-        $c->log->error("failed to delete callrecording: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete callrecording.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete callrecording.", $e);
         return;
     }
     return 1;

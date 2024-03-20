@@ -136,8 +136,7 @@ sub update_item {
         }
         $item->discard_changes;
     } catch($e) {
-        #$c->log->error("failed to create billingnetwork: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billingnetwork.");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billingnetwork.", $e);
         return;
     };
 
@@ -155,7 +154,6 @@ sub prepare_blocks_resource {
     }
     return NGCP::Panel::Utils::BillingNetworks::set_blocks_from_to($resource->{blocks},sub {
         my ($err) = @_;
-        #$c->log->error($err);
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
 }

@@ -75,9 +75,8 @@ sub POST :Allow {
 
         unless($uuid_string && UUID::parse($uuid_string, $uuid_bin) != -1) {
             $res = {success => 0};
-            $c->log->error("Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
-            $c->response->status(HTTP_FORBIDDEN);
-            $c->response->body(JSON::to_json($res));
+            $self->error($c, HTTP_FORBIDDEN, 'Forbidden',
+                         "Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
             return;
         }
 
@@ -88,9 +87,8 @@ sub POST :Allow {
         );
         unless ($redis) {
             $res = {success => 0};
-            $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
-            $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
-            $c->response->body(JSON::to_json($res));
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
+                         "Failed to connect to central redis url " . $c->config->{redis}->{central_url});
             return;
         }
         $redis->select($c->config->{'Plugin::Session'}->{redis_db});
@@ -100,17 +98,15 @@ sub POST :Allow {
             my $administrator = $c->model('DB')->resultset('admins')->search({login => $admin})->first;
             unless ($administrator) {
                 $res = {success => 0};
-                $c->log->error("Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
-                $c->response->status(HTTP_FORBIDDEN);
-                $c->response->body(JSON::to_json($res));
+                $self->error($c, HTTP_FORBIDDEN, 'Forbidden',
+                             "Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
                 return;
             }
             my $ip = $redis->hget("password_reset:admin::$uuid_string", "ip");
             if ($ip && $ip ne $c->req->address) {
                 $res = {success => 0};
-                $c->log->error("Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
-                $c->response->status(HTTP_FORBIDDEN);
-                $c->response->body(JSON::to_json($res));
+                $self->error($c, HTTP_FORBIDDEN, 'Forbidden',
+                             "Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
                 return;
             }
             $c->log->debug("Updating administrator password.");
@@ -130,9 +126,8 @@ sub POST :Allow {
             my $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
             unless($subscriber && $subscriber->provisioning_voip_subscriber) {
                 $res = {success => 0};
-                $c->log->error("Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
-                $c->response->status(HTTP_FORBIDDEN);
-                $c->response->body(JSON::to_json($res));
+                $self->error($c, HTTP_FORBIDDEN, 'Forbidden',
+                             "Invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");
                 return;
             }
             $c->log->debug("Updating subscriber password.");

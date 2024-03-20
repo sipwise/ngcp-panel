@@ -62,7 +62,6 @@ sub PATCH :Allow {
     my ($self, $c, $id) = @_;
 
     if ($c->user->roles eq 'subscriberadmin') {
-        $c->log->error("role subscriberadmin cannot edit pbxdeviceprofiles");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot edit pbxdeviceprofile.");
         return;
     }
@@ -100,7 +99,6 @@ sub PUT :Allow {
     my ($self, $c, $id) = @_;
 
     if ($c->user->roles eq 'subscriberadmin') {
-        $c->log->error("role subscriberadmin cannot edit pbxdeviceprofiles");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid role. Cannot edit pbxdeviceprofile.");
         return;
     }

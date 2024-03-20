@@ -131,8 +131,7 @@ sub POST :Allow {
                 $cl->create_related('voip_contract_location_blocks', $block);
             }
         } catch($e) {
-            $c->log->error("failed to create customer location: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer location.");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer location.", $e);
             return;
         };
         

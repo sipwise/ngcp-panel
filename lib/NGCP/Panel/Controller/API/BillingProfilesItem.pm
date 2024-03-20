@@ -173,8 +173,8 @@ sub DELETE :Allow {
                 terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local
             });
        } catch($e) {
-           $c->log->error("Failed to terminate billingprofile with id '$id': $e");
-           $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+           $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                        "Failed to terminate billingprofile with id '$id'", $e);
            last;
        }
        $guard->commit;
