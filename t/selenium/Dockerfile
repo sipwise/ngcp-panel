@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2024-03-07
+ENV REFRESHED_AT 2024-03-22
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -34,25 +34,25 @@ RUN adduser --disabled-password --gecos=Selenium-User selenium
 WORKDIR /home/selenium/
 
 # installing geckodriver (0.33.0)
-RUN wget http://deb.sipwise.com/files/geckodriver-v0.33.0-linux64.tar.gz && \
+RUN wget https://deb.sipwise.com/files/geckodriver-v0.33.0-linux64.tar.gz && \
     tar xvf geckodriver-v0.33.0-linux64.tar.gz && \
     ln -s /home/selenium/geckodriver /usr/bin/geckodriver && \
     rm -f geckodriver-v0.33.0-linux64.tar.gz
 
-# installing firefox (lang=en_US) (114.0.2)
-RUN wget http://deb.sipwise.com/files/firefox-114.0.2.tar.bz2 && \
-    tar xvf firefox-114.0.2.tar.bz2 && \
+# installing firefox (lang=en_US) (123.0.1)
+RUN wget https://deb.sipwise.com/files/firefox-123.0.1.tar.bz2 && \
+    tar xvf firefox-123.0.1.tar.bz2 && \
     ln -s /home/selenium/firefox/firefox /usr/bin/firefox && \
-    rm -f firefox-114.0.2.tar.bz2
+    rm -f firefox-123.0.1.tar.bz2
 
 # installing chromedriver (114.0.5735.90)
-RUN wget http://deb.sipwise.com/files/chromedriver_linux64_114.zip && \
+RUN wget https://deb.sipwise.com/files/chromedriver_linux64_114.zip && \
     unzip chromedriver_linux64_114.zip && \
     #ln -s /home/selenium/chromedriver /usr/bin/chromedriver && \
     rm -f chromedriver_linux64114.zip
 
 # installing chrome (114.0.5735.198)
-RUN wget http://deb.sipwise.com/files/google-chrome-stable_114_amd64.deb && \
+RUN wget https://deb.sipwise.com/files/google-chrome-stable_114_amd64.deb && \
     apt install -y ./google-chrome-stable_114_amd64.deb && \
     rm -f google-chrome-stable_114_amd64.deb
 
