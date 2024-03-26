@@ -64,6 +64,16 @@ has_field 'active_callforward.enabled' => (
     },
 );
 
+has_field 'active_callforward.use_redirection' => (
+    type => 'Boolean',
+    default => 0,
+    wrapper_class => [qw/hfh-rep-field/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['For calls coming from PSTN only, it enables or disables the usage of a 302 Redirection instead of the standard internal Call Forward.'],
+    },
+);
+
 has_field 'callforward_controls_add' => (
     type => 'AddElement',
     repeatable => 'active_callforward',

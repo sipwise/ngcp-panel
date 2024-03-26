@@ -4028,6 +4028,10 @@ msgid "Enables or disables the Call Forward rule from beign used."
 msgstr "Aktiviert oder deaktiviert die Gültigkeit der Rufumleitungsregel."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "For calls coming from PSTN only, it enables or disables the usage of a 302 Redirection instead of the standard internal Call Forward."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enables or disables the action from being included in the headers processing logic"
 msgstr "Aktiviert oder deaktiviert die Einbeziehung der Aktion in die Header-Verarbeitungslogik"
 
@@ -13595,6 +13599,10 @@ msgstr "Bis Datum"
 #: share/templates/subscriber/preferences.tt
 msgid "To Username"
 msgstr "Angerufenen-Benutzername"
+
+#: share/templates/subscriber/preferences.tt
+msgid "PSTN 302 Redirection"
+msgstr ""
 
 #: share/templates/statistics/supportstatus.tt
 msgid "To disable Sipwise support access run:"

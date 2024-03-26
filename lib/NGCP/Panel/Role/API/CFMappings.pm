@@ -80,6 +80,7 @@ sub hal_from_item {
                         bnumberset_id => undef,
                     ),
                     ( enabled => $mapping->enabled ),
+                    ( use_redirection => $mapping->use_redirection ),
                     ( cfm_id => $mapping->id ),
                 };
         }

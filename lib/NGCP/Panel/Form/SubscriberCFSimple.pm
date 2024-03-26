@@ -41,6 +41,15 @@ has_field 'enabled' => (
     },
 );
 
+has_field 'use_redirection' => (
+    type => 'Boolean',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['For calls coming from PSTN only, it enables or disables the usage of a 302 Redirection instead of the standard internal Call Forward.'],
+    },
+);
+
 sub build_destinations {
     my ($self) = @_;
 
@@ -127,7 +136,7 @@ has_field 'cf_actions.advanced' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(destination enabled)],
+    render_list => [qw(destination enabled use_redirection)],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(cf_actions)],);
 sub validate_destination{

@@ -4084,6 +4084,10 @@ msgid "Enables or disables the Call Forward rule from beign used."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "For calls coming from PSTN only, it enables or disables the usage of a 302 Redirection instead of the standard internal Call Forward."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enables or disables the action from being included in the headers processing logic"
 msgstr ""
 
@@ -13772,6 +13776,10 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt
 msgid "To Username"
+msgstr ""
+
+#: share/templates/subscriber/preferences.tt
+msgid "PSTN 302 Redirection"
 msgstr ""
 
 #: share/templates/statistics/supportstatus.tt

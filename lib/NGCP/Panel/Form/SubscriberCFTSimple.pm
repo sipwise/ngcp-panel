@@ -18,7 +18,7 @@ has_field 'ringtimeout' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(destination ringtimeout enabled)],
+    render_list => [qw(destination ringtimeout enabled use_redirection)],
 );
 
 sub validate_ringtimeout {

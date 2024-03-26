@@ -706,6 +706,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             bset_mode => $bset_mode,
             bnumbers => \@bnumbers,
             enabled => $map->enabled,
+            use_redirection => $map->use_redirection,
         };
     }
 
@@ -940,7 +941,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
     my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
-    my ($destination, $enabled);
+    my ($destination, $enabled, $use_redirection);
 
     if($cf_mapping->count > 1) {
         # there is more than one mapping,
@@ -971,6 +972,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         }
         $destination = $cf_mapping->first->destination_set->voip_cf_destinations->first;
         $enabled = $cf_mapping->first->enabled;
+        $use_redirection = $cf_mapping->first->use_redirection;
     }
 
     my $params = {};
@@ -1012,6 +1014,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params->{ringtimeout} = $ringtimeout;
         $params->{destination}->{announcement_id} = $destination ? $destination->announcement_id : '';
         $params->{enabled} = $enabled // 1;
+        $params->{use_redirection} = $use_redirection // 0;
     }
 
     my $cf_form;
@@ -1075,11 +1078,13 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                         type => $cf_type,
                         destination_set_id => $dest_set->id,
                         time_set_id => undef, #$time_set_id,
-                        enabled => $cf_form->field('enabled')->value
+                        enabled => $cf_form->field('enabled')->value,
+                        use_redirection => $cf_form->field('use_redirection')->value
                     });
                 }
                 else {
                     $map->update({enabled => $cf_form->field('enabled')->value});
+                    $map->update({use_redirection => $cf_form->field('use_redirection')->value});
                 }
 
                 if ($cf_preference->first) {
@@ -1221,6 +1226,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             source_set => $map->source_set ? $map->source_set->id : undef,
             bnumber_set => $map->bnumber_set ? $map->bnumber_set->id : undef,
             enabled => $map->enabled || undef,
+            use_redirection => $map->use_redirection || undef,
         };
     }
     my $params = {
@@ -1298,6 +1304,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         source_set_id => $map->field('source_set')->value,
                         bnumber_set_id => $map->field('bnumber_set')->value,
                         enabled => $map->field('enabled')->value,
+                        use_redirection => $map->field('use_redirection')->value,
                     });
                     if (!$cf_pref_created) {
                         if ($cf_preference->count != 1) {

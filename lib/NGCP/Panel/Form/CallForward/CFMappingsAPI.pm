@@ -164,6 +164,11 @@ has_field 'cfu.enabled' => (
     do_label => 0,
 );
 
+has_field 'cfu.use_redirection' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cfb.timeset' => (
     type => 'Compound',
     do_wrapper => 1,
@@ -198,6 +203,11 @@ has_field 'cfb.bnumberset_id' => (
 );
 
 has_field 'cfb.enabled' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
+has_field 'cfb.use_redirection' => (
     type => 'Boolean',
     do_label => 0,
 );
@@ -256,6 +266,11 @@ has_field 'cft.enabled' => (
     do_label => 0,
 );
 
+has_field 'cft.use_redirection' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cft.cfm_id' => (
     type => 'PosInteger',
     do_label => 0,
@@ -310,6 +325,11 @@ has_field 'cfna.enabled' => (
     do_label => 0,
 );
 
+has_field 'cfna.use_redirection' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cfna.cfm_id' => (
     type => 'PosInteger',
     do_label => 0,
@@ -360,6 +380,11 @@ has_field 'cfs.bnumberset_id' => (
 );
 
 has_field 'cfs.enabled' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
+has_field 'cfs.use_redirection' => (
     type => 'Boolean',
     do_label => 0,
 );
@@ -424,6 +449,11 @@ has_field 'cfr.enabled' => (
     do_label => 0,
 );
 
+has_field 'cfr.use_redirection' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
 has_field 'cfr.cfm_id' => (
     type => 'PosInteger',
     do_label => 0,
@@ -474,6 +504,11 @@ has_field 'cfo.bnumberset_id' => (
 );
 
 has_field 'cfo.enabled' => (
+    type => 'Boolean',
+    do_label => 0,
+);
+
+has_field 'cfo.use_redirection' => (
     type => 'Boolean',
     do_label => 0,
 );

@@ -2488,6 +2488,10 @@ msgid "Enables lawful interception for the subscriber."
 msgstr "Activer l'interception légale pour cet abonné."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "For calls coming from PSTN only, it enables or disables the usage of a 302 Redirection instead of the standard internal Call Forward."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Encoding bitrate for G.723.1 (5.3 kbit/s for 20-byte frames or 6.3 kbit/s for 24-byte frames"
 msgstr "Débit d'encodage pour G.723.1 (5.3 kbit/s pour des trames de 20-byte ou 6.3 kbit/s pour des trames de 24-byte"
 
@@ -7975,6 +7979,10 @@ msgstr "Vers (numéro distant)"
 #: share/templates/subscriber/preferences.tt
 msgid "To Username"
 msgstr "A l'utilisateur"
+
+#: share/templates/subscriber/preferences.tt
+msgid "PSTN 302 Redirection"
+msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/ccareadmin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Tools"

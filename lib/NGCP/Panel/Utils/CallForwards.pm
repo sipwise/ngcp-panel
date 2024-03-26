@@ -326,6 +326,7 @@ sub update_cf_mappings {
                 bnumber_set_id => ref $bset eq 'HASH' ? $bset->{id} : ( $bset ? $bset->id : undef ),
                 type => $type,
                 enabled => defined $mapping->{enabled} ? $mapping->{enabled} : 1,
+                use_redirection => defined $mapping->{use_redirection} ? $mapping->{use_redirection} : 0,
             };
         }
     }

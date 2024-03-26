@@ -112,6 +112,7 @@ $( document ).ready(function() {
                             <th>[% c.loc('To (B-Numbers)') %]</th>
                             <th>[% c.loc('New Destinations') %]</th>
                             <th>[% c.loc('Enabled') %]</th>
+                            <th>[% c.loc('PSTN 302 Redirection') %]</th>
 
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
@@ -241,6 +242,12 @@ $( document ).ready(function() {
                             <td>
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
                                     [% maps.enabled %]
+                                    <br/>
+                                [% END -%]
+                            </td>
+                            <td>
+                                [% FOR maps IN cf_destinations.${cf.type} -%]
+                                    [% maps.use_redirection %]
                                     <br/>
                                 [% END -%]
                             </td>
