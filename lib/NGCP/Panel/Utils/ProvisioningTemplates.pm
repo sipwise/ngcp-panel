@@ -334,6 +334,7 @@ sub process_csv {
                 'values' => $row,
             );
         } catch($e) {
+            $c->log->error($e);
             push(@fails,{ linenum => $linenum, msg => $e });
         }
     }
