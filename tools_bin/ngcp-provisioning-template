@@ -9,17 +9,16 @@ use Config::General qw();
 use File::Slurp qw();
 use XML::Simple qw();
 
-use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
-use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
-use lib "/usr/local/devel/ngcp-schema/lib";
-use lib "/usr/local/devel/sipwise-base/lib";
+#use lib "/home/rkrenn/sipwise/git/ngcp-schema/lib";
+#use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";
+#use lib "/usr/local/devel/ngcp-schema/lib";
+#use lib "/usr/local/devel/sipwise-base/lib";
 use NGCP::Schema qw();
-use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
-use lib "/usr/local/devel/ngcp-panel/lib";
+#use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
+#use lib "/usr/local/devel/ngcp-panel/lib";
 use NGCP::Panel::Utils::ProvisioningTemplates qw();
 
 my @panel_configs = qw(
-   /home/rkrenn/sipwise/git/vagrant-ngcp/ngcp_panel.conf
    /etc/ngcp-panel/ngcp_panel.conf
    /etc/ngcp_panel.conf
    /ngcp_panel.conf
@@ -28,43 +27,25 @@ my @panel_configs = qw(
 #/usr/local/devel/vagrant-ngcp/ngcp_panel.conf
 
 my @provisioning_configs = qw(
-   /home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
-   
+   /etc/ngcp-panel/provisioning.conf
 );
 #/etc/ngcp-panel/provisioning.conf
 #/home/rkrenn/sipwise/git/vagrant-ngcp/provisioning.conf
 #/usr/local/devel/vagrant-ngcp/provisioning.conf
 
 my %db = (
-    host => '192.168.0.96',
+    host => undef, #'192.168.0.99'
     port => 3306,
     user => 'root',
     password => undef,
 );
 
 my $template_name = shift @ARGV;
-#my $template_name = 'My First Provisioning Template'; #'vaa_test';
-#my $template_name = 'vaa_test_js';
+#my $template_name = 'My First Provisioning Template'; 
 pod2usage(2) unless $template_name;
 pod2usage(1) if $template_name =~ /help|\?/;
 my $help;
 my $log_level;
-
-# XXX: Remove after mr10.5.
-sub parse_old_db_option {
-    my ($name, $value) = @_;
-    my $newname = $name =~ tr/_/-/r;
-    $db{$name} = $value;
-    warn "$0: option --$name is deprecated; use --$newname instead\n";
-}
-
-# XXX: Remove after mr10.5.
-sub parse_old_log_level_option {
-    my ($name, $value) = @_;
-    my $newname = $name =~ tr/_/-/r;
-    $log_level = $value;
-    warn "$0: option --$name is deprecated; use --$newname instead\n";
-}
 
 Getopt::Long::Configure("pass_through");
 Getopt::Long::Configure("permute");
@@ -147,6 +128,20 @@ if (exists $c->stash->{'provisioning_templates'}->{$template_name}) {
 }
 
 exit(0);
+
+sub parse_old_db_option {
+    my ($name, $value) = @_;
+    my $newname = $name =~ tr/_/-/r;
+    $db{$name} = $value;
+    #warn "$0: option --$name is deprecated; use --$newname instead\n";
+}
+
+sub parse_old_log_level_option {
+    my ($name, $value) = @_;
+    my $newname = $name =~ tr/_/-/r;
+    $log_level = $value;
+    #warn "$0: option --$name is deprecated; use --$newname instead\n";
+}
 
 sub _create_c {
 
