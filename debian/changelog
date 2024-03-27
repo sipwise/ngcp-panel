@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.19+0~mr11.5.1.19) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [bbb3f98] MT#59748 drop ngcp-provisioning-template test dbhost
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 27 Mar 2024 15:54:00 +0100
+
 ngcp-panel (11.5.1.18+0~mr11.5.1.18) unstable; urgency=medium
 
   [ Rene Krenn ]
