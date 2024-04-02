@@ -44,6 +44,7 @@ sub resource_from_item {
     my %resource = $item->get_inflated_columns;
 
     $now //= NGCP::Panel::Utils::DateTime::current_local;
+
     my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $item, );
     my $billing_profile_id = $billing_mapping->billing_profile->id;
     my $future_billing_profiles = NGCP::Panel::Utils::BillingMappings::resource_from_future_mappings($item);
@@ -73,8 +74,12 @@ sub resource_from_item {
     return \%resource;
 }
 
-sub hal_from_contract {
-    my ($self, $c, $contract, $form, $now) = @_;
+sub hal_from_item {
+    my ($self, $c, $contract, $form, $params) = @_;
+
+    my $now = $params && $params->{now}
+                ? $params->{now}
+                : NGCP::Panel::Utils::DateTime::current_local;
 
     my $resource = $self->resource_from_item($c, $contract, $form, $now);
 
