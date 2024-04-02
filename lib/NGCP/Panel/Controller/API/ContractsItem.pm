@@ -56,7 +56,7 @@ sub GET :Allow {
         my $contract = $self->contract_by_id($c, $id);
         last unless $self->resource_exists($c, contract => $contract);
 
-        my $hal = $self->hal_from_contract($c, $contract, undef, NGCP::Panel::Utils::DateTime::current_local);
+        my $hal = $self->hal_from_item($c, $contract, undef);
         $guard->commit; #potential db write ops in hal_from
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -112,7 +112,7 @@ sub PATCH :Allow {
         #$c->log->debug(Dumper($contract));
         last unless $contract;
 
-        my $hal = $self->hal_from_contract($c, $contract, $form, $now);
+        my $hal = $self->hal_from_item($c, $contract, $form, { now => $now });
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -147,7 +147,7 @@ sub PUT :Allow {
         $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
         last unless $contract;
 
-        my $hal = $self->hal_from_contract($c, $contract, $form, $now);
+        my $hal = $self->hal_from_item($c, $contract, $form, { now => $now });
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
