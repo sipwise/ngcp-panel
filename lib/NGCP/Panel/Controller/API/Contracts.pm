@@ -101,7 +101,7 @@ sub GET :Allow {
         my $form = $self->get_form($c);
         for my $contract (@$contracts) {
             #NGCP::Panel::Utils::ProfilePackages::get_contract_balance
-            push @embedded, $self->hal_from_contract($c, $contract, $form, $now);
+            push @embedded, $self->hal_from_item($c, $contract, $form, { now => $now });
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%d', $c->request->path, $contract->id),
