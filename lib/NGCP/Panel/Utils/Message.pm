@@ -224,6 +224,17 @@ sub info {
     my $usr_type = 'info';
     my $usr_text = $desc;
 
+    if (defined $msg) {
+        if (ref($msg)) {
+            $msg = $c->qs(Data::Dumper->new([ obfuscate_password_fields($c,$log) ])
+                                   ->Terse(1)
+                                   ->Maxdepth(1)
+                                   ->Dump);
+        }
+        $msg =~ s/\n//g;
+        $msg =~ s/\s+/ /g;
+    }
+
     if (defined $log) {
         if (ref($log)) {
             $log_msg = $c->qs(Data::Dumper->new([ obfuscate_password_fields($c,$log) ])

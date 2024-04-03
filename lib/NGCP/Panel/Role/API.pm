@@ -354,7 +354,7 @@ sub error {
     # message -> returned as HTTP message in the reply
     # errors -> contain errors for internal logging, last element often contains a DBIx exception
 
-    $c->error(['', @errors]);
+    $c->error([$message, @errors]);
 
     $c->response->content_type('application/json');
     $c->response->status($code);
@@ -1060,15 +1060,9 @@ sub log_response {
     $c->response->content_type('')
         if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
     my $rc = '';
+    my $errors = '';
     if ($c->has_errors) {
-        my $msg = join ', ', splice @{$c->error}, 1;
-        if ($msg) {
-            $rc = NGCP::Panel::Utils::Message::error(
-                c    => $c,
-                type => 'api_response',
-                log  => $msg,
-            );
-        }
+        $errors = join ', ', splice @{$c->error}, 1;
         $c->clear_errors;
     }
     my ($response_body, $params_data) = $self->filter_log_response(
@@ -1079,7 +1073,8 @@ sub log_response {
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
-        log  => $c->qs($response_body),
+        desc => $c->qs($response_body),
+        log  => $c->qs($errors // ''),
         data => $params_data,
     );
 }
