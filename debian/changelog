@@ -1,3 +1,10 @@
+ngcp-panel (12.2.1.7+0~mr12.2.1.7) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [27909d4] MT#59478 improve MSG, LOG log string data storing
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 03 Apr 2024 17:43:14 +0200
+
 ngcp-panel (12.2.1.6+0~mr12.2.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
