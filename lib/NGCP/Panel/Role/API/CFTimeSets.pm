@@ -407,10 +407,12 @@ sub resource_from_item {
     my $resource = { $item->get_inflated_columns };
 
     $resource->{subscriber_id} = $item->subscriber->voip_subscriber->id;
-    $resource->{times} //= [];
+    $resource->{times} = [];
 
-    foreach my $period ($item->voip_cf_periods->all) {
-        push @{$resource->{times}}, { $period->get_inflated_columns };
+    foreach my $row ($item->voip_cf_periods->all) {
+        my %period = $row->get_inflated_columns;
+        delete $period{id};
+        push @{$resource->{times}}, \%period;
     }
 
     return $resource;
