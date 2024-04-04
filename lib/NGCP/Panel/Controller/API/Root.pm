@@ -562,6 +562,7 @@ sub get_collection_properties {
 sub end : Private {
     my ($self, $c) = @_;
 
+    $c->clear_errors;
     #$self->log_response($c);
     return 1;
 }
