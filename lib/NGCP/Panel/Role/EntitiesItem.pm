@@ -315,6 +315,9 @@ sub patch {
 
             ($hal, $hal_id) = $self->get_journal_item_hal($c, $item, { form => $form });
             unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                if ($c->has_errors) {
+                    goto TX_END;
+                }
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                              '#add_journal_item_hal') unless $c->has_errors;
                 goto TX_END;
@@ -426,6 +429,9 @@ sub put {
 
             ($hal, $hal_id) = $self->get_journal_item_hal($c, $item, { form => $form });
             unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                if ($c->has_errors) {
+                    goto TX_END;
+                }
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                              '#add_journal_item_hal') unless $c->has_errors;
                 goto TX_END;
@@ -480,6 +486,9 @@ sub delete {  ## no critic (ProhibitBuiltinHomonyms)
             ($hal, $hal_id) = $self->get_journal_item_hal($c, $item);
             if ($self->delete_item($c, $item)) {
                 unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                    if ($c->has_errors) {
+                        goto TX_END;
+                    }
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                                  '#add_journal_item_hal');
                     goto TX_END;
