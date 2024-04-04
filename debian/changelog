@@ -1,3 +1,11 @@
+ngcp-panel (12.2.1.10+0~mr12.2.1.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d878e35] MT#59478 adapt /api/cftimesets to global transactions, more fixes
+  * [97cd36d] MT#59478 Entities/EntitiesItem more $c->has_errors checks
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Apr 2024 16:33:57 +0200
+
 ngcp-panel (12.2.1.9+0~mr12.2.1.9) unstable; urgency=medium
 
   [ Kirill Solomko ]
