@@ -287,24 +287,36 @@ sub post {
                 );
 
                 unless ($self->process_form_resource($c, undef, undef, $resource, $form, $process_extras)) {
+                    if ($c->has_errors) {
+                        goto TX_END;
+                    }
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
                                  '#pre_process_form_resource') unless $c->has_errors;
                     goto TX_END;
                 }
 
                 unless ($self->check_duplicate($c, undef, undef, $resource, $form, $process_extras)) {
+                    if ($c->has_errors) {
+                        goto TX_END;
+                    }
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
                                  '#check_duplicates') unless $c->has_errors;
                     goto TX_END;
                 }
 
                 unless ($self->check_resource($c, undef, undef, $resource, $form, $process_extras)) {
+                    if ($c->has_errors) {
+                        goto TX_END;
+                    }
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
                                  '#check_resource') unless $c->has_errors;
                     goto TX_END;
                 }
 
                 $item = $self->create_item($c, $resource, $form, $process_extras);
+                if ($c->has_errors) {
+                    goto TX_END;
+                }
                 unless ($item || $self->get_config('no_item_created')) {
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                                  '#create_item') unless $c->has_errors;
@@ -313,6 +325,9 @@ sub post {
 
                 ($hal, $hal_id) = $self->get_journal_item_hal($c, $item, { form => $form });
                 unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
+                    if ($c->has_errors) {
+                        goto TX_END;
+                    }
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                                  '#add_journal_item_hal') unless $c->has_errors;
                     goto TX_END;
