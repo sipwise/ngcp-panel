@@ -1,3 +1,10 @@
+ngcp-panel (12.2.1.11+0~mr12.2.1.11) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [58d86e6] MT#59806 adapt /api/cfdestinationsets to Entities
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Apr 2024 19:36:04 +0200
+
 ngcp-panel (12.2.1.10+0~mr12.2.1.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
