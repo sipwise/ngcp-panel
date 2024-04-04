@@ -1,3 +1,10 @@
+ngcp-panel (12.2.1.8+0~mr12.2.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d43c403] MT#59797 /api/headerruleconditions (actions) fix reseller role
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Apr 2024 12:16:28 +0200
+
 ngcp-panel (12.2.1.7+0~mr12.2.1.7) unstable; urgency=medium
 
   [ Kirill Solomko ]
