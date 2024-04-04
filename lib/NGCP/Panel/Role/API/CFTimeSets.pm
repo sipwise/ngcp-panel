@@ -300,8 +300,9 @@ sub _merge_adjacent {
 }
 
 sub hal_from_item {
-    my ($self, $c, $item, $type) = @_;
-    my $form;
+    my ($self, $c, $item, $form, $params) = @_;
+
+    my $type = 'cftimesets';
 
     my %resource = $item->get_inflated_columns;
     my @times;
@@ -398,6 +399,22 @@ sub check_subscriber_can_update_item {
     }
 
     return 1;
+}
+
+sub resource_from_item {
+    my ($self, $c, $item) = @_;
+
+    my $resource = { $item->get_inflated_columns };
+
+    $resource->{subscriber_id} = $item->subscriber->voip_subscriber->id;
+    $resource->{times} //= [];
+
+    foreach my $period ($item->voip_cf_periods->all) {
+        push @{$resource->{times}}, { $period->get_inflated_columns };
+    }
+
+    return $resource;
+
 }
 
 sub update_item {
