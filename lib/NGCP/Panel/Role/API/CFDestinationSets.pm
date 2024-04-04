@@ -26,8 +26,7 @@ sub get_form {
 }
 
 sub hal_from_item {
-    my ($self, $c, $item, $type) = @_;
-    my $form;
+    my ($self, $c, $item, $form, $params) = @_;
 
     my %resource = $item->get_inflated_columns;
     my @destinations;
@@ -130,6 +129,33 @@ sub check_subscriber_can_update_item {
     }
 
     return 1;
+}
+
+sub resource_from_item {
+    my ($self, $c, $item) = @_;
+
+    my $resource = { $item->get_inflated_columns };
+
+    $resource->{subscriber_id} = $item->subscriber->voip_subscriber->id;
+    $resource->{destinations} = [];
+
+    for my $dest ($item->voip_cf_destinations->all) {
+        my ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($dest->destination);
+        my $deflated;
+        if($d eq "uri") {
+            $deflated = NGCP::Panel::Utils::Subscriber::uri_deflate($c, $duri, $item->subscriber->voip_subscriber);
+            $d = $dest->destination;
+        }
+        my $destelem = {$dest->get_inflated_columns,
+                destination => $dest->destination,
+                $deflated ? (simple_destination => $deflated) : (),
+            };
+        delete @{$destelem}{'id', 'destination_set_id'};
+        push @{$resource->{destinations}}, $destelem;
+    }
+
+    return $resource;
+
 }
 
 sub update_item {

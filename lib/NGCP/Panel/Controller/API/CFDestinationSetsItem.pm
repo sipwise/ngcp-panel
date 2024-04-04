@@ -44,121 +44,21 @@ __PACKAGE__->set_config({
     }
 });
 
-sub GET :Allow {
-    my ($self, $c, $id) = @_;
-    {
-        last unless $self->valid_id($c, $id);
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
+sub delete_item {
+    my ($self, $c, $item) = @_;
 
-        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
+    return unless $self->check_subscriber_can_update_item($c, $item);
 
-        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-            (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r
-                =~ s/rel=self/rel="item self"/r;
-            } $hal->http_headers),
-        ), $hal->as_json);
-        $c->response->headers($response->headers);
-        $c->response->body($response->content);
-        return;
+    try {
+        $item->delete;
+    } catch($e) {
+        my $id = $item->id;
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                     "Failed to delete cfdestinationset with id '$id'", $e);
+        last;
     }
-    return;
-}
 
-sub PATCH :Allow {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        my $json = $self->get_valid_patch_data(
-            c => $c,
-            id => $id,
-            media_type => 'application/json-patch+json',
-            ops => [qw/add replace remove copy/],
-        );
-        last unless $json;
-
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
-        my $old_resource = $self->hal_from_item($c, $dset, "cfdestinationsets")->resource;
-        my $resource = $self->apply_patch($c, $old_resource, $json);
-        last unless $resource;
-
-        my $form = $self->get_form($c);
-        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
-        last unless $dset;
-
-        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
-        last unless $self->add_update_journal_item_hal($c,$hal);
-        
-        $guard->commit; 
-
-        $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
-    }
-    return;
-}
-
-sub PUT :Allow {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $preference = $self->require_preference($c);
-        last unless $preference;
-
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
-        my $resource = $self->get_valid_put_data(
-            c => $c,
-            id => $id,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-        my $old_resource = { $dset->get_inflated_columns };
-
-        my $form = $self->get_form($c);
-        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
-        last unless $dset;
-        
-        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
-        last unless $self->add_update_journal_item_hal($c,$hal);
-
-        $guard->commit;
-
-        $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
-    }
-    return;
-}
-
-sub DELETE :Allow {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
-
-        last unless $self->check_subscriber_can_update_item($c, $dset);
-
-        last unless $self->add_delete_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            return $self->hal_from_item($c, $dset, "cfdestinationsets"); });
-        
-        try {
-            $dset->delete;
-        } catch($e) {
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
-                         "Failed to delete cfdestinationset with id '$id'", $e);
-            last;
-        }
-        $guard->commit;
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
-    }
-    return;
+    return 1 ;
 }
 
 sub get_journal_methods{
