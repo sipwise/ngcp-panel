@@ -287,8 +287,6 @@ sub patch {
         {
             $item = $self->item_by_id_valid($c, $id);
             unless ($item) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
-                             '#item_by_id_valid') unless $c->has_errors;
                 goto TX_END;
             }
 
@@ -386,8 +384,6 @@ sub put {
         {
             $item = $self->item_by_id_valid($c, $id);
             unless ($item) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
-                             '#item_by_id_valid') unless $c->has_errors;
                 goto TX_END;
             }
 
@@ -469,14 +465,11 @@ sub delete {  ## no critic (ProhibitBuiltinHomonyms)
         {
             $item = $self->item_by_id_valid($c, $id);
             unless ($item) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
-                             '#item_by_id_valid');
                 goto TX_END;
             }
 
             ($hal, $hal_id) = $self->get_journal_item_hal($c, $item);
-            #here we left space for information that checking failed and we decided not to delete item
-            if ($self->delete_item($c, $item)) {
+            unless ($self->delete_item($c, $item)) {
                 unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                                  '#add_journal_item_hal');
