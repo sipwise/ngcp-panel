@@ -1,3 +1,11 @@
+ngcp-panel (12.2.1.9+0~mr12.2.1.9) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a7b559c] MT#59478 Entities fix non-existing $item handling in put/patch/delete
+  * [19440b6] MT#59478 /api/ root error handling
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 04 Apr 2024 14:59:27 +0200
+
 ngcp-panel (12.2.1.8+0~mr12.2.1.8) unstable; urgency=medium
 
   [ Kirill Solomko ]
