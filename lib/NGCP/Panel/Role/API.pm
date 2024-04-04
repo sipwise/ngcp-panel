@@ -356,6 +356,8 @@ sub error {
 
     $c->error([$message, @errors]);
 
+    $c->stash->{is_api_error_response} = 1;
+
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
@@ -1062,7 +1064,9 @@ sub log_response {
     my $rc = '';
     my $errors = '';
     if ($c->has_errors) {
-        $errors = join ', ', splice @{$c->error}, 1;
+        $errors = $c->stash->{is_api_error_response}
+                    ? join ', ', splice @{$c->error}, 1
+                    : join ', ', @{$c->error};
         $c->clear_errors;
     }
     my ($response_body, $params_data) = $self->filter_log_response(
