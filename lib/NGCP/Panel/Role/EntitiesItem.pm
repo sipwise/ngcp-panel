@@ -294,6 +294,9 @@ sub patch {
             #$old_resource = clone($old_resource);
             ##without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
             $resource = $self->apply_patch($c, $old_resource, $json);
+            if ($c->has_errors) {
+                goto TX_END;
+            }
             unless ($resource) {
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                              '#apply_patch') unless $c->has_errors;
@@ -301,6 +304,9 @@ sub patch {
             }
 
             ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+            if ($c->has_errors) {
+                goto TX_END;
+            }
             unless ($item) {
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                              '#update_item') unless $c->has_errors;
@@ -392,6 +398,9 @@ sub put {
             my ($data_processed_result);
             if (!$non_json_data || !$data) {
                 ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+                if ($c->has_errors) {
+                    goto TX_END;
+                }
                 unless ($item) {
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                                  '#update_item') unless $c->has_errors;
@@ -469,13 +478,16 @@ sub delete {  ## no critic (ProhibitBuiltinHomonyms)
             }
 
             ($hal, $hal_id) = $self->get_journal_item_hal($c, $item);
-            unless ($self->delete_item($c, $item)) {
+            if ($self->delete_item($c, $item)) {
                 unless ($self->add_journal_item_hal($c, { hal => $hal, ($hal_id ? ( id => $hal_id, ) : ()) })) {
                     $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                                  '#add_journal_item_hal');
                     goto TX_END;
                 }
             } else {
+                if ($c->has_errors) {
+                    goto TX_END;
+                }
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                              'non 1 return from $self->delete_item()');
                 goto TX_END;
