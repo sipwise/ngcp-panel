@@ -461,19 +461,19 @@ sub check_destinations {
         }
         if (exists $d->{timeout} && ! is_int($d->{timeout})) {
             $c->log->error("Invalid timeout for the destination '".$c->qs($d->{destination})."'");
-            &{$err_code}("Invalid timeout for the destination '".$c->qs($d->{destination})."'");
+            &{$err_code}("Invalid timeout for the destination '".$d->{destination}."'");
             return;
         }
         if (exists $d->{priority} && ! is_int($d->{priority})) {
             $c->log->error("Invalid priority for the destination '".$c->qs($d->{destination})."'");
-            &{$err_code}("Invalid priority for the destination '".$c->qs($d->{destination})."'");
+            &{$err_code}("Invalid priority for the destination '".$d->{destination}."'");
             return;
         }
         if (defined $d->{announcement_id}) {
         #todo: I think that user expects that put and get will be the same
             if(('customhours' ne $d->{destination}) && ('sip:custom-hours@app.local' ne $d->{destination}) ){
                 $c->log->error("Invalid parameter 'announcement_id' for the destination '".$c->qs($d->{destination})."'");
-                &{$err_code}("Invalid parameter 'announcement_id' for the destination '".$c->qs($d->{destination})."'");
+                &{$err_code}("Invalid parameter 'announcement_id' for the destination '".$d->{destination}."'");
                 return;
             }elsif(! is_int($d->{announcement_id})){
                 $c->log->error("Invalid announcement_id");
