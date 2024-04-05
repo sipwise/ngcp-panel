@@ -28,6 +28,8 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $form, $params) = @_;
 
+    my $type = 'cfdestinationsets';
+
     my %resource = $item->get_inflated_columns;
     my @destinations;
     for my $dest ($item->voip_cf_destinations->all) {
@@ -60,6 +62,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
             Data::HAL::Link->new(relation => "ngcp:subscribers", href => sprintf("/api/subscribers/%d", $b_subs_id)),
             $self->get_journal_relation_link($c, $item->id),
         ],
