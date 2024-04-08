@@ -1313,6 +1313,15 @@ sub update_subscriber_numbers {
     $acli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => 'allowed_clis', prov_subscriber => $prov_subs)
         if($prov_subs && $c->config->{numbermanagement}->{auto_allow_cli});
+    
+    my $create_primary_acli = $c->request->params->{create_primary_acli};
+    if (length($create_primary_acli)
+        and ('false' eq lc($create_primary_acli)
+             or ('0' eq $create_primary_acli))) {
+        $create_primary_acli = 0;
+    } else {
+        $create_primary_acli = 1;
+    }
 
     if ($same_primary_number) {
         # skip primary number processing for the same number
@@ -1450,7 +1459,7 @@ sub update_subscriber_numbers {
 
                 if(defined $acli_pref) {
                     $acli_pref->search({ value => $old_cli })->delete if($old_cli);
-                    if(!$acli_pref->find({ value => $cli })) {
+                    if($create_primary_acli && !$acli_pref->find({ value => $cli })) {
                         $acli_pref->create({ value => $cli });
                     }
                 }
@@ -1611,7 +1620,7 @@ sub update_subscriber_numbers {
 
             if(defined $acli_pref) {
                 $acli_pref->search({ value => $old_cli })->delete if($old_cli);
-                if(!$acli_pref->find({ value => $cli })) {
+                if($create_primary_acli && !$acli_pref->find({ value => $cli })) {
                     $acli_pref->create({ value => $cli });
                 }
             }
