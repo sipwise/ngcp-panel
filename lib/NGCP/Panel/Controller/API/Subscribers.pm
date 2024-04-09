@@ -417,13 +417,12 @@ sub POST :Allow {
                     level => $resource->{lock} || 4,
                 );
             } else {
-                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
-
                 NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                     c => $c,
                     prov_subscriber => $subscriber->provisioning_voip_subscriber,
                     level => $resource->{lock} || 0,
                 ) if exists $resource->{lock};
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
             }
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                 c              => $c,
