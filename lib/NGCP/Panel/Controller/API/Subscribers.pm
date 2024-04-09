@@ -423,7 +423,7 @@ sub POST :Allow {
                     c => $c,
                     prov_subscriber => $subscriber->provisioning_voip_subscriber,
                     level => $resource->{lock} || 0,
-                );
+                ) if exists $resource->{lock};
             }
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                 c              => $c,
