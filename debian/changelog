@@ -1,3 +1,16 @@
+ngcp-panel (10.5.1.41+0~mr10.5.1.41) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [69cb418] MT#56301 Fix API creation of an active subscriber with lock
+
+  [ Rene Krenn ]
+  * [d361c75] MT#56301 set locklevel of created subscribers only if specified
+
+  [ Kirill Solomko ]
+  * [2cf5b58] MT#56301 move lock_provisioning_voip_subscriber before underrun_lock
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 Apr 2024 10:06:32 +0200
+
 ngcp-panel (10.5.1.40+0~mr10.5.1.40) unstable; urgency=medium
 
   [ Rene Krenn ]
