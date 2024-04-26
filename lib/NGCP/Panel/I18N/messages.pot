@@ -10322,7 +10322,7 @@ msgid "Search by wildcard pattern. A wildcard is implicitly appended at the end 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN)."
+msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it matches, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 
 #: share/templates/helpers/datatables.tt
@@ -10498,7 +10498,7 @@ msgid "Set to 'if both parties are behind same NAT' if you want to allow RTP to 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Sets upper limit on accepted Min-SE value in in SBC."
+msgid "Sets upper limit on accepted Min-SE value in SBC."
 msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt

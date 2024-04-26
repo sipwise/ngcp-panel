@@ -1136,7 +1136,7 @@ sub _get_sorted_query_params {
     my %unknown = %{$c->req->query_params};
     my @sorted = ();
     
-    # 1. add non-dummy query paramaters found:
+    # 1. add non-dummy query parameters found:
     #   keep order of query params as defined in the source, but put those with new_rs
     #   at the beginning (narrow part results as much as possible as early as possible)
     if (defined $query_params) {

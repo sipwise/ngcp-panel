@@ -6848,7 +6848,7 @@ msgid "Save SVG"
 msgstr "Sauvegarder SVG"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN)."
+msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it matches, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr "Rechercher une correspondance partielle du numéro fourni par l'utilisateur (UPN) avec le numéro E164 principal de l'abonné et les alias. S'il correspond, prendre l'UPN comme valide sans vérifier les allowed_clis et copier l'UPN dans le numéro fourni par le réseau (NPN)"
 
 #: share/templates/subscriber/preferences.tt
@@ -6944,7 +6944,7 @@ msgid "Set to 'if both parties are behind same NAT' if you want to allow RTP to 
 msgstr "Réglez sur 'si les deux parties sont derrière le même NAT' si vous voulez permettre à RTP de contourner RTP-Proxy si les UAs SIP sont dans le même LAN comme déterminé par la vérificaion del'adresse IP 'reçue' (mode point-à-point)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Sets upper limit on accepted Min-SE value in in SBC."
+msgid "Sets upper limit on accepted Min-SE value in SBC."
 msgstr "Définit la limite supérieure de la valeur Min-SE acceptée dans SBC."
 
 #: share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt

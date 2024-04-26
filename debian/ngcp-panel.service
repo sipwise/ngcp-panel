@@ -74,7 +74,7 @@ LimitMEMLOCK=0
 NoNewPrivileges=false
 
 # {{{
-# NOTE: all of the the following hardenings need to stay disabled, as long as we use the
+# NOTE: all of the following hardenings need to stay disabled, as long as we use the
 # sendmail(1) interface via perl's Email::Sender::Transport::Sendmail library
 #CapabilityBoundingSet=
 #LockPersonality=true
