@@ -72,8 +72,6 @@ sub build_destinations {
         }
         push @options,
             { label => 'Custom Announcement', value => 'customhours' };
-        push @options, { label => 'Local Subscriber', value => 'localuser' }
-            if($c->config->{features}->{callthrough} || $c->config->{features}->{callingcard} );
         push @options, { label => 'Manager Secretary', value => 'managersecretary' }
             if($c->config->{features}->{manager_secretary});
     }

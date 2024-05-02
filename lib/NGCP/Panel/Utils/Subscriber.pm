@@ -111,8 +111,6 @@ sub destination_as_string {
         return "CallingCard";
     } elsif($dest =~ /^sip:callthrough\@app\.local$/) {
         return "CallThrough";
-    } elsif($dest =~ /^sip:localuser\@.+\.local$/) {
-        return "Local Subscriber";
     } elsif($dest =~ /^sip:auto-attendant\@app\.local$/) {
         return "Auto Attendant";
     } elsif($dest =~ /^sip:office-hours\@app\.local$/) {
@@ -1897,8 +1895,6 @@ sub field_to_destination {
         $d = "sip:callingcard\@app.local";
     } elsif($d eq "callthrough") {
         $d = "sip:callthrough\@app.local";
-    } elsif($d eq "localuser") {
-        $d = "sip:localuser\@app.local";
     } elsif($d eq "autoattendant") {
         $d = "sip:auto-attendant\@app.local";
     } elsif($d eq "officehours") {
@@ -1939,8 +1935,6 @@ sub destination_to_field {
         $d = 'callingcard';
     } elsif($d =~ /^sip:callthrough\@app\.local$/) {
         $d = 'callthrough';
-    } elsif($d =~ /^sip:localuser\@.+\.local$/) {
-        $d = 'localuser';
     } elsif($d =~ /^sip:auto-attendant\@app\.local$/) {
         $d = 'autoattendant';
     } elsif($d =~ /^sip:office-hours\@app\.local$/) {

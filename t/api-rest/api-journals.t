@@ -1103,7 +1103,6 @@ sub test_cfdestinationset {
                                 'conference',
                                 'callingcard',
                                 'callthrough',
-                                'localuser',
                                 'autoattendant',
                                 'officehours',
                                 'test_destination@example.com');
