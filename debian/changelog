@@ -1,3 +1,25 @@
+ngcp-panel (10.5.7.1+0~mr10.5.7.1) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [aacf44c] MT#58762 harmonize restapi wildcard filters
+  * [6ab7c0b] MT#58762 adjust restpi tests to harmonized wildcard filters
+  * [eb44ad8] MT#58762 adjust restpi tests v2 to harmonized wildcard filters
+  * [10f3b93] MT#58762 adjust restpi tests v2 to harmonized wildcard filters #1
+  * [3d745dc] MT#59025 fix peering groups name filter
+  * [0cefd10] MT#59748 drop ngcp-provisioning-template test dbhost
+  * [e5ea0ba] MT#56301 set locklevel of created subscribers only if specified
+
+  [ Marco Capetta ]
+  * [65a9a52] MT#58762 Fix typo in swagger documentation
+  * [a31f0f0] MT#56301 Fix API creation of an active subscriber with lock
+
+  [ Kirill Solomko ]
+  * [46338fb] MT#59797 /api/headerruleconditions (actions) fix reseller role
+  * [0d9c469] MT#59835 /api/billingzones fix HAL ngcp:billingfees relation
+  * [4f39d4d] MT#56301 move lock_provisioning_voip_subscriber before underrun_lock
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 06 May 2024 14:04:50 +0200
+
 ngcp-panel (10.5.7.0+0~mr10.5.7.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
