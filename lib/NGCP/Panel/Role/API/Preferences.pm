@@ -73,6 +73,8 @@ sub _item_rs {
     my $item_rs;
     my $type = $self->container_resource_type;
 
+    print "TYPE: $type\n";
+
     if($type eq "domains") {
         # we actually return the domain rs here, as we can easily
         # go to dom_preferences from there
@@ -167,9 +169,16 @@ sub _item_rs {
     } elsif($type eq "pbxdevices") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('autoprov_field_devices');
-        } else {
+        } elsif ($c->user->roles eq "reseller") {
             $item_rs = $c->model('DB')->resultset('autoprov_field_devices')->search({
                     'device.reseller_id' => $c->user->reseller_id
+                },{
+                    'join' => {'profile' => {'config' => 'device'}},
+            });
+        } elsif ($c->user->roles eq "subscriberadmin") {
+            $item_rs = $c->model('DB')->resultset('autoprov_field_devices')->search({
+                    'device.reseller_id' => $c->user->contract->contact->reseller_id,
+                    'me.contract_id' => $c->user->account_id,
                 },{
                     'join' => {'profile' => {'config' => 'device'}},
             });
