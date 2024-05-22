@@ -1,3 +1,41 @@
+ngcp-panel (12.4.1.0+0~mr12.4.1.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [b22d2d8] MT#59624 update firefox in docker to fix segfaults
+  * [1fdaa6b] MT#55677 fix all ngcp-panel-selenium tests
+
+  [ Kirill Solomko ]
+  * [205b27a] MT#59478 API better transaction and error handling
+  * [9dbd6b0] MT#59478 /api/contracts address $now and hal_from_contract
+  * [9d598d4] MT#59478 improve MSG, LOG log string data storing
+  * [bf249f9] MT#59797 /api/headerruleconditions (actions) fix reseller role
+  * [4e2e141] MT#59478 Entities fix non-existing $item handling in put/patch/delete
+  * [91f1dcf] MT#59478 /api/ root error handling
+  * [9e36533] MT#59478 adapt /api/cftimesets to global transactions, more fixes
+  * [1872f34] MT#59478 Entities/EntitiesItem more $c->has_errors checks
+  * [b2a1bc0] MT#59806 adapt /api/cfdestinationsets to Entities
+  * [c006e9e] MT#59806 add missing cfdestinationsets HAL link type
+  * [e4cda08] MT#59835 /api/billingzones fix HAL ngcp:billingfees relation
+  * [c6aaadd] MT#56301 move lock_provisioning_voip_subscriber before underrun_lock
+  * [f247817] MT#60119 allow pbxfielddeveicepreferences to subscriberadmin role
+
+  [ Rene Krenn ]
+  * [14e5b91] MT#59748 drop ngcp-provisioning-template test dbhost
+  * [df670f5] MT#56301 set locklevel of created subscribers only if specified
+  * [941c75e] MT#59078 ?create_primary_acli= query param
+
+  [ Marco Capetta ]
+  * [8945b8a] MT#56301 Fix API creation of an active subscriber with lock
+  * [42f8747] MT#59749 Add use_redirection flag to Call Forwards configuration
+
+  [ Michael Prokop ]
+  * [c8766cd] MT#48844 Minor typo fixes
+
+  [ Donat Zenichev ]
+  * [844a9e5] MT#59011 Cleanup panel from the reference to "sip:localuser"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 22 May 2024 14:31:59 +0200
+
 ngcp-panel (12.4.0.0+0~mr12.4.0.0) unstable; urgency=medium
 
   [ Guillem Jover ]
