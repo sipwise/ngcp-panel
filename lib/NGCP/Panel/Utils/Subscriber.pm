@@ -1291,7 +1291,7 @@ sub update_subscriber_numbers {
 
     my $primary_number_old = defined $billing_subs->primary_number ? { $billing_subs->primary_number->get_inflated_columns } : undef;
 
-    my $old_pri_cli;
+    my $old_pri_cli = '';
     if (defined $billing_subs->primary_number) {
         my $old_cc = $billing_subs->primary_number->cc;
         my $old_ac = ($billing_subs->primary_number->ac // '');
@@ -1299,15 +1299,15 @@ sub update_subscriber_numbers {
         $old_pri_cli = $old_cc . ($old_ac // '') . $old_sn;
     }
 
-    my $new_pri_cli;
-    if ($primary_number && ref $primary_number eq 'HASH') {
+    my $new_pri_cli = '';
+    if ($primary_number && ref $primary_number eq 'HASH' && $primary_number->{cc}) {
         my $new_cc = $primary_number->{cc};
-        my $new_ac = $primary_number->{ac};
+        my $new_ac = $primary_number->{ac} // '';
         my $new_sn = $primary_number->{sn};
         $new_pri_cli = $new_cc . ($new_ac // '') . $new_sn;
     }
 
-    my $same_primary_number = $old_pri_cli && $new_pri_cli && $old_pri_cli eq $new_pri_cli;
+    my $same_primary_number = $old_pri_cli eq $new_pri_cli;
 
     my $acli_pref;
     $acli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
