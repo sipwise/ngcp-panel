@@ -29,9 +29,17 @@ sub auto :Private {
 
 sub end :Private {
     my ($self, $c) = @_;
+
+    if (my $accept = $c->request->header('Accept')) {
+        if ($accept eq 'application/json') {
+            $c->response->content_type($accept);
+        }
+    }
+
     if ($self->get_config('log_response')) {
         $self->log_response($c);
     }
+
     return 1;
 }
 
