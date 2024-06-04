@@ -108,9 +108,13 @@ sub _item_rs {
         }, {
             join => { 'contract' => 'contact' },
         });
-    } elsif ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+    } elsif($c->user->roles eq "subscriberadmin") {
         $item_rs = $item_rs->search({
-            'provisioning_voip_subscriber.id' => $c->user->id,
+            'me.contract_id' => $c->user->account_id,
+        });
+    } elsif($c->user->roles eq "subscriber") {
+        $item_rs = $item_rs->search_rs({
+            'me.uuid' => $c->user->uuid,
         });
     }
 
