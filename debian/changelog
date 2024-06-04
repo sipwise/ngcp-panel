@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.24+0~mr11.5.1.24) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [7295a51] MT#59363 /api/subscriberregistrations change socket field to Text
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 04 Jun 2024 18:01:54 +0200
+
 ngcp-panel (11.5.1.23+0~mr11.5.1.23) unstable; urgency=medium
 
   [ Marco Capetta ]
