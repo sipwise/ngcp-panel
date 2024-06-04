@@ -199,6 +199,11 @@ sub _item_rs {
             }, {
                 join => 'contact',
             });
+        } elsif ($c->user->roles eq 'subscriberadmin') {
+            $item_rs = $c->model('DB')->resultset('contracts')->search({
+                'me.id' => $c->user->account_id,
+                'me.status' => { '!=' => 'terminated' },
+            });
         }
     }
     return $item_rs;
