@@ -70,6 +70,7 @@ sub GET :Allow {
 
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $cf (@$cfs_rows) {
             try {
                 push @embedded, $self->hal_from_item($c, $cf, $form);
@@ -79,6 +80,7 @@ sub GET :Allow {
                 );
             }
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

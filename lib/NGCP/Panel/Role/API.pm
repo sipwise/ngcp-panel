@@ -1318,6 +1318,48 @@ sub hal_from_item {
     return $hal;
 }
 
+sub expand_prepare_collection {
+    my ($self, $c) = @_;
+
+    $c->stash->{expand_is_collection} = 1;
+}
+
+sub expand_collection_fields {
+    my ($self, $c, $embedded) = @_;
+
+    my $expand_cache = $c->stash->{expand_cache} // return;
+
+    my ($key_fields, $new_key_fields) = (0,0);
+    my $failsafe = 0;
+    my $max_failsafe = 100; # support max of 100 expand_field iterations
+
+    do {
+        $failsafe++;
+        $key_fields = keys %{$expand_cache};
+        $self->expand_check_prepared_cache($c);
+        for my $hal (@{$embedded}) {
+            $self->expand_fields($c, $hal->{resource});
+        }
+        $new_key_fields = keys %{$expand_cache};
+    } until ($key_fields == $new_key_fields || $failsafe == $max_failsafe);
+
+    #require Data::Dumper;
+    #print Data::Dumper->new([$expand_cache])->Terse(1)->Maxdepth(3)->Dump;
+}
+
+sub expand_check_prepared_cache {
+    my ($self, $c) = @_;
+
+    my $expand_cache = $c->stash->{expand_cache} // return;
+
+    for my $key_field (keys %{$expand_cache}) {
+        my $cache = $expand_cache->{$key_field};
+        next if $cache->{invalid};
+        $cache->{expanded} = 1 if $cache->{prepared};
+        $cache->{prepared} //= 1;
+    }
+}
+
 sub expand_fields {
     my ($self, $c, $resource) = @_;
 
@@ -1346,55 +1388,103 @@ sub expand_fields {
 }
 
 sub expand_field {
-    my ($self, $c, $resource, $resource_form, $field) = @_;
+    my ($self, $c, $resource, $resource_form, $field, $depth) = @_;
 
-    my ($subfield, $found);
-    if ($field =~ /^([^\.]+)\.(.+)/) {
-        $field = $1;
-        $subfield = $2;
+    $depth //= 0;
+    my ($pri_field, $key_field, $found);
+    my @fields = split(/\./, $field);
+    if (exists $fields[$depth]) {
+        $pri_field = $fields[$depth];
     }
+    my @parents = @fields;
+    my @sub_fields = splice(@parents, $depth);
+    shift @sub_fields; # remove current field
+    my $parent = join('.', @parents);
+    $key_field = $depth == 0 ? $pri_field : $parent . '.' . $pri_field;
 
-    return unless exists $resource->{$field};
+    return unless exists $resource->{$pri_field};
     $found = 1;
 
-    my $expand_form = NGCP::Panel::Form::get("NGCP::Panel::Form::Expand", $c);
+    my $cache = $c->stash->{expand_cache}{$key_field} //= {};
 
-    my ($attr, $expand);
-    my $f_field = $resource_form->field($field);
+    return if $cache->{invalid};
 
-    if ($f_field) {
-        $attr     = $f_field->element_attr;
-        $expand   = $attr->{expand};
+    my $expand_form = $cache->{expand_form} //=
+        NGCP::Panel::Form::get("NGCP::Panel::Form::Expand", $c);
+
+    my ($attr, $expand) = @{$cache}{qw(attr expand)};
+    if (!$attr || !$expand) {
+        if (my $f_field = $resource_form->field($pri_field)) {
+            $attr     = $f_field->element_attr;
+            $expand   = $attr->{expand};
+        }
+
+        if (!$expand) { # use default field expand if specified
+            if (my $f_field = $expand_form->field($pri_field)) {
+                $attr     = $f_field->element_attr;
+                $expand   = $attr->{expand};
+            }
+        }
+
+        if ($attr && $expand) {
+            $cache->{attr} = $attr;
+            $cache->{expand} = $expand;
+        } else {
+            $cache->{invalid} = 1;
+            return;
+        }
     }
 
-    unless ($expand) { # use default field expand if specified
-        $f_field  = $expand_form->field($field) // return;
-        $attr     = $f_field->element_attr // return;
-        $expand   = $attr->{expand} // return;
+    my ($to, $class, $form) = @{$cache}{qw(to class form)};
+    if (!$to || !$class || !$form) {
+        try {
+            die unless $expand->{allowed_roles};
+            die unless any { $c->user->roles eq $_ } @{$expand->{allowed_roles}};
+
+            $to = $expand->{to} // $pri_field . '_expand';
+            $class = $expand->{class} // die;
+            $form  = $class->get_form($c) // die;
+
+            $cache->{to} = $to;
+            $cache->{class} = $class;
+            $cache->{form} = $form;
+        } catch ($e) {
+            $cache->{invalid} = 1;
+            return;
+        }
     }
 
-    return unless $expand->{allowed_roles};
-    return unless any { $c->user->roles eq $_ } @{$expand->{allowed_roles}};
+    $cache->{parent} = $parent;
 
-    my $id = $resource->{$field} // return $found; # null value but the field exists
-    my $to = $expand->{to} // $field . '_expand';
-    my $class = $expand->{class} // return;
-    my $form  = $class->get_form($c) // return;
+    my $id;
+    if (exists $resource->{$pri_field}) {
+        $id = $resource->{$pri_field} // return $found;
+    } else {
+        return;
+    }
 
     if (ref $id eq 'ARRAY') {
         for (my $i=0; $i<=$#$id; $i++) {
             my $a_id = $id->[$i];
-            $resource->{$to}[$i] =
-                $self->get_expanded_field_data($c, $expand, $resource, $field, $class, $form, $a_id);
-            if ($subfield) {
-                $found = $self->expand_field($c, $resource->{$to}[$i], $form, $subfield);
+            if ($c->stash->{expand_is_collection} && !$cache->{prepared}) {
+                $cache->{ids}{$a_id} = 1;
+            } else {
+                $resource->{$to}[$i] =
+                    $self->get_expanded_field_data($c, $expand, $resource, $key_field, $a_id);
+            }
+            if (@sub_fields) {
+                $found = $self->expand_field($c, $resource->{$to}[$i], $form, $field, $depth+1);
             }
         }
     } else {
-        $resource->{$to} ||=
-            $self->get_expanded_field_data($c, $expand, $resource, $field, $class, $form, $id);
-        if ($subfield) {
-            $found = $self->expand_field($c, $resource->{$to}, $form, $subfield);
+        if ($c->stash->{expand_is_collection} && !$cache->{prepared}) {
+            $cache->{ids}{$id} = 1;
+        } else {
+            $resource->{$to} ||=
+                $self->get_expanded_field_data($c, $expand, $resource, $key_field, $id);
+        }
+        if (@sub_fields) {
+            $found = $self->expand_field($c, $resource->{$to}, $form, $field, $depth+1);
         }
     }
 
@@ -1402,9 +1492,30 @@ sub expand_field {
 }
 
 sub get_expanded_field_data {
-    my ($self, $c, $expand, $resource, $field, $class, $form, $id) = @_;
+    my ($self, $c, $expand, $resource, $key_field, $id) = @_;
 
-    my $item     = $class->item_by_id($c, $id) // return;
+    my $cache = $c->stash->{expand_cache}{$key_field} // return;
+
+    my ($class, $form) = @{$cache}{qw(class form)};
+
+    my $item;
+    if ($c->stash->{expand_is_collection}) {
+        return if !$cache->{prepared} && $cache->{expanded};
+
+        if (!$cache->{items_by_id} && $cache->{ids}) {
+            my %items_by_id = map { $_->id => $_ }
+                    $class->item_rs($c)->search({
+                        'me.id' => { '-in' => [keys %{$cache->{ids}}] },
+                    },{
+                        'order_by' => { '-asc' => 'id' },
+                    })->all();
+            $cache->{items_by_id} = \%items_by_id;
+        }
+
+        $item = $cache->{items_by_id}{$id} // return;
+    } else {
+        $item = $class->item_by_id($c, $id) // return;
+    }
 
     my $item_res = $class->resource_from_item($c, $item, $form);
     my $data     = $class->post_process_hal_resource($c, $item, $item_res, $form);

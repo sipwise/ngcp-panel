@@ -77,6 +77,7 @@ sub GET :Allow {
 
         (my $total_count, $ssets, my $ssets_rows) = $self->paginate_order_collection($c, $ssets);
         my (@embedded, @links);
+        $self->expand_prepare_collection($c);
         for my $sset (@$ssets_rows) {
             push @embedded, $self->hal_from_item($c, $sset, "cfsourcesets");
             push @links, Data::HAL::Link->new(
@@ -84,6 +85,7 @@ sub GET :Allow {
                 href     => sprintf('%s%d', $self->dispatch_path, $sset->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

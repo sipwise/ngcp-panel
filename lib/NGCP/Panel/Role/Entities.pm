@@ -211,10 +211,12 @@ sub get {
         (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my ($form) = $self->get_form($c);
+        $self->expand_collection_fields($c, \@embedded);
         for my $item (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $item, $form, {});
             push @links, grep { $_->relation->_original eq 'ngcp:'.$self->resource_name } @{$embedded[-1]->links};
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
