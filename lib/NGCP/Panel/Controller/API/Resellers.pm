@@ -68,6 +68,7 @@ sub GET :Allow {
         (my $total_count, $resellers, my $resellers_rows) = $self->paginate_order_collection($c, $resellers);
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $reseller (@$resellers_rows) {
             push @embedded, $self->hal_from_reseller($c, $reseller, $form);
             push @links, Data::HAL::Link->new(
@@ -75,6 +76,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%d', $c->request->path, $reseller->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

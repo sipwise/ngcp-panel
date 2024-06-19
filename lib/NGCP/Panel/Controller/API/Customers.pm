@@ -158,6 +158,7 @@ sub GET :Allow {
             contract_id_field => 'id');
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $customer (@$customers) {
             push @embedded, $self->hal_from_customer($c, $customer, $form, $now);
             push @links, Data::HAL::Link->new(
@@ -165,6 +166,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%d', $c->request->path, $customer->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         $self->delay_commit($c,$guard); #potential db write ops in hal_from
         push @links,
             Data::HAL::Link->new(

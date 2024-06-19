@@ -66,6 +66,7 @@ sub GET :Allow {
         my $subscribers = $self->item_rs($c);
         (my $total_count, $subscribers, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers);
         my (@embedded, @links);
+        $self->expand_prepare_collection($c);
         for my $subscriber (@$subscribers_rows) {
             push @embedded, $self->hal_from_item($c, $subscriber);
             push @links, Data::HAL::Link->new(
@@ -73,6 +74,7 @@ sub GET :Allow {
                 href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

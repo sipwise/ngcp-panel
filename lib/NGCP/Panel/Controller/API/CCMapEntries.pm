@@ -50,6 +50,7 @@ sub GET :Allow {
         my $cfs = $self->item_rs($c);
         (my $total_count, $cfs, my $cfs_rows) = $self->paginate_order_collection($c, $cfs);
         my (@embedded, @links);
+        $self->expand_prepare_collection($c);
         for my $cf (@$cfs_rows) {
             try {
                 push @embedded, $self->hal_from_item($c, $cf, "ccmapentries");
@@ -59,6 +60,7 @@ sub GET :Allow {
                 );
             }
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
