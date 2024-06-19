@@ -99,6 +99,7 @@ sub GET :Allow {
             contract_id_field => 'id');
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $contract (@$contracts) {
             #NGCP::Panel::Utils::ProfilePackages::get_contract_balance
             push @embedded, $self->hal_from_item($c, $contract, $form, { now => $now });
@@ -107,6 +108,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%d', $c->request->path, $contract->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         $self->delay_commit($c,$guard); #potential db write ops in hal_from
         push @links,
             Data::HAL::Link->new(

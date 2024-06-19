@@ -79,6 +79,7 @@ sub GET :Allow {
         return unless $query_string;
         my (@embedded, @links);
         my $error_flag = 0;
+        $self->expand_prepare_collection($c);
         for my $dev (@$field_devs_rows) {
             my $hal = $self->hal_from_item($c, $dev);
             $error_flag = 1 unless $hal;
@@ -89,6 +90,7 @@ sub GET :Allow {
             );
         }
         last if $error_flag;
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

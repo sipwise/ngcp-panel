@@ -81,6 +81,7 @@ sub GET :Allow {
 
         (my $total_count, $bns, my $bns_rows) = $self->paginate_order_collection($c, $bns);
         my (@embedded, @links);
+        $self->expand_prepare_collection($c);
         for my $bn (@$bns_rows) {
             push @embedded, $self->hal_from_item($c, $bn, "billingnetworks");
             push @links, Data::HAL::Link->new(
@@ -88,6 +89,7 @@ sub GET :Allow {
                 href     => sprintf('%s%d', $self->dispatch_path, $bn->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

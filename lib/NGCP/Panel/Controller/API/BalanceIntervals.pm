@@ -99,6 +99,7 @@ sub GET :Allow {
             contract_id_field => 'id');
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $contract (@$contracts) {
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $contract,
@@ -112,6 +113,7 @@ sub GET :Allow {
             push @links, $link;
             #push @links, Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/%d/", $self->resource_name, $contract->id));
         }
+        $self->expand_collection_fields($c, \@embedded);
         $self->delay_commit($c,$guard);
         push @links,
             Data::HAL::Link->new(

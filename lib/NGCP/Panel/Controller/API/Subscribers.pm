@@ -322,6 +322,7 @@ sub GET :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links, %contract_map);
         my ($form) = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $subscriber (@$subscribers) {
             my $contract = $subscriber->contract;
             NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
@@ -335,6 +336,7 @@ sub GET :Allow {
                 href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         $self->delay_commit($c,$guard);
         push @links,
             Data::HAL::Link->new(

@@ -73,6 +73,7 @@ sub GET :Allow {
         (my $total_count, $profiles, my $profiles_rows) = $self->paginate_order_collection($c, $profiles);
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $profile (@$profiles_rows) {
             push @embedded, $self->hal_from_item($c, $profile, $self->resource_from_item($c, $profile, $form), $form);
             push @links, Data::HAL::Link->new(
@@ -80,6 +81,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%d', $c->request->path, $profile->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

@@ -97,6 +97,7 @@ sub GET :Allow {
             contract_id_field => 'contract_id');
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links, %contract_map);
+        $self->expand_prepare_collection($c);
         for my $subscriber (@$subscribers) {
             next unless($subscriber->provisioning_voip_subscriber);
             my $contract = $subscriber->contract;
@@ -110,6 +111,7 @@ sub GET :Allow {
                 href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         $self->delay_commit($c,$guard);
         push @links,
             Data::HAL::Link->new(

@@ -98,6 +98,7 @@ sub GET :Allow {
         #$t2 = time; print("page: " . ($t2 - $t1) . "secs\n"); $t1 = time;
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $item (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
@@ -105,6 +106,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%d', $c->request->path, $item->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

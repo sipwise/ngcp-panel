@@ -178,6 +178,7 @@ sub GET :Allow {
         (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $item (@$items_rows) {
             my $hal = $self->hal_from_item($c, $item, $form);
             $hal->_forcearray(1);
@@ -189,6 +190,7 @@ sub GET :Allow {
             $link->_forcearray(1);
             push @links, $link;
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

@@ -66,6 +66,7 @@ sub GET :Allow {
         (my $total_count, $zones, my $zones_rows) = $self->paginate_order_collection($c, $zones);
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        $self->expand_prepare_collection($c);
         for my $zone (@$zones_rows) {
             push @embedded, $self->hal_from_zone($c, $zone, $form);
             push @links, Data::HAL::Link->new(
@@ -73,6 +74,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%d', $c->request->path, $zone->id),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',

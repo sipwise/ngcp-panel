@@ -321,6 +321,7 @@ sub GET :Allow {
         my $href_data = $owner->{subscriber} ?
             "subscriber_id=".$owner->{subscriber}->id :
             "customer_id=".$owner->{customer}->id;
+        $self->expand_prepare_collection($c);
         for my $item (@$items_rows) {
             push @embedded, $self->hal_from_item($c, $item, $form, { 'owner' => $owner });
             push @links, Data::HAL::Link->new(
@@ -328,6 +329,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%d?%s', $c->request->path, $item->id, $href_data),
             );
         }
+        $self->expand_collection_fields($c, \@embedded);
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
