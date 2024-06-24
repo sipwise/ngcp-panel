@@ -1109,7 +1109,7 @@ sub apply_query_params {
         my $p = $param;
         $p = $p->{param} if ref $p;
         my $q = $c->req->query_params->{$p};
-        $q = undef if $q eq "NULL"; # IS NULL translation
+        $q = undef if $q && !is_int($q) && ($q eq "NULL" or $q eq "null"); # IS NULL translation
         next unless ref $param; # skip unknown query parameters
         next unless($param->{query} || $param->{query_type} || $param->{new_rs}); # skip dummy query parameters
         if (defined $param->{new_rs}) {
