@@ -27,7 +27,7 @@ sub query_params {
             query => {
                 first => sub {
                     my $q = shift;
-                    return { 'me.contract_id' => lc($q) eq 'null' ? undef : $q };
+                    return { 'me.contract_id' => $q };
                 },
                 second => sub {},
             },
