@@ -52,6 +52,14 @@ sub resource_from_item {
     return $resource;
 }
 
+sub pre_process_form_resource {
+    my ($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    if ($c->user->roles eq 'reseller') {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    }
+    return $resource;
+}
+
 sub process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     my ($resource_from_upload,$fails, $text_success);
