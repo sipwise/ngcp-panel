@@ -49,7 +49,10 @@ sub relation{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin/],
+    allowed_roles => {
+        'Default' => [qw/admin/],
+        'GET'     => [qw/admin reseller/],
+    },
 });
 
 sub GET :Allow {
