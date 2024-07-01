@@ -1,3 +1,21 @@
+ngcp-panel (9.5.10.0+0~mr9.5.10.0) unstable; urgency=medium
+
+  [ Fabricio Santolin da Silva ]
+  * [b373d38] MT#58468 Fix special characters incorrectly interpreted by paps
+
+  [ Marco Capetta ]
+  * [9faa152] MT#54356 Fix swagger documentation for 'calllist' api
+  * [919e9a5] MT#56301 Fix API creation of an active subscriber with lock
+
+  [ Kirill Solomko ]
+  * [fa03daa] MT#59835 /api/billingzones fix HAL ngcp:billingfees relation
+  * [ccf87f0] MT#56301 move lock_provisioning_voip_subscriber before underrun_lock
+
+  [ Rene Krenn ]
+  * [98934dc] MT#56301 set locklevel of created subscribers only if specified
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Jul 2024 15:43:55 +0200
+
 ngcp-panel (9.5.9.0+0~mr9.5.9.0) unstable; urgency=medium
 
   [ Marco Capetta ]
