@@ -17,10 +17,12 @@ PIDFile=/run/fastcgi/ngcp-panel.pid
 ExecStart=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl --listen /run/fastcgi/ngcp-panel.sock --pidfile /run/fastcgi/ngcp-panel.pid --nproc $NPROC
 
 # Files + directories not directly associated are made invisible in the /proc/ file system
-ProcSubset=pid
+# ProcSubset=pid
+# Disabled: MT#58964, to be able to read /proc/ngcp/flags/
 
 # Processes owned by other users are hidden from /proc/
-ProtectProc=invisible
+# ProtectProc=invisible
+# Disabled: MT#58964, to be able to read /proc/ngcp/flags/
 
 # Service cannot modify the control group file system (via /sys/fs/cgroup)
 ProtectControlGroups=true

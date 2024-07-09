@@ -9,7 +9,7 @@ use HTTP::Headers qw();
 use HTTP::Response qw();
 use HTTP::Status qw(:constants);
 use File::Find::Rule;
-use JSON qw(to_json encode_json);
+use JSON qw(to_json encode_json decode_json);
 use YAML::XS qw/Dump/;
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API;
@@ -17,6 +17,7 @@ use List::Util qw(none);
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
 use NGCP::Panel::Utils::Journal qw();
+use NGCP::Panel::Utils::License;
 
 #with 'NGCP::Panel::Role::API';
 
@@ -342,6 +343,17 @@ sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
 
     $c->stash->{ngcp_api_realm} = $c->request->env->{NGCP_API_REALM} // "";
     $c->stash(template => 'api/platforminfo.tt');
+    $c->stash(process_json_file_cb => sub {
+        my $json_file = shift;
+        my $json = '';
+        my $licenses = NGCP::Panel::Utils::License::get_licenses($c);
+        open(my $fh, '<', $json_file) || return;
+        $json .= $_ while <$fh>;
+        close $fh;
+        my $data = decode_json($json) || return;
+        $data->{licenses} = $licenses;
+        return to_json($data, {pretty => 1, canonical => 1});
+    });
     $c->forward($c->view());
 }
 

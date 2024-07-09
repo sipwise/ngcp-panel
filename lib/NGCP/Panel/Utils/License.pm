@@ -53,6 +53,37 @@ sub is_license_error {
     return $ext || $status;
 }
 
+sub get_licenses {
+    my $c = shift;
+
+    my $proc_dir = '/proc/ngcp/flags';
+    unless (-d $proc_dir) {
+        $c->log->error("Failed to access $proc_dir");
+        return;
+    };
+
+    my @lics = ();
+    opendir(my $dh, $proc_dir) || do {
+        $c->log->error("Failed to open licenses dir $proc_dir: $!");
+        return;
+    };
+    while (readdir($dh)) {
+        my $lf = $_;
+        next if $lf =~ /^\.+$/;
+        open(my $fh, '<', "$proc_dir/$lf") || do {
+            $c->log->error("Failed to open license file $lf: $!");
+            next;
+        };
+        my $enabled = <$fh>;
+        chomp($enabled) if $enabled;
+        push @lics, $lf if $enabled && $enabled == 1;
+        close $fh;
+    }
+    closedir $dh;
+    my @sorted_lics = sort @lics;
+    return \@sorted_lics;
+}
+
 1;
 
 =head1 NAME
