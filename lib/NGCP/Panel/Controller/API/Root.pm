@@ -347,11 +347,13 @@ sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
         my $json_file = shift;
         my $json = '';
         my $licenses = NGCP::Panel::Utils::License::get_licenses($c);
+        my $license_meta = NGCP::Panel::Utils::License::get_license_meta($c);
         open(my $fh, '<', $json_file) || return;
         $json .= $_ while <$fh>;
         close $fh;
         my $data = decode_json($json) || return;
-        $data->{licenses} = $licenses;
+        $data->{licenses} = $licenses // [];
+        $data->{license_meta} = $license_meta // {};
         return to_json($data, {pretty => 1, canonical => 1});
     });
     $c->forward($c->view());

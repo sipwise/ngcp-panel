@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Sipwise::Base;
+use List::Util qw(none);
 
 sub get_license_status {
     my ($ref) = @_;
@@ -75,13 +76,60 @@ sub get_licenses {
             next;
         };
         my $enabled = <$fh>;
-        chomp($enabled) if $enabled;
+        chomp($enabled) if defined $enabled;
         push @lics, $lf if $enabled && $enabled == 1;
         close $fh;
     }
     closedir $dh;
     my @sorted_lics = sort @lics;
     return \@sorted_lics;
+}
+
+sub get_license_meta {
+    my $c = shift;
+
+    my $proc_dir = '/proc/ngcp';
+    unless (-d $proc_dir) {
+        $c->log->error("Failed to access $proc_dir");
+        return;
+    };
+
+    my $meta = {};
+    my @collect = qw(
+        check
+        current_calls
+        current_pbx_groups
+        current_pbx_subscribers
+        current_registered_subscribers
+        current_subscribers
+        license_valid_until
+        max_calls
+        max_pbx_groups
+        max_pbx_subscribers
+        max_registered_subscribers
+        max_subscribers
+        valid
+    );
+
+    opendir(my $dh, $proc_dir) || do {
+        $c->log->error("Failed to open ngcp dir $proc_dir: $!");
+        return;
+    };
+    while (readdir($dh)) {
+        my $lf = $_;
+        next if $lf =~ /^\.+$/;
+        next if none { $lf eq $_ } @collect;
+        open(my $fh, '<', "$proc_dir/$lf") || do {
+            $c->log->error("Failed to open license file $lf: $!");
+            next;
+        };
+        my $value = <$fh>;
+        chomp($value) if defined $value;
+        $meta->{$lf} = $value =~ /^-?\d+(\.\d+)?$/ ? $value+0 : $value;
+        close $fh;
+    }
+    closedir $dh;
+    return $meta;
 }
 
 1;
