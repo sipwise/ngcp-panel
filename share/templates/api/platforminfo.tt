@@ -16,7 +16,11 @@ ELSE;
 END;
 
 TRY;
-    json = c.stash.process_json_file_cb(json_file);
+    IF !c.user_exists;
+        INCLUDE $json_file;
+    ELSE;
+        json = c.stash.process_json_file_cb(json_file);
+    END;
 CATCH;
     json = '{"error": "an internal error when fetching the config data"}';
 END;
