@@ -35,6 +35,7 @@ has_field 'direction' => (
         { label => 'Local', value => 'local' },
         { label => 'Peer', value => 'peer' },
         { label => 'Outbound', value => 'outbound' },
+        { label => 'B-Leg Outbound', value => 'b_outbound' },
         { label => 'Call Forward Inbound', value => 'cf_inbound' },
         { label => 'Call Forward Outbound', value => 'cf_outbound' },
         { label => 'Reply', value => 'reply' },
