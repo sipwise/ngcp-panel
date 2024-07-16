@@ -1105,11 +1105,18 @@ sub apply_query_params {
         return $item_rs;
     }
 
+    my $form = $self->get_form($c);
+
     foreach my $param (reverse _get_sorted_query_params($c,$query_params)) {
         my $p = $param;
         $p = $p->{param} if ref $p;
         my $q = $c->req->query_params->{$p};
-        $q = undef if $q && !is_int($q) && ($q eq "NULL" or $q eq "null"); # IS NULL translation
+        my $is_null = $q && !is_int($q) && lc($q) eq '$null';
+        my $is_not_null = $q && !is_int($q) && lc($q) eq '$not_null';
+        if ($is_null || $is_not_null) {
+            $q = undef if $is_null; # IS NULL translation
+            $q = { '!=' => undef } if $is_not_null; # IS NOT NULL translation
+        }
         next unless ref $param; # skip unknown query parameters
         next unless($param->{query} || $param->{query_type} || $param->{new_rs}); # skip dummy query parameters
         if (defined $param->{new_rs}) {
