@@ -31,10 +31,10 @@ has_field 'priority' => (
 has_field 'direction' => (
     type => 'Select',
     options => [
-        { label => 'Inbound', value => 'inbound' },
+        { label => 'A-Leg Inbound', value => 'a_inbound' },
         { label => 'Local', value => 'local' },
         { label => 'Peer', value => 'peer' },
-        { label => 'Outbound', value => 'outbound' },
+        { label => 'A-Leg Outbound', value => 'a_outbound' },
         { label => 'B-Leg Outbound', value => 'b_outbound' },
         { label => 'Call Forward Inbound', value => 'cf_inbound' },
         { label => 'Call Forward Outbound', value => 'cf_outbound' },
