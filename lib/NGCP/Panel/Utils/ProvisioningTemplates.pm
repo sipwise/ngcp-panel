@@ -785,13 +785,14 @@ sub _init_contract_context {
         }
         $context->{contract_contact} = \%contract_contact;
         if (scalar @identifiers) {
-            my $e = $schema->resultset('contacts')->search_rs({
-                map { $_ => $contract_contact{$_}; } @identifiers
-            })->first;
-            if ($e and 'terminated' ne $e->status) {
-                $contract_contact{id} = $e->id;
-            } else {
-                delete $contract_contact{id};
+            delete $contract_contact{id};
+            foreach my $e ($schema->resultset('contacts')->search_rs({
+                    map { $_ => $contract_contact{$_}; } @identifiers
+                })->all) {
+                if ('terminated' ne $e->status) {
+                    $contract_contact{id} = $e->id;
+                    last;
+                }
             }
         } else {
             delete $contract_contact{id};
@@ -863,13 +864,14 @@ sub _init_contract_context {
 
         $context->{contract} = \%contract;
         if (scalar @identifiers) {
-            my $e = $schema->resultset('contracts')->search_rs({
-                map { $_ => $contract{$_}; } @identifiers
-            })->first;
-            if ($e and 'terminated' ne $e->status) {
-                $contract{id} = $e->id;
-            } else {
-                delete $contract{id};
+            delete $contract{id};
+            foreach my $e ($schema->resultset('contracts')->search_rs({
+                    map { $_ => $contract{$_}; } @identifiers
+                })->all) {
+                if ('terminated' ne $e->status) {
+                    $contract{id} = $e->id;
+                    last;
+                }
             }
         } else {
             delete $contract{id};
@@ -930,15 +932,17 @@ sub _init_subscriber_context {
         
         my $item;
         if (scalar @identifiers) {
-            $item = $schema->resultset('voip_subscribers')->search_rs({
-                map { $_ => $subscriber{$_}; } @identifiers
-            },{
-                join => 'domain',
-            })->first;
-            if ($item and 'terminated' ne $item->status) {
-                $subscriber{id} = $item->id;
-            } else {
-                delete $subscriber{id};
+            delete $subscriber{id};
+            foreach my $e ($schema->resultset('voip_subscribers')->search_rs({
+                    map { $_ => $subscriber{$_}; } @identifiers
+                },{
+                    #join => 'domain',
+                })->all) {
+                if ('terminated' ne $e->status) {
+                    $subscriber{id} = $e->id;
+                    $item = $e;
+                    last;
+                }
             }
         } else {
             delete $subscriber{id};
