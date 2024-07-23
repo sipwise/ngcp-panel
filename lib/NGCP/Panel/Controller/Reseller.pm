@@ -73,7 +73,7 @@ sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDet
     return;
 }
 
-sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(License) :RequiresLicense('reseller') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
@@ -136,7 +136,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
     $c->stash(form => $form);
 }
 
-sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('list_reseller_restricted') :PathPart('') :CaptureArgs(1) :Does(License) :RequiresLicense('reseller') :LicenseDetachTo('/denied_page') {
     my ($self, $c, $reseller_id) = @_;
 
     unless($reseller_id && is_int($reseller_id)) {
@@ -410,7 +410,7 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
     $c->detach( $c->view("JSON") );
 }
 
-sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+sub create_defaults :Path('create_defaults') :Args(0) :Does(License) :RequiresLicense('reseller') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     $c->detach('/denied_page') unless $c->request->method eq 'POST';
     $c->detach('/denied_page')
@@ -754,7 +754,7 @@ sub phonebook_root :Chained('base_details') :PathPart('phonebook') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub phonebook_create :Chained('base_details') :PathPart('phonebook/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub phonebook_create :Chained('base_details') :PathPart('phonebook/create') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller)  {
     my ($self, $c) = @_;
 
     my $reseller = $c->stash->{reseller}->first;
@@ -803,7 +803,7 @@ sub phonebook_create :Chained('base_details') :PathPart('phonebook/create') :Arg
     );
 }
 
-sub phonebook_base :Chained('base_details') :PathPart('phonebook') :CaptureArgs(1) {
+sub phonebook_base :Chained('base_details') :PathPart('phonebook') :CaptureArgs(1) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c, $phonebook_id) = @_;
 
     unless($phonebook_id && is_int($phonebook_id)) {
@@ -902,7 +902,7 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) :Do
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/reseller/details", [$reseller->id]));
 }
 
-sub phonebook_upload_csv :Chained('base_details') :PathPart('phonebook_upload_csv') :Args(0) {
+sub phonebook_upload_csv :Chained('base_details') :PathPart('phonebook_upload_csv') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     my $reseller = $c->stash->{reseller}->first;
@@ -920,7 +920,7 @@ sub phonebook_upload_csv :Chained('base_details') :PathPart('phonebook_upload_cs
     return;
 }
 
-sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') :Args(0) {
+sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     my $reseller = $c->stash->{reseller}->first;

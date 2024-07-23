@@ -42,6 +42,7 @@ sub get_journal_methods{
 }
 
 __PACKAGE__->set_config({
+    required_licenses => [qw/batch_provisioning/],
     action_add  => {
         item_base => {
             Chained => '/',

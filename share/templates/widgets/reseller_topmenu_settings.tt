@@ -35,19 +35,25 @@
         <li><a href="[% c.uri_for('/domain') %]">[% c.loc('Domains') %]</a></li>
         <li><a href="[% c.uri_for('/subscriber') %]">[% c.loc('Subscribers') %]</a></li>
         <li><a href="[% c.uri_for('/subscriberprofile') %]">[% c.loc('Subscriber Profiles') %]</a></li>
+        [% IF c.license('billing') -%]
         <li><a href="[% c.uri_for('/billing') %]">[% c.loc('Billing') %]</a></li>
         <li><a href="[% c.uri_for('/network') %]">[% c.loc('Billing Networks') %]</a></li>
         <li><a href="[% c.uri_for('/package') %]">[% c.loc('Profile Packages') %]</a></li>
+        [% END -%]
+        [% IF c.license('invoice') -%]
         <li><a href="[% c.uri_for('/invoicetemplate') %]">[% c.loc('Invoice Templates') %]</a></li>
         <li><a href="[% c.uri_for('/invoice') %]">[% c.loc('Invoices') %]</a></li>
+        [% END -%]
+        [% IF c.license('billing') -%]
         [% IF c.config.features.voucher -%]
         <li><a href="[% c.uri_for('/voucher') %]">[% c.loc('Vouchers') %]</a></li>
+        [% END -%]
         [% END -%]
         <li><a href="[% c.uri_for('/rewrite') %]">[% c.loc('Rewrite Rule Sets') %]</a></li>
         <li><a href="[% c.uri_for('/ncos') %]">[% c.loc('NCOS Levels') %]</a></li>
         <li><a href="[% c.uri_for('/sound') %]">[% c.loc('Sound Sets') %]</a></li>
         <li><a href="[% c.uri_for('/emailtemplate') %]">[% c.loc('Email Templates') %]</a></li>
-        [% IF c.config.features.cloudpbx -%]
+        [% IF c.license('pbx') && c.license('device_provisioning') && c.config.features.cloudpbx -%]
         <li><a href="[% c.uri_for('/device') %]">[% c.loc('Device Management') %]</a></li>
         [% END -%]
         [% IF c.config.features.malicious_call -%]
@@ -55,7 +61,9 @@
         [% END -%]
         <li><a href="[% c.uri_for('/emergencymapping') %]">[% c.loc('Emergency Mappings') %]</a></li>
         [% IF c.config.general.ngcp_type != 'spce' -%]
+        [% IF c.license('phonebook') -%]
         <li><a href="[% c.uri_for('/phonebook') %]">[% c.loc('Phonebook') %]</a></li>
+        [% END -%]
         [% END -%]
     </ul>
 </li>

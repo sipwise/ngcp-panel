@@ -415,7 +415,7 @@ $( document ).ready(function() {
     </div>
     [% END -%]
 
-    [% IF c.config.features.faxserver  && (
+    [% IF c.license('fax') && c.config.features.faxserver  && (
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.fax_server.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" ||
@@ -660,7 +660,7 @@ $( document ).ready(function() {
         </div>
     </div>
     [% END -%]
-    [% IF c.config.features.cloudpbx && subscriber.contract.product.class == 'pbxaccount' && (
+    [% IF c.license('pbx') && c.config.features.cloudpbx && subscriber.contract.product.class == 'pbxaccount' && (
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.auto_attendant.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" ||
@@ -971,6 +971,7 @@ $( document ).ready(function() {
 [% END -%]
 
 [% IF c.config.general.ngcp_type != 'spce' -%]
+[% IF c.license('header_manipulation') -%]
 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -1021,6 +1022,7 @@ $( document ).ready(function() {
             </div>
         </div>
     </div>
+[% END -%]
 [% END -%]
 [% END -%]
 

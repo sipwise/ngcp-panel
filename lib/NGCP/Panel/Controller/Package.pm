@@ -36,7 +36,7 @@ sub package_list :Chained('/') :PathPart('package') :CaptureArgs(0) :Does(ACL) :
               template => 'package/list.tt');
 }
 
-sub package_list_restricted :Chained('package_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub package_list_restricted :Chained('package_list') :PathPart('') :CaptureArgs(0) :Does(License) :RequiresLicense('billing') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 

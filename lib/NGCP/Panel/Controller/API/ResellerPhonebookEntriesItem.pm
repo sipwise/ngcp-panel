@@ -8,6 +8,7 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::ResellerPh
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
     allowed_ngcp_types => [qw/carrier sppro/],
+    required_licenses => [qw/phonebook/],
 });
 
 sub allowed_methods{

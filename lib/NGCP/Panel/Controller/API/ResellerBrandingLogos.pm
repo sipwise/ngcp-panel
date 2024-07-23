@@ -10,6 +10,9 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::ResellerBrandi
 __PACKAGE__->set_config({
     log_response  => 0,
     allowed_roles => [qw/admin reseller subscriberadmin/],
+    required_licenses => {
+        POST => [qw/reseller/],
+    }
 });
 
 sub allowed_methods {

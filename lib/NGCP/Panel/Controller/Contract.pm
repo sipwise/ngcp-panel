@@ -139,6 +139,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Peering", $c);
         $is_peering_reseller = 1;
     } elsif ( NGCP::Panel::Utils::Contract::is_reseller_product( c => $c, product => $contract->product ) ) {
+        if (!$c->license('reseller')) {
+             $c->detach('/denied_page');
+            return;
+        }
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Reseller", $c);
         $is_peering_reseller = 1;
     } else {
@@ -252,6 +256,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my ($self, $c) = @_;
     my $contract = $c->stash->{contract};
+
+    if ( NGCP::Panel::Utils::Contract::is_reseller_product( c => $c, product => $contract->product ) ) {
+        if (!$c->license('reseller')) {
+                $c->detach('/denied_page');
+            return;
+        }
+    }
 
     if ($contract->id == 1) {
         NGCP::Panel::Utils::Message::error(
@@ -490,7 +501,7 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
     $c->detach( $c->view("JSON") );
 }
 
-sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
+sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) :Does(License) :RequiresLicense('batch_provisioning') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');

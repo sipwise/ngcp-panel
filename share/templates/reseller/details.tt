@@ -429,6 +429,7 @@
     </div>
 
     [% IF c.config.general.ngcp_type != 'spce' -%]
+    [% IF c.license('phonebook') -%]
     [% IF c.user.roles == "admin" || c.user.roles == "reseller" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -467,6 +468,7 @@
             </div>
         </div>
     </div>
+    [% END -%]
 
     <div class="accordion-group">
         <div class="accordion-heading">

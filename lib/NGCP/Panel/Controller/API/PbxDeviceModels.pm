@@ -19,7 +19,8 @@ __PACKAGE__->set_config({
     allowed_roles => {
         'Default' => [qw/admin reseller subscriberadmin subscriber/],
         'POST'    => [qw/admin reseller/],
-    }
+    },
+    required_licenses => [qw/pbx device_provisioning/],
 });
 
 # curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.png -F mac_image=@sandbox/spa504g-back.png -F front_thumbnail=@sandbox/spa504g-front-small.png -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "can_private":true, "can_shared":true, "can_blf":true, "can_speeddial":true, "can_forward":true, "can_transfer":true, "keys":[{"labelpos":"top", "x":5110, "y":5120},{"labelpos":"top", "x":5310, "y":5320}]}]}' https://localhost:4443/api/pbxdevicemodels/

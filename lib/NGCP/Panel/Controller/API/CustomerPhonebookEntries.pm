@@ -15,6 +15,7 @@ __PACKAGE__->set_config({
     },
     allowed_roles   => [qw/admin reseller subscriberadmin/],
     allowed_ngcp_types => [qw/carrier sppro/],
+    required_licenses => [qw/phonebook/],
 });
 
 sub allowed_methods {

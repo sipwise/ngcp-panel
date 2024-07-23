@@ -11,7 +11,7 @@ use NGCP::Panel::Utils::Rewrite;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::HeaderManipulations;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Does(License) :RequiresLicense('header_manipulation') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     my $ngcp_type = $c->config->{general}{ngcp_type} // '';

@@ -50,6 +50,10 @@ sub inv_list :Chained('/') :PathPart('invoice') :CaptureArgs(0) :Does(ACL) :ACLD
     $c->stash(template => 'invoice/invoice_list.tt');
 }
 
+sub inv_list_restricted :Chained('/') :PathPart('invoice') :CaptureArgs(0) :Does(License) :RequiresLicense('invoice') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+}
+
 sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {
     my ( $self, $c, $contract_id ) = @_;
 
@@ -118,7 +122,7 @@ sub customer_ajax :Chained('customer_inv_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('inv_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('inv_list_restricted') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $inv_id) = @_;
 
     unless($inv_id && is_int($inv_id)) {
@@ -142,7 +146,7 @@ sub base :Chained('inv_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(inv => $res);
 }
 
-sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub create :Chained('inv_list_restricted') :PathPart('create') :Args() :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');

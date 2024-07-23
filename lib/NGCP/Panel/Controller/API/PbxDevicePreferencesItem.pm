@@ -10,7 +10,8 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller/],
         Journal => [qw/admin reseller/],
-    }
+    },
+    required_licenses => [qw/pbx device_provisioning/],
 });
 
 sub allowed_methods{

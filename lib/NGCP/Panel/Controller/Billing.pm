@@ -38,7 +38,7 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Does(ACL) :
     $c->stash(template => 'billing/list.tt');
 }
 
-sub profile_list_restricted :Chained('profile_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub profile_list_restricted :Chained('profile_list') :PathPart('') :CaptureArgs(0) :Does(License) :RequiresLicense('billing') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 

@@ -73,10 +73,16 @@ $( document ).ready(function() {
             { name = c.loc('Edit'), uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Terminate'), uri = "/contract/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
         ];
-        helper.top_buttons = [
-            { name = c.loc('Create Peering Contract'), uri = c.uri_for_action('/contract/peering_create'), icon = 'icon-star' },
-            { name = c.loc('Create Reseller Contract'), uri = c.uri_for_action('/contract/reseller_create'), icon = 'icon-star' },
-        ];
+        IF c.license('reseller');
+            helper.top_buttons = [
+                { name = c.loc('Create Peering Contract'), uri = c.uri_for_action('/contract/peering_create'), icon = 'icon-star' },
+                { name = c.loc('Create Reseller Contract'), uri = c.uri_for_action('/contract/reseller_create'), icon = 'icon-star' },
+            ];
+        ELSE;
+            helper.top_buttons = [
+                { name = c.loc('Create Peering Contract'), uri = c.uri_for_action('/contract/peering_create'), icon = 'icon-star' },
+            ];
+        END;
     END;
 
     PROCESS 'helpers/datatables.tt';

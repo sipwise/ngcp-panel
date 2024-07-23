@@ -39,7 +39,7 @@ sub template_list :Chained('/') :PathPart('invoicetemplate') :CaptureArgs(0) :Do
     $c->stash(template => 'invoice/template_list.tt');
 }
 
-sub template_list_restricted :Chained('template_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub template_list_restricted :Chained('template_list') :PathPart('') :CaptureArgs(0) :Does(License) :RequiresLicense('invoice') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 

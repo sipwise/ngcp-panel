@@ -167,6 +167,7 @@ sub relation{
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller/],
+    required_licenses => [qw/billing/],
 });
 
 sub GET :Allow {

@@ -242,7 +242,7 @@ sub prepare_resource {
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
     } elsif ($c->user->roles eq "subscriberadmin") {
-        if ( $c->config->{features}->{cloudpbx} && $c->user->contract->product->class eq 'pbxaccount') {
+        if ( $c->license('pbx') && $c->config->{features}->{cloudpbx} && $c->user->contract->product->class eq 'pbxaccount') {
             my $pilot = $schema->resultset('provisioning_voip_subscribers')->search({
                 account_id => $c->user->account_id,
                 is_pbx_pilot => 1,
@@ -431,7 +431,7 @@ sub prepare_resource {
             delete $resource->{$pref};
         }
         $admin = $resource->{admin} // 0;
-    } elsif($c->config->{features}->{cloudpbx}) {
+    } elsif($c->license('pbx') && $c->config->{features}->{cloudpbx}) {
         $preferences->{cloud_pbx} = 1;
         my $subs = $c->model('DB')->resultset('voip_subscribers')->search({
             contract_id => $customer->id,
@@ -617,7 +617,7 @@ sub create_subscriber {
     my $prov_domain = $schema->resultset('voip_domains')
             ->find({domain => $billing_domain->domain});
 
-    if (my $status = NGCP::Panel::Utils::License::is_license_error()) {
+    if (my $status = NGCP::Panel::Utils::License::is_license_error($c)) {
         $c->log->warn("invalid license status: $status");
         # die("invalid license status: $status");
     }
@@ -2512,7 +2512,7 @@ sub create_cf_destination{
 
 sub get_subscriber_pbx_status{
     my($c, $subscriber) = @_;
-    if($c->config->{features}->{cloudpbx}) {
+    if($c->license('pbx') && $c->config->{features}->{cloudpbx}) {
         my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c,
             attribute => 'cloud_pbx',

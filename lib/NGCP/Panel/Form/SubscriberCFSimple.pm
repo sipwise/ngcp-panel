@@ -65,7 +65,7 @@ sub build_destinations {
             if($c->config->{features}->{callingcard});
         push @options, { label => 'Call Through', value => 'callthrough' }
             if($c->config->{features}->{callthrough});
-        if($c->config->{features}->{cloudpbx} && $c->stash->{pbx}){
+        if($c->license('pbx') && $c->config->{features}->{cloudpbx} && $c->stash->{pbx}){
             push @options,
                 { label => 'Auto Attendant', value => 'autoattendant' },
                 { label => 'Office Hours Announcement', value => 'officehours' };

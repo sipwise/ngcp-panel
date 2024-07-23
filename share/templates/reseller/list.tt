@@ -19,10 +19,12 @@
             { name = c.loc('Terminate'), uri = "/reseller/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
             { name = c.loc('Details'), uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
-        helper.top_buttons = [
-            { name = c.loc('Create Reseller'), uri = c.uri_for('/reseller/create'), icon = 'icon-star' },
-            { name = c.loc('Create Reseller with default values'), uri = c.uri_for('/reseller/create_defaults'), icon = 'icon-star', method = 'post' },
-        ];
+        IF c.license('reseller');
+            helper.top_buttons = [
+                { name = c.loc('Create Reseller'), uri = c.uri_for('/reseller/create'), icon = 'icon-star' },
+                { name = c.loc('Create Reseller with default values'), uri = c.uri_for('/reseller/create_defaults'), icon = 'icon-star', method = 'post' },
+            ];
+        END;
     ELSE;
         helper.dt_buttons = [
             { name = c.loc('Details'), uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },

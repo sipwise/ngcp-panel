@@ -1276,7 +1276,7 @@ sub load_preference_list {
 
     my $customer_view = $params{customer_view} // 0;
     my $subscriber_view = $params{subscriber_view} // 0;
-    my $cloudpbx_enabled = $c->config->{features}{cloudpbx};
+    my $cloudpbx_enabled = $c->license('pbx') && $c->config->{features}{cloudpbx};
 
     my $search_conditions = $params{search_conditions};
 

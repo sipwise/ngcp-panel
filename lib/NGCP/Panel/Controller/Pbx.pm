@@ -15,7 +15,7 @@ sub auto :Private {
     return 1;
 }
 
-sub base :Chained('/') :PathPart('') :CaptureArgs(0) {
+sub base :Chained('/') :PathPart('') :CaptureArgs(0) :Does(License) :RequiresLicense('device_provisioning') :RequiresLicense('pbx') :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     $c->stash->{schema} = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';

@@ -226,7 +226,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     );
 }
 
-sub webfax :Chained('base') :PathPart('webfax') :Args(0) {
+sub webfax :Chained('base') :Does(License) :RequiresLicense('fax') :LicenseDetachTo('/denied_page') :PathPart('webfax') :Args(0) {
     my ($self, $c) = @_;
 
     $c->stash(
@@ -234,7 +234,7 @@ sub webfax :Chained('base') :PathPart('webfax') :Args(0) {
     );
 }
 
-sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
+sub webfax_send :Chained('base') :Does(License) :RequiresLicense('fax') :LicenseDetachTo('/denied_page') :PathPart('webfax/send') :Args(0) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -3653,7 +3653,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     );
 }
 
-sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
+sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) :Does(License) :RequiresLicense('fax') :LicenseDetachTo('/denied_page') {
     my ($self, $c, $attribute) = @_;
 
     $c->detach('/denied_page')
@@ -3794,7 +3794,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
     );
 }
 
-sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') :Args(1) {
+sub edit_mail_to_fax :Chained('base') :PathPart('preferences/mail_to_fax/edit') :Args(1) :Does(License) :RequiresLicense('fax') :LicenseDetachTo('/denied_page') {
     my ($self, $c, $attribute) = @_;
 
     $c->detach('/denied_page')
@@ -5489,7 +5489,7 @@ sub phonebook_root :Chained('master') :PathPart('phonebook') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub phonebook_create :Chained('master') :PathPart('phonebook/create') :Args(0) {
+sub phonebook_create :Chained('master') :PathPart('phonebook/create') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -5539,7 +5539,7 @@ sub phonebook_create :Chained('master') :PathPart('phonebook/create') :Args(0) {
     );
 }
 
-sub phonebook_base :Chained('master') :PathPart('phonebook') :CaptureArgs(1) {
+sub phonebook_base :Chained('master') :PathPart('phonebook') :CaptureArgs(1) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c, $phonebook_id) = @_;
 
     unless($phonebook_id && is_int($phonebook_id)) {
@@ -5639,7 +5639,7 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/subscriber/details", [$subscriber->id]));
 }
 
-sub phonebook_upload_csv :Chained('master') :PathPart('phonebook_upload_csv') :Args(0) {
+sub phonebook_upload_csv :Chained('master') :PathPart('phonebook_upload_csv') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -5657,7 +5657,7 @@ sub phonebook_upload_csv :Chained('master') :PathPart('phonebook_upload_csv') :A
     return;
 }
 
-sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') :Args(0) {
+sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page')  {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -5696,7 +5696,7 @@ sub header_rules_ajax :Chained('header_rules_list') :PathPart('ajax') :Args(0) {
     );
 }
 
-sub header_rules_base :Chained('header_rules_list') :PathPart('') :CaptureArgs(1) {
+sub header_rules_base :Chained('header_rules_list') :PathPart('') :CaptureArgs(1) :Does(License) :RequiresLicense('header_manipulation') :LicenseDetachTo('/denied_page') {
     my ($self, $c, $rule_id) = @_;
 
     return NGCP::Panel::Utils::HeaderManipulations::ui_rules_base(
@@ -5720,7 +5720,7 @@ sub header_rules_delete :Chained('header_rules_base') :PathPart('delete') {
     );
 }
 
-sub header_rules_create :Chained('header_rules_list') :PathPart('create') :Args(0) {
+sub header_rules_create :Chained('header_rules_list') :PathPart('create') :Args(0) :Does(License) :RequiresLicense('header_manipulation') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     return NGCP::Panel::Utils::HeaderManipulations::ui_rules_create(

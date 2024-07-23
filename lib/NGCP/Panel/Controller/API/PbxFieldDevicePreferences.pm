@@ -7,6 +7,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Preferences/;
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin/],
+    required_licenses => [qw/pbx device_provisioning/],
 });
 
 sub allowed_methods{

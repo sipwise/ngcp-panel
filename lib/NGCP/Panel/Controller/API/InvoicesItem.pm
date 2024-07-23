@@ -6,6 +6,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Invoices/;
 
 __PACKAGE__->set_config({
+    required_licenses => [qw/invoice/],
     log_response => 0,
     GET => {
         #first element of array is default, if no accept header was received.

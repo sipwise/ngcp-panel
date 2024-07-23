@@ -10,6 +10,7 @@ use HTTP::Status qw(:constants);
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    required_licenses => [qw/call_recording/],
 });
 
 sub allowed_methods{

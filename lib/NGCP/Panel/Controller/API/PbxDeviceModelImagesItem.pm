@@ -13,6 +13,7 @@ __PACKAGE__->set_config({
     },
     log_response  => 0,
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    required_licenses => [qw/pbx device_provisioning/],
 });
 
 sub allowed_methods{

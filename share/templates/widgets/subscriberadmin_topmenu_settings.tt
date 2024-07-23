@@ -11,7 +11,7 @@
         <li><a href="[% c.uri_for_action('/subscriber/preferences', [c.user.voip_subscriber.id]) %]">[% c.loc('Subscriber Settings') %]</a></li>
         <li><a href="[% c.uri_for_action('/customer/details', [c.user.account_id]) %]">[% c.loc('Customer Details') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/webpass', [c.user.voip_subscriber.id]) %]">[% c.loc('User Details') %]</a></li>
-        [% IF c.config.features.faxserver -%]
+        [% IF c.license('fax') && c.config.features.faxserver -%]
         <li><a href="[% c.uri_for_action('/subscriber/webfax', [c.user.voip_subscriber.id]) %]">[% c.loc('Web Fax') %]</a></li>
         [% END -%]
     </ul>

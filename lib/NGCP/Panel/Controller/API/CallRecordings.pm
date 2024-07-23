@@ -7,6 +7,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallRecordings
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    required_licenses => [qw/call_recording/],
 });
 
 sub allowed_methods{

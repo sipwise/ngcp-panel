@@ -26,7 +26,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
-use List::Util qw(any);
+use List::Util qw(any all);
 
 #It is expected to work for all our 3 common cases:
 #1. Body is the plain json data
@@ -1746,6 +1746,27 @@ sub check_allowed_ngcp_types {
     return 1;
 }
 
+sub check_licenses {
+    my ($self, $c) = @_;
+
+    my $required_licenses = $self->get_config('required_licenses') // [];
+    if (ref $required_licenses eq 'ARRAY') {
+        if (@{$required_licenses} &&
+            ! all { $c->license($_) } @{$required_licenses}) {
+            return;
+        }
+    } elsif (ref $required_licenses eq 'HASH') {
+        my $method = $c->req->method;
+        if (my $method_licenses = $required_licenses->{$method}) {
+            if (@{$method_licenses} &&
+                ! all { $c->license($_) } @{$method_licenses}) {
+                return;
+            }
+        }
+    }
+    return 1;
+}
+
 sub validate_request {
     my ($self, $c) = @_;
 
@@ -1843,6 +1864,10 @@ sub allowed_methods{
 
 sub allowed_ngcp_types {
     return $_[0]->config->{allowed_ngcp_types};
+}
+
+sub required_licenses {
+    return $_[0]->config->{required_licenses};
 }
 
 #------ /accessors ---

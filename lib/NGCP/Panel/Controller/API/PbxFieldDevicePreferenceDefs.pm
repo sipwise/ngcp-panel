@@ -13,6 +13,7 @@ sub allowed_methods{
 __PACKAGE__->set_config({
     preferences_group => 'fielddev_pref',
     allowed_roles    => [qw/admin reseller/],
+    required_licenses => [qw/pbx device_provisioning/],
 });
 
 1;

@@ -186,6 +186,7 @@ $(function() {
         </div>
     </div>
 
+    [% IF c.license('billing') -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_bilprofs">[% c.loc('Billing Profile Schedule') %]</a>
@@ -225,6 +226,7 @@ $(function() {
         </div>
     </div>
     [% END -%]
+    [% END -%]
 
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -238,7 +240,7 @@ $(function() {
                         contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
                     <div class="alert alert-info">
                         [% c.loc('[_1] of maximum [_2] subscribers [_3] created',subscriber_count,contract.max_subscribers,
-                                c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                                c.license('pbx') && c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
                     [% IF !c.user.read_only -%]
                         <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]">
@@ -248,7 +250,7 @@ $(function() {
                 [% ELSIF contract.max_subscribers.defined -%]
                     <div class="alert">
                         [% c.loc('Maximum number of [_1] subscribers [_2] created',contract.max_subscribers,
-                            c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                            c.license('pbx') && c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
                 [% ELSIF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
                           c.user.roles == "admin" || c.user.roles == "reseller" ||
@@ -290,7 +292,7 @@ $(function() {
         </div>
     </div>
 
-    [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' && subscribers.count -%]
+    [% IF c.license('pbx') && c.config.features.cloudpbx && product.class == 'pbxaccount' && subscribers.count -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxgroups">[% c.loc('PBX Groups') %]</a>
@@ -300,7 +302,7 @@ $(function() {
                 [% IF contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
                     <div class="alert alert-info">
                         [% c.loc('[_1] of maximum [_2] subscribers [_3] created',subscriber_count, contract.max_subscribers,
-                            c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                            c.license('pbx') && c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
                     [% IF !c.user.read_only -%]
                         <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_group_create', [ c.req.captures.0 ]) %]">
@@ -310,7 +312,7 @@ $(function() {
                 [% ELSIF contract.max_subscribers.defined -%]
                     <div class="alert">
                         [% c.loc('Maximum number of [_1] subscribers [_2] created',contract.max_subscribers,
-                            c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                            c.license('pbx') && c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
                 [% ELSE %]
                     [% IF !c.user.read_only -%]
@@ -420,7 +422,7 @@ $(function() {
     [% END -%]
 
     [% IF
-        c.config.features.cloudpbx &&
+        c.license('pbx') && c.config.features.cloudpbx &&
         product.class == 'pbxaccount' &&
         (c.user.roles == 'admin' || c.user.roles == 'reseller' ||
          c.user.roles == 'ccareadmin' || c.user.roles == 'ccare' ||
@@ -466,6 +468,7 @@ $(function() {
     </div>
     [% END -%]
 
+    [% IF c.license('billing') -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_balance">[% c.loc('Contract Balance') %]</a>
@@ -709,7 +712,9 @@ $(function() {
         </div>
     </div>
     [% END -%]
+    [% END -%]
 
+    [% IF c.license('invoice') -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_invoices">[% c.loc('Invoices') %]</a>
@@ -733,6 +738,7 @@ $(function() {
             </div>
         </div>
     </div>
+    [% END -%]
 
     [% IF ((c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
            c.user.roles == "admin" || c.user.roles == "reseller" ||
@@ -775,6 +781,7 @@ $(function() {
     [% END -%]
 
     [% IF c.config.general.ngcp_type != 'spce' -%]
+    [% IF c.license('phonebook') -%]
     [% IF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") ||
            c.user.roles == "admin" || c.user.roles == "reseller" ||
            c.user.roles == "ccareadmin" || c.user.roles == "ccare" -%]
@@ -819,6 +826,7 @@ $(function() {
             </div>
         </div>
     </div>
+    [% END -%]
     [% END -%]
     [% END -%]
 
@@ -901,7 +909,7 @@ $(function() {
 [% END -%]
 
 
-[% IF c.config.features.cloudpbx && device_flag -%]
+[% IF c.license('pbx') && c.config.features.cloudpbx && device_flag -%]
 <style>
     .annotated
     {
@@ -1294,6 +1302,6 @@ annotate_profile();
 </script>
 <div id="extensions">
 </div>
-[% END -%]<!--/IF c.config.features.cloudpbx && device_flag-->
+[% END -%]<!--/IF c.license('pbx') && c.config.features.cloudpbx && device_flag-->
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

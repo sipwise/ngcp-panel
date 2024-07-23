@@ -7,6 +7,7 @@ use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::FaxserverSetti
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
+    required_licenses => [qw/fax/],
 });
 
 sub allowed_methods{

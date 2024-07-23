@@ -13,6 +13,7 @@ sub allowed_methods{
 __PACKAGE__->set_config({
     preferences_group => 'reseller_pref',
     allowed_roles    => [qw/admin reseller/],
+    required_licenses => [qw/reseller/],
 });
 
 1;

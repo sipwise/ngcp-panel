@@ -56,6 +56,7 @@ sub query_params {
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller ccareadmin ccare/],
+    required_licenses => [qw/billing/],
     action_add    => {
         item_base => {
             Chained => '/',

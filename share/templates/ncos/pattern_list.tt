@@ -36,7 +36,7 @@
         [% IF local_ac_checked %]checked="checked"[% END %]>
     <label for="local_ac">[% c.loc('Include local area code') %]</label>
     <div class="ngcp-separator"></div>
-    [% IF c.config.features.cloudpbx -%]
+    [% IF c.license('pbx') && c.config.features.cloudpbx -%]
     <input id="intra_pbx" type="checkbox" name="intra_pbx" disabled="disabled"
         [% IF intra_pbx_checked %]checked="checked"[% END %]>
     <label for="intra_pbx">[% c.loc('Intra PBX Calls within same customer') %]</label>

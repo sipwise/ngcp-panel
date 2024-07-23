@@ -39,7 +39,8 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
         Journal => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
-    }
+    },
+    required_licenses => [qw/fax/],
 });
 
 sub GET :Allow {

@@ -13,7 +13,7 @@ use NGCP::Panel::Utils::Generic qw(run_module_method get_module_var);
 use NGCP::Panel::Form::ProvisioningTemplate::Admin qw();
 use NGCP::Panel::Form::ProvisioningTemplate::Reseller qw();
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
+sub auto :Does(License) :RequiresLicense('batch_provisioning') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);

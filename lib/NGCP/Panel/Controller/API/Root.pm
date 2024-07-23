@@ -13,7 +13,7 @@ use JSON qw(to_json encode_json decode_json);
 use YAML::XS qw/Dump/;
 use Safe::Isa qw($_isa);
 use NGCP::Panel::Utils::API;
-use List::Util qw(none);
+use List::Util qw(none all);
 use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
 use NGCP::Panel::Utils::Journal qw();
@@ -103,10 +103,20 @@ sub GET : Allow {
             next unless $user_roles{$role};
         }
 
-        my $allowed_ngcp_types = $full_mod->config->{allowed_ngcp_types} // [];
-        if (@{$allowed_ngcp_types}) {
-            next if none { $_ eq $c->config->{general}{ngcp_type} }
-                @{$allowed_ngcp_types};
+        if ($full_mod->can('config')) {
+            my $allowed_ngcp_types = $full_mod->config->{allowed_ngcp_types} // [];
+            if (@{$allowed_ngcp_types}) {
+                next if none { $_ eq $c->config->{general}{ngcp_type} }
+                    @{$allowed_ngcp_types};
+            }
+
+            my $required_licenses = $full_mod->config->{required_licenses} // undef;
+            if (ref $required_licenses eq 'ARRAY') {
+                if (@{$required_licenses} &&
+                    ! all { $c->license($_) } @{$required_licenses}) {
+                        next;
+                }
+            }
         }
 
         my $query_params = [];
@@ -122,6 +132,21 @@ sub GET : Allow {
         } else {
             $actions = [ sort keys %{ $full_mod->config->{action} } ];
         }
+
+        if ($full_mod->can('config')) {
+            my $required_licenses = $full_mod->config->{required_licenses} // undef;
+            if (ref $required_licenses eq 'HASH') {
+                foreach my $method (qw/GET HEAD OPTIONS POST/) {
+                    if (my $method_licenses = $required_licenses->{$method}) {
+                        if (@{$method_licenses} &&
+                            ! all { $c->license($_) } @{$method_licenses}) {
+                                $actions = [grep { $_ ne $method } @{$actions}];
+                        }
+                    }
+                }
+            }
+        }
+
         my $uri = "/api/$rel/";
         my $item_actions = [];
         my $journal_resource_config = {};
@@ -137,6 +162,24 @@ sub GET : Allow {
                     push @{ $item_actions }, $m;
                 }
             }
+
+            my $required_licenses = $full_item_mod->config->{required_licenses} // undef;
+            if (ref $required_licenses eq 'ARRAY') {
+                if (@{$required_licenses} &&
+                    ! all { $c->license($_) } @{$required_licenses}) {
+                        $item_actions = [];
+                }
+            } elsif (ref $required_licenses eq 'HASH') {
+                foreach my $method (qw/GET HEAD OPTIONS PUT PATCH DELETE/) {
+                    if (my $method_licenses = $required_licenses->{$method}) {
+                        if (@{$method_licenses} &&
+                            ! all { $c->license($_) } @{$method_licenses}) {
+                                $item_actions = [grep { $_ ne $method } @{$actions}];
+                        }
+                    }
+                }
+            }
+
             if($full_item_mod->can('resource_name')) {
                 my @operations = ();
                 my $op_config = {};

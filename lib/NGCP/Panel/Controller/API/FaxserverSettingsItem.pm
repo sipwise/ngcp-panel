@@ -14,6 +14,7 @@ __PACKAGE__->set_config({
         Default => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
         Journal => [qw/admin reseller ccareadmin ccare subscriber subscriberadmin/],
     },
+    required_licenses => [qw/fax/],
     PATCH => { ops => [qw/add replace remove copy/] },
 });
 

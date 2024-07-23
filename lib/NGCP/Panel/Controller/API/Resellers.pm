@@ -57,6 +57,9 @@ sub relation{
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin/],
+    required_licenses => {
+        POST => [qw/reseller/],
+    }
 });
 
 sub GET :Allow {

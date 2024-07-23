@@ -5,7 +5,9 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::PbxDeviceModelImages NGCP::Panel::Role::API::PbxDeviceModels/;
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    required_licenses => [qw/pbx device_provisioning/],
+});
 
 sub config_allowed_roles {
     return [qw/admin reseller subscriberadmin subscriber/];

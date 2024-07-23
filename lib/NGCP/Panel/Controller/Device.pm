@@ -144,7 +144,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     );
 }
 
-sub root :Chained('base') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub root :Chained('base') :PathPart('') :Args(0) :Does(License) :RequiresLicense('pbx') :RequiresLicense('device_provisioning') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 

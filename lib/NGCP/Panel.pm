@@ -29,6 +29,7 @@ use Catalyst qw/
     NGCP::EscapeSensitiveValue
     NGCP::EscapeJs
     NGCP::EscapeURI
+    NGCP::License
     I18N
 /;
 use Log::Log4perl::Catalyst qw();

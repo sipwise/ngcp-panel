@@ -617,7 +617,7 @@ sub subscriberadmin_write_access {
            && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/
          )
          ||
-         ( $c->config->{features}->{cloudpbx} #user can disable pbx feature after some time of using it
+         ( $c->license('pbx') && $c->config->{features}->{cloudpbx} #user can disable pbx feature after some time of using it
            && $c->user->contract->product->class eq 'pbxaccount'
          )
         ) {

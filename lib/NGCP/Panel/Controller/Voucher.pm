@@ -27,7 +27,7 @@ sub voucher_list :Chained('/') :PathPart('voucher') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     $c->detach('/denied_page')
-        unless($c->config->{features}->{voucher});
+        unless($c->license('billing') && $c->config->{features}->{voucher});
 
     my $voucher_rs = $c->model('DB')->resultset('vouchers'); #->search_rs(undef, {
             #'join' => { 'customer' => 'contact'},

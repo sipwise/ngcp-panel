@@ -182,10 +182,10 @@ sub get_file_handles {
         order_by => { -asc => 'handles.name' }
     });
 
-    unless($c->config->{features}->{cloudpbx}) {
+    unless($c->license('pbx') && $c->config->{features}->{cloudpbx}) {
         $handles_rs = $handles_rs->search({ 'group.name' => { '!=' => 'pbx' } });
     }
-    unless($c->config->{features}->{cloudpbx} || $c->config->{features}->{musiconhold}) {
+    unless(($c->license('pbx') && $c->config->{features}->{cloudpbx}) || $c->config->{features}->{musiconhold}) {
         $handles_rs = $handles_rs->search({ 'group.name' => { '!=' => 'music_on_hold' } });
     }
     unless($c->config->{features}->{callingcard}) {

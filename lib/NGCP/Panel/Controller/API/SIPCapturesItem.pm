@@ -16,6 +16,7 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SIPCapture
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
+    required_licenses => [qw/voisniff-mysql_dump/],
     log_response => 0,
 });
 

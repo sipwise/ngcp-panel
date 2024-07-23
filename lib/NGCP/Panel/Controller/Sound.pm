@@ -19,7 +19,7 @@ sub auto :Private {
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
     # only allow access to admin/reseller if cloudpbx is not enabled
-    if(!$c->config->{features}->{cloudpbx} &&
+    if((!$c->license('pbx') || !$c->config->{features}->{cloudpbx}) &&
        $c->user->roles ne "admin" &&
        $c->user->roles ne "reseller") {
 
@@ -215,7 +215,7 @@ sub edit :Chained('base') :PathPart('edit') {
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::CustomerSet", $c);
     }
-    unless ($c->config->{features}->{cloudpbx} || $params->{contract}{id} ) {
+    unless (($c->license('pbx') && $c->config->{features}->{cloudpbx}) || $params->{contract}{id} ) {
         my $form_render_list = $form->block('fields')->render_list;
         $form->block('fields')->render_list([ grep {$_ !~ m/^contract(_default)?/} @{ $form_render_list } ]);
     }
@@ -409,7 +409,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Sound::CustomerSet", $c);
     }
-    unless ($c->config->{features}->{cloudpbx}) {
+    unless ($c->license('pbx') && $c->config->{features}->{cloudpbx}) {
         my $form_render_list = $form->block('fields')->render_list;
         $form->block('fields')->render_list([ grep {$_ !~ m/^contract(_default)?/} @{ $form_render_list } ]);
     }

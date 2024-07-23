@@ -35,7 +35,7 @@ sub network_list :Chained('/') :PathPart('network') :CaptureArgs(0) :Does(ACL) :
               template => 'network/list.tt');
 }
 
-sub network_list_restricted :Chained('network_list') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub network_list_restricted :Chained('network_list') :PathPart('') :CaptureArgs(0) :Does(License) :RequiresLicense('billing') :LicenseDetachTo('/denied_page') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 

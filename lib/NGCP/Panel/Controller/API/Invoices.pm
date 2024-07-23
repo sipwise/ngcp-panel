@@ -6,7 +6,9 @@ use HTTP::Status qw(:constants);
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Invoices/;
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    required_licenses => [qw/invoice/],
+});
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];

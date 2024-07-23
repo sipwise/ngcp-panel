@@ -21,7 +21,7 @@
             { name = c.loc('Fees'), uri = "/billing/'+full[\"id\"]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
             { name = c.loc('Off-Peaktimes'), uri = "/billing/'+full[\"id\"]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
         ];
-        IF c.user.roles == "admin" || c.user.roles == "reseller";
+        IF c.license('billing') && (c.user.roles == "admin" || c.user.roles == "reseller");
             helper.top_buttons = [
                 { name = c.loc('Create Billing Profile'), uri = c.uri_for('/billing/create'), icon = 'icon-star' },
             ];

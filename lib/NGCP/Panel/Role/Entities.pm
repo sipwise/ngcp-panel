@@ -24,6 +24,10 @@ sub auto :Private {
         $self->error($c, HTTP_NOT_FOUND, "Path not found");
         return;
     }
+    if (! $self->check_licenses($c)) {
+        $self->error($c, HTTP_FORBIDDEN, "Invalid license");
+        return;
+    }
     return $self->validate_request($c);
 }
 

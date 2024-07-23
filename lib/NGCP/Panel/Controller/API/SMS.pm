@@ -10,7 +10,9 @@ use NGCP::Panel::Utils::Preferences;
 use UUID;
 
 
-__PACKAGE__->set_config();
+__PACKAGE__->set_config({
+    required_licenses => [qw/sms/],
+});
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];

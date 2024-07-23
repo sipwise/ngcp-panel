@@ -190,7 +190,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
         delete $params->{contact};
     }
 
-    if($c->config->{features}->{cloudpbx}) {
+    if($c->license('pbx') && $c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::ProductSelect", $c);
     } else {
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::Customer", $c);
@@ -374,7 +374,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     # only show the extension if it's a pbx extension. otherwise (and in case of a pilot?) show the
     # number
 
-    if($c->config->{features}->{cloudpbx} && $product->class eq "pbxaccount") {
+    if($c->license('pbx') && $c->config->{features}->{cloudpbx} && $product->class eq "pbxaccount") {
         $c->stash->{subscriber_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
             { name => "id", search => 1, title => $c->loc("#") },
             { name => "username", search => 1, title => $c->loc("Name") },
@@ -444,7 +444,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
 
     $c->stash->{subscribers} = $subscribers_rs->search_rs({'provisioning_voip_subscriber.is_pbx_group' => 0});
-    if($c->config->{features}->{cloudpbx}) {
+    if($c->license('pbx') && $c->config->{features}->{cloudpbx}) {
         $c->stash->{pbx_groups} = $subscribers_rs->search_rs({'provisioning_voip_subscriber.is_pbx_group' => 1});
     }
 
@@ -541,7 +541,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
     $params->{billing_profile}->{id} = $billing_profile->id;
     $params = merge($params, $c->session->{created_objects}); # TODO: created billing profiles/networks will not be pre-selected
     #$c->log->debug('customer/edit');
-    if($c->config->{features}->{cloudpbx}) {
+    if($c->license('pbx') && $c->config->{features}->{cloudpbx}) {
         #$c->log->debug('ProductSelect');
         $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Contract::ProductSelect", $c);
     } else {
@@ -787,7 +787,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
 
     my $params = {};
 
-    if($c->config->{features}->{cloudpbx} && $pbx) {
+    if($c->license('pbx') && $c->config->{features}->{cloudpbx} && $pbx) {
         $c->stash(customer_id => $c->stash->{contract}->id);
         # we need to create a pilot subscriber first
         unless($c->stash->{pilot}) {
@@ -2560,7 +2560,7 @@ sub phonebook_root :Chained('base') :PathPart('phonebook') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) {
+sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page')  {
     my ($self, $c) = @_;
 
     my $contract = $c->stash->{contract};
@@ -2609,7 +2609,7 @@ sub phonebook_create :Chained('base') :PathPart('phonebook/create') :Args(0) {
     );
 }
 
-sub phonebook_base :Chained('base') :PathPart('phonebook') :CaptureArgs(1) {
+sub phonebook_base :Chained('base') :PathPart('phonebook') :CaptureArgs(1) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c, $phonebook_id) = @_;
 
     unless($phonebook_id && is_int($phonebook_id)) {
@@ -2708,7 +2708,7 @@ sub phonebook_delete :Chained('phonebook_base') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action("/customer/details", [$contract->id]));
 }
 
-sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Args(0) {
+sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page') {
     my ($self, $c) = @_;
 
     my $contract = $c->stash->{contract};
@@ -2726,7 +2726,7 @@ sub phonebook_upload_csv :Chained('base') :PathPart('phonebook_upload_csv') :Arg
     return;
 }
 
-sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') :Args(0) {
+sub phonebook_download_csv :Chained('base') :PathPart('phonebook_download_csv') :Args(0) :Does(License) :RequiresLicense('phonebook') :LicenseDetachTo('/denied_page')  {
     my ($self, $c) = @_;
 
     my $contract = $c->stash->{contract};

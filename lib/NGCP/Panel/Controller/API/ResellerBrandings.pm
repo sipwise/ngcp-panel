@@ -18,6 +18,9 @@ __PACKAGE__->set_config({
     allowed_roles => {
         'Default' => [qw/admin reseller subscriberadmin subscriber/],
         'POST'    => [qw/admin reseller/],
+    },
+    required_licenses => {
+        POST => [qw/reseller/],
     }
 });
 

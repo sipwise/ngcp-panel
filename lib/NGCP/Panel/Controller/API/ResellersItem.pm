@@ -39,7 +39,8 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin/],
         Journal => [qw/admin/],
-    }
+    },
+    required_licenses => [qw/reseller/],
 });
 
 sub GET :Allow {

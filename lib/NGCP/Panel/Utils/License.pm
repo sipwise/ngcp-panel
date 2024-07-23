@@ -5,53 +5,99 @@ use warnings;
 use Sipwise::Base;
 use List::Util qw(none);
 
+use Fcntl;
+use IO::Select;
+
 sub get_license_status {
-    my ($ref) = @_;
+    my ($c, $ref) = @_;
 
     my $fd;
     {
         no autodie qw(open);
-        if (!open($fd, '<', '/proc/ngcp/check')) {
+        if (!sysopen($fd, '/proc/ngcp/check', O_NONBLOCK|O_RDONLY)) {
+            $c->log->error('License status check failed: could not check license');
             return 'missing';
         }
     }
-    my $status = <$fd>;
+    my $status = '';
+    my @h = IO::Select->new($fd)->can_read(1);
+    map { $status = <$_> } @h;
     close($fd);
+    unless ($status) {
+        $c->log->error('License status check failed: missing license');
+        return 'missing';
+    }
     chomp($status);
     if ($status =~ /^ok/) {
         return 'ok';
     }
     if ($status =~ /missing license/) {
+        $c->log->error("License status check failed: $status");
         return 'missing';
     }
     if ($status =~ /^(warning|error) \((.*)\)$/) {
         if (ref($ref) eq 'SCALAR') {
-            $$ref = $2;
+            $$ref = $status;
         }
-        return $1;
+        if ($status =~ /^warning/) {
+            # do not spam logs with warnings as it's related to graceful thresholds
+        } else {
+            $c->log->error("License status check failed: $status");
+        }
+        return $status;
     }
 
     if (ref($ref) eq 'SCALAR') {
         $$ref = 'internal error';
     }
+    $c->log->error("License status check failed: internal error");
     return 'error';
 }
 
 sub is_license_status {
-    my (@allowed) = @_;
-    my $status = get_license_status();
+    my $c = shift;
+    my @allowed = @_;
+    my $status = get_license_status($c);
     return scalar grep {$_ eq $status} @allowed;
 }
 
 sub is_license_error {
-    my (@allowed) = @_;
+    my $c = shift;
+    my @allowed = @_;
     @allowed or @allowed = ('error');
     my $ext;
-    my $status = get_license_status(\$ext);
+    my $status = get_license_status($c, \$ext);
     if (!grep {$_ eq $status} @allowed) {
         return 0;
     }
     return $ext || $status;
+}
+
+sub get_license {
+    my ($c, $lic_name) = @_;
+
+    return 1 if $c->config->{general}{ngcp_type} eq 'spce';
+
+    my $proc_dir = '/proc/ngcp/flags';
+    unless (-d $proc_dir) {
+        $c->log->error("Failed to access $proc_dir");
+        return;
+    };
+
+    my $lic_file = $proc_dir . '/' . $lic_name;
+    return unless (-r $lic_file);
+
+    sysopen(my $fd, "$lic_file", O_NONBLOCK|O_RDONLY) || do {
+        $c->log->error("Failed to open license file $lic_name: $!");
+        return;
+    };
+    my $enabled;
+    my @h = IO::Select->new($fd)->can_read(1);
+    map { $enabled = <$_> } @h;
+    close $fd;
+    chomp($enabled) if defined $enabled;
+
+    return $enabled;
 }
 
 sub get_licenses {
@@ -71,14 +117,16 @@ sub get_licenses {
     while (readdir($dh)) {
         my $lf = $_;
         next if $lf =~ /^\.+$/;
-        open(my $fh, '<', "$proc_dir/$lf") || do {
+        sysopen(my $fd, "$proc_dir/$lf", O_NONBLOCK|O_RDONLY) || do {
             $c->log->error("Failed to open license file $lf: $!");
             next;
         };
-        my $enabled = <$fh>;
+        my $enabled;
+        my @h = IO::Select->new($fd)->can_read(1);
+        map { $enabled = <$_> } @h;
+        close $fd;
         chomp($enabled) if defined $enabled;
         push @lics, $lf if $enabled && $enabled == 1;
-        close $fh;
     }
     closedir $dh;
     my @sorted_lics = sort @lics;
@@ -119,14 +167,16 @@ sub get_license_meta {
         my $lf = $_;
         next if $lf =~ /^\.+$/;
         next if none { $lf eq $_ } @collect;
-        open(my $fh, '<', "$proc_dir/$lf") || do {
+        sysopen(my $fd, "$proc_dir/$lf", O_NONBLOCK|O_RDONLY) || do {
             $c->log->error("Failed to open license file $lf: $!");
             next;
         };
-        my $value = <$fh>;
+        my $value;
+        my @h = IO::Select->new($fd)->can_read(1);
+        map { $value = <$_> } @h;
+        close $fd;
         chomp($value) if defined $value;
         $meta->{$lf} = $value =~ /^-?\d+(\.\d+)?$/ ? $value+0 : $value;
-        close $fh;
     }
     closedir $dh;
     return $meta;
@@ -158,7 +208,7 @@ a more detailed status description is written into that scalar in the 'warning'
 and 'error' cases.
 
 Example:
-my $status = get_license_status(\$ext_status);
+my $status = get_license_status($c, \$ext_status);
 
 =head2 is_license_status
 
@@ -166,16 +216,16 @@ Takes a list of strings as argument list. Returns true or false if the license
 status is one of the status names given in the argument list.
 
 Example:
-if (is_license_status(qw(missing error))) ...
+if (is_license_status($c, qw(missing error))) ...
 
 =head2 is_license_error
 
-Similar to is_license_status() but returns the status string instead of true if
+Similar to is_license_status($c) but returns the status string instead of true if
 the license status is one of the values given. If the argument list is empty, it
 defaults to ('error').
 
 Example:
-if (my $status = is_license_error()) ...
+if (my $status = is_license_error($c)) ...
 
 =head1 AUTHOR
 
