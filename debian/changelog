@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.25+0~mr11.5.1.25) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9d53086] MT#60520 prov templates: fix lookup of items
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 Jul 2024 16:08:58 +0200
+
 ngcp-panel (11.5.1.24+0~mr11.5.1.24) unstable; urgency=medium
 
   [ Kirill Solomko ]
