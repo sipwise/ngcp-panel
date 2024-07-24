@@ -745,6 +745,33 @@ sub details :Chained('base') :PathPart('details') :Args(0) {
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
 
+    my $license_max_subscribers = $c->license_max_subscribers;
+    my $current_subscribers_count = $c->license_current_subscribers;
+    if ($license_max_subscribers >= 0 && $current_subscribers_count >= $license_max_subscribers) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => "tried to exceed max number of license subscribers: $license_max_subscribers current: $current_subscribers_count",
+            desc  => $c->loc('Maximum number of subscribers for this platform is reached'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
+    }
+
+    my $license_max_pbx_subscribers = $c->license_max_pbx_subscribers;
+    my $current_pbx_subscribers_count = $c->license_current_pbx_subscribers;
+    if ($c->stash->{contract}->product->class eq 'pbxaccount' &&
+        $license_max_pbx_subscribers >= 0 && $current_pbx_subscribers_count >= $license_max_pbx_subscribers) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => "tried to exceed max number of license pbx subscribers: $license_max_pbx_subscribers current: $current_pbx_subscribers_count",
+            desc  => $c->loc('Maximum number of PBX subscribers for this platform is reached'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
+    }
+
     if (defined $c->stash->{contract}->max_subscribers &&
        $c->stash->{contract}->voip_subscribers
         ->search({ status => { -not_in => ['terminated'] } })
@@ -1411,6 +1438,20 @@ sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
 
 sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     my ($self, $c) = @_;
+
+
+    my $license_max_pbx_groups = $c->license_max_pbx_groups;
+    my $current_pbx_groups_count = $c->license_current_pbx_groups;
+    if ($license_max_pbx_groups >= 0 && $current_pbx_groups_count >= $license_max_pbx_groups) {
+        NGCP::Panel::Utils::Message::error(
+            c => $c,
+            error => "tried to exceed max number of license pbx groups: $license_max_pbx_groups current: $current_pbx_groups_count",
+            desc  => $c->loc('Maximum number of pbx groups for this platform is reached'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
+    }
 
     if(defined $c->stash->{contract}->max_subscribers &&
        $c->stash->{contract}->voip_subscribers

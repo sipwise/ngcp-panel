@@ -182,6 +182,71 @@ sub get_license_meta {
     return $meta;
 }
 
+sub get_license_count_type {
+    my ($c, $type, $lic) = @_;
+
+    return -1 if $c->config->{general}{ngcp_type} eq 'spce';
+
+    my $proc_dir = '/proc/ngcp';
+    unless (-d $proc_dir) {
+        $c->log->error("Failed to access $proc_dir");
+        return 0;
+    };
+
+    my $lic_file = $proc_dir . '/' . $type . '_' . $lic;
+    return unless (-r $lic_file);
+
+    sysopen(my $fd, "$lic_file", O_NONBLOCK|O_RDONLY) || do {
+        $c->log->error("Failed to open license file $lic_file: $!");
+        return 0;
+    };
+    my $value;
+    my @h = IO::Select->new($fd)->can_read(1);
+    map { $value = <$_> } @h;
+    close $fd;
+    chomp($value) if defined $value;
+
+    return -1 if $value eq 'unlimited';
+
+    return $value ? $value+0 : 0;
+}
+
+sub get_max_pbx_groups {
+    my ($c) = @_;
+
+    return get_license_count_type($c, 'max', 'pbx_groups');
+}
+
+sub get_max_pbx_subscribers {
+    my ($c) = @_;
+
+    return get_license_count_type($c, 'max', 'pbx_subscribers');
+}
+
+sub get_max_subscribers {
+    my ($c) = @_;
+
+    return get_license_count_type($c, 'max', 'subscribers');
+}
+
+sub get_current_pbx_groups {
+    my ($c) = @_;
+
+    return get_license_count_type($c, 'current', 'pbx_groups');
+}
+
+sub get_current_pbx_subscribers {
+    my ($c) = @_;
+
+    return get_license_count_type($c, 'current', 'pbx_subscribers');
+}
+
+sub get_current_subscribers {
+    my ($c) = @_;
+
+    return get_license_count_type($c, 'current', 'subscribers');
+}
+
 1;
 
 =head1 NAME

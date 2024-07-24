@@ -21,13 +21,24 @@ sub license_max_pbx_groups {
     return NGCP::Panel::Utils::License::get_max_pbx_groups(@_);
 }
 
-sub license_max_subscribers {
-    return NGCP::Panel::Utils::License::get_max_subscribers(@_);
-}
-
 sub license_max_pbx_subscribers {
     return NGCP::Panel::Utils::License::get_max_pbx_subscribers(@_);
 }
 
-1;
+sub license_max_subscribers {
+    return NGCP::Panel::Utils::License::get_max_subscribers(@_);
+}
 
+sub license_current_pbx_groups {
+    return NGCP::Panel::Utils::License::get_current_pbx_groups(@_);
+}
+
+sub license_current_pbx_subscribers {
+    return NGCP::Panel::Utils::License::get_current_pbx_subscribers(@_);
+}
+
+sub license_current_subscribers {
+    return NGCP::Panel::Utils::License::get_current_subscribers(@_);
+}
+
+1;

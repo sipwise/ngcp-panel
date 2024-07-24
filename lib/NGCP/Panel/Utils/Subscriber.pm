@@ -2640,6 +2640,40 @@ sub get_sub_username_and_aliases {
     return \@usernames;
 }
 
+sub get_pbx_groups_count {
+    my $c = shift;
+
+    my $schema = $c->model('DB');
+    my $rs = $schema->resultset('provisioning_voip_subscribers')->search({
+        is_pbx_group => 1,
+    });
+
+    return $rs->count();
+}
+
+sub get_pbx_subscribers_count {
+    my $c = shift;
+
+    my $schema = $c->model('DB');
+    my $rs = $schema->resultset('provisioning_voip_subscribers')->search({
+        'product.class' => 'pbxaccount',
+    },{
+        join => { contract => 'product' },
+    });
+
+    return $rs->count();
+}
+
+sub get_subscribers_count {
+    my $c = shift;
+
+    my $schema = $c->model('DB');
+    my $rs = $schema->resultset('provisioning_voip_subscribers')->search({
+    });
+
+    return $rs->count();
+}
+
 1;
 
 =head1 NAME
