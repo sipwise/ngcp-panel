@@ -4,7 +4,7 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
-use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Utils::Generic qw(run_module_method get_module_var);
 use NGCP::Panel::Utils::Generic qw(trim);
 
 use Storable qw();
@@ -137,8 +137,8 @@ sub validate_yaml {
     my ($self, $field) = @_;
 
     eval {
-        my $data = NGCP::Panel::Utils::ProvisioningTemplates::parse_template(undef, undef, undef, $field->value);
-        NGCP::Panel::Utils::ProvisioningTemplates::validate_template($data);
+        my $data = run_module_method('Utils::ProvisioningTemplates::parse_template',undef, undef, undef, $field->value);
+        run_module_method('Utils::ProvisioningTemplates::validate_template',$data);
     };
     if ($@) {
         $field->add_error(trim($@));
@@ -164,7 +164,7 @@ sub validate {
     $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id}) if $resource->{reseller_id};
 
     eval {
-        NGCP::Panel::Utils::ProvisioningTemplates::validate_template_name($c,
+        run_module_method('Utils::ProvisioningTemplates::validate_template_name',$c,
             $field->value,$c->stash->{old_name},$reseller);
     };
     if ($@) {

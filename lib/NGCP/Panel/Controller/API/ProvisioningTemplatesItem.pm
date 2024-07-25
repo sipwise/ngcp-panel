@@ -11,7 +11,7 @@ require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 use Scalar::Util qw/blessed/;
-use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Utils::Generic qw(run_module_method get_module_var);
 use NGCP::Panel::Role::API::Subscribers qw();
 
 sub allowed_methods{
@@ -293,7 +293,7 @@ sub update_item_model {
 
     my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 
-    $resource->{yaml} = NGCP::Panel::Utils::ProvisioningTemplates::dump_template($c,
+    $resource->{yaml} = run_module_method('Utils::ProvisioningTemplates::dump_template',$c,
         $resource->{id},
         $resource->{name},
         delete $resource->{template},
@@ -352,16 +352,16 @@ sub post {
     if (!$non_json_data || !$data) {
         my $context;
         try {
-            $context = NGCP::Panel::Utils::ProvisioningTemplates::provision_begin(
+            $context = run_module_method('Utils::ProvisioningTemplates::provision_begin',
                 c     => $c,
                 purge => $purge,
             );
-            NGCP::Panel::Utils::ProvisioningTemplates::provision_commit_row(
+            run_module_method('Utils::ProvisioningTemplates::provision_commit_row',
                 c => $c,
                 context => $context,
                 'values' => $resource,
             );
-            NGCP::Panel::Utils::ProvisioningTemplates::provision_finish(
+            run_module_method('Utils::ProvisioningTemplates::provision_finish',
                 c => $c,
                 context => $context,
             );
@@ -371,13 +371,13 @@ sub post {
             ));
             $c->response->header(Location => sprintf('%s%d', NGCP::Panel::Role::API::Subscribers::dispatch_path(), $context->{subscriber}->{id}));
         } catch($e) {
-            NGCP::Panel::Utils::ProvisioningTemplates::provision_cleanup($c, $context);
+            run_module_method('Utils::ProvisioningTemplates::provision_cleanup',$c, $context);
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Provisioning template '$id' failed", $e);
             return;
         }
     } else {
         try {
-            my ($linecount,$errors) = NGCP::Panel::Utils::ProvisioningTemplates::process_csv(
+            my ($linecount,$errors) = run_module_method('Utils::ProvisioningTemplates::process_csv',
                 c     => $c,
                 data  => \$data,
                 purge => $purge,

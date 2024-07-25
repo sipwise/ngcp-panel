@@ -8,9 +8,9 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type array_to_map escape_js escape_uri trim escape_search_string_pattern);
-%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern)],
-    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern)]);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type array_to_map escape_js escape_uri trim escape_search_string_pattern run_module_method get_module_var);
+%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern &run_module_method &get_module_var)],
+    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern &run_module_method &get_module_var)]);
 
 use Hash::Merge;
 use Data::Compare qw//;
@@ -261,6 +261,34 @@ sub escape_search_string_pattern {
     }
     return ($searchString_escaped,$is_pattern);
 
+}
+
+sub _load_module {
+    my $package_element = shift;
+    eval {
+        (my $module = $package_element) =~ s/::[a-zA-Z_0-9]+$//g;
+        (my $file = $module) =~ s|::|/|g;
+        require $file . '.pm';
+        #$module->import();
+        1;
+    } or do {
+        die($@);
+    };
+}
+
+sub run_module_method {
+    my $method_name = 'NGCP::Panel::' . shift;
+    _load_module($method_name);
+    no strict "refs";  ## no critic (ProhibitNoStrict)
+    return $method_name->(@_);
+}
+
+sub get_module_var {
+    my $var_name = 'NGCP::Panel::' . shift;
+    _load_module($var_name);
+    no strict "refs";  ## no critic (ProhibitNoStrict)
+    return @{$var_name} if wantarray;
+    return ${$var_name};
 }
 
 1;

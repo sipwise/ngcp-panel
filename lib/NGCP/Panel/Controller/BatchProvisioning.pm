@@ -9,7 +9,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::DateTime qw();
-use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Utils::Generic qw(run_module_method get_module_var);
 use NGCP::Panel::Form::ProvisioningTemplate::Admin qw();
 use NGCP::Panel::Form::ProvisioningTemplate::Reseller qw();
 
@@ -25,7 +25,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub template_list :Chained('/') :PathPart('batchprovisioning') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    NGCP::Panel::Utils::ProvisioningTemplates::load_template_map($c);
+    run_module_method('Utils::ProvisioningTemplates::load_template_map',$c);
 
     $c->stash->{template_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
@@ -90,7 +90,7 @@ sub do_template_form :Chained('template_base') :PathPart('form') :Args(0) {
 
     $c->log->debug($c->stash->{provisioning_template_name});
     $c->log->debug($c->uri_for_action('/batchprovisioning/root'));
-    NGCP::Panel::Utils::ProvisioningTemplates::create_provisioning_template_form(
+    run_module_method('Utils::ProvisioningTemplates::create_provisioning_template_form',
         c => $c,
         base_uri => $c->uri_for_action('/batchprovisioning/root'),
     );
@@ -125,7 +125,7 @@ sub do_template_upload :Chained('template_base') :PathPart('upload') :Args(0) {
 
         my $data = $upload->slurp;
         try {
-            my ($linecount,$errors) = NGCP::Panel::Utils::ProvisioningTemplates::process_csv(
+            my ($linecount,$errors) = run_module_method('Utils::ProvisioningTemplates::process_csv',
                 c     => $c,
                 data  => \$data,
                 purge => $c->req->params->{purge_existing},

@@ -12,7 +12,7 @@ use HTTP::Status qw(:constants);
 use Scalar::Util qw/blessed/;
 use JSON qw();
 
-use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Utils::Generic qw(run_module_method get_module_var);
 use NGCP::Panel::Utils::API qw();
 use NGCP::Panel::Utils::Generic qw(trim);
 
@@ -21,7 +21,7 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     unless ($c->stash->{provisioning_templates}) {
-        NGCP::Panel::Utils::ProvisioningTemplates::load_template_map($c);
+        run_module_method('Utils::ProvisioningTemplates::load_template_map',$c);
     }
 
     my $editable;
@@ -100,10 +100,10 @@ sub get_form {
     my ($self, $c, $type, $id) = @_;
     if ($type and 'form' eq lc($type)) {
         unless ($c->stash->{provisioning_templates}) {
-            NGCP::Panel::Utils::ProvisioningTemplates::load_template_map($c);
+            run_module_method('Utils::ProvisioningTemplates::load_template_map',$c);
         }
         $c->stash->{provisioning_template_name} = $id;
-        return NGCP::Panel::Utils::ProvisioningTemplates::get_provisioning_template_form($c);
+        return run_module_method('Utils::ProvisioningTemplates::get_provisioning_template_form',$c);
     } else {
         if ($c->user->is_superuser) {
             return NGCP::Panel::Form::get("NGCP::Panel::Form::ProvisioningTemplate::AdminAPI", $c);
@@ -126,12 +126,12 @@ sub resource_from_item {
                 $resource{template} = delete $resource{yaml};
             } elsif ('json' eq lc($c->req->param('format'))) {
                 eval {
-                    $resource{template} = _template_as_json(NGCP::Panel::Utils::ProvisioningTemplates::parse_template($c, $resource{id}, $resource{name}, delete $resource{yaml}));
+                    $resource{template} = _template_as_json(run_module_method('Utils::ProvisioningTemplates::parse_template',$c, $resource{id}, $resource{name}, delete $resource{yaml}));
                 };
             }
         } else {
             eval {
-                $resource{template} = NGCP::Panel::Utils::ProvisioningTemplates::parse_template($c, $resource{id}, $resource{name}, delete $resource{yaml});
+                $resource{template} = run_module_method('Utils::ProvisioningTemplates::parse_template',$c, $resource{id}, $resource{name}, delete $resource{yaml});
             };
         }
     } else {
@@ -147,7 +147,7 @@ sub resource_from_item {
         if ($c->req->param('format')) {
             if (grep { $_ eq lc($c->req->param('format')); } qw(yml yaml)) {
                 eval {
-                    $resource{template} = NGCP::Panel::Utils::ProvisioningTemplates::dump_template($c, $resource{id}, $resource{name}, $resource{template});
+                    $resource{template} = run_module_method('Utils::ProvisioningTemplates::dump_template',$c, $resource{id}, $resource{name}, $resource{template});
                 };
             } elsif ('json' eq lc($c->req->param('format'))) {
                 $resource{template} = _template_as_json($resource{template});
@@ -183,7 +183,7 @@ sub item_by_id {
     return unless length($id);
 
     unless ($c->stash->{provisioning_templates}) {
-        NGCP::Panel::Utils::ProvisioningTemplates::load_template_map($c);
+        run_module_method('Utils::ProvisioningTemplates::load_template_map',$c);
     }
 
     my $item = $c->stash->{provisioning_templates}->{$id};
@@ -212,7 +212,7 @@ sub check_resource {
         my $reseller;
         $reseller = $c->model('DB')->resultset('resellers')->find(
             $resource->{reseller_id}) if $resource->{reseller_id};
-        NGCP::Panel::Utils::ProvisioningTemplates::validate_template_name($c,
+        run_module_method('Utils::ProvisioningTemplates::validate_template_name',$c,
             $resource->{name},($old_resource ? $old_resource->{name} : undef),
             $reseller);
     };
@@ -224,12 +224,12 @@ sub check_resource {
     eval {
         if ($c->req->param('format')) {
             if (grep { $_ eq lc($c->req->param('format')); } qw(yml yaml)) {
-                $resource->{template} = NGCP::Panel::Utils::ProvisioningTemplates::parse_template($c, $resource->{id}, $resource->{name}, $resource->{template});
+                $resource->{template} = run_module_method('Utils::ProvisioningTemplates::parse_template',$c, $resource->{id}, $resource->{name}, $resource->{template});
             } elsif ('json' eq lc($c->req->param('format'))) {
                 $resource->{template} = _template_from_json($resource->{template});
             }
         }
-        NGCP::Panel::Utils::ProvisioningTemplates::validate_template($resource->{template});
+        run_module_method('Utils::ProvisioningTemplates::validate_template',$resource->{template});
     };
     if ($@) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY,trim($@));

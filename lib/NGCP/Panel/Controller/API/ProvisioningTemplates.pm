@@ -9,7 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 
-use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Utils::Generic qw(run_module_method get_module_var);
 use NGCP::Panel::Utils::DateTime qw();
 
 sub allowed_methods{
@@ -60,7 +60,7 @@ sub create_item {
     
     my ($self, $c, $resource, $form, $process_extras) = @_;
     
-    $resource->{yaml} = NGCP::Panel::Utils::ProvisioningTemplates::dump_template($c,
+    $resource->{yaml} = run_module_method('Utils::ProvisioningTemplates::dump_template',$c,
         $resource->{id},
         $resource->{name},
         delete $resource->{template},
