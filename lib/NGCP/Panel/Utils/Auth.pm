@@ -30,24 +30,25 @@ sub get_bcrypt_cost {
 
 sub generate_salted_hash {
     my $pass = shift;
+    my $bcrypt_cost = shift // get_bcrypt_cost();
 
     my $salt = rand_bits($SALT_LENGTH);
     my $b64salt = en_base64($salt);
     my $b64hash = en_base64(bcrypt_hash({
         key_nul => 1,
-        cost => get_bcrypt_cost(),
+        cost => $bcrypt_cost,
         salt => $salt,
     }, $pass));
     return $b64salt . '$' . $b64hash;
 }
 
 sub get_usr_salted_pass {
-    my ($saltedpass, $pass) = @_;
+    my ($saltedpass, $pass, $opt_cost) = @_;
     my ($db_b64salt, $db_b64hash) = split /\$/, $saltedpass;
     my $salt = de_base64($db_b64salt);
     my $usr_b64hash = en_base64(bcrypt_hash({
         key_nul => 1,
-        cost => get_bcrypt_cost(),
+        cost => $opt_cost // get_bcrypt_cost(),
         salt => $salt,
     }, $pass));
     return $db_b64salt . '$' . $usr_b64hash;

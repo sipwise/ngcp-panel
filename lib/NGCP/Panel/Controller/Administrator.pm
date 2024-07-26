@@ -5,6 +5,7 @@ use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form;
 use HTTP::Headers qw();
+use NGCP::Panel::Utils::Admin;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Auth;
@@ -147,8 +148,9 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
+            my $password = delete $form->values->{password};
             $form->values->{md5pass} = undef;
-            $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
+            $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($password);
 
             if ($form->values->{role_id}) {
                 $form->values->%* = ( $form->values->%*, NGCP::Panel::Utils::UserRole::resolve_flags($c, $form->values->{role_id}) );
@@ -156,8 +158,13 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
                 $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
             }
 
-            $c->stash->{admins}->create($form->values);
+            my $admin = $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
+
+            NGCP::Panel::Utils::Admin::insert_password_journal(
+                $c, $admin, $password
+            );
+
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Administrator successfully created'),
@@ -254,9 +261,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $form->values->{reseller};
             }
             delete $form->values->{password} unless length $form->values->{password};
-            if(exists $form->values->{password}) {
+            my $password = delete $form->values->{password} // undef;
+            if ($password) {
                 $form->values->{md5pass} = undef;
-                $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash(delete $form->values->{password});
+                $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($password);
             }
             #should be after other fields, to remove all added values, e.g. reseller_id
             if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Auth::get_special_admin_login()) {
@@ -276,6 +284,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
+
+            if ($password) {
+                NGCP::Panel::Utils::Admin::insert_password_journal(
+                    $c, $c->stash->{administrator}, $password
+                );
+            }
+
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 data => { $c->stash->{administrator}->get_inflated_columns },

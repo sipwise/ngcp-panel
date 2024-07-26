@@ -92,7 +92,6 @@ sub process_form_resource {
     NGCP::Panel::Utils::API::apply_resource_reseller_id($c, $resource);
 
     my $pass = $resource->{password};
-    delete $resource->{password};
     if (defined $pass) {
         $resource->{md5pass} = undef;
         $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
@@ -195,6 +194,11 @@ sub update_item {
             $self->error($c, HTTP_FORBIDDEN, "Only own user can change password");
             return;
         }
+
+        NGCP::Panel::Utils::Admin::insert_password_journal(
+            $c, $item, $pass
+        );
+
         $resource->{md5pass} = undef;
         $resource->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($pass);
     }

@@ -401,6 +401,8 @@ sub POST :Allow {
 
         my $license_max_pbx_groups = $c->license_max_pbx_groups;
         my $current_pbx_groups_count = $c->license_current_pbx_groups;
+        $c->log->debug("Current pbx groups: ". $current_pbx_groups_count);
+        $c->log->debug("License max pbx groups: ". $license_max_pbx_groups);
         if (is_true($resource->{is_pbx_group}) &&
             $license_max_pbx_groups >= 0 && $current_pbx_groups_count >= $license_max_pbx_groups) {
             $self->error($c, HTTP_FORBIDDEN,

@@ -212,10 +212,10 @@ sub resource_from_item {
         if ($c->user->roles eq "subscriberadmin") {
             $resource{customer_id} = $contract_id;
             if ($item->id != $c->user->voip_subscriber->id) {
-                if (!$c->config->{security}->{password_sip_expose_subadmin}) {
+                if (!$c->config->{security}->{password}->{sip_expose_subadmin}) {
                     delete $resource{_password};
                 }
-                if (!$c->config->{security}->{password_web_expose_subadmin}) {
+                if (!$c->config->{security}->{password}->{web_expose_subadmin}) {
                     delete $resource{_webpassword};
                 }
             }
@@ -529,6 +529,18 @@ sub update_item {
         status => $resource->{status},
         contact_id => $resource->{contact_id},
     };
+
+    if ($resource->{password} && $resource->{password} ne $prov_subscriber->password) {
+        NGCP::Panel::Utils::Subscriber::insert_password_journal(
+            $c, $prov_subscriber, $resource->{password}
+        );
+    }
+
+    if ($resource->{webpassword}) {
+        NGCP::Panel::Utils::Subscriber::insert_webpassword_journal(
+            $c, $prov_subscriber, $resource->{webpassword}
+        );
+    }
 
     if (exists $resource->{webpassword} and $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS) {
         $resource->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($resource->{webpassword});

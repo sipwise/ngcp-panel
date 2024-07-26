@@ -57,7 +57,12 @@ sub create_item {
 
     my $item;
     try {
+        my $pass = delete $resource->{password};
         $item = $c->model('DB')->resultset('admins')->create($resource);
+        NGCP::Panel::Utils::Admin::insert_password_journal(
+            $c, $item, $pass
+        );
+
     } catch($e) {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create admin.", $e);
         return;

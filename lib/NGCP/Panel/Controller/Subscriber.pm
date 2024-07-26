@@ -458,7 +458,7 @@ sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-        unless($c->config->{security}->{password_allow_recovery});
+        unless($c->config->{security}->{password}{allow_recovery});
 
     my $posted = $c->req->method eq "POST";
     my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Subscriber::RecoverPassword", $c);
@@ -3031,7 +3031,21 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     }
                 }
 
+                my $prev_password = $prov_subscriber->password;
+
                 $prov_subscriber->update($prov_params);
+
+                if ($form->params->{password} && $form->params->{password} ne $prev_password) {
+                    NGCP::Panel::Utils::Subscriber::insert_password_journal(
+                        $c, $prov_subscriber, $form->params->{password}
+                    );
+                }
+
+                if ($form->params->{webpassword}) {
+                    NGCP::Panel::Utils::Subscriber::insert_webpassword_journal(
+                        $c, $prov_subscriber, $form->params->{webpassword}
+                    );
+                }
 
                 my $new_group_ids = defined $form->value->{group_select} ?
                     decode_json($form->value->{group_select}) : [];

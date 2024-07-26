@@ -61,12 +61,12 @@ override 'update_fields' => sub {
     }
 
 
-    if($c->config->{security}->{password_sip_autogenerate}) {
+    if($c->config->{security}->{password}->{sip_autogenerate}) {
         # todo: only set to inactive for certain roles, and only if specified in config
         $self->field('password')->inactive(1);
         $self->field('password')->required(0);
     }
-    if($c->config->{security}->{password_web_autogenerate}) {
+    if($c->config->{security}->{password}->{web_autogenerate}) {
         # todo: only set to inactive for certain roles, and only if specified in config
         $self->field('webpassword')->inactive(1);
         $self->field('webpassword')->required(0);

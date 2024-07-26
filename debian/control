@@ -46,6 +46,7 @@ Depends:
  libdata-hal-perl,
  libdata-ical-perl,
  libdata-page-perl,
+ libdata-password-zxcvbn-perl,
  libdata-printer-perl,
  libdata-serializer-perl,
  libdata-structure-util-perl,

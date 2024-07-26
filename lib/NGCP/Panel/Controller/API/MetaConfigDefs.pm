@@ -66,8 +66,8 @@ sub GET :Allow {
         $config{file} = $c->config->{'Plugin::ConfigLoader'}->{file};
         $config{numbermanagement}->{auto_sync_cli} = $config_internal{numbermanagement}->{auto_sync_cli};
         $config{numbermanagement}->{auto_allow_cli} = $config_internal{numbermanagement}->{auto_allow_cli};
-        $config{security}->{password_web_validate}  = $config_internal{security}->{password_web_validate};
-        $config{security}->{password_sip_validate}  = $config_internal{security}->{password_sip_validate};
+        $config{security}->{password}->{web_validate}  = $config_internal{security}->{password}{web_validate};
+        $config{security}->{password}->{sip_validate}  = $config_internal{security}->{password}{sip_validate};
         $config{privileges}  = $config_internal{privileges};
         $config{features} = $config_internal{features};
 

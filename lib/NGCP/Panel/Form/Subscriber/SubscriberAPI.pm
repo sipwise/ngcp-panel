@@ -245,10 +245,10 @@ sub update_fields {
     # make sure we don't use contract, as we have customer
     $self->field('contract')->inactive(1);
 
-    if($c->config->{security}->{password_sip_autogenerate}) {
+    if($c->config->{security}->{password}->{sip_autogenerate}) {
         $self->field('password')->required(0);
     }
-    if($c->config->{security}->{password_web_autogenerate}) {
+    if($c->config->{security}->{password}->{web_autogenerate}) {
         $self->field('webpassword')->required(0);
     }
     return;

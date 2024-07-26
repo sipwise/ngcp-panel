@@ -1,19 +1,19 @@
 package NGCP::Panel::Utils::Form;
 
 use Sipwise::Base;
-use Crypt::Cracklib;
+use Data::Password::zxcvbn qw(password_strength);
 use NGCP::Panel::Utils::Auth;
 
 sub validate_password {
     my %params = @_;
     my $c = $params{c};
     my $field = $params{field};
-    my $r = $c->config->{security};
+    my $pw = $c->config->{security}{password};
     my $utf8 = $params{utf8} // 1;
     my $pass = $field->value;
 
-    my $minlen = $r->{password_min_length} // 6;
-    my $maxlen = $r->{password_max_length} // 40;
+    my $minlen = $pw->{min_length} // 12;
+    my $maxlen = $pw->{max_length} // 40;
 
     if(length($pass) < $minlen) {
         $field->add_error($c->loc('Must be at minimum [_1] characters long', $minlen));
@@ -21,46 +21,101 @@ sub validate_password {
     if(length($pass) > $maxlen) {
         $field->add_error($c->loc('Must be at maximum [_1] characters long', $maxlen));
     }
-    if($r->{password_musthave_lowercase} && $pass !~ /[a-z]/) {
-        $field->add_error($c->loc('Must contain lower-case characters'));
+    if ($pass =~ /\s/) {
+        $field->add_error($c->loc("Must not contain spaces"));
     }
-    if($r->{password_musthave_uppercase} && $pass !~ /[A-Z]/) {
-        $field->add_error($c->loc('Must contain upper-case characters'));
+
+    if(my $c_check = $pw->{musthave_lowercase}) {
+        my $count = 0;
+        map { $_ =~ /^[a-z]$/ and $count++ } split(//, $pass);
+        if ($count < $c_check) {
+            $field->add_error($c->loc("Must contain at least $c_check lower-case characters"));
+        }
     }
-    if($r->{password_musthave_digit} && $pass !~ /[0-9]/) {
-        $field->add_error($c->loc('Must contain digits'));
+    if(my $c_check = $pw->{musthave_uppercase}) {
+        my $count = 0;
+        map { $_ =~ /^[A-Z]$/ and $count++ } split(//, $pass);
+        if ($count < $c_check) {
+            $field->add_error($c->loc("Must contain at least $c_check upper-case characters"));
+        }
     }
-    if($r->{password_musthave_specialchar} && $pass !~ /[^0-9a-zA-Z]/) {
-        $field->add_error($c->loc('Must contain special characters'));
+    if(my $c_check = $pw->{musthave_digit}) {
+        my $count = 0;
+        map { $_ =~ /^[0-9]$/ and $count++ } split(//, $pass);
+        if ($count < $c_check) {
+            $field->add_error($c->loc("Must contain at least $c_check digits"));
+        }
+    }
+    if(my $c_check = $pw->{musthave_specialchar}) {
+        my $count = 0;
+        map { $_ =~ /^[^0-9a-zA-Z]$/ and $count++ } split(//, $pass);
+        if ($count < $c_check) {
+            $field->add_error($c->loc("Must contain at least $c_check special characters"));
+        }
     }
     if (!$utf8 && $pass && !NGCP::Panel::Utils::Auth::check_password($pass)) {
         $field->add_error($c->loc('Contains invalid characters'));
     }
-    if($field->name eq "password" && $r->{password_sip_validate}) {
+    my $res = password_strength($pass);
+    if ($res->{score} < 3) {
+        $field->add_error($c->loc('Password is too weak'));
+    }
+
+    my $lp_rs;
+    my $check_last_passwords = 0;
+    my $prov_sub = $c->stash->{subscriber}
+                    ? $c->stash->{subscriber}->provisioning_voip_subscriber
+                    : undef;
+    my $admin = $c->stash->{administrator} // undef;
+    if($field->name eq "password" && $pw->{sip_validate}) {
         my $user;
         if($field->form->field('username')) {
             $user = $field->form->field('username')->value;
-        } elsif($c->stash->{subscriber}) {
-            $user = $c->stash->{subscriber}->provisioning_voip_subscriber->username;
+        } elsif($prov_sub) {
+            $user = $prov_sub->username;
+            if (defined $user && $pass =~ /$user/i) {
+                $field->add_error($c->loc('Must not contain username'));
+            }
+        } elsif($admin) {
+            $user = $admin->login;
+            if (defined $user && $pass =~ /$user/i) {
+                $field->add_error($c->loc('Must not contain login'));
+            }
         }
-        if(defined $user && $pass =~ /$user/i) {
-            $field->add_error($c->loc('Must not contain username'));
+        if ($pass && $prov_sub && $pass ne $prov_sub->password) {
+            $lp_rs = $prov_sub->last_passwords;
+            $check_last_passwords = 1;
         }
-        unless(Crypt::Cracklib::check($pass)) {
-            $field->add_error($c->loc('Password is too weak'));
+        if ($pass && $admin) {
+            $lp_rs = $admin->last_passwords;
+            $check_last_passwords = 1;
         }
-    } elsif($field->name eq "webpassword" && $r->{password_web_validate}) {
+    } elsif($field->name eq "webpassword" && $pw->{web_validate}) {
         my $user;
         if($field->form->field('webusername')) {
             $user = $field->form->field('webusername')->value;
-        } elsif($c->stash->{subscriber}) {
-            $user = $c->stash->{subscriber}->provisioning_voip_subscriber->webusername;
+        } elsif($prov_sub) {
+            $user = $prov_sub->webusername;
         }
         if(defined $user && $pass =~ /$user/i) {
             $field->add_error($c->loc('Must not contain username'));
         }
-        unless(Crypt::Cracklib::check($pass)) {
-            $field->add_error($c->loc('Password is too weak'));
+        if ($pass && $prov_sub) {
+            $lp_rs = $prov_sub->last_webpasswords;
+            $check_last_passwords = 1;
+        }
+    }
+    if ($check_last_passwords) {
+        my $bcrypt_cost = 6;
+        foreach my $row ($lp_rs->all) {
+            my $last_password = $row->value;
+            my $enc_pass = $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS
+                                ? NGCP::Panel::Utils::Auth::get_usr_salted_pass($last_password, $pass, $bcrypt_cost)
+                                : $pass;
+            if ($last_password eq $enc_pass) {
+                $field->add_error($c->loc('Password was previously used'));
+                last;
+            }
         }
     }
 }

@@ -1,10 +1,27 @@
   function generate_password(len) {
     var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?/-_%$()[]";
-    for (var i = 0; i < len; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    var possible_lower = "abcdefghijklmnopqrstuvwxyz";
+    var possible_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var possible_digit = "0123456789";
+    var possible_spec = "@!?/\-_&*^%$;:<>,.()[]{}";
+    var min_lower = 4;
+    var min_upper = 4;
+    var min_digit = 4;
+    var min_spec = 4;
+    var chars = ''
+    for (var i = 0; i < min_lower; i++) {
+        chars += possible_lower.charAt(Math.floor(Math.random() * possible_lower.length));
     }
-    return text;
+    for (var i = 0; i < min_upper; i++) {
+        chars += possible_upper.charAt(Math.floor(Math.random() * possible_upper.length));
+    }
+    for (var i = 0; i < min_digit; i++) {
+        chars += possible_digit.charAt(Math.floor(Math.random() * possible_digit.length));
+    }
+    for (var i = 0; i < min_spec; i++) {
+        chars += possible_spec.charAt(Math.floor(Math.random() * possible_spec.length));
+    }
+    return [...chars].sort(()=>Math.random()-.5).join('');
   }
   $(document).ready(function() {
     var btn = '<div id="gen_password" class="btn btn-primary pull-right" style="width:10%">Generate</div>';

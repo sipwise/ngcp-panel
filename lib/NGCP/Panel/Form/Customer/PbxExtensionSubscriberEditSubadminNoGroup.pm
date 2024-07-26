@@ -24,10 +24,10 @@ sub update_fields {
     }
 
     if($c->user->roles eq "subscriberadmin") {
-        if(!$c->config->{security}->{password_sip_expose_subadmin}) {
+        if(!$c->config->{security}->{password}->{sip_expose_subadmin}) {
             $self->field('password')->inactive(1);
         }
-        if(!$c->config->{security}->{password_web_expose_subadmin}) {
+        if(!$c->config->{security}->{password}->{web_expose_subadmin}) {
             $self->field('webpassword')->inactive(1);
         }
     }

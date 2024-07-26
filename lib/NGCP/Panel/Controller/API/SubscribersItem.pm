@@ -84,6 +84,7 @@ sub PUT :Allow {
         my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $subscriber->contract,
             ); #apply underrun lock level
+        $c->stash->{subscriber} = $subscriber; # password validation
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -126,6 +127,7 @@ sub PATCH :Allow {
         my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                 contract => $subscriber->contract,
             ); #apply underrun lock level
+        $c->stash->{subscriber} = $subscriber; # password validation
         my $json = $self->get_valid_patch_data(
             c => $c,
             id => $id,

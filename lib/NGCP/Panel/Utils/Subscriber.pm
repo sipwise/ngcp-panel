@@ -8,6 +8,7 @@ use NGCP::Panel::Utils::Generic qw(:all);
 
 use DBIx::Class::Exception;
 use String::MkPasswd;
+use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Email;
@@ -643,20 +644,20 @@ sub create_subscriber {
         die("invalid timezone name '$params->{timezone}' detected");
     }
 
-    my $passlen = $c->config->{security}->{password_min_length} || 8;
-    if($c->config->{security}->{password_sip_autogenerate} and not defined $params->{password}) {
+    my $passlen = $c->config->{security}->{password}->{min_length} || 12;
+    if($c->config->{security}->{password}->{sip_autogenerate} and not defined $params->{password}) {
         $params->{password} = String::MkPasswd::mkpasswd(
             -length => $passlen,
-            -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
+            -minnum => 3, -minlower => 3, -minupper => 3, -minspecial => 3,
             -distribute => 1, -fatal => 1,
         );
         #otherwise it breaks xml device configs
         $params->{password} =~s/[<>&]/,/g;
     }
-    if($c->config->{security}->{password_web_autogenerate} and not defined $params->{webpassword}) {
+    if($c->config->{security}->{password}->{web_autogenerate} and not defined $params->{webpassword}) {
         $params->{webpassword} = String::MkPasswd::mkpasswd(
             -length => $passlen,
-            -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
+            -minnum => 3, -minlower => 3, -minupper => 3, -minspecial => 3,
             -distribute => 1, -fatal => 1,
         );
     }
@@ -697,12 +698,15 @@ sub create_subscriber {
             primary_number_id => undef, # will be filled in next step
             contact_id => $contact ? $contact->id : undef,
         });
+
         unless(exists $params->{password}) {
             my ($pass_bin, $pass_str);
             UUID::generate($pass_bin);
             UUID::unparse($pass_bin, $pass_str);
             $params->{password} = $pass_str;
         }
+
+        my $raw_webpassword = $params->{webpassword} // undef;
         if (exists $params->{webpassword} and $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS) {
             $params->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($params->{webpassword});
         }
@@ -725,6 +729,18 @@ sub create_subscriber {
             profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
+
+        if ($params->{password}) {
+            NGCP::Panel::Utils::Subscriber::insert_password_journal(
+                $c, $prov_subscriber, $params->{password}
+            );
+        }
+
+        if ($raw_webpassword) {
+            NGCP::Panel::Utils::Subscriber::insert_webpassword_journal(
+                $c, $prov_subscriber, $raw_webpassword,
+            );
+        }
 
         my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
             c => $c,
@@ -2672,6 +2688,73 @@ sub get_subscribers_count {
     });
 
     return $rs->count();
+}
+
+sub insert_password_journal {
+    my ($c, $prov_sub, $password) = @_;
+
+    my $bcrypt_cost = 6;
+    my $keep_last_used = $c->config->{security}{password}{sip_keep_last_used} // return;
+
+    my $rs = $prov_sub->last_passwords->search({
+    },{
+        order_by => { '-desc' => 'created_at' },
+    });
+
+    my @delete_ids = ();
+    my $idx = 0;
+    foreach my $row ($rs->all) {
+        $idx++;
+        $idx >= $keep_last_used ? push @delete_ids, $row->id : next;
+    }
+
+    my $del_rs = $rs->search({
+        id => { -in => \@delete_ids },
+    });
+
+    $del_rs->delete;
+
+    $prov_sub->last_passwords->create({
+        subscriber_id => $prov_sub->id,
+        value => $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS
+                    ? NGCP::Panel::Utils::Auth::generate_salted_hash($password, $bcrypt_cost)
+                    : $password,
+    });
+    $prov_sub->update({ password_modify_timestamp => \'current_timestamp()' });
+}
+
+sub insert_webpassword_journal {
+    my ($c, $prov_sub, $webpassword) = @_;
+
+    my $bcrypt_cost = 6;
+    my $keep_last_used = $c->config->{security}{password}{web_keep_last_used} // return;
+
+    my $rs = $prov_sub->last_webpasswords->search({
+    },{
+        order_by => { '-desc' => 'created_at' },
+    });
+
+
+    my @delete_ids = ();
+    my $idx = 0;
+    foreach my $row ($rs->all) {
+        $idx++;
+        $idx >= $keep_last_used ? push @delete_ids, $row->id : next;
+    }
+
+    my $del_rs = $rs->search({
+        id => { -in => \@delete_ids },
+    });
+
+    $del_rs->delete;
+
+    $prov_sub->last_webpasswords->create({
+        subscriber_id => $prov_sub->id,
+        value => $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS
+                    ? NGCP::Panel::Utils::Auth::generate_salted_hash($webpassword, $bcrypt_cost)
+                    : $webpassword,
+    });
+    $prov_sub->update({ webpassword_modify_timestamp => \'current_timestamp()' });
 }
 
 1;
