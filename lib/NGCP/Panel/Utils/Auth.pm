@@ -5,9 +5,7 @@ use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 use Data::Entropy::Algorithms qw/rand_bits/;
 use IO::Compress::Zip qw/zip/;
 use IPC::System::Simple qw/capturex/;
-use Redis;
 use UUID;
-use NGCP::Panel::Utils::Redis;
 
 our $SALT_LENGTH = 128;
 our $ENCRYPT_SUBSCRIBER_WEBPASSWORDS = 1;
@@ -58,7 +56,8 @@ sub perform_auth {
     my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
     my $res;
 
-    return $res unless check_password($pass);
+    return $res if !check_password($pass);
+    return $res if user_is_banned($c, $user, $realm);
 
     my $dbadmin;
     $dbadmin = $c->model('DB')->resultset('admins')->find({
@@ -113,11 +112,14 @@ sub perform_auth {
             });
         }
     }
+
+    $res ? clear_failed_login_attempts($c, $user, $realm)
+         : log_failed_login_attempt($c, $user, $realm);
+
     return $res;
 }
 
 sub is_salted_hash {
-    
     my $password = shift;
     if (length($password)
         and (length($password) == 54 or length($password) == 56)
@@ -125,7 +127,6 @@ sub is_salted_hash {
         return 1;
     }
     return 0;
-    
 }
 
 sub perform_subscriber_auth {
@@ -135,7 +136,10 @@ sub perform_subscriber_auth {
     if ($pass && $pass =~ /[^[:ascii:]]/) {
         return $res;
     }
-    
+
+    my $userdom = "$user:$domain";
+    return $res if user_is_banned($c, $userdom, 'subscriber');
+
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
         webusername => $user,
         'voip_subscriber.status' => 'active',
@@ -215,6 +219,10 @@ sub perform_subscriber_auth {
                 'subscriber');
         }
     }
+
+    $res ? clear_failed_login_attempts($c, $userdom, 'subscriber')
+         : log_failed_login_attempt($c, $userdom, 'subscriber');
+
     return $res;
 }
 
@@ -424,15 +432,10 @@ sub initiate_password_reset {
     my ($uuid_bin, $uuid_string);
     UUID::generate($uuid_bin);
     UUID::unparse($uuid_bin, $uuid_string);
-    my $redis = Redis->new(
-        server => $c->config->{redis}->{central_url},
-        reconnect => 10, every => 500000, # 500ms
-        cnx_timeout => 3,
-    );
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
     unless ($redis) {
         return {success => 0, error => "Failed to connect to central redis url " . $c->config->{redis}->{central_url}};
     }
-    $redis->select($c->config->{'Plugin::Session'}->{redis_db});
     my $username = $admin->login;
     if ($redis->exists("password_reset:admin::$username")) {
         return {success => 0, error => 'A password reset attempt has been made already recently, please check your email.'};
@@ -460,7 +463,7 @@ sub generate_auth_token {
     my ($self, $c, $type, $role, $user_id, $expires) = @_;
 
     my ($uuid_bin, $uuid_string);
-    my $redis = NGCP::Panel::Utils::Redis::get_redis_connection($c, {database => $c->config->{'Plugin::Session'}->{redis_db}});
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
     unless ($redis) {
         $c->log->error("Could not generate auth token for user $user_id, no Redis connection available");
@@ -485,6 +488,72 @@ sub generate_auth_token {
                     $uuid_string, $type, $role, $user_id, $expires, $expire_time);
 
     return $uuid_string;
+}
+
+sub user_is_banned {
+    my ($c, $user, $realm) = @_;
+
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
+
+    my $key = "login:ban:$user:$realm";
+
+    return $redis->exists($key) ? 1 : 0;
+}
+
+sub log_failed_login_attempt {
+    my ($c, $user, $realm) = @_;
+
+    return unless $c->config->{security}{login}{ban_enable};
+    my $expire = $c->config->{security}{login}{ban_expire_time} // 0;
+    my $max_attempts = $c->config->{security}{login}{max_attempts} // return;
+
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
+
+    my $key = "login:fail:$user:$realm";
+    my $attempted = ($redis->hget($key, 'attempts') // 0) + 1;
+    $attempted >= $max_attempts
+        ? ban_user($c, $user, $realm)
+        : do {
+             $redis->multi();
+             $redis->hset($key, 'attempts', $attempted);
+             $redis->hset($key, 'last_attempt', time());
+             $redis->expire($key, $expire // 3600); # always expire invalid login attempts
+             $redis->exec();
+        };
+
+    return;
+}
+
+sub clear_failed_login_attempts {
+    my ($c, $user, $realm) = @_;
+
+    my $key = "login:fail:$user:$realm";
+
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
+
+    $redis->del($key);
+
+    return;
+}
+
+sub ban_user {
+    my ($c, $user, $realm) = @_;
+
+    return unless $c->config->{security}{login}{ban_enable};
+    my $expire = $c->config->{security}{login}{ban_expire_time} // 0;
+    $expire = 30;
+
+    my $key = "login:ban:$user:$realm";
+    $c->log->info("ban user=$user realm=$realm for $expire seconds");
+
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
+
+    $redis->hset($key, 'banned_at', time());
+    $redis->expire($key, $expire) if $expire;
+
+    clear_failed_login_attempts($c, $user, $realm);
+
+    return;
 }
 
 1;

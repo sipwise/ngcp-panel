@@ -24,7 +24,6 @@ use JSON qw/decode_json encode_json/;
 use HTTP::Status qw(:constants);
 use IPC::System::Simple qw/capturex/;
 use File::Slurp qw/read_file/;
-use Redis;
 use NGCP::Panel::Utils::Encryption qw();
 
 my %LOCK = (
@@ -41,16 +40,11 @@ sub get_subscriber_location_rs {
     if ($c->config->{redis}->{usrloc}) {
         my $redis;
         try {
-            $redis = Redis->new(
-                server => $c->config->{redis}->{central_url},
-                reconnect => 10, every => 500000, # 500ms
-                cnx_timeout => 3,
-            );
+            my $redis = $c->redis_get_connection({database => $c->config->{redis}->{usrloc_db}});
             unless ($redis) {
                 $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
                 return;
             }
-            $redis->select($c->config->{redis}->{usrloc_db});
             my $rs = NGCP::Panel::Utils::RedisLocationResultSet->new(_redis => $redis, _c => $c);
             $rs = $rs->search($filter, $opt) if ($filter and scalar keys %$filter);
             return $rs;

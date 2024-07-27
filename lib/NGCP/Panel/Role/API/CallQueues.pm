@@ -13,34 +13,12 @@ my $redis_callqueue_key_prefix = 'callqueue:';
 my $redis_dialogdata_key_prefix = 'dialog:cid::';
 my $number_search_limit = 100; # scan redis only if collection gets bigger than this
 
-# todo: move this stash factory method below to some util.
 sub _get_redis {
     my ($self, $c, $select) = @_;
-    my $stash_key = 'redis';
-    if (defined $select) {
-        $stash_key .= '_' . $select;
-    } else {
-        $c->error("redis store not specified");
-        return;
-    }
-    my $redis = $c->stash->{$stash_key};
+    my $redis = $c->redis_get_connection({database => $select});
     unless ($redis) {
-        try {
-            $redis = Redis->new(
-                server => $c->config->{redis}->{central_url},
-                reconnect => 10, every => 500000, # 500ms
-                cnx_timeout => 3,
-            );
-            unless ($redis) {
-                $c->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
-                return;
-            }
-            $redis->select($select) if defined $select;
-            $c->stash($stash_key => $redis);
-        } catch($e) {
-            $c->error("Failed to fetch callqueue information from redis: $e");
-            return;
-        }
+        $c->error("Failed to fetch callqueue information from redis");
+        return;
     }
     return $redis;
 }

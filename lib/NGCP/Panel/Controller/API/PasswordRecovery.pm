@@ -80,18 +80,13 @@ sub POST :Allow {
             return;
         }
 
-        my $redis = Redis->new(
-            server => $c->config->{redis}->{central_url},
-            reconnect => 10, every => 500000, # 500ms
-            cnx_timeout => 3,
-        );
+        my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
         unless ($redis) {
             $res = {success => 0};
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error',
                          "Failed to connect to central redis url " . $c->config->{redis}->{central_url});
             return;
         }
-        $redis->select($c->config->{'Plugin::Session'}->{redis_db});
         my $admin = $redis->hget("password_reset:admin::$uuid_string", "user");
         if ($admin) {
             $c->log->debug("Entering password recovery for administrator.");

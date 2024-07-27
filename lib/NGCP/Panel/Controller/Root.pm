@@ -541,8 +541,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         }
         $auth_user = $c->user;
     } elsif ($auth_token) {
-        my $redis = NGCP::Panel::Utils::Redis::get_redis_connection($c, {database => $c->config->{'Plugin::Session'}->{redis_db}});
-
+        my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
         unless ($redis) {
             $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
             $c->response->body(encode_json({
@@ -782,7 +781,6 @@ sub login_to_v2 :Chained('/') :PathPart('login_to_v2') :Args(0) {
 
     use JSON qw/encode_json decode_json/;
     use Crypt::JWT qw/encode_jwt/;
-    use Redis;
 
     my $key = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{jwt_key};
     my $relative_exp = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{relative_exp};
@@ -806,16 +804,11 @@ sub login_to_v2 :Chained('/') :PathPart('login_to_v2') :Args(0) {
         $relative_exp ? (relative_exp => $relative_exp) : (),
     );
 
-    my $redis = Redis->new(
-        server => $c->config->{redis}->{central_url},
-        reconnect => 10, every => 500000, # 500ms
-        cnx_timeout => 3,
-    );
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
     unless ($redis) {
         $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
         return;
     }
-    $redis->select($c->config->{'Plugin::Session'}->{redis_db});
     $redis->set("jwt:$token", '');
     $redis->expire("jwt:$token", 300);
 

@@ -4,7 +4,6 @@ use warnings;
 use strict;
 
 use parent 'Catalyst::Controller';
-use Redis;
 use TryCatch;
 use UUID;
 
@@ -196,16 +195,11 @@ sub recover_password :Chained('/') :PathPart('recoverpassword') :Args(0) {
         $c->detach('/denied_page')
     }
 
-    my $redis = Redis->new(
-        server => $c->config->{redis}->{central_url},
-        reconnect => 10, every => 500000, # 500ms
-        cnx_timeout => 3,
-    );
+    my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
     unless ($redis) {
         $c->log->error("Failed to connect to central redis url " . $c->config->{redis}->{central_url});
         return;
     }
-    $redis->select($c->config->{'Plugin::Session'}->{redis_db});
     my $ip = $redis->hget("password_reset:admin::$uuid_string", "ip");
     if ($ip && $ip ne $c->req->address) {
         $c->log->warn("invalid password recovery attempt for token '$uuid_string' from '".$c->qs($c->req->address)."'");

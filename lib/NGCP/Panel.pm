@@ -30,6 +30,7 @@ use Catalyst qw/
     NGCP::EscapeJs
     NGCP::EscapeURI
     NGCP::License
+    NGCP::Redis
     I18N
 /;
 use Log::Log4perl::Catalyst qw();
