@@ -1,3 +1,38 @@
+ngcp-panel (13.0.0.0+0~mr13.0.0.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a46ef5b] MT#60160 improve same primary number detection
+  * [6926930] MT#60227 handle Accept: application/json header
+  * [0d8d68d] MT#60236 /api/mailtofaxsettings allow subscriber roles
+  * [f81481e] MT#60236 disable mailtofaxsettings active state checks
+  * [9a2d66a] MT#60238 /api/customerpreferences allow subscriberadmin
+  * [6543743] MT#60162 improve expand functionality for collections
+  * [18597ef] MT#60378 accept null same way as NULL for search
+  * [775ec90] MT#60392 /api/lnpcarriers allow reseller GET
+  * [f72f829] MT#60393 /api/timesets fix reseller_id validation
+  * [244b4f7] MT#60392 /api/ncoslnpcarriers allow reseller
+  * [5d26436] MT#60392 /api/ncoslnpcarriers fix reseller role typo
+  * [ca908bf] MT#60400 /api/soundsets remove null search detection
+  * [522fd97] MT#58964 /api/platforminfo add licenses info
+  * [6cb38f0] MT#58964 do not render licenses for public platforminfo
+  * [524a264] MT#60498 add search by not_null, change null param
+  * [10a88cf] MT#58964 /api/platforminfo add license_meta
+  * [9d021be] MT#59979 add license control
+  * [43d112b] MT#60558 add max subscribers/groups license checks
+  * [d9f283c] MT#59449 enhance password validation and handling
+  * [60fa23c] MT#60585 add user ban support
+  * [cfe0a44] MT#60585 add user ban by IP address, ban JWT invalid attempts
+
+  [ Marco Capetta ]
+  * [fefa5ea] MT#60511 Form/Header/Rule add direction "b_outbound"
+  * [551cc2f] MT#60515 rename hm inbound/outbound directions to a_inbound/a_outbound
+
+  [ Rene Krenn ]
+  * [0fd36ac] MT#60520 prov templates: fix lookup of items
+  * [9c10330] MT#60575 dynamically load provisioning templates module
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 28 Jul 2024 12:03:13 +0200
+
 ngcp-panel (12.5.0.0+0~mr12.5.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
