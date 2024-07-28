@@ -526,6 +526,17 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         return;
     }
 
+    my $banned = NGCP::Panel::Utils::Auth::user_is_banned($c, $user, $ngcp_realm);
+    if ($banned) {
+        my $ip = $c->request->address;
+        $c->response->status(HTTP_FORBIDDEN);
+        $c->response->body(encode_json({
+            code => HTTP_FORBIDDEN,
+            message => "Forbidden!" })."\n");
+        $c->log->debug("Banned user=$user realm=$ngcp_realm ip=$ip login attempt");
+        return;
+    }
+
     my $auth_user;
     if ($jwt) {
         my $realm = $ngcp_realm eq 'admin' ? 'api_admin_jwt'
@@ -537,6 +548,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 code => HTTP_FORBIDDEN,
                 message => "Forbidden!" })."\n");
             $c->log->info("Invalid JWT");
+            NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $user, $ngcp_realm);
             return;
         }
         $auth_user = $c->user;
@@ -561,6 +573,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 code => HTTP_FORBIDDEN,
                 message => "Forbidden!" })."\n");
             $c->log->info("Unknown auth_token");
+            NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $user, $ngcp_realm);
             return;
         }
 
@@ -573,6 +586,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                     code => HTTP_FORBIDDEN,
                     message => "Forbidden!" })."\n");
                 $c->log->info("Wrong auth_token role");
+                NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $user, $ngcp_realm);
                 return;
             }
 
@@ -589,6 +603,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                     code => HTTP_FORBIDDEN,
                     message => "Forbidden!" })."\n");
                 $c->log->info("Wrong auth_token role");
+                NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $user, $ngcp_realm);
                 return;
             }
 
@@ -652,6 +667,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                     code => HTTP_FORBIDDEN,
                     message => "User not found" })."\n");
                 $c->log->info("User not found");
+                NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $user, $ngcp_realm);
                 return;
             }
         } else {
@@ -733,6 +749,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 code => HTTP_FORBIDDEN,
                 message => "User not found" })."\n");
             $c->log->info("User not found");
+            NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $user, $ngcp_realm);
             return;
         }
         $log_user    = $auth_user->login;
@@ -758,11 +775,13 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 code => HTTP_FORBIDDEN,
                 message => "User not found" })."\n");
             $c->log->info("User not found");
+            NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $user, $ngcp_realm);
             return;
         }
         $log_user    = $auth_user->webusername;
         $log_user_id = $auth_user->uuid;
     }
+    NGCP::Panel::Utils::Auth::clear_failed_login_attempts($c, $user, $ngcp_realm);
 
     $c->log->debug(sprintf '%s JWT token for user=%s id=%s realm=%s expires_in_secs=%d',
                     $jwt ? 'Re-issue' : 'Issue',

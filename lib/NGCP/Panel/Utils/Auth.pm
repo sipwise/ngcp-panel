@@ -493,9 +493,10 @@ sub generate_auth_token {
 sub user_is_banned {
     my ($c, $user, $realm) = @_;
 
+    my $ip = $c->request->address;
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
-    my $key = "login:ban:$user:$realm";
+    my $key = "login:ban:$user:$realm:$ip";
 
     return $redis->exists($key) ? 1 : 0;
 }
@@ -506,10 +507,11 @@ sub log_failed_login_attempt {
     return unless $c->config->{security}{login}{ban_enable};
     my $expire = $c->config->{security}{login}{ban_expire_time} // 0;
     my $max_attempts = $c->config->{security}{login}{max_attempts} // return;
+    my $ip = $c->request->address;
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
-    my $key = "login:fail:$user:$realm";
+    my $key = "login:fail:$user:$realm:$ip";
     my $attempted = ($redis->hget($key, 'attempts') // 0) + 1;
     $attempted >= $max_attempts
         ? ban_user($c, $user, $realm)
@@ -527,7 +529,8 @@ sub log_failed_login_attempt {
 sub clear_failed_login_attempts {
     my ($c, $user, $realm) = @_;
 
-    my $key = "login:fail:$user:$realm";
+    my $ip = $c->request->address;
+    my $key = "login:fail:$user:$realm:$ip";
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
@@ -541,10 +544,10 @@ sub ban_user {
 
     return unless $c->config->{security}{login}{ban_enable};
     my $expire = $c->config->{security}{login}{ban_expire_time} // 0;
-    $expire = 30;
+    my $ip = $c->request->address;
+    my $key = "login:ban:$user:$realm:$ip";
 
-    my $key = "login:ban:$user:$realm";
-    $c->log->info("ban user=$user realm=$realm for $expire seconds");
+    $c->log->info("Ban user=$user realm=$realm ip=$ip for $expire seconds");
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
