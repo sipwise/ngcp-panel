@@ -15,6 +15,26 @@ sub validate_password {
     my $minlen = $pw->{min_length} // 12;
     my $maxlen = $pw->{max_length} // 40;
 
+    my $is_sip_password = 0;
+    my $is_web_password = 0;
+    my $is_admin_password = 0;
+
+    if ($params{admin}) {
+        $is_admin_password = 1;
+    } elsif ($field->name eq 'password') {
+        $is_sip_password = 1;
+    } elsif ($field->name eq 'webpassword') {
+        $is_web_password = 1;
+    }
+
+    if ($is_sip_password) {
+        return unless $pw->{sip_validate};
+    } elsif ($is_web_password || $is_admin_password) {
+        return unless $pw->{web_validate};
+    } else {
+        return;
+    }
+
     if(length($pass) < $minlen) {
         $field->add_error($c->loc('Must be at minimum [_1] characters long', $minlen));
     }
@@ -63,36 +83,29 @@ sub validate_password {
 
     my $lp_rs;
     my $check_last_passwords = 0;
-    my $prov_sub = $c->stash->{subscriber}
-                    ? $c->stash->{subscriber}->provisioning_voip_subscriber
-                    : undef;
-    my $admin = $c->stash->{administrator} // undef;
-    if($field->name eq "password" && $pw->{sip_validate}) {
+    if ($is_sip_password) {
         my $user;
-        if($field->form->field('username')) {
+        my $prov_sub = $c->stash->{subscriber}
+                        ? $c->stash->{subscriber}->provisioning_voip_subscriber
+                        : undef;
+        if ($field->form->field('username')) {
             $user = $field->form->field('username')->value;
-        } elsif($prov_sub) {
+        } elsif ($prov_sub) {
             $user = $prov_sub->username;
-            if (defined $user && $pass =~ /$user/i) {
-                $field->add_error($c->loc('Must not contain username'));
-            }
-        } elsif($admin) {
-            $user = $admin->login;
-            if (defined $user && $pass =~ /$user/i) {
-                $field->add_error($c->loc('Must not contain login'));
-            }
+        }
+        if (defined $user && $pass =~ /$user/i) {
+            $field->add_error($c->loc('Must not contain username'));
         }
         if ($pass && $prov_sub && $pass ne $prov_sub->password) {
             $lp_rs = $prov_sub->last_passwords;
             $check_last_passwords = 1;
         }
-        if ($pass && $admin) {
-            $lp_rs = $admin->last_passwords;
-            $check_last_passwords = 1;
-        }
     } elsif($field->name eq "webpassword" && $pw->{web_validate}) {
         my $user;
-        if($field->form->field('webusername')) {
+        my $prov_sub = $c->stash->{subscriber}
+                ? $c->stash->{subscriber}->provisioning_voip_subscriber
+                : undef;
+        if ($field->form->field('webusername')) {
             $user = $field->form->field('webusername')->value;
         } elsif($prov_sub) {
             $user = $prov_sub->webusername;
@@ -102,6 +115,21 @@ sub validate_password {
         }
         if ($pass && $prov_sub) {
             $lp_rs = $prov_sub->last_webpasswords;
+            $check_last_passwords = 1;
+        }
+    } elsif ($is_admin_password) {
+        my $user;
+        my $admin = $c->stash->{administrator} // undef;
+        if ($field->form->field('login')) {
+            $user = $field->form->field('login')->value;
+        } elsif($admin) {
+            $user = $admin->login;
+        }
+        if (defined $user && $pass =~ /$user/i) {
+            $field->add_error($c->loc('Must not contain login'));
+        }
+        if ($pass && $admin) {
+            $lp_rs = $admin->last_passwords;
             $check_last_passwords = 1;
         }
     }
