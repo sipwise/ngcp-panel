@@ -113,8 +113,11 @@ sub perform_auth {
         }
     }
 
-    $res ? clear_failed_login_attempts($c, $user, $realm)
-         : log_failed_login_attempt($c, $user, $realm);
+    $res ? do {
+        clear_failed_login_attempts($c, $user, 'admin');
+        reset_ban_increment_stage($c, $user, 'admin');
+    }
+    : log_failed_login_attempt($c, $user, 'admin');
 
     return $res;
 }
@@ -137,7 +140,7 @@ sub perform_subscriber_auth {
         return $res;
     }
 
-    my $userdom = "$user:$domain";
+    my $userdom = $user . '@' . $domain;
     return $res if user_is_banned($c, $userdom, 'subscriber');
 
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
@@ -220,8 +223,11 @@ sub perform_subscriber_auth {
         }
     }
 
-    $res ? clear_failed_login_attempts($c, $userdom, 'subscriber')
-         : log_failed_login_attempt($c, $userdom, 'subscriber');
+    $res ? do {
+        clear_failed_login_attempts($c, $userdom, 'subscriber');
+        reset_ban_increment_stage($c, $userdom, 'subscriber');
+    }
+    : log_failed_login_attempt($c, $userdom, 'subscriber');
 
     return $res;
 }
@@ -490,13 +496,31 @@ sub generate_auth_token {
     return $uuid_string;
 }
 
+sub get_user_domain {
+    my ($c, $user) = @_;
+
+    my ($p_user, $p_domain, $t) = split(/\@/, $user, 3);
+    if (defined $t) {
+        # in case username is an email address
+        $p_user = $p_user . '@' . $p_domain;
+        $p_domain = $t;
+    }
+    unless(defined $p_domain) {
+        $p_domain = $c->req->uri->host;
+    }
+
+    return ($p_user, $p_domain);
+}
+
 sub user_is_banned {
     my ($c, $user, $realm) = @_;
 
     my $ip = $c->request->address;
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
-    my $key = "login:ban:$user:$realm:$ip";
+    my ($p_user, $p_domain) = get_user_domain($c, $user);
+
+    my $key = "login:ban:$p_user:$p_domain:$realm:$ip";
 
     return $redis->exists($key) ? 1 : 0;
 }
@@ -505,13 +529,15 @@ sub log_failed_login_attempt {
     my ($c, $user, $realm) = @_;
 
     return unless $c->config->{security}{login}{ban_enable};
-    my $expire = $c->config->{security}{login}{ban_expire_time} // 0;
+    my $expire = $c->config->{security}{login}{ban_max_time} // 3600;
     my $max_attempts = $c->config->{security}{login}{max_attempts} // return;
     my $ip = $c->request->address;
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
-    my $key = "login:fail:$user:$realm:$ip";
+    my ($p_user, $p_domain) = get_user_domain($c, $user);
+
+    my $key = "login:fail:$p_user:$p_domain:$realm:$ip";
     my $attempted = ($redis->hget($key, 'attempts') // 0) + 1;
     $attempted >= $max_attempts
         ? ban_user($c, $user, $realm)
@@ -529,8 +555,10 @@ sub log_failed_login_attempt {
 sub clear_failed_login_attempts {
     my ($c, $user, $realm) = @_;
 
+    my ($p_user, $p_domain) = get_user_domain($c, $user);
+
     my $ip = $c->request->address;
-    my $key = "login:fail:$user:$realm:$ip";
+    my $key = "login:fail:$p_user:$p_domain:$realm:$ip";
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
@@ -539,20 +567,85 @@ sub clear_failed_login_attempts {
     return;
 }
 
-sub ban_user {
+sub reset_ban_increment_stage {
     my ($c, $user, $realm) = @_;
 
-    return unless $c->config->{security}{login}{ban_enable};
-    my $expire = $c->config->{security}{login}{ban_expire_time} // 0;
-    my $ip = $c->request->address;
-    my $key = "login:ban:$user:$realm:$ip";
+    my ($p_user, $p_domain) = get_user_domain($c, $user);
 
-    $c->log->info("Ban user=$user realm=$realm ip=$ip for $expire seconds");
+    my $usr_rs;
+    if ($realm eq 'admin') {
+        $usr_rs = $c->model('DB')->resultset('admins')->search({
+            login => $p_user,
+        })->first;
+    } elsif ($realm eq 'subscriber') {
+        $usr_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+            webusername => $p_user,
+            'domain.domain' => $p_domain,
+        }, {
+            join => 'domain',
+        })->first;
+    }
+    if ($usr_rs) {
+        my $ip = $c->request->address;
+        $c->log->debug("Reset ban increment for user=$p_user domain=$p_domain realm=$realm ip=$ip");
+        $usr_rs->update({ban_increment_stage => 0});
+    }
+
+    return;
+}
+
+sub ban_user {
+    my ($c, $user, $realm, $domain) = @_;
+
+    return unless $c->config->{security}{login}{ban_enable};
+    my $min_time = $c->config->{security}{login}{ban_min_time} // 300;
+    my $max_time = $c->config->{security}{login}{ban_max_time} // 3600;
+    my $increment = $c->config->{security}{login}{ban_increment} // 300;
+
+    my ($p_user, $p_domain) = get_user_domain($c, $user);
+
+    my $ip = $c->request->address;
+    my $key = "login:ban:$p_user:$p_domain:$realm:$ip";
+
+    my $increment_stage = -1;
+    my $expire = 3600;
+
+    my $usr_rs;
+    if ($realm eq 'admin') {
+        $usr_rs = $c->model('DB')->resultset('admins')->search({
+            login => $p_user,
+        })->first;
+        if ($usr_rs) {
+            $increment_stage = $usr_rs->ban_increment_stage;
+        }
+    } elsif ($realm eq 'subscriber') {
+        $usr_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+            webusername => $p_user,
+            'domain.domain' => $p_domain,
+        },{
+            join => 'domain',
+        })->first;
+        if ($usr_rs) {
+            $increment_stage = $usr_rs->ban_increment_stage;
+        }
+    }
+
+    if ($increment_stage >= 0) {
+        $expire = $min_time + $increment*$increment_stage;
+        $expire = $max_time if $expire > $max_time;
+        $increment_stage++;
+    }
+
+    $c->log->info("Ban user=$p_user domain=$p_domain realm=$realm ip=$ip stage=$increment_stage for $expire seconds");
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
     $redis->hset($key, 'banned_at', time());
     $redis->expire($key, $expire) if $expire;
+
+    if ($increment_stage > 0 && $usr_rs) {
+        $usr_rs->update({ban_increment_stage => $increment_stage});
+    }
 
     clear_failed_login_attempts($c, $user, $realm);
 
