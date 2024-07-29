@@ -88,7 +88,7 @@ sub validate_password {
     my $c = $self->form->ctx;
     return unless $c;
 
-    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field, utf8 => 0);
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field, utf8 => 0, admin => 1);
 }
 
 sub _acl_role_select_options {

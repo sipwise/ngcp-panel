@@ -30,6 +30,14 @@ __PACKAGE__->set_config({
     }
 });
 
+sub PUT :Allow {
+    my ($self, $c, $id) = @_;
+    if (my $item = $self->item_by_id_valid($c, $id)) {
+        $c->stash->{administrator} = $item;
+    }
+    return $self->SUPER::PUT($c, $id);
+}
+
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
 
@@ -38,6 +46,10 @@ sub PATCH :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, admin => $item);
+        $c->stash->{administrator} = $item;
+
         my $json = $self->get_valid_patch_data(
             c => $c,
             id => $id,
@@ -45,8 +57,6 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, admin => $item);
         my $old_resource = { $item->get_inflated_columns };
         #use saltedpass so we have a password field for applying patch
         #we later check in update_item and if the password field is still
