@@ -98,6 +98,16 @@ has_field 'subscriber_id' => (
     },
 );
 
+has_field 'package_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::ProfilePackages',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
 has_field 'package_after_id' => (
     type => 'PosInteger',
     element_attr => {
