@@ -260,10 +260,12 @@ sub validate_form {
             my $e = join '; ', map {
                 my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
                 $in //= '';
+                my $field_name = ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name;
+                my $secure_input = $field_name =~ /^(web)?password$/ ? '*****' : $in;
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'',
-                    ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
-                    $in, #for now, we dont change the error response text, even if causes sensitive data in the logs.
-                         #(($_->$_can('todo') && $_->todo()) ? $c->qs($in) : $in),
+                    $field_name, $secure_input,
+                    #for now, we dont change the error response text, even if causes sensitive data in the logs.
+                    #(($_->$_can('todo') && $_->todo()) ? $c->qs($in) : $in),
                     join(',', @{ $_->errors })
             } $form->error_fields;
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
