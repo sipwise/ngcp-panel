@@ -140,7 +140,7 @@ sub perform_subscriber_auth {
         return $res;
     }
 
-    my $userdom = $user . '@' . $domain;
+    my $userdom = $domain ? $user . '@' . $domain : $user;
     return $res if user_is_banned($c, $userdom, 'subscriber');
 
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
