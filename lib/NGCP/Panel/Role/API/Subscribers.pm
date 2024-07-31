@@ -365,8 +365,8 @@ sub prepare_resource {
         resource => $resource,
         item => $item,
         err_code => sub {
-            my ($code,$msg) = @_;
-            $self->error($c, $code, $msg);
+            my ($code, $msg, @errors) = @_;
+            $self->error($c, $code, $msg, @errors);
         },
         validate_code => sub {
             my ($r) = @_;
