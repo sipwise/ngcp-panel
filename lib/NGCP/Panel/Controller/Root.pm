@@ -212,6 +212,16 @@ sub auto :Private {
             }
 
             my ($username,$password) = $c->req->headers->authorization_basic;
+
+            unless ($username && defined $password) {
+                $c->user->logout if ($c->user);
+                $c->log->debug("invalid api subscriber http login");
+                $c->log->warn("invalid api http login from '".$c->qs($c->req->address));
+                my $r = $c->get_auth_realm($realm);
+                $r->credential->authorization_required_response($c, $r);
+                return;
+            }
+
             my ($u,$d) = split(/\@/,$username);
             if ($d) {
                 $c->req->headers->authorization_basic($u,$password);
