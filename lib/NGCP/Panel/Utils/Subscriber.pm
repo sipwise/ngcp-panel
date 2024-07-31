@@ -392,7 +392,7 @@ sub prepare_resource {
     my $current_pbx_groups_count = $c->license_current_pbx_groups;
     if (is_true($resource->{is_pbx_group}) &&
         $license_max_pbx_groups >= 0 && $current_pbx_groups_count >= $license_max_pbx_groups) {
-        &{$err_code}($c, HTTP_FORBIDDEN,
+        &{$err_code}(HTTP_FORBIDDEN,
             "Maximum number of PBX groups for this platform is reached",
             "Exceeded max number of license pbx groups: $license_max_pbx_groups current: $current_pbx_groups_count"
         );
