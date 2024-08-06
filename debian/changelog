@@ -1,3 +1,10 @@
+ngcp-panel (12.3.1.15+0~mr12.3.1.15) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [1607587] MT#60300 fix sound sets list rendering for reseller
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 06 Aug 2024 17:36:59 +0200
+
 ngcp-panel (12.3.1.14+0~mr12.3.1.14) unstable; urgency=medium
 
   [ Rene Krenn ]
