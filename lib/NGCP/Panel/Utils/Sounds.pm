@@ -105,15 +105,14 @@ sub stash_soundset_list {
         splice @{ $dt_fields }, 2, 0,
             { name => 'contract.contact.email', search => 1, title => $c->loc('Customer') };
         push @{ $dt_fields },
-            { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') },
+            { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') };
     } elsif ($c->user->roles eq "reseller") {
         splice @{ $dt_fields }, 1, 0,
             { name => 'contract.contact.email', search => 1, title => $c->loc('Customer') };
         push @{ $dt_fields },
-            { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') },
+            { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') };
 
         $sets_rs = $sets_rs->search({ 'me.reseller_id' => $c->user->reseller_id });
-
     }
 
     if ($contract || $c->user->roles eq "subscriberadmin") {
@@ -151,7 +150,7 @@ sub stash_soundset_list {
         push @{ $dt_fields },
             { name => 'user_role', visible => 0, search => 0, title => $c->loc('#UserRole') },
             { name => 'user_contract_id', visible => 0, search => 0, title => $c->loc('#UserContractId') },
-            { name => 'contract_id', visible => 0, search => 0, title => $c->loc('#Contract_id') },
+            { name => 'contract_id', visible => 0, search => 0, title => $c->loc('#Contract_id') };
     }
 
     $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $dt_fields);
