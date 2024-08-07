@@ -40,7 +40,10 @@ __PACKAGE__->set_config({
         Default => [qw/admin/],
         Journal => [qw/admin/],
     },
-    required_licenses => [qw/reseller/],
+    required_licenses => {
+        PATCH => [qw/reseller/],
+        PUT => [qw/reseller/],
+    }
 });
 
 sub GET :Allow {
