@@ -16,6 +16,7 @@ use HTTP::Status qw(:constants);
 use Scalar::Util qw/blessed/;
 use DateTime::Format::HTTP qw();
 use DateTime::Format::RFC3339 qw();
+use DateTime::Format::Strptime;
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use Encode qw( encode_utf8 );
@@ -24,6 +25,7 @@ use HTTP::Headers::Util qw(split_header_words);
 use Data::Compare;
 use Data::HAL qw();
 use Data::HAL::Link qw();
+use NGCP::Panel::Utils::Auth qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Journal qw();
 use List::Util qw(any all);
@@ -1771,6 +1773,25 @@ sub check_licenses {
 
 sub validate_request {
     my ($self, $c) = @_;
+
+    if (! $self->check_allowed_ngcp_types($c)) {
+        $self->error($c, HTTP_NOT_FOUND, "Path not found");
+        return;
+    }
+
+    if (! $self->check_licenses($c)) {
+        $self->error($c, HTTP_FORBIDDEN, "Invalid license");
+        return;
+    }
+
+    if (! NGCP::Panel::Utils::Auth::check_max_age($c)) {
+        if ($c->req->method =~ /^(PUT|PATCH)$/ && $c->req->path =~ /^api\/(admins|subscribers)\//) {
+            $c->stash->{validate_password_change} = 1;
+        } else {
+            $self->error($c, HTTP_FORBIDDEN, "Password expired");
+            return;
+        }
+    }
 
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;

@@ -155,6 +155,13 @@ sub update_item {
         resource => $resource,
     );
 
+    if ($c->stash->{validate_password_change}) {
+        if (!$resource->{password} || $resource->{password} eq $old_resource->{saltedpass}) {
+            $self->error($c, HTTP_FORBIDDEN, "Password expired");
+            return;
+        }
+    }
+
     if ($item->id == $c->user->id) {
         # user cannot modify the following own permissions for security reasons
         my $own_forbidden = 0;

@@ -407,6 +407,13 @@ sub update_item {
     my $groupmembers = $full_resource->{groupmembers};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
+    if ($c->stash->{validate_password_change}) {
+        if (!$resource->{webpassword}) {
+            $self->error($c, HTTP_FORBIDDEN, "Password expired");
+            return;
+        }
+    }
+
     $self->process_form_resource($c, $item, $full_resource, $resource, $form);
 
     if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !is_true($resource->{is_pbx_pilot})) {

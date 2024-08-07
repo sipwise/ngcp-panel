@@ -20,14 +20,7 @@ sub auto :Private {
     if ($self->get_config('log_request')) {
         $self->log_request($c);
     }
-    if (! $self->check_allowed_ngcp_types($c)) {
-        $self->error($c, HTTP_NOT_FOUND, "Path not found");
-        return;
-    }
-    if (! $self->check_licenses($c)) {
-        $self->error($c, HTTP_FORBIDDEN, "Invalid license");
-        return;
-    }
+
     return $self->validate_request($c);
 }
 

@@ -10,6 +10,8 @@ use UUID;
 use NGCP::Panel::Form;
 
 use NGCP::Panel::Utils::Auth;
+use NGCP::Panel::Utils::Form;
+use NGCP::Panel::Utils::Subscriber;
 
 sub login_index :Path Form {
     my ( $self, $c, $realm ) = @_;
@@ -80,7 +82,7 @@ sub login_index :Path Form {
 
             $c->session->{user_tz} = undef;  # reset to reload from db
             $c->session->{user_tz_name} = undef;  # reset to reload from db
-            my $target = $c->session->{'target'} || '/';
+            my $target = $c->session->{'target'} || '/dashboard';
             delete $c->session->{target};
             $target =~ s!^https?://[^/]+/!/!;
             $c->log->debug("Login::index auth ok, redirecting to $target");
@@ -270,6 +272,138 @@ sub recover_password :Chained('/') :PathPart('recoverpassword') :Args(0) {
         edit_flag => 1,
         template => 'administrator/reset_password.tt',
         close_target => $c->uri_for('/login/admin'),
+    );
+}
+
+sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
+    my ($self, $c) = @_;
+
+    my $realm = $c->req->env->{NGCP_REALM} // 'admin';
+
+    $c->user->logout if $c->user;
+
+    my $posted = ($c->req->method eq 'POST');
+    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::PasswordChange", $c);
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => { username => $c->stash->{username} },
+    );
+
+    if($posted && $form->validated) {
+        $c->log->debug("login form validated");
+        my $user = $form->field('username')->value;
+        my $pass = $form->field('password')->value;
+        my $new_pass = $form->field('new_password')->value;
+        my $new_pass2 = $form->field('new_password2')->value;
+        $c->log->debug("Password change user=$user, realm=$realm");
+        my $res;
+        if($realm eq 'admin') {
+            $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, 'admin', 'admin_bcrypt');
+        } elsif($realm eq 'subscriber') {
+            my ($u, $d, $t) = split /\@/, $user;
+            if(defined $t) {
+                # in case username is an email address
+                $u = $u . '@' . $d;
+                $d = $t;
+            }
+            unless(defined $d) {
+                $d = $c->req->uri->host;
+            }
+            $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $pass);
+        }
+
+        if($res) {
+            # auth ok
+
+            if ($pass eq $new_pass) {
+                $form->field('new_password')->add_error($c->loc('Password must not be equal to the old password'));
+            } elsif ($new_pass ne $new_pass2) {
+                $form->field('new_password2')->add_error($c->loc('New password fields do not match'));
+            } else {
+                NGCP::Panel::Utils::Form::validate_password(
+                    c => $c, field => $form->field('new_password'), admin => $realm eq 'admin', password_change => 1
+                );
+            }
+
+            if (!$form->has_errors) {
+                if ($realm eq 'admin') {
+                    use Crypt::JWT qw/encode_jwt/;
+
+                    $c->user->update({
+                        saltedpass => NGCP::Panel::Utils::Auth::generate_salted_hash($new_pass)
+                    });
+                    NGCP::Panel::Utils::Admin::insert_password_journal(
+                        $c, $c->user, $new_pass
+                    );
+
+                    my $key = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{jwt_key};
+                    my $relative_exp = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{relative_exp};
+                    my $alg = $c->config->{'Plugin::Authentication'}{api_admin_jwt}{credential}{alg};
+
+                    unless ($key) {
+                        NGCP::Panel::Utils::Message::error(
+                            c    => $c,
+                            desc => $c->loc('No JWT key has been configured.'),
+                        );
+                    }
+
+                    my $jwt_data = {
+                        id => $c->user->id,
+                        username => $c->user->login,
+                    };
+                    my $token = encode_jwt(
+                        payload => $jwt_data,
+                        key => $key,
+                        alg => $alg,
+                        $relative_exp ? (relative_exp => $relative_exp) : (),
+                    );
+
+                    $c->session->{aui_adminId} = $c->user->id;
+                    $c->session->{aui_jwt} = $token;
+                } else {
+                    $c->user->provisioning_voip_subscriber->update({
+                        webpassword =>
+                            $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS
+                                ? NGCP::Panel::Utils::Auth::generate_salted_hash($new_pass)
+                                : $new_pass
+                    });
+                    NGCP::Panel::Utils::Subscriber::insert_webpassword_journal(
+                        $c, $c->user->provisioning_voip_subscriber, $new_pass
+                    );
+
+                }
+                $c->log->debug("Password successfully changed for user=$user, realm=$realm");
+                $c->session->{user_tz} = undef;  # reset to reload from db
+                $c->session->{user_tz_name} = undef;  # reset to reload from db
+                my $target = $c->session->{'target'} || '/dashboard';
+                delete $c->session->{target};
+                $target =~ s!^https?://[^/]+/!/!;
+                $c->log->debug("Login::index auth ok, redirecting to $target");
+                NGCP::Panel::Utils::Message::info(
+                    c    => $c,
+                    desc => $c->loc('Password successfully changed'),
+                );
+                $c->response->redirect($target);
+            }
+        } else {
+            $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");
+            $c->log->debug("Login::index auth failed");
+            $form->add_form_error($c->loc('Invalid username/password'));
+        }
+    } else {
+        # initial get
+    }
+
+    if ($form->has_errors) {
+        my $request_ip = $c->request->address;
+        $c->log->error("NGCP Panel Password Change failed realm=$realm ip=" . $c->qs($request_ip));
+    }
+
+    $c->stash(
+        form => $form,
+        realm => $realm,
+        template => 'login/change_password.tt',
     );
 }
 

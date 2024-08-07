@@ -8,6 +8,7 @@ sub validate_password {
     my %params = @_;
     my $c = $params{c};
     my $field = $params{field};
+    my $pass_change = $params{password_change};
     my $pw = $c->config->{security}{password};
     my $utf8 = $params{utf8} // 1;
     my $pass = $field->value;
@@ -24,6 +25,8 @@ sub validate_password {
     } elsif ($field->name eq 'password') {
         $is_sip_password = 1;
     } elsif ($field->name eq 'webpassword') {
+        $is_web_password = 1;
+    } elsif ($field->name eq 'new_password') {
         $is_web_password = 1;
     }
 
@@ -88,6 +91,9 @@ sub validate_password {
         my $prov_sub = $c->stash->{subscriber}
                         ? $c->stash->{subscriber}->provisioning_voip_subscriber
                         : undef;
+        if ($pass_change && !$prov_sub) {
+            $prov_sub = $c->user->provisioning_voip_subscriber;
+        }
         if ($field->form->field('username')) {
             $user = $field->form->field('username')->value;
         } elsif ($prov_sub) {
@@ -105,6 +111,9 @@ sub validate_password {
         my $prov_sub = $c->stash->{subscriber}
                 ? $c->stash->{subscriber}->provisioning_voip_subscriber
                 : undef;
+        if ($pass_change && !$prov_sub) {
+            $prov_sub = $c->user->provisioning_voip_subscriber;
+        }
         if ($field->form->field('webusername')) {
             $user = $field->form->field('webusername')->value;
         } elsif($prov_sub) {
@@ -120,6 +129,9 @@ sub validate_password {
     } elsif ($is_admin_password) {
         my $user;
         my $admin = $c->stash->{administrator} // undef;
+        if ($pass_change && !$admin) {
+            $admin = $c->user;
+        }
         if ($field->form->field('login')) {
             $user = $field->form->field('login')->value;
         } elsif($admin) {

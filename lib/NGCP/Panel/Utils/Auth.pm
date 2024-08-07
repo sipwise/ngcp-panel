@@ -340,7 +340,7 @@ sub check_openvpn_availability {
     my $openvpn_service = $config->{service};
     my $output = cmd($c, {no_debug_output =>1 }, $systemctl_cmd, 'list-unit-files', 'openvpn.service');
     #$c->log->debug( $output );
-    if ($output =~/^openvpn.service/m) {
+    if ($output =~ /^openvpn.service/m) {
         $res = 1;
     }
     return $res;
@@ -650,6 +650,34 @@ sub ban_user {
     clear_failed_login_attempts($c, $user, $realm);
 
     return;
+}
+
+sub check_max_age {
+    my $c = shift;
+
+    my $pass_last_modify_time;
+    my $strp = DateTime::Format::Strptime->new(
+        pattern => '%Y-%m-%dT%H:%M:%S',
+        time_zone => 'local',
+    );
+    if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        my $webpass_last_modify = $c->user->webpassword_modify_timestamp;
+        my $dt = $strp->parse_datetime($webpass_last_modify // '');
+        $pass_last_modify_time = $dt->epoch if $dt;
+    } else {
+        my $saltedpass_last_modify = $c->user->saltedpass_modify_timestamp;
+        my $dt = $strp->parse_datetime($saltedpass_last_modify // '');
+        $pass_last_modify_time = $dt->epoch if $dt;
+    }
+    if ($pass_last_modify_time) {
+        my $max_age = $c->config->{security}{password}{web_max_age_days} // 0;
+        if (defined $max_age && $max_age > 0) {
+            if ($pass_last_modify_time < (time()-$max_age*24*60*60)) {
+                return;
+            }
+        }
+    }
+    return 1;
 }
 
 1;

@@ -99,6 +99,7 @@ sub auto :Private {
         or $c->req->uri->path =~ m|^/recoverwebpassword/?$|
         or $c->req->uri->path =~ m|^/resetwebpassword/?$|
         or $c->req->uri->path =~ m|^/resetpassword/?$|
+        or $c->req->uri->path =~ m|^/changepassword/?$|
         or $c->req->uri->path =~ m|^/api/passwordreset/?$|
         or $c->req->uri->path =~ m|^/api/passwordrecovery/?$|
         or $c->req->uri->path =~ m|^/internalsms/receive/?$|
@@ -474,6 +475,13 @@ sub check_user_access {
          $path =~ /delete/ ||
          $c->req->method =~ /^(POST|PUT|PATCH|DELETE)$/)) {
         $c->detach('/denied_page');
+        return;
+    }
+
+    # redirect to password change page if password is expired
+    if (! NGCP::Panel::Utils::Auth::check_max_age($c)) {
+        $c->session(target => $c->request->uri);
+        $c->response->redirect($c->uri_for('/changepassword'));
         return;
     }
 
