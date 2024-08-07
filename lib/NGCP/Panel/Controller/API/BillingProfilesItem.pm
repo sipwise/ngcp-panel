@@ -41,7 +41,11 @@ __PACKAGE__->set_config({
         Default => [qw/admin reseller ccareadmin ccare/],
         Journal => [qw/admin reseller ccareadmin ccare/],
     },
-    required_licenses => [qw/billing/],
+    required_licenses => {
+        PATCH => [qw/billing/],
+        PUT => [qw/billing/],
+        DELETE => [qw/billing/],
+    }
 });
 
 sub GET :Allow {
