@@ -655,6 +655,8 @@ sub ban_user {
 sub check_max_age {
     my $c = shift;
 
+    return 1 unless $c->user;
+
     my $pass_last_modify_time;
     my $strp = DateTime::Format::Strptime->new(
         pattern => '%Y-%m-%dT%H:%M:%S',
