@@ -1,3 +1,21 @@
+ngcp-panel (12.5.2.0+0~mr12.5.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [c71fe13] MT#59449 fix password validation enabled/disabled, admins
+  * [7c74eef] MT#60595 add expand by package_id
+  * [4edd8bd] MT#59449 add progressive user bans support
+  * [354791c] MT#59449 sub auth fix possible username without undef domain
+  * [6ba0c24] MT#60601 obfuscate password/webpassword in API valdiation errors
+  * [73468ca] MT#60558 move max license checks for POST /api/subscribers
+  * [03b28a3] MT#60558 fix max_pbx_groups $c argument typo
+  * [8009635] MT#59449 fix subscriber auth attempts without username
+  * [69867ed] MT#60300 fix sound sets list rendering for reseller
+
+  [ Marco Capetta ]
+  * [4828b02] MT#59979 permit GET on resellers and billing profiles items even without license
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 Aug 2024 13:59:46 +0200
+
 ngcp-panel (12.5.1.0+0~mr12.5.1.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
