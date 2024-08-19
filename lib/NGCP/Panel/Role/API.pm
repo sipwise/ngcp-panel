@@ -1523,7 +1523,7 @@ sub get_expanded_field_data {
                     $class->item_rs($c)->search({
                         'me.id' => { '-in' => [keys %{$cache->{ids}}] },
                     },{
-                        'order_by' => { '-asc' => 'id' },
+                        'order_by' => { '-asc' => 'me.id' },
                     })->all();
             $cache->{items_by_id} = \%items_by_id;
         }

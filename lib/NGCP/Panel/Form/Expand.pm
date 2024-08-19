@@ -260,4 +260,24 @@ has_field 'rwr_set_id' => (
     },
 );
 
+has_field 'device_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::PbxDeviceModels',
+            allowed_roles => [qw(admin reseller subscriberadmin)],
+        },
+    },
+);
+
+has_field 'config_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::PbxDeviceConfigs',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
 1;

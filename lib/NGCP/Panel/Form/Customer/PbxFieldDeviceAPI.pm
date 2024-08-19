@@ -19,6 +19,12 @@ has_field 'profile_id' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
     label => 'Device Profile',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::PbxDeviceProfiles',
+            allowed_roles => [qw(admin reseller subscriberadmin)],
+        },
+    },
 );
 
 has_field 'identifier' => (
