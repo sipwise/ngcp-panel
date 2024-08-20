@@ -12,7 +12,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PUT/];
+    return [qw/GET OPTIONS HEAD PUT DELETE/];
 }
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PbxDeviceConfigs/;
@@ -86,7 +86,6 @@ sub PUT :Allow {
     return;
 }
 
-=pod
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
@@ -103,7 +102,6 @@ sub DELETE :Allow {
     }
     return;
 }
-=cut
 
 1;
 

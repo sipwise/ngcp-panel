@@ -14,12 +14,13 @@ __PACKAGE__->set_config({
         'Default' => [qw/admin reseller subscriberadmin subscriber/],
         'PUT'     => [qw/admin reseller/],
         'PATCH'   => [qw/admin reseller/],
+        'DELETE'  => [qw/admin reseller/],
     },
     required_licenses => [qw/pbx device_provisioning/],
 });
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PATCH PUT/];
+    return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
 1;

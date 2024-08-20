@@ -15,7 +15,7 @@ require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 sub allowed_methods{
-    return [qw/GET OPTIONS HEAD PATCH PUT/];
+    return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::PbxDeviceProfiles/;
@@ -33,7 +33,12 @@ sub relation{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller subscriberadmin/],
+    allowed_roles => {
+        'Default' => [qw/admin reseller subscriberadmin/],
+        'PUT'     => [qw/admin reseller/],
+        'PATCH'   => [qw/admin reseller/],
+        'DELETE'  => [qw/admin reseller/],
+    },
     required_licenses => [qw/pbx device_provisioning/],
 });
 
@@ -126,6 +131,23 @@ sub PUT :Allow {
         $guard->commit;
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
+    }
+    return;
+}
+
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, pbxdeviceprofile => $item);
+        $item->delete;
+
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
     }
     return;
 }
