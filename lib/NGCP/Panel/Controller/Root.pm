@@ -478,8 +478,8 @@ sub check_user_access {
         return;
     }
 
-    # redirect to password change page if password is expired
-    if (! NGCP::Panel::Utils::Auth::check_max_age($c)) {
+    # redirect non API requests to password change page if password is expired
+    if ($c->req->path !~ /^api\/.+/ && !NGCP::Panel::Utils::Auth::check_max_age($c)) {
         $c->session(target => $c->request->uri);
         $c->response->redirect($c->uri_for('/changepassword'));
         return;
@@ -733,6 +733,14 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 }
             }
         }
+    }
+
+    if (! NGCP::Panel::Utils::Auth::check_max_age($c, $auth_user, $ngcp_realm)) {
+        $c->response->status(HTTP_FORBIDDEN);
+        $c->response->body(encode_json({
+            code => HTTP_FORBIDDEN,
+            message => "Password expired"})."\n");
+        return;
     }
 
     my $result = {};

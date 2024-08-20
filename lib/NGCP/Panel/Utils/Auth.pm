@@ -654,23 +654,36 @@ sub ban_user {
 
 sub check_max_age {
     my $c = shift;
+    my ($auth_user, $ngcp_realm) = @_;
 
-    return 1 unless $c->user;
-
+    my $pass_last_modify;
     my $pass_last_modify_time;
+
+    if ($auth_user && $ngcp_realm) {
+        if ($ngcp_realm eq 'admin') {
+            $pass_last_modify = $auth_user->saltedpass_modify_timestamp;
+        } else {
+            $pass_last_modify = $auth_user->webpassword_modify_timestamp;
+        }
+    } else {
+        return 1 unless $c->user;
+
+        if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+            $pass_last_modify = $c->user->webpassword_modify_timestamp;
+        } else {
+            $pass_last_modify = $c->user->saltedpass_modify_timestamp;
+        }
+    }
+
     my $strp = DateTime::Format::Strptime->new(
         pattern => '%Y-%m-%dT%H:%M:%S',
         time_zone => 'local',
     );
-    if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
-        my $webpass_last_modify = $c->user->webpassword_modify_timestamp;
-        my $dt = $strp->parse_datetime($webpass_last_modify // '');
-        $pass_last_modify_time = $dt->epoch if $dt;
-    } else {
-        my $saltedpass_last_modify = $c->user->saltedpass_modify_timestamp;
-        my $dt = $strp->parse_datetime($saltedpass_last_modify // '');
-        $pass_last_modify_time = $dt->epoch if $dt;
+
+    if (my $dt = $strp->parse_datetime($pass_last_modify // '')) {
+        $pass_last_modify_time = $dt->epoch;
     }
+
     if ($pass_last_modify_time) {
         my $max_age = $c->config->{security}{password}{web_max_age_days} // 0;
         if (defined $max_age && $max_age > 0) {
@@ -679,6 +692,7 @@ sub check_max_age {
             }
         }
     }
+
     return 1;
 }
 
