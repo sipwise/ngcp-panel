@@ -92,7 +92,7 @@ my $test_machine = Test::Collection->new(
 $test_machine->DATA_ITEM_STORE($fake_data->process('pbxdevicemodels'));
 @{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);
 $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
-$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH)};
+$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};
 
 
 my $connactable_devices={};
