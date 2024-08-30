@@ -367,36 +367,38 @@ sub prepare_resource {
         }
     }
 
-    my $license_max_subscribers = $c->license_max_subscribers;
-    my $current_subscribers_count = $c->license_current_subscribers;
-    if ($license_max_subscribers >= 0 && $current_subscribers_count >= $license_max_subscribers) {
-        &{$err_code}(HTTP_FORBIDDEN,
-            "Maximum number of subscribers for this platform is reached",
-            "Exceeded max number of license subscribers: $license_max_subscribers current: $current_subscribers_count"
-        );
-        return;
-    }
+    if ($c->req->method eq 'POST') {
+        my $license_max_subscribers = $c->license_max_subscribers;
+        my $current_subscribers_count = $c->license_current_subscribers;
+        if ($license_max_subscribers >= 0 && $current_subscribers_count >= $license_max_subscribers) {
+            &{$err_code}(HTTP_FORBIDDEN,
+                "Maximum number of subscribers for this platform is reached",
+                "Exceeded max number of license subscribers: $license_max_subscribers current: $current_subscribers_count"
+            );
+            return;
+        }
 
-    my $license_max_pbx_subscribers = $c->license_max_pbx_subscribers;
-    my $current_pbx_subscribers_count = $c->license_current_pbx_subscribers;
-    if ($schema->resultset('contracts')->find($resource->{customer_id})->product->class eq 'pbxaccount' &&
-        $license_max_pbx_subscribers >= 0 && $current_pbx_subscribers_count >= $license_max_pbx_subscribers) {
-        &{$err_code}(HTTP_FORBIDDEN,
-            "Maximum number of PBX subscribers for this platform is reached",
-            "Exceeded max number of license pbx subscribers: $license_max_pbx_subscribers current: $current_pbx_subscribers_count"
-        );
-        return;
-    }
+        my $license_max_pbx_subscribers = $c->license_max_pbx_subscribers;
+        my $current_pbx_subscribers_count = $c->license_current_pbx_subscribers;
+        if ($schema->resultset('contracts')->find($resource->{customer_id})->product->class eq 'pbxaccount' &&
+            $license_max_pbx_subscribers >= 0 && $current_pbx_subscribers_count >= $license_max_pbx_subscribers) {
+            &{$err_code}(HTTP_FORBIDDEN,
+                "Maximum number of PBX subscribers for this platform is reached",
+                "Exceeded max number of license pbx subscribers: $license_max_pbx_subscribers current: $current_pbx_subscribers_count"
+            );
+            return;
+        }
 
-    my $license_max_pbx_groups = $c->license_max_pbx_groups;
-    my $current_pbx_groups_count = $c->license_current_pbx_groups;
-    if (is_true($resource->{is_pbx_group}) &&
-        $license_max_pbx_groups >= 0 && $current_pbx_groups_count >= $license_max_pbx_groups) {
-        &{$err_code}(HTTP_FORBIDDEN,
-            "Maximum number of PBX groups for this platform is reached",
-            "Exceeded max number of license pbx groups: $license_max_pbx_groups current: $current_pbx_groups_count"
-        );
-        return;
+        my $license_max_pbx_groups = $c->license_max_pbx_groups;
+        my $current_pbx_groups_count = $c->license_current_pbx_groups;
+        if (is_true($resource->{is_pbx_group}) &&
+            $license_max_pbx_groups >= 0 && $current_pbx_groups_count >= $license_max_pbx_groups) {
+            &{$err_code}(HTTP_FORBIDDEN,
+                "Maximum number of PBX groups for this platform is reached",
+                "Exceeded max number of license pbx groups: $license_max_pbx_groups current: $current_pbx_groups_count"
+            );
+            return;
+        }
     }
 
     my $customer = &$getcustomer_code($resource->{customer_id});
