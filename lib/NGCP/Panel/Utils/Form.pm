@@ -27,7 +27,16 @@ sub validate_password {
     } elsif ($field->name eq 'webpassword') {
         $is_web_password = 1;
     } elsif ($field->name eq 'new_password') {
-        $is_web_password = 1;
+        if ($pass_change) {
+            my $ngcp_realm = $c->request->env->{NGCP_REALM} // 'admin';
+            if ($ngcp_realm eq 'admin') {
+                $is_admin_password = 1;
+            } else {
+                $is_web_password = 1;
+            }
+        } else {
+            $is_web_password = 1;
+        }
     }
 
     if ($is_sip_password) {
@@ -106,17 +115,19 @@ sub validate_password {
             $lp_rs = $prov_sub->last_passwords;
             $check_last_passwords = 1;
         }
-    } elsif($field->name eq "webpassword" && $pw->{web_validate}) {
+    } elsif ($is_web_password) {
         my $user;
         my $prov_sub = $c->stash->{subscriber}
                 ? $c->stash->{subscriber}->provisioning_voip_subscriber
                 : undef;
         if ($pass_change && !$prov_sub) {
-            $prov_sub = $c->user->provisioning_voip_subscriber;
+            if ($c->user->can('webpassword')) {
+                $prov_sub = $c->user;
+            }
         }
         if ($field->form->field('webusername')) {
             $user = $field->form->field('webusername')->value;
-        } elsif($prov_sub) {
+        } elsif ($prov_sub) {
             $user = $prov_sub->webusername;
         }
         if(defined $user && $pass =~ /$user/i) {

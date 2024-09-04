@@ -263,7 +263,7 @@ sub validate_form {
                 my $in = (defined $_->input && ref $_->input eq 'HASH' && exists $_->input->{id}) ? $_->input->{id} : ($_->input // '');
                 $in //= '';
                 my $field_name = ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name;
-                my $secure_input = $field_name =~ /^(web)?password$/ ? '*****' : $in;
+                my $secure_input = $field_name =~ /^(web|new_)?password$/ ? '*****' : $in;
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'',
                     $field_name, $secure_input,
                     #for now, we dont change the error response text, even if causes sensitive data in the logs.
@@ -1785,8 +1785,8 @@ sub validate_request {
     }
 
     if (! NGCP::Panel::Utils::Auth::check_max_age($c)) {
-        if ($c->req->method =~ /^(PUT|PATCH)$/ && $c->req->path =~ /^api\/(admins|subscribers)\//) {
-            $c->stash->{validate_password_change} = 1;
+        if ($c->req->method eq 'POST' && $c->req->path =~ /^api\/passwordchange\//) {
+            $c->stash->{password_change_request} = 1;
         } else {
             $self->error($c, HTTP_FORBIDDEN, "Password expired");
             return;

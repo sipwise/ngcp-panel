@@ -73,8 +73,6 @@ sub _item_rs {
     my $item_rs;
     my $type = $self->container_resource_type;
 
-    print "TYPE: $type\n";
-
     if($type eq "domains") {
         # we actually return the domain rs here, as we can easily
         # go to dom_preferences from there
