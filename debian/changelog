@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.4+0~mr12.5.1.4) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [cacb6d6] MT#59449 fix perform_auth to send correct realm to ban check
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 06 Sep 2024 16:46:19 +0200
+
 ngcp-panel (12.5.1.3+0~mr12.5.1.3) unstable; urgency=medium
 
   [ Kirill Solomko ]
