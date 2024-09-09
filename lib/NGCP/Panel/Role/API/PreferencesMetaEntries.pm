@@ -44,6 +44,19 @@ sub get_form {
     return NGCP::Panel::Form::get("NGCP::Panel::Form::Device::PreferenceAPI", $c);
 }
 
+sub pre_process_form_resource {
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $enums = $resource->{enum};
+    foreach my $enum (@{$enums}) {
+        if (defined $enum->{default_val}) {
+            $enum->{default_val} = $enum->{default_val} + 0;
+        }
+    }
+
+    return $resource;
+}
+
 sub process_form_resource {
     my ($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
     if ( $resource->{dev_pref} && !$resource->{autoprov_device_id} ) {
