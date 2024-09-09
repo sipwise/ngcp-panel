@@ -111,6 +111,7 @@ $ua = Test::Collection->new()->ua();
         ncospatterns => 1,
         numbers => 1,
         partycallcontrols => 1,
+        passwordchange => 1,
         passwordreset => 1,
         passwordrecovery => 1,
         pbxdeviceconfigfiles => 1,
