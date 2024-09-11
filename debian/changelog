@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.6+0~mr12.5.1.6) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [7527486] MT#60860 Update new favicon in png format
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Sep 2024 23:38:31 +0200
+
 ngcp-panel (12.5.1.5+0~mr12.5.1.5) unstable; urgency=medium
 
   [ Marco Capetta ]
