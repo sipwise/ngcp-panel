@@ -134,10 +134,7 @@ sub POST :Allow {
             resource => $resource,
             form => $form,
         );
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $resource->{reseller_id} = $c->user->reseller_id;
-        }
+
         $resource->{set_id} = delete $resource->{profile_set_id};
 
         my $set = $c->model('DB')->resultset('voip_subscriber_profile_sets');
