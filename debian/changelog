@@ -1,3 +1,10 @@
+ngcp-panel (10.5.7.2+0~mr10.5.7.2) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [1360036] MT#60756 Fix subscriberprofiles POST api call as reseller
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Sep 2024 09:58:36 +0200
+
 ngcp-panel (10.5.7.1+0~mr10.5.7.1) unstable; urgency=medium
 
   [ Rene Krenn ]
