@@ -46,6 +46,11 @@ sub query_params {
             description => 'Filter for models by name',
             query_type => 'wildcard',
         },
+        {
+            param => 'type',
+            description => 'Filter for model type',
+            query_type => 'string_eq',
+        },
     ];
 }
 

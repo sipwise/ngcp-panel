@@ -54,6 +54,11 @@ sub query_params {
                 second => sub { },
             },
         },
+        {
+            param => 'tag',
+            description => 'Filter for firmwares with a specific tag',
+            query_type => 'string_eq',
+        },
     ];
 }
 
