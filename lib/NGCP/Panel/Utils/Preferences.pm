@@ -618,6 +618,12 @@ sub update_preferences {
                                 &$err_code(HTTP_UNPROCESSABLE_ENTITY, $err_msg);
                                 return;
                             }
+                        } else {
+                            unless (exists $resource->{$k}) {
+                                my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k);
+                                last SWITCH unless $rs; # unknown resource, just ignore
+                                $rs->delete;
+                            }
                         }
                         last SWITCH;
                     };
