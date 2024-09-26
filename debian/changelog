@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.8+0~mr12.5.1.8) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [a69fb48] MT#61065 Fix 'cli' preference removal
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Sep 2024 10:28:46 +0200
+
 ngcp-panel (12.5.1.7+0~mr12.5.1.7) unstable; urgency=medium
 
   [ Marco Capetta ]
