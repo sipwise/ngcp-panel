@@ -1,3 +1,40 @@
+ngcp-panel (13.1.0.0+0~mr13.1.0.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [e6b29d3] MT#59449 fix password validation enabled/disabled, admins
+  * [f383837] MT#60595 add expand by package_id
+  * [2972d3b] MT#59449 add progressive user bans support
+  * [4a9a632] MT#59449 sub auth fix possible username without undef domain
+  * [65ae07a] MT#60601 obfuscate password/webpassword in API valdiation errors
+  * [e2e1776] MT#60558 move max license checks for POST /api/subscribers
+  * [c4c710e] MT#60558 fix max_pbx_groups $c argument typo
+  * [0a9fb5d] MT#59449 fix subscriber auth attempts without username
+  * [c7ae8c1] MT#60300 fix sound sets list rendering for reseller
+  * [b041888] MT#60656 add max_age password validation support
+  * [78dfb7f] MT#60656 do not check max_age if user does not exist
+  * [b97be45] MT#60709 add PBX expand by device_id,profile_id,config_id
+  * [f3bc809] MT#60710 add missing DELETE method for pbx endpoints
+  * [4b00a59] MT#60710 fix pbxdeviceprofiles allowed_roles typo
+  * [46d297d] MT#60656 improve 403 Password Expired for expired passwords
+  * [f4c5f22] MT#60710 add DELETE to pbxdevicemodels api-test allowed methods
+  * [e09de1e] MT#60558 invoke max subscribers/group license check only on POST
+  * [bbd44f1] MT#60858 add /api/passwordchange endpoint
+  * [a394526] MT#59449 fix perform_auth to send correct realm to ban check
+  * [558fbcb] MT#60858 add /api/passwordchange endpoint to api-test root links
+  * [a7589ae] MT#60877 /api/preferencemetaentries accept default_val as boolean
+  * [13f9cd1] MT#60858 add passwordchange to test links valid syntax checks
+  * [55b27b3] MT#61100 add pbx device/firmware search by type/tag
+
+  [ Marco Capetta ]
+  * [a2a01d4] MT#59979 permit GET on resellers and billing profiles items even without license
+  * [463969b] MT#59449 Fix selenium tests after password enforcements
+  * [43a1be5] MT#60860 Update new sipwise logo
+  * [a02cac3] MT#60860 Update new favicon in png format
+  * [d40126e] MT#60756 Fix subscriberprofiles POST api call as reseller
+  * [f9a328f] MT#61065 Fix 'cli' preference removal
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 01 Oct 2024 10:00:26 +0200
+
 ngcp-panel (13.0.0.0+0~mr13.0.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
