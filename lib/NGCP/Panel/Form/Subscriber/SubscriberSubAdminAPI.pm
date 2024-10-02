@@ -121,11 +121,11 @@ has_field 'status' => (
 );
 
 has_field 'timezone' => (
-    type => '+NGCP::Panel::Field::TimezoneSelect',
+    type => 'Text',
     label => 'Timezone',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The timezone of the subscriber.']
+        title => ['The timezone of the subscriber. See http://search.cpan.org/dist/DateTime-TimeZone/lib/DateTime/TimeZone/Catalog.pm for a full list of valid timezone names.']
     },
 );
 #we need customer_id field in the form to don't delete customer_id from the resource as absent field during form validation
@@ -322,6 +322,17 @@ sub validate_webpassword {
     return unless $c;
 
     NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field, utf8 => 0);
+}
+
+sub validate_timezone {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    my $value = $field->value;
+    unless (NGCP::Panel::Utils::DateTime::is_valid_timezone_name($value, 0, $c, 1)) {
+        $field->add_error($c->loc('Invalid timezone name: '.$value));
+    }
 }
 
 sub update_fields {
