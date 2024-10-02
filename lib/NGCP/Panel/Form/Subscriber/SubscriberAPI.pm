@@ -235,6 +235,17 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
+sub validate_timezone {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    my $value = $field->value;
+    unless (NGCP::Panel::Utils::DateTime::is_valid_timezone_name($value, 0, $c, 1)) {
+        $field->add_error($c->loc('Invalid timezone name: '.$value));
+    }
+}
+
 # override parent here to prevent any password magic
 sub update_fields {
 #IMPORTANT! redefined sub update_fields with no super call disable call of the update_field_list and defaults methods
@@ -253,7 +264,6 @@ sub update_fields {
     }
     return;
 }
-
 
 1;
 
