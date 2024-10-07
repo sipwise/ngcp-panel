@@ -34,9 +34,10 @@ sub tmpl_list :Chained('/') :PathPart('emailtemplate') :CaptureArgs(0) :Does(ACL
     #select r.id as reseller_id,r.name as reseller_name, etd.id as email_template_id, etd.name as email_template_name from resellers r
     #join email_templates etd on etd.reseller_id is null
     #left join email_templates et on et.name=etd.name and et.reseller_id=r.id
-    #where et.id is null order by r.id,etd.id;
+    #where r.status != 'terminated' and et.id is null order by r.id,etd.id;
     my $tmpl_missed_rs = $c->model('DB')->resultset('resellers')->search_rs({
             'et.id' => undef,
+            'me.status' => { '!=' => 'terminated' },
         },{
             'select' => [
                 { '' => \'concat(me.id,"/",etd.id)', -as => 'id' },
