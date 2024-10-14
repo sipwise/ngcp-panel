@@ -1,3 +1,13 @@
+ngcp-panel (11.5.1.29+0~mr11.5.1.29) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [eb35287] MT#60553 handle API subscriber timezone field separately
+
+  [ Marco Capetta ]
+  * [4f8accb] MT#60864 Fix Sync Email Templates button behavior
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Oct 2024 17:38:21 +0200
+
 ngcp-panel (11.5.1.28+0~mr11.5.1.28) unstable; urgency=medium
 
   [ Marco Capetta ]
