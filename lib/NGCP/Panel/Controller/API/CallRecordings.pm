@@ -33,7 +33,7 @@ sub query_params {
         {
             # we handle that separately/manually in the role
             param => 'subscriber_id',
-            description => 'Filter for callrecordings where the subscriber with the given id is involved.',
+            description => 'Filter callrecordings for or delete callrecording of the given subscriber_id only.',
         },
         {
             # we handle that separately/manually in the role

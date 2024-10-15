@@ -4451,7 +4451,8 @@ sub delete_recording :Chained('recording') :PathPart('delete') :Args(0) {
                 NGCP::Panel::Utils::Subscriber::delete_callrecording(
                     c => $c,
                     recording => $recording,
-                    force_delete => $form->values->{force_delete}
+                    force_delete => $form->values->{force_delete},
+                    uuid => $c->stash->{subscriber}->uuid,
                 );
             });
             NGCP::Panel::Utils::Message::info(
