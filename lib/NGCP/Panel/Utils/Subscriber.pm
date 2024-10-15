@@ -2522,23 +2522,43 @@ sub get_voicemail_content_type {
 
 sub delete_callrecording {
     my %params = @_;
-    my($recording, $force_delete) = @params{qw/recording force_delete/};
+    my($c,$recording, $force_delete, $uuid) = @params{qw/c recording force_delete uuid/};
 
-    foreach my $stream($recording->recording_streams->all) {
-        #if we met some error deleting file - we will fail and transaction will be rollbacked
-        if (! -e $stream->full_filename && !$force_delete) {
-            die "Callrecording file ".$stream->full_filename." is absent";
-        }
-        eval {
-            unlink $stream->full_filename;
-        };
-        if ($@ && !$force_delete) {
-            die("Cannot delete call recording file: $@");
+    $recording = $c->model('DB')->resultset('recording_calls')->find({
+        id => $recording->id
+    },{for => 'update'});
+
+    my $delete_all = 1;
+    if ($uuid) {
+        $recording->recording_metakeys->search_rs({
+            'key' => 'uuid',
+            'value' => $uuid,
+        })->delete;
+        if ($recording->recording_metakeys->search_rs({
+                'key' => 'uuid',
+            })->first) {
+            $delete_all = 0;
         }
     }
-    $recording->recording_streams->delete;
-    $recording->recording_metakeys->delete;
-    $recording->delete;
+
+    if ($delete_all) {
+        foreach my $stream($recording->recording_streams->all) {
+            #if we met some error deleting file - we will fail and transaction will be rollbacked
+            if (! -e $stream->full_filename && !$force_delete) {
+                die "Callrecording file ".$stream->full_filename." is absent";
+            }
+            eval {
+                unlink $stream->full_filename;
+            };
+            if ($@ && !$force_delete) {
+                die("Cannot delete call recording file: $@");
+            }
+        }
+        $recording->recording_metakeys->delete;
+        $recording->recording_streams->delete;
+        $recording->delete;
+    }
+    
 }
 
 sub prov_to_billing_subscriber_id {
