@@ -1,3 +1,24 @@
+ngcp-panel (10.5.9.0+0~mr10.5.9.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2c58f18] MT#60162 improve expand functionality for collections
+
+  [ Rene Krenn ]
+  * [2d78375] MT#56817 MT#56362 fix errors from nondetermistic query param ordering
+  * [275d47b] MT#59216 restore appending wildcard behaviour
+  * [60e5deb] MT#56817 MT#56362 fix query param sorting for rs chained the regular way
+  * [7804c9e] MT#56817 MT#56362 fix query param sorting for regulary chained rs
+  * [3d476c4] MT#59363 fix /api/domains/?domain= filter pattern behaviour
+  * [8a44078] MT#59363 retain trailing+leading wildcard for legacy panel only
+  * [f96194f] MT#59597 remove trailing+leading % entirely for "wildcard" param types
+  * [71f36fb] MT#59597 fix remove trailing+leading % entirely for "wildcard" params
+  * [d21b0c3] MT#58485 invoice: use UTC tz when filtering for start_time
+
+  [ Marco Capetta ]
+  * [5d27002] MT#60756 Fix subscriberprofiles POST api call as reseller
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 16 Oct 2024 11:06:06 +0200
+
 ngcp-panel (10.5.8.0+0~mr10.5.8.0) unstable; urgency=medium
 
   [ Rene Krenn ]
