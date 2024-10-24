@@ -7,6 +7,23 @@ use IO::Compress::Zip qw/zip/;
 use IPC::System::Simple qw/capturex/;
 use UUID;
 
+use NGCP::Panel::Utils::Ldap qw(
+    auth_ldap_simple
+    get_user_dn
+            
+    $ldapconnecterror
+    $ldapnouserdn
+    $ldapauthfailed
+    $ldapsearchfailed
+    $ldapnousersfound
+    $ldapmultipleusersfound
+    $ldapuserfound
+    $ldapauthsuccessful
+);
+
+our $local_auth_method = 'local';
+our $ldap_auth_method = 'ldap';
+
 our $SALT_LENGTH = 128;
 our $ENCRYPT_SUBSCRIBER_WEBPASSWORDS = 1;
 
@@ -54,7 +71,9 @@ sub get_usr_salted_pass {
 
 sub perform_auth {
     my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
+    
     my $res;
+    my $log_failed_login_attempt = 1;
 
     return $res if !check_password($pass);
     return $res if user_is_banned($c, $user, 'admin');
@@ -64,52 +83,65 @@ sub perform_auth {
         login => $user,
         is_active => 1,
     }) if $user;
-    if(defined $dbadmin && defined $dbadmin->saltedpass) {
-        $c->log->debug("login via bcrypt");
-        my $saltedpass = $dbadmin->saltedpass;
-        my $usr_salted_pass = get_usr_salted_pass($saltedpass, $pass);
-        # fetch again to load user into session etc (otherwise we could
-        # simply compare the two hashes here :(
-        $res = $c->authenticate(
-            {
-                login => $user,
-                saltedpass => $usr_salted_pass,
-                'dbix_class' => {
-                    searchargs => [{
-                        -and => [
-                            login => $user,
-                            is_active => 1,
-                        ],
-                    }],
-                }
-            }, $bcrypt_realm
-        );
-    } elsif(defined $dbadmin) { # we already know if the username is wrong, no need to check again
+    return $res unless $dbadmin;
 
-        # check md5 and migrate over to bcrypt on success
-        $c->log->debug("login via md5");
-        $res = $c->authenticate(
-            {
-                login => $user,
-                md5pass => $pass,
-                'dbix_class' => {
-                    searchargs => [{
-                        -and => [
-                            login => $user,
-                            is_active => 1,
-                        ],
-                    }],
-                }
-            }, $realm);
-
-        if($res) {
-            # login ok, time to move user to bcrypt hashing
-            $c->log->debug("migrating to bcrypt");
-            my $saltedpass = generate_salted_hash($pass);
-            $dbadmin->update({
-                md5pass => undef,
-                saltedpass => $saltedpass,
-            });
+    if ($dbadmin->auth_mode eq $local_auth_method) {
+        if (defined $dbadmin->saltedpass) {
+            $c->log->debug("login via bcrypt");
+            my $saltedpass = $dbadmin->saltedpass;
+            my $usr_salted_pass = get_usr_salted_pass($saltedpass, $pass);
+            # fetch again to load user into session etc (otherwise we could
+            # simply compare the two hashes here :(
+            $res = $c->authenticate(
+                {
+                    login => $user,
+                    saltedpass => $usr_salted_pass,
+                    'dbix_class' => {
+                        searchargs => [{
+                            -and => [
+                                login => $user,
+                                is_active => 1,
+                            ],
+                        }],
+                    }
+                }, $bcrypt_realm
+            );
+        } elsif (defined $dbadmin) { # we already know if the username is wrong, no need to check again
+            # check md5 and migrate over to bcrypt on success
+            $c->log->debug("login via md5");
+            $res = $c->authenticate(
+                {
+                    login => $user,
+                    md5pass => $pass,
+                    'dbix_class' => {
+                        searchargs => [{
+                            -and => [
+                                login => $user,
+                                is_active => 1,
+                            ],
+                        }],
+                    }
+                }, $realm);
+            if($res) {
+                # login ok, time to move user to bcrypt hashing
+                $c->log->debug("migrating to bcrypt");
+                my $saltedpass = generate_salted_hash($pass);
+                $dbadmin->update({
+                    md5pass => undef,
+                    saltedpass => $saltedpass,
+                });
+            }
+        }
+    } elsif ($dbadmin->auth_mode eq $ldap_auth_method) {
+        $c->log->debug("login via ldap");
+        my ($code,$message) = auth_ldap_simple($c,get_user_dn($user),$pass);
+        if ($code == $ldapauthfailed) {
+            $res = 0;
+        } elsif ($code != $ldapauthsuccessful) {
+            $res = 0;
+            $log_failed_login_attempt = 0; # do not log failed attempt if there was an ldap error
+        } else {
+            $res = 1;
         }
     }
 
@@ -117,7 +149,7 @@ sub perform_auth {
         clear_failed_login_attempts($c, $user, 'admin');
         reset_ban_increment_stage($c, $user, 'admin');
     }
-    : log_failed_login_attempt($c, $user, 'admin');
+    : ($log_failed_login_attempt && log_failed_login_attempt($c, $user, 'admin'));
 
     return $res;
 }

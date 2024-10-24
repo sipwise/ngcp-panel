@@ -10,6 +10,16 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'login' => (type => 'Text', required => 1, minlength => 5, maxlength => 31, default_method => \&_set_default);
+has_field 'auth_mode' => (
+    type => 'Select',
+    label => 'Authentication Mode',
+    required => 1, 
+    options => [
+        { value => 'local', label => 'local' },
+        { value => 'ldap', label => 'LDAP' },
+    ],
+    default_method => \&_set_default,
+);
 has_field 'password' => (type => 'Password', required => 1, label => 'Password');
 has_field 'email' => (type => 'Email', required => 0, label => 'Email', maxlength => 255);
 for (qw(is_active show_passwords call_data billing_data
@@ -21,7 +31,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        login password email is_master is_active read_only show_passwords call_data billing_data can_reset_password
+        login auth_mode password email is_master is_active read_only show_passwords call_data billing_data can_reset_password
     )],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);
@@ -35,6 +45,10 @@ sub _set_default {
         qw(is_active show_passwords call_data billing_data)) {
 
         $field->default(1);
+    }
+
+    if ($field->name eq 'auth_mode') {
+        $field->default('local');
     }
 
     if (_check_inactive($field, $field->name)) {

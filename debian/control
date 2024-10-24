@@ -94,6 +94,7 @@ Depends:
  libmoosex-emulate-class-accessor-fast-perl,
  libnamespace-autoclean-perl,
  libnet-http-perl,
+ libnet-ldap-perl,
  libnet-telnet-perl,
  libnetaddr-ip-perl,
  libngcp-schema-perl,

@@ -1298,9 +1298,9 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             name => 'PBX Address Book',
         },
         ldap => {
-            tls => $c->config->{ldap}->{tls},
-            ip => $c->config->{ldap}->{ip},
-            port => $c->config->{ldap}->{port},
+            tls => $c->config->{ldap_device}->{tls},
+            ip => $c->config->{ldap_device}->{ip},
+            port => $c->config->{ldap_device}->{port},
             dn => ',dc=hpbx,dc=sipwise,dc=com', # uid=xxx,o=contract-id added below
             password => '', # set below
             base => ',dc=hpbx,dc=sipwise,dc=com', # o=contract-id added below
