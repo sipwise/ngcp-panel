@@ -7,7 +7,7 @@ use Test::Collection;
 use Data::Dumper;
 use URI::Escape;
 
-my$test_collection = new Test::Collection(
+my $test_collection = Test::Collection->new(
     name => 'pbxdeviceprofiles', 
     DEBUG => 1,
 );

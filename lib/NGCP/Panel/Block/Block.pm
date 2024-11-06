@@ -30,7 +30,7 @@ sub render {
     
     my $output = '';
     
-    my $t = new Template({ 
+    my $t = Template->new({
         ABSOLUTE => 1, 
         INCLUDE_PATH => [
             '/usr/share/ngcp-panel/templates',

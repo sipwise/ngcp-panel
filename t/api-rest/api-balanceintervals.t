@@ -2142,13 +2142,13 @@ sub _get_allow_fake_client_time {
 #        use Project::Gantt;
 #        use Project::Gantt::Skin;
 #
-#        my $skin= new Project::Gantt::Skin(
+#        my $skin = Project::Gantt::Skin->new(
 #            doTitle         =>      0);
 #
 #        my $filename = $req_identifier;
 #        $filename =~ s/[^a-z0-9_\-]/_/i;
 #        $filename = '/home/rkrenn/test/gantt/' . $filename . '.png';
-#        my $gantt = new Project::Gantt(
+#        my $gantt = Project::Gantt->new(
 #            file            =>      $filename,
 #            skin            =>      $skin,
 #            mode            =>      'months',
@@ -2280,8 +2280,8 @@ sub _create_gantt {
     #
     #    # Create a XYChart object of size 620 x 280 pixels. Set background color to light blue (ccccff),
     #    # with 1 pixel 3D border effect.
-    #    #my $c = new XYChart(700, 365, 0xccccff, 0x000000, 1);
-    #    my $c = new XYChart(1300, 700, 0xccccff, 0x000000, 1);
+    #    #my $c = XYChart->new(700, 365, 0xccccff, 0x000000, 1);
+    #    my $c = XYChart->new(1300, 700, 0xccccff, 0x000000, 1);
     #
     #    # Set the plotarea at (140, 55) and of size 460 x 200 pixels. Use alternative white/grey background.
     #    # Enable both horizontal and vertical grids by setting their colors to grey (c0c0c0). Set vertical

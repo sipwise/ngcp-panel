@@ -36,7 +36,7 @@ sub send_fax {
         my @hosts = split(/,\s*/, $c->config->{faxserver}{hosts});
         my $port = $c->config->{faxserver}{port};
         $c->log->debug("faxserver port $port hosts: " . join(',',@hosts));
-        my $ping = new Net::Ping('tcp', 1);
+        my $ping = Net::Ping->new('tcp', 1);
         $ping->port_number($port);
         do {
             my $host = $hosts[rand @hosts];
@@ -98,7 +98,7 @@ sub send_fax {
         my $text = Encode::encode('UTF-8', $args{data});
         $sendfax_args{input} = [\$text];
     }
-    my $client = new NGCP::Fax;
+    my $client = NGCP::Fax->new;
     use Data::Dumper;
     $c->log->debug('invoke send_fax with args: ' . Dumper(\%sendfax_args));
     my $res = $client->send_fax(\%sendfax_args);
@@ -158,7 +158,7 @@ sub get_fax {
     }
 
     if ($format) {
-        my $client = new NGCP::Fax;
+        my $client = NGCP::Fax->new;
         my $fh = $client->convert_file({}, $filepath, $format);
         my $rs_old = $RS;
         local $RS = undef;

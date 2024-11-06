@@ -44,7 +44,7 @@ sub draw_arrow {
   $c->moveTo($from_x, $from_y);
   $c->penSize($width, $width);
   $c->lineTo($to_x, $to_y);
-  my $poly = new GD::Polygon;
+  my $poly = GD::Polygon->new;
   $poly->addPt($to_x, $to_y);
   my $dir = ($to_x > $from_x) ? -1 : 1;
   $poly->addPt($to_x + 4*$width*$dir, $to_y - 2*$width-(($width%2)?0:1));

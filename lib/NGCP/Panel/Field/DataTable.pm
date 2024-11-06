@@ -51,7 +51,7 @@ sub render_element {
     };
     ref $self->adjust_datatable_vars eq 'CODE' and $self->adjust_datatable_vars->($self, $vars);
 
-    my $t = new Template({
+    my $t = Template->new({
         ABSOLUTE => 1,
         INCLUDE_PATH => [
             '/usr/share/ngcp-panel/templates',

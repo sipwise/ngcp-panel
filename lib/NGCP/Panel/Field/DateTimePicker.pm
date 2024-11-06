@@ -47,7 +47,7 @@ sub render_element {
         wrapper_class => $self->wrapper_class,
         field => $self
     };
-    my $t = new Template({ 
+    my $t = Template->new({
         ABSOLUTE => 1, 
         INCLUDE_PATH => [
             '/usr/share/ngcp-panel/templates',
