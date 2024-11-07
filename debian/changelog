@@ -1,3 +1,13 @@
+ngcp-panel (11.5.1.30+0~mr11.5.1.30) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9eaf851] MT#59363 fix /api/domains/?domain= filter pattern behaviour
+  * [2301a40] MT#59363 retain trailing+leading wildcard for legacy panel only
+  * [5f4bce9] MT#59597 remove trailing+leading % entirely for "wildcard" param types
+  * [b2589bf] MT#59597 fix remove trailing+leading % entirely for "wildcard" params
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Nov 2024 11:36:51 +0100
+
 ngcp-panel (11.5.1.29+0~mr11.5.1.29) unstable; urgency=medium
 
   [ Kirill Solomko ]
