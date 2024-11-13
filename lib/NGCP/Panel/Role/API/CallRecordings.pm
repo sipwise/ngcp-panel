@@ -113,6 +113,7 @@ sub _item_rs {
     );
     if ($join_idx > 0) {
         $item_rs = $item_rs->search_rs(undef,{
+            distinct => 1,
             join => [ ('recording_metakeys') x $join_idx ],
         });
     }
