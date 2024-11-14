@@ -55,9 +55,13 @@ else
     -signkey "${KEY_FILE}" -out "${CRT_FILE}" -extfile "${OPENSSL_CONFIG}"
 fi
 
-chmod 640 "${KEY_FILE}" "${CRT_FILE}"
+chmod 640 "${KEY_FILE}"
+chmod 644 "${CRT_FILE}"
 chown root:ssl-cert "${KEY_FILE}" "${CRT_FILE}"
-[ -r "${CSR_FILE}" ] && chmod 600 "${CSR_FILE}"
+if [ -r "${CSR_FILE}" ] ; then
+  chmod 640 "${CSR_FILE}"
+  chown root:ssl-cert "${CSR_FILE}"
+fi
 
 if [ "$SKIP_CSR" = "true" ] ; then
   echo "Generated ${KEY_FILE} ${CRT_FILE}"
