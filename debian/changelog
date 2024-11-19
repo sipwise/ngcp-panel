@@ -1,3 +1,10 @@
+ngcp-panel (13.0.1.2+0~mr13.0.1.2) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [04e1847] MT#58444 Set correct permissions/ownership for ssl files
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 Nov 2024 14:14:59 +0100
+
 ngcp-panel (13.0.1.1+0~mr13.0.1.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
