@@ -208,6 +208,7 @@ sub update_item {
         $resource = $old_resource;
         $resource->{is_active} = $active;
     }
+    $resource->{auth_mode} ||= 'local';
 
     $item->update($resource);
 

@@ -10,7 +10,7 @@ use UUID;
 use NGCP::Panel::Utils::Ldap qw(
     auth_ldap_simple
     get_user_dn
-            
+
     $ldapconnecterror
     $ldapnouserdn
     $ldapauthfailed
@@ -71,7 +71,7 @@ sub get_usr_salted_pass {
 
 sub perform_auth {
     my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
-    
+
     my $res;
     my $log_failed_login_attempt = 1;
 
@@ -106,7 +106,7 @@ sub perform_auth {
                     }
                 }, $bcrypt_realm
             );
-        } elsif (defined $dbadmin) { # we already know if the username is wrong, no need to check again
+        } else {
             # check md5 and migrate over to bcrypt on success
             $c->log->debug("login via md5");
             $res = $c->authenticate(
@@ -142,6 +142,7 @@ sub perform_auth {
             $log_failed_login_attempt = 0; # do not log failed attempt if there was an ldap error
         } else {
             $res = 1;
+            $c->set_authenticated($dbadmin); # logs the user in and calls persist_user
         }
     }
 

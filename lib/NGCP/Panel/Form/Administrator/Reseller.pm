@@ -13,7 +13,7 @@ has_field 'login' => (type => 'Text', required => 1, minlength => 5, maxlength =
 has_field 'auth_mode' => (
     type => 'Select',
     label => 'Authentication Mode',
-    required => 1, 
+    required => 0,
     options => [
         { value => 'local', label => 'local' },
         { value => 'ldap', label => 'LDAP' },

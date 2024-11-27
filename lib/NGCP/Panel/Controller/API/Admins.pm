@@ -58,6 +58,7 @@ sub create_item {
     my $item;
     try {
         my $pass = delete $resource->{password};
+        $resource->{auth_mode} ||= 'local';
         $item = $c->model('DB')->resultset('admins')->create($resource);
         NGCP::Panel::Utils::Admin::insert_password_journal(
             $c, $item, $pass

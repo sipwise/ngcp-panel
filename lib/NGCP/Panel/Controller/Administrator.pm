@@ -150,6 +150,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
             }
             my $password = delete $form->values->{password};
             $form->values->{md5pass} = undef;
+            $form->values->{auth_mode} ||= 'local';
             $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($password);
 
             if ($form->values->{role_id}) {
@@ -281,6 +282,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             } else {
                 $form->values->{role_id} = NGCP::Panel::Utils::UserRole::resolve_role_id($c, $form->values);
             }
+            $form->values->{auth_mode} ||= 'local';
 
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
