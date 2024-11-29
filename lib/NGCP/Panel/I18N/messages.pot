@@ -130,8 +130,8 @@ msgstr ""
 msgid "%1 for %2s"
 msgstr ""
 
-#. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
+#. (subscriber_count,contract.max_subscribers,                                c.license('pbx')
+#. (subscriber_count, contract.max_subscribers,                            c.license('pbx')
 #: share/templates/customer/details.tt
 msgid "%1 of maximum %2 subscribers %3 created"
 msgstr ""
@@ -168,6 +168,10 @@ msgstr ""
 
 #: share/templates/sound/handles_list.tt
 msgid "(empty)"
+msgstr ""
+
+#: share/templates/customer/details.tt
+msgid "(including PBX groups) "
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Voucher.pm lib/NGCP/Panel/Utils/Billing.pm lib/NGCP/Panel/Utils/CallList.pm lib/NGCP/Panel/Utils/EmergencyMapping.pm lib/NGCP/Panel/Utils/Lnp.pm lib/NGCP/Panel/Utils/Phonebook.pm
@@ -372,6 +376,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "A valid caller number in the E164 format. Must be valid according to the preferences alloed_clis, user_cli, cli"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A-Leg Inbound"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "A-Leg Outbound"
 msgstr ""
 
 #: share/templates/subscriber/preferences.tt
@@ -584,6 +596,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Administrative Block Mode for outbound calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Administrative NCOS Exceptions"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -1062,8 +1078,16 @@ msgstr ""
 msgid "Auto Attendant Slots"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Auto-Attendant extensions dialing mode"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "Autoattendant"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "B-Leg Outbound"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2231,6 +2255,11 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
+#. (realm.ucfirst)
+#: share/templates/login/change_password.tt
+msgid "Change password using your %1 credentials:"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Channels"
 msgstr ""
@@ -2332,15 +2361,7 @@ msgid "Code"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Codecs filter by ID"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Codecs filter by name"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Codecs list of IDs"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2353,10 +2374,6 @@ msgstr ""
 
 #: share/templates/peeringoverview/list.tt
 msgid "Columns"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Comma separated list of audio and video codecs IDs to whitelist or blacklist."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -2389,6 +2406,10 @@ msgstr ""
 
 #: share/templates/customer/details.tt share/templates/device/list.tt
 msgid "Config"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Config id"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
@@ -3181,7 +3202,11 @@ msgid "Define the way \"advice of charge\" message will be sent."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Define what type of connection to use in case of Office-Hours and Early Rejects. If set to 'early' the announcement is played with early media (183). If set to 'established' the announcement is played after a 200 OK."
+msgid "Define what type of connection to use in case of pre-announcements (such as office-hours, early rejects, pre-recording announcement etc.). If set to 'early' the announcement is played with early media (183). If set to 'established' the announcement is played using established connection (200OK)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Define which type of extensions dialing mode to use for the Auto-Attendant application. If enabled, then instant mode is used (doesn't require *asterisk sign to be added in front of extension). Otherwise, if disabled (default), a dial of extensions is only through the *asterisk sign."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -4081,10 +4106,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enables or disables the Call Forward rule from beign used."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "For calls coming from PSTN only, it enables or disables the usage of a 302 Redirection instead of the standard internal Call Forward."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -5434,6 +5455,10 @@ msgid "For a list of possible values, see the \"lock\" field in the API doc for 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "For calls coming from PSTN only, it enables or disables the usage of a 302 Redirection instead of the standard internal Call Forward."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "For incoming calls from this peer, find the destination subscriber by a uuid parameter in R-URI which has been sent in Contact at outbound registration."
 msgstr ""
 
@@ -5477,7 +5502,7 @@ msgstr ""
 msgid "Force translation of audio media to T.38 offer"
 msgstr ""
 
-#: share/templates/login/login.tt
+#: share/templates/login/change_password.tt share/templates/login/login.tt
 msgid "Forgot your password?"
 msgstr ""
 
@@ -5657,7 +5682,7 @@ msgstr ""
 msgid "GET"
 msgstr ""
 
-#: share/layout/body.tt share/templates/login/login.tt
+#: share/layout/body.tt share/templates/login/change_password.tt share/templates/login/login.tt
 msgid "GO TO NEW ADMIN PANEL"
 msgstr ""
 
@@ -6845,6 +6870,11 @@ msgstr ""
 msgid "Invalid timeset id detected"
 msgstr ""
 
+#. ($value)
+#: lib/NGCP/Panel/Form/Subscriber/SubscriberAPI.pm lib/NGCP/Panel/Form/Subscriber/SubscriberSubAdminAPI.pm
+msgid "Invalid timezone name: "
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Login.pm
 msgid "Invalid token"
 msgstr ""
@@ -7261,6 +7291,10 @@ msgid "List of error codes and respective announcements"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "List of numbers that the subscriber is allowed to call even if blocked by the NCOS. If the called number matches, then all the NCOS and administrative NCOS checks are skipped."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "List of response codes for which the forking is stopped"
 msgstr ""
 
@@ -7598,7 +7632,7 @@ msgstr ""
 msgid "Maximum Number of simultaneous participants in one conference room."
 msgstr ""
 
-#. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
+#. (contract.max_subscribers,                            c.license('pbx')
 #: share/templates/customer/details.tt
 msgid "Maximum number of %1 subscribers %2 created"
 msgstr ""
@@ -7606,6 +7640,10 @@ msgstr ""
 #. (reseller.first.contract.max_subscribers)
 #: share/templates/reseller/details.tt
 msgid "Maximum number of %1 subscribers (including PBX groups) created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Maximum number of PBX subscribers for this platform is reached"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -7661,11 +7699,19 @@ msgid "Maximum number of overall (incoming and outgoing) concurrent on-net and o
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Maximum number of pbx groups for this platform is reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Maximum number of subscribers for this customer is reached"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
 msgid "Maximum number of subscribers for this customer reached"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Customer.pm
+msgid "Maximum number of subscribers for this platform is reached"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm
@@ -7827,19 +7873,27 @@ msgid "Must be either a number or user@domain format."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
-msgid "Must contain digits"
+msgid "Must contain at least $c_check digits"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
-msgid "Must contain lower-case characters"
+msgid "Must contain at least $c_check lower-case characters"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
-msgid "Must contain special characters"
+msgid "Must contain at least $c_check special characters"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
-msgid "Must contain upper-case characters"
+msgid "Must contain at least $c_check upper-case characters"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Must not contain login"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Must not contain spaces"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm
@@ -8045,6 +8099,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "New cli"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "New password"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "New password fields do not match"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "New password2"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm
@@ -8686,6 +8752,10 @@ msgstr ""
 msgid "PS"
 msgstr ""
 
+#: share/templates/subscriber/preferences.tt
+msgid "PSTN 302 Redirection"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Package"
 msgstr ""
@@ -8770,6 +8840,10 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+#: share/templates/login/change_password.tt
+msgid "Password Change"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password Reset Email Template"
 msgstr ""
@@ -8778,8 +8852,16 @@ msgstr ""
 msgid "Password is too weak"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Password must not be equal to the old password"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password of the phone administrator."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Password successfully changed"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Login.pm
@@ -8800,6 +8882,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Password used to configure bootstrap url on Yealink redirect server. Obtained from Yealink."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm
+msgid "Password was previously used"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/CallListSuppression.pm lib/NGCP/Panel/Controller/NCOS.pm lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9983,7 +10069,7 @@ msgstr ""
 msgid "Reserved for Customer"
 msgstr ""
 
-#: share/templates/administrator/reset_password.tt share/templates/login/login.tt
+#: share/templates/administrator/reset_password.tt share/templates/login/change_password.tt share/templates/login/login.tt
 msgid "Reset Password"
 msgstr ""
 
@@ -10326,7 +10412,7 @@ msgid "Search by wildcard pattern. A wildcard is implicitly appended at the end 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it matches, take UPN as valid without allowed_clis check and copy UPN to network-provided number (NPN)."
+msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 
 #: share/templates/helpers/datatables.tt
@@ -10502,7 +10588,7 @@ msgid "Set to 'if both parties are behind same NAT' if you want to allow RTP to 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Sets upper limit on accepted Min-SE value in SBC."
+msgid "Sets upper limit on accepted Min-SE value in in SBC."
 msgstr ""
 
 #: share/templates/subscriber/edit_webpass.tt share/templates/subscriber/master.tt
@@ -11144,6 +11230,10 @@ msgid "Subject"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Submit"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Submitid"
 msgstr ""
 
@@ -11241,6 +11331,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Subscriber id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Subscriber id, to create a subscriber assigned header rule."
 msgstr ""
 
 #. (prov_lock_string)
@@ -11610,10 +11704,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Switch"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Switch between blacklisting (bl) or whitelisting (wl) of codec IDs listed in codecs_id_list (1 for wl, 0 bl)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13778,10 +13868,6 @@ msgstr ""
 msgid "To Username"
 msgstr ""
 
-#: share/templates/subscriber/preferences.tt
-msgid "PSTN 302 Redirection"
-msgstr ""
-
 #: share/templates/statistics/supportstatus.tt
 msgid "To disable Sipwise support access run:"
 msgstr ""
@@ -14212,6 +14298,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use rates of the reseller's billing profile for fraud control."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Use redirection"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
