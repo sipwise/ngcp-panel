@@ -1,3 +1,11 @@
+ngcp-panel (11.5.1.32+0~mr11.5.1.32) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [55da4f0] MT#60197 support deleting call recordings per subscriber
+  * [4ca89f4] MT#61513 prevent duplicates in GET /api/callrecordings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Nov 2024 13:31:04 +0100
+
 ngcp-panel (11.5.1.31+0~mr11.5.1.31) unstable; urgency=medium
 
   [ Mykola Malkov ]
