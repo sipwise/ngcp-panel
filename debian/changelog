@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.12+0~mr12.5.1.12) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [430d5ac] MT#61673 /api/calllists fix missing type response field
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 04 Dec 2024 22:08:18 +0100
+
 ngcp-panel (12.5.1.11+0~mr12.5.1.11) unstable; urgency=medium
 
   [ Rene Krenn ]
