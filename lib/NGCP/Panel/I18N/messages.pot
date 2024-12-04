@@ -2381,6 +2381,10 @@ msgid "Comma-Separated list of Email addresses to send notifications when tresho
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Comma-separated list of SDP media types (e.g. 'video') to remove from an offer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Comma-separated list of e-mail addresses for notification"
 msgstr ""
 
@@ -9899,6 +9903,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Remote Authentication"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Remove/reject SDP media sections by type"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
