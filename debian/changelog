@@ -1,3 +1,30 @@
+ngcp-panel (13.2.0.0+0~mr13.2.0.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [e835888] MT#60553 handle API subscriber timezone field separately
+  * [1873193] MT#61673 /api/calllists fix missing type response field
+
+  [ Marco Capetta ]
+  * [97adbaf] MT#60864 Fix Sync Email Templates button behavior
+
+  [ Rene Krenn ]
+  * [1c09e27] MT#60197 support deleting call recordings per subscriber
+  * [598f7db] MT#61513 prevent duplicates in GET /api/callrecordings
+  * [358139e] MT#59447 admin user LDAP authentication
+  * [de0595c] MT#59447 admin user LDAP authentication #1
+
+  [ Guillem Jover ]
+  * [bdbd126] MT#61459 Do not use Perl indirect object syntax
+
+  [ Mykola Malkov ]
+  * [a8476ad] MT#58444 Set correct permissions/ownership for ssl files
+
+  [ Sipwise Jenkins Builder ]
+  * [019f8e8] TT#4166 I18N dump: snapshot 2024.11.29-23.29.15
+  * [b64fbbe] TT#4166 I18N dump: snapshot 2024.12.04-23.23.17
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Dec 2024 11:27:19 +0100
+
 ngcp-panel (13.1.0.0+0~mr13.1.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
