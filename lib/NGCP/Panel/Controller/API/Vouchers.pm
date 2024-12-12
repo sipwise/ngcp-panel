@@ -212,26 +212,28 @@ sub POST :Allow {
                     rs             => $self->_item_rs($c),
                     purge_existing => ($purge_existing eq 'true' || $purge_existing eq '1'),
                 );
-            } catch(DBIx::Class::Exception $e where { /Duplicate entry .* for key '\S*vouchers_rescode_idx'/ }) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                    "Failed to upload vouchers, a voucher code is duplicated or already exists for its reseller", $e);
-                last;
-            } catch(DBIx::Class::Exception $e where { /foreign key constraint fails/ }) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                    "Failed to upload vouchers, unknown reseller_id, customer_id or package_id", $e);
-                last;
-            } catch(DBIx::Class::Exception $e where { /Incorrect \w+ value|Data truncated|cannot be null|Out of range value/ }) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                    "Failed to upload vouchers, invalid voucher data", $e);
-                last;
-            } catch($e where { ref $_ eq 'ARRAY' }) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to upload vouchers, $e->[0]");
-                last;
             } catch($e) {
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
-                             "failed to upload csv", $e);
-                last;
-            };
+                if ($e->isa('DBIx::Class::Exception' && $e =~ /Duplicate entry .* for key '\S*vouchers_rescode_idx'/) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                        "Failed to upload vouchers, a voucher code is duplicated or already exists for its reseller", $e);
+                    last;
+                } elsif ($e->isa('DBIx::Class::Exception') && $e =~ /foreign key constraint fails/) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                        "Failed to upload vouchers, unknown reseller_id, customer_id or package_id", $e);
+                    last;
+                } elsif ($e->isa('DBIx::Class::Exception)') && $e =~ /Incorrect \w+ value|Data truncated|cannot be null|Out of range value/) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                        "Failed to upload vouchers, invalid voucher data", $e);
+                    last;
+                } elsif (ref $e eq 'ARRAY') {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to upload vouchers, $e->[0]");
+                    last;
+                } else {
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                                 "failed to upload csv", $e);
+                    last;
+                }
+            }
 
             $c->log->info($$text);
 

@@ -365,8 +365,10 @@ sub generate_client_cert {
                 ssl_client_certificate => undef, # not used anymore, clear it just in case
             });
             $updated = 1;
-        } catch(DBIx::Class::Exception $e where { "$_" =~ qr'Duplicate entry' }) {
-            $serial++;
+        } catch($e) {
+            if ($e->isa('DBIx::Class::Exception') && $e =~ m/Duplicate entry/) {
+                $serial++;
+            }
         }
     }
 
