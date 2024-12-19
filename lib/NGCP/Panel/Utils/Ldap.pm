@@ -111,7 +111,7 @@ sub auth_ldap_simple {
 
     my $label = 'LDAP auth: ';
 
-    my $ldap_uri = $c->config->{ldap}->{admins}->{uri};
+    my $ldap_uri = $c->config->{ldap_admin}->{uri};
 
     my $message = undef;
     if (length($user_dn) > 0) {

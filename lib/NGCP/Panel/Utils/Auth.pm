@@ -134,7 +134,7 @@ sub perform_auth {
         }
     } elsif ($dbadmin->auth_mode eq $ldap_auth_method) {
         $c->log->debug("login via ldap");
-        my ($code,$message) = auth_ldap_simple($c,get_user_dn($user),$pass);
+        my ($code,$message) = auth_ldap_simple($c,get_user_dn($c,$user),$pass);
         if ($code == $ldapauthfailed) {
             $res = 0;
         } elsif ($code != $ldapauthsuccessful) {
