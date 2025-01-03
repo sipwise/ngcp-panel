@@ -136,7 +136,8 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(License)
     $c->stash(form => $form);
 }
 
-sub base :Chained('list_reseller_restricted') :PathPart('') :CaptureArgs(1) :Does(License) :RequiresLicense('reseller') :LicenseDetachTo('/denied_page') {
+sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
+
     my ($self, $c, $reseller_id) = @_;
 
     unless($reseller_id && is_int($reseller_id)) {
