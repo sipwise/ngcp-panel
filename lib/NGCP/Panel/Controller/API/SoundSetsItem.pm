@@ -90,6 +90,7 @@ sub delete_item {
     # clear audio cache of the current sound set and
     # and all potentially affected children sets
     NGCP::Panel::Utils::Sems::clear_audio_cache($c, $item->id);
+    NGCP::Panel::Utils::Rtpengine::clear_audio_cache_set($c, $item->id);
 
     $item->delete;
 

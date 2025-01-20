@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+use NGCP::Panel::Utils::Rtpengine;
 
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PUT PATCH DELETE/];
@@ -137,6 +138,7 @@ sub DELETE :Allow {
         my $group_name = $item->handle->group->name;
         try {
             NGCP::Panel::Utils::Sems::clear_audio_cache($c, $item->set_id, $item->handle->name, $group_name);
+            NGCP::Panel::Utils::Rtpengine::clear_audio_cache_files($c, $item->id);
         } catch ($e) {
             $c->log->warn("Failed to clear audio cache for group " . $group_name);
         }

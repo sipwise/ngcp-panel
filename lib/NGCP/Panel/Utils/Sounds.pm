@@ -6,9 +6,11 @@ use English;
 use Capture::Tiny qw(capture);
 use File::Temp qw/tempfile/;
 use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::Rtpengine;
 use NGCP::Panel::Utils::Preferences;
 use File::Slurp;
 use File::Basename;
+use Data::Dumper;
 
 sub transcode_file {
     my ($tmpfile, $source_codec, $target_codec) = @_;
@@ -235,6 +237,7 @@ sub apply_default_soundset_files{
     my $schema = $c->model('DB');
 
     my $base = "/var/lib/ngcp-soundsets";
+    my @reload_ids;
     foreach my $h (@{$file_handles}) {
         my $handle_name = $h->{handle_name};
         my @paths = (
@@ -273,6 +276,8 @@ sub apply_default_soundset_files{
                         data => ${data_ref},
                         loopplay => $loopplay,
                     });
+
+                push(@reload_ids, $file_id);
             } else {
                 $c->log->debug("skip $path as $handle_name exists via id $file_id and override is not set");
             }
@@ -296,6 +301,8 @@ sub apply_default_soundset_files{
         NGCP::Panel::Utils::Sems::clear_audio_cache($c, $fres->set_id,
             $fres->handle->name, $group_name);
     }
+
+    NGCP::Panel::Utils::Rtpengine::clear_audio_cache_files($c, @reload_ids);
 }
 
 sub contract_sound_set_propagate {

@@ -11,6 +11,7 @@ use File::Type;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::Rtpengine;
 use List::Util qw(any);
 
 sub auto :Private {
@@ -361,6 +362,7 @@ sub delete_sound :Chained('base') :PathPart('delete') {
             # clear audio cache of the current sound set and
             # all potentially affected children sets
             NGCP::Panel::Utils::Sems::clear_audio_cache($c, $own_id);
+            NGCP::Panel::Utils::Rtpengine::clear_audio_cache_set($c, $own_id);
 
             $c->stash->{set_result}->delete;
         });
@@ -720,6 +722,7 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
     my $group_name = $handle->group->name;
     try {
         NGCP::Panel::Utils::Sems::clear_audio_cache($c, $c->stash->{file_result}->set_id, $handle->name, $group_name);
+        NGCP::Panel::Utils::Rtpengine::clear_audio_cache_files($c, $c->stash->{file_result}->id);
     } catch ($e) {
         $c->log->warn("Failed to clear audio cache for group " . $group_name);
     }

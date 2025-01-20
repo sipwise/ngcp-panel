@@ -13,6 +13,7 @@ use HTTP::Status qw(:constants);
 use File::Temp qw(tempfile);
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::Rtpengine;
 use NGCP::Panel::Utils::Generic;
 
 sub transcode_data {
@@ -216,6 +217,7 @@ sub update_item {
     try {
         if ($item) {
             $item->update($resource);
+            NGCP::Panel::Utils::Rtpengine::clear_audio_cache_files($c, $item->id);
         } else {
             $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
         }
