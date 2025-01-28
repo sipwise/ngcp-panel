@@ -419,9 +419,9 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body//div/a[contains(., "Edit")]')))
         driver.find_element(By.XPATH, '/html/body//div/a[contains(., "Edit")]').click()
         fill_element(driver, '//*[@id="q-app"]//div/main//form//div/label//div/input[@aria-label="Company"]', contactmail)
-        driver.find_element(By.XPATH, '//*[@id="q-app"]//div//main//form/div/div[1]/div/div[4]/div/label/div/div/div[2]/button').click()
+        driver.find_element(By.XPATH, '//button[@data-cy="aui-save-button"]').click()
         self.assertTrue(
-            driver.find_element(By.XPATH, '//*[@id="q-app"]//div/main//form//div/label//div/input[@aria-label="Company"]').get_attribute('value') == '', 'Saved value is not correct')
+            driver.find_element(By.XPATH, '//input[@aria-label="Company"]').get_attribute('value') == contactmail, 'Saved value is not correct')
         print("OK")
         filename = 0
 
@@ -595,6 +595,7 @@ class testrun(unittest.TestCase):
         driver.find_element(By.XPATH, '/html/body//div/a[contains(., "Preferences")]').click()
         print("OK")
         print("Try to change a setting (concurrent_max)...", end="")
+        driver.find_element(By.XPATH, '//button[@data-cy="aui-switch-old-panel-close"]').click()
         fill_element(driver, '/html/body//div//main//div//label//div/input[@aria-label="Maximum number of concurrent calls"]', 100)
         driver.find_element(By.XPATH, '/html/body//div//main//div//label//div//button[contains(., "Save")]').click()
         wait_for_invisibility(driver, '/html/body//div//main//div//label//div/svg[@class="q-spinner q-spinner-mat"]')
@@ -603,16 +604,16 @@ class testrun(unittest.TestCase):
             'Saved value is not correct')
         print("OK")
         print("Try to delete setting value and restoring it...", end="")
-        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/button[contains(., "cancel")]').click()
-        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div//button[contains(., "Reset")]').click()
+        driver.find_element(By.XPATH, '//i[@aria-label="Clear"]').click()
+        driver.find_element(By.XPATH, '//button[@data-cy="preference-reset"]').click()
         wait_for_invisibility(driver, '/html/body//div//main//div//label//div/svg[@class="q-spinner q-spinner-mat"]')
         self.assertTrue(
             driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/input[@aria-label="Maximum number of concurrent calls"]').get_attribute('value') == '100',
             'Saved value is not correct')
         print("OK")
         print("Try to delete setting...", end="")
-        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/button[contains(., "cancel")]').click()
-        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div//button[contains(., "Save")]').click()
+        driver.find_element(By.XPATH, '//i[@aria-label="Clear"]').click()
+        driver.find_element(By.XPATH, '//button[@data-cy="preference-save"]').click()
         wait_for_invisibility(driver, '/html/body//div//main//div//label//div/svg[@class="q-spinner q-spinner-mat"]')
         self.assertTrue(
             driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/input[@aria-label="Maximum number of concurrent calls"]').get_attribute('value') == '', 'Saved value is not correct')
