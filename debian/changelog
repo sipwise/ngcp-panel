@@ -1,3 +1,15 @@
+ngcp-panel (13.3.0.0+0~mr13.3.0.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [fc42ca7] MT#59447 fix admin LDAP uri
+  * [9f4c50c] MT#61558 fix reseller (branding) license restriction
+
+  [ Richard Fuchs ]
+  * [1bcc643] MT#61630 turn XMLDispatch into HTTPDispatcher
+  * [b2b5600] MT#61630 invalidate rtpengine cached files
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Jan 2025 15:15:08 +0100
+
 ngcp-panel (13.2.0.0+0~mr13.2.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
