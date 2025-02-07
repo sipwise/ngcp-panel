@@ -292,7 +292,6 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Check if Billing Profile was created...", end="")
         wait_for_invisibility(driver, '//input[@data-cy="aui-input-search--datatable"][@disabled]')
-        
         fill_element(driver, '//input[@data-cy="aui-input-search--datatable"]', billingrealname)
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="q-app"]/div//main/div//table/tbody/tr[1]/td[contains(., "' + billingrealname + '")]')) > 0, "Billing Profile was not found")
@@ -419,9 +418,9 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body//div/a[contains(., "Edit")]')))
         driver.find_element(By.XPATH, '/html/body//div/a[contains(., "Edit")]').click()
         fill_element(driver, '//*[@id="q-app"]//div/main//form//div/label//div/input[@aria-label="Company"]', contactmail)
-        driver.find_element(By.XPATH, '//button[@data-cy="aui-save-button"]').click()
+        driver.find_element(By.XPATH, '//*[@id="q-app"]//div//button[@data-cy="aui-reset-button"]').click()
         self.assertTrue(
-            driver.find_element(By.XPATH, '//input[@aria-label="Company"]').get_attribute('value') == contactmail, 'Saved value is not correct')
+            driver.find_element(By.XPATH, '//input[@aria-label="Company"]').get_attribute('value') == '', 'Saved value is not correct')
         print("OK")
         filename = 0
 
@@ -579,7 +578,7 @@ class testrun(unittest.TestCase):
         print("Try to edit customer status...", end="")
         scroll_to_element(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[11]/span')
         time.sleep(1)
-        click_js(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[11]/span')
+        click_js(driver, '//*[@id="q-app"]/div//main//div//table/tbody/tr[1]/td[@data-cy="q-td--status"]/span')
         wait_for_invisibility(driver, '/html/body//div[@class="q-transition--fade-enter q-transition--fade-enter-active"]')
         click_js(driver, '/html/body//div//label//div/span[contains(., "Active")]')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body//div[@class="q-item__label"][contains(., "Locked")]')))
@@ -604,16 +603,16 @@ class testrun(unittest.TestCase):
             'Saved value is not correct')
         print("OK")
         print("Try to delete setting value and restoring it...", end="")
-        driver.find_element(By.XPATH, '//i[@aria-label="Clear"]').click()
-        driver.find_element(By.XPATH, '//button[@data-cy="preference-reset"]').click()
+        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/i[@role="button"][@aria-label="Clear"]').click()
+        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div//button[@data-cy="preference-reset"]').click()
         wait_for_invisibility(driver, '/html/body//div//main//div//label//div/svg[@class="q-spinner q-spinner-mat"]')
         self.assertTrue(
             driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/input[@aria-label="Maximum number of concurrent calls"]').get_attribute('value') == '100',
             'Saved value is not correct')
         print("OK")
         print("Try to delete setting...", end="")
-        driver.find_element(By.XPATH, '//i[@aria-label="Clear"]').click()
-        driver.find_element(By.XPATH, '//button[@data-cy="preference-save"]').click()
+        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/i[@role="button"][@aria-label="Clear"]').click()
+        driver.find_element(By.XPATH, '/html/body//div//main//div//label//div//button[@data-cy="preference-save"]').click()
         wait_for_invisibility(driver, '/html/body//div//main//div//label//div/svg[@class="q-spinner q-spinner-mat"]')
         self.assertTrue(
             driver.find_element(By.XPATH, '/html/body//div//main//div//label//div/input[@aria-label="Maximum number of concurrent calls"]').get_attribute('value') == '', 'Saved value is not correct')
@@ -995,7 +994,6 @@ class testrun(unittest.TestCase):
             driver.save_screenshot('/results/' + filename)
             filename = 0
         driver.quit()
-
 
 if __name__ == '__main__':
     browser = os.environ['BROWSER']
