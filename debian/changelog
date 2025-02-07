@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.33+0~mr11.5.1.33) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [de7ee41] MT#55677 fix contact and customer selenium tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Feb 2025 08:08:25 +0100
+
 ngcp-panel (11.5.1.32+0~mr11.5.1.32) unstable; urgency=medium
 
   [ Rene Krenn ]
