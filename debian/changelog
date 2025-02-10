@@ -1,3 +1,13 @@
+ngcp-panel (13.0.1.6+0~mr13.0.1.6) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [948cea0] MT#55677 fix contact and customer tests
+
+  [ Kirill Solomko ]
+  * [c4e1e55] MT#62093 return 403 Banned for banned users
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Feb 2025 16:27:24 +0100
+
 ngcp-panel (13.0.1.5+0~mr13.0.1.5) unstable; urgency=medium
 
   [ Nico Schedel ]
