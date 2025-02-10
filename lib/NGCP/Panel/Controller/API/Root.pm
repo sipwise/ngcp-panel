@@ -447,6 +447,17 @@ sub invalid_user : Private {
     return;
 }
 
+sub banned_user : Private {
+    my ($self, $c, $user) = @_;
+
+    my $log_user = "'$user'" // '';
+
+    $self->error($c, HTTP_FORBIDDEN, "Banned");
+    $c->log->warn("banned user $log_user api login from '".$c->qs($c->req->address)."'");
+
+    return;
+}
+
 sub field_to_json : Private {
     my ($self, $field) = @_;
 
