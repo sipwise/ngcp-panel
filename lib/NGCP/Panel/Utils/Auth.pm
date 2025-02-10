@@ -76,7 +76,7 @@ sub perform_auth {
     my $log_failed_login_attempt = 1;
 
     return $res if !check_password($pass);
-    return $res if user_is_banned($c, $user, 'admin');
+    return -2 if user_is_banned($c, $user, 'admin');
 
     my $dbadmin;
     $dbadmin = $c->model('DB')->resultset('admins')->find({
@@ -174,7 +174,7 @@ sub perform_subscriber_auth {
     }
 
     my $userdom = $domain ? $user . '@' . $domain : $user;
-    return $res if user_is_banned($c, $userdom, 'subscriber');
+    return -2 if user_is_banned($c, $userdom, 'subscriber');
 
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
         webusername => $user,
