@@ -165,6 +165,7 @@ sub auto :Private {
                 }));
                 return;
             }
+
             $self->api_apply_fake_time($c);
             return $self->check_user_access($c);
         } elsif ($c->req->headers->header("NGCP-UserAgent") &&
@@ -229,6 +230,10 @@ sub auto :Private {
             }
             my $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $password);
 
+            if ($res && $res == -2) {
+                $c->detach(qw(API::Root banned_user), [$username]);
+            }
+
             if($res && $c->user_exists) {
                 $d //= $c->req->uri->host;
                 $c->log->debug("checking '".$c->user->domain->domain."' against '$d'");
@@ -256,6 +261,11 @@ sub auto :Private {
             my ($user, $pass) = $c->req->headers->authorization_basic;
             #$c->log->debug("user: " . $user . " pass: " . $pass);
             my $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
+
+            if ($res && $res == -2) {
+                $c->detach(qw(API::Root banned_user), [$user]);
+            }
+
             if($res and $c->user_exists and $c->user->is_active)  {
                 $c->log->debug("admin '".$c->user->login."' authenticated via api_admin_http");
             } else {
@@ -553,7 +563,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
         $c->response->status(HTTP_FORBIDDEN);
         $c->response->body(encode_json({
             code => HTTP_FORBIDDEN,
-            message => "Forbidden!" })."\n");
+            message => "Banned" })."\n");
         $c->log->debug("Banned user=$log_user realm=$ngcp_realm ip=$ip login attempt");
         return;
     }

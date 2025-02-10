@@ -76,7 +76,7 @@ sub perform_auth {
     my $log_failed_login_attempt = 1;
 
     return $res if !check_password($pass);
-    return $res if user_is_banned($c, $user, 'admin');
+    return -2 if user_is_banned($c, $user, 'admin');
 
     my $dbadmin;
     $dbadmin = $c->model('DB')->resultset('admins')->find({
@@ -174,7 +174,7 @@ sub perform_subscriber_auth {
     }
 
     my $userdom = $domain ? $user . '@' . $domain : $user;
-    return $res if user_is_banned($c, $userdom, 'subscriber');
+    return -2 if user_is_banned($c, $userdom, 'subscriber');
 
     my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
         webusername => $user,
@@ -553,6 +553,7 @@ sub user_is_banned {
 
     my ($p_user, $p_domain) = get_user_domain($c, $user);
 
+
     my $key;
     my ($user_id, $reseller_id, $customer_id) = ('', '', '');
     if ($realm eq 'admin') {
@@ -563,7 +564,7 @@ sub user_is_banned {
             $user_id = $user_rs->id;
             $reseller_id = $user_rs->reseller_id;
         }
-        $key = "login:ban::user:${p_user}::domain:${p_domain}::realm:${realm}::ip:${ip}::admin_id:${user_id}::reseller_id:${reseller_id}";
+        $key = login_ban_admin_key($p_user, $p_domain, $realm, $ip, $user_id, $reseller_id);
     } elsif ($realm eq 'subscriber') {
         my $user_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
             webusername => $p_user,
@@ -575,7 +576,7 @@ sub user_is_banned {
             $user_id = $user_rs->voip_subscriber->id;
             $customer_id = $user_rs->account_id;
         }
-        $key = "login:ban::user:${p_user}::domain:${p_domain}::realm:${realm}::ip:${ip}::subscriber_id:${user_id}::customer_id:${customer_id}";
+        $key = login_ban_subscriber_key($p_user, $p_domain, $realm, $ip, $user_id, $customer_id);
     }
 
     return $redis->exists($key) ? 1 : 0;
@@ -593,7 +594,7 @@ sub log_failed_login_attempt {
 
     my ($p_user, $p_domain) = get_user_domain($c, $user);
 
-    my $key = "login:fail::user:${p_user}::domain:${p_domain}::realm:${realm}::ip:${ip}";
+    my $key = login_fail_key($p_user, $p_domain, $realm, $ip);
     my $attempted = ($redis->hget($key, 'attempts') // 0) + 1;
     $attempted >= $max_attempts
         ? ban_user($c, $user, $realm)
@@ -614,7 +615,7 @@ sub clear_failed_login_attempts {
     my ($p_user, $p_domain) = get_user_domain($c, $user);
 
     my $ip = $c->request->address;
-    my $key = "login:fail::user:${p_user}::domain:${p_domain}::realm:${realm}::ip:${ip}";
+    my $key = login_fail_key($p_user, $p_domain, $realm, $ip);
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
@@ -677,7 +678,7 @@ sub ban_user {
             $user_id = $user_rs->id;
             $reseller_id = $user_rs->reseller_id;
         }
-        $key = "login:ban::user:${p_user}::domain:${p_domain}::realm:${realm}::ip:${ip}::admin_id:${user_id}::reseller_id:${reseller_id}";
+        $key = login_ban_admin_key($p_user, $p_domain, $realm, $ip, $user_id, $reseller_id);
     } elsif ($realm eq 'subscriber') {
         $user_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
             webusername => $p_user,
@@ -690,7 +691,7 @@ sub ban_user {
             $user_id = $user_rs->voip_subscriber->id;
             $customer_id = $user_rs->account_id;
         }
-        $key = "login:ban::user:${p_user}::domain:${p_domain}::realm:${realm}::ip:${ip}::subscriber_id:${user_id}::customer_id:${customer_id}";
+        $key = login_ban_subscriber_key($p_user, $p_domain, $realm, $ip, $user_id, $customer_id);
     }
 
     if ($increment_stage >= 0) {
@@ -703,8 +704,11 @@ sub ban_user {
 
     my $redis = $c->redis_get_connection({database => $c->config->{'Plugin::Session'}->{redis_db}});
 
+    my $fail_key = login_fail_key($p_user, $p_domain, $realm, $ip);
+
     $redis->hset($key, 'banned_at', time());
     $redis->expire($key, $expire) if $expire;
+    $redis->del($fail_key);
 
     if ($increment_stage > 0 && $user_rs) {
         $user_rs->update({ban_increment_stage => $increment_stage});
@@ -757,6 +761,28 @@ sub check_max_age {
     }
 
     return 1;
+}
+
+sub login_fail_key {
+    my ($user, $domain, $realm, $ip) = @_;
+    return "login:fail::user:${user}::domain:${domain}::realm:${realm}::ip:${ip}";
+}
+
+sub login_ban_basic_key {
+    my ($user, $domain, $realm, $ip) = @_;
+    return "login:ban::user:${user}::domain:${domain}::realm:${realm}::ip:${ip}";
+}
+
+sub login_ban_admin_key {
+    my ($user, $domain, $realm, $ip, $admin_id, $reseller_id) = @_;
+    my $basic_key = login_ban_basic_key($user, $domain, $realm, $ip);
+    return "${basic_key}::admin_id:${admin_id}::reseller_id:${reseller_id}";
+}
+
+sub login_ban_subscriber_key {
+    my ($user, $domain, $realm, $ip, $subscriber_id, $customer_id) = @_;
+    my $basic_key = login_ban_basic_key($user, $domain, $realm, $ip);
+    return "${basic_key}::subscriber_id:${subscriber_id}::customer_id:${customer_id}";
 }
 
 1;
