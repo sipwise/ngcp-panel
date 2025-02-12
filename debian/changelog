@@ -1,3 +1,10 @@
+ngcp-panel (13.2.1.1+0~mr13.2.1.1) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4127ca3] MT#62093 return 403 Banned for banned users
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Feb 2025 07:37:37 +0100
+
 ngcp-panel (13.2.1.0+0~mr13.2.1.0) unstable; urgency=medium
 
   [ Rene Krenn ]
