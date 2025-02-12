@@ -567,7 +567,7 @@ $(function() {
 
                         <tr>
                             <td>[% c.loc('Cash balance threshold when underrun profiles get applied:') %]</td>
-                            <td>[% package.underrun_profile_threshold ? money_format( package.underrun_lock_threshold / 100 ) : '' %]</td>
+                            <td>[% package.underrun_profile_threshold ? money_format( package.underrun_profile_threshold / 100 ) : '' %]</td>
                             <td>[% c.loc('Cash balance threshold when subscribers will be locked:') %]</td>
                             <td>[% package.underrun_lock_threshold ? money_format( package.underrun_lock_threshold / 100 ) : '' %]</td>
                         </tr>
