@@ -3,6 +3,7 @@ use Sipwise::Base;
 use Crypt::Rijndael;
 use MIME::Base64;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Contract qw();
 
 sub encrypt_code {
     my ($c, $plain) = @_;
@@ -44,7 +45,7 @@ sub decrypt_code {
 
 sub check_topup {
     my %params = @_;
-    my ($c,$plain_code,$voucher_id,$now,$subscriber_id,$contract,$package_id,$schema,$err_code,$entities,$resource) = @params{qw/c plain_code voucher_id now subscriber_id contract package_id schema err_code entities resource/};
+    my ($c,$plain_code,$voucher_id,$now,$subscriber_id,$contract_id,$contract,$package_id,$schema,$err_code,$entities,$resource) = @params{qw/c plain_code voucher_id now subscriber_id contract_id contract package_id schema err_code entities resource/};
 
     $schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
@@ -70,6 +71,15 @@ sub check_topup {
         }
         $entities->{subscriber} = $subscriber if defined $entities;
         $contract //= $subscriber->contract;
+    } elsif (defined $contract_id) {
+        $contract = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c)->find($contract_id) unless $contract;
+        unless($contract) {
+            if (defined $resource) {
+                $resource->{contract_id} = undef if exists $resource->{contract_id};
+                $resource->{contract}->{id} = undef if (exists $resource->{contract} && exists $resource->{contract}->{id});
+            }
+            return 0 unless &{$err_code}("Unknown contract ID $contract_id.");
+        }
     }
 
     $entities->{contract} = $contract if defined $entities;

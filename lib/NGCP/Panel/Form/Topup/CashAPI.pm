@@ -16,10 +16,19 @@ has_field 'id' => (
 
 has_field 'subscriber_id' => (
     type => 'PosInteger',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
         title => ['The subscriber for which to topup the balance.']
+    },
+);
+
+has_field 'contract_id' => (
+    type => 'PosInteger',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contract for which to topup the balance.']
     },
 );
 

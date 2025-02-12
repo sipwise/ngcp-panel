@@ -81,6 +81,7 @@ sub POST :Allow {
         last unless NGCP::Panel::Utils::Voucher::check_topup(c => $c,
                     now => $now,
                     subscriber_id => $resource->{subscriber_id},
+                    contract_id => $resource->{contract_id},
                     package_id => $resource->{package_id},
                     resource => $resource,
                     entities => $entities,
