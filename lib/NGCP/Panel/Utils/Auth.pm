@@ -6,6 +6,9 @@ use Data::Entropy::Algorithms qw/rand_bits/;
 use IO::Compress::Zip qw/zip/;
 use IPC::System::Simple qw/capturex/;
 use UUID;
+use Bytes::Random::Secure qw();
+use MIME::Base32 qw();
+use Digest::HMAC_SHA1 qw();
 
 use NGCP::Panel::Utils::Ldap qw(
     auth_ldap_simple
@@ -26,6 +29,10 @@ our $ldap_auth_method = 'ldap';
 
 our $SALT_LENGTH = 128;
 our $ENCRYPT_SUBSCRIBER_WEBPASSWORDS = 1;
+
+our $OTP_SECRET_LENGTH = 20; #160 Bits
+our $OTP_WINDOW = 3;
+our $OTP_STEP_SIZE = 30; #secs
 
 sub check_password {
     my $pass = shift // return;
@@ -783,6 +790,51 @@ sub login_ban_subscriber_key {
     my ($user, $domain, $realm, $ip, $subscriber_id, $customer_id) = @_;
     my $basic_key = login_ban_basic_key($user, $domain, $realm, $ip);
     return "${basic_key}::subscriber_id:${subscriber_id}::customer_id:${customer_id}";
+}
+
+sub create_otp_secret {
+
+    my $secret = Bytes::Random::Secure::random_bytes($OTP_SECRET_LENGTH);
+    return MIME::Base32::encode($secret);
+
+}
+
+sub verify_otp {
+
+    my ($otp_secret, $otp, $time) = @_;
+
+    my $secret = MIME::Base32::decode($otp_secret);
+    my $window = $OTP_WINDOW;
+
+    for my $i (-int(($OTP_WINDOW - 1) / 2) .. int($OTP_WINDOW / 2)) {
+        my $hash = _verify_otp_bytes($secret, int($time / $OTP_STEP_SIZE) + $i);
+        return 1 if $hash == $otp;
+    }
+    return 0;
+
+}
+
+sub _verify_otp_bytes {
+
+    my ($secret, $t) = @_;
+    my $data = pack("Q>", $t);
+
+    my $hmac = Digest::HMAC_SHA1->new($secret);
+    $hmac->add($data);
+    my $hash = $hmac->digest;
+
+    my $offset = ord(substr($hash, -1)) & 0xF;
+    my $truncated_hash = 0;
+
+    for my $i (0 .. 3) {
+        $truncated_hash = ($truncated_hash << 8) | ord(substr($hash, $offset + $i, 1));
+    }
+
+    $truncated_hash &= 0x7FFFFFFF;
+    $truncated_hash %= 1000000;
+
+    return $truncated_hash;
+
 }
 
 1;
