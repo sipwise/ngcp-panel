@@ -18,6 +18,20 @@ use HTTP::Status qw(:constants);
 use Crypt::Eksblowfish::Bcrypt qw/bcrypt_hash en_base64 de_base64/;
 use Data::Entropy::Algorithms qw/rand_bits/;
 
+use NGCP::Panel::Utils::Ldap qw(
+    auth_ldap_simple
+    get_user_dn
+
+    $ldapconnecterror
+    $ldapnouserdn
+    $ldapauthfailed
+    $ldapsearchfailed
+    $ldapnousersfound
+    $ldapmultipleusersfound
+    $ldapuserfound
+    $ldapauthsuccessful
+);
+
 use NGCP::Schema qw//;
 
 #
@@ -675,21 +689,47 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 is_active => 1,
             });
 
-            my $usr_salted_pass;
-            $auth_user = $authrs->first;
-
-            if ($auth_user && $auth_user->id) {
-                $usr_salted_pass = NGCP::Panel::Utils::Auth::get_usr_salted_pass($auth_user->saltedpass, $pass);
-            }
-
-            unless ($usr_salted_pass && $usr_salted_pass eq $auth_user->saltedpass) {
-                $c->response->status(HTTP_FORBIDDEN);
-                $c->response->body(encode_json({
-                    code => HTTP_FORBIDDEN,
-                    message => "User not found" })."\n");
-                $c->log->info("User not found");
-                NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $log_user, $ngcp_realm, $d);
-                return;
+            if ($auth_user = $authrs->first) {
+                if ($auth_user->auth_mode eq $NGCP::Panel::Utils::Auth::local_auth_method) {
+                    my $usr_salted_pass = NGCP::Panel::Utils::Auth::get_usr_salted_pass($auth_user->saltedpass, $pass);
+                    if ($usr_salted_pass ne $auth_user->saltedpass) {
+                        $c->response->status(HTTP_FORBIDDEN);
+                        $c->response->body(encode_json({
+                            code => HTTP_FORBIDDEN,
+                            message => "User not found" })."\n");
+                        $c->log->info("User not found");
+                        NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $log_user, $ngcp_realm, $d);
+                        return;
+                    }
+                } elsif ($auth_user->auth_mode eq $NGCP::Panel::Utils::Auth::ldap_auth_method) {
+                    $c->log->debug("login via ldap");
+                    my ($code,$message) = auth_ldap_simple($c,get_user_dn($c,$user),$pass);
+                    if ($code == $ldapauthfailed) {
+                        $c->response->status(HTTP_FORBIDDEN);
+                        $c->response->body(encode_json({
+                            code => HTTP_FORBIDDEN,
+                            message => "User not found" })."\n");
+                        $c->log->info("User not found");
+                        NGCP::Panel::Utils::Auth::log_failed_login_attempt($c, $log_user, $ngcp_realm, $d);
+                        return;
+                    } elsif ($code != $ldapauthsuccessful) {
+                        $c->response->status(HTTP_FORBIDDEN);
+                        $c->response->body(encode_json({
+                            code => HTTP_FORBIDDEN,
+                            message => "User not found" })."\n");
+                        $c->log->info("User not found");
+                        return; # do not log failed attempt if there was an ldap error
+                    }
+                } else {
+                    $c->log->error("unsupported auth_mode " . $auth_user->auth_mode);
+                    $c->response->status(HTTP_FORBIDDEN);
+                    $c->response->body(encode_json({
+                        code => HTTP_FORBIDDEN,
+                        message => "User not found" })."\n");
+                    $c->log->info("User not found");
+                    return;
+                }
+                
             }
         } else {
             my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
