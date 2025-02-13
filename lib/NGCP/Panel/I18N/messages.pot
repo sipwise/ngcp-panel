@@ -12227,6 +12227,10 @@ msgid "The content type this config is served as."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The contract for which to topup the balance."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The contract id this location belongs to."
 msgstr ""
 
