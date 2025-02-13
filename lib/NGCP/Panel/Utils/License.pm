@@ -13,9 +13,10 @@ sub get_license_status {
 
     my $fd;
     {
-        no autodie qw(open);
+        no autodie qw(sysopen);
         if (!sysopen($fd, '/proc/ngcp/check', O_NONBLOCK|O_RDONLY)) {
-            $c->log->error('License status check failed: could not check license');
+            $c->log->error('License status check failed: could not check license')
+                unless $c->config->{general}{ngcp_type} eq 'spce';
             return 'missing';
         }
     }
@@ -80,7 +81,8 @@ sub get_license {
 
     my $proc_dir = '/proc/ngcp/flags';
     unless (-d $proc_dir) {
-        $c->log->error("Failed to access $proc_dir");
+        $c->log->error("Failed to access $proc_dir")
+            unless $c->config->{general}{ngcp_type} eq 'spce';
         return;
     };
 
@@ -105,7 +107,8 @@ sub get_licenses {
 
     my $proc_dir = '/proc/ngcp/flags';
     unless (-d $proc_dir) {
-        $c->log->error("Failed to access $proc_dir");
+        $c->log->error("Failed to access $proc_dir")
+            unless $c->config->{general}{ngcp_type} eq 'spce';
         return;
     };
 
@@ -138,7 +141,8 @@ sub get_license_meta {
 
     my $proc_dir = '/proc/ngcp';
     unless (-d $proc_dir) {
-        $c->log->error("Failed to access $proc_dir");
+        $c->log->error("Failed to access $proc_dir")
+            unless $c->config->{general}{ngcp_type} eq 'spce';
         return;
     };
 
