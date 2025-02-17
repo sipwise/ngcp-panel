@@ -24,6 +24,7 @@ use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::Subscriber
 __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
+        DELETE  => [qw/admin reseller ccareadmin ccare subscriberadmin/],
         Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
