@@ -18,13 +18,16 @@ use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Events qw();
 use UUID;
 
-__PACKAGE__->set_config({
-    allowed_roles => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
-});
-
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
 }
+
+__PACKAGE__->set_config({
+    allowed_roles => {
+        Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
+        POST    => [qw/admin reseller ccareadmin ccare subscriberadmin/],
+    }
+});
 
 sub api_description {
     return 'Defines an actual user who can log into the web panel, register devices via SIP and/or '.
