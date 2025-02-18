@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.16+0~mr12.5.1.16) unstable; urgency=medium
+
+  [ Richard Fuchs ]
+  * [1de0aaf] MT#59979 defuse license logs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 18 Feb 2025 14:14:17 +0100
+
 ngcp-panel (12.5.1.15+0~mr12.5.1.15) unstable; urgency=medium
 
   [ Nico Schedel ]
