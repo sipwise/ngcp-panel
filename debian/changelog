@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.17+0~mr12.5.1.17) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [2db38a3] MT#62180 /api/subscribers prevent subscribers from POST/DELETE
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 18 Feb 2025 15:30:27 +0100
+
 ngcp-panel (12.5.1.16+0~mr12.5.1.16) unstable; urgency=medium
 
   [ Richard Fuchs ]
