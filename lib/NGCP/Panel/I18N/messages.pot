@@ -12719,6 +12719,10 @@ msgid "The internal id in the sms journal"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The internal id of the pbx user"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The interval between each iteration. For example, when 'Repeate (frequency)' defined iteration unit as 'yearly', an interval of '2' means once every two years, but with 'Repeate (frequency)' equal to 'hourly', it means once every two hours. The default interval is '1'."
 msgstr ""
 
