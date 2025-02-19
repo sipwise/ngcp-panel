@@ -52,6 +52,11 @@ sub query_params {
             description => 'Filter for Phonebook entries that are marked as shared',
             query_type => 'string_eq',
         },
+        {
+            param => 'include',
+            description => 'Include phonebook entries shared by subscribers, and/or from reseller, and/or from customer. Accepted values: all,reseller,customer',
+            # only for doc
+        },
     ];
 }
 

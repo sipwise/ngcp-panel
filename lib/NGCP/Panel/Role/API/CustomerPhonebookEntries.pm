@@ -7,6 +7,8 @@ use parent 'NGCP::Panel::Role::API';
 
 use HTTP::Status qw(:constants);
 
+use NGCP::Panel::Utils::Phonebook;
+
 sub resource_name {
     return 'customerphonebookentries';
 }
@@ -14,9 +16,21 @@ sub resource_name {
 sub _item_rs {
     my ($self, $c) = @_;
 
+    my $params = $c->req->params;
+
     my $item_rs = $c->model('DB')->resultset('contract_phonebook');
 
-    if ($c->user->roles eq 'reseller') {
+    if ($c->req->method eq 'GET' && $params->{include}) {
+        if ($params->{include} eq 'all') {
+            $item_rs = $c->model('DB')->resultset('v_contract_phonebook');
+        } elsif ($params->{include} eq 'shared') {
+            $item_rs = $c->model('DB')->resultset('v_contract_shared_phonebook');
+        } elsif ($params->{include} eq 'reseller') {
+            $item_rs = $c->model('DB')->resultset('v_contract_reseller_phonebook');
+        }
+    }
+
+    if ($c->user->roles eq 'reseller' || $c->user->roles eq 'ccare') {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{
@@ -31,6 +45,24 @@ sub _item_rs {
     return $item_rs;
 }
 
+sub get_item_id {
+    my ($self, $c, $item, $resource, $form, $params) = @_;
+    return blessed $item ? $item->id : $item->{id};
+}
+
+sub valid_id {
+    my ($self, $c, $id) = @_;
+    return 1 if is_int($id) || $id =~ /^[csr\d]+$/;
+    $self->error($c, HTTP_BAD_REQUEST, "Invalid id in request URI");
+    return;
+}
+
+sub item_by_id {
+    my ($self, $c, $id) = @_;
+    my $item_rs = $self->item_rs($c);
+    return $item_rs->search({ 'me.id' => $id })->first;
+}
+
 sub get_form {
     my ($self, $c) = @_;
 
@@ -40,6 +72,7 @@ sub get_form {
 sub process_hal_resource {
     my($self, $c, $item, $resource, $form) = @_;
     $resource->{customer_id} = delete $resource->{contract_id};
+    $resource->{shared} //= 0;
     return $resource;
 }
 

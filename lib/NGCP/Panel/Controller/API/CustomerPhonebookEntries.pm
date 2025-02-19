@@ -53,6 +53,11 @@ sub query_params {
             description => 'Filter for Phonebook numbers with a specific name',
             query_type => 'wildcard',
         },
+        {
+            param => 'include',
+            description => 'Include phonebook entries shared by subscribers and/or from reseller. Accepted values: all,shared,reseller',
+            # only for doc
+        },
     ];
 }
 
