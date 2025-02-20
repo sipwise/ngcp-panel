@@ -273,11 +273,14 @@ sub auto :Private {
         } else {
             $c->log->debug("Root::auto API admin request with http auth");
             my ($user, $pass) = $c->req->headers->authorization_basic;
+            my ($otp) = $c->request->header('X-OTP');
             #$c->log->debug("user: " . $user . " pass: " . $pass);
             my $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
 
             if ($res && $res == -2) {
                 $c->detach(qw(API::Root banned_user), [$user]);
+            } elsif ($res && $res == -3) {
+                $c->detach(qw(API::Root invalid_otp), [$otp]);
             }
 
             if($res and $c->user_exists and $c->user->is_active)  {
@@ -534,6 +537,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
 
     my $auth_token = $c->req->body_data->{token} // '';
     my $jwt        = $c->req->body_data->{jwt} // '';
+    my $otp        = $c->req->body_data->{otp} // '';
     my $user       = $c->req->body_data->{username} // '';
     my $pass       = $c->req->body_data->{password} // '';
     my $ngcp_realm = $c->request->env->{NGCP_REALM} // 'admin';
@@ -729,7 +733,11 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                     $c->log->info("User not found");
                     return;
                 }
-                
+                if ($res
+                    and $auth_user->enable_2fa
+                    and not verify_otp($auth_user->otp_secret,$otp,time())) {
+                    $res = 0;
+                }
             }
         } else {
             my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({

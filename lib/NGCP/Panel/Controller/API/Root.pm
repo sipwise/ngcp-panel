@@ -447,6 +447,13 @@ sub invalid_user : Private {
     return;
 }
 
+sub invalid_otp : Private {
+    my ($self, $c, $otp) = @_;
+
+    $self->error($c, HTTP_FORBIDDEN, "Invalid OTP");
+    return;
+}
+
 sub banned_user : Private {
     my ($self, $c, $user) = @_;
 

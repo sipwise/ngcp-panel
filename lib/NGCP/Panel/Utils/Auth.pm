@@ -151,9 +151,19 @@ sub perform_auth {
             $res = 1;
             $c->set_authenticated($dbadmin); # logs the user in and calls persist_user
         }
+    } else {
+        $c->log->error("unsupported auth_mode " . $dbadmin->auth_mode);
+        $res = 0;
+        $log_failed_login_attempt = 0;
     }
 
-    $res ? do {
+    if ($res
+        and $dbadmin->enable_2fa
+        and not verify_otp($dbadmin->otp_secret,$otp,time())) {
+        $res = -3;
+    }
+
+    $res > 0 ? do {
         clear_failed_login_attempts($c, $user, 'admin');
         reset_ban_increment_stage($c, $user, 'admin');
     }
