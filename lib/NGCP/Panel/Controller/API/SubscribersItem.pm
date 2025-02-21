@@ -137,14 +137,15 @@ sub PATCH :Allow {
         );
         last unless $json;
 
+        my $patch_mode = 1;
         my ($form) = $self->get_form($c);
-        my $old_resource = $self->resource_from_item($c, $subscriber, $form);
+        my $old_resource = $self->resource_from_item($c, $subscriber, $form, $patch_mode);
         $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $update = 1;
-        my $r = $self->prepare_resource($c, $schema, $resource, $subscriber);
+        my $r = $self->prepare_resource($c, $schema, $resource, $subscriber, $patch_mode);
         last unless $r;
         $resource = $r->{resource};
 
