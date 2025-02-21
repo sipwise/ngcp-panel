@@ -46,7 +46,7 @@ sub get_form {
 }
 
 sub resource_from_item {
-    my ($self, $c, $item, $form) = @_;
+    my ($self, $c, $item, $form, $patch_mode) = @_;
     my $pref;
 
     my $bill_resource = { $item->get_inflated_columns };
@@ -78,15 +78,26 @@ sub resource_from_item {
     }
     my $sippassword = $resource{password};
     my $webpassword = $resource{webpassword};
+
     if(!$form){
         ($form) = $self->get_form($c);
     }
+
+    # form validation during PATCH causes
+    # fields to be removed from the %resource
+    # and then apply_patch() removes the fields
+    # that were not a part the PATCH ops from
+    # the database, therefore a copy of the resource
+    # is validated instead, preserving the original one
+    # when $patch_mode is enabled
+    my %validate_resource = %resource;
     last unless $self->validate_form(
         c => $c,
-        resource => \%resource,
+        resource => $patch_mode ? \%validate_resource : \%resource,
         form => $form,
         run => 0,
     );
+
     $resource{_password} = $sippassword;
     $resource{_webpassword} = $webpassword;
 
@@ -192,10 +203,6 @@ sub resource_from_item {
             }
         }
     } else {
-        # fields we never want to see
-        foreach my $k(qw/profile_set_id external_id/) {
-            delete $resource{$k};
-        }
         delete $resource{'password'} if $c->user->roles eq 'subscriber';
 
         if ($c->user->roles eq "subscriberadmin") {
@@ -346,7 +353,7 @@ sub get_customer {
 }
 
 sub prepare_resource {
-    my ($self, $c, $schema, $resource, $item) = @_;
+    my ($self, $c, $schema, $resource, $item, $patch_mode) = @_;
 
     return NGCP::Panel::Utils::Subscriber::prepare_resource(
         c => $c,
@@ -360,9 +367,17 @@ sub prepare_resource {
         validate_code => sub {
             my ($r) = @_;
             my ($form) = $self->get_form($c);
+            # form validation during PATCH causes
+            # fields to be removed from the %resource
+            # and then apply_patch() removes the fields
+            # that were not a part the PATCH ops from
+            # the database, therefore a copy of the resource
+            # is validated instead, preserving the original one
+            # when $patch_mode is enabled
+            my %validate_resource = %{$r};
             return $self->validate_form(
                 c => $c,
-                resource => $r,
+                resource => $patch_mode ? \%validate_resource : $r,
                 form => $form,
             );
         },
