@@ -38,9 +38,7 @@ sub end :Private {
         }
     }
 
-    if ($self->get_config('log_response')) {
-        $self->log_response($c);
-    }
+    $self->log_response($c);
 
     return 1;
 }
