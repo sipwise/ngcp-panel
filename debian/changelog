@@ -1,3 +1,11 @@
+ngcp-panel (13.1.1.6+0~mr13.1.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [290673a] MT#62223 API unhandled internal errors cause 500 error
+  * [060e8e4] MT#62223 improve error response handling when log_response is off
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Feb 2025 16:21:57 +0100
+
 ngcp-panel (13.1.1.5+0~mr13.1.1.5) unstable; urgency=medium
 
   [ Richard Fuchs ]
