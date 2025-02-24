@@ -1065,9 +1065,11 @@ sub log_response {
     $c->forward(qw(Controller::Root render));
     $c->response->content_type('')
         if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
-    my $rc = '';
     my $errors = '';
+    my $has_errors = 0;
     if ($c->has_errors) {
+        $has_errors = 1;
+
         $errors = $c->stash->{is_api_error_response}
                     ? join ', ', splice @{$c->error}, 1
                     : join ', ', @{$c->error};
@@ -1083,19 +1085,31 @@ sub log_response {
             );
         }
 
+        # to avoid html content response
         $c->clear_errors;
     }
-    my ($response_body, $params_data) = $self->filter_log_response(
-            $c,
-            $c->response->body,
-            $c->request->parameters,
+
+    my ($response_body, $params_data) =
+        (
+            ($has_errors || $self->get_config('log_response'))
+                ? $c->response->body
+                : undef,
+            $c->request->parameters
         );
+
+    my ($filtered_response_body, $filtered_params_data) =
+        $self->filter_log_response(
+            $c,
+            $response_body,
+            $params_data
+        );
+
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
-        desc => $c->qs($response_body),
+        desc => $c->qs($filtered_response_body),
         log  => $c->qs($errors // ''),
-        data => $params_data,
+        data => $filtered_params_data,
     );
 }
 
