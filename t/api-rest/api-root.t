@@ -128,6 +128,7 @@ $ua = Test::Collection->new()->ua();
         pbxfielddevicepreferencedefs => 1,
         pbxfielddevicepreferences => 1,
         pbxdevices => 1,
+        pbxusers => 1,
         peeringgroups => 1,
         peeringrules => 1,
         peeringinboundrules => 1,
