@@ -77,7 +77,23 @@ sub get_usr_salted_pass {
 }
 
 sub perform_auth {
-    my ($c, $user, $pass, $realm, $bcrypt_realm) = @_;
+
+    my %params = @_;
+    my ($c,
+        $user,
+        $pass,
+        $otp,
+        $skip_otp,
+        $realm,
+        $bcrypt_realm) = @params{qw/
+            c
+            user
+            pass
+            otp
+            skip_otp
+            realm
+            bcrypt_realm
+        /};
 
     my $res;
     my $log_failed_login_attempt = 1;
@@ -158,8 +174,9 @@ sub perform_auth {
     }
 
     if ($res
+        and not $skip_otp
         and $dbadmin->enable_2fa
-        and not verify_otp($dbadmin->otp_secret,$otp,time())) {
+        and not verify_otp($c,$dbadmin->otp_secret,$otp,time())) {
         $res = -3;
     }
 
@@ -811,7 +828,15 @@ sub create_otp_secret {
 
 sub verify_otp {
 
-    my ($otp_secret, $otp, $time) = @_;
+    my ($c, $otp_secret, $otp, $time) = @_;
+
+    #$c->log->debug("verify otp: $otp, secret $otp_secret");
+    #return 1;
+
+    $c->log->debug("verify otp: " . ($otp // "") . ", secret " . ($otp_secret // ""));
+
+    return 0 unless $otp;
+    return 0 unless $otp_secret;
 
     my $secret = MIME::Base32::decode($otp_secret);
     my $window = $OTP_WINDOW;

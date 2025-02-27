@@ -77,6 +77,7 @@ Depends:
  libhtml-formhandler-perl (>= 0.40026),
  libhtml-parser-perl,
  libhttp-message-perl,
+ libimager-qrcode-perl,
  libio-compress-lzma-perl,
  libio-socket-ip-perl,
  libio-string-perl,

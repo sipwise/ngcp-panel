@@ -46,6 +46,7 @@ $ua = Test::Collection->new()->ua();
         activesubscriberpreferences => 1,
         admincerts => 1,
         admins => 1,
+        otpsecret => 1,
         applyrewrites => 1,
         authtokens => 1,
         autoattendants => 1,

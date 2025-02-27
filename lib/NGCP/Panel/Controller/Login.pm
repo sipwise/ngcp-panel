@@ -31,10 +31,18 @@ sub login_index :Path Form {
         $c->log->debug("login form validated");
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
+        my $otp;
         $c->log->debug("Login::index user=$user, pass=****, realm=$realm");
         my $res;
         if($realm eq 'admin') {
-            $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, 'admin', 'admin_bcrypt');
+            $res = NGCP::Panel::Utils::Auth::perform_auth(
+                c => $c,
+                user => $user,
+                pass => $pass,
+                otp => $otp,
+                realm => 'admin',
+                bcrypt_realm => 'admin_bcrypt',
+            );
         } elsif($realm eq 'subscriber') {
             my ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {
@@ -294,12 +302,20 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
         $c->log->debug("login form validated");
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
+        my $otp;
         my $new_pass = $form->field('new_password')->value;
         my $new_pass2 = $form->field('new_password2')->value;
         $c->log->debug("Password change user=$user, realm=$realm");
         my $res;
         if($realm eq 'admin') {
-            $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, 'admin', 'admin_bcrypt');
+            $res = NGCP::Panel::Utils::Auth::perform_auth(
+                c => $c,
+                user => $user,
+                pass => $pass,
+                otp => $otp,
+                realm => 'admin',
+                bcrypt_realm => 'admin_bcrypt',
+            );
         } elsif($realm eq 'subscriber') {
             my ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {

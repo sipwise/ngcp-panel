@@ -275,7 +275,15 @@ sub auto :Private {
             my ($user, $pass) = $c->req->headers->authorization_basic;
             my ($otp) = $c->request->header('X-OTP');
             #$c->log->debug("user: " . $user . " pass: " . $pass);
-            my $res = NGCP::Panel::Utils::Auth::perform_auth($c, $user, $pass, "api_admin" , "api_admin_bcrypt");
+            my $res = NGCP::Panel::Utils::Auth::perform_auth(
+                c => $c,
+                user => $user,
+                pass => $pass,
+                otp => $otp,
+                skip_otp => ($c->req->uri->path =~ m|^/api/otpsecret/?$| ? 1 : 0),
+                realm => 'api_admin',
+                bcrypt_realm => 'api_admin_bcrypt',
+            );
 
             if ($res && $res == -2) {
                 $c->detach(qw(API::Root banned_user), [$user]);
@@ -733,10 +741,14 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                     $c->log->info("User not found");
                     return;
                 }
-                if ($res
-                    and $auth_user->enable_2fa
-                    and not verify_otp($auth_user->otp_secret,$otp,time())) {
-                    $res = 0;
+                if ($auth_user->enable_2fa
+                    and not verify_otp($c,$auth_user->otp_secret,$otp,time())) {
+                    $c->response->status(HTTP_FORBIDDEN);
+                    $c->response->body(encode_json({
+                        code => HTTP_FORBIDDEN,
+                        message => "Invalid OTP" })."\n");
+                    $c->log->info("Invalid OTP");
+                    return; 
                 }
             }
         } else {
