@@ -2968,7 +2968,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $schema->txn_do(sub {
 
                 NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                    schema => $schema, contract_id => $subscriber->contract->id);
+                    c => $c, schema => $schema, contract_id => $subscriber->contract->id);
 
                 my $email = delete $form->params->{email} || undef;
                 my $timezone = delete $form->values->{timezone}{name} || undef;

@@ -77,7 +77,7 @@ sub resize_actual_contract_balance {
     my($c,$contract,$old_package,$actual_balance,$is_topup,$topup_amount,$now,$schema,$profiles_added) = @params{qw/c contract old_package balance is_topup topup_amount now schema profiles_added/};
 
     $schema //= $c->model('DB');
-    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c, schema => $schema, contract_id => $contract->id);
     $is_topup //= 0;
     $topup_amount //= 0.0;
     $profiles_added //= 0;
@@ -217,9 +217,12 @@ sub catchup_contract_balances {
     my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun is_create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added/};
 
     return unless $contract;
+    if ($c->stash->{catchup_contract_ids}) {
+        return unless $c->stash->{catchup_contract_ids}->{$contract->id};
+    }
 
     my $schema = $c->model('DB');
-    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c, schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
     $old_package = $contract->profile_package if !exists $params{old_package};
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
@@ -442,7 +445,7 @@ sub topup_contract_balance {
     my($c,$contract,$package,$voucher,$amount,$now,$request_token,$schema,$log_vals,$subscriber) = @params{qw/c contract package voucher amount now request_token schema log_vals subscriber/};
 
     $schema //= $c->model('DB');
-    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c, schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::current_local;
 
     my $voucher_package = ($voucher ? $voucher->profile_package : $package);
@@ -587,7 +590,7 @@ sub create_initial_contract_balances {
     my($c,$contract,$now) = @params{qw/c contract now/};
 
     my $schema = $c->model('DB');
-    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c, schema => $schema, contract_id => $contract->id);
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
 
     my ($start_mode,$interval_unit,$interval_value,$initial_balance,$underrun_profile_threshold,$underrun_lock_threshold);

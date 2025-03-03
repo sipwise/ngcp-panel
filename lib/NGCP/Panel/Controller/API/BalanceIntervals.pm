@@ -95,9 +95,12 @@ sub GET :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $contracts_rs = $self->item_rs($c,0,$now);
         (my $total_count, $contracts_rs, my $contracts_rows) = $self->paginate_order_collection($c, $contracts_rs);
-        my $contracts = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c,
+        my $contracts = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
+            c => $c,
             rs => $contracts_rs,
-            contract_id_field => 'id');
+            contract_id_field => 'id',
+            #skip_locked => 1,
+        );
         my (@embedded, @links);
         my $form = $self->get_form($c);
         $self->expand_prepare_collection($c);

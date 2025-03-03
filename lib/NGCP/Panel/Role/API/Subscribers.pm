@@ -396,7 +396,7 @@ sub prepare_resource {
             my ($cid) = @_;
             my $contract = $self->get_customer($c, $cid);
             NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                schema => $c->model('DB'), contract_id => $contract->id) if $contract;
+                c => $c, schema => $c->model('DB'), contract_id => $contract->id) if $contract;
             return $contract;
         },
     );
