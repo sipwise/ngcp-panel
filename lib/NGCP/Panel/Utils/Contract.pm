@@ -7,6 +7,25 @@ use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList qw();
 
+my $lock_timeout = 5;
+
+use DBIx::Class::SQLMaker::MySQL qw();
+{
+    no warnings 'redefine'; ## no critic (ProhibitNoWarnings)
+    *DBIx::Class::SQLMaker::MySQL::_lock_select = sub {
+        my ($self, $type) = @_;
+
+        my $sql;
+        if (ref($type) eq 'SCALAR') {
+            $sql = "FOR $$type";
+        } else {
+            $sql = $DBIx::Class::SQLMaker::MySQL::for_syntax->{$type} || $self->throw_exception( "Unknown SELECT .. FOR type '$type' requested" );
+        }
+
+        return " $sql";
+    };
+}
+
 sub recursively_lock_contract {
     my %params = @_;
 
@@ -465,7 +484,20 @@ sub is_reseller_product {
 
 sub acquire_contract_rowlocks {
     my %params = @_;
-    my($c,$schema,$rs,$contract_id_field,$contract_ids,$contract_id) = @params{qw/c schema rs contract_id_field contract_ids contract_id/};
+    my($c,
+        $schema,
+        $rs,
+        $contract_id_field,
+        $contract_ids,
+        $contract_id,
+        $skip_locked) = @params{qw/c
+         schema
+         rs
+         contract_id_field
+         contract_ids
+         contract_id
+         skip_locked
+    /};
 
     $schema //= $c->model('DB');
 
@@ -491,9 +523,14 @@ sub acquire_contract_rowlocks {
         $c->log->debug('contract ID to be locked: ' . $contract_id) if $c;
         my $contract = $schema->resultset('contracts')->find({
                 id => $contract_id
-                },{for => 'update'});
+                },{ for => ($skip_locked ? \"update skip locked" : \"update wait $lock_timeout") });
         $t2 = time;
-        $c->log->debug('contract ID ' . $contract_id . ' locked (' . ($t2 - $t1) . ' secs)') if $c;
+        if ($c) {
+            $c->log->debug('contract ID ' . $contract_id . ' locked (' . ($t2 - $t1) . ' secs)');
+            $c->stash->{catchup_contract_ids} = {
+                $contract_id => (defined $contract ? 1 : 0),
+            } if $skip_locked;
+        }
         return $contract;
     } elsif ((scalar @contract_ids_to_lock) > 0) {
         @contract_ids_to_lock = sort { $a <=> $b } @contract_ids_to_lock; #"Access your tables and rows in a fixed order."
@@ -501,9 +538,19 @@ sub acquire_contract_rowlocks {
         $c->log->debug('contract IDs to be locked: ' . $contract_ids_label) if $c;
         my @contracts = $schema->resultset('contracts')->search({
                 id => { -in => [ @contract_ids_to_lock ] }
-                },{for => 'update'})->all;
+                },{ for => ($skip_locked ? \"update skip locked" : \"update wait $lock_timeout") })->all;
         $t2 = time;
-        $c->log->debug('contract IDs ' . $contract_ids_label . ' locked (' . ($t2 - $t1) . ' secs)') if $c;
+        if ($c) {
+            $c->log->debug('contract IDs ' . $contract_ids_label . ' locked (' . ($t2 - $t1) . ' secs)');
+            if ($skip_locked) {
+                my %cids = map { $_->id => undef; } @contracts;
+                foreach (@contract_ids_to_lock) {
+                    $c->stash->{catchup_contract_ids} = {
+                        $_ => (exists $cids{$_} ? 1 : 0),
+                    };
+                }
+            }
+        }
         if (defined $contract_ids || defined $contract_id) {
             return [ @contracts ];
         } else {
