@@ -886,7 +886,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             $schema->txn_do(sub {
 
                 NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                    schema => $schema, contract_id => $c->stash->{contract}->id) if $c->stash->{contract};
+                    c => $c, schema => $schema, contract_id => $c->stash->{contract}->id) if $c->stash->{contract};
 
                 my $preferences = {};
                 my $pbx_group_ids = [];
@@ -1504,7 +1504,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             $schema->txn_do( sub {
 
                 NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                    schema => $schema, contract_id => $c->stash->{contract}->id) if $c->stash->{contract};
+                    c => $c, schema => $schema, contract_id => $c->stash->{contract}->id) if $c->stash->{contract};
 
                 my $preferences = {};
 

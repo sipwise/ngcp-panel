@@ -967,7 +967,7 @@ sub _init_subscriber_context {
                 my ($cid) = @_;
                 my $contract = $schema->resultset('contracts')->find($cid);
                 NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                    schema => $schema, contract_id => $contract->id) if $contract;
+                    c => $c, schema => $schema, contract_id => $contract->id) if $contract;
                 return $contract;
             },
             item => $item,
