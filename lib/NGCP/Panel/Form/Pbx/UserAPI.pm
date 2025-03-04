@@ -50,6 +50,32 @@ has_field 'pbx_extension' => (
     },
 );
 
+has_field 'username' => (
+    type => '+NGCP::Panel::Field::Identifier',
+    label => 'SIP Username',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The username for SIP and XMPP services.']
+    },
+);
+
+has_field 'domain' => (
+    type => '+NGCP::Panel::Field::Domain',
+    label => 'SIP Domain',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The domain id this subscriber belongs to.'],
+        implicit_parameter => {
+            type => "String",
+            required => 0,
+            validate_when_empty => 0,
+            element_attr => {
+                title => ['The domain name this subscriber belongs to.'],
+            },
+        },
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -60,7 +86,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id primary_number display_name pbx_extension/],
+    render_list => [qw/id primary_number display_name pbx_extension username domain/],
 );
 
 has_block 'actions' => (

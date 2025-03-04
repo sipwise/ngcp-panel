@@ -85,6 +85,8 @@ sub resource_from_item {
 
     $resource{display_name} = $display_name_pref ? $display_name_pref->value : undef;
     $resource{pbx_extension} = $prov_sub->pbx_extension;
+    $resource{username} = $prov_sub->username;
+    $resource{domain} = $prov_sub->domain->domain;
 
     return unless $self->validate_form(
         c => $c,
