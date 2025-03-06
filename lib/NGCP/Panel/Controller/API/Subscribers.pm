@@ -323,7 +323,7 @@ sub GET :Allow {
             c => $c,
             rs => $subscribers_rs,
             contract_id_field => 'contract_id',
-            skip_locked => 1,
+            skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
         );
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links, %contract_map);
