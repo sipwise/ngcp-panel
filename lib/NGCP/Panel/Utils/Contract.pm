@@ -12,6 +12,10 @@ my $lock_timeout = 5;
 use DBIx::Class::SQLMaker::MySQL qw();
 {
     no warnings 'redefine'; ## no critic (ProhibitNoWarnings)
+    my $for_syntax = {
+        update => 'FOR UPDATE',
+        shared => 'LOCK IN SHARE MODE'
+    };
     *DBIx::Class::SQLMaker::MySQL::_lock_select = sub {
         my ($self, $type) = @_;
 
@@ -19,7 +23,7 @@ use DBIx::Class::SQLMaker::MySQL qw();
         if (ref($type) eq 'SCALAR') {
             $sql = "FOR $$type";
         } else {
-            $sql = $DBIx::Class::SQLMaker::MySQL::for_syntax->{$type} || $self->throw_exception( "Unknown SELECT .. FOR type '$type' requested" );
+            $sql = $for_syntax->{$type} || $self->throw_exception( "Unknown SELECT .. FOR type '$type' requested" );
         }
 
         return " $sql";
