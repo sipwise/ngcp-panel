@@ -171,7 +171,7 @@ sub GET :Allow {
             c => $c,
             rs => $customers_rs,
             contract_id_field => 'id',
-            skip_locked => 1,
+            skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
         );
         my (@embedded, @links);
         my $form = $self->get_form($c);
