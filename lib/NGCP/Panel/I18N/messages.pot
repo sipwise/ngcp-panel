@@ -1082,6 +1082,14 @@ msgstr ""
 msgid "Auto-Attendant extensions dialing mode"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Auto-Attendant message repetition on timeout"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Auto-Attendant message repetition on wrong key"
+msgstr ""
+
 #: share/templates/subscriber/preferences.tt
 msgid "Autoattendant"
 msgstr ""
@@ -3191,6 +3199,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Default for Subscribers"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Define Auto-Attendant number of message repetitions played before reaching associated overflow in case of timeout"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Define Auto-Attendant number of message repetitions played before reaching associated overflow in case of wrong keypress"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
