@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.35+0~mr11.5.1.35) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [1d560ba] MT#62178 fix external_id, profile auto removal for subscriber roles
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Mar 2025 15:28:20 +0100
+
 ngcp-panel (11.5.1.34+0~mr11.5.1.34) unstable; urgency=medium
 
   [ Kirill Solomko ]
