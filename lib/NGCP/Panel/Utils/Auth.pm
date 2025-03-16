@@ -9,6 +9,8 @@ use UUID;
 use Bytes::Random::Secure qw();
 use MIME::Base32 qw();
 use Digest::HMAC_SHA1 qw();
+use Imager::QRCode qw();
+use URI::Encode qw(uri_encode);
 
 use NGCP::Panel::Utils::Ldap qw(
     auth_ldap_simple
@@ -175,12 +177,18 @@ sub perform_auth {
 
     if ($res
         and not $skip_otp
-        and $dbadmin->enable_2fa
-        and not verify_otp($c,$dbadmin->otp_secret,$otp,time())) {
-        $res = -3;
+        and $dbadmin->enable_2fa) {
+        if (verify_otp($c,$dbadmin->otp_secret,$otp,time())) {
+            $dbadmin->update({
+                show_otp_registration_info => 0,
+            }) if ($dbadmin->show_otp_registration_info);
+        } else {
+            $res = -3;
+        }
+        
     }
 
-    $res > 0 ? do {
+    (defined $res and $res > 0) ? do {
         clear_failed_login_attempts($c, $user, 'admin');
         reset_ban_increment_stage($c, $user, 'admin');
     }
@@ -826,14 +834,49 @@ sub create_otp_secret {
 
 }
 
+sub generate_otp_qr {
+
+    my ($c,$admin) = @_;
+    
+    #<img src="$http_base_url/chart?chs=150x150&chld=M%7c0&cht=qr&chl=otpauth://totp/$string_utils.urlEncode($inheriteduser_name,$template_encoding)@$string_utils.urlEncode($instance_name,$template_encoding)?secret=$otp_secret"/>
+    my $qrcode = Imager::QRCode->new(
+        size          => 4,
+        margin        => 3,
+        version       => 1,
+        level         => 'M',
+        casesensitive => 1,
+        #i_background => Imager::Color->new("#FFF"),
+        #background => Imager::Color->new("#FFF"),
+        lightcolor    => Imager::Color->new(255, 255, 255, 0.0),
+        darkcolor     => Imager::Color->new(0, 0, 0),
+    );
+    
+    my $image = $qrcode->plot(sprintf("otpauth://totp/%s@%s?secret=%s&issuer=%s",
+        uri_encode($admin->login),
+        uri_encode($c->req->uri->host),
+        $admin->otp_secret,
+        'NGCP', # . $c->config->{ngcp_version}
+    ));
+
+    my $data;
+    $image->write(data => \$data, type => 'png')
+        or die $image->errstr;
+
+    return \$data; 
+
+}
+
 sub verify_otp {
 
     my ($c, $otp_secret, $otp, $time) = @_;
 
-    #$c->log->debug("verify otp: $otp, secret $otp_secret");
-    #return 1;
-
-    $c->log->debug("verify otp: " . ($otp // "") . ", secret " . ($otp_secret // ""));
+    my @dbg_msg = ();
+    push(@dbg_msg,$otp) if $otp;
+    push(@dbg_msg,"no otp provided") unless $otp;
+    push(@dbg_msg,'secret ' . $otp_secret) if $otp_secret;
+    push(@dbg_msg,'no secret') unless $otp_secret;
+    push(@dbg_msg,'time ' . $time) if $time;
+    $c->log->debug("verify otp: " . join(', ',@dbg_msg));
 
     return 0 unless $otp;
     return 0 unless $otp_secret;
@@ -843,7 +886,7 @@ sub verify_otp {
 
     for my $i (-int(($OTP_WINDOW - 1) / 2) .. int($OTP_WINDOW / 2)) {
         my $hash = _verify_otp_bytes($secret, int($time / $OTP_STEP_SIZE) + $i);
-        return 1 if $hash == $otp;
+        return 1 if $hash eq $otp;
     }
     return 0;
 

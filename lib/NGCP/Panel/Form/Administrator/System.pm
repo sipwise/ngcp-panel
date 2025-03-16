@@ -12,7 +12,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        reseller login auth_mode password email role_id is_master is_active read_only show_passwords call_data billing_data can_reset_password
+        reseller login auth_mode password email role_id is_master is_active read_only enable_2fa show_passwords call_data billing_data can_reset_password
     )],
 );
 

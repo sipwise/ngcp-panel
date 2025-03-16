@@ -52,6 +52,9 @@ sub auto :Private {
         $c->log->debug("Root::auto enable cache");
         NGCP::Panel::Form::dont_use_cache(0);
         $is_api_request = 1;
+    #} elsif ('NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name) {
+    #    $c->log->debug("Root::auto disable cache");
+    #    NGCP::Panel::Form::dont_use_cache(0);       
     } else {
         $c->log->debug("Root::auto disable cache");
         NGCP::Panel::Form::dont_use_cache(1);

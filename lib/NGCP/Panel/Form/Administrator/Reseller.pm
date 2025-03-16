@@ -23,7 +23,7 @@ has_field 'auth_mode' => (
 has_field 'password' => (type => 'Password', required => 1, label => 'Password');
 has_field 'email' => (type => 'Email', required => 0, label => 'Email', maxlength => 255);
 for (qw(is_active show_passwords call_data billing_data
-        is_master is_ccare read_only can_reset_password)) {
+        is_master is_ccare read_only enable_2fa can_reset_password)) {
     has_field $_ => (type => 'Boolean', default_method => \&_set_default);
 }
 has_field 'save' => (type => 'Submit', element_class => [qw(btn btn-primary)],);
@@ -31,7 +31,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        login auth_mode password email is_master is_active read_only show_passwords call_data billing_data can_reset_password
+        login auth_mode password enable_2fa email is_master is_active enable_2fa read_only show_passwords call_data billing_data can_reset_password
     )],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);
@@ -45,6 +45,12 @@ sub _set_default {
         qw(is_active show_passwords call_data billing_data)) {
 
         $field->default(1);
+    }
+
+    if (grep { $field->name eq $_ }
+        qw(is_active show_passwords call_data billing_data)) {
+
+        $field->default(0);
     }
 
     if ($field->name eq 'auth_mode') {

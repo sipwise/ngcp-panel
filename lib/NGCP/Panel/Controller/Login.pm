@@ -6,6 +6,7 @@ use strict;
 use parent 'Catalyst::Controller';
 use TryCatch;
 use UUID;
+use MIME::Base64;
 
 use NGCP::Panel::Form;
 
@@ -16,11 +17,20 @@ use NGCP::Panel::Utils::Subscriber;
 sub login_index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
-    $realm = 'subscriber'
-        unless($realm && $realm eq 'admin');
-
     my $posted = ($c->req->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Login", $c);
+    my $form;
+
+    if ($c->request->params->{otp}) {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::LoginOtp", $c);
+    } else {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::Login", $c);
+    }
+
+    if (not $realm 
+        or $realm ne 'admin') {
+        $realm = 'subscriber';
+    }
+    
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -32,7 +42,12 @@ sub login_index :Path Form {
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
         my $otp;
-        $c->log->debug("Login::index user=$user, pass=****, realm=$realm");
+        if ($form->field('otp')) {
+            $otp = $form->field('otp')->value;
+            $c->log->debug("Login::index user=$user, pass=****, otp=$otp, realm=$realm");
+        } else {
+            $c->log->debug("Login::index user=$user, pass=****, realm=$realm");
+        }
         my $res;
         if($realm eq 'admin') {
             $res = NGCP::Panel::Utils::Auth::perform_auth(
@@ -56,9 +71,27 @@ sub login_index :Path Form {
             $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $pass);
         }
 
-        if($res) {
+        if(defined $res && $res == -3) {
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::LoginOtp", $c);
+            $form->field('username')->value($user);
+            $form->field('password')->value($pass);
+            $form->field('otp')->value(undef);
+            $form->add_form_error($c->loc('Invalid one-time code')) if $otp;
+            my $dbadmin = $c->model('DB')->resultset('admins')->search({
+                login => $user,
+            })->first;
+            $c->stash(show_otp_registration_info => $dbadmin->show_otp_registration_info);
+            if ($dbadmin && $dbadmin->show_otp_registration_info) {
+                $c->stash(
+                    otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$dbadmin)}),
+                );
+            }
+        } elsif($res && $res == -2) {
+            $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");
+            $c->log->debug("Login::index auth failed");
+            $form->add_form_error($c->loc('User banned')) 
+        } elsif($res) {
             # auth ok
-
             if ($realm eq 'admin') {
                 use Crypt::JWT qw/encode_jwt/;
 
@@ -99,7 +132,8 @@ sub login_index :Path Form {
         } else {
             $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");
             $c->log->debug("Login::index auth failed");
-            $form->add_form_error($c->loc('Invalid username/password'));
+            $form->add_form_error($c->loc('Invalid username/password')) 
+            
         }
     } else {
         # initial get
@@ -291,7 +325,14 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
     $c->user->logout if $c->user;
 
     my $posted = ($c->req->method eq 'POST');
-    my $form = NGCP::Panel::Form::get("NGCP::Panel::Form::PasswordChange", $c);
+    my $form;
+
+    if ($c->request->params->{otp}) {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::PasswordChangeOtp", $c);
+    } else {
+        $form = NGCP::Panel::Form::get("NGCP::Panel::Form::PasswordChange", $c);
+    }
+
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -305,7 +346,12 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
         my $otp;
         my $new_pass = $form->field('new_password')->value;
         my $new_pass2 = $form->field('new_password2')->value;
-        $c->log->debug("Password change user=$user, realm=$realm");
+        if ($form->field('otp')) {
+            $otp = $form->field('otp')->value;
+            $c->log->debug("Password change user=$user, pass=****, otp=$otp, realm=$realm");
+        } else {
+            $c->log->debug("Password change user=$user, pass=****, realm=$realm");
+        }
         my $res;
         if($realm eq 'admin') {
             $res = NGCP::Panel::Utils::Auth::perform_auth(
@@ -329,7 +375,28 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
             $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $pass);
         }
 
-        if($res) {
+        if(defined $res && $res == -3) {
+            $form = NGCP::Panel::Form::get("NGCP::Panel::Form::PasswordChangeOtp", $c);
+            $form->field('username')->value($user);
+            $form->field('password')->value($pass);
+            $form->field('otp')->value(undef);
+            $form->field('new_password')->value($new_pass);
+            $form->field('new_password')->value($new_pass2);
+            $form->add_form_error($c->loc('Invalid one-time code')) if $otp;
+            my $dbadmin = $c->model('DB')->resultset('admins')->search({
+                login => $user,
+            })->first;
+            $c->stash(show_otp_registration_info => $dbadmin->show_otp_registration_info);
+            if ($dbadmin && $dbadmin->show_otp_registration_info) {
+                $c->stash(
+                    otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$dbadmin)}),
+                );
+            }
+        } elsif($res && $res == -2) {
+            $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");
+            $c->log->debug("Login::index auth failed");
+            $form->add_form_error($c->loc('User banned')) 
+        } elsif($res) {
             # auth ok
 
             if ($pass eq $new_pass) {

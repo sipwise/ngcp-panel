@@ -3,8 +3,7 @@ package NGCP::Panel::Controller::API::OTPSecret;
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API/;
 
 use Sipwise::Base;
-use Imager::QRCode qw();
-use URI::Encode qw(uri_encode);
+use NGCP::Panel::Utils::Auth qw();
 
 use HTTP::Status qw(:constants);
 
@@ -59,31 +58,11 @@ sub get_item_binary_data{
 
     my($self, $c, $id, $item, $return_type) = @_;
 
-    #<img src="$http_base_url/chart?chs=150x150&chld=M%7c0&cht=qr&chl=otpauth://totp/$string_utils.urlEncode($inheriteduser_name,$template_encoding)@$string_utils.urlEncode($instance_name,$template_encoding)?secret=$otp_secret"/>
-    my $qrcode = Imager::QRCode->new(
-        size          => 4,
-        margin        => 3,
-        version       => 1,
-        level         => 'M',
-        casesensitive => 1,
-        lightcolor    => Imager::Color->new(255, 255, 255),
-        darkcolor     => Imager::Color->new(0, 0, 0),
-    );
-    
-    my $image = $qrcode->plot(sprintf("otpauth://totp/%s@%s?secret=%s&issuer=%s",
-        uri_encode($item->login),
-        uri_encode($c->req->uri->host),
-        $item->otp_secret,
-        'NGCP', # . $c->config->{ngcp_version}
-    ));
-
-    my $data;
-    $image->write(data => \$data, type => 'png')
-        or die $image->errstr;
+    my $data = NGCP::Panel::Utils::Auth::generate_otp_qr($c,$item);
 
     my $t = time();
 
-    return \$data, 'image/png', "qrcode_$t.png";
+    return $data, 'image/png', "qrcode_$t.png"; 
 
 }
 

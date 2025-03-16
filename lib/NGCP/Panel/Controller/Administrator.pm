@@ -37,13 +37,15 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         { name => "email", search => 1, title => $c->loc("Email") },
         $c->user->roles eq 'admin' || $c->user->roles eq 'reseller' ?
         (
+         { name => "auth_mode", title => $c->loc("Authentication Mode")},
          { name => "acl_role.role", title => $c->loc("Role")},
          { name => "is_master", title => $c->loc("Master") },
          { name => "is_active", title => $c->loc("Active") },
          { name => "read_only", title => $c->loc("Read Only") },
-         { name => "show_passwords", title => $c->loc("Show Passwords") },
-         { name => "call_data", title => $c->loc("Show CDRs") },
-         { name => "billing_data", title => $c->loc("Show Billing Info") },
+         #{ name => "show_passwords", title => $c->loc("Show Passwords") },
+         #{ name => "call_data", title => $c->loc("Show CDRs") },
+         #{ name => "billing_data", title => $c->loc("Show Billing Info") },
+         { name => "enable_2fa", title => $c->loc("2FA") },
          { name => "can_reset_password", title => $c->loc("Can Reset Password") },
         ) : ()
     );
@@ -152,6 +154,15 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) :AllowedRole(admi
             $form->values->{md5pass} = undef;
             $form->values->{auth_mode} ||= 'local';
             $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($password);
+            if ($form->values->{enable_2fa}) {
+                $form->values->{enable_2fa} = 1;
+                $form->values->{otp_secret} = NGCP::Panel::Utils::Auth::create_otp_secret();
+                $form->values->{show_otp_registration_info} = 1;
+            } else {
+                $form->values->{enable_2fa} = 0;
+                $form->values->{otp_secret} = undef;
+                $form->values->{show_otp_registration_info} = 0;
+            }
 
             if ($form->values->{role_id}) {
                 $form->values->%* = ( $form->values->%*, NGCP::Panel::Utils::UserRole::resolve_flags($c, $form->values->{role_id}) );
@@ -267,6 +278,17 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 $form->values->{md5pass} = undef;
                 $form->values->{saltedpass} = NGCP::Panel::Utils::Auth::generate_salted_hash($password);
             }
+
+            if ($form->values->{enable_2fa}) {
+                $form->values->{enable_2fa} = 1;
+                unless ($c->stash->{administrator}->otp_secret) {
+                    $form->values->{otp_secret} = NGCP::Panel::Utils::Auth::create_otp_secret();
+                    $form->values->{show_otp_registration_info} = 1;
+                }
+            } else {
+                $form->values->{enable_2fa} = 0;
+            }
+
             #should be after other fields, to remove all added values, e.g. reseller_id
             if($c->stash->{administrator}->login eq NGCP::Panel::Utils::Auth::get_special_admin_login()) {
                 foreach my $field ($form->fields){

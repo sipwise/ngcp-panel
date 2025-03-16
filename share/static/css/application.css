@@ -1090,6 +1090,9 @@ body.login {
 .login-fields .password-field {
   background: url(../img/signin/password.png) no-repeat;
 }
+.login-fields .otp-field {
+  background: url(../img/signin/otp.png) no-repeat;
+}
 .login-actions {
   float: left;
   width: 100%;
