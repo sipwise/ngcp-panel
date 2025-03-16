@@ -186,6 +186,10 @@ msgstr ""
 msgid "1st day of month, at 00:00 system time"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "2FA"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Root.pm
 msgid "403 - Permission denied"
 msgstr ""
@@ -1060,6 +1064,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Auth key"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Administrator.pm
+msgid "Authentication Mode"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6802,6 +6810,10 @@ msgstr ""
 msgid "Invalid number block id detected"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "Invalid one-time code"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Package.pm
 msgid "Invalid package id detected"
 msgstr ""
@@ -8560,6 +8572,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Other cli"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Otp"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14391,6 +14407,10 @@ msgstr ""
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/edit_webpass.tt
 msgid "User Details for %1@%2"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Login.pm
+msgid "User banned"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
