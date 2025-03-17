@@ -745,7 +745,7 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                     return;
                 }
                 if ($auth_user->enable_2fa
-                    and not verify_otp($c,$auth_user->otp_secret,$otp,time())) {
+                    and not NGCP::Panel::Utils::Auth::verify_otp($c,$auth_user->otp_secret,$otp,time())) {
                     $c->response->status(HTTP_FORBIDDEN);
                     $c->response->body(encode_json({
                         code => HTTP_FORBIDDEN,
