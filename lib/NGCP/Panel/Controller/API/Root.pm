@@ -84,6 +84,7 @@ sub GET : Allow {
         "PbxFieldDevicePreferenceDefs" => 1,
         "MetaConfigDefs" => 1,
         "AuthTokens" => 1,
+        "OTPSecret" => 1,
     };
 
     my $colls = NGCP::Panel::Utils::API::get_collections_files;
