@@ -744,14 +744,19 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                     $c->log->info("User not found");
                     return;
                 }
-                if ($auth_user->enable_2fa
-                    and not NGCP::Panel::Utils::Auth::verify_otp($c,$auth_user->otp_secret,$otp,time())) {
-                    $c->response->status(HTTP_FORBIDDEN);
-                    $c->response->body(encode_json({
-                        code => HTTP_FORBIDDEN,
-                        message => "Invalid OTP" })."\n");
-                    $c->log->info("Invalid OTP");
-                    return; 
+                if ($auth_user->enable_2fa) {
+                    if (NGCP::Panel::Utils::Auth::verify_otp($c,$auth_user->otp_secret,$otp,time())) {
+                        $auth_user->update({
+                            show_otp_registration_info => 0,
+                        }) if ($auth_user->show_otp_registration_info);
+                    } else {
+                        $c->response->status(HTTP_FORBIDDEN);
+                        $c->response->body(encode_json({
+                            code => HTTP_FORBIDDEN,
+                            message => "Invalid OTP" })."\n");
+                        $c->log->info("Invalid OTP");
+                        return; 
+                    }
                 }
             }
         } else {
