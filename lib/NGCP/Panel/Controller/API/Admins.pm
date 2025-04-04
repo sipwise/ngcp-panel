@@ -1,6 +1,7 @@
 package NGCP::Panel::Controller::API::Admins;
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::UserRole;
+use NGCP::Panel::Utils::Auth qw();
 
 use Sipwise::Base;
 
@@ -59,6 +60,15 @@ sub create_item {
     try {
         my $pass = delete $resource->{password};
         $resource->{auth_mode} ||= 'local';
+        if ($resource->{enable_2fa}) {
+            $resource->{enable_2fa} = 1;
+            $resource->{otp_secret} = NGCP::Panel::Utils::Auth::create_otp_secret();
+            $resource->{show_otp_registration_info} = 1;
+        } else {
+            $resource->{enable_2fa} = 0;
+            $resource->{otp_secret} = undef;
+            $resource->{show_otp_registration_info} = 0;
+        }        
         $item = $c->model('DB')->resultset('admins')->create($resource);
         NGCP::Panel::Utils::Admin::insert_password_journal(
             $c, $item, $pass

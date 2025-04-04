@@ -210,6 +210,16 @@ sub update_item {
     }
     $resource->{auth_mode} ||= 'local';
 
+    if ($resource->{enable_2fa}) {
+        $resource->{enable_2fa} = 1;
+        unless ($item->otp_secret) {
+            $resource->{otp_secret} = NGCP::Panel::Utils::Auth::create_otp_secret();
+            $resource->{show_otp_registration_info} = 1;
+        }
+    } else {
+        $resource->{enable_2fa} = 0;
+    }    
+
     $item->update($resource);
 
     return $item;
