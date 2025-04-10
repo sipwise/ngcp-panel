@@ -1,3 +1,51 @@
+ngcp-panel (13.4.0.0+0~mr13.4.0.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [aaa834d] MT#55677 fix contact and customer selenium tests
+  * [72f483a] MT#55677 fix contact and customer tests
+
+  [ Kirill Solomko ]
+  * [9960cd1] MT#62093 extend user ban keys in Redis
+  * [d5fd867] MT#62093 return 403 Banned for banned users
+  * [4eace82] MT#62180 /api/subscribers prevent subscribers from POST/DELETE
+  * [e66c568] MT#61803 add /api/pbxusers endpoint
+  * [ef4442f] MT#61805 add API phonebook support for top level inclusion
+  * [97e457c] MT#62178 fix external_id, profile auto removal for subscriber roles
+  * [cbc4e57] MT#62223 API unhandled internal errors cause 500 error
+  * [e8f41ab] MT#62223 improve error response handling when log_response is off
+  * [989e7b5] MT#61572 allow subscriber to GET resellerbrandinglogos
+  * [5a7522e] MT#61803 add /api/pbxusers to api-root.t
+  * [24d2867] MT#62289 /api/pbxusers add username and domain fields
+
+  [ Rene Krenn ]
+  * [60b3917] MT#62066 fix underrun_profile_threshold
+  * [143bd0d] MT#62084 contract_id field for /api/topupcash and /api/topupvoucher
+  * [82af5cf] MT#62283 "for update no lock" logic for GET /subscribers and /contracts
+  * [764ab7d] MT#62283 exclude "for update no lock" in tests
+  * [3c497cb] MT#62283 fix dbix "for update no lock" patch
+  * [c0249ea] MT#53706 OTP generate_secret, verify_secret
+  * [6c68438] MT#59447 admin ldap authentication for JWT
+  * [b0b646d] MT#53706 wire OTP secret validation - api, jwt
+  * [4bb352e] MT#53706 rail for generating OTP secret QR code png
+  * [0bd2c64] MT#53706 OTP: login, show registration info
+  * [164a246] MT#53706 update OTP registration info
+  * [8820b45] MT#53706 exclude /api/otpsecret from apidocs
+  * [816f777] MT#53706 OTP: fix restapi tests
+  * [ded0cf5] MT#53706 OTP: fix restapi tests #1
+  * [f167a55] MT#53706 OTP: reset show_info with jwt login
+  * [6600d7c] MT#53706 enable_2fa option for /api/admins
+
+  [ Sipwise Jenkins Builder ]
+  * [60f8c73] TT#4166 I18N dump: snapshot 2025.02.13-23.23.38
+  * [70ec201] TT#4166 I18N dump: snapshot 2025.02.18-23.28.14
+  * [3bd8580] TT#4166 I18N dump: snapshot 2025.03.06-23.23.13
+  * [ac05f1e] TT#4166 I18N dump: snapshot 2025.03.16-23.30.53
+
+  [ Richard Fuchs ]
+  * [015ee89] MT#59979 defuse license logs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Apr 2025 08:28:16 +0200
+
 ngcp-panel (13.3.0.0+0~mr13.3.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
