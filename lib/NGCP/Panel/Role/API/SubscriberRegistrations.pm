@@ -179,7 +179,7 @@ sub resource_from_item {
     my $sub = $self->subscriber_from_item($c, $item);
     return unless($sub);
     $resource->{subscriber_id} = int($sub->id);
-    $resource->{nat} = $resource->{cflags} & 64;
+    $resource->{nat} = $resource->{cflags} & 128;
     if ($resource->{path}) {
         (my ($socket)) = $resource->{path} =~/;socket=([^>]+)>/;
         if ($socket) {
@@ -325,8 +325,8 @@ sub update_item {
     }
     my $values = $form->values;
     $values->{flags} = 0;
-    $values->{cflags} = 0;
-    $values->{cflags} |= 64 if($values->{nat});
+    $values->{cflags} = 256;
+    $values->{cflags} |= 128 if($values->{nat});
 
     NGCP::Panel::Utils::Kamailio::create_location($c,
         $sub->provisioning_voip_subscriber,

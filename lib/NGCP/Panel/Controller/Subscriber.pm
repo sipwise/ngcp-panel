@@ -4531,8 +4531,8 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
         try {
             my $values = $form->values;
             $values->{flags} = 0;
-            $values->{cflags} = 0;
-            $values->{cflags} |= 64 if($values->{nat});
+            $values->{cflags} = 256;
+            $values->{cflags} |= 128 if($values->{nat});
             NGCP::Panel::Utils::Kamailio::create_location($c,
                 $c->stash->{subscriber}->provisioning_voip_subscriber,
                 $values
