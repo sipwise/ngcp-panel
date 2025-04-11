@@ -1045,8 +1045,8 @@ sub _init_registrations_context {
         push(@{$context->{registrations}}, \%registration);
 
         $registration{flags} = 0;
-        $registration{cflags} = 0;
-        $registration{cflags} |= 64 if($registration{nat});
+        $registration{cflags} = 256;
+        $registration{cflags} |= 128 if($registration{nat});
 
     }
 
