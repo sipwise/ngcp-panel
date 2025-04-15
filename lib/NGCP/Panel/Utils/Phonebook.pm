@@ -237,7 +237,7 @@ sub download_csv {
     foreach my $row ($rs->all) {
         my %entry = $row->get_inflated_columns;
         delete $entry{id};
-        $c->res->write_fh->write(join (",", @entry{@cols}) );
+        $c->res->write_fh->write_encoded(join (",", @entry{@cols}) );
         $c->res->write_fh->write("\n");
     }
     $c->res->write_fh->close;
