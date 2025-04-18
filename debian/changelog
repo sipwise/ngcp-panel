@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.37+0~mr11.5.1.37) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [3ec0804] MT#61646 fix phoenbook .csv encoding
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 18 Apr 2025 13:10:56 +0200
+
 ngcp-panel (11.5.1.36+0~mr11.5.1.36) unstable; urgency=medium
 
   [ Marco Capetta ]
