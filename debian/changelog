@@ -1,3 +1,10 @@
+ngcp-panel (13.2.1.8+0~mr13.2.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d174697] MT#62600 fix UI invoice create/edit
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 22 Apr 2025 18:12:31 +0200
+
 ngcp-panel (13.2.1.7+0~mr13.2.1.7) unstable; urgency=medium
 
   [ Marco Capetta ]
