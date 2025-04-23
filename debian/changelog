@@ -1,3 +1,13 @@
+ngcp-panel (13.3.1.1+0~mr13.3.1.1) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [b72107b] MT#62546 Fix permanent registration nat flags
+
+  [ Kirill Solomko ]
+  * [b2107f9] MT#62600 fix UI invoice create/edit
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 23 Apr 2025 10:37:55 +0200
+
 ngcp-panel (13.3.1.0+0~mr13.3.1.0) unstable; urgency=medium
 
   [ Nico Schedel ]
