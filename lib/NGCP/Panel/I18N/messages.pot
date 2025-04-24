@@ -14703,6 +14703,10 @@ msgstr ""
 msgid "Web password successfully recovered, please re-login."
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "Websocket Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DateTime.pm lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Wednesday"
 msgstr ""
