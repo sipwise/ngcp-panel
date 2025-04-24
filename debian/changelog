@@ -1,3 +1,10 @@
+ngcp-panel (13.3.1.2+0~mr13.3.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [1dc6540] MT#62304 add Websocket Statistics to the monitoring page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 24 Apr 2025 18:25:15 +0200
+
 ngcp-panel (13.3.1.1+0~mr13.3.1.1) unstable; urgency=medium
 
   [ Marco Capetta ]
