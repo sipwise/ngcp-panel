@@ -168,7 +168,15 @@ sub get_opt{#get $opt
         "test-groups"     ,
     ) or pod2usage(2);
     my @opt_keys = keys %$opt_in;
-    @{$opt}{ map{ s/\-/_/; } @opt_keys } = map {my $v = $opt_in->{$_}; $v={ map {$_=>1;} split(/[^[:alnum:]]+/,$v ) }; $v;} @opt_keys ;
+    @{$opt}{ map{ s/\-/_/r; } @opt_keys } = map {
+        my $v = $opt_in->{$_};
+        $v = {
+            map {
+                $_ => 1;
+            } split(/[^[:alnum:]]+/, $v)
+        };
+        $v;
+    } @opt_keys;
     print Dumper $opt;
     pod2usage(1) if $opt->{help};
     pod2usage(1) unless( 1

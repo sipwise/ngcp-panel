@@ -238,7 +238,12 @@ sub process_file {
     open(my $fh, '<:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
     my @rows = ();
     while (my $row = <$fh>) {
-        my @cleaned = map { $_ = s/NULL//gr =~ s/[\r\n]//gir; length($_) > 0 ? $_ : undef; } split(/,/,$row);
+        my @cleaned = map {
+            my $col = $_;
+            $col =~ s/NULL//g;
+            $col =~ s/[\r\n]//gi;
+            length $col > 0 ? $col : undef;
+        } split /,/, $row;
         push(@rows,{
             id => $cleaned[0],
             time_set_id => $cleaned[1],
