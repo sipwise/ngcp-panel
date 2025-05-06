@@ -639,7 +639,7 @@ sub get_actual_billing_mapping_old {
                     '+as' => [ 'billing_mapping_id' ],
                 })->first;
     return $contract->get_column("billing_mapping_id") if $contract;
-    return undef;
+    return;
 
 }
 

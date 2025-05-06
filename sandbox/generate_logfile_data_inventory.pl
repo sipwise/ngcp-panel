@@ -622,7 +622,7 @@ sub _deserialize_messagesargs {
     my $args = eval $_line;
     if ($@) {
         warn($_line ."\n" .$@);
-        return undef;
+        return;
     } else {
         return $args;
     }
