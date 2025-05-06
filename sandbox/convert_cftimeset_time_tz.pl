@@ -83,7 +83,8 @@ print "\n" . process_rows('voip_cf_time_sets', sub {
     my $tz = $schema->resultset('voip_subscriber_timezone')->search_rs({
             subscriber_id => $item->subscriber->voip_subscriber->id
         })->first;
-    my $tz_name = normalize_db_tz_name($tz->name) if $tz;
+    my $tz_name;
+    $tz_name = normalize_db_tz_name($tz->name) if $tz;
     print "\nsubscriber id " . $item->subscriber->voip_subscriber->id . " - $tz_name: ";
 
     for my $time ($item->voip_cf_periods->all) {
