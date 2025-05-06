@@ -659,7 +659,7 @@ sub _create_mock {
 #}
 
 sub _generate_combinations {
-    my @arrays = grep @$_, @_;
+    my @arrays = grep { @{$_} }, @_;
     my $min = @arrays;
     my @current = ([]);
     for my $array (@arrays) {
