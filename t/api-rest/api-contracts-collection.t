@@ -121,11 +121,7 @@ $data->{billing_profiles} = [map { {
 $test_machine->http_code_msg(200,"Check that we can PUT contracts if there aren't prepaid billing ptofiles", $res, $content);
 
 ($res,$content) = $test_machine->request_patch( [ { op => 'replace', path => '/billing_profile_id', value => $bp_no_prepaid->{content}->{id} } ] );
-$test_machine->http_code_msg(200,"Check that we can $data->{billing_profiles} = [{'profile_id' => $bp_no_prepaid->{content}->{id}}, map { {
-        'profile_id' => $_->{content}->{id},
-        'start' => $dtf->format_datetime($now->add( days => Test::FakeData::seq)),
-        'stop' => $dtf->format_datetime($now->add( days => Test::FakeData::seq)),
-    } } @$bps_prepaid, @$bps_no_prepaid ]; contracts if there aren't prepaid billing ptofiles", $res, $content);
+$test_machine->http_code_msg(200,"Check that we can create contracts if there aren't prepaid billing ptofiles", $res, $content);
 
 $data = clone $test_machine->DATA_ITEM;
 $data->{billing_profile_id} = $bp_no_prepaid->{content}->{id};
