@@ -166,11 +166,9 @@ sub _scandirfiles {
         open my $fh, '<', $inputfilepath
             or die 'cannot open file ' . $inputfilepath . ': ' . $!;
         if ($slurp) {
-            my $line_terminator = $/;
-            $/ = undef;
+            local $/ = undef;
             my $data = <$fh>;
             &$code(\$data,$inputfilename,$inputfiledir,$inputfilesuffix);
-            $/ = $line_terminator;
         } else {
             while (<$fh>) {
                 last unless &$code($_,$inputfilename,$inputfiledir,$inputfilesuffix, sub {
