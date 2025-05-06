@@ -163,7 +163,7 @@ sub _scandirfiles {
         my $inputfilepath = $inputdir . $file;
         next if grep { $_ eq $inputfilepath; } @filestoskip;
         my ($inputfilename,$inputfiledir,$inputfilesuffix) = File::Basename::fileparse($inputfilepath, $rperlextensions);
-        open my $fh, '<' . $inputfilepath
+        open my $fh, '<', $inputfilepath
             or die 'cannot open file ' . $inputfilepath . ': ' . $!;
         if ($slurp) {
             my $line_terminator = $/;
