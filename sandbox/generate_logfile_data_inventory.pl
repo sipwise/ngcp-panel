@@ -152,35 +152,33 @@ sub _scandirfiles {
 
     my ($inputdir,$slurp,$code) = @_;
 
-    local *DIR;
-    if (not opendir(DIR, $inputdir)) {
-        die('cannot opendir ' . $inputdir . ': ' . $!);
-    }
-    my @files = grep { /$rperlextensions$/ && -f $inputdir . $_} readdir(DIR);
-    closedir DIR;
+    opendir my $dir_dh, $inputdir
+        or die 'cannot opendir ' . $inputdir . ': ' . $!;
+    my @files = grep {
+        /$rperlextensions$/ && -f $inputdir . $_
+    } readdir $dir_dh;
+    closedir $dir_dh;
     return unless (scalar @files) > 0;
     foreach my $file (@files) {
         my $inputfilepath = $inputdir . $file;
         next if grep { $_ eq $inputfilepath; } @filestoskip;
         my ($inputfilename,$inputfiledir,$inputfilesuffix) = File::Basename::fileparse($inputfilepath, $rperlextensions);
-        local *FILE;
-        if (not open (FILE,'<' . $inputfilepath)) {
-            die('cannot open file ' . $inputfilepath . ': ' . $!);
-        }
+        open my $fh, '<' . $inputfilepath
+            or die 'cannot open file ' . $inputfilepath . ': ' . $!;
         if ($slurp) {
             my $line_terminator = $/;
             $/ = undef;
-            my $data = <FILE>;
+            my $data = <$fh>;
             &$code(\$data,$inputfilename,$inputfiledir,$inputfilesuffix);
             $/ = $line_terminator;
         } else {
-            while (<FILE>) {
+            while (<$fh>) {
                 last unless &$code($_,$inputfilename,$inputfiledir,$inputfilesuffix, sub {
-                    <FILE>;
+                    <$fh>;
                 });
             }
         }
-        close(FILE);
+        close $fh;
     }
 
 }
