@@ -1,4 +1,5 @@
 use strict;
+use warnings;
 
 eval 'use lib "/home/rkrenn/sipwise/git/sipwise-base/lib";';
 eval 'use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";';

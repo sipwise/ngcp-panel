@@ -1,3 +1,6 @@
+use strict;
+use warnings;
+
 #use Sipwise::Base;
 use Net::Domain qw(hostfqdn);
 use JSON qw();
