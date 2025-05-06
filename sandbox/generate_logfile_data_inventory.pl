@@ -616,6 +616,8 @@ sub _deserialize_messagesargs {
     my $contact_id = '$contact_id';
     my $group_name = '$group_name'; #app server
     use Data::Dumper;
+    # XXX: This is part of the current API.
+    ## no critic (BuiltinFunctions::ProhibitStringyEval)
     my $args = eval $_line;
     if ($@) {
         warn($_line ."\n" .$@);

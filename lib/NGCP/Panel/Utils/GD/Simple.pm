@@ -248,6 +248,9 @@ If future GD subclasses are created, this method will subport them.
 
 =cut
 
+# XXX: This is part of the current API, while the check is valid, this cannot
+# be easily fixed.
+## no critic (Subroutines::ProhibitBuiltinHomonyms)
 sub class {
   my $pack    = shift;
   if (@_) {

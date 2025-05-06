@@ -1924,6 +1924,8 @@ sub pbx_device_lines_update :Private{
         } else {
             next unless $line->field('subscriber_id')->value;
         }
+        # XXX: This is a perlcritic false positive, ignore it.
+        ## no critic (ValuesAndExpressions::ProhibitCommaSeparatedStatements)
         my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
             $is_custom_number
                 ? (is_pbx_pilot => 1)
