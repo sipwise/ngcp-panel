@@ -11,6 +11,8 @@ require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+use NGCP::Panel::Utils::Peering;
+
 sub allowed_methods{
     return [qw/GET OPTIONS HEAD PATCH PUT DELETE/];
 }
@@ -75,29 +77,62 @@ sub PATCH :Allow {
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
+        my $probe_deleted = 0;
+
+        try {
+            if ($old_resource->{enabled} && !$resource->{enabled}) {
+                NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
+                    c => $c,
+                    prov_peer => $item
+                );
+            }
+        } catch($e) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
+                         "failed to delete peer registration", $e);
+            last;
+        }
+
+        try {
+            if (($resource->{probe} && $old_resource->{enabled} && !$resource->{enabled}) ||
+                ($old_resource->{probe} && !$resource->{probe})) {
+                    NGCP::Panel::Utils::Peering::sip_delete_probe(
+                        c => $c,
+                        ip => $item->ip,
+                        port => $item->port,
+                        transport => $item->transport,
+                    );
+                    $probe_deleted = 1;
+            }
+        } catch($e) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
+                         "failed to delete probe", $e);
+            last;
+        }
+
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        $guard->commit;
-
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
-
         try {
-            if (($item->probe && $old_resource->{enabled} && !$item->enabled) || ($old_resource->{probe} && !$item->probe)) {
-                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+            if (!$old_resource->{enabled} && $resource->{enabled}) {
+                NGCP::Panel::Utils::Peering::sip_create_peer_registration(
                     c => $c,
-                    ip => $item->ip,
-                    port => $item->port,
-                    transport => $item->transport,
+                    prov_peer => $item
                 );
             }
-            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
         } catch($e) {
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
-                         "failed to reload kamailio cache", $e);
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
+                         "failed to create peer registration", $e);
             last;
         }
+
+        $guard->commit;
+
+        if ($probe_deleted) {
+            NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
+        }
+
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -133,29 +168,62 @@ sub PUT :Allow {
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
 
+        my $probe_deleted = 0;
+
+        try {
+            if ($old_resource->{enabled} && !$resource->{enabled}) {
+                NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
+                    c => $c,
+                    prov_peer => $item
+                );
+            }
+        } catch($e) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
+                         "failed to delete peer registration", $e);
+            last;
+        }
+
+        try {
+            if (($resource->{probe} && $old_resource->{enabled} && !$resource->{enabled}) ||
+                ($old_resource->{probe} && !$resource->{probe})) {
+                    NGCP::Panel::Utils::Peering::sip_delete_probe(
+                        c => $c,
+                        ip => $item->ip,
+                        port => $item->port,
+                        transport => $item->transport,
+                    );
+                    $probe_deleted = 1;
+            }
+        } catch($e) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
+                         "failed to delete probe", $e);
+            last;
+        }
+
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        $guard->commit;
-
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
-
         try {
-            if (($item->probe && $old_resource->{enabled} && !$item->enabled) || ($old_resource->{probe} && !$item->probe)) {
-                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+            if (!$old_resource->{enabled} && $resource->{enabled}) {
+                NGCP::Panel::Utils::Peering::sip_create_peer_registration(
                     c => $c,
-                    ip => $item->ip,
-                    port => $item->port,
-                    transport => $item->transport,
+                    prov_peer => $item
                 );
             }
-            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
         } catch($e) {
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
-                         "failed to reload kamailio cache", $e);
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
+                         "failed to create peer registration", $e);
             last;
         }
+
+        $guard->commit;
+
+        if ($probe_deleted) {
+            NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
+        }
+
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -181,27 +249,40 @@ sub DELETE :Allow {
     {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, peeringserver => $item);
-        my $probe = $item->probe;
-        $item->delete;
-        $guard->commit;
-
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
 
         try {
-            if($probe) {
-                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+            if ($item->enabled) {
+                NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
+                    c => $c, prov_peer => $item
+                );
+            }
+        } catch($e) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete peering server.",
+                "failed to delete peer registration", $e);
+            last;
+        }
+
+        try {
+            if($item->probe) {
+                NGCP::Panel::Utils::Peering::sip_delete_probe(
                     c => $c,
                     ip => $item->ip,
                     port => $item->port,
                     transport => $item->transport,
                 );
-                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+                NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
             }
         } catch($e) {
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
-                         "failed to reload kamailio cache", $e);
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete peering server.",
+                "failed to reload kamailio cache", $e);
             last;
         }
+
+        $item->delete;
+        $guard->commit;
+
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
+
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

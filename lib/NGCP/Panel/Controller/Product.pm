@@ -108,7 +108,7 @@ Retrieves and processes a datastructure containing preference groups, preference
 
 Data that is put on stash: pref_groups
 
-=head2 _sip_domain_reload
+=head2 sip_domain_reload
 
 Ported from ossbss
 

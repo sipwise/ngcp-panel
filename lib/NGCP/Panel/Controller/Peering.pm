@@ -138,7 +138,7 @@ sub edit :Chained('base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $c->stash->{group_result}->update($form->custom_get_values);
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
             delete $c->session->{created_objects}->{contract};
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -166,7 +166,7 @@ sub delete_peering :Chained('base') :PathPart('delete') {
         # manually delete hosts in group to let triggers hit in
         foreach my $p ($c->stash->{group_result}->voip_peer_hosts->all) {
             if($p->probe) {
-                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                NGCP::Panel::Utils::Peering::sip_delete_probe(
                     c => $c,
                     ip => $p->ip,
                     port => $p->port,
@@ -178,13 +178,15 @@ sub delete_peering :Chained('base') :PathPart('delete') {
                 $c->stash->{server}->{ip} = $p->ip;
                 $c->stash->{server}->{id} = $p->id;
                 $c->stash->{server_result} = $p;
-                NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+                NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
+                    c => $c, prov_peer => $p
+                );
             }
             $p->voip_peer_preferences->delete_all;
             $p->delete;
         }
         $c->stash->{group_result}->delete;
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{group_result}->get_inflated_columns },
@@ -226,7 +228,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
         try {
             $c->model('DB')->resultset('voip_peer_groups')->create(
                 $formdata );
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
             delete $c->session->{created_objects}->{contract};
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -298,9 +300,9 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
                 probe => $form->values->{probe},
             };
             my $server = $c->stash->{group_result}->voip_peer_hosts->create($dbvalues);
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
             if($dbvalues->{probe}) {
-                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+                NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
             }
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
@@ -376,26 +378,30 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
             my $probing_before = $c->stash->{server_result}->probe;
 
             if ($enabled_before && !$form->values->{enabled}) {
-                NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+                NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
+                    c => $c, prov_peer => $c->stash->{server_result}
+                );
             }
 
             $c->stash->{server_result}->update($form->values);
 
             if (!$enabled_before && $form->values->{enabled}) {
-                NGCP::Panel::Utils::Peering::_sip_create_peer_registration(c => $c);
+                NGCP::Panel::Utils::Peering::sip_create_peer_registration(
+                    c => $c, prov_peer => $c->stash->{server_result}
+                );
             }
 
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
             if (($c->stash->{server_result}->probe && $enabled_before && !$c->stash->{server_result}->enabled) || ($probing_before && !$c->stash->{server_result}->probe)) {
-                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                NGCP::Panel::Utils::Peering::sip_delete_probe(
                     c => $c,
                     ip => $c->stash->{server_result}->ip,
                     port => $c->stash->{server_result}->port,
                     transport => $c->stash->{server_result}->transport,
                 );
             }
-            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Peering server successfully updated'),
@@ -424,19 +430,21 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
         my $probe = $c->stash->{server_result}->probe;
         my $enabled = $c->stash->{server_result}->enabled;
         if ($enabled) {
-            NGCP::Panel::Utils::Peering::_sip_delete_peer_registration(c => $c);
+            NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
+                c => $c, prov_peer => $c->stash->{server_result}
+            );
         }
 
         $c->stash->{server_result}->delete;
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
         if($probe) {
-            NGCP::Panel::Utils::Peering::_sip_delete_probe(
+            NGCP::Panel::Utils::Peering::sip_delete_probe(
                 c => $c,
                 ip => $c->stash->{server_result}->ip,
                 port => $c->stash->{server_result}->port,
                 transport => $c->stash->{server_result}->transport,
             );
-            NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
         }
         NGCP::Panel::Utils::Message::info(
             c    => $c,
@@ -590,17 +598,15 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
                 return;
             }
 
-            my $prov_peer = {};
             my $type = 'peering';
-            $prov_peer->{username} = $c->stash->{server}->{name};
-            $prov_peer->{domain} = $c->stash->{server}->{ip};
-            $prov_peer->{id} = $c->stash->{server_result}->lcr_gw->id;
-            $prov_peer->{uuid} = 0;
+            my $prov_peer = $c->stash->{server_result};
 
-            unless(compare($old_authentication_prefs, $new_authentication_prefs)) {
+            if (!compare($old_authentication_prefs, $new_authentication_prefs)) {
                 try {
                     NGCP::Panel::Utils::Preferences::update_sems_peer_auth(
-                        $c, $prov_peer, $type, $old_authentication_prefs, $new_authentication_prefs);
+                        $c, $prov_peer, $type,
+                        $old_authentication_prefs, $new_authentication_prefs
+                    );
                 } catch($e) {
                     NGCP::Panel::Utils::Message::error(
                         c     => $c,
@@ -662,7 +668,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
             });
             die("peering rule already exists") if $dup_item;
             $c->stash->{group_result}->voip_peer_rules->create($form->values);
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Peering rule successfully created'),
@@ -746,7 +752,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
             });
             die("peering rule already exists") if ($dup_item && $dup_item->id != $c->stash->{rule_result}->id);
             $c->stash->{rule_result}->update($form->values);
-            NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+            NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
             NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Peering rule successfully changed'),
@@ -773,7 +779,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
     
     try {
         $c->stash->{rule_result}->delete;
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{rule_result}->get_inflated_columns },

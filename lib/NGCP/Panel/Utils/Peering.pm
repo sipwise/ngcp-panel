@@ -1,10 +1,11 @@
 package NGCP::Panel::Utils::Peering;
-use NGCP::Panel::Utils::XMLDispatcher;
-
 use strict;
 use warnings;
 
-sub _sip_lcr_reload {
+use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::XMLDispatcher;
+
+sub sip_lcr_reload {
     my(%params) = @_;
     my($c) = @params{qw/c/};
 
@@ -21,73 +22,70 @@ EOF
     return 1;
 }
 
-sub _sip_delete_peer_registration {
-  my(%params) = @_;
-  my($c) = @params{qw/c/};
-  my $prov_peer = {};
-  my $type = 'peering';
+sub sip_delete_peer_registration {
+    my (%params) = @_;
+    my ($c, $prov_peer) = @params{qw/c prov_peer/};
+    my $type = 'peering';
 
-  $prov_peer->{username} = $c->stash->{server}->{name};
-  $prov_peer->{domain} = $c->stash->{server}->{ip};
-  $prov_peer->{id} = $c->stash->{server_result}->lcr_gw->id;
-  $prov_peer->{uuid} = 0;
+    my $pref_all = $prov_peer->voip_peer_preferences->search({
+    },{
+        join => 'attribute',
+    });
 
-  my $pref_all = $c->stash->{server_result}->voip_peer_preferences->search({
-  }, {
-      join => 'attribute',
-  });
+    my $auth_prefs = {};
+    foreach my $pref ($pref_all->all) {
+        my $attr = $pref->attribute->attribute;
+        if ($attr =~ /^peer_auth_/) {
+            $auth_prefs->{$attr} = $pref->value;
+        }
+    }
 
-  my $auth_prefs = {};
-  foreach my $pref ($pref_all->all) {
-      my $attr = $pref->attribute->attribute;
-      if ($attr =~ /^peer_auth_/) {
-          $auth_prefs->{$attr} = $pref->value;
-      }
-  }
-
-  if (defined $auth_prefs->{peer_auth_register} && $auth_prefs->{peer_auth_register} == 1 &&
-       defined $auth_prefs->{peer_auth_user} &&
-       defined $auth_prefs->{peer_auth_realm} &&
-       defined $auth_prefs->{peer_auth_pass}) {
-          NGCP::Panel::Utils::Sems::delete_peer_registration($c, $prov_peer, $type, $auth_prefs);
-  }
-  return 1;
+    if (defined $auth_prefs->{peer_auth_register} &&
+        defined $auth_prefs->{peer_auth_user} &&
+        defined $auth_prefs->{peer_auth_realm} &&
+        defined $auth_prefs->{peer_auth_pass} &&
+                $auth_prefs->{peer_auth_register} == 1)
+    {
+        NGCP::Panel::Utils::Sems::delete_peer_registration(
+            $c, $prov_peer, $type, $auth_prefs
+        );
+    }
 }
 
-sub _sip_create_peer_registration {
-  my(%params) = @_;
-  my($c) = @params{qw/c/};
-  my $prov_peer = {};
-  my $type = 'peering';
+sub sip_create_peer_registration {
+    my (%params) = @_;
+    my ($c, $prov_peer) = @params{qw/c prov_peer/};
+    my $type = 'peering';
 
-  $prov_peer->{username} = $c->stash->{server}->{name};
-  $prov_peer->{domain} = $c->stash->{server}->{ip};
-  $prov_peer->{id} = $c->stash->{server_result}->lcr_gw->id;
-  $prov_peer->{uuid} = 0;
+    my $pref_all = $prov_peer->voip_peer_preferences->search({
+    }, {
+        join => 'attribute',
+    });
 
-  my $pref_all = $c->stash->{server_result}->voip_peer_preferences->search({
-  }, {
-      join => 'attribute',
-  });
+    my $auth_prefs = {};
+    foreach my $pref ($pref_all->all) {
+        my $attr = $pref->attribute->attribute;
+        if ($attr =~ /^peer_auth_/) {
+            $auth_prefs->{$attr} = $pref->value;
+        }
+    }
 
-  my $auth_prefs = {};
-  foreach my $pref ($pref_all->all) {
-      my $attr = $pref->attribute->attribute;
-      if ($attr =~ /^peer_auth_/) {
-          $auth_prefs->{$attr} = $pref->value;
-      }
-  }
-  if (defined $auth_prefs->{peer_auth_register} && $auth_prefs->{peer_auth_register} == 1 &&
-       defined $auth_prefs->{peer_auth_user} &&
-       defined $auth_prefs->{peer_auth_realm} &&
-       defined $auth_prefs->{peer_auth_pass}) {
-          NGCP::Panel::Utils::Sems::create_peer_registration($c, $prov_peer, $type, $auth_prefs);
-  }
-  return 1;
+    if (defined $auth_prefs->{peer_auth_register} &&
+        defined $auth_prefs->{peer_auth_user} &&
+        defined $auth_prefs->{peer_auth_realm} &&
+        defined $auth_prefs->{peer_auth_pass} &&
+                $auth_prefs->{peer_auth_register} == 1)
+    {
+        NGCP::Panel::Utils::Sems::create_peer_registration(
+            $c, $prov_peer, $type, $auth_prefs
+        );
+    }
 }
 
-sub _sip_dispatcher_reload {
-    my ($self, $c) = @_;
+sub sip_dispatcher_reload {
+    my (%params) = @_;
+    my ($c) = @params{qw/c/};
+
     my ($res) = NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
@@ -99,10 +97,12 @@ EOF
     return ref $res ? @{ $res } : ();
 }
 
-sub _sip_delete_probe {
+sub sip_delete_probe {
     my (%params) = @_;
     my ($c, $ip, $port, $transport) = @params{qw/c ip port transport/};
+
     my $string_transport = {'1' => 'UDP', '2' => 'TCP', '3' => 'TLS'};
+
     NGCP::Panel::Utils::XMLDispatcher::dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
@@ -258,7 +258,7 @@ A temporary helper to manipulate peerings related data
 
 =head1 METHODS
 
-=head2 _sip_lcr_reload
+=head2 sip_lcr_reload
 
 This is ported from ossbss.
 

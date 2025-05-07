@@ -156,7 +156,7 @@ sub POST :Allow {
 
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
