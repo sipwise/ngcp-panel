@@ -1,3 +1,12 @@
+ngcp-panel (12.5.1.25+0~mr12.5.1.25) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [4421f6d] MT#62283 "for update no lock" logic for GET /subscribers and /contracts
+  * [488d28d] MT#62283 exclude "for update no lock" in tests
+  * [d7096c2] MT#62283 fix dbix "for update no lock" patch
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 07 May 2025 17:11:44 +0200
+
 ngcp-panel (12.5.1.24+0~mr12.5.1.24) unstable; urgency=medium
 
   [ Kirill Solomko ]
