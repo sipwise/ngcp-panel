@@ -536,7 +536,7 @@ Delete a rewrite rule determined by L</rules_base>.
 Show a modal to create a new rewrite rule using the form
 L<NGCP::Panel::Form::RewriteRule>.
 
-=head2 _sip_dialplan_reload
+=head2 sip_dialplan_reload
 
 This is ported from ossbss.
 

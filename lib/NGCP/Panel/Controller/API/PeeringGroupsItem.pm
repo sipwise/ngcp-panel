@@ -70,7 +70,7 @@ sub PATCH :Allow {
 
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
@@ -101,7 +101,7 @@ sub PUT :Allow {
 
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
@@ -118,11 +118,17 @@ sub DELETE :Allow {
 
         foreach my $p ($item->voip_peer_hosts->all) {
             if($p->probe) {
-                NGCP::Panel::Utils::Peering::_sip_delete_probe(
+                NGCP::Panel::Utils::Peering::sip_delete_probe(
                     c => $c,
                     ip => $p->ip,
                     port => $p->port,
                     transport => $p->transport,
+                );
+            }
+            if ($p->enabled) {
+                NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
+                    c => $c,
+                    prov_peer => $p
                 );
             }
             $p->voip_peer_preferences->delete_all;
@@ -131,7 +137,7 @@ sub DELETE :Allow {
         $item->delete;
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
