@@ -556,10 +556,9 @@ sub update_preferences {
         return;
     }
 
-    if ($type eq "subscribers" && grep {/^peer_auth_/} keys %{ $resource }) {
-        $c->log->debug("Fetching old peer_auth_params for future comparison");
-        get_peer_auth_params(
-            $c, $elem, $old_auth_prefs);
+    if (($type eq 'subscribers' || $type eq 'peerings')
+            && grep {/^peer_auth_/} keys %{ $resource }) {
+        get_peer_auth_params($c, $elem, $type, $old_auth_prefs);
     };
 
     # make sure to not clear any internal prefs, except for those defined
@@ -1067,18 +1066,19 @@ sub update_preferences {
         }
     }
 
-    if($type eq "subscribers") {
-        if(keys %{ $old_auth_prefs }) {
+    if ($type eq 'subscribers' || $type eq 'peerings') {
+        if (keys %{ $old_auth_prefs }) {
             my $new_auth_prefs = {};
-            my $prov_subscriber = $elem;
-            get_peer_auth_params(
-                $c, $prov_subscriber, $new_auth_prefs);
-            unless(compare($old_auth_prefs, $new_auth_prefs)) {
-                $c->log->debug("peer_auth_params changed. Updating sems.");
-                my $type = 'subscriber';
+            my $prov_object = $elem;
+            my $sems_type = $type eq 'subscribers' ? 'subscriber' : 'peering';
+            get_peer_auth_params($c, $prov_object, $type, $new_auth_prefs);
+            if (!compare($old_auth_prefs, $new_auth_prefs)) {
+                $c->log->debug("peer_auth_params changed. updating sems registration.");
                 try {
                     update_sems_peer_auth(
-                        $c, $prov_subscriber, $type, $old_auth_prefs, $new_auth_prefs);
+                        $c, $prov_object, $sems_type,
+                        $old_auth_prefs, $new_auth_prefs
+                    );
                 } catch($e) {
                     $c->log->error("Failed to set peer registration: $e");
                     &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
@@ -2730,18 +2730,18 @@ sub update_sems_peer_auth {
     my ($c, $prov_object, $type, $old_auth_prefs, $new_auth_prefs) = @_;
     # prov_object can be either peering or subscriber
 
-    if(!_is_peer_auth_active($c, $old_auth_prefs) &&
-        _is_peer_auth_active($c, $new_auth_prefs)) {
+    if(!is_peer_auth_active($c, $old_auth_prefs) &&
+        is_peer_auth_active($c, $new_auth_prefs)) {
 
         NGCP::Panel::Utils::Sems::create_peer_registration(
             $c, $prov_object, $type, $new_auth_prefs);
-    } elsif( _is_peer_auth_active($c, $old_auth_prefs) &&
-            !_is_peer_auth_active($c, $new_auth_prefs)) {
+    } elsif(is_peer_auth_active($c, $old_auth_prefs) &&
+            !is_peer_auth_active($c, $new_auth_prefs)) {
 
         NGCP::Panel::Utils::Sems::delete_peer_registration(
             $c, $prov_object, $type, $old_auth_prefs);
-    } elsif(_is_peer_auth_active($c, $old_auth_prefs) &&
-            _is_peer_auth_active($c, $new_auth_prefs)){
+    } elsif(is_peer_auth_active($c, $old_auth_prefs) &&
+            is_peer_auth_active($c, $new_auth_prefs)){
 
         NGCP::Panel::Utils::Sems::update_peer_registration(
             $c, $prov_object, $type, $new_auth_prefs, $old_auth_prefs);
@@ -2751,20 +2751,28 @@ sub update_sems_peer_auth {
 }
 
 sub get_peer_auth_params {
-    my ($c, $prov_subscriber, $prefs) = @_;
+    my ($c, $prov_object, $type, $prefs) = @_;
 
-    foreach my $attribute (qw/peer_auth_user peer_auth_hf_user peer_auth_realm peer_auth_registrar_server peer_auth_pass peer_auth_register/){
+    foreach my $attribute (qw/peer_auth_user peer_auth_hf_user peer_auth_realm peer_auth_registrar_server peer_auth_pass peer_auth_register/) {
         my $rs;
-        $rs = get_usr_preference_rs(
-            c => $c,
-            attribute => $attribute,
-            prov_subscriber => $prov_subscriber
-        );
+        if ($type eq 'subscribers') {
+            $rs = get_usr_preference_rs(
+                c => $c,
+                attribute => $attribute,
+                prov_subscriber => $prov_object
+            );
+        } elsif ($type eq 'peerings') {
+            $rs = get_peer_preference_rs(
+                c => $c,
+                attribute => $attribute,
+                peer_host => $prov_object
+            );
+        }
         $prefs->{$attribute} = $rs->first ? $rs->first->value : undef;
     }
 }
 
-sub _is_peer_auth_active {
+sub is_peer_auth_active {
     my ($c, $prefs) = @_;
     if(defined $prefs->{peer_auth_register} && $prefs->{peer_auth_register} == 1 &&
        defined $prefs->{peer_auth_user} &&
