@@ -111,7 +111,7 @@ sub create_item {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering group.", $e);
         return;
     }
-    NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+    NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
     return $item;
 }
 

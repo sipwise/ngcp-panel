@@ -152,7 +152,7 @@ sub POST :Allow {
         try {
             $item = $c->model('DB')->resultset('voip_peer_hosts')->create($resource);
             if($resource->{probe}) {
-                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+                NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
             }
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.", $e);
@@ -161,11 +161,11 @@ sub POST :Allow {
 
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         try {
             if($resource->{probe}) {
-                NGCP::Panel::Utils::Peering::_sip_dispatcher_reload(c => $c);
+                NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
             }
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create peering server.",
