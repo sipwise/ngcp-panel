@@ -81,7 +81,7 @@ sub PATCH :Allow {
 
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
@@ -111,7 +111,7 @@ sub PUT :Allow {
 
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $self->return_representation($c, 'item' => $item, 'form' => $form, 'preference' => $preference );
     }
@@ -128,7 +128,7 @@ sub DELETE :Allow {
         $item->delete;
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::_sip_lcr_reload(c => $c);
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());

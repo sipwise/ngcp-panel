@@ -37,10 +37,15 @@ sub create_peer_registration {
 
     if ($type eq 'peering') {
         # outbound registration for a peering
-        $sid = $prov_obj->{id};
-        $uuid = $prov_obj->{uuid};
-        $username = $prov_obj->{username};
-        $domain = $prov_obj->{domain};
+        if ($prov_obj->enabled) {
+            $sid = $prov_obj->lcr_gw->id;
+            $uuid = 0;
+            $username = $prov_obj->name;
+            $domain = $prov_obj->ip;
+        } else {
+            $c->log->debug("skip creating a registration for disabled peering.");
+            return 1;
+        }
     } elsif ($type eq "subscriber") {
         # outbound registration for usual subscriber
         $sid = $prov_obj->kamailio_subscriber->id;
@@ -77,7 +82,7 @@ sub create_peer_registration {
         # if the outbound socket is default, then use the transport
         # of the peering's parameters (Protocol: UDP/TCP/TLS)
         } else {
-            SWITCH: for ($c->stash->{server_result}->transport) {
+            SWITCH: for ($prov_obj->transport) {
                 /^2$/ && do {
                     $transport = ';transport=tcp';
                     last SWITCH;
@@ -138,7 +143,7 @@ EOF
         }
         die "Failed to add peer registration on application servers\n";
     }
-            
+
     return 1;
 }
 
@@ -155,10 +160,15 @@ sub update_peer_registration {
 
     if ($type eq 'peering') {
         # outbound registration for a peering
-        $sid = $prov_obj->{id};
-        $uuid = $prov_obj->{uuid};
-        $username = $prov_obj->{username};
-        $domain = $prov_obj->{domain};
+        if ($prov_obj->enabled) {
+            $sid = $prov_obj->lcr_gw->id;
+            $uuid = 0;
+            $username = $prov_obj->name;
+            $domain = $prov_obj->ip;
+        } else {
+            $c->log->debug("skip updating a registration for disabled peering.");
+            return 1;
+        }
     } elsif ($type eq "subscriber") {
         # outbound registration for usual subscriber
         $sid = $prov_obj->kamailio_subscriber->id;
@@ -195,7 +205,7 @@ sub update_peer_registration {
         # if the outbound socket is default, then use the transport
         # of the peering's parameters (Protocol: UDP/TCP/TLS)
         } else {
-            SWITCH: for ($c->stash->{server_result}->transport) {
+            SWITCH: for ($prov_obj->transport) {
                 /^2$/ && do {
                     $transport = ';transport=tcp';
                     last SWITCH;
@@ -278,7 +288,7 @@ EOF
         }
         die "Failed to update peer registration on application servers\n";
     }
-            
+
     return 1;
 }
 
@@ -294,10 +304,15 @@ sub delete_peer_registration {
 
     if ($type eq 'peering') {
         # outbound registration for a peering
-        $sid = $prov_obj->{id};
-        $uuid = $prov_obj->{uuid};
-        $username = $prov_obj->{username};
-        $domain = $prov_obj->{domain};
+        if ($prov_obj->enabled) {
+            $sid = $prov_obj->lcr_gw->id;
+            $uuid = 0;
+            $username = $prov_obj->name;
+            $domain = $prov_obj->ip;
+        } else {
+            $c->log->debug("skip deleting a registration for disabled peering.");
+            return 1;
+        }
     } elsif ($type eq "subscriber") {
         # outbound registration for usual subscriber
         $sid = $prov_obj->kamailio_subscriber->id;
@@ -368,7 +383,7 @@ EOF
         }
         die "Failed to delete peer registration on application servers\n";
     }
-            
+
     return 1;
 }
 
