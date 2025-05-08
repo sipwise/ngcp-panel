@@ -2768,7 +2768,7 @@ sub get_peer_auth_params {
                 peer_host => $prov_object
             );
         }
-        $prefs->{$attribute} = $rs->first ? $rs->first->value : undef;
+        $prefs->{$attribute} = $rs && $rs->first ? $rs->first->value : undef;
     }
 }
 
