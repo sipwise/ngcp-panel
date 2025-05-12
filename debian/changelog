@@ -1,3 +1,11 @@
+ngcp-panel (12.5.1.26+0~mr12.5.1.26) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [92c898e] MT#62705 improve peer_auth registrations support
+  * [7ac1d11] MT#62705 fix get_peer_auth_params() $rs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 May 2025 15:42:03 +0200
+
 ngcp-panel (12.5.1.25+0~mr12.5.1.25) unstable; urgency=medium
 
   [ Rene Krenn ]
