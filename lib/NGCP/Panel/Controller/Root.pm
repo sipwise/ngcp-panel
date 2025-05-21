@@ -231,6 +231,7 @@ sub auto :Private {
             }
 
             my ($username,$password) = $c->req->headers->authorization_basic;
+            my ($otp) = $c->request->header('X-OTP');
 
             unless ($username && defined $password) {
                 $c->user->logout if ($c->user);
@@ -245,7 +246,14 @@ sub auto :Private {
             if ($d) {
                 $c->req->headers->authorization_basic($u,$password);
             }
-            my $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $password);
+            my $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth(
+                c => $c,
+                user => $u,
+                domain => $d,
+                pass => $password,
+                otp => $otp,
+                skip_otp => ($c->req->uri->path =~ m|^/api/otpsecret/?$| ? 1 : 0),
+            );
 
             if ($res && $res == -2) {
                 $c->detach(qw(API::Root banned_user), [$username]);
@@ -809,6 +817,23 @@ sub login_jwt :Chained('/') :PathPart('login_jwt') :Args(0) :Method('POST') {
                 } else {
                     $auth_user = $authrs->search({webpassword => $pass})->first;
                 }
+
+                if (NGCP::Panel::Utils::Auth::get_subscriber_enable_2fa($c,$auth_user)) {
+                    if (NGCP::Panel::Utils::Auth::verify_otp($c,
+                            NGCP::Panel::Utils::Auth::get_subscriber_otp_secret($c,$auth_user),
+                            $otp,time())) {
+                        NGCP::Panel::Utils::Auth::set_subscriber_show_otp_registration_info($c,$auth_user,0)
+                        if NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$auth_user);
+                    } else {
+                        $c->response->status(HTTP_FORBIDDEN);
+                        $c->response->body(encode_json({
+                            code => HTTP_FORBIDDEN,
+                            message => "Invalid OTP" })."\n");
+                        $c->log->info("Invalid OTP");
+                        return; 
+                    }
+                }
+
             }
         }
     }

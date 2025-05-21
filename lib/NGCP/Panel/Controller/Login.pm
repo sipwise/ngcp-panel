@@ -49,6 +49,7 @@ sub login_index :Path Form {
             $c->log->debug("Login::index user=$user, pass=****, realm=$realm");
         }
         my $res;
+        my ($u, $d, $t);
         if($realm eq 'admin') {
             $res = NGCP::Panel::Utils::Auth::perform_auth(
                 c => $c,
@@ -59,7 +60,7 @@ sub login_index :Path Form {
                 bcrypt_realm => 'admin_bcrypt',
             );
         } elsif($realm eq 'subscriber') {
-            my ($u, $d, $t) = split /\@/, $user;
+            ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {
                 # in case username is an email address
                 $u = $u . '@' . $d;
@@ -68,23 +69,47 @@ sub login_index :Path Form {
             unless(defined $d) {
                 $d = $c->req->uri->host;
             }
-            $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $pass);
+            $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth(
+                c => $c,
+                user => $u,
+                domain => $d,
+                pass => $pass,
+                otp => $otp,
+            );
         }
 
         if(defined $res && $res == -3) {
             $form = NGCP::Panel::Form::get("NGCP::Panel::Form::LoginOtp", $c);
             $form->field('username')->value($user);
-            $form->field('password')->value($pass);
+            $form->field('password')->value($pass);            
             $form->field('otp')->value(undef);
             $form->add_form_error($c->loc('Invalid one-time code')) if $otp;
-            my $dbadmin = $c->model('DB')->resultset('admins')->search({
-                login => $user,
-            })->first;
-            $c->stash(show_otp_registration_info => $dbadmin->show_otp_registration_info);
-            if ($dbadmin && $dbadmin->show_otp_registration_info) {
-                $c->stash(
-                    otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$dbadmin)}),
-                );
+            if($realm eq 'admin') {
+                my $dbadmin = $c->model('DB')->resultset('admins')->search({
+                    login => $user,
+                })->first;
+                $c->stash(show_otp_registration_info => $dbadmin->show_otp_registration_info);
+                if ($dbadmin->show_otp_registration_info) {
+                    $c->stash(
+                        otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$dbadmin)}),
+                    );
+                }
+            } elsif($realm eq 'subscriber') {
+                my $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+                    webusername => $u,
+                    'voip_subscriber.status' => 'active',
+                    ($c->config->{features}->{multidomain} ? ('domain.domain' => $d) : ()),
+                    'contract.status' => 'active',
+                }, {
+                    join => ['domain', 'contract', 'voip_subscriber'],
+                })->first;
+                my $show_otp_registration_info = NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$sub);
+                $c->stash(show_otp_registration_info => $show_otp_registration_info);
+                if ($show_otp_registration_info) {
+                    $c->stash(
+                        otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$sub)}),
+                    );
+                }
             }
         } elsif($res && $res == -2) {
             $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");
@@ -353,6 +378,7 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
             $c->log->debug("Password change user=$user, pass=****, realm=$realm");
         }
         my $res;
+        my ($u, $d, $t);
         if($realm eq 'admin') {
             $res = NGCP::Panel::Utils::Auth::perform_auth(
                 c => $c,
@@ -363,7 +389,7 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
                 bcrypt_realm => 'admin_bcrypt',
             );
         } elsif($realm eq 'subscriber') {
-            my ($u, $d, $t) = split /\@/, $user;
+            ($u, $d, $t) = split /\@/, $user;
             if(defined $t) {
                 # in case username is an email address
                 $u = $u . '@' . $d;
@@ -372,7 +398,13 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
             unless(defined $d) {
                 $d = $c->req->uri->host;
             }
-            $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth($c, $u, $d, $pass);
+            $res = NGCP::Panel::Utils::Auth::perform_subscriber_auth(
+                c => $c,
+                user => $u,
+                domain => $d,
+                pass => $pass,
+                otp => $otp,
+            );
         }
 
         if(defined $res && $res == -3) {
@@ -383,14 +415,32 @@ sub change_password :Chained('/') :PathPart('changepassword') Args(0) {
             $form->field('new_password')->value($new_pass);
             $form->field('new_password')->value($new_pass2);
             $form->add_form_error($c->loc('Invalid one-time code')) if $otp;
-            my $dbadmin = $c->model('DB')->resultset('admins')->search({
-                login => $user,
-            })->first;
-            $c->stash(show_otp_registration_info => $dbadmin->show_otp_registration_info);
-            if ($dbadmin && $dbadmin->show_otp_registration_info) {
-                $c->stash(
-                    otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$dbadmin)}),
-                );
+            if($realm eq 'admin') {
+                my $dbadmin = $c->model('DB')->resultset('admins')->search({
+                    login => $user,
+                })->first;
+                $c->stash(show_otp_registration_info => $dbadmin->show_otp_registration_info);
+                if ($dbadmin->show_otp_registration_info) {
+                    $c->stash(
+                        otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$dbadmin)}),
+                    );
+                }
+            } elsif($realm eq 'subscriber') {
+                my $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+                    webusername => $u,
+                    'voip_subscriber.status' => 'active',
+                    ($c->config->{features}->{multidomain} ? ('domain.domain' => $d) : ()),
+                    'contract.status' => 'active',
+                }, {
+                    join => ['domain', 'contract', 'voip_subscriber'],
+                })->first;
+                my $show_otp_registration_info = NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$sub);
+                $c->stash(show_otp_registration_info => $show_otp_registration_info);
+                if ($show_otp_registration_info) {
+                    $c->stash(
+                        otp_secret_qr_base64 => encode_base64(${NGCP::Panel::Utils::Auth::generate_otp_qr($c,$sub)}),
+                    );
+                }
             }
         } elsif($res && $res == -2) {
             $c->log->warn("invalid http login from '".$c->qs($c->req->address)."'");

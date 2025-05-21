@@ -11,6 +11,7 @@ use MIME::Base32 qw();
 use Digest::HMAC_SHA1 qw();
 use Imager::QRCode qw();
 use URI::Encode qw(uri_encode);
+use NGCP::Panel::Utils::Preferences qw();
 
 use NGCP::Panel::Utils::Ldap qw(
     auth_ldap_simple
@@ -35,6 +36,8 @@ our $ENCRYPT_SUBSCRIBER_WEBPASSWORDS = 1;
 our $OTP_SECRET_LENGTH = 20; #160 Bits
 our $OTP_WINDOW = 3;
 our $OTP_STEP_SIZE = 30; #secs
+
+my $lock_timeout = 5;
 
 sub check_password {
     my $pass = shift // return;
@@ -208,7 +211,22 @@ sub is_salted_hash {
 }
 
 sub perform_subscriber_auth {
-    my ($c, $user, $domain, $pass) = @_;
+
+    my %params = @_;
+    my ($c,
+        $user,
+        $domain,
+        $pass,
+        $otp,
+        $skip_otp) = @params{qw/
+            c
+            user
+            domain
+            pass
+            otp
+            skip_otp
+        /};
+
     my $res;
 
     if ($pass && $pass =~ /[^[:ascii:]]/) {
@@ -295,6 +313,17 @@ sub perform_subscriber_auth {
                     }
                 },
                 'subscriber');
+        }
+    }
+
+    if ($res
+        and not $skip_otp
+        and get_subscriber_enable_2fa($c,$sub)) {
+        if (verify_otp($c,get_subscriber_otp_secret($c,$sub),$otp,time())) {
+            NGCP::Panel::Utils::Auth::set_subscriber_show_otp_registration_info($c,$sub,0)
+            if NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$sub);
+        } else {
+            $res = -3;
         }
     }
 
@@ -834,9 +863,122 @@ sub create_otp_secret {
 
 }
 
+sub get_subscriber_enable_2fa {
+    my ($c,$prov_subscriber) = @_;
+
+    return 0 unless $prov_subscriber;
+
+    my $rs = NGCP::Panel::Utils::Preferences::get_chained_preference_rs(
+        $c,
+        'enable_2fa',
+        $prov_subscriber,
+        {
+            type => 'usr',
+            'order' => [qw/usr prof dom/]
+        },
+    );
+
+    if ($rs->first) {
+        return 1 if $rs->first->value;
+    }
+
+    return 0;
+}
+
+sub get_subscriber_otp_secret {
+
+    my ($c,$prov_subscriber) = @_;
+
+    return unless $prov_subscriber;
+
+    $prov_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+        id => $prov_subscriber->id
+    },{ for => \"update wait $lock_timeout" });
+
+    my $otp_secret;
+    my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c,
+        prov_subscriber => $prov_subscriber,
+        attribute => 'otp_secret',
+    );
+
+    if ($rs->first) {
+        $otp_secret = $rs->first->value;
+    } else {
+        $otp_secret = create_otp_secret();
+        $rs->create({ value => $otp_secret });
+    }
+
+    return $otp_secret;
+
+}
+
+sub get_subscriber_show_otp_registration_info {
+
+    my ($c,$prov_subscriber) = @_;
+
+    return unless $prov_subscriber;
+
+    $prov_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+        id => $prov_subscriber->id
+    },{ for => \"update wait $lock_timeout" });
+
+    my $show_otp_registration_info;
+    my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c,
+        prov_subscriber => $prov_subscriber,
+        attribute => 'show_otp_registration_info',
+    );
+
+    if ($rs->first) {
+        $show_otp_registration_info = $rs->first->value;
+    } else {
+        $show_otp_registration_info = 1;
+        $rs->create({ value => $show_otp_registration_info });
+    }
+
+    return $show_otp_registration_info;
+
+}
+
+sub set_subscriber_show_otp_registration_info {
+
+    my ($c,$prov_subscriber,$value) = @_;
+
+    return unless $prov_subscriber;
+
+    $prov_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+        id => $prov_subscriber->id
+    },{ for => \"update wait $lock_timeout" });
+
+    my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c,
+        prov_subscriber => $prov_subscriber,
+        attribute => 'show_otp_registration_info',
+    );
+
+    if ($rs->first) {
+        $rs->first->update({ value => $value });
+    } else {
+        $rs->create({ value => $value });
+    }
+
+    return $value;
+
+}
+
+sub get_otp_secret {
+    my ($c,$user) = @_;
+    if (ref $user eq 'NGCP::Panel::Model::DB::admins') {
+        return $user->otp_secret;
+    } elsif (ref $user eq 'NGCP::Panel::Model::DB::provisioning_voip_subscribers') {
+        return get_subscriber_otp_secret($c,$user);
+    }
+}
+
 sub generate_otp_qr {
 
-    my ($c,$admin) = @_;
+    my ($c,$user) = @_;
     
     #<img src="$http_base_url/chart?chs=150x150&chld=M%7c0&cht=qr&chl=otpauth://totp/$string_utils.urlEncode($inheriteduser_name,$template_encoding)@$string_utils.urlEncode($instance_name,$template_encoding)?secret=$otp_secret"/>
     my $qrcode = Imager::QRCode->new(
@@ -851,12 +993,26 @@ sub generate_otp_qr {
         darkcolor     => Imager::Color->new(0, 0, 0),
     );
     
-    my $image = $qrcode->plot(sprintf("otpauth://totp/%s@%s?secret=%s&issuer=%s",
-        uri_encode($admin->login),
-        uri_encode($c->req->uri->host),
-        $admin->otp_secret,
-        'NGCP', # . $c->config->{ngcp_version}
-    ));
+    #$c->log->debug("xxx: " . ref $user );
+
+    my $image;
+    if (ref $user eq 'NGCP::Panel::Model::DB::admins') {
+        $image = $qrcode->plot(sprintf("otpauth://totp/%s@%s?secret=%s&issuer=%s",
+            uri_encode($user->login),
+            uri_encode($c->req->uri->host),
+            $user->otp_secret,
+            'NGCP', # . $c->config->{ngcp_version}
+        ));
+    } elsif (ref $user eq 'NGCP::Panel::Model::DB::provisioning_voip_subscribers') {
+        #$c->log->debug("xxx: " . $user->webusername );
+        #$c->log->debug("yyy: " . $user->domain->domain );
+        $image = $qrcode->plot(sprintf("otpauth://totp/%s@%s?secret=%s&issuer=%s",
+            uri_encode($user->webusername),
+            uri_encode($user->domain->domain),
+            get_subscriber_otp_secret($c,$user),
+            'NGCP', # . $c->config->{ngcp_version}
+        ));
+    }
 
     my $data;
     $image->write(data => \$data, type => 'png')
