@@ -90,7 +90,8 @@ sub process_form_resource{
             converted_data_ref => \$process_extras->{binary_ref},
         );
     } catch($e) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $e);
+        chomp $e;
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to create voicemail greeting: $e");
         return;
     }
     return 1;
@@ -155,8 +156,9 @@ sub check_duplicate{
         'voip_subscriber.id' => $resource->{subscriber_id},
         'me.dir'             => {like => '%/'.$resource->{dir}},
     })->first;
-    if($existing_item && (!$item || $item->id != $existing_item->id)) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Voicemail greeting for the type "'.$resource->{dir}.'" and subscriber id "'.$resource->{subscriber_id}.'" already exists');
+
+    if ($existing_item && (!$item || $item->id != $existing_item->id)) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Voicemail greeting for the type '$resource->{dir}' and subscriber id '$resource->{subscriber_id}' already exists.");
         return;
     }
 

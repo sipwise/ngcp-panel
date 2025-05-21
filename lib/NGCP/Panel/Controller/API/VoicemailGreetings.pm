@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::API::VoicemailGreetings;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use Sipwise::Base;
+use HTTP::Status qw(:constants);
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::VoicemailGreetings/;
 
@@ -80,17 +81,23 @@ sub query_params {
 
 sub create_item {
     my ($self, $c, $resource, $form, $process_extras) = @_;
-    my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory( c => $c, subscriber => $c->stash->{checked}->{subscriber}, dir => $resource->{dir} );
-    my $item = $c->stash->{checked}->{voicemail_subscriber}->voicemail_spools->create({
-        'recording'      => ${$process_extras->{binary_ref}},
-        'dir'            => $dir,
-        'origtime'       => time(),#just to make inflate possible. Really we don't need this value
-        'mailboxcontext' => 'default',
-        'msgnum'         => '-1',
-    });
-    #we need to return subscriber id, so item can be used for further update
-    #We can't just add field to the item object, so we need to reselect it
-    $item = $self->item_by_id($c, $item->id);
+    my $item;
+    try {
+        my $dir = NGCP::Panel::Utils::Subscriber::get_subscriber_voicemail_directory( c => $c, subscriber => $c->stash->{checked}->{subscriber}, dir => $resource->{dir} );
+        $item = $c->stash->{checked}->{voicemail_subscriber}->voicemail_spools->create({
+            'recording'      => ${$process_extras->{binary_ref}},
+            'dir'            => $dir,
+            'origtime'       => time(),#just to make inflate possible. Really we don't need this value
+            'mailboxcontext' => 'default',
+            'msgnum'         => '-1',
+        });
+        #we need to return subscriber id, so item can be used for further update
+        #We can't just add field to the item object, so we need to reselect it
+        $item = $self->item_by_id($c, $item->id);
+    } catch($e) {
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voicemail greeting.", $e);
+        return;
+    }
     return $item;
 }
 

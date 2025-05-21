@@ -2464,30 +2464,33 @@ sub convert_voicemailgreeting{
     $c->log->debug("type=".$upload->type."; size=".$upload->size."; filename=".$upload->filename.";");
 
     my $filepath = $upload->tempname;
-    my $filepath_converted = $filepath;
-    $filepath_converted =~s/\.([^\.]+)$/\.converted.$1/;
+    my $filepath_converted = $upload->tempname;
+    $filepath_converted =~ s/\.([^\.]+)$/\_converted.wav/;
 
-    #my $ft = File::Type->new();
-    #my $greetingfile = delete $form->values->{'greetingfile'};
-    #my $mime_type = $ft->mime_type($greetingfile);
-    #if(('edit' eq $action) &&('audio/x-wav' ne $mime_type && 'application/octet-stream' ne $mime_type)){
-    #    die('Wrong mime-type '.$mime_type.' for the voicemail greeting. Must be a audio file in the "wav" format');
-    #    return;
-    #}
-    my @cmd = ( $filepath, '-e', 'gsm', '-b', '16', '-r', '8000', '-c', '1', $filepath_converted);
+    my @cmd = ( $filepath, '-e', 'gsm', '-r', '8000', '-c', '1', $filepath_converted);
     my $output = '';
+
     $c->log->debug("cmd=".join(" ", 'sox', @cmd));
+
     eval {
         $output = capturex('sox', @cmd);
     };
+
     $c->log->debug("cmd=".join(" ", 'sox', @cmd)."; output=$output; \$\@=".($@?$@:'').';');
-    if($output || $@){
-        die('Wrong file format for the voicemail greeting. Must be a audio file in the "wav" format with "gsm" encoding.');
+
+    if ($output || $@) {
+        chomp $@;
+        unlink $filepath_converted if -f $filepath_converted;
+        die "Wrong file format for the voicemail greeting. Must be an audio file in the 'wav' format\n";
     }
+
     my $data = read_file($filepath_converted, {binmode => ':raw'},);
-    if(!length($data)){
+    unlink $filepath_converted if -f $filepath_converted;
+
+    if (!length($data)) {
         die('Empty greeting file after conversion to GSM encoding.');
     }
+
     ${$params{converted_data_ref}} = \$data;
 }
 
