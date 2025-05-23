@@ -575,9 +575,8 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
     my $subscriber_login_url;
     
-    if ($c->config->{general}{csc_js_enable} == 1
-        or $c->config->{general}{csc_js_enable} == 2) {
-        $subscriber_login_url = $c->req->base.'v2/#/login';
+    if ($c->config->{general}{csc_enable} == 1) {
+        $subscriber_login_url = $c->req->base.'#/login';
     } else {
         $subscriber_login_url = $c->uri_for('/login/subscriber');
     }
@@ -3288,8 +3287,7 @@ sub login_to_csc_v2 :Chained('master') :PathPart('login_to_csc_v2') :Args(0) :Do
     }
 
     #redirect to server's hostname
-    my $v2_prefix = $c->config->{general}{csc_js_enable} == 2 ? '/v2/' : '/';
-    $c->res->redirect("https://" . $c->req->uri->host . $v2_prefix . "?a=$token");
+    $c->res->redirect("https://" . $c->req->uri->host . "/?a=$token");
 }
 
 sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) : AllowedRole(reseller) :AllowedRole(ccareadmin) :AllowedRole(ccare) :AllowedRole(subscriberadmin) {

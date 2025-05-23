@@ -104,9 +104,8 @@ sub POST :Allow {
 
                 my $url = NGCP::Panel::Utils::Email::rewrite_url(
                     $c->config->{contact}->{external_base_url},
-                    ($c->config->{general}{csc_js_enable} > 0) ?
-                    ($c->req->base . 'v2/#/recoverpassword')
-                    : $c->uri_for_action('/subscriber/recover_webpassword')->as_string);
+                    ($c->req->base . '#/recoverpassword')
+                );
                 $url .= '?uuid=' . $uuid_string;
                 
                 $c->log->debug("passreset url: $url");

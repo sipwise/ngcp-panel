@@ -56,11 +56,8 @@
                     <a class="btn btn-primary btn-large" href="[% href %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller" ||
                            c.user.roles == "ccareadmin" || c.user.roles == "ccare") -%]
-                        [% IF c.config.general.csc_js_enable == 0 || c.config.general.csc_js_enable == 2 -%]
-                            <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/login_to_csc', [ subscriber.id ]) %]" target="_blank"><i class="icon-user"></i> [% c.loc('Login to CSC') %]</a>
-                        [% END -%]
-                        [% IF c.config.general.csc_js_enable == 1 || c.config.general.csc_js_enable == 2 -%]
-                            <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/login_to_csc_v2', [ subscriber.id ]) %]" target="_blank"><i class="icon-user"></i> [% c.loc('Login to New CSC') %]</a>
+                        [% IF c.config.general.csc_enable == 1 -%]
+                            <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/login_to_csc_v2', [ subscriber.id ]) %]" target="_blank"><i class="icon-user"></i> [% c.loc('Login to CSC') %]</a>
                         [% END -%]
                     [% END -%]
                 [% END -%]
