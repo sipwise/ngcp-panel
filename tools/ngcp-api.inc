@@ -47,3 +47,5 @@ validateurl() {
     exit 1
   fi
 }
+
+# vim: ft=bash
