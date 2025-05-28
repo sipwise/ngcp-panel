@@ -19,6 +19,7 @@ EOF
 
 if [ -z "${APIUSER}" ]; then
   if [ -f "${TOOLS}" ]; then
+    # shellcheck source=./tools/ngcp-api.inc
     source "${TOOLS}"
 
     importcreds "${USERCREDS}" 0600
@@ -34,6 +35,8 @@ if [ -z "${APIUSER}" ]; then
   fi
 fi
 
+CURL_OPTS=()
+
 while getopts "hv" OPTION
 do
   case ${OPTION} in
@@ -41,7 +44,7 @@ do
       usage
       ;;
     v)
-      VERBOSE="--verbose"
+      CURL_OPTS+=(--verbose)
       ;;
     ?)
       usage
@@ -56,7 +59,7 @@ if [ -z "${URL}" ] ; then
 fi
 validateurl "$URL"
 
-${CURL} -i ${VERBOSE} -X DELETE \
+${CURL} -i "${CURL_OPTS[@]}" -X DELETE \
   "${APIREALM[@]}" \
   -H 'Connection: close' \
   "${HEADERS}" --user "${APIUSER}" --insecure "${URL}"

@@ -20,6 +20,7 @@ EOF
 
 if [ -z "${APIUSER}" ]; then
   if [ -f "${TOOLS}" ]; then
+    # shellcheck source=./tools/ngcp-api.inc
     source "${TOOLS}"
 
     importcreds "${USERCREDS}" 0600
@@ -34,6 +35,7 @@ if [ -z "${APIUSER}" ]; then
     exit 1
   fi
 fi
+CURL_OPTS=()
 INPUT=(-T -)
 
 while getopts "f:hv" OPTION
@@ -44,14 +46,14 @@ do
       ;;
     f)
       INPUT=()
-      FILE_INPUT=(--data-binary @${OPTARG})
+      FILE_INPUT=(--data-binary "@${OPTARG}")
       if [ ! -f "${OPTARG}" ]; then
         echo "No '${OPTARG}' file found"
         usage
       fi
       ;;
     v)
-      VERBOSE="--verbose"
+      CURL_OPTS+=(--verbose)
       ;;
     ?)
       usage
@@ -67,7 +69,7 @@ fi
 validateurl "$URL"
 CTYPE=${2:-application/json}
 
-${CURL} -i ${VERBOSE} -X PUT \
+${CURL} -i "${CURL_OPTS[@]}" -X PUT \
   "${APIREALM[@]}" \
   -H 'Connection: close' -H 'Prefer: return=representation' \
   -H "Content-Type: ${CTYPE}" \

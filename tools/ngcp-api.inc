@@ -23,6 +23,7 @@ importcreds () {
   echo "${CREDS} present, checking perms"
   if stat "${CREDS}" | grep -q "Access: (${PERMS}" 1>/dev/null ; then
     echo "${CREDS} permissions ok"
+    # shellcheck source=./etc/default/ngcp-api
     . "${CREDS}"
   else
     echo "Error: ${CREDS} must have permissions ${PERMS}" >&2

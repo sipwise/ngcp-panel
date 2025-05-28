@@ -1,3 +1,4 @@
+etc/default/ngcp-api		etc/default/
 etc/logging.conf		etc/ngcp-panel/
 etc/ngcp_panel.conf		etc/ngcp-panel/
 lib/NGCP/Panel/I18N/*		usr/share/perl5/NGCP/Panel/I18N
