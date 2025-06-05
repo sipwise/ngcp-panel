@@ -2529,6 +2529,8 @@ sub get_chained_preference_rs {
         ->resultset('voip_preferences')
         ->find({ attribute => $attr });
 
+    return unless $preference;
+
     my $type_meta = $params->{type} // 'usr';
     my $type_order = $params->{order} // $type_order_default->{$type_meta};
     my $provisioning_subscriber = $params->{provisioning_subscriber};

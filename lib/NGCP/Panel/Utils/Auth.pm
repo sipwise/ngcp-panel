@@ -878,7 +878,7 @@ sub get_subscriber_enable_2fa {
         },
     );
 
-    if ($rs->first) {
+    if ($rs && $rs->first) {
         return 1 if $rs->first->value;
     }
 
