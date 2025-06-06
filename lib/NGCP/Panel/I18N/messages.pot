@@ -186,6 +186,10 @@ msgstr ""
 msgid "1st day of month, at 00:00 system time"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "2-Factor Authentication (2FA)"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "2FA"
 msgstr ""
@@ -4098,6 +4102,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable Session-Timers"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Time-based One-Time-Password (TOTP) Multifactor Authentication for Subscriber CSC logins."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8374,6 +8382,10 @@ msgid "OK"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "OTP Secret"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "October"
 msgstr ""
 
@@ -10664,11 +10676,19 @@ msgid "Show Call Forward Destination to Caller"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Show OTP Registration Info"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Show PSTN Destination to Caller"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm lib/NGCP/Panel/Controller/Reseller.pm
 msgid "Show Passwords"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Show Time-based One-Time-Password (TOTP) secret and registration info for the next CSC logins."
 msgstr ""
 
 #: share/templates/invoice/template_editor_form.tt
@@ -13813,6 +13833,10 @@ msgstr ""
 
 #: share/templates/reseller/details.tt
 msgid "Time sets"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Time-based One-Time-Password (TOTP) secret (RFC 6238)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
