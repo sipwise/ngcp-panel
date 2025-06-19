@@ -116,6 +116,16 @@ has_field 'lines.target_number' => (
     },
 );
 
+has_field 'lines.label' => (
+    type => 'Text',
+    required => 0,
+    label => 'Linelabel',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The key label'],
+    },
+);
+
 has_field 'lines.deviceid_number_id' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 0,

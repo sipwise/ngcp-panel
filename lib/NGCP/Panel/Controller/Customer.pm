@@ -1836,6 +1836,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
             line => $line->linerange_id . '.' . $line->key_num,
             type => $line->line_type,
             target_number => $line->target_number,
+            label => $line->label,
         };
     }
     $params->{line} = \@lines;
@@ -1918,9 +1919,11 @@ sub pbx_device_lines_update :Private{
     foreach my $line(@$lines) {
         my $is_custom_number = 0;
         my $target_number;
+        my $label;
         if ($line->field('switch') && $line->field('switch')->value) {
             $is_custom_number = 1;
             $target_number = $line->field('target_number')->value // next;
+            $label = $line->field('label')->value // next;
         } else {
             next unless $line->field('subscriber_id')->value;
         }
@@ -1953,6 +1956,7 @@ sub pbx_device_lines_update :Private{
                 line_type      => $type,
                 extension_unit => $unit,
                 target_number  => $target_number,
+                label          => $label,
             });
         }
     }

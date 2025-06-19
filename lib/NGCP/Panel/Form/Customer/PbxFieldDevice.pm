@@ -96,6 +96,12 @@ has_field 'line.target_number' => (
     required => 0,
 );
 
+has_field 'line.label' => (
+    type => 'Text',
+    type => 'Hidden',
+    required => 0,
+);
+
 has_field 'line.switch' => (
     type => 'Hidden',
     required => 0,
