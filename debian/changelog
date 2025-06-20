@@ -1,3 +1,42 @@
+ngcp-panel (13.5.0.0+0~mr13.5.0.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [1be3f5a] MT#62546 Fix permanent registration nat flags
+  * [c4542d0] MT#61427 Remove quick access to the OLD CSC panel
+
+  [ Rene Krenn ]
+  * [8a11b8e] MT#61646 fix phoenbook .csv encoding
+  * [00a007d] MT#62568 subscriber 2FA impl
+
+  [ Kirill Solomko ]
+  * [7a7c5cd] MT#62600 fix UI invoice create/edit
+  * [942cd4c] MT#62304 add Websocket Statistics to the monitoring page
+  * [4d26ca5] MT#62705 improve peer_auth registrations support
+  * [8037316] MT#62705 fix get_peer_auth_params() $rs
+  * [0ce3658] MT#62890 fix and improve voicemailgreetings upload
+  * [e3db35d] MT#62568 fix get_subscriber_enable_2fa() and get_chained_preference_rs()
+
+  [ Sipwise Jenkins Builder ]
+  * [7f8d6ea] TT#4166 I18N dump: snapshot 2025.04.24-22.20.20
+  * [b67dc2c] TT#4166 I18N dump: snapshot 2025.06.06-22.20.33
+
+  [ Guillem Jover ]
+  * [32b0cb1] MT#62763 Suppress perlcritic false positives or intentional violations
+  * [a7a3ac2] MT#62763 Add a shebang to treat file as a program
+  * [4b00805] MT#62763 Use perl strictures
+  * [b49f926] MT#62763 Replace code being tested from test description string with "creating"
+  * [d8ddcc7] MT#62763 Do not modify topic variable in list functions
+  * [56c23ce] MT#62763 Do not declare variable in conditional statement
+  * [57896f8] MT#62763 Use «return» instead of «return undef»
+  * [328bce8] MT#62763 Use a block in grep expression
+  * [8fe6530] MT#62763 Use a scoped variable instead of a local bareword
+  * [d9a53a3] MT#62763 Do not use two-argument open
+  * [aa526ae] MT#62763 Localize $/ variable on assignment instead of using an intermediate variable
+  * [cd904af] MT#62763 Rename PHP test script to use .php extension
+  * [3f75e81] MT#62763 Fix shellcheck issues
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Jun 2025 10:44:01 +0200
+
 ngcp-panel (13.4.0.0+0~mr13.4.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
