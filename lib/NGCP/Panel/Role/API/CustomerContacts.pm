@@ -111,8 +111,15 @@ sub update_contact {
     $resource->{country}{id} = delete $resource->{country};
     $resource->{timezone}{name} = delete $resource->{timezone};
     $form //= $self->get_form($c);
-    # TODO: for some reason, formhandler lets missing reseller_id slip thru
-    $resource->{reseller_id} //= undef;
+
+    if ($old_resource->{reseller_id} != $resource->{reseller_id}) {
+        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        unless ($reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
+            return;
+        }
+    }
+
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -124,13 +131,6 @@ sub update_contact {
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $resource->{modify_timestamp} = $now;
 
-    if($old_resource->{reseller_id} != $resource->{reseller_id}) {
-        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
-        unless($reseller) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
-            return;
-        }
-    }
 
     $contact->update($resource);
 
