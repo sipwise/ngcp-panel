@@ -283,6 +283,28 @@ sub query_params {
             },
 
         },
+        {
+            param => 'duration_ge',
+            description => 'Filter for calls with duration being greater or equal the specified value.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.duration' => { '>=' => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'duration_le',
+            description => 'Filter for calls with duration lower or equal the specified value.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.duration' => { '<=' => $q } };
+                },
+                second => sub {},
+            },
+        },
     ];
 }
 
