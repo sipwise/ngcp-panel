@@ -13,6 +13,16 @@ has_field 'id' => (
     },
 );
 
+has_field 'customer_id' => (
+    type => 'PosInteger',
+    required => 0,
+    label => 'Phonebook entry customer id',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Phonebook entry customer id'],
+    },
+);
+
 has_field 'subscriber_id' => (
     type => 'PosInteger',
     required => 0,

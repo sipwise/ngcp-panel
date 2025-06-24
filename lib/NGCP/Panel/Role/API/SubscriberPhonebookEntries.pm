@@ -28,21 +28,36 @@ sub _item_rs {
         }
     }
 
-    if ($c->user->roles eq 'reseller' || $c->user->roles eq 'ccare') {
+    if ($c->user->roles eq 'admin' || $c->user->roles eq 'ccareadmin') {
+        $item_rs = $item_rs->search({
+        },{
+            join => 'subscriber',
+            '+select' => [qw/subscriber.contract_id/],
+            '+as' => [qw/customer_id/],
+        });
+    } elsif ($c->user->roles eq 'reseller' || $c->user->roles eq 'ccare') {
         $item_rs = $item_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{
             join => { subscriber => { contract => 'contact' } },
+            '+select' => [qw/subscriber.contract_id/],
+            '+as' => [qw/customer_id/],
         });
     } elsif ($c->user->roles eq 'subscriberadmin') {
         $item_rs = $item_rs->search({
             'subscriber.contract_id' => $c->user->account_id,
         },{
             join => 'subscriber',
+            '+select' => [qw/subscriber.contract_id/],
+            '+as' => [qw/customer_id/],
         });
     } elsif ($c->user->roles eq 'subscriber') {
         $item_rs = $item_rs->search({
             'subscriber_id' => $c->user->voip_subscriber->id,
+        },{
+            join => 'subscriber',
+            '+select' => [qw/subscriber.contract_id/],
+            '+as' => [qw/customer_id/],
         });
     }
 

@@ -33,6 +33,19 @@ sub order_by_cols {
 sub query_params {
     return [
         {
+            param => 'customer_id',
+            description => 'Filter for Phonebook entries belonging to a specific customer',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       'subscriber.contract_id' => $q,
+                    };
+                },
+                second => sub {},
+            },
+        },
+        {
             param => 'subscriber_id',
             description => 'Filter for Phonebook entries belonging to a specific subscriber',
             query_type => 'string_eq',
