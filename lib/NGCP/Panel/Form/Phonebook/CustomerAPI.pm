@@ -43,4 +43,13 @@ has_field 'number' => (
     },
 );
 
+has_field 'own' => (
+    type => 'Boolean',
+    required => 0,
+    default_value => 0,
+    label => 'Number allegiance',
+    element_attr => {                                                                                                                             rel => ['tooltip'],                                                                                                                       title => ['Defines if the Phonebook entry belongs to the customer'],
+    },
+);
+
 1;

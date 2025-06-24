@@ -60,7 +60,18 @@ has_field 'shared' => (
     label => 'Share phonebook entry',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Define if the Phonebook entry is visible to other subscribers within the same contract'],
+        title => ['Defines if the Phonebook entry is visible to other subscribers within the same contract'],
+    },
+);
+
+has_field 'own' => (
+    type => 'Boolean',
+    required => 0,
+    default_value => 0,
+    label => 'Number allegiance',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Defines if the Phonebook entry belongs to the subscriber'],
     },
 );
 
