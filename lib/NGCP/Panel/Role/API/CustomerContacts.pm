@@ -35,7 +35,7 @@ sub _item_rs {
 sub get_form {
     my ($self, $c) = @_;
     if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Admin", $c);
+        return NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::AdminAPI", $c);
     } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::Contact::Reseller", $c);
     }
@@ -112,6 +112,16 @@ sub update_contact {
     $resource->{timezone}{name} = delete $resource->{timezone};
     $form //= $self->get_form($c);
 
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+    );
+
+    if ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
+        $resource->{reseller_id} = $old_resource->{reseller_id};
+    }
+
     if ($old_resource->{reseller_id} != $resource->{reseller_id}) {
         my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
         unless ($reseller) {
@@ -120,17 +130,11 @@ sub update_contact {
         }
     }
 
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-    );
     $resource->{country} = $resource->{country}{id};
     $resource->{timezone} = $resource->{timezone}{name};
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $resource->{modify_timestamp} = $now;
-
 
     $contact->update($resource);
 
