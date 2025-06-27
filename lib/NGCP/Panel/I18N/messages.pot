@@ -2473,11 +2473,19 @@ msgid "Contact URI"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Contact entry reseller id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Contact id"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm
 msgid "Contact not found"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Contact reseller id"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm
@@ -3226,10 +3234,6 @@ msgid "Define an action to be executed if User-Provided Number doesn't match the
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Define if the Phonebook entry is visible to other subscribers within the same contract"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Define the way \"advice of charge\" message will be sent."
 msgstr ""
 
@@ -3251,6 +3255,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Defines if a subscriber can initiate calls from the CSC"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Defines if the Phonebook entry belongs to the customer"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Defines if the Phonebook entry belongs to the subscriber"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Defines if the Phonebook entry is visible to other subscribers within the same contract"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8331,6 +8347,10 @@ msgstr ""
 
 #: share/templates/lnp/list.tt share/templates/widgets/admin_topmenu_settings.tt
 msgid "Number Porting"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Number allegiance"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
