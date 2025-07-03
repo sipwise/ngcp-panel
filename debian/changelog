@@ -1,3 +1,11 @@
+ngcp-panel (13.4.2.0+0~mr13.4.2.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d442a26] MT#63062 fix /api/customercontacts for reseller roles
+  * [2a97352] MT#63062 /api/customercontacts fix PUT/PATCH reseller_id validation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 03 Jul 2025 12:16:10 +0200
+
 ngcp-panel (13.4.1.0+0~mr13.4.1.0) unstable; urgency=medium
 
   [ Marco Capetta ]
