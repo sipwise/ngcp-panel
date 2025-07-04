@@ -110,6 +110,8 @@ sub resource_from_item {
     $resource{format} = lc($item->file_format);
     $resource{sample_rate} = $item->sample_rate;
     $resource{channels} = $item->channels;
+    $resource{transcript_status} = $item->transcript_status;
+    $resource{transcript} = $item->transcript;
 
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T',

@@ -76,6 +76,29 @@ has_field 'end_time' => (
     },
 );
 
+has_field 'transcript_status' => (
+    type => 'Select',
+    required => 1,
+    options => [
+        { name => 'none', value => 'none' },
+        { name => 'pending', value => 'pending' },
+        { name => 'done', value => 'done' },
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The status of the speech-to-text transcription.'],
+    },
+);
+
+has_field 'transcript' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The speech-to-text transcription.'],
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
