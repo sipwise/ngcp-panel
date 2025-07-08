@@ -2207,17 +2207,20 @@ sub check_deadlock {
 
     return 0 unless $error;
 
-    #my $lock_retry = $error =~ /Lock wait timeout exceeded; try restarting transaction/;
+    my $lockwait_retry = $error =~ /Lock wait timeout exceeded; try restarting transaction/;
     my $deadlock_retry = $error =~ /Deadlock found when trying to get lock; try restarting transaction/;
 
-    return 0 unless $deadlock_retry;
+    return 0 unless $deadlock_retry or $lockwait_retry;
 
     my $attempt = $c->stash->{deadlock_retry_attempt} //= 1;
+    my $lockwait_err = "lock timeout detected, retry transaction attempt=$attempt/$max_attempts";
+    my $deadlock_err = "deadlock detected, retry transaction attempt=$attempt/$max_attempts";
+
     return 0 if $attempt > $max_attempts;
     NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_retry',
-        log  => "deadlock detected, retry transaction attempt=$attempt/$max_attempts",
+        log  => ($lockwait_retry and $lockwait_err or $deadlock_err),
     );
     $c->stash->{deadlock_retry_attempt} = $attempt+1;
     return 1;
