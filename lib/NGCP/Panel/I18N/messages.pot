@@ -13391,6 +13391,10 @@ msgid "The source set mode"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The speech-to-text transcription."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The start of the invoice period."
 msgstr ""
 
@@ -13432,6 +13436,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The status of the reseller."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The status of the speech-to-text transcription."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14138,6 +14146,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Sound.pm
 msgid "Transcoding audio file failed"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcript"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcript status"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm
