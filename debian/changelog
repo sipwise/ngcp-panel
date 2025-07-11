@@ -1,3 +1,10 @@
+ngcp-panel (13.4.1.3+0~mr13.4.1.3) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [8025bc4] MT#63199 /api/subscriberpreferences add lockwait and deadlock detection
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 11 Jul 2025 14:16:34 +0200
+
 ngcp-panel (13.4.1.2+0~mr13.4.1.2) unstable; urgency=medium
 
   [ Kirill Solomko ]
