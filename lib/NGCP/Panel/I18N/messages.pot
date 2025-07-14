@@ -3713,6 +3713,10 @@ msgid "Divert Outgoing Blocked Calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Do Not Disturb (DND) mode"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Do not fallback after a callee 404 response"
 msgstr ""
 
@@ -4086,6 +4090,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable DNS SRV on device when resolving server host"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable Do Not Disturb (DND) mode. If activated the subscriber will not receive any call. The call forwards will not be taken into account."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
