@@ -31,6 +31,16 @@ sub get_journal_methods{
 sub update_item_model {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
+    my $old_parent_id = $old_resource->{parent_id};
+    my $new_parent_id = $resource->{parent_id};
+    if ((!defined $old_parent_id && defined $new_parent_id)
+        || (defined $old_parent_id && !defined $new_parent_id)
+        || (defined $old_parent_id && defined $new_parent_id && $old_parent_id != $new_parent_id)
+    ) {
+        $c->log->debug("Parent changed: clearing cache for set " . $item->id);
+        NGCP::Panel::Utils::Sems::clear_audio_cache($c, $item->id);
+    }
+
     my $copy_from_default_params =  { map {$_ => delete $resource->{$_}} (qw/copy_from_default loopplay replace_existing language/) };
     $item->update($resource);
     if ($copy_from_default_params->{copy_from_default}) {
