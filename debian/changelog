@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.30+0~mr12.5.1.30) unstable; urgency=medium
+
+  [ Fabricio Santolin da Silva ]
+  * [fc3b7d1] MT#63070 Add request for sems to clear its audio cache
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Jul 2025 16:07:57 +0200
+
 ngcp-panel (12.5.1.29+0~mr12.5.1.29) unstable; urgency=medium
 
   [ Kirill Solomko ]
