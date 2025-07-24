@@ -88,4 +88,15 @@ sub order_by_cols {
     return $cols;
 }
 
+sub check_create_csv :Private {
+    my ($self, $c) = @_;
+    return "conversations.csv";
+}
+
+sub create_csv :Private {
+    my ($self, $c) = @_;
+
+    $self->download_csv($c);
+}
+
 1;

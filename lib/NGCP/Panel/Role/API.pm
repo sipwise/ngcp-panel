@@ -1978,6 +1978,7 @@ sub return_csv{
         $self->create_csv($c);
         $c->response->body(q());
     }catch($e){
+        chomp($e);
         $self->error($c, HTTP_BAD_REQUEST, $e);
     }
 }

@@ -1000,5 +1000,31 @@ sub hal_links {
     ];
 }
 
+sub download_csv {
+    my ($self, $c) = @_;
+
+    my $params = {};
+    my $form = $self->get_form($c);
+    my $rs = $self->get_list($c);
+    my $type = $c->request->params->{type};
+
+    my @cols = map { $_->name() } $form->sorted_fields();
+
+    $c->res->write_fh->write_encoded(join (",", @cols) );
+    $c->res->write_fh->write("\n");
+
+    foreach my $item ($rs->all) {
+        my $resource = $self->resource_from_item($c, $item, $form, $params);
+        $resource = $self->process_hal_resource($c, $item, $resource, $form, $params);
+
+        my @vals = map { $resource->{$_} // '' } @cols;
+        $c->res->write_fh->write_encoded(join ",", @vals);
+        $c->res->write_fh->write("\n");
+    }
+
+    $c->res->write_fh->close;
+
+    return 1;
+}
 
 1;
