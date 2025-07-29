@@ -1,3 +1,10 @@
+ngcp-panel (13.4.1.5+0~mr13.4.1.5) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [b0aff4e] MT#63324 fix Auth::is_user_banned error
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 Jul 2025 11:53:54 +0200
+
 ngcp-panel (13.4.1.4+0~mr13.4.1.4) unstable; urgency=medium
 
   [ Fabricio Santolin da Silva ]
