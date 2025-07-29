@@ -650,7 +650,7 @@ sub user_is_banned {
         $key = login_ban_subscriber_key($p_user, $p_domain, $realm, $ip, $user_id, $customer_id);
     }
 
-    return $redis->exists($key) ? 1 : 0;
+    return $key ? ($redis->exists($key) ? 1 : 0) : 0;
 }
 
 sub log_failed_login_attempt {
