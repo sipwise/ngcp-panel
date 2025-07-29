@@ -1,3 +1,16 @@
+ngcp-panel (10.5.10.0+0~mr10.5.10.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [378a800] MT#58444 Set correct permissions/ownership for ssl files
+
+  [ Rene Krenn ]
+  * [a31d34f] MT#58936 fix customerzonecosts resourcename
+
+  [ Kirill Solomko ]
+  * [27bdde4] MT#62178 fix external_id, profile auto removal for subscriber roles
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 Jul 2025 11:32:24 +0200
+
 ngcp-panel (10.5.9.0+0~mr10.5.9.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
