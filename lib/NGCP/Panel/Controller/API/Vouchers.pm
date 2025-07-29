@@ -42,7 +42,13 @@ sub query_params {
                 },
                 second => sub {},
             },
-        },    ];
+        },
+        {
+            param => 'code',
+            description => 'Filter for a voucher with the base64 encoded code',
+            query_type => 'string_eq',
+        },
+    ],
 }
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Vouchers/;
