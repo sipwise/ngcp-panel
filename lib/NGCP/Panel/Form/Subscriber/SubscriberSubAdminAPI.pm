@@ -98,8 +98,6 @@ has_field 'password' => (
     },
 );
 
-
-
 has_field 'administrative' => (
     type => 'Boolean',
     label => 'Administrative',
@@ -140,6 +138,17 @@ has_field 'customer_id' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The contract used for this subscriber.']
+    },
+);
+
+has_field 'profile' => (
+    type => '+NGCP::Panel::Field::SubscriberProfile',
+    label => 'Subscriber Profile',
+    validate_when_empty => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The profile defining the actual feature set for this subscriber.'],
     },
 );
 
