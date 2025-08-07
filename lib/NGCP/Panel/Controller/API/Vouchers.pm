@@ -8,8 +8,10 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use MIME::Base64;
 
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Voucher;
 
 sub allowed_methods{
     return [qw/GET POST OPTIONS HEAD/];
@@ -46,7 +48,14 @@ sub query_params {
         {
             param => 'code',
             description => 'Filter for a voucher with the base64 encoded code',
-            query_type => 'string_eq',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                my $code = decode_base64($q);
+                my $enc_code = NGCP::Panel::Utils::Voucher::encrypt_code($c, $code);
+                return $rs->search_rs({
+                    code => $enc_code,
+                });
+            },
         },
     ],
 }
