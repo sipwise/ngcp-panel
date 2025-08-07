@@ -1,3 +1,15 @@
+ngcp-panel (12.5.1.31+0~mr12.5.1.31) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [8ca61f7] MT#63182 add deadlock detection for DELETE /api/subscribers
+  * [923351a] MT#63320 fix /api/vouchers search by code
+  * [b8e17ec] MT#63320 /api/vouchers rename to search by base64_code
+
+  [ Rene Krenn ]
+  * [49aafed] MT#63358 readonly prodile_id for GET /api/subscribers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Aug 2025 17:27:54 +0200
+
 ngcp-panel (12.5.1.30+0~mr12.5.1.30) unstable; urgency=medium
 
   [ Fabricio Santolin da Silva ]
