@@ -203,78 +203,90 @@ sub DELETE :Allow {
 
     return unless $self->check_write_access($c, $id);
 
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $subscriber = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, subscriber => $subscriber);
+    TX_START:
+    $c->clear_errors;
+    try {
+        my $guard = $c->model('DB')->txn_scope_guard;
+        {
+            my $subscriber = $self->item_by_id($c, $id);
+            last unless $self->resource_exists($c, subscriber => $subscriber);
 
-        if ($subscriber->contract->product->class eq "pbxaccount" && $subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
-            my $other_subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
-                                        contract_id => $subscriber->contract->id,
-                                        status => { '!=' => 'terminated' },
-                                        'provisioning_voip_subscriber.is_pbx_pilot' => 0,
-                                    }, {
-                                        join => 'provisioning_voip_subscriber',
-                                    })->first();
-            if ($other_subscriber) {
-                $self->error($c, HTTP_FORBIDDEN, "Cannot terminate pilot subscriber when other subscribers exists");
-                return;
+            if ($subscriber->contract->product->class eq "pbxaccount" && $subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
+                my $other_subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
+                                            contract_id => $subscriber->contract->id,
+                                            status => { '!=' => 'terminated' },
+                                            'provisioning_voip_subscriber.is_pbx_pilot' => 0,
+                                        }, {
+                                            join => 'provisioning_voip_subscriber',
+                                        })->first();
+                if ($other_subscriber) {
+                    $self->error($c, HTTP_FORBIDDEN, "Cannot terminate pilot subscriber when other subscribers exists");
+                    return;
+                }
             }
+
+            if($c->user->roles eq "subscriberadmin") {
+
+                my $prov_sub = $subscriber->provisioning_voip_subscriber;
+                if($prov_sub->is_pbx_pilot) {
+                    $self->error($c, HTTP_FORBIDDEN, "Cannot terminate pilot subscriber");
+                    return;
+                }
+                if($prov_sub->id == $c->user->id) {
+                    $self->error($c, HTTP_FORBIDDEN, "Cannot terminate own subscriber");
+                    return;
+                }
+                if($prov_sub->account_id != $c->user->account_id) {
+                    $self->error($c, HTTP_FORBIDDEN, "Invalid subscriber id");
+                    last;
+                }
+            }
+
+            if($c->user->roles eq "admin") {
+            } elsif($c->user->roles eq "reseller") {
+                my $contact = $subscriber->contract->contact;
+                unless($contact && $contact->reseller_id == $c->user->reseller_id) {
+                    $self->error($c, HTTP_FORBIDDEN, "subscriber does not belong to reseller");
+                    last;
+                }
+            }
+
+            last unless $self->add_delete_journal_item_hal($c,sub {
+                my $self = shift;
+                my ($c) = @_;
+                my ($_form) = $self->get_form($c);
+                #my $_subscriber = $self->item_by_id($c, $id);
+                my $_resource = $self->resource_from_item($c, $subscriber, $_form);
+                return $self->hal_from_item($c,$subscriber,$_resource,$_form); });
+
+            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+
+            $guard->commit;
+
+            try {
+                my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
+                if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
+                    die "XMLRPC failed";
+                }
+            } catch($e) {
+                NGCP::Panel::Utils::Message::error(
+                    c     => $c,
+                    error => "failed to reload kamailio: $e. Subscriber was terminated.",
+                    desc  => $c->loc('Failed to reload kamailio. Subscriber was terminated.'),
+                );
+            }
+
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->body(q());
         }
-
-        if($c->user->roles eq "subscriberadmin") {
-
-            my $prov_sub = $subscriber->provisioning_voip_subscriber;
-            if($prov_sub->is_pbx_pilot) {
-                $self->error($c, HTTP_FORBIDDEN, "Cannot terminate pilot subscriber");
-                return;
-            }
-            if($prov_sub->id == $c->user->id) {
-                $self->error($c, HTTP_FORBIDDEN, "Cannot terminate own subscriber");
-                return;
-            }
-            if($prov_sub->account_id != $c->user->account_id) {
-                $self->error($c, HTTP_FORBIDDEN, "Invalid subscriber id");
-                last;
-            }
+    } catch($e) {
+        if ($self->check_deadlock($c, $e)) {
+            goto TX_START;
         }
-
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            my $contact = $subscriber->contract->contact;
-            unless($contact && $contact->reseller_id == $c->user->reseller_id) {
-                $self->error($c, HTTP_FORBIDDEN, "subscriber does not belong to reseller");
-                last;
-            }
+        unless ($c->has_errors) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
+            last;
         }
-
-        last unless $self->add_delete_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            my ($_form) = $self->get_form($c);
-            #my $_subscriber = $self->item_by_id($c, $id);
-            my $_resource = $self->resource_from_item($c, $subscriber, $_form);
-            return $self->hal_from_item($c,$subscriber,$_resource,$_form); });
-
-        NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-
-        $guard->commit;
-
-        try {
-            my (undef, $xmlrpc_res) = NGCP::Panel::Utils::Kamailio::trusted_reload($c);
-            if (!defined $xmlrpc_res || $xmlrpc_res < 1) {
-                die "XMLRPC failed";
-            }
-        } catch($e) {
-            NGCP::Panel::Utils::Message::error(
-                c     => $c,
-                error => "failed to reload kamailio: $e. Subscriber was terminated.",
-                desc  => $c->loc('Failed to reload kamailio. Subscriber was terminated.'),
-            );
-        }
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
     }
     return;
 }
