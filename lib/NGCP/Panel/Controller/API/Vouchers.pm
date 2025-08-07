@@ -46,10 +46,11 @@ sub query_params {
             },
         },
         {
-            param => 'code',
-            description => 'Filter for a voucher with the base64 encoded code',
+            param => 'base64_code',
+            description => 'Filter for a voucher with the code, the value is expected as an encoded base64 string',
             new_rs => sub {
-                my ($c,$q,$rs) = @_;
+                my ($c, $q, $rs) = @_;
+                $q .= '=' unless $q =~ /=$/;
                 my $code = decode_base64($q);
                 my $enc_code = NGCP::Panel::Utils::Voucher::encrypt_code($c, $code);
                 return $rs->search_rs({
