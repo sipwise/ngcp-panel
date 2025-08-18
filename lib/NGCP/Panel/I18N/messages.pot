@@ -163,6 +163,10 @@ msgid "'CSC Registered Devices' - An internal flag to be able to map Registered 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'Connected line identification restriction' - if set to true, the CLI is not displayed to the remote party on incoming calls."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "(Base) IP Address"
 msgstr ""
 
@@ -6074,6 +6078,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Hide own number for calls within own PBX"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Hide own number for inbound calls"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
