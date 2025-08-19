@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
 
-    $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
+    $(document).on( "click", '#[% table_id %] tr td input[type="checkbox"]', function() {
 
         if($(this).attr("checked") == "checked") {
             $(this).parents("tr").siblings().find("td input[type='checkbox']").attr("checked", false);
