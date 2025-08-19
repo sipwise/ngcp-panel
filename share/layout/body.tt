@@ -185,7 +185,7 @@ var mainWrapperInit = function () {
                     function() { $(this).find('.sw_actions').css('visibility','hidden'); }
     );
 
-    $('a[data-confirm]').live("click", function(ev) {
+    $(document).on("click", 'a[data-confirm]', function(ev) {
         var href = $(this).attr('href');
         //var onclick = $(this).attr('onclick');
         if (!$('#dataConfirmModal').length) {
@@ -210,7 +210,7 @@ var mainWrapperInit = function () {
         if($('#mod_edit').length) {
             if(!$(this).attr('cancel-hide')){
                 $('#mod_edit').modal('hide');
-                $('#dataConfirmCancel').live("click", function(ev) {
+                $(document).on("click", '#dataConfirmCancel', function(ev) {
                     $('#mod_edit').modal('show');
                 });
             }
