@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title>Sipwise NGCP HTTP API documentation (version 1)</title>
-        <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"></link>
+        <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.13.2.min.css"></link>
         <link rel="stylesheet" href="/css/font-opensans.css"></link>
         <link rel="stylesheet" href="/css/font-awesome.css"></link>
         <link rel="stylesheet" href="/css/bootstrap/bootstrap.css"></link>
@@ -44,8 +44,9 @@
             .pagebreak { page-break-after: always; }
             .chapter { page-break-inside: avoid; }
         </style>
-	<script type="text/javascript" src="/js/libs/jquery-1.7.2.min.js"></script>
-	<script type="text/javascript" src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="/js/libs/jquery-3.6.4.min.js"></script>
+    <script src="/js/libs/jquery-compat.js"></script>
+    <script type="text/javascript" src="/js/libs/jquery-ui-1.13.2.min.js"></script>
     </head>
     <body>
 [%

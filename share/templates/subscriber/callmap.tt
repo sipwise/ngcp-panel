@@ -1,13 +1,14 @@
 [% site_config.title = c.loc('Call Flow for Call-ID [_1]', callid) -%]
 <link rel="stylesheet" href="/css/callflow.css">
-<link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css">
+<link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.13.2.min.css">
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
 <script src="/js/libs/aliaseditor.js"></script>
 <script src="/js/libs/diagram.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-<script src="/js/libs/jquery-1.7.2.min.js"></script>
+<script src="/js/libs/jquery-3.6.4.min.js"></script>
+<script src="/js/libs/jquery-compat.js"></script>
 
 <div id="controls">
     <a class="btn btn-primary btn-small" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>

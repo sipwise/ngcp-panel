@@ -15,7 +15,7 @@ $(document).ready(function() {
     function update_hidden_value () {
         $("#[% hidden_id %]").val( JSON.stringify(checked_fields[%table_id%]) );
     }
-    $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
+    $(document).on( "click", '#[% table_id %] tr td input[type="checkbox"]', function() {
         var my_id = $(this).parents("tr").find("td:first").text();
         var indexOfId = checked_fields[%table_id%].indexOf(my_id)
         if($(this).attr("checked") == "checked") {
