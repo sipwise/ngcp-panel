@@ -15,7 +15,7 @@ __PACKAGE__->set_config({
 });
 
 sub allowed_methods {
-    return [qw/GET OPTIONS HEAD/];
+    return [qw/GET OPTIONS HEAD DELETE/];
 }
 
 sub item_name {
@@ -24,6 +24,21 @@ sub item_name {
 
 sub resource_name {
     return 'otpsecret';
+}
+
+sub query_params {
+    return [
+        {
+            param => 'admin_id',
+            description => 'OTP secret of given admin',
+            query => undef, #dummy param
+        },
+        {
+            param => 'subscriber_id',
+            description => 'OTP secret of given subscriber',
+            query => undef, #dummy param
+        },
+    ];
 }
 
 sub item_by_id_valid {
@@ -36,36 +51,101 @@ sub item_by_id_valid {
 
 }
 
+sub _get_admin {
+    my ($c,$id,$show) = @_;
+    my $item_rs = $c->model('DB')->resultset('admins')->search({
+        -and => [
+            id => $id,
+            enable_2fa => 1,
+            ($show ? (show_otp_registration_info => 1) : ()),
+            \[ 'length(`me`.`otp_secret`) > ?', '0' ],
+        ]
+    },{
+    });
+    return $item_rs;
+}
+
+sub _get_subscriber {
+    my ($c,$id,$show) = @_;
+    my $item_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+        id => $c,
+    },{
+    });
+
+    $show = (NGCP::Panel::Utils::Auth::get_subscriber_enable_2fa($c,$item_rs->first)
+        and ($show or NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$item_rs->first)) ? 1 : 0);
+
+    $item_rs = $item_rs->search({
+        -and => [
+            \[ '1 = ?', $show ],
+        ],
+    },{
+    });
+    return $item_rs;
+}
+
 sub _item_rs {
-    my ($self, $c) = @_;
+    my ($self, $c, $delete) = @_;
 
     my $item_rs;
 
     if ($c->user->auth_realm =~ /admin/) {
-        $item_rs = $c->model('DB')->resultset('admins')->search({
-            -and => [
-                id => $c->user->id,
-                enable_2fa => 1,
-                show_otp_registration_info => 1,
-                \[ 'length(`me`.`otp_secret`) > ?', '0' ],
-            ]
-        },{
-        });
-    } elsif ($c->user->auth_realm =~ /subscriber/) {
-        $item_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
-            id => $c->user->id,
-        },{
-        });
+        if ($c->request->params->{admin_id}) {
+            if ($c->user->is_master and grep { $c->user->roles eq $_; } qw(admin reseller)) {
+                $item_rs = _get_admin($c,$c->request->params->{admin_id},not $delete);
+                $item_rs = $item_rs->search_rs({
+                    reseller_id => $c->user->reseller_id,
+                },{
 
-        my $show = (NGCP::Panel::Utils::Auth::get_subscriber_enable_2fa($c,$item_rs->first)
-            and NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$item_rs->first) ? 1 : 0);
-        
-        $item_rs = $item_rs->search({
-            -and => [
-                \[ '1 = ?', $show ],
-            ],
-        },{
-        });
+                }) if grep { $c->user->roles eq $_; } qw(reseller);
+            } else {
+                $self->error($c, HTTP_FORBIDDEN, "insufficient privileges for OTP of this admin");
+            }
+        } elsif ($c->request->params->{subscriber_id}) {
+            if (grep { $c->user->roles eq $_; } qw(admin reseller ccareadmin ccare)) {
+                $item_rs = _get_subscriber($c,$c->request->params->{subscriber_id},not $delete);
+                $item_rs = $item_rs->search({
+                    'contact.reseller_id' => $c->user->reseller_id,
+                }, {
+                    join => { 'contract' => 'contact' },
+                }) if grep { $c->user->roles eq $_; } qw(reseller ccare);
+            } else {
+                $self->error($c, HTTP_FORBIDDEN, "insufficient privileges for OTP of this subscriber");
+            }
+        } else {
+            if ($delete) {
+                if (grep { $c->user->roles eq $_; } qw(admin reseller)) {
+                    $item_rs = _get_admin($c,$c->user->id,0);
+                } else {
+                    $self->error($c, HTTP_FORBIDDEN, "insufficient privileges to clear own OTP");
+                }
+            } else {
+                $item_rs = _get_admin($c,$c->user->id,1);
+            }
+        }
+    } elsif ($c->user->auth_realm =~ /subscriber/) {
+        if ($c->request->params->{admin_id}) {
+            $self->error($c, HTTP_FORBIDDEN, "insufficient privileges for OTP of this admin");
+        } elsif ($c->request->params->{subscriber_id}) {
+            if (grep { $c->user->roles eq $_; } qw(subscriberadmin)) {
+                $item_rs = _get_subscriber($c,$c->request->params->{subscriber_id},not $delete);
+                $item_rs = $item_rs->search({
+                    'contract_id' => $c->user->contract->id,
+                }, undef);
+            } else {
+                $self->error($c, HTTP_FORBIDDEN, "insufficient privileges for OTP of this subscriber");
+            }
+        } else {
+            if ($delete) {
+                #if (grep { $c->user->roles eq $_; } qw(subscriberadmin)) {
+                #    $item_rs = _get_subscriber($c,$c->user->id,0);
+                #} else {
+                    $self->error($c, HTTP_FORBIDDEN, "insufficient privileges to clear own OTP");
+                #}
+            } else {
+                $item_rs = _get_subscriber($c,$c->user->id,1);
+            }
+        }
     }
 
     return $item_rs;
@@ -102,6 +182,29 @@ sub get_item_binary_data {
 
     return $data, 'image/png', "qrcode_$t.png"; 
 
+}
+
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $user = $self->_item_rs($c, $id, 1)->first;
+        last unless $self->resource_exists($c, user => $user);
+
+        try {
+            NGCP::Panel::Utils::Auth::clear_otp_secret($c,$user);
+        } catch($e) {
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                         "Failed to clear OTP", $e);
+            last;
+        }
+
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
+    }
+    return;
 }
 
 1;
