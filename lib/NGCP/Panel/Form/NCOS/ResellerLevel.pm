@@ -34,6 +34,15 @@ has_field 'timeset' => (
     type => '+NGCP::Panel::Field::TimeSet',
 );
 
+has_field 'time_set_invert' => (
+    type => 'Boolean',
+    label => 'Invert the time set matching',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Invert the time set matching']
+    },
+);
+
 has_field 'expose_to_customer' => (
     type => 'Boolean',
     label => 'Expose to Customer',

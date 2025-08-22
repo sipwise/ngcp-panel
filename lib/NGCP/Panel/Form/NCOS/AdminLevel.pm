@@ -11,7 +11,7 @@ has_field 'reseller' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller level mode description timeset expose_to_customer/],
+    render_list => [qw/reseller level mode description timeset time_set_invert expose_to_customer/],
 );
 
 has_block 'actions' => (

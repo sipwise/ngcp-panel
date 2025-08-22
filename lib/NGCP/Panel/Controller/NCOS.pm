@@ -31,6 +31,7 @@ sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
         { name => 'level', search => 1, title => $c->loc('Level Name') },
         { name => 'mode', search => 1, title => $c->loc('Mode') },
         { name => 'timeset.name', search => 1, title => $c->loc('Timeset') },
+        { name => 'time_set_invert', search => 1, title => $c->loc('Timeset Invert') },
         { name => 'description', search => 1, title => $c->loc('Description') },
         { name => 'expose_to_customer', search => 1, title => $c->loc('Expose to Customer') },
     ]);

@@ -78,6 +78,15 @@ has_field 'expose_to_customer' => (
     },
 );
 
+has_field 'time_set_invert' => (
+    type => 'Boolean',
+    label => 'Invert the time set matching',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Invert the time set matching']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
