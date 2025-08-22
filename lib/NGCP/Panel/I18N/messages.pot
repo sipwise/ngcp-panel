@@ -7315,6 +7315,10 @@ msgid "Line/Key Type"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Linelabel"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Linerange"
 msgstr ""
 
@@ -12840,6 +12844,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The invoice template type (only svg for now)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The key label"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
