@@ -6967,6 +6967,10 @@ msgstr ""
 msgid "Invert selection"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Invert the time set matching"
+msgstr ""
+
 #: share/templates/customer/details.tt share/templates/invoice/invoice_list.tt
 msgid "Invoice"
 msgstr ""
@@ -13938,6 +13942,10 @@ msgstr ""
 #. (escaped_tset_name)
 #: share/templates/subscriber/preferences.tt
 msgid "Timeset \"%1\" Details"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/NCOS.pm
+msgid "Timeset Invert"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/TimeSet.pm
