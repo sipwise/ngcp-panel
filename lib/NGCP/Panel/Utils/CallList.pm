@@ -40,6 +40,10 @@ use constant ENABLE_SUPPRESSIONS => 1; #setting to 0 totally disables call list 
 #     * status
 #     * rating_status
 #     * type
+#     * own_phonebook_name
+#     * own_phonebook_id
+#     * other_phonebook_name
+#     * other_phonebook_id
 sub process_cdr_item {
 
     my ($c, $item, $owner, $params) = @_;
@@ -285,6 +289,79 @@ sub process_cdr_item {
                 number => $resource->{other_cli}, direction => "caller_out")) {
             $resource->{other_cli} = $normalized_cli;
         }
+    }
+
+    $resource->{own_phonebook_id} = undef;
+    $resource->{own_phonebook_name} = undef;
+
+    my ($own_phonebook_entries, $other_phonebook_entries);
+    if ($resource->{direction} eq "out") {
+        $own_phonebook_entries =
+            $c->model('DB')->resultset('v_subscriber_phonebook')->search({
+                number => {
+                    '-in' => [
+                        $resource->{own_cli},
+                        $item->source_user,
+                        $item->source_cli,
+                    ],
+                },
+                subscriber_id => $billing_src_sub->id,
+            },{
+                rows => 1,
+            });
+
+        $other_phonebook_entries =
+            $c->model('DB')->resultset('v_subscriber_phonebook')->search({
+                number => {
+                    '-in' => [
+                        $resource->{other_cli},
+                        $item->destination_user,
+                        $item->destination_user_in,
+                        $item->destination_user_dialed,
+                    ],
+                },
+                subscriber_id => $billing_src_sub->id,
+            },{
+                rows => 1
+            });
+    } else {
+        $own_phonebook_entries =
+            $c->model('DB')->resultset('v_subscriber_phonebook')->search({
+                number => {
+                    '-in' => [
+                        $resource->{own_cli},
+                        $item->destination_user,
+                        $item->destination_user_in,
+                        $item->destination_user_dialed,
+                    ],
+                },
+                subscriber_id => $billing_dst_sub->id,
+            },{
+                rows => 1
+            });
+
+        $other_phonebook_entries =
+            $c->model('DB')->resultset('v_subscriber_phonebook')->search({
+                number => {
+                    '-in' => [
+                        $resource->{other_cli},
+                        $item->source_user,
+                        $item->source_cli,
+                    ],
+                },
+                subscriber_id => $billing_dst_sub->id,
+            },{
+                rows => 1
+            });
+    }
+
+    if ($own_phonebook_entries->first) {
+        $resource->{own_phonebook_id} = $own_phonebook_entries->first->id;
+        $resource->{own_phonebook_name} = $own_phonebook_entries->first->name;
+    }
+    if ($other_phonebook_entries->first) {
+        $resource->{other_phonebook_id} = $other_phonebook_entries->first->id;
+        $resource->{other_phonebook_name} = $other_phonebook_entries->first->name;
     }
 
     my @own_details = ();
