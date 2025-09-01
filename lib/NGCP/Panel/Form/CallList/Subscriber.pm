@@ -67,43 +67,6 @@ has_field 'status' => (
         title => ['The status of the call, one of ok, busy, noanswer, cancel, offline, timeout, other.']
     },
 );
-
-has_field 'own_phonebook_name' => (
-    type => 'Text',
-    required => 0,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Phonebook name associated to the own number'],
-    },
-);
-
-has_field 'own_phonebook_id' => (
-    type => 'PosInteger',
-    required => 0,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Phonebook entry id associated to the own number'],
-    },
-);
-
-has_field 'other_phonebook_name' => (
-    type => 'Text',
-    required => 0,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Phonebook name associated to the other number'],
-    },
-);
-
-has_field 'other_phonebook_id' => (
-    type => 'PosInteger',
-    required => 0,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Phonebook entry id associated to the other number'],
-    },
-);
-
 has_field 'rating_status' => (
     type => 'Select',
     required => 1,
