@@ -2010,6 +2010,18 @@ msgid "Callee pattern"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee phonebook entry id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee phonebook id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Callee phonebook name"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Callee prefix"
 msgstr ""
 
@@ -2075,6 +2087,18 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Caller peering group"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller phonebook entry id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller phonebook id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Caller phonebook name"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8627,14 +8651,6 @@ msgid "Other cli"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Other phonebook id"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Other phonebook name"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Otp"
 msgstr ""
 
@@ -8720,14 +8736,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Own cli"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Own phonebook id"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Own phonebook name"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -9266,14 +9274,6 @@ msgid "Phonebook entry id"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Phonebook entry id associated to the other number"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Phonebook entry id associated to the own number"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Phonebook entry name"
 msgstr ""
 
@@ -9295,14 +9295,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm lib/NGCP/Panel/Controller/Phonebook.pm lib/NGCP/Panel/Controller/Reseller.pm lib/NGCP/Panel/Controller/Subscriber.pm
 msgid "Phonebook entry successfully updated"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Phonebook name associated to the other number"
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Phonebook name associated to the own number"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
