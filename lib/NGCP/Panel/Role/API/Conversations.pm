@@ -60,6 +60,9 @@ $call_fields{destination_account_id} = 'me.destination_account_id';
 $call_fields{destination_user_in} = 'me.destination_user_in';
 $call_fields{destination_domain} = 'me.destination_domain';
 
+$call_fields{destination_user} = 'me.destination_user';
+$call_fields{destination_user_dialed} = 'me.destination_user_dialed';
+
 $call_fields{call_type} = 'me.call_type';
 $call_fields{call_status} = 'me.call_status';
 $call_fields{init_time} = 'me.init_time';
@@ -830,6 +833,8 @@ sub process_hal_resource {
     #$c->log->debug(Dumper($resource));
     #$c->log->debug(Dumper($item));
     my ($item_mock_obj, $item_accessors_hash) = _get_item_object($c, $resource);
+
+
     if('call' eq $resource->{type}){
         my $owner = $self->get_owner_cached($c);
         return unless $owner;
@@ -861,6 +866,19 @@ sub process_hal_resource {
         } else {
             $resource->{currency} = '';
         }
+
+        my $sub = $resource->{direction} eq 'out'
+                    ? $item_mock_obj->source_subscriber()
+                    : $item_mock_obj->destination_subscriber();
+        my $sub_id = $sub ? $sub->id : undef;
+
+        for my $type (qw/caller callee/) {
+            my $pb = $self->_get_call_phonebook(
+                $c, $item_mock_obj, $sub_id, $type, [$resource->{$type}]
+            );
+            $resource->{$type.'_phonebook_id'} = $pb ? $pb->[0] : undef;
+            $resource->{$type.'_phonebook_name'} = $pb ? $pb->[1] : undef;
+        }
     }elsif('fax' eq $resource->{type}){
         my $fax_subscriber_provisioning = $schema->resultset('provisioning_voip_subscribers')->search_rs({
             'id' => $item_mock_obj->subscriber_id,
@@ -878,6 +896,18 @@ sub process_hal_resource {
         }
         $resource->{subscriber_id} = $fax_subscriber_billing->id;
         $resource->{call_id} = $item_mock_obj->call_id;
+
+        for my $type (qw/caller callee/) {
+            my $orig_number = $type eq 'caller'
+                                ? $item_mock_obj->caller
+                                : $item_mock_obj->callee;
+            my $pb = $self->_get_fax_voicemail_phonebook(
+                $c, $item_mock_obj, $resource->{subscriber_id},
+                [$orig_number, $resource->{$type}]
+            );
+            $resource->{$type.'_phonebook_id'} = $pb ? $pb->[0] : undef;
+            $resource->{$type.'_phonebook_name'} = $pb ? $pb->[1] : undef;
+        }
     }elsif('voicemail' eq $resource->{type}){
         $resource = $item_accessors_hash;
         $resource->{caller} = $item_mock_obj->callerid;
@@ -891,6 +921,12 @@ sub process_hal_resource {
         $resource->{direction} = 'in';
         $resource->{filename} = $filename;
         $resource->{call_id} = $item_mock_obj->call_id;
+
+        my $pb = $self->_get_fax_voicemail_phonebook(
+            $c, $item_mock_obj, $resource->{voicemail_subscriber_id}, [$resource->{caller}]
+        );
+        $resource->{'caller_phonebook_id'} = $pb ? $pb->[0] : undef;
+        $resource->{'caller_phonebook_name'} = $pb ? $pb->[1] : undef;
     }elsif('sms' eq $resource->{type}){
         $resource = $item_accessors_hash;
         #$resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;
@@ -973,6 +1009,69 @@ sub _get_fields_by_type{
         $proto = $xmpp_proto;
     }
     return $fields,$fields_tied,$proto;
+}
+
+sub _get_call_phonebook {
+    my ($self, $c, $item, $sub_id, $type, $extra_values) = @_;
+
+    return unless $sub_id;
+
+    $extra_values //= [];
+
+    if ($type eq 'caller') {
+        my $rs = $c->model('DB')->resultset('v_subscriber_phonebook')->search({
+            number => {
+                '-in' => [
+                    @{$extra_values},
+                    $item->source_user,
+                    $item->source_cli,
+                ],
+            },
+            subscriber_id => $sub_id,
+        },{
+            rows => 1,
+        });
+
+        return [$rs->first->id, $rs->first->name] if $rs->first;
+    } elsif ($type eq 'callee') {
+        my $rs= $c->model('DB')->resultset('v_subscriber_phonebook')->search({
+            number => {
+                '-in' => [
+                    @{$extra_values},
+                    $item->destination_user,
+                    $item->destination_user_in,
+                    $item->destination_user_dialed,
+                ],
+            },
+            subscriber_id => $sub_id,
+        },{
+            rows => 1,
+        });
+
+        return [$rs->first->id, $rs->first->name] if $rs->first;
+    }
+    return;
+}
+
+sub _get_fax_voicemail_phonebook {
+    my ($self, $c, $item, $sub_id, $extra_values) = @_;
+
+    return unless $sub_id;
+
+    $extra_values //= [];
+
+    my $rs = $c->model('DB')->resultset('v_subscriber_phonebook')->search({
+        number => {
+            '-in' => [
+                @{$extra_values},
+            ],
+        },
+        subscriber_id => $sub_id,
+    },{
+        rows => 1,
+    });
+
+    return [$rs->first->id, $rs->first->name] if $rs->first;
 }
 
 sub hal_links {

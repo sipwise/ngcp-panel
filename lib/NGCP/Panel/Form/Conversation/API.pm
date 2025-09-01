@@ -123,4 +123,40 @@ has_field 'currency' => (
     required => 0,
 );
 
+has_field 'caller_phonebook_id' => (
+    type => 'PosInteger',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Caller phonebook entry id'],
+    },
+);
+
+has_field 'caller_phonebook_name' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Callee phonebook name'],
+    },
+);
+
+has_field 'callee_phonebook_id' => (
+    type => 'PosInteger',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Callee phonebook entry id'],
+    },
+);
+
+has_field 'callee_phonebook_name' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Callee phonebook name'],
+    },
+);
+
 1;
