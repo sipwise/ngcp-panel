@@ -1,3 +1,50 @@
+ngcp-panel (14.0.0.0+0~mr14.0.0.0) unstable; urgency=medium
+
+  [ Guillem Jover ]
+  * [b952dda] MT#62763 Set vim file type to bash for shell scripts not being detected
+
+  [ Kirill Solomko ]
+  * [f7a3b1e] MT#63062 fix /api/customercontacts for reseller roles
+  * [aeea350] MT#60845 /api/calllists add filter by duration
+  * [a38cd24] MT#63066 /api/subscriberphonebook add filter by customer_id
+  * [f44b43e] MT#63047 API add 'own' field to subscriber and customer phonebook
+  * [b8cd29c] MT#63062 /api/customercontacts fix PUT/PATCH reseller_id validation
+  * [3bb3d9e] MT#63182 /api/subscribers add lockwait and deadlock detection
+  * [9ee7177] MT#63199 /api/subscriberpreferences add lockwait and deadlock detection
+  * [4a38eac] MT#61804 /api/conversations add csv download support
+  * [4c28a0d] MT#63320 /api/vouchers add search by code
+  * [6d25bfa] MT#63324 fix Auth::is_user_banned error
+  * [927be2a] MT#63320 fix /api/vouchers search by code
+  * [aff1517] MT#63182 add deadlock detection for DELETE /api/subscribers
+  * [b74fbab] MT#63320 /api/vouchers rename to search by base64_code
+  * [c5e6d15] MT#63090 /api/calllists add phonebook entries support
+  * [88a11e0] Revert "MT#63090 /api/calllists add phonebook entries support"
+  * [67091cf] MT#63090 /api/conversations add phonebook entries support
+
+  [ Sipwise Jenkins Builder ]
+  * [6363e1e] TT#4166 I18N dump: snapshot 2025.06.27-22.20.14
+  * [e40eb8a] TT#4166 I18N dump: snapshot 2025.07.10-22.20.00
+  * [5a28253] TT#4166 I18N dump: snapshot 2025.07.14-22.19.49
+  * [e794e62] TT#4166 I18N dump: snapshot 2025.08.18-22.19.53
+  * [dabaf2e] TT#4166 I18N dump: snapshot 2025.08.22-22.20.04
+  * [19c7da5] TT#4166 I18N dump: snapshot 2025.08.26-22.19.54
+  * [47da425] TT#4166 I18N dump: snapshot 2025.08.28-22.19.56
+  * [097d429] TT#4166 I18N dump: snapshot 2025.09.01-22.19.51
+
+  [ Rene Krenn ]
+  * [eb6f749] MT#62987 transcript info - api
+  * [4c7b789] MT#63358 readonly prodile_id for GET /api/subscribers
+  * [da9ad91] MT#62569 reset admin/subscriber OTP secret - restapi
+
+  [ Fabricio Santolin da Silva ]
+  * [0850b11] MT#63070 Add request for sems to clear its audio cache
+
+  [ Marco Capetta ]
+  * [d9497ff] MT#60563 add /api/pbxdevices label support
+  * [1c9e706] MT#63454 Add new time_set_invert field in NCOS Levels
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 08 Sep 2025 11:45:02 +0200
+
 ngcp-panel (13.5.0.0+0~mr13.5.0.0) unstable; urgency=medium
 
   [ Marco Capetta ]
