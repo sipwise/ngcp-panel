@@ -917,23 +917,32 @@ sub clear_otp_secret {
 
     my ($c,$user) = @_;
     if (ref $user eq 'NGCP::Panel::Model::DB::admins') {
-        $user->update({
-            otp_secret => undef,
-            show_otp_registration_info => 0,
-        });
-        $c->log->debug("otp secret cleared for admin id " . $user->id);
+        if ($user->enable_2fa) {
+            $user->update({
+                otp_secret => NGCP::Panel::Utils::Auth::create_otp_secret(),
+                show_otp_registration_info => 1,
+            });
+        } else {
+            $user->update({
+                otp_secret => undef,
+                show_otp_registration_info => 0,
+            });
+        }
+        $c->log->debug("otp secret reset for admin id " . $user->id);
     } elsif (ref $user eq 'NGCP::Panel::Model::DB::provisioning_voip_subscribers') {
         my $prov_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
             id => $user->id
         },{ for => \"update wait $lock_timeout" });
 
-        my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c,
-            prov_subscriber => $prov_subscriber,
-            attribute => { -in => [ 'otp_secret', 'show_otp_registration_info' ] },
-        );
+        my $prefs = $c->model('DB')->resultset('voip_usr_preferences')->search({
+            'attribute.attribute' => { -in => [ 'otp_secret', 'show_otp_registration_info' ] },
+            subscriber_id => $prov_subscriber->id,
+        },{
+            'join' => 'attribute',
+        });
 
-        $rs->delete;
+        $prefs->delete;
+
         $c->log->debug("otp secret cleared for prov subscriber id " . $user->id);
     }
 
