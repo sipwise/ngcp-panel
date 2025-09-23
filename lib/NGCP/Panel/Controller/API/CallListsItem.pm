@@ -35,6 +35,48 @@ __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller subscriberadmin subscriber/],
 });
 
+sub query_params {
+    return [
+        {
+            param => 'subscriber_id',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                if ($c->user->roles ne "subscriber") {
+                    my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($q);
+                    if ($subscriber) {
+                        my $out_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            source_user_id => $subscriber->uuid,
+                        }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+                        my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            destination_user_id => $subscriber->uuid,
+                            source_user_id => { '!=' => $subscriber->uuid },
+                        }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
+                        return $out_rs->union_all($in_rs);
+                    }
+                }
+                return $rs;
+            },
+        },
+        {
+            param => 'customer_id',
+            new_rs => sub {
+                my ($c,$q,$rs) = @_;
+                if ($c->user->roles ne "subscriber" and $c->user->roles ne "subscriberadmin" and not exists $c->req->query_params->{subscriber_id}) {
+                    my $out_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            source_account_id => $q,
+                    }),NGCP::Panel::Utils::CallList::SUPPRESS_OUT);
+                    my $in_rs = NGCP::Panel::Utils::CallList::call_list_suppressions_rs($c,$rs->search_rs({
+                            destination_account_id => $q,
+                            source_account_id => { '!=' => $q },
+                    }),NGCP::Panel::Utils::CallList::SUPPRESS_IN);
+                    return $out_rs->union_all($in_rs);
+                }
+                return $rs;
+            },
+        },
+    ],
+}
+
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -43,7 +85,9 @@ sub GET :Allow {
         last unless $self->valid_id($c, $id);
 
         my $owner = NGCP::Panel::Utils::API::Calllist::get_owner_data($self, $c, $schema);
+        $c->stash(owner => $owner);
         last unless $owner;
+        my $form = $self->get_form($c);
         my $href_data = $owner->{subscriber} ?
             "subscriber_id=".$owner->{subscriber}->id :
             "customer_id=".$owner->{customer}->id;
@@ -51,7 +95,7 @@ sub GET :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, calllist => $item);
 
-        my $hal = $self->hal_from_item($c, $item, $owner, undef, $href_data);
+        my $hal = $self->hal_from_item($c, $item, $form, { 'owner' => $owner });
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
