@@ -35,7 +35,7 @@ sub query_params {
         },
         {
             param => 'subscriber_id',
-            description => 'OTP secret of given subscriber',
+            description => 'OTP secret of given billing subscriber id',
             query => undef, #dummy param
         },
     ];
@@ -45,7 +45,8 @@ sub item_by_id_valid {
 
     my ($self, $c) = @_;
     my $item_rs = $self->item_rs($c);
-    my $item = $item_rs->first;
+    my $item;
+    $item = $item_rs->first if $item_rs;
     $self->error($c, HTTP_BAD_REQUEST, "no OTP") unless $item;
     return $item;
 
@@ -62,18 +63,24 @@ sub _get_admin {
         ]
     },{
     });
+
+    #my ($stmt, @bind_vals) = @{${$item_rs->as_query}};
+    #@bind_vals = map { $_->[1]; } @bind_vals;
+    #$c->log->debug("otp query stmt: " . $stmt);
+    #$c->log->debug("otp query stmt bind: " . join(",",@bind_vals));
+
     return $item_rs;
 }
 
 sub _get_subscriber {
     my ($c,$id,$show) = @_;
     my $item_rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
-        id => $c,
+        id => $id,
     },{
     });
 
     $show = (NGCP::Panel::Utils::Auth::get_subscriber_enable_2fa($c,$item_rs->first)
-        and ($show or NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$item_rs->first)) ? 1 : 0);
+        and ((not $show) or NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$item_rs->first)) ? 1 : 0);
 
     $item_rs = $item_rs->search({
         -and => [
@@ -81,6 +88,12 @@ sub _get_subscriber {
         ],
     },{
     });
+
+    #my ($stmt, @bind_vals) = @{${$item_rs->as_query}};
+    #@bind_vals = map { $_->[1]; } @bind_vals;
+    #$c->log->debug("otp query stmt: " . $stmt);
+    #$c->log->debug("otp query stmt bind: " . join(",",@bind_vals));
+
     return $item_rs;
 }
 
@@ -103,12 +116,20 @@ sub _item_rs {
             }
         } elsif ($c->request->params->{subscriber_id}) {
             if (grep { $c->user->roles eq $_; } qw(admin reseller ccareadmin ccare)) {
-                $item_rs = _get_subscriber($c,$c->request->params->{subscriber_id},not $delete);
-                $item_rs = $item_rs->search({
+                my $bs = $c->model('DB')->resultset('voip_subscribers')->search_rs({
+                    id => $c->request->params->{subscriber_id},
+                },{
+                });
+                $bs = $bs->search_rs({
                     'contact.reseller_id' => $c->user->reseller_id,
                 }, {
                     join => { 'contract' => 'contact' },
                 }) if grep { $c->user->roles eq $_; } qw(reseller ccare);
+                $bs = $bs->first;
+                last unless $bs;
+                my $ps = $bs->provisioning_voip_subscriber;
+                last unless $ps;
+                $item_rs = _get_subscriber($c,$ps->id,not $delete);
             } else {
                 $self->error($c, HTTP_FORBIDDEN, "insufficient privileges for OTP of this subscriber");
             }
@@ -128,10 +149,14 @@ sub _item_rs {
             $self->error($c, HTTP_FORBIDDEN, "insufficient privileges for OTP of this admin");
         } elsif ($c->request->params->{subscriber_id}) {
             if (grep { $c->user->roles eq $_; } qw(subscriberadmin)) {
-                $item_rs = _get_subscriber($c,$c->request->params->{subscriber_id},not $delete);
-                $item_rs = $item_rs->search({
+                my $bs = $c->model('DB')->resultset('voip_subscribers')->search({
+                    id => $c->request->params->{subscriber_id},
                     'contract_id' => $c->user->contract->id,
-                }, undef);
+                },{
+                })->first;
+                my $ps = $bs->provisioning_voip_subscriber;
+                last unless $ps;
+                $item_rs = _get_subscriber($c,$ps->id,not $delete);
             } else {
                 $self->error($c, HTTP_FORBIDDEN, "insufficient privileges for OTP of this subscriber");
             }
@@ -185,10 +210,10 @@ sub get_item_binary_data {
 }
 
 sub DELETE :Allow {
-    my ($self, $c, $id) = @_;
+    my ($self, $c) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $user = $self->_item_rs($c, $id, 1)->first;
+        my $user = $self->_item_rs($c, 1)->first;
         last unless $self->resource_exists($c, user => $user);
 
         try {
