@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.32+0~mr12.5.1.32) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d091322] MT#63605 fix GET invoicetemplates without reseller_id
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 Sep 2025 13:10:52 +0200
+
 ngcp-panel (12.5.1.31+0~mr12.5.1.31) unstable; urgency=medium
 
   [ Kirill Solomko ]
