@@ -3226,6 +3226,10 @@ msgid "Debit:"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Debug log level"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "December"
 msgstr ""
 
@@ -4170,6 +4174,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable regex matching for \"Received from IP\" and \"Destination\" fields."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Enable scoped SIP debug logging for subscriber, domain, or peer. When enabled, all log levels for dialogs in this scope are promoted to be recorded regardless of the global proxy log setting. The default is disabled."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
