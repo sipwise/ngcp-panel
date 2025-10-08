@@ -61,6 +61,7 @@ sub GET :Allow {
 
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                     contract => $subscriber->contract,
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
                 ); #apply underrun lock level
             my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
             $guard->commit; #potential db write ops in hal_from
@@ -110,6 +111,7 @@ sub PATCH :Allow {
             last unless $self->resource_exists($c, subscriberpreferences => $subscriber);
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                     contract => $subscriber->contract,
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
                 ); #apply underrun lock level
 
             my $old_resource = $self->get_resource($c, $subscriber, "subscribers");
@@ -167,6 +169,7 @@ sub PUT :Allow {
             last unless $self->resource_exists($c, systemcontact => $subscriber);
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                     contract => $subscriber->contract,
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
                 ); #apply underrun lock level
             my $resource = $self->get_valid_put_data(
                 c => $c,

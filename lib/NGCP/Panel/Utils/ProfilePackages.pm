@@ -214,7 +214,7 @@ sub _create_next_balance {
 
 sub catchup_contract_balances {
     my %params = @_;
-    my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added) = @params{qw/c contract old_package now suppress_underrun is_create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added/};
+    my($c,$contract,$old_package,$now,$suppress_underrun,$is_create_next,$last_notopup_discard_intervals,$last_carry_over_mode,$topup_amount,$profiles_added,$skip_locked) = @params{qw/c contract old_package now suppress_underrun is_create_next last_notopup_discard_intervals last_carry_over_mode topup_amount profiles_added skip_locked/};
 
     return unless $contract;
     if ($c->stash->{catchup_contract_ids}) {
@@ -222,7 +222,12 @@ sub catchup_contract_balances {
     }
 
     my $schema = $c->model('DB');
-    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(c => $c, schema => $schema, contract_id => $contract->id);
+    $contract = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
+        c => $c,
+        schema => $schema,
+        contract_id => $contract->id,
+        skip_locked => $skip_locked,
+    );
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
     $old_package = $contract->profile_package if !exists $params{old_package};
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
