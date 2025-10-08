@@ -524,6 +524,14 @@ sub acquire_contract_rowlocks {
     my @contract_ids_to_lock = keys %contract_id_map;
     my ($t1,$t2) = (time,undef);
     if (defined $contract_id && !defined $rs_result && !defined $contract_ids) {
+        if ($c and $c->stash->{catchup_contract_ids}) {
+            #if (exists $c->stash->{catchup_contract_ids}->{$contract_id}) {
+            my $contract = $schema->resultset('contracts')->find({
+                id => $contract_id
+            },undef);
+            return $contract;
+            #}
+        }
         $c->log->debug('contract ID to be locked: ' . $contract_id) if $c;
         my $contract = $schema->resultset('contracts')->find({
                 id => $contract_id
@@ -538,6 +546,18 @@ sub acquire_contract_rowlocks {
         return $contract;
     } elsif ((scalar @contract_ids_to_lock) > 0) {
         @contract_ids_to_lock = sort { $a <=> $b } @contract_ids_to_lock; #"Access your tables and rows in a fixed order."
+        if ($c and $c->stash->{catchup_contract_ids}) {
+            #if (exists $c->stash->{catchup_contract_ids}->{$contract_id}) {
+            my @contracts = $schema->resultset('contracts')->search({
+                id => { -in => [ @contract_ids_to_lock ] }
+            },undef)->all;
+            if (defined $contract_ids || defined $contract_id) {
+                return [ @contracts ];
+            } else {
+                return $rs_result;
+            }
+            #}
+        }
         my $contract_ids_label = join(', ',@contract_ids_to_lock);
         $c->log->debug('contract IDs to be locked: ' . $contract_ids_label) if $c;
         my @contracts = $schema->resultset('contracts')->search({
