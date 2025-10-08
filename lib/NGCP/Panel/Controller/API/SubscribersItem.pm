@@ -49,9 +49,9 @@ sub GET :Allow {
             last unless $self->resource_exists($c, subscriber => $subscriber);
 
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                    contract => $subscriber->contract,
-                ); #apply underrun lock level
-
+                contract => $subscriber->contract,
+                skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+            ); #apply underrun lock level
 
             my ($form) = $self->get_form($c);
             my $resource = $self->resource_from_item($c, $subscriber, $form);
@@ -99,6 +99,7 @@ sub PUT :Allow {
             last unless $self->resource_exists($c, subscriber => $subscriber);
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                     contract => $subscriber->contract,
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
                 ); #apply underrun lock level
             $c->stash->{subscriber} = $subscriber; # password validation
             my $resource = $self->get_valid_put_data(
@@ -154,6 +155,7 @@ sub PATCH :Allow {
             last unless $self->resource_exists($c, subscriber => $subscriber);
             my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                     contract => $subscriber->contract,
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
                 ); #apply underrun lock level
             $c->stash->{subscriber} = $subscriber; # password validation
             my $json = $self->get_valid_patch_data(
