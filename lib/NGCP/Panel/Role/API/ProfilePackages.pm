@@ -92,7 +92,7 @@ sub _item_rs {
 
     my $item_rs = $c->model('DB')->resultset('profile_packages')->search_rs();
     my $search_xtra = {
-            '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
+            '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt(10) ] , -as => 'contract_cnt' },
                            { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
                            ],
             };       
