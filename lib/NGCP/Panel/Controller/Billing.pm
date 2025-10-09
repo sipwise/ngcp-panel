@@ -47,7 +47,7 @@ sub _profile_resultset_admin {
     my $rs = $c->model('DB')->resultset('billing_profiles')->search({
             'me.status' => { '!=' => 'terminated' },
             },
-            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(10) ] , -as => 'contract_cnt' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
@@ -61,7 +61,7 @@ sub _profile_resultset_reseller {
         ->search_rs({
             'me.status' => { '!=' => 'terminated' },
             },
-            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(1000) ] , -as => 'contract_cnt' },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(10) ] , -as => 'contract_cnt' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
                            { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
             });
