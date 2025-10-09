@@ -201,7 +201,7 @@ sub get_datatable_cols {
     my $grp_len = 30;
     return (
         { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"),
-          custom_renderer => 'function ( data, type, full, opt ) { if(full.contract_cnt > 1000){return \'1000+\'}return full.contract_cnt; }' },
+          custom_renderer => 'function ( data, type, full, opt ) { if(full.contract_cnt > 10){return \'10+\'}return full.contract_cnt; }' },
         { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },
         { name => 'blocks_grp', accessor => "blocks_grp", search => 0, title => $c->loc('Network Blocks'), literal_sql =>
           "if(length(".$grp_stmt.") > ".$grp_len.", concat(left(".$grp_stmt.", ".$grp_len."), '...'), ".$grp_stmt.")" },
