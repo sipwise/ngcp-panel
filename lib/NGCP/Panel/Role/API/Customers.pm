@@ -285,9 +285,9 @@ sub update_customer {
 sub get_template_fields_spec{
     return {
         'invoice_template_id'          => [qw/invoice_templates invoice_template/],
-        'subscriber_email_template_id' => [qw/email_templates subscriber_email_template/],
-        'passreset_email_template_id'  => [qw/email_templates passreset_email_template/],
-        'invoice_email_template_id'    => [qw/email_templates invoice_email_template/],
+        'subscriber_email_template_id' => [qw/email_templates subscriber_email_template subscriber_default_email/],
+        'passreset_email_template_id'  => [qw/email_templates passreset_email_template passreset_default_email/],
+        'invoice_email_template_id'    => [qw/email_templates invoice_email_template invoice_default_email/],
     };
 }
 
