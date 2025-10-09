@@ -1,3 +1,10 @@
+ngcp-panel (13.4.1.8+0~mr13.4.1.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [e23a8f3] MT#63724 reduce contract_cnt limit to 10
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Oct 2025 16:18:26 +0200
+
 ngcp-panel (13.4.1.7+0~mr13.4.1.7) unstable; urgency=medium
 
   [ Rene Krenn ]
