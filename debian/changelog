@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.2+0~mr13.5.1.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ec1513f] MT#63706 skip_locked for GET /api/subscriber/id
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Oct 2025 08:55:44 +0200
+
 ngcp-panel (13.5.1.1+0~mr13.5.1.1) unstable; urgency=medium
 
   [ Kirill Solomko ]
