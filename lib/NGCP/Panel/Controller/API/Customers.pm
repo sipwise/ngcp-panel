@@ -266,6 +266,50 @@ sub POST :Allow {
         $resource->{modify_timestamp} = $now;
         my $customer;
 
+        my $tmplfields = $self->get_template_fields_spec();
+        foreach my $field (keys %$tmplfields){
+            my ($t_table, $t_rel, $t_def_name) = @{$tmplfields->{$field}};
+            if (my $t_id = $resource->{$field}) {
+                my $template = $c->model('DB')->resultset($t_table)->search({
+                    'me.id' => $t_id,
+                    'me.reseller_id' => $custcontact->reseller_id,
+                })->first;
+
+                unless ($template) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "'$field' with value '" . $t_id
+                        . "' does not belong to Reseller '" . $custcontact->reseller_id
+                        . "' that is assigned to Customer's Contact '$resource->{contact_id}'");
+                    return;
+                }
+            } else {
+                next unless $t_def_name;
+
+                my $template = $c->model('DB')->resultset($t_table)->search({
+                    'me.name' => $t_def_name,
+                    'me.reseller_id' => $custcontact->reseller_id,
+                })->first;
+
+                unless ($template) {
+                    my $raw_def_template = $c->model('DB')->resultset($t_table)->search({
+                        'me.name' => $t_def_name,
+                        'me.reseller_id' => undef
+                    })->first;
+
+                    unless ($raw_def_template) {
+                        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Cannot find basic default template '$t_def_name'");
+                        return;
+                    }
+
+                    my $copy_template = { $raw_def_template->get_inflated_columns };
+                    delete $copy_template->{id};
+                    $copy_template->{reseller_id} = $custcontact->reseller_id;
+                    $template = $c->model('DB')->resultset('email_templates')->create($copy_template);
+                }
+
+                $resource->{$field} = $template->id;
+            }
+        }
+
         try {
             $customer = $schema->resultset('contracts')->create($resource);
             $c->log->debug("customer id " . $customer->id . " created");
@@ -278,21 +322,6 @@ sub POST :Allow {
         unless($customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:customercontacts item, but an ngcp:systemcontacts item");
             last;
-        }
-
-        #todo: strange: why do we check this after customer creation?
-        my $tmplfields = $self->get_template_fields_spec();
-        foreach my $field (keys %$tmplfields){
-            next unless $customer->$field();
-
-            my $field_table_rel = $tmplfields->{$field}->[1];
-            unless($customer->$field_table_rel()->reseller_id && 
-                    $customer->$field_table_rel()->reseller_id == $customer->contact->reseller_id) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "'$field' with value '" . $customer->$field() 
-                    . "' does not belong to Reseller '" . $customer->contact->reseller_id 
-                    . "' that is assigned to Customer's Contact '$resource->{contact_id}'");
-                return;
-            }
         }
 
         try {
