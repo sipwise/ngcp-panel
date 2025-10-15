@@ -474,9 +474,11 @@ sub provision_begin {
                 $string =~ s/^\s+|\s+$//g;
                 return $string;
             };
+
             $subs{'die'} = sub {
                 return die(( map { _unbox_je_value($_); } @_));
             };
+
             while (each %subs) {
                 $context->{_je}->new_function($_ => $subs{$_});
             }
