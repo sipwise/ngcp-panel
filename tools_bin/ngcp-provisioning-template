@@ -184,9 +184,19 @@ sub _create_c {
                     return $self->{param}->{$key} if $key;
                     return $self->{param};
                 },
+                params => sub {
+                    my $self = shift;
+                    my $key = shift;
+                    return $self->{param}->{$key} if $key;
+                    return $self->{param};
+                },
                 path => sub {
                     my $self = shift;
                     return 'api/';
+                },
+                method => sub {
+                    my $self = shift;
+                    return ''; #disable license checks (max_subscribers) for now
                 },
             );
         };

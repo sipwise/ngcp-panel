@@ -307,7 +307,7 @@ sub process_csv {
     my $csv = Text::CSV_XS->new({
         allow_whitespace => 1,
         binary => 1,
-        keep_meta_info => 1
+        keep_meta_info => 1,
     });
     my $fields = get_fields($c,0);
     my @cols = keys %$fields;
@@ -318,15 +318,19 @@ sub process_csv {
         purge => $purge,
     );
     open(my $fh, '<:encoding(utf8)', $data);
-    while ( my $line = <$fh> ){
+    binmode $fh;
+    $csv->header($fh);
+    while (my $row = $csv->getline_hr($fh)) {
+    #while ( my $line = <$fh> ){
         ++$linenum;
-        next unless length $line;
-        unless($csv->parse($line)) {
-            push(@fails,{ linenum => $linenum, });
-            next;
-        }
-        my $row = {};
-        @{$row}{keys %$fields} = $csv->fields();
+        #next unless length $line;
+        #unless($csv->parse($line)) {
+        #   push(@fails,{ linenum => $linenum, });
+        #    next;
+        #}
+        #my $row = {};
+        #@{$row}{keys %$fields} = $csv->fields();
+        #my $row =
         try {
             provision_commit_row(
                 c => $c,
@@ -441,7 +445,7 @@ sub provision_begin {
 
     foreach my $sub (qw(debug info warn error)) {
         $subs{$sub} = sub {
-            return $c->log->$sub(( map { ($_ // '') . ''; } @_));
+            return $c->log->$sub(( map { _unbox_je_value($_); } @_));
         };
     }
 
@@ -464,6 +468,11 @@ sub provision_begin {
                 return sprintf(_unbox_je_value(shift @_), map {
                     _unbox_je_value($_);
                 } @_);
+            };
+            $subs{'trim'} = sub {
+                my $string = _unbox_je_value(shift @_);
+                $string =~ s/^\s+|\s+$//g;
+                return $string;
             };
             while (each %subs) {
                 $context->{_je}->new_function($_ => $subs{$_});
@@ -771,8 +780,8 @@ sub _init_contract_context {
         }
         if (exists $contract_contact{reseller}) {
             $context->{_r_c} //= {};
-            if (exists $context->{_r_c}->{$contract_contact{reseller}}
-                or ($context->{_r_c}->{$contract_contact{reseller}} = $schema->resultset('resellers')->search_rs({
+            if ($context->{_r_c}->{$contract_contact{reseller}}
+                or (not exists $context->{_r_c}->{$contract_contact{reseller}} and $context->{_r_c}->{$contract_contact{reseller}} = $schema->resultset('resellers')->search_rs({
                 name => $contract_contact{reseller},
                 status => { '!=' => 'terminated' },
             })->first)) {
@@ -816,8 +825,8 @@ sub _init_contract_context {
         }
         if (exists $contract{profile_package}) {
             $context->{_pp_c} //= {};
-            if (exists $context->{_pp_c}->{$contract{profile_package}}
-                or ($context->{_pp_c}->{$contract{profile_package}} = $schema->resultset('profile_packages')->search_rs({
+            if ($context->{_pp_c}->{$contract{profile_package}}
+                or (not exists $context->{_pp_c}->{$contract{profile_package}} and $context->{_pp_c}->{$contract{profile_package}} = $schema->resultset('profile_packages')->search_rs({
                 name => $contract{profile_package},
                 #reseller_id
                 #status => { '!=' => 'terminated' },
@@ -831,8 +840,8 @@ sub _init_contract_context {
         }
         if (exists $contract{billing_profile}) {
             $context->{_bp_c} //= {};
-            if (exists $context->{_bp_c}->{$contract{billing_profile}}
-                or ($context->{_bp_c}->{$contract{billing_profile}} = $schema->resultset('billing_profiles')->search_rs({
+            if ($context->{_bp_c}->{$contract{billing_profile}}
+                or (not exists $context->{_bp_c}->{$contract{billing_profile}} and $context->{_bp_c}->{$contract{billing_profile}} = $schema->resultset('billing_profiles')->search_rs({
                 name => $contract{billing_profile},
                 #todo: reseller_id
                 status => { '!=' => 'terminated' },
@@ -846,8 +855,8 @@ sub _init_contract_context {
         }
         if (exists $contract{product}) {
             $context->{_pr_c} //= {};
-            if (exists $context->{_pr_c}->{$contract{product}}
-                or ($context->{_pr_c}->{$contract{product}} = $schema->resultset('products')->search_rs({
+            if ($context->{_pr_c}->{$contract{product}}
+                or (not exists $context->{_pr_c}->{$contract{product}} and $context->{_pr_c}->{$contract{product}} = $schema->resultset('products')->search_rs({
                 name => $contract{product},
             })->first)) {
                 $contract{product_id} = $context->{_pr_c}->{$contract{product}}->id;
@@ -910,8 +919,8 @@ sub _init_subscriber_context {
         }
         if (exists $subscriber{domain}) {
             $context->{_bd_c} //= {};
-            if (exists $context->{_bd_c}->{$subscriber{domain}}
-                or ($context->{_bd_c}->{$subscriber{domain}} = $schema->resultset('domains')->search_rs({
+            if ($context->{_bd_c}->{$subscriber{domain}}
+                or (not exists $context->{_bd_c}->{$subscriber{domain}} and $context->{_bd_c}->{$subscriber{domain}} = $schema->resultset('domains')->search_rs({
                     domain => $subscriber{domain},
                     #todo: reseller_id
                     #status => { '!=' => 'terminated' },
@@ -1469,8 +1478,16 @@ sub _unbox_je_value {
 
     my $v = shift;
     return unless defined $v;
-    if ((ref $v) =~ /^JE::/) {
+    if ((ref $v) =~ /^JE::Object/) {
         $v = $v->value;
+    } elsif ((ref $v) =~ /^JE::String/) {
+        $v = $v . '';
+    } elsif ((ref $v) =~ /^JE::Number/) {
+        $v = $v + 0;
+    } elsif ((ref $v) =~ /^JE::Boolean/) {
+        $v = ($v ? 1 : 0);
+    } elsif ((ref $v) =~ /^JE::(Null|Undefined)/) {
+        $v = undef;
     } elsif ($JE_ANON_CLASS eq ref $v) {
         $v = _unbless($v);
     }
