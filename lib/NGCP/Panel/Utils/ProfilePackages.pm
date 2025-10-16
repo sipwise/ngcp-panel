@@ -55,12 +55,12 @@ use constant API_DEFAULT_TOPUP_REQUEST_TOKEN => 'api';
 
 sub get_contract_balance {
     my %params = @_;
-    my($c,$contract,$now,$schema,$stime,$etime) = @params{qw/c contract now schema stime etime/};
+    my($c,$contract,$now,$schema,$stime,$etime,$skip_locked) = @params{qw/c contract now schema stime etime skip_locked/};
 
     #$schema //= $c->model('DB');
     $now //= NGCP::Panel::Utils::DateTime::current_local;
 
-    my $balance = catchup_contract_balances(c => $c, contract => $contract, now => $now);
+    my $balance = catchup_contract_balances(c => $c, contract => $contract, now => $now, skip_locked => $skip_locked);
 
     if (defined $stime || defined $etime) { #supported for backward compat only
         $balance = $contract->contract_balances->search({
