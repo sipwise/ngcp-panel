@@ -1796,7 +1796,7 @@ sub terminate {
     $schema->txn_do(sub {
 
         NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-            c => $c, schema => $schema, contract_id => $subscriber->contract->id);
+            c => $c, schema => $schema, contract_id => $subscriber->contract->id, skip_locked => $params{skip_locked} );
 
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
