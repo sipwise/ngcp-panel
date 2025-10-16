@@ -261,7 +261,8 @@ sub DELETE :Allow {
                 my $_resource = $self->resource_from_item($c, $subscriber, $_form);
                 return $self->hal_from_item($c,$subscriber,$_resource,$_form); });
 
-            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber,
+                skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),);
 
             $guard->commit;
 
