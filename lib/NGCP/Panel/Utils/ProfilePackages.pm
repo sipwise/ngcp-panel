@@ -228,6 +228,7 @@ sub catchup_contract_balances {
         contract_id => $contract->id,
         skip_locked => $skip_locked,
     );
+    return unless $contract;
     $now //= NGCP::Panel::Utils::DateTime::set_local_tz($contract->modify_timestamp);
     $old_package = $contract->profile_package if !exists $params{old_package};
     my $contract_create = NGCP::Panel::Utils::DateTime::set_local_tz($contract->create_timestamp // $contract->modify_timestamp);
