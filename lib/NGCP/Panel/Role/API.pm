@@ -6,7 +6,7 @@ use parent qw/NGCP::Panel::Role::Journal/;
 
 use NGCP::Panel::Utils::Generic qw(:all);
 use boolean qw(true);
-use URI::Escape qw(uri_escape);
+use URI::Escape qw(uri_escape_utf8);
 use Safe::Isa qw($_isa $_can);
 use Storable qw();
 use JSON qw();
@@ -1158,21 +1158,21 @@ sub apply_query_params {
             $item_rs = $item_rs->search($sub_where->($q,$c), $sub_attributes->($q,$c));
         }
     }
-    
+
     #use DBIx::Class::Helper::ResultSet::Explain qw();
     #use Data::Dumper;
     #$c->log->debug(Dumper(DBIx::Class::Helper::ResultSet::Explain::explain($item_rs)));
-    
+
     return $item_rs;
 }
 
 sub _get_sorted_query_params {
 
     my ($c,$query_params) = @_;
-    
+
     my %unknown = %{$c->req->query_params};
     my @sorted = ();
-    
+
     # 1. add non-dummy query parameters found:
     #   keep order of query params as defined in the source, but put those with new_rs
     #   at the beginning (narrow part results as much as possible as early as possible)
@@ -1187,10 +1187,10 @@ sub _get_sorted_query_params {
             }
         }
     }
-    
+
     # 2. add unknown query parameters:
     push(@sorted, keys %unknown);
-    
+
     return @sorted;
 
 }
@@ -1325,7 +1325,7 @@ sub hal_from_item {
                 href => $self->apply_mandatory_parameters($c, 'item', sprintf(
                     "%s%s",
                     $self->dispatch_path,
-                    uri_escape($self->get_item_id($c, $item))
+                    uri_escape_utf8($self->get_item_id($c, $item))
                 ), $item, $resource, $params),
             ),
             Data::HAL::Link->new(
@@ -1333,11 +1333,11 @@ sub hal_from_item {
                 href => $self->apply_mandatory_parameters($c, 'item', sprintf(
                     "/api/%s/%s",
                     $self->resource_name,
-                    uri_escape($self->get_item_id($c, $item))
+                    uri_escape_utf8($self->get_item_id($c, $item))
                 ), $item, $resource, $params)
             ),
             @$links,
-            $self->get_journal_relation_link($c, uri_escape($self->get_item_id($c, $item))),
+            $self->get_journal_relation_link($c, uri_escape_utf8($self->get_item_id($c, $item))),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
