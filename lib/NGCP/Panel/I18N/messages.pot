@@ -3266,6 +3266,10 @@ msgid "Define an action to be executed if User-Provided Number doesn't match the
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Define the log level verbosity preference for subscribers or peers. The level can be NOTICE, INFO or DEBUG."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Define the way \"advice of charge\" message will be sent."
 msgstr ""
 
@@ -4174,10 +4178,6 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Enable regex matching for \"Received from IP\" and \"Destination\" fields."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "Enable scoped SIP debug logging for subscriber, domain, or peer. When enabled, all log levels for dialogs in this scope are promoted to be recorded regardless of the global proxy log setting. The default is disabled."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
