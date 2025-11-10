@@ -190,7 +190,7 @@ sub PUT :Allow {
         }
 
         try {
-            if (($peer_disabled || $probe_disabled) {
+            if ($peer_disabled || $probe_disabled) {
                 NGCP::Panel::Utils::Peering::sip_delete_probe(
                     c => $c,
                     ip => $item->ip,
