@@ -77,10 +77,14 @@ sub PATCH :Allow {
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $probe_deleted = 0;
+        my $peer_disabled  = $old_resource->{enabled} && !$resource->{enabled};
+        my $peer_enabled   = !$old_resource->{enabled} && $resource->{enabled};
+        my $probe_disabled = $old_resource->{probe} && !$resource->{probe};
+        my $probe_enabled  = !$old_resource->{probe} && $resource->{probe};
+        my $probe_updated  = $peer_disabled || $peer_enabled || $probe_disabled || $probe_enabled;
 
         try {
-            if ($old_resource->{enabled} && !$resource->{enabled}) {
+            if ($peer_disabled) {
                 NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
                     c => $c,
                     prov_peer => $item
@@ -93,15 +97,13 @@ sub PATCH :Allow {
         }
 
         try {
-            if (($resource->{probe} && $old_resource->{enabled} && !$resource->{enabled}) ||
-                ($old_resource->{probe} && !$resource->{probe})) {
-                    NGCP::Panel::Utils::Peering::sip_delete_probe(
-                        c => $c,
-                        ip => $item->ip,
-                        port => $item->port,
-                        transport => $item->transport,
-                    );
-                    $probe_deleted = 1;
+            if ($peer_disabled || $probe_disabled) {
+                NGCP::Panel::Utils::Peering::sip_delete_probe(
+                    c => $c,
+                    ip => $item->ip,
+                    port => $item->port,
+                    transport => $item->transport,
+                );
             }
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
@@ -114,7 +116,7 @@ sub PATCH :Allow {
         last unless $item;
 
         try {
-            if (!$old_resource->{enabled} && $resource->{enabled}) {
+            if ($peer_enabled) {
                 NGCP::Panel::Utils::Peering::sip_create_peer_registration(
                     c => $c,
                     prov_peer => $item
@@ -128,7 +130,7 @@ sub PATCH :Allow {
 
         $guard->commit;
 
-        if ($probe_deleted) {
+        if ($probe_updated) {
             NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
         }
 
@@ -168,10 +170,14 @@ sub PUT :Allow {
         last unless $resource;
         my $old_resource = { $item->get_inflated_columns };
 
-        my $probe_deleted = 0;
+        my $peer_disabled  = $old_resource->{enabled} && !$resource->{enabled};
+        my $peer_enabled   = !$old_resource->{enabled} && $resource->{enabled};
+        my $probe_disabled = $old_resource->{probe} && !$resource->{probe};
+        my $probe_enabled  = !$old_resource->{probe} && $resource->{probe};
+        my $probe_updated  = $peer_disabled || $peer_enabled || $probe_disabled || $probe_enabled;
 
         try {
-            if ($old_resource->{enabled} && !$resource->{enabled}) {
+            if ($peer_disabled) {
                 NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
                     c => $c,
                     prov_peer => $item
@@ -184,15 +190,13 @@ sub PUT :Allow {
         }
 
         try {
-            if (($resource->{probe} && $old_resource->{enabled} && !$resource->{enabled}) ||
-                ($old_resource->{probe} && !$resource->{probe})) {
-                    NGCP::Panel::Utils::Peering::sip_delete_probe(
-                        c => $c,
-                        ip => $item->ip,
-                        port => $item->port,
-                        transport => $item->transport,
-                    );
-                    $probe_deleted = 1;
+            if (($peer_disabled || $probe_disabled) {
+                NGCP::Panel::Utils::Peering::sip_delete_probe(
+                    c => $c,
+                    ip => $item->ip,
+                    port => $item->port,
+                    transport => $item->transport,
+                );
             }
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update peering server.",
@@ -205,7 +209,7 @@ sub PUT :Allow {
         last unless $item;
 
         try {
-            if (!$old_resource->{enabled} && $resource->{enabled}) {
+            if ($peer_enabled) {
                 NGCP::Panel::Utils::Peering::sip_create_peer_registration(
                     c => $c,
                     prov_peer => $item
@@ -219,7 +223,7 @@ sub PUT :Allow {
 
         $guard->commit;
 
-        if ($probe_deleted) {
+        if ($probe_updated) {
             NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
         }
 
@@ -250,6 +254,8 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, peeringserver => $item);
 
+        my $probe_updated = 0;
+
         try {
             if ($item->enabled) {
                 NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
@@ -270,7 +276,7 @@ sub DELETE :Allow {
                     port => $item->port,
                     transport => $item->transport,
                 );
-                NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
+                $probe_updated = 1;
             }
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to delete peering server.",
@@ -281,8 +287,11 @@ sub DELETE :Allow {
         $item->delete;
         $guard->commit;
 
-        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
+        if ($probe_updated) {
+            NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
+        }
 
+        NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
