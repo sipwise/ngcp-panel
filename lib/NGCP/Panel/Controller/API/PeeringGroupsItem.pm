@@ -116,6 +116,8 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, peeringgroup => $item);
 
+        my $probe_updated = 0;
+
         foreach my $p ($item->voip_peer_hosts->all) {
             if($p->probe) {
                 NGCP::Panel::Utils::Peering::sip_delete_probe(
@@ -124,6 +126,7 @@ sub DELETE :Allow {
                     port => $p->port,
                     transport => $p->transport,
                 );
+                $probe_updated = 1;
             }
             if ($p->enabled) {
                 NGCP::Panel::Utils::Peering::sip_delete_peer_registration(
@@ -136,6 +139,10 @@ sub DELETE :Allow {
         }
         $item->delete;
         $guard->commit;
+
+        if ($probe_updated) {
+            NGCP::Panel::Utils::Peering::sip_dispatcher_reload(c => $c);
+        }
 
         NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
 
