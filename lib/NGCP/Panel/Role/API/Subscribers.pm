@@ -396,7 +396,11 @@ sub prepare_resource {
             my ($cid) = @_;
             my $contract = $self->get_customer($c, $cid);
             NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                c => $c, schema => $c->model('DB'), contract_id => $contract->id) if $contract;
+                c => $c,
+                schema => $c->model('DB'),
+                contract_id => $contract->id,
+                skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+            ) if $contract;
             return $contract;
         },
     );
