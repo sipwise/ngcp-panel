@@ -1,3 +1,11 @@
+ngcp-panel (12.5.1.36+0~mr12.5.1.36) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [80287d2] MT#63893 Call 'sip_dispatcher_reload' while changing peerings via API
+  * [06a7ddd] MT#63893 Fix typo in commit 3b17ab6c54c7ca
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Nov 2025 12:22:42 +0100
+
 ngcp-panel (12.5.1.35+0~mr12.5.1.35) unstable; urgency=medium
 
   [ Rene Krenn ]
