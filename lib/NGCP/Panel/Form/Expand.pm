@@ -290,4 +290,14 @@ has_field 'config_id' => (
     },
 );
 
+has_field 'carrier_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::LnpCarriers',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
 1;
