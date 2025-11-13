@@ -2208,6 +2208,10 @@ msgid "Carrier"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Carrier id"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Carry Over"
 msgstr ""
 
