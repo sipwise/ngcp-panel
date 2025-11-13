@@ -55,7 +55,10 @@ sub hal_from_item {
     $resource{carrier_id} = delete $resource{lnp_provider_id};
     $resource{start} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $resource{start};
     $resource{end} =~ s/T\d{2}:\d{2}:\d{2}(\+.+)?$// if $resource{end};
+
+    $self->expand_fields($c, \%resource);
     $hal->resource({%resource});
+
     return $hal;
 }
 
