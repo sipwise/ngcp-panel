@@ -230,6 +230,16 @@ has_field 'passreset_email_template_id' => (
     },
 );
 
+has_field 'subscriber_email_template_id' => (
+    type => 'PosInteger',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::EmailTemplates',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
+);
+
 has_field 'invoice_template_id' => (
     type => 'PosInteger',
     element_attr => {
