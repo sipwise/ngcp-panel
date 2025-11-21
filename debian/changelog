@@ -1,3 +1,12 @@
+ngcp-panel (12.5.1.37+0~mr12.5.1.37) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [b19a141] MT#63706 skip_locked for DELETE /api/subscriber/id
+  * [ea72e54] MT#63706 skip_locked for DELETE /api/subscriber/id #1
+  * [c8fca95] MT#63706 skip_locked for POST /api/subscriber/
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 21 Nov 2025 11:09:21 +0100
+
 ngcp-panel (12.5.1.36+0~mr12.5.1.36) unstable; urgency=medium
 
   [ Marco Capetta ]
