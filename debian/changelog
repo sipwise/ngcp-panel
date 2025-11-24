@@ -1,3 +1,33 @@
+ngcp-panel (14.1.0.0+0~mr14.1.0.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [0d3aac9] MT#63605 fix GET invoicetemplates without reseller_id
+  * [b6df422] MT#63597 fix /api/callists GET by id
+  * [d1686f5] MT#63050 /api/customers email_template auto assign
+  * [be0e9de] MT#63839 add expand by subscriber_email_template_id
+  * [d0783b1] MT#63859 add expand by carrier_id
+
+  [ Sipwise Jenkins Builder ]
+  * [b97c35e] TT#4166 I18N dump: snapshot 2025.09.25-22.26.27
+  * [ef8b9ff] TT#4166 I18N dump: snapshot 2025.11.07-23.19.31
+  * [6c57a87] TT#4166 I18N dump: snapshot 2025.11.13-23.23.57
+
+  [ Rene Krenn ]
+  * [3451546] MT#63617 reset admin OTP instead of clearing
+  * [73664f2] MT#63706 skip_locked for GET /api/subscriber/id
+  * [82b2539] MT#63724 reduce contract_cnt limit to 10
+  * [2460c6e] MT#63759 prov templates:  parse .csv header
+  * [2a5bd4c] MT#63706 skip_locked for DELETE /api/subscriber/id
+  * [a5ac1e9] MT#63706 skip_locked for DELETE /api/subscriber/id #1
+  * [3ff0395] MT#61442 allow utf8 for creating data::hal links
+  * [f501fc1] MT#63706 skip_locked for POST /api/subscriber/
+
+  [ Marco Capetta ]
+  * [3b17ab6] MT#63893 Call 'sip_dispatcher_reload' while changing peerings via API
+  * [4f64c07] MT#63893 Fix typo in commit 3b17ab6c54c7ca
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Nov 2025 16:56:37 +0100
+
 ngcp-panel (14.0.0.0+0~mr14.0.0.0) unstable; urgency=medium
 
   [ Guillem Jover ]
