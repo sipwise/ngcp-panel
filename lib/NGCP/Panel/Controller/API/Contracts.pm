@@ -94,12 +94,19 @@ sub GET :Allow {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my $contracts_rs = $self->item_rs($c,0,$now);
         (my $total_count, $contracts_rs, my $contracts_rows) = $self->paginate_order_collection($c, $contracts_rs);
-        my $contracts = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-            c => $c,
-            rs => $contracts_rs,
-            contract_id_field => 'id',
-            skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
-        );
+
+        my $contracts;
+        if ($c->config->{api}{underrun_lock_on_request}) {
+            $contracts = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
+                c => $c,
+                rs => $contracts_rs,
+                contract_id_field => 'id',
+                skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+            );
+        } else {
+            $contracts = [$contracts_rs->all];
+        }
+
         my (@embedded, @links);
         my $form = $self->get_form($c);
         $self->expand_prepare_collection($c);
@@ -112,7 +119,11 @@ sub GET :Allow {
             );
         }
         $self->expand_collection_fields($c, \@embedded);
-        $self->delay_commit($c,$guard); #potential db write ops in hal_from
+
+        if ($c->config->{api}{underrun_lock_on_request}) {
+            $self->delay_commit($c,$guard); #potential db write ops in hal_from
+        }
+
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
