@@ -322,22 +322,31 @@ sub GET :Allow {
         {
             my $subscribers_rs = $self->item_rs($c);
             (my $total_count, $subscribers_rs, my $subscribers_rows) = $self->paginate_order_collection($c, $subscribers_rs);
-            my $subscribers = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                c => $c,
-                rs => $subscribers_rs,
-                contract_id_field => 'contract_id',
-                skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
-            );
+
+            my $subscribers;
+            if ($c->config->{api}{underrun_lock_on_request}) {
+                $subscribers = NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
+                    c => $c,
+                    rs => $subscribers_rs,
+                    contract_id_field => 'contract_id',
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+                );
+            } else {
+                $subscribers = [$subscribers_rs->all];
+            }
+
             my $now = NGCP::Panel::Utils::DateTime::current_local;
             my (@embedded, @links, %contract_map);
             my ($form) = $self->get_form($c);
             $self->expand_prepare_collection($c);
             for my $subscriber (@$subscribers) {
-                my $contract = $subscriber->contract;
-                NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                    contract => $contract,
-                    now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
-                $contract_map{$contract->id} = 1;
+                if ($c->config->{api}{underrun_lock_on_request}) {
+                    my $contract = $subscriber->contract;
+                    NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                        contract => $contract,
+                        now => $now) if !exists $contract_map{$contract->id}; #apply underrun lock level
+                    $contract_map{$contract->id} = 1;
+                }
                 my $resource = $self->resource_from_item($c, $subscriber, $form);
                 push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
                 push @links, Data::HAL::Link->new(
@@ -346,7 +355,11 @@ sub GET :Allow {
                 );
             }
             $self->expand_collection_fields($c, \@embedded);
-            $self->delay_commit($c,$guard);
+
+            if ($c->config->{api}{underrun_lock_on_request}) {
+                $self->delay_commit($c,$guard);
+            }
+
             push @links,
                 Data::HAL::Link->new(
                     relation => 'curies',

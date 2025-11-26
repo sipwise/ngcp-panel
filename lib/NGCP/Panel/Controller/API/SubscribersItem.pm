@@ -48,15 +48,20 @@ sub GET :Allow {
             my $subscriber = $self->item_by_id($c, $id);
             last unless $self->resource_exists($c, subscriber => $subscriber);
 
-            my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                contract => $subscriber->contract,
-                skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
-            ); #apply underrun lock level
+            if ($c->config->{api}{underrun_lock_on_request}) {
+                my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                    contract => $subscriber->contract,
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+                ); #apply underrun lock level
+            }
 
             my ($form) = $self->get_form($c);
             my $resource = $self->resource_from_item($c, $subscriber, $form);
             my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
-            $guard->commit; #potential db write ops in hal_from
+
+            if ($c->config->{api}{underrun_lock_on_request}) {
+                $guard->commit; #potential db write ops in hal_from
+            }
 
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -97,10 +102,14 @@ sub PUT :Allow {
 
             my $subscriber = $self->item_by_id($c, $id);
             last unless $self->resource_exists($c, subscriber => $subscriber);
-            my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                    contract => $subscriber->contract,
-                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
-                ); #apply underrun lock level
+
+            if ($c->config->{api}{underrun_lock_on_request}) {
+                my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                        contract => $subscriber->contract,
+                        skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+                    ); #apply underrun lock level
+            }
+
             $c->stash->{subscriber} = $subscriber; # password validation
             my $resource = $self->get_valid_put_data(
                 c => $c,
@@ -122,6 +131,7 @@ sub PUT :Allow {
             last unless $self->add_update_journal_item_hal($c,$hal);
 
             $guard->commit;
+
             $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
         }
     } catch($e) {
@@ -153,10 +163,14 @@ sub PATCH :Allow {
 
             my $subscriber = $self->item_by_id($c, $id);
             last unless $self->resource_exists($c, subscriber => $subscriber);
-            my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
-                    contract => $subscriber->contract,
-                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
-                ); #apply underrun lock level
+
+            if ($c->config->{api}{underrun_lock_on_request}) {
+                my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                        contract => $subscriber->contract,
+                        skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+                    ); #apply underrun lock level
+            }
+
             $c->stash->{subscriber} = $subscriber; # password validation
             my $json = $self->get_valid_patch_data(
                 c => $c,
@@ -186,6 +200,7 @@ sub PATCH :Allow {
             last unless $self->add_update_journal_item_hal($c,$hal);
 
             $guard->commit;
+
             $self->return_representation($c, 'hal' => $hal, 'preference' => $preference );
         }
     } catch($e) {
