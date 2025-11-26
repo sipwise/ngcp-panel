@@ -16,7 +16,7 @@ def login_panel(driver, username="administrator", password="administrator"):
         driver.implicitly_wait(1)
         driver.find_element(By.XPATH, '//*[@id="login_page_v1"]//div/b/a').click()
         driver.implicitly_wait(10)
-    except:
+    except Exception:
         pass
     finally:
         driver.implicitly_wait(10)

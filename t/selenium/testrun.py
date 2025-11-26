@@ -739,7 +739,7 @@ class testrun(unittest.TestCase):
             driver.implicitly_wait(1)
             driver.find_element(By.XPATH, '//*[@id="login_page_v1"]//div/b/a').click()
             driver.implicitly_wait(10)
-        except:
+        except Exception:
             pass
         finally:
             driver.implicitly_wait(10)
@@ -994,6 +994,7 @@ class testrun(unittest.TestCase):
             driver.save_screenshot('/results/' + filename)
             filename = 0
         driver.quit()
+
 
 if __name__ == '__main__':
     browser = os.environ['BROWSER']
