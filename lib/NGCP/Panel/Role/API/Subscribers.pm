@@ -395,12 +395,16 @@ sub prepare_resource {
         getcustomer_code => sub {
             my ($cid) = @_;
             my $contract = $self->get_customer($c, $cid);
-            NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                c => $c,
-                schema => $c->model('DB'),
-                contract_id => $contract->id,
-                skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
-            ) if $contract;
+
+            if ($c->config->{api}{underrun_lock_on_request}) {
+                NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
+                    c => $c,
+                    schema => $c->model('DB'),
+                    contract_id => $contract->id,
+                    skip_locked => ($c->request->header('X-Delay-Commit') ? 0 : 1),
+                ) if $contract;
+            }
+
             return $contract;
         },
     );
