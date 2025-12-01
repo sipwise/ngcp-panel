@@ -30,16 +30,20 @@ our $ldapuserfound = 1;
 our $ldapauthsuccessful = 2;
 
 sub get_user_dn {
+
     my $c = shift;
-    my $dn_format = $c->config->{ldap_admin}->{format};
-    $dn_format ||= '%s';
-    print sprintf($dn_format, @_);
-    return sprintf($dn_format, @_);
+    my @args = @_;
+    my $user = shift;
+    my ($entry, $code, $message) = search_dn($c, $user, @args);
+    $user = $entry->dn() if $user;
+    my $dn_format = $c->config->{ldap_admin}->{format} ||= '%s';
+    return sprintf($dn_format, $user, @args);
+
 }
 
 sub search_dn {
 
-    my ($c,$user_dn) = @_;
+    my ($c,$user_dn, @args) = @_;
 
     my $message;
     my $label = 'LDAP search: ';
@@ -47,9 +51,12 @@ sub search_dn {
     my $ldap_uri = $c->config->{ldap_admin}->{uri};
     my $ldap_manager_dn = $c->config->{ldap_admin}->{dn};
     my $ldap_manager_password = $c->config->{ldap_admin}->{password};
+    my $ldap_manager_search_base = $c->config->{ldap_admin}->{search_base};
+    my $ldap_manager_filter_format = $c->config->{ldap_admin}->{filter_format};
 
     if (length($user_dn)) {
-        my $ldap = Net::LDAP->new($ldap_uri, verify => 'none');
+        my $ldap;
+        $ldap = Net::LDAP->new($ldap_uri, verify => 'none') if $ldap_uri;
         if (defined $ldap) {
             my $mesg;
             if (length($ldap_manager_dn) > 0) {
@@ -61,49 +68,49 @@ sub search_dn {
             if ($mesg->code() != LDAP_SUCCESS) {
                 $message = $mesg->error();
                 $c->log->debug($label . $message);
-                return ($ldapauthfailed, $message);
+                return (undef, $ldapauthfailed, $message);
             }
 
-            my $search = $ldap->search(base => $user_dn, scope => 'base', filter => '(objectClass=*)'); #attrs => ['dn'], );
+            my $search = $ldap->search(base => $ldap_manager_search_base,
+                filter => sprintf($ldap_manager_filter_format, $user_dn, @args));
 
             if ($search->code() != LDAP_SUCCESS) {
                 $message = $search->error();
                 $c->log->debug($label . $message);
-                return ($ldapsearchfailed,$message);
+                return (undef, $ldapsearchfailed, $message);
             }
 
             if ($search->count() == 0) {
                 $message = 'no ldap entry found: ' . $user_dn;
                 $ldap->unbind();
                 $c->log->debug($label . $message);
-                return ($ldapnousersfound,$message);
+                return (undef, $ldapnousersfound, $message);
             } elsif ($search->count() > 1) {
                 $message = 'multiple ldap entries found: ' . $user_dn;
                 $ldap->unbind();
                 $c->log->debug($label . $message);
-                return ($ldapmultipleusersfound,$message);
+                return (undef, $ldapmultipleusersfound, $message);
             } else {
                 my $entry = $search->shift_entry();
                 $message = 'ldap entry found: ' . $entry->dn();
                 $ldap->unbind();
                 $c->log->info($label . $message);
 
-                return ($ldapuserfound,$message);
+                return ($entry, $ldapuserfound, $message);
             }
 
         } else {
             $message = $@;
             $c->log->debug($label . $message);
-            return ($ldapconnecterror,$message);
+            return (undef, $ldapconnecterror, $message);
         }
     } else {
         $message = 'no user dn specified';
         $c->log->debug($label . $message);
-        return ($ldapnouserdn,$message);
+        return (undef, $ldapnouserdn, $message);
     }
 
 }
-
 
 sub auth_ldap_simple {
 
