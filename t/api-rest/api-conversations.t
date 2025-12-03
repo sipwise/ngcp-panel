@@ -21,7 +21,7 @@ $fake_data->set_data_from_script({
 });
 $test_machine->DATA_ITEM_STORE($fake_data->process('conversations'));
 
-my @TYPES = qw/call voicemail fax sms xmpp/;
+my @TYPES = qw/call voicemail fax sms/;
 
 foreach my $owner_param ( map {'?'.$_.'='.$test_machine->DATA_ITEM->{$_}}
     qw/customer_id subscriber_id/

@@ -30,8 +30,8 @@ __PACKAGE__->set_config({
 });
 
 sub api_description {
-    return 'Defines an actual user who can log into the web panel, register devices via SIP and/or '.
-        'XMPP and place and receive calls via SIP. A subscriber always belongs to a '.
+    return 'Defines an actual user who can log into the web panel, register devices via SIP '.
+        'and place and receive calls via SIP. A subscriber always belongs to a '.
         '<a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.';
 }
 

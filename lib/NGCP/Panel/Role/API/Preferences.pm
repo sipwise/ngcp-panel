@@ -14,7 +14,6 @@ use JSON::Types;
 use Safe::Isa qw($_isa);
 use Data::Validate::IP qw/is_ipv4 is_ipv6/;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;

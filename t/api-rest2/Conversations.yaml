@@ -156,36 +156,6 @@
     perl_code: !!perl/code |
         {
             my ($retained) = @_;
-            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=xmpp&order_by=type";
-        } 
-    conditions:
-        is:
-            code: 200
-
-#get conversations
--
-    name: get conversations
-    type: item
-    method: GET
-    path: '/${link}'
-    perl_code: !!perl/code |
-        {
-            my ($retained) = @_;
-            $retained->{link} = "/api/conversations/?customer_id=".$retained->{customer_id}."&type=xmpp&order_by=timestamp";
-        } 
-    conditions:
-        is:
-            code: 200
-
-#get conversations
--
-    name: get conversations
-    type: item
-    method: GET
-    path: '/${link}'
-    perl_code: !!perl/code |
-        {
-            my ($retained) = @_;
             $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=call&order_by=type";
         } 
     conditions:
@@ -292,36 +262,6 @@
         {
             my ($retained) = @_;
             $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=sms&order_by=timestamp";
-        } 
-    conditions:
-        is:
-            code: 200
-
-#get conversations
--
-    name: get conversations
-    type: item
-    method: GET
-    path: '/${link}'
-    perl_code: !!perl/code |
-        {
-            my ($retained) = @_;
-            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=xmpp&order_by=type";
-        } 
-    conditions:
-        is:
-            code: 200
-
-#get conversations
--
-    name: get conversations
-    type: item
-    method: GET
-    path: '/${link}'
-    perl_code: !!perl/code |
-        {
-            my ($retained) = @_;
-            $retained->{link} = "/api/conversations/?subscriber_id=".$retained->{subscriber_id}."&type=xmpp&order_by=timestamp";
         } 
     conditions:
         is:

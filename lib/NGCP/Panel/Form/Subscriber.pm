@@ -71,7 +71,7 @@ has_field 'username' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The username for SIP and XMPP services.']
+        title => ['The username for SIP services.']
     },
 );
 
@@ -100,7 +100,7 @@ has_field 'password' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The password to authenticate for SIP and XMPP services.']
+        title => ['The password to authenticate for SIP services.']
     },
 );
 

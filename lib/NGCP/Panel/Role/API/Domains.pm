@@ -10,7 +10,6 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -92,16 +91,6 @@ sub item_by_id {
 
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
-}
-
-sub xmpp_domain_reload {
-    my ($self, $c, $domain) = @_;
-    NGCP::Panel::Utils::Prosody::activate_domain($c, $domain);
-}
-
-sub xmpp_domain_disable {
-    my ($self, $c, $domain) = @_;
-    NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain);
 }
 
 =pod

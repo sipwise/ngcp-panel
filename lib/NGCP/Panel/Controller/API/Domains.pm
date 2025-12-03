@@ -119,7 +119,7 @@ sub POST :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my ($sip_reload, $xmpp_reload) = $self->check_reload($c, $resource);
+        my $sip_reload = $self->check_sip_reload($c, $resource);
 
         my $form = $self->get_form($c);
         last unless $self->validate_form(
@@ -175,7 +175,6 @@ sub POST :Allow {
         $guard->commit;
 
         try {
-            $self->xmpp_domain_reload($c, $resource->{domain}) if $xmpp_reload;
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c, $resource->{domain}) if ($sip_reload);
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain. Domain was created", $e);

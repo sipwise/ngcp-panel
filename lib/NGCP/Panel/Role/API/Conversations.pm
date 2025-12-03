@@ -43,7 +43,6 @@ my %enabled_conversations = (
     voicemail => 1,
     sms       => 1,
     fax       => 1,
-    xmpp      => 1,
 );
 
 my %call_fields = ();
@@ -123,19 +122,11 @@ $fax_fields{caller_uuid} = 'me.caller_uuid';
 $fax_fields{callee_uuid} = 'me.callee_uuid';
 $fax_fields{call_id} = 'me.call_id';
 
-my %xmpp_fields = ();
-my $xmpp_fields_tied = tie(%xmpp_fields, 'Tie::IxHash');
-$xmpp_fields{subscriber_id} = 'me.id';
-$xmpp_fields{user} = 'me.user';
-$xmpp_fields{with} = 'me.with';
-$xmpp_fields{epoch} = 'me.epoch';
-
 my $max_fields = scalar keys %call_fields;
 $max_fields += scalar NGCP::Panel::Utils::CallList::get_suppression_id_colnames();
 $max_fields = scalar keys %voicemail_fields if ((scalar keys %voicemail_fields) > $max_fields);
 $max_fields = scalar keys %sms_fields if ((scalar keys %sms_fields) > $max_fields);
 $max_fields = scalar keys %fax_fields if ((scalar keys %fax_fields) > $max_fields);
-$max_fields = scalar keys %xmpp_fields if ((scalar keys %xmpp_fields) > $max_fields);
 
 
 my $cdr_proto = NGCP::Panel::Utils::Generic::hash2obj(
@@ -207,17 +198,6 @@ my $sms_proto = NGCP::Panel::Utils::Generic::hash2obj(
     },
 );
 
-my $xmpp_proto = NGCP::Panel::Utils::Generic::hash2obj(
-    classname => 'xmpp_item',
-    accessors => {
-        %{_get_fields_names(\%xmpp_fields,$xmpp_fields_tied)},
-        get_column => sub {
-            my ($self,$colname) = @_;
-            return $self->{$colname};
-        },
-    },
-);
-
 sub get_list{
     my ($self, $c) = @_;
 #TODO: move to config and return to the SUPER (Entities) again
@@ -282,7 +262,7 @@ sub _item_rs {
 
     my $item_rs;
     my $type_param = ((exists $params->{type}) ? ($params->{type} // '') : undef);
-    foreach my $type (qw(call voicemail sms fax xmpp)) {
+    foreach my $type (qw(call voicemail sms fax)) {
         if ($enabled_conversations{$type} and ((not defined $type_param) or index(lc($type_param),$type) > -1)) {
             my $sub_name = '_get_' . $type . '_rs';
             my $rs = $self->$sub_name(
@@ -692,100 +672,6 @@ sub _get_fax_rs {
 
 }
 
-sub _get_xmpp_rs {
-
-    my $self = shift;
-    my %params = @_;
-    my ($c,$uuid,$contract_id,$reseller_id,$params) = @params{qw/c uuid contract_id reseller_id params/};
-
-    my $rs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs(undef,{
-        #join => [ 'domain', 'sipwise_mam_user', 'sipwise_mam_with' ],
-        join => 'domain',
-    });
-
-    $rs = $self->_apply_timestamp_from_to(
-        rs => $rs,
-        params => $params,
-        col => 'epoch'
-    );
-    $rs = $self->apply_caller_filter(
-        rs => $rs,
-        params => $params,
-        col => 'user'
-    );
-    $rs = $self->apply_callee_filter(
-        rs => $rs,
-        params => $params,
-        col => 'with'
-    );         
-
-    if ($reseller_id) {
-        $rs = $rs->search_rs({
-            'contact.reseller_id' => $reseller_id,
-        },{
-            join => { voip_subscriber => { contract => 'contact'} },
-        });
-    }
-    if ($contract_id) {
-        $rs = $rs->search({
-            'contract.id' => $contract_id,
-        },{
-            join => { voip_subscriber => 'contract' },
-        });
-    }
-    if ($uuid) {
-        $rs = $rs->search({
-            'me.uuid' => $uuid,
-        });
-    }
-
-    my $out_rs = $rs->search_rs(undef,{
-        join => 'sipwise_mam_user',
-        '+select' => [
-            { '' => \'"out"', -as => 'direction' },
-            { '' => 'sipwise_mam_user.id', -as => 'mam_id' },
-            { '' => 'sipwise_mam_user.username', -as => 'user' },
-            { '' => 'sipwise_mam_user.with', -as => 'with' },
-            { '' => 'sipwise_mam_user.epoch', -as => 'epoch' },
-        ],
-        '+as' => ['direction','mam_id','user','with','epoch'],
-    });
-    my $in_rs = $rs->search_rs(undef,{
-        join => 'sipwise_mam_with',
-        '+select' => [
-            { '' => \'"in"', -as => 'direction' },
-            { '' => 'sipwise_mam_with.id', -as => 'mam_id' },
-            { '' => 'sipwise_mam_with.username', -as => 'user' },
-            { '' => 'sipwise_mam_with.with', -as => 'with' },
-            { '' => 'sipwise_mam_with.epoch', -as => 'epoch' },
-        ],
-        '+as' => ['direction','mam_id','user','with','epoch'],
-    });
-
-    $self->_apply_direction(params => $params,
-        in => sub {
-            $rs = $in_rs;
-        },
-        out => sub {
-            $rs = $out_rs;
-        },
-        inout => sub {
-            $rs = $out_rs->union_all($in_rs);
-        },
-    );
-
-    return $rs->search(undef,{
-        select => [
-              { '' => \'"xmpp"', -as => 'type' },
-              { '' => 'mam_id', -as => 'id' },
-              { '' => 'epoch', -as => 'timestamp' },
-              _get_select_list(\%xmpp_fields),
-            ],
-        as => ['type','id','timestamp',_get_as_list(\%xmpp_fields),],
-    });
-
-}
-
 sub _get_select_list {
 
     my ($fields,$min,$max) = @_;
@@ -930,8 +816,6 @@ sub process_hal_resource {
     }elsif('sms' eq $resource->{type}){
         $resource = $item_accessors_hash;
         #$resource->{start_time} =  NGCP::Panel::Utils::DateTime::from_string($item_mock_obj->timestamp)->epoch;
-    }elsif('xmpp' eq $resource->{type}){
-        $resource = $item_accessors_hash;
     }
     #$c->log->debug(Dumper('resource'));
     #$c->log->debug(Dumper($resource));
@@ -1003,10 +887,6 @@ sub _get_fields_by_type{
         $fields = \%fax_fields;
         $fields_tied = $fax_fields_tied;
         $proto = $fax_proto;
-    }elsif('xmpp' eq $type){
-        $fields = \%xmpp_fields;
-        $fields_tied = $xmpp_fields_tied;
-        $proto = $xmpp_proto;
     }
     return $fields,$fields_tied,$proto;
 }
@@ -1092,10 +972,6 @@ sub hal_links {
                 Data::HAL::Link->new(relation => 'ngcp:faxes', href => sprintf("/api/faxes/%d", $resource->{id})),
                 Data::HAL::Link->new(relation => 'ngcp:faxrecordings', href => sprintf("/api/faxrecordings/%d", $resource->{id})),
            ) : ()),
-        # todo - add xmpp mam rail:
-        #('xmpp' eq $item->{type} ? (
-        #    Data::HAL::Link->new(relation => 'ngcp:xmpp', href => sprintf("/api/xmpp/%d", $item->{id})),
-        # ) : ()),
     ];
 }
 

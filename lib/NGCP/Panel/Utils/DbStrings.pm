@@ -176,10 +176,8 @@ sub localize {
     $c->loc('The members (as SIP URIs) of the PBX hunt group.');
     $c->loc('CLI of CloudPBX Pilot Subscriber');
     $c->loc('The base CLI for the PBX extension.');
-    $c->loc('Export subscriber to shared XMPP Buddylist');
-    $c->loc('Export this subscriber into the shared XMPP buddy list for the customer.');
     $c->loc('Network-Provided Display Name');
-    $c->loc('The network-provided display name used for XMPP contacts and optionally SIP outbound header manipulation.');
+    $c->loc('The network-provided display name used optionally for SIP outbound header manipulation.');
     $c->loc('Customer Sound Set');
     $c->loc('Customer specific Sound Set used for PBX auto-attendant prompts, customer-specific announcements etc.');
     $c->loc('api test pref');
@@ -193,7 +191,6 @@ sub localize {
     $c->loc('Session Timers');
     $c->loc('Internals');
     $c->loc('Cloud PBX');
-    $c->loc('XMPP Settings');
     return;
 }
 
@@ -371,7 +368,7 @@ sub form_strings {
     $c->loc('Whether the subscriber can configure other subscribers within his Customer account.');
     $c->loc('The fully qualified domain name (e.g. sip.example.org).');
     $c->loc('Is superuser');
-    $c->loc('The username for SIP and XMPP services.');
+    $c->loc('The username for SIP services.');
     $c->loc('Create Contact');
     $c->loc('Interval charge');
     $c->loc('Supports Busy Lamp Field');
@@ -486,7 +483,7 @@ sub form_strings {
     $c->loc('The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.');
     $c->loc('From Pattern');
     $c->loc('A unique identifier string (only alphanumeric chars and _).');
-    $c->loc('The person\'s name, which is then used in XMPP contact lists or auto-provisioned phones, and which can be used as network-provided display name in SIP calls.');
+    $c->loc('The person\'s name, which is then used in auto-provisioned phones, and which can be used as network-provided display name in SIP calls.');
     $c->loc('Line/Key Range');
     $c->loc('A POSIX regex matching against the full Request-URI (e.g. \'^sip:.+@example\.org$\' or \'^sip:431\')');
     $c->loc('The status of the subscriber.');
@@ -680,7 +677,7 @@ sub form_strings {
     $c->loc('IP Address');
     $c->loc('Notify Emails');
     $c->loc('Description');
-    $c->loc('The password to authenticate for SIP and XMPP services.');
+    $c->loc('The password to authenticate for SIP services.');
     $c->loc('Handle');
     $c->loc('Delete Key');
 

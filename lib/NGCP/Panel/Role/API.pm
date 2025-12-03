@@ -200,20 +200,16 @@ sub get_valid_patch_data {
     return $json;
 }
 
-sub check_reload {
+sub check_sip_reload {
     my ($self, $c, $resource) = @_;
-    my ($sip, $xmpp) = (1,1);
+    my $sip = 1;
 
     if (delete $resource->{_skip_sip_reload} || $c->config->{features}->{debug}) {
         $sip = 0;
         $c->log->debug("skipping SIP reload");
     }
-    if (delete $resource->{_skip_xmpp_reload} || $c->config->{features}->{debug}) {
-        $xmpp = 0;
-        $c->log->debug("skipping XMPP reload");
-    }
 
-    return ($sip, $xmpp);
+    return $sip;
 }
 
 sub validate_form {

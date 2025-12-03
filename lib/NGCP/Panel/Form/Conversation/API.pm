@@ -5,7 +5,7 @@ extends 'HTML::FormHandler';
 
 has_field 'id' => (
     type => 'PosInteger',
-    label => 'The original conversation record id - cdr id/voicemail id/sms id/fax journal record id/prosody message archive mgmt (mam) record id.',
+    label => 'The original conversation record id - cdr id/voicemail id/sms id/fax journal record id.',
     required => 1,
 );
 
@@ -29,7 +29,7 @@ has_field 'start_time' => (
 
 has_field 'type' => (
     type => 'Text',
-    label => 'The conversation event type: call/voicemail/sms/fax/xmpp.',
+    label => 'The conversation event type: call/voicemail/sms/fax.',
     required => 1,
 );
 

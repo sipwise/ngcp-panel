@@ -36,7 +36,7 @@ has_field 'display_name' => (
     label => 'Display Name',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The person\'s name, which is then used in XMPP contact lists or auto-provisioned phones, and which can be used as network-provided display name in SIP calls.']
+        title => ['The person\'s name, which is then used in auto-provisioned phones, and which can be used as network-provided display name in SIP calls.']
     },
     maxlength => 128,
 );
@@ -55,7 +55,7 @@ has_field 'username' => (
     label => 'SIP Username',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The username for SIP and XMPP services.']
+        title => ['The username for SIP services.']
     },
 );
 

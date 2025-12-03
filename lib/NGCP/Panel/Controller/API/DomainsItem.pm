@@ -74,7 +74,7 @@ sub DELETE :Allow {
         my $domain = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, domain => $domain);
 
-        my ($sip_reload, $xmpp_reload) = $self->check_reload($c, $c->req->params);
+        my $sip_reload = $self->check_sip_reload($c, $c->req->params);
 
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
@@ -102,7 +102,6 @@ sub DELETE :Allow {
         $guard->commit;
 
         try {
-            $self->xmpp_domain_disable($c, $domain->domain) if $xmpp_reload;
             NGCP::Panel::Utils::XMLDispatcher::sip_domain_reload($c) if $sip_reload;
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.", $e);

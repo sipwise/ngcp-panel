@@ -17,7 +17,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Combined collection of conversation events (calls, voice mails, sms, faxes, xmpp messages).';
+    return 'Combined collection of conversation events (calls, voice mails, sms, faxes).';
 };
 
 sub query_params {
@@ -51,7 +51,7 @@ sub query_params {
 
         {
             param => 'type',
-            description => 'Filter for conversation events of given types ("call", "voicemail", "sms", "fax", "xmpp"). Multiple types can be included by concatenating type strings, eg. "?type=call-voicemial".',
+            description => 'Filter for conversation events of given types ("call", "voicemail", "sms", "fax"). Multiple types can be included by concatenating type strings, eg. "?type=call-voicemial".',
         },
 
         {

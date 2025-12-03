@@ -9,7 +9,6 @@ use NGCP::Panel::Form;
 
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
-use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::XMLDispatcher;
 
@@ -158,8 +157,6 @@ sub create :Chained('dom_list_restricted') :PathPart('create') :Args() {
                     }
                 }
 
-                NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain})
-                    unless($c->config->{features}->{debug});
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
@@ -314,8 +311,6 @@ sub delete_domain :Chained('base') :PathPart('delete') :Args(0) {
             $prov_domain->voip_dom_preferences->delete;
             $prov_domain->provisioning_voip_subscribers->delete;
             $prov_domain->delete;
-            NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain)
-                unless($c->config->{features}->{debug});
         });
     } catch ($e) {
         NGCP::Panel::Utils::Message::error(

@@ -14,7 +14,6 @@ use Test::More;
 use POSIX qw(ceil);
 use NGCP::Panel::Form;
 use NGCP::Panel::Utils::XMLDispatcher;
-use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Utils::DateTime;
