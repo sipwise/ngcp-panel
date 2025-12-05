@@ -591,7 +591,7 @@ sub update_preferences {
             $full_rs->delete_all;
         } catch($e) {
             $c->log->error("failed to clear preferences for '$accessor': $e");
-            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.", $e);
             return;
         };
     } else {
@@ -693,7 +693,7 @@ sub update_preferences {
             }
         } catch($e) {
             $c->log->error("failed to clear preference for '$accessor': $e");
-            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.", $e);
             return;
         };
     }
@@ -1015,7 +1015,7 @@ sub update_preferences {
                         };
                         if ($@) {
                             $c->log->error("Failed to transform pref value - $@");
-                            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.", $@); # TODO?
                             return;
                         }
 						if(JSON::is_bool($v)){
@@ -1030,7 +1030,7 @@ sub update_preferences {
                     };
                     if ($@) {
                         $c->log->error("Failed to transform pref value - $@");
-                        &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                        &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.", $@); # TODO?
                         return;
                     }
                     if(JSON::is_bool($resource->{$pref})){
@@ -1044,7 +1044,7 @@ sub update_preferences {
                     };
                     if ($@) {
                         $c->log->error("Failed to transform pref value - $@");
-                        &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                        &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.", $@); # TODO?
                         return;
                     }
                     if(JSON::is_bool($resource->{$pref})){
@@ -1061,7 +1061,7 @@ sub update_preferences {
             }
         } catch($e) {
             $c->log->error("failed to update preference for '$accessor': $e");
-            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+            &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.", $e);
             return;
         }
     }
@@ -1081,7 +1081,7 @@ sub update_preferences {
                     );
                 } catch($e) {
                     $c->log->error("Failed to set peer registration: $e");
-                    &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error."); # TODO?
+                    &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.", $e); # TODO?
                     return;
                 }
             }

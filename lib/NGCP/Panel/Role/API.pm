@@ -2182,7 +2182,7 @@ sub check_wildcard_search {
 
 sub check_deadlock {
     my ($self, $c, $error) = @_;
-    my $max_attempts = 2;
+    my $max_attempts = 5;
 
     return 0 unless $error;
 
@@ -2202,6 +2202,7 @@ sub check_deadlock {
         log  => ($lockwait_retry and $lockwait_err or $deadlock_err),
     );
     $c->stash->{deadlock_retry_attempt} = $attempt+1;
+    sleep 1;
     return 1;
 }
 
