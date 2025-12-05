@@ -208,10 +208,28 @@ sub _item_rs {
 }
 
 sub update_item {
+    my ($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
 
-    my ($self, $c, $item, $old_resource, $resource) = @_;
+    $process_extras //= {};
 
-    return NGCP::Panel::Utils::Preferences::update_preferences(
+    if (ref $process_extras eq 'HASH') {
+        $process_extras->{retry_tx} = 0;
+    }
+
+    my $err_cb = sub {
+        my ($code, $msg, $err) = @_;
+        if ($err && $self->check_deadlock($c, $err)) {
+            if (ref $process_extras eq 'HASH') {
+                $process_extras->{retry_tx} = 1;
+            }
+            return;
+        }
+        unless ($c->has_errors) {
+            $self->error($c, $code, $msg, $err);
+        }
+    };
+
+    $item = NGCP::Panel::Utils::Preferences::update_preferences(
         c => $c,
         schema => $c->model('DB'),
         item => $item,
@@ -219,11 +237,10 @@ sub update_item {
         resource => $resource,
         type => $self->container_resource_type,
         replace => uc($c->request->method) eq 'PUT',
-        err_code => sub {
-            my ($code, $msg) = @_;
-            $self->error($c, $code, $msg);
-        },
+        err_code => $err_cb,
     );
+
+    return $item, $form, $process_extras;
 
 }
 
