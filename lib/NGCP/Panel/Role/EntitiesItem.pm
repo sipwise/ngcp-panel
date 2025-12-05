@@ -306,7 +306,8 @@ sub patch {
                 goto TX_END;
             }
 
-            ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+            ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras);
+            goto TX_START if ref $process_extras eq 'HASH' && $process_extras->{retry_tx};
             if ($c->has_errors) {
                 goto TX_END;
             }
@@ -403,7 +404,8 @@ sub put {
 
             my ($data_processed_result);
             if (!$non_json_data || !$data) {
-                ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras );
+                ($item, $form, $process_extras) = $self->update_item($c, $item, $old_resource, $resource, $form, $process_extras);
+                goto TX_START if ref $process_extras eq 'HASH' && $process_extras->{retry_tx};
                 if ($c->has_errors) {
                     goto TX_END;
                 }

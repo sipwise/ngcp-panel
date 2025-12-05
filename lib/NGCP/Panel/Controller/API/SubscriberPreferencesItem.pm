@@ -129,7 +129,9 @@ sub PATCH :Allow {
 
             # last param is "no replace" to NOT delete existing prefs
             # for proper PATCH behavior
-            $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, 0, "subscribers");
+            my $process_extras;
+            ($subscriber, undef, $process_extras) = $self->update_item($c, $subscriber, $old_resource, $resource, undef, $process_extras);
+            goto TX_START if $process_extras->{retry_tx};
             last unless $subscriber;
 
             my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
@@ -194,7 +196,9 @@ sub PUT :Allow {
 
             # last param is "replace" to delete all existing prefs
             # for proper PUT behavior
-            $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, 1, "subscribers");
+            my $process_extras;
+            $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, undef, $process_extras);
+            goto TX_START if $process_extras->{retry_tx};
             last unless $subscriber;
 
             my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
