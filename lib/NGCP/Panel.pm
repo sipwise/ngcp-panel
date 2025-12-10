@@ -331,7 +331,8 @@ __PACKAGE__->config(
 );
 __PACKAGE__->config( default_view => 'HTML' );
 
-__PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config_file));
+__PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config_file, autoflush => 1));
+# autoflush => 1: since we are not writing directly to the log file but to syslog instead, let syslog/rsyslog take care of the buffering part, otherwise $c->log->* invokations get buffered and delayed until a request if fully completed and response is sent, on top of it all logs such dumped buffer to syslog will be logged with exact same time, which is not correct. As well as autoflush is enabled by default in Log4Perl.
 
 # configure Data::HAL depending on our config
 {
