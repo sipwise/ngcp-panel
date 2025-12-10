@@ -1,3 +1,11 @@
+ngcp-panel (12.5.1.38+0~mr12.5.1.38) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [60a81b5] MT#64067 address deadlock detection for preferences
+  * [1cc676b] MT#64098 enable logger autoflush
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 10 Dec 2025 17:25:21 +0100
+
 ngcp-panel (12.5.1.37+0~mr12.5.1.37) unstable; urgency=medium
 
   [ Rene Krenn ]
