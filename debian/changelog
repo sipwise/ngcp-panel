@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.39+0~mr12.5.1.39) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [75a3766] MT#64067 fix subscriberpreferences PUT update_item
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 11 Dec 2025 10:02:52 +0100
+
 ngcp-panel (12.5.1.38+0~mr12.5.1.38) unstable; urgency=medium
 
   [ Kirill Solomko ]
