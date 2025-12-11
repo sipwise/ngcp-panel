@@ -197,7 +197,7 @@ sub PUT :Allow {
             # last param is "replace" to delete all existing prefs
             # for proper PUT behavior
             my $process_extras;
-            $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, undef, $process_extras);
+            ($subscriber, undef, $process_extras) = $self->update_item($c, $subscriber, $old_resource, $resource, undef, $process_extras);
             goto TX_START if $process_extras->{retry_tx};
             last unless $subscriber;
 
