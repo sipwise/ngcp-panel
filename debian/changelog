@@ -1,3 +1,14 @@
+ngcp-panel (14.0.1.2+0~mr14.0.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [3b8af44] MT#63997 make underrun lock on requests optional
+  * [55a9a95] MT#64067 address deadlock detection for preferences
+  * [a98ecca] MT#64098 enable logger autoflush
+  * [e1fe2f8] MT#64067 fix subscriberpreferences PUT update_item
+  * [a45dc62] MT#64121 fix $c->error $c->error handling
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 Dec 2025 18:55:15 +0100
+
 ngcp-panel (14.0.1.1+0~mr14.0.1.1) unstable; urgency=medium
 
   * New release.
