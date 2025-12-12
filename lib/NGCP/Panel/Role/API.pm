@@ -1069,7 +1069,7 @@ sub log_response {
         $has_errors = 1;
 
         $errors = $c->stash->{is_api_error_response}
-                    ? join ', ', splice @{$c->error}, 1
+                    ? join ', ', (splice @{$c->error}, 1) // ()
                     : join ', ', @{$c->error};
 
         # unhandled error message, should return 500 instead of 200
