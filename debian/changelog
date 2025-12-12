@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.40+0~mr12.5.1.40) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [87b023e] MT#64121 fix $c->error $c->error handling
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 Dec 2025 18:54:54 +0100
+
 ngcp-panel (12.5.1.39+0~mr12.5.1.39) unstable; urgency=medium
 
   [ Kirill Solomko ]
