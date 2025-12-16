@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.41+0~mr12.5.1.41) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [202138a] MT#64131 fix non-default NULL preference render
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 16 Dec 2025 10:44:28 +0100
+
 ngcp-panel (12.5.1.40+0~mr12.5.1.40) unstable; urgency=medium
 
   [ Kirill Solomko ]
