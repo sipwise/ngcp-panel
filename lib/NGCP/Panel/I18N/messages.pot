@@ -12423,7 +12423,7 @@ msgid "The contract's subscribers' lock levels before the top-up."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The conversation event type: call/voicemail/sms/fax/xmpp."
+msgid "The conversation event type: call/voicemail/sms/fax."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13143,7 +13143,7 @@ msgid "The optional date when the porting gets inactive again in format YYYY-MM-
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The original conversation record id - cdr id/voicemail id/sms id/fax journal record id/prosody message archive mgmt (mam) record id."
+msgid "The original conversation record id - cdr id/voicemail id/sms id/fax journal record id."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13155,7 +13155,7 @@ msgid "The password for authenticating on the X-2 interface."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The password to authenticate for SIP and XMPP services."
+msgid "The password to authenticate for SIP services."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13183,7 +13183,7 @@ msgid "The peering group this server belongs to."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The person's name, which is then used in XMPP contact lists or auto-provisioned phones, and which can be used as network-provided display name in SIP calls."
+msgid "The person's name, which is then used in auto-provisioned phones, and which can be used as network-provided display name in SIP calls."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -13807,7 +13807,7 @@ msgid "The user that attempted the topup."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
-msgid "The username for SIP and XMPP services."
+msgid "The username for SIP services."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
