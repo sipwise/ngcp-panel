@@ -25,24 +25,28 @@ has_field 'active_callforward.time_set' => (
     type => '+NGCP::Panel::Field::SubscriberTimeSet',
     label => 'during Time Set',
     wrapper_class => [qw/hfh-rep-field/],
+    localize => 0,
 );
 
 has_field 'active_callforward.source_set' => (
     type => '+NGCP::Panel::Field::SubscriberSourceSet',
     label => 'from Source Set',
     wrapper_class => [qw/hfh-rep-field/],
+    localize => 0,
 );
 
 has_field 'active_callforward.bnumber_set' => (
     type => '+NGCP::Panel::Field::SubscriberBNumberSet',
     label => 'to B-Number Set',
     wrapper_class => [qw/hfh-rep-field/],
+    localize => 0,
 );
 
 has_field 'active_callforward.destination_set' => (
     type => '+NGCP::Panel::Field::SubscriberDestinationSet',
     label => 'Destination Set',
     wrapper_class => [qw/hfh-rep-field/],
+    localize => 0,
 );
 
 has_field 'active_callforward.rm' => (
