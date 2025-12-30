@@ -1,11 +1,11 @@
-# DOCKER_NAME=ngcp-panel-tests-selenium-bookworm
-FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
+# DOCKER_NAME=ngcp-panel-tests-selenium-trixie
+FROM docker.mgm.sipwise.com/sipwise-trixie:latest
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2024-03-22
+ENV REFRESHED_AT 2025-12-30
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -68,12 +68,12 @@ COPY t/selenium/webdriver_prefs.json /usr/lib/python3/dist-packages/selenium/web
 # ----------------------
 # When you want to build the base image from scratch (jump to the next section if you don't want to build yourself!):
 # NOTE: run the following command from root folder of git repository:
-# % docker build --tag="ngcp-panel-tests-selenium-bookworm" -f t/selenium/Dockerfile .
-# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw ngcp-panel-tests-selenium-bookworm:latest bash
+# % docker build --tag="ngcp-panel-tests-selenium-trixie" -f t/selenium/Dockerfile .
+# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw ngcp-panel-tests-selenium-trixie:latest bash
 #
 # Use the existing docker image:
-# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-selenium-bookworm
-# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-bookworm:latest bash
+# % docker pull docker.mgm.sipwise.com/ngcp-panel-tests-selenium-trixie
+# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-panel-tests-selenium-trixie:latest bash
 #
 # Inside docker:
 #   su - selenium
