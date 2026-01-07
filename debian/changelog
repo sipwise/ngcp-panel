@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.42+0~mr12.5.1.42) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [80505d9] MT#64172 enable use_session = 0 for all API and JWT realms
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 07 Jan 2026 15:53:29 +0100
+
 ngcp-panel (12.5.1.41+0~mr12.5.1.41) unstable; urgency=medium
 
   [ Kirill Solomko ]
