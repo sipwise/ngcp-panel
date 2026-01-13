@@ -465,6 +465,14 @@ sub provision_begin {
                     _unbox_je_value($_);
                 } @_);
             };
+            $subs{'trim'} = sub {
+                my $string = _unbox_je_value(shift @_);
+                $string =~ s/^\s+|\s+$//g;
+                return $string;
+            };
+            $subs{'die'} = sub {
+                return die(( map { _unbox_je_value($_); } @_));
+            };
             while (each %subs) {
                 $context->{_je}->new_function($_ => $subs{$_});
             }
@@ -1433,11 +1441,13 @@ sub _calculate {
                     ";\n_func = $c;");
                 die("$f: " . $@) if $@;
                 my $v;
+                my $err;
                 eval {
                     $v = _unbox_je_value($context->{_je}->eval('_func();'));
+                    $err = $@;
                 };
-                if ($@) {
-                    die("$f: " . $@);
+                if ($err or ($err = $@)) {
+                    die("$f: " . $err);
                 }
                 return ($1 => $v);
 
