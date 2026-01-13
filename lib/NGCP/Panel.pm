@@ -179,7 +179,7 @@ __PACKAGE__->config(
                 user_model => 'DB::admins',
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
             },
-            use_session => 0,
+            use_session => 1,
         },
         api_admin => {
             credential => {
