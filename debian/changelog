@@ -1,3 +1,10 @@
+ngcp-panel (14.0.1.6+0~mr14.0.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [85ddc10] MT#64172 admin_jwt restore use_session = 1
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 13 Jan 2026 16:18:25 +0100
+
 ngcp-panel (14.0.1.5+0~mr14.0.1.5) unstable; urgency=medium
 
   [ Kirill Solomko ]
