@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.43+0~mr12.5.1.43) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [115f1a4] MT#63980 fix Javascript prov templates raising errors
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Jan 2026 13:12:06 +0100
+
 ngcp-panel (12.5.1.42+0~mr12.5.1.42) unstable; urgency=medium
 
   [ Kirill Solomko ]
