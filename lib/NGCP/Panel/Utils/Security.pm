@@ -60,7 +60,9 @@ EOF
     my @users = ();
     my $usr = {};
     for my $host (grep {$$_[1]} @$user_res) {
-        my $xmlDoc = $xml_parser->parse_string($host->[2]);
+        my $xml = $host->[2];
+        $xml =~ s/[\x00-\x08\x0b\x0c\x0e-\x1f]//g;
+        my $xmlDoc = $xml_parser->parse_string($xml);
         my $username = '';
         my $key = '';
         foreach my $node ($xmlDoc->findnodes('//member')) {
