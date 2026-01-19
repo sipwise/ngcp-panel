@@ -27,7 +27,8 @@ sub logout_index :Path {
     my ( $self, $c, $realm ) = @_;
 
     $c->logout;
-    $c->response->redirect($c->uri_for('/login'));
+    my $redirect = $c->req->params->{redirect} // 1;
+    $c->response->redirect($c->uri_for('/login')) if $redirect;
 }
 
 sub ajax_logout :Chained('/') :PathPart('ajax_logout') :Args(0) {
