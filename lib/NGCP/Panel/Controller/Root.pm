@@ -210,12 +210,24 @@ sub auto :Private {
                     $c->log->debug("Invalid api subscriber JWT login");
                 }
             } else {
-                $c->log->debug("Root::auto API request with admin JWT");
-                my $realm = "api_admin_jwt";
-                my $res = $c->authenticate({}, $realm);
+               if  ($c->req->headers->header("X-NGCP-Admin-UI") &&
+                    $c->req->headers->header("X-NGCP-Admin-UI") eq "1") {
 
-                unless ($c->user_exists) {
-                    $c->log->debug("Invalid api admin JWT login");
+                    $c->log->debug("Root::auto API request from NGCP-Admin-UI with admin JWT");
+                    my $realm = "ngcp_admin_ui_jwt";
+                    my $res = $c->authenticate({}, $realm);
+
+                    unless ($c->user_exists) {
+                        $c->log->debug("Invalid api NGCP-Admin-UI admin JWT login");
+                    }
+                } else {
+                    $c->log->debug("Root::auto API request with admin JWT");
+                    my $realm = "api_admin_jwt";
+                    my $res = $c->authenticate({}, $realm);
+
+                    unless ($c->user_exists) {
+                        $c->log->debug("Invalid api admin JWT login");
+                    }
                 }
             }
 
@@ -341,12 +353,24 @@ sub auto :Private {
             $c->req->headers->header("Authorization") &&
             $c->req->headers->header("Authorization") =~ m/^Bearer /) {
 
-        $c->log->debug("Root::auto UI request with admin JWT");
-        my $realm = "admin_jwt";
-        my $res = $c->authenticate({}, $realm);
+        if  ($c->req->headers->header("X-NGCP-Admin-UI") &&
+             $c->req->headers->header("X-NGCP-Admin-UI") eq "1") {
 
-        unless ($c->user_exists) {
-            $c->log->debug("invalid UI admin JWT login");
+            $c->log->debug("Root::auto UI request from NGCP-Admin-UI with admin JWT");
+            my $realm = "ngcp_admin_ui_jwt";
+            my $res = $c->authenticate({}, $realm);
+
+            unless ($c->user_exists) {
+                $c->log->debug("Invalid NGCP-Admin-UI admin JWT login");
+            }
+        } else {
+            $c->log->debug("Root::auto UI request with admin JWT");
+            my $realm = "admin_jwt";
+            my $res = $c->authenticate({}, $realm);
+
+            unless ($c->user_exists) {
+                $c->log->debug("invalid UI admin JWT login");
+            }
         }
 
         $self->api_apply_fake_time($c);
