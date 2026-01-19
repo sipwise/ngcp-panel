@@ -1,3 +1,11 @@
+ngcp-panel (13.5.1.19+0~mr13.5.1.19) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [0020ec8] MT#64282 add redirect=0 option to /ajax_logout
+  * [8db4d74] MT#64282 replace redirect with ajax_logout separation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Jan 2026 18:52:03 +0100
+
 ngcp-panel (13.5.1.18+0~mr13.5.1.18) unstable; urgency=medium
 
   [ Kirill Solomko ]
