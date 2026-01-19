@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.44+0~mr12.5.1.44) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [fbd639f] MT#64280 add ngcp_admin_ui_jwt realm and X-NGCP-Admin-UI header
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Jan 2026 15:22:39 +0100
+
 ngcp-panel (12.5.1.43+0~mr12.5.1.43) unstable; urgency=medium
 
   [ Rene Krenn ]
