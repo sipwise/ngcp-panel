@@ -327,7 +327,25 @@ __PACKAGE__->config(
                 store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
                 use_userdata_from_session => 0,
             }
-        }
+        },
+        ngcp_admin_ui_jwt => {
+            credential => {
+                class => '+NGCP::Panel::Authentication::Credential::JWT',
+                username_jwt => 'username',
+                username_field => 'login',
+                id_jwt => 'id',
+                id_field => 'id',
+                jwt_key => _get_jwt_key(),
+                debug => 1,
+                alg => 'HS256',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::admins',
+                store_user_class => 'NGCP::Panel::Authentication::Store::RoleFromRealm',
+            },
+            use_session => 1,
+        },
     },
     ngcp_version => get_ngcp_version(),
     uploadtmp    => $panel_config->{general}{tmpdir} // '/tmp',
