@@ -24,11 +24,14 @@ Catalyst Controller.
 =cut
 
 sub logout_index :Path {
+    my ($self, $c) = @_;
+}
+
+sub logout :Chained('/') :PathPart('logout') :Args(0) {
     my ( $self, $c, $realm ) = @_;
 
     $c->logout;
-    my $redirect = $c->req->params->{redirect} // 1;
-    $c->response->redirect($c->uri_for('/login')) if $redirect;
+    $c->response->redirect($c->uri_for('/login'));
 }
 
 sub ajax_logout :Chained('/') :PathPart('ajax_logout') :Args(0) {
