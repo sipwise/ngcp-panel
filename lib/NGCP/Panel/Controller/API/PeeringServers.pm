@@ -132,9 +132,13 @@ sub POST :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
+
         my $item;
 
         my $form = $self->get_form($c);
+
+        $self->pre_process_form_resource($c, undef, undef, $resource, $form, undef);
+
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
