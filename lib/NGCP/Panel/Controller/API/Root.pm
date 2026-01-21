@@ -398,6 +398,11 @@ sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
         my $data = decode_json($json) || return;
         $data->{licenses} = $licenses // [];
         $data->{license_meta} = $license_meta // {};
+
+        if ($c->user->roles eq 'admin') {
+            $data->{sip}{external_sbc} = $c->config->{sip}{external_sbc};
+        }
+
         return to_json($data, {pretty => 1, canonical => 1});
     });
     $c->forward($c->view());
