@@ -65,8 +65,29 @@ sub item_by_id {
     return $item_rs->find($id);
 }
 
+sub pre_process_form_resource {
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $uri = $resource->{via_route} // return;
+
+    $uri =~ s/^\s*([^\s]+)\s*$/$1/g;
+
+    unless ($uri =~ /^</) {
+        $uri = '<' . $uri . ';lr>';
+    }
+
+    unless ($uri =~ /;lr>$/) {
+        $uri =~ s/>$//;
+        $uri = $uri . ';lr>';
+    }
+
+    $resource->{via_route} = $uri;
+}
+
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    $self->pre_process_form_resource($c, $item, $old_resource, $resource, $form, undef);
 
     $form //= $self->get_form($c);
     return unless $self->validate_form(
