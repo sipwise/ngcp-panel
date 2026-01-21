@@ -56,6 +56,9 @@ has_field 'via_route' => (
     type => '+NGCP::Panel::Field::Select',
     label => 'Via Route',
     options_method => \&build_via_routes,
+    apply => [
+        { transform => \&transform_via_route },
+    ],
     translate => 0,
 );
 
@@ -127,28 +130,35 @@ sub validate_name {
     }
 }
 
+sub transform_via_route {
+    my ($self, $field) = @_;
+
+    my $uri = $field->value;
+
+    $uri =~ s/^\s*([^\s]+)\s*$/$1/g;
+
+    unless ($uri =~ /^</) {
+        $uri = '<' . $uri . ';lr>';
+    }
+
+    unless ($uri =~ /;lr>$/) {
+        $uri =~ s/>$//;
+        $uri = $uri . ';lr>';
+    }
+
+    return $uri;
+}
+
 sub validate_via_route {
     my ($self, $field) = @_;
 
-    my @hops = split /,/, $field->value;
-    my $err = 0;
-    foreach my $hop(@hops) {
-        $hop =~ s/^\s*([^\s]+)\s*$/$1/;
-        # TODO: is there a proper sip uri check?
-        unless($hop =~ /^<sip\:.+>$/) {
-            $err = 1; last;
-        }
-    }
-    if($err) {
-        $field->add_error("Invalid SIP URI, must be (comma-separated) SIP URI(s) in form sip:ip:port");
+    my $uri = $field->value;
+
+    unless ($field->value =~ /^<?sip\:[^\s]+:\d+;lr>?$/) {
+        $field->add_error("Invalid SIP URI, must be a valid SIP URI in the form of sip:ip:port");
     }
 }
-#sub validate {
-#    my ($self) = @_;
-#    my $c = $self->ctx;
-#    return unless $c;
-#    my $model = $c->
-#}
+
 1;
 
 __END__
