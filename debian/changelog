@@ -1,3 +1,11 @@
+ngcp-panel (14.0.1.10+0~mr14.0.1.10) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [5ffef00] MT#64295 fix /api/peeringservers via_route validation
+  * [058b63b] MT#64297 /api/platforminfo expose sip.external_sbc config
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 22 Jan 2026 16:08:09 +0100
+
 ngcp-panel (14.0.1.9+0~mr14.0.1.9) unstable; urgency=medium
 
   [ Kirill Solomko ]
