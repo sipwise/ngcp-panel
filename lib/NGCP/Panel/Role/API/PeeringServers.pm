@@ -72,13 +72,17 @@ sub pre_process_form_resource {
 
     $uri =~ s/^\s*([^\s]+)\s*$/$1/g;
 
-    unless ($uri =~ /^</) {
-        $uri = '<' . $uri . ';lr>';
-    }
+    if ($uri) {
+        unless ($uri =~ /^</) {
+            $uri = '<' . $uri . ';lr>';
+        }
 
-    unless ($uri =~ /;lr>$/) {
-        $uri =~ s/>$//;
-        $uri = $uri . ';lr>';
+        unless ($uri =~ /;lr>$/) {
+            $uri =~ s/>$//;
+            $uri = $uri . ';lr>';
+        }
+    } else {
+        $uri = undef;
     }
 
     $resource->{via_route} = $uri;
