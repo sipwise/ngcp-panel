@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.21+0~mr13.5.1.21) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4d82d63] MT#64295 better handling of via_route empty string
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 23 Jan 2026 11:26:20 +0100
+
 ngcp-panel (13.5.1.20+0~mr13.5.1.20) unstable; urgency=medium
 
   [ Kirill Solomko ]
