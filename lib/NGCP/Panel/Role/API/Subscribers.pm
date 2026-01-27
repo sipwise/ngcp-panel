@@ -627,18 +627,18 @@ sub update_item {
 }
 
 sub check_write_access {
-    my ( $self, $c, $id ) = @_;
+    my ($self, $c, $id) = @_;
 
     if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
         $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
             return 1;
-    }
-    elsif ($c->user->roles eq "subscriberadmin" && !$self->subscriberadmin_write_access($c)) {
-        $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-        return;
-    }
-    elsif($c->user->roles eq "subscriber") {
-        if ( $id != $c->user->voip_subscriber->id ) {
+    } elsif ($c->user->roles eq "subscriberadmin") {
+        if (!$self->subscriberadmin_write_access($c, $id) && $id != $c->user->voip_subscriber->id) {
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
+        }
+    } elsif($c->user->roles eq "subscriber") {
+        if ($id != $c->user->voip_subscriber->id) {
             $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
             return;
         }
@@ -647,17 +647,31 @@ sub check_write_access {
 }
 
 sub subscriberadmin_write_access {
-    my($self,$c) = @_;
-    if ( ( $c->config->{privileges}->{subscriberadmin}->{subscribers}
+    my ($self, $c, $id) = @_;
+    if ( (( $c->config->{privileges}->{subscriberadmin}->{subscribers}
            && $c->config->{privileges}->{subscriberadmin}->{subscribers} =~/write/
-         )
+          )
          ||
-         ( $c->license('pbx') && $c->config->{features}->{cloudpbx} #user can disable pbx feature after some time of using it
+          ( $c->license('pbx') && $c->config->{features}->{cloudpbx}
            && $c->user->contract->product->class eq 'pbxaccount'
-         )
+          ))
+         &&
+         $self->check_subscriber_same_customer($c, $id)
         ) {
         return 1;
     }
+    return 0;
+}
+
+sub check_subscriber_same_customer {
+    my ($self, $c, $id) = @_;
+
+    my $sub = $c->model('DB')->resultset('voip_subscribers')->find($id);
+
+    if ($sub && $sub->status ne 'terminated' && $sub->contract_id == $c->user->account_id) {
+        return 1;
+    }
+
     return 0;
 }
 
