@@ -1,3 +1,10 @@
+ngcp-panel (14.0.1.12+0~mr14.0.1.12) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [7c02e77] MT#64232 improve check_subscriberadmin_write_access
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 28 Jan 2026 19:57:35 +0100
+
 ngcp-panel (14.0.1.11+0~mr14.0.1.11) unstable; urgency=medium
 
   [ Kirill Solomko ]
