@@ -11,10 +11,19 @@ has_field 'group_id' => (
     },
 );
 
+has_field 'site_id' => (
+    type => 'PosInteger',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['If defined, the peering will only be used on the selected site.']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group_id name ip host port transport weight via_route probe enabled/],
+    render_list => [qw/group_id name ip host port transport weight via_route site_id probe enabled/],
 );
 
 1;

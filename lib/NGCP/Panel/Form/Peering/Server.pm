@@ -83,6 +83,31 @@ sub build_via_routes {
     return \@options;
 }
 
+has_field 'site_id' => (
+    type => '+NGCP::Panel::Field::Select',
+    label => 'Site',
+    options_method => \&build_sites_select,
+);
+
+sub build_sites_select {
+    my ($self) = @_;
+
+    return unless $self->form->ctx;
+    my @options = ();
+    push @options, { label => 'all (default)', value => undef };
+    my $sites = $self->form->ctx->config->{multisite}->{sites};
+    if (defined $sites) {
+        if (ref $sites eq "HASH") {
+            foreach my $id (sort keys %{$sites}) {
+                my ($name, $role) = @{$sites->{$id}}{qw(name role)};
+                my $label = "$name (id: $id role: $role)";
+                push @options, { label => $label, value => $id };
+            }
+        }
+    }
+    return \@options;
+}
+
 has_field 'probe' => (
     type => 'Boolean',
     label => 'Enable Probing',
@@ -114,7 +139,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/ name ip host port transport weight via_route probe enabled /],
+    render_list => [qw/ name ip host port transport weight via_route site_id probe enabled /],
 );
 
 has_block 'actions' => (

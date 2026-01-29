@@ -84,6 +84,9 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'transport', search => 1, title => $c->loc('Protocol') },
         { name => 'weight', search => 0, title => $c->loc('Weight') },
         { name => 'via_route', search => 1, title => $c->loc('Via Route Set') },
+        $c->config->{multisite}{site_id}
+            ? ({ name => 'site_id', search => 0, title => $c->loc('Site') })
+            : (),
         { name => 'probe', search => 0, title => $c->loc('Probe') },
         { name => 'enabled', search => 0, title => $c->loc('Enabled') },
     ]);
@@ -298,6 +301,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
                 via_route => $form->values->{via_route},
                 enabled => $form->values->{enabled},
                 probe => $form->values->{probe},
+                site_id => $form->values->{site_id},
             };
             my $server = $c->stash->{group_result}->voip_peer_hosts->create($dbvalues);
             NGCP::Panel::Utils::Peering::sip_lcr_reload(c => $c);
