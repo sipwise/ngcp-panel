@@ -80,6 +80,8 @@ sub new_subscriber {
     my $email = $subscriber->contact ? 
         $subscriber->contact->email : $subscriber->contract->contact->email;
 
+    return unless $template->from_email && $email;
+
     my $vars = {
         url => $url,
         subscriber => $subscriber->username . '@' . $subscriber->domain->domain,
@@ -109,6 +111,8 @@ sub password_reset {
     my $email = $subscriber->contact ? 
         $subscriber->contact->email : $subscriber->contract->contact->email;
 
+    return unless $template->from_email && $email;
+
     my $vars = {
         url => $url,
         subscriber => $subscriber->username . '@' . $subscriber->domain->domain,
@@ -126,6 +130,8 @@ sub admin_password_reset {
     my $template = $admin->reseller->email_templates->search({name => 'admin_passreset_default_email'})->first;
     return unless($template);
     my $email = $admin->email;
+
+    return unless $template->from_email && $email;
 
     my $vars = {
         url => $url,
