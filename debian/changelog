@@ -1,3 +1,42 @@
+ngcp-panel (14.2.0.0+0~mr14.2.0.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [6e2ca03] MT#63997 make underrun lock on requests optional
+  * [eae620f] MT#64067 address deadlock detection for preferences
+  * [bb6b737] MT#64098 enable logger autoflush
+  * [56b15e8] MT#64067 fix subscriberpreferences PUT update_item
+  * [9d70f62] MT#64121 fix $c->error $c->error handling
+  * [f6246ba] MT#64131 fix non-default NULL preference render
+  * [6003c3b] MT#64172 enable use_session = 0 for all API and JWT realms
+  * [acf142a] MT#64172 admin_jwt restore use_session = 1
+  * [41fb2d2] MT#64280 add ngcp_admin_ui_jwt realm and X-NGCP-Admin-UI header
+  * [4a1f5f4] MT#64282 add redirect=0 option to /ajax_logout
+  * [c48355c] MT#64282 replace redirect with ajax_logout separation
+  * [638b2f2] MT#64295 fix /api/peeringservers via_route validation
+  * [a97490e] MT#64297 /api/platforminfo expose sip.external_sbc config
+  * [c417cc6] MT#64295 better handling of via_route empty string
+  * [224aec5] MT#64232 improve check_subscriberadmin_write_access
+  * [00b9608] MT#64346 skip email dispatch without a dest email
+
+  [ Rene Krenn ]
+  * [4905f12] MT#63818 ldap auth: support dn lookup
+  * [5fb5a86] MT#63980 fix Javascript prov templates raising errors
+  * [10df504] MT#64142 do not translate CF dropdown items
+
+  [ Guillem Jover ]
+  * [b6e2baa] MT#63479 Remove prosody support
+  * [d191420] MT#62899 Update packaging for Debian trixie
+  * [fb52d2d] MT#62899 Switch Dockerfile from Debian bookworm to trixie
+  * [c7dac19] MT#62763 Fix pycodestyle issues
+
+  [ Sipwise Jenkins Builder ]
+  * [73e945c] TT#4166 I18N dump: snapshot 2025.12.17-23.19.49
+
+  [ Michael Prokop ]
+  * [b864f27] MT#62249 Refresh docker images
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 05 Feb 2026 10:23:27 +0100
+
 ngcp-panel (14.1.0.0+0~mr14.1.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
