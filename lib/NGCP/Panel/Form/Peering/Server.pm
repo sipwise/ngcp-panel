@@ -157,12 +157,11 @@ sub validate_name {
 
 sub transform_via_route {
     my ($self, $field) = @_;
-
     my $uri = $field->value;
 
     $uri =~ s/^\s*([^\s]+)\s*$/$1/g;
 
-    $uri || return undef;
+    return unless $uri;
 
     unless ($uri =~ /^</) {
         $uri = '<' . $uri . ';lr>';
@@ -178,8 +177,9 @@ sub transform_via_route {
 
 sub validate_via_route {
     my ($self, $field) = @_;
+    my $uri = $field->value;
 
-    my $uri = $field->value || return;
+    return unless $uri;
 
     unless ($field->value =~ /^<?sip\:[^\s]+:\d+;lr>?$/) {
         $field->add_error("Invalid SIP URI, must be a valid SIP URI in the form of sip:ip:port");
