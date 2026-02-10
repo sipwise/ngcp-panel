@@ -6285,6 +6285,10 @@ msgid "If active, this sound set is used for all existing and new subscribers if
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If defined, the peering will only be used on the selected site."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled allows LNP queries for local subscribers."
 msgstr ""
 
@@ -10818,6 +10822,14 @@ msgstr ""
 
 #: share/templates/statistics/supportstatus.tt
 msgid "Sipwise support access is"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Site"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Site id"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Lnp.pm lib/NGCP/Panel/Utils/DbStrings.pm
