@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.24+0~mr13.5.1.24) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9992a03] MT#61442 allow utf8 for creating data::hal links
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 10 Feb 2026 18:17:04 +0100
+
 ngcp-panel (13.5.1.23+0~mr13.5.1.23) unstable; urgency=medium
 
   [ Kirill Solomko ]
