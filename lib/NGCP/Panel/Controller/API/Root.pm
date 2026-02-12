@@ -401,6 +401,12 @@ sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
 
         if ($c->user->roles eq 'admin') {
             $data->{sip}{external_sbc} = $c->config->{sip}{external_sbc};
+            my $site_id = $c->config->{multisite}{site_id} // 0;
+            if ($site_id) {
+                $data->{multisite} = $c->config->{multisite};
+            } else {
+                $data->{multisite} = {};
+            }
         }
 
         return to_json($data, {pretty => 1, canonical => 1});
