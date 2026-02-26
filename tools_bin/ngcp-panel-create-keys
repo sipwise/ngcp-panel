@@ -59,7 +59,7 @@ if ('rsa' eq lc($type)) {
          make_dir => 1,
          path_owner => "root",
          path_group => "root",
-         path_mod => 777,
+         path_mod => 755,
     );
 
     $pk->import_key(\$rsa->get_public_key_string());
@@ -67,11 +67,11 @@ if ('rsa' eq lc($type)) {
          filename => $public_key_filename,
          owner => "root",
          group => "root",
-         mod => 600,
+         mod => 644,
          make_dir => 1,
          path_owner => "root",
          path_group => "root",
-         path_mod => 777,
+         path_mod => 755,
     );
 } else {
     die("Unsupported key type: $type\n")
