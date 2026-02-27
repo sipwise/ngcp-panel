@@ -108,7 +108,9 @@ sub save_pem {
         path_mod => $path_mod,
         path_owner => $path_owner,
         path_group => $path_group);
-    open(my $fh, '>', $filename) or die "Could not open file '$filename': $!\n";
+
+    sysopen my $fh, $filename, O_WRONLY | O_CREAT, $mod
+        or die "Could not open file '$filename': $!\n";
     print $fh $data;
     close $fh;
     _chownmod($filename,$owner,$group,$mod);
