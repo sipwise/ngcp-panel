@@ -42,7 +42,7 @@ if ('rsa' eq lc($type)) {
         $i++;
     }
 
-    $size //= 2048;
+    $size //= 3072;
     die("Invalid size $size for RSA keys\n") if ($size < 2048 or $size > 8192);
 
     my $rsa = Crypt::OpenSSL::RSA->generate_key($size);
@@ -196,12 +196,13 @@ Specify what key to generate. Defaults to "rsa" (encryption of JSON fields).
 
 Specify the key size in bits.
 Minimum size is 2048, maximum is 8192.
+Defaults to 3072 bits.
 
 =back
 
 =head1 EXAMPLES
 
-ngcp-create-keys --type="rsa" --size="2048"
+ngcp-create-keys --type="rsa" --size="3072"
 
 =head1 AUTHOR
 
