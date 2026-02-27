@@ -43,7 +43,7 @@ if ('rsa' eq lc($type)) {
     }
 
     $size //= 2048;
-    die("Invalid size $size for RSA keys\n") if ($size < 256 or $size > 8192);
+    die("Invalid size $size for RSA keys\n") if ($size < 2048 or $size > 8192);
 
     my $rsa = Crypt::OpenSSL::RSA->generate_key($size);
 
@@ -195,6 +195,7 @@ Specify what key to generate. Defaults to "rsa" (encryption of JSON fields).
 =item B<--size=>I<key length>
 
 Specify the key size in bits.
+Minimum size is 2048, maximum is 8192.
 
 =back
 
