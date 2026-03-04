@@ -5,6 +5,7 @@ use warnings;
 
 use Getopt::Long qw(GetOptions);
 use Pod::Usage qw(pod2usage);
+use Fcntl;
 use File::Basename qw(fileparse);
 use File::Path qw(make_path);
 
