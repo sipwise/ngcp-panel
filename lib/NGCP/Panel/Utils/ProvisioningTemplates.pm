@@ -527,6 +527,17 @@ sub provision_commit_row {
         $context,
         $schema,
     );
+    _init_contract_balance_context(
+        $c,
+        $context,
+        $schema,
+        $c->stash->{provisioning_templates}->{$template},
+    );
+    _set_contract_balance(
+        $c,
+        $context,
+        $schema,
+    );
     _init_contract_preferences_context(
         $c,
         $context,
@@ -724,6 +735,7 @@ sub _init_row_context {
 
     delete $context->{contract_contact};
     delete $context->{contract};
+    delete $context->{contract_balance};
     delete $context->{contract_preferences};
     delete $context->{subscriber};
     delete $context->{subscriber_preferences};
@@ -740,6 +752,7 @@ sub _init_row_context {
     delete $context->{product};
 
     delete $context->{_bm};
+    delete $context->{_cb};
     delete $context->{_cp};
     delete $context->{_cs};
 
@@ -1017,6 +1030,36 @@ sub _init_subscriber_preferences_context {
 
 }
 
+
+sub _init_contract_balance_context {
+
+    my ($c, $context, $schema, $template) = @_;
+
+    if (exists $template->{contract_balance}) {
+
+        $context->{_cb} = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+            contract => $schema->resultset('contracts')->find({
+                id => $context->{contract}->{id},
+            }),
+            now => $context->{now},);
+        );
+
+        my %contract_balance = (
+            cash_balance => $context->{_cb}->cash_balance,
+            free_time_balance => $context->{_cb}->free_time_balance,
+        );
+        foreach my $col (keys %{$template->{contract_balance}}) {
+            my ($k,$v) = _calculate($context,$col, $template->{contract_balance}->{$col});
+            $contract_balance{$k} = $v;
+        }
+        $context->{contract_balance} = \%contract_balance;
+
+        $c->log->debug("provisioning template - contract balance: " . Dumper($context->{contract_balance}));
+
+    }
+
+}
+
 sub _init_contract_preferences_context {
 
     my ($c, $context, $schema, $template) = @_;
@@ -1150,6 +1193,39 @@ sub _create_contract {
             );
             $c->log->debug("provisioning template - contract id $context->{contract}->{id} created");
         }
+    }
+
+}
+
+sub _set_contract_balance {
+
+    my ($c, $context, $schema) = @_;
+
+    if (exists $context->{contract_balance}) {
+
+        my $entities = { contract => $context->{_cb}->contract, };
+        my $log_vals = {};
+
+        $context->{_cb} = NGCP::Panel::Utils::ProfilePackages::set_contract_balance(
+            c => $c,
+            balance => $context->{_cb},
+            cash_balance => $context->{contract_balance}->{cash_balance},
+            free_time_balance => $context->{contract_balance}->{free_time_balance},
+            now => $context->{now},
+            log_vals => $log_vals);
+
+        my $topup_log = NGCP::Panel::Utils::ProfilePackages::create_topup_log_record(
+            c => $c,
+            now => $context->{now},
+            entities => $entities,
+            log_vals => $log_vals,
+            request_token => NGCP::Panel::Utils::ProfilePackages::API_DEFAULT_TOPUP_REQUEST_TOKEN,
+        );
+
+        $context->{_cb}->discard_changes;
+
+        $c->log->debug("provisioning template - contract id $context->{contract}->{id} contract balance set");
+
     }
 
 }
