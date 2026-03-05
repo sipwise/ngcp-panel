@@ -6,6 +6,7 @@ use Sipwise::Base;
 use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::CallList qw();
+use HTTP::Status qw(:constants);
 
 my $lock_timeout = 5;
 
@@ -583,6 +584,81 @@ sub acquire_contract_rowlocks {
     }
     $c->log->debug('no contract IDs to be locked!') if $c;
     return [];
+}
+
+sub prepare_fraud_preferences_resource {
+
+    my ($c, $customer) = @_;
+    my $item = $customer->contract_fraud_preference;
+    my $bp_item = $customer->actual_billing_profile->billing_profile;
+    my $resource;
+
+    my ($prefs, $bp_prefs);
+    $bp_prefs = { $bp_item->get_inflated_columns };
+    $prefs = $item ? { $item->get_inflated_columns } : undef;
+
+    if ($prefs) {
+        $resource = $prefs;
+        delete $resource->{contract_id};
+        delete $resource->{id};
+    } else {
+        $resource = {
+            fraud_interval_limit => undef,
+            fraud_interval_lock => undef,
+            fraud_interval_notify => undef,
+            fraud_daily_limit => undef,
+            fraud_daily_lock => undef,
+            fraud_daily_notify => undef,
+        }
+    }
+
+    foreach my $type (qw(interval daily)) {
+        my $prefix = 'fraud_'.$type.'_';
+        my $c_prefix = 'current_fraud_'.$type.'_';
+        $resource->{$c_prefix.'source'} =
+            $prefs && $prefs->{$prefix.'limit'}
+                ? 'customer'
+                : 'billing_profile';
+        my $sel_prefs =
+            $resource->{$c_prefix.'source'} eq 'customer'
+                ? $prefs
+                : $bp_prefs;
+        map {
+            $resource->{$c_prefix.$_} = $sel_prefs->{$prefix.$_}
+        } qw(limit lock notify);
+    }
+
+    return $resource;
+
+}
+
+sub check_fraud_preferences_resource {
+
+    my ($resource, $err_code) = @_;
+
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 1; };
+    }
+
+    #foreach my $type (qw(interval daily)) {
+    #    if (defined $resource->{'fraud_'.$type.'_limit'} && $resource->{'fraud_'.$type.'_limit'} <= 0) {
+    #        die "Fraud ${type} limit must be greater than 0";
+    #    }
+    #}
+
+    foreach my $type (qw(interval daily)) {
+        if (not defined $resource->{'fraud_'.$type.'_limit'}) {
+            if (defined $resource->{'fraud_'.$type.'_lock'}) {
+                return unless &$err_code(HTTP_UNPROCESSABLE_ENTITY, 'for cleared fraud_'.$type.'_limit, fraud_'.$type.'_lock must be cleared too.');
+            }
+            if (defined $resource->{'fraud_'.$type.'_notify'}) {
+                return unless &$err_code(HTTP_UNPROCESSABLE_ENTITY, 'for cleared fraud_'.$type.'_limit, fraud_'.$type.'_notify must be cleared too.');
+            }
+        }
+    }
+
+    return 1;
+
 }
 
 1;
