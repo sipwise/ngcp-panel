@@ -20,13 +20,48 @@ if ( matched.browser ) {
     jQuery.browser.version = matched.version;
 }
 
-(function($) {
-    var $old = $;
-    window.$ = window.jQuery = function(selector, context) {
-        if (selector === '#' || selector === '') {
-            console.warn('jquery # override');
-            return $old([]);
-        }
-        return $old(selector, context);
+(function ($) {
+
+    const booleanAttrs = {
+        checked: true,
+        selected: true,
+        disabled: true,
+        readonly: true,
+        multiple: true
     };
+
+    var oldInit = $.fn.init;
+
+    $.fn.init = function (selector, context, root) {
+
+        if (typeof selector === 'string') {
+            if (selector === '#' || selector.trim() === '') {
+                console.warn('jquery # override', new Error().stack);
+                return oldInit.call(this, [], context, root);
+            }
+        }
+
+        return oldInit.call(this, selector, context, root);
+    };
+
+    $.fn.init.prototype = $.fn;
+
+    const oldAttr = $.fn.attr;
+
+    $.fn.attr = function (name, value) {
+
+        if (booleanAttrs[name]) {
+
+            // getter
+            if (value === undefined) {
+                return this.prop(name) ? name : undefined;
+            }
+
+            // setter
+            return this.prop(name, !!value);
+        }
+
+        return oldAttr.apply(this, arguments);
+    };
+
 })(jQuery);
