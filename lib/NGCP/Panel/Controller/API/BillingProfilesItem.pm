@@ -8,7 +8,7 @@ use HTTP::Status qw(:constants);
 use Clone qw/clone/;
 
 use NGCP::Panel::Utils::ValidateJSON qw();
-use NGCP::Panel::Utils::Billing qw /check_profile_update_item/;
+use NGCP::Panel::Utils::Billing qw();
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
