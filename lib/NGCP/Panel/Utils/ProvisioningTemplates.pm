@@ -538,6 +538,17 @@ sub provision_commit_row {
         $context,
         $schema,
     );
+    _init_fraud_preferences_context(
+        $c,
+        $context,
+        $schema,
+        $c->stash->{provisioning_templates}->{$template},
+    );
+    _set_fraud_preferences(
+        $c,
+        $context,
+        $schema,
+    );
     _init_contract_preferences_context(
         $c,
         $context,
@@ -1030,7 +1041,6 @@ sub _init_subscriber_preferences_context {
 
 }
 
-
 sub _init_contract_balance_context {
 
     my ($c, $context, $schema, $template) = @_;
@@ -1041,13 +1051,14 @@ sub _init_contract_balance_context {
             contract => $schema->resultset('contracts')->find({
                 id => $context->{contract}->{id},
             }),
-            now => $context->{now},);
+            now => $context->{now},
         );
 
         my %contract_balance = (
             cash_balance => $context->{_cb}->cash_balance,
             free_time_balance => $context->{_cb}->free_time_balance,
         );
+        $context->{contract_balance} = { %contract_balance }; #expose current balance fields for calculations
         foreach my $col (keys %{$template->{contract_balance}}) {
             my ($k,$v) = _calculate($context,$col, $template->{contract_balance}->{$col});
             $contract_balance{$k} = $v;
@@ -1055,6 +1066,32 @@ sub _init_contract_balance_context {
         $context->{contract_balance} = \%contract_balance;
 
         $c->log->debug("provisioning template - contract balance: " . Dumper($context->{contract_balance}));
+
+    }
+
+}
+
+sub _init_fraud_preferences_context {
+
+    my ($c, $context, $schema, $template) = @_;
+
+    if (exists $template->{fraud_preferences}) {
+
+        my $customer = $schema->resultset('contracts')->find({
+            id => $context->{contract}->{id},
+        });
+        my $resource = NGCP::Panel::Utils::Contract::prepare_fraud_preferences_resource($c, $customer);
+
+        my %fraud_preferences = %$resource;
+        $context->{fraud_preferences} = { %fraud_preferences }; #expose current_* and *_source fields for calculations
+        foreach my $col (keys %{$template->{fraud_preferences}}) {
+            my ($k,$v) = _calculate($context,$col, $template->{fraud_preferences}->{$col});
+            $fraud_preferences{$k} = $v;
+        }
+        $fraud_preferences{contract_id} = $customer->id;
+        $context->{fraud_preferences} = \%fraud_preferences;
+
+        $c->log->debug("provisioning template - fraud preferences: " . Dumper($context->{fraud_preferences}));
 
     }
 
@@ -1225,6 +1262,31 @@ sub _set_contract_balance {
         $context->{_cb}->discard_changes;
 
         $c->log->debug("provisioning template - contract id $context->{contract}->{id} contract balance set");
+
+    }
+
+}
+
+sub _set_fraud_preferences {
+
+    my ($c, $context, $schema) = @_;
+
+    if (exists $context->{fraud_preferences}) {
+
+        my $resource = {
+            map { ($_ =~ /^current|source$/) ? () : ($_ => $context->{fraud_preferences}->{$_}); }
+            keys %{$context->{fraud_preferences}} };
+
+        NGCP::Panel::Utils::Contract::check_fraud_preferences_resource($resource,sub {
+            my ($code, $msg) = @_;
+            die($msg);
+        });
+
+        my $item = $schema->resultset('contract_fraud_preferences')->update_or_create($resource,{
+            key => 'contract_id'
+        });
+
+        $c->log->debug("provisioning template - contract id $context->{contract}->{id} fraud preferences set");
 
     }
 
