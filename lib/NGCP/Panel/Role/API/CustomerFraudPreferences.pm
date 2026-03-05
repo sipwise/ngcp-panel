@@ -56,44 +56,8 @@ sub hal_from_item {
 sub resource_from_item {
 
     my ($self, $c, $customer, $form) = @_;
-    my $item = $customer->contract_fraud_preference;
-    my $bp_item = $customer->actual_billing_profile->billing_profile;
-    my $resource;
 
-    my ($prefs, $bp_prefs);
-    $bp_prefs = { $bp_item->get_inflated_columns };
-    $prefs = $item ? { $item->get_inflated_columns } : undef;
-
-    if ($prefs) {
-        $resource = $prefs;
-        delete $resource->{contract_id};
-        delete $resource->{id};
-    } else {
-        $resource = {
-            fraud_interval_limit => undef,
-            fraud_interval_lock => undef,
-            fraud_interval_notify => undef,
-            fraud_daily_limit => undef,
-            fraud_daily_lock => undef,
-            fraud_daily_notify => undef,
-        }
-    }
-
-    foreach my $type (qw(interval daily)) {
-        my $prefix = 'fraud_'.$type.'_';
-        my $c_prefix = 'current_fraud_'.$type.'_';
-        $resource->{$c_prefix.'source'} =
-            $prefs && $prefs->{$prefix.'limit'}
-                ? 'customer'
-                : 'billing_profile';
-        my $sel_prefs =
-            $resource->{$c_prefix.'source'} eq 'customer'
-                ? $prefs
-                : $bp_prefs;
-        map {
-            $resource->{$c_prefix.$_} = $sel_prefs->{$prefix.$_}
-        } qw(limit lock notify);
-    }
+    my $resource = NGCP::Panel::Utils::Contract::prepare_fraud_preferences_resource($c, $customer);
 
     return $resource;
 
@@ -146,18 +110,11 @@ sub update_item {
 
     $resource->{contract_id} = $customer->id;
 
-    foreach my $type (qw(interval daily)) {
-        if (not defined $resource->{'fraud_'.$type.'_limit'}) {
-            if (defined $resource->{'fraud_'.$type.'_lock'}) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'for cleared fraud_'.$type.'_limit, fraud_'.$type.'_lock must be cleared too.');
-                return;
-            }
-            if (defined $resource->{'fraud_'.$type.'_notify'}) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'for cleared fraud_'.$type.'_limit, fraud_'.$type.'_notify must be cleared too.');
-                return;
-            }
-        }
-    }
+    return unless NGCP::Panel::Utils::Contract::check_fraud_preferences_resource($resource,sub {
+        my ($code, $msg, @errors) = @_;
+        $self->error($c, $code, $msg, @errors);
+        return 0;
+    });
 
     try {
         my $item = $c->model('DB')->resultset('contract_fraud_preferences')->update_or_create($resource,{
