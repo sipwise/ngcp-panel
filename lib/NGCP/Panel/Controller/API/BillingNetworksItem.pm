@@ -11,7 +11,7 @@ use HTTP::Status qw(:constants);
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Reseller qw();
-use NGCP::Panel::Utils::BillingNetworks qw /check_network_update_item/;
+use NGCP::Panel::Utils::BillingNetworks qw();
 require Catalyst::ActionRole::ACL;
 require NGCP::Panel::Role::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
