@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.25+0~mr13.5.1.25) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [c62a3e4] MT#63759 prov templates:  parse .csv header
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 17 Mar 2026 12:21:53 +0100
+
 ngcp-panel (13.5.1.24+0~mr13.5.1.24) unstable; urgency=medium
 
   [ Rene Krenn ]
