@@ -137,10 +137,12 @@ sub validate_template {
     my ($data,$prefix) = @_;
     $prefix //= 'template: ';
     die($prefix . "not a hash\n") unless 'HASH' eq ref $data;
-    foreach my $section (qw/subscriber/) {
-        die($prefix . "section '$section' required\n") unless exists $data->{$section};
-        die($prefix . "section '$section' is not a hash\n") unless 'HASH' eq ref $data->{$section};
-    }
+    # todo: validate fields
+
+    #foreach my $section (qw/subscriber/) {
+    #    die($prefix . "section '$section' required\n") unless exists $data->{$section};
+    #    die($prefix . "section '$section' is not a hash\n") unless 'HASH' eq ref $data->{$section};
+    #}
 
 }
 
@@ -263,11 +265,19 @@ sub create_provisioning_template_form {
                 c => $c,
                 context => $context,
             );
-            NGCP::Panel::Utils::Message::info(
-                c => $c,
-                data => \%log_data,
-                desc => $c->loc("Provisioning template '[_1]' done: subscriber [_2] created", $template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}),
-            );
+            if (exists $context->{subscriber}) {
+                NGCP::Panel::Utils::Message::info(
+                    c => $c,
+                    data => \%log_data,
+                    desc => $c->loc("Provisioning template '[_1]' done: subscriber [_2] processed", $template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}),
+                );
+            } else {
+                NGCP::Panel::Utils::Message::info(
+                    c => $c,
+                    data => \%log_data,
+                    desc => $c->loc("Provisioning template '[_1]' done: contract [_2] processed", $template, $context->{contract}->{id}),
+                );
+            }
         } catch($e) {
             provision_cleanup($c, $context);
             NGCP::Panel::Utils::Message::error(
@@ -697,7 +707,11 @@ sub provision_commit_row {
     #die();
     $guard->commit;
 
-    $c->log->debug("provisioning template $template done: " . $context->{subscriber}->{username} . '@' . $context->{domain}->{domain});
+    if (exists $context->{subscriber}) {
+        $c->log->debug("provisioning template $template done: " . $context->{subscriber}->{username} . '@' . $context->{domain}->{domain});
+    } else {
+        $c->log->debug("provisioning template $template done: contract id " . $context->{contract}->{id});
+    }
 
 }
 
@@ -938,7 +952,7 @@ sub _init_subscriber_context {
 
     my ($c, $context, $schema, $template) = @_;
 
-    {
+    if (exists $template->{subscriber}) {
         my @identifiers = _get_identifiers($template->{subscriber});
         my %subscriber = ();
         foreach my $col (keys %{$template->{subscriber}}) {
@@ -1152,9 +1166,10 @@ sub _init_trusted_sources_context {
 
     my ($c, $context, $schema, $template) = @_;
 
-    my $subscriber = $schema->resultset('voip_subscribers')->find({
+    my $subscriber;
+    $subscriber = $schema->resultset('voip_subscribers')->find({
         id => $context->{subscriber}->{id},
-    });
+    }) if exists $context->{subscriber};
 
     foreach my $template_trusted_source (@{_force_array($template->{trusted_sources})}) {
         my %trusted_source = ();
@@ -1296,7 +1311,7 @@ sub _create_subscriber {
 
     my ($c, $context, $schema) = @_;
 
-    unless ($context->{subscriber}->{id}) {
+    if (exists $context->{subscriber} and not $context->{subscriber}->{id}) {
         my $error_info = { extended => {} };
     
         my @events_to_create = ();
@@ -1398,9 +1413,10 @@ sub _create_registrations {
 
     my ($c, $context, $schema) = @_;
 
-    my $subscriber = $schema->resultset('voip_subscribers')->find({
+    my $subscriber;
+    $subscriber = $schema->resultset('voip_subscribers')->find({
         id => $context->{subscriber}->{id},
-    });
+    }) if exists $context->{subscriber};
 
     foreach my $registration (@{$context->{registrations}}) {
         my $ret = NGCP::Panel::Utils::Kamailio::create_location($c,
