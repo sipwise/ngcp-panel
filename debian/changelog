@@ -1,3 +1,14 @@
+ngcp-panel (14.0.1.15+0~mr14.0.1.15) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [d52d30c] MT#63401 upgrade to jquery 3.6.4 and jquery-ui 1.13.2
+  * [6c78558] MT#64584 prov templates: contract_balance support
+  * [156e366] MT#63401 jquery upgrade: restore .attr( behaviour
+  * [62260e0] MT#64594 prov templates: fraud preferences support
+  * [4af7ca9] MT#64761 prov templates: support contract-only mode
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Mar 2026 16:11:07 +0100
+
 ngcp-panel (14.0.1.14+0~mr14.0.1.14) unstable; urgency=medium
 
   [ Rene Krenn ]
