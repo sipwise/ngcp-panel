@@ -9617,9 +9617,14 @@ msgstr ""
 msgid "Provisioning Template"
 msgstr ""
 
+#. ($template, $context->{contract}->{id})
+#: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
+msgid "Provisioning template '%1' done: contract %2 processed"
+msgstr ""
+
 #. ($template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain})
 #: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
-msgid "Provisioning template '%1' done: subscriber %2 created"
+msgid "Provisioning template '%1' done: subscriber %2 processed"
 msgstr ""
 
 #. ($template, $e)
