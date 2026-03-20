@@ -1,3 +1,15 @@
+ngcp-panel (13.5.1.26+0~mr13.5.1.26) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [6f680ed] MT#64142 do not translate CF dropdown items
+  * [b35742b] MT#63401 upgrade to jquery 3.6.4 and jquery-ui 1.13.2
+  * [3833978] MT#64584 prov templates: contract_balance support
+  * [4fe13cb] MT#63401 jquery upgrade: restore .attr( behaviour
+  * [02be97f] MT#64594 prov templates: fraud preferences support
+  * [14ccb0c] MT#64761 prov templates: support contract-only mode
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Mar 2026 19:32:36 +0100
+
 ngcp-panel (13.5.1.25+0~mr13.5.1.25) unstable; urgency=medium
 
   [ Rene Krenn ]
