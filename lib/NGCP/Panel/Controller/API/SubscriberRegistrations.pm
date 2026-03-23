@@ -91,10 +91,17 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $items = $self->item_rs($c, undef, {page => $page, rows => $rows});
-        (my $total_count, $items, my $items_rows) = $self->paginate_order_collection($c, $items);
+        my ($items_count, $total_count, $items_rows);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        $self->expand_prepare_collection($c);
+        if ($items) {
+            ($items_count, $items, $items_rows) = $self->paginate_order_collection($c, $items);
+            $total_count = $items->total_count();
+            $self->expand_prepare_collection($c);
+        } else {
+            $items_rows = [];
+            $total_count = 0;
+        }
         for my $item (@$items_rows) {
             my $halitem = $self->hal_from_item($c, $item, $form);
             next unless($halitem);
@@ -104,7 +111,7 @@ sub GET :Allow {
                 href     => sprintf('/%s%s', $c->request->path, $item->id),
             );
         }
-        $self->expand_collection_fields($c, \@embedded);
+        $self->expand_collection_fields($c, \@embedded) if $items;
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
