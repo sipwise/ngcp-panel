@@ -32,6 +32,12 @@ has _rows => (
     default => sub {[]}
 );
 
+has _total_count => (
+    is => 'rw',
+    isa => sub { die "$_[0] must be int" unless defined $_[0] && is_int($_[0]) },
+    default => 0,
+);
+
 has _query_done => (
     is => 'rw',
     isa => sub { die "$_[0] must be int" unless defined $_[0] && is_int($_[0]) },
@@ -58,6 +64,12 @@ sub count {
 
     my $count = @{ $self->_rows };
     return $count;
+}
+
+sub total_count {
+    my $self = shift;
+
+    return $self->_total_count;
 }
 
 sub first {
@@ -111,14 +123,14 @@ sub find {
     if (exists $filter->{reseller_id} && $filter->{reseller_id} != $subscribers_reseller->get_column('reseller_id')) {
         return;
     }
+    $self->_total_count(1);
     return NGCP::Panel::Utils::RedisLocationResultSource->new(_data => \%entry);
 }
 
 sub search {
     my ($self, $filter, $opt) = @_;
-    $filter //= {};
+    $filter //= $self->_unalias($filter // {});
 
-    $filter = $self->_unalias($filter // {});
     my $new_rs = $self->meta->clone_object($self);
     unless ($new_rs->_query_done) {
         if ($filter->{id}) {
@@ -195,6 +207,8 @@ sub _rows_from_mapkey {
         my $res = $self->_row_from_key($key, $filter);
         push @rows, $res if $res;
     }
+    my $total_count = $self->_total_count;
+    $self->_total_count($total_count + $#rows+1);
     return \@rows;
 }
 
@@ -322,6 +336,9 @@ sub _scan {
 
             my $keys = shift @{$res};
             my $keys_count = $#$keys+1;
+
+            my $total_count = $self->_total_count;
+            $self->_total_count($total_count + $keys_count);
 
             my $offset = $fetched_keys_count - ($page-1)*$rows;
             $fetched_keys_count += $keys_count;

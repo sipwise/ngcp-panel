@@ -24,7 +24,7 @@ sub _item_rs {
         unless (defined $filter) {
             $filter = {};
             if ($c->req->param('subscriber_id')) {
-                my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+                my $sub = $c->model('DB')->resultset('voip_subscribers')->find($c->req->param('subscriber_id')) // return;
                 my $prov_subscriber = $sub->provisioning_voip_subscriber;
                 my @usernames = ($prov_subscriber->username);
                 my $devid_aliases = $prov_subscriber->voip_dbaliases->search(
