@@ -129,8 +129,8 @@ sub find {
 
 sub search {
     my ($self, $filter, $opt) = @_;
-    $filter //= $self->_unalias($filter // {});
 
+    $filter = $self->_unalias($filter // {});
     my $new_rs = $self->meta->clone_object($self);
     unless ($new_rs->_query_done) {
         if ($filter->{id}) {
