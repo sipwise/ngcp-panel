@@ -1,3 +1,11 @@
+ngcp-panel (14.1.1.4+0~mr14.1.1.4) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a7fe75f] MT#62339 /api/subscriberregistrations add total_count support
+  * [39af44b] MT#62339 RedisLocationResultSet fix $filter assignment typo
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Mar 2026 16:44:56 +0100
+
 ngcp-panel (14.1.1.3+0~mr14.1.1.3) unstable; urgency=medium
 
   [ Rene Krenn ]
