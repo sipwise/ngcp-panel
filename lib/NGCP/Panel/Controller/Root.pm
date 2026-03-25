@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Statistics qw();
 use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Form qw();
+use NGCP::Panel::Utils::Navigation qw();
 use DateTime qw();
 use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
@@ -421,7 +422,8 @@ sub back :Path('/back') :Args(0) {
     } else {
         $target = $c->uri_for('/dashboard');
     }
-    $c->response->redirect($target);
+
+    $c->response->redirect(NGCP::Panel::Utils::Navigation::check_target($c,$target));
     $c->detach;
 }
 
