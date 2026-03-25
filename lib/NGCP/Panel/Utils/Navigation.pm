@@ -89,8 +89,31 @@ sub select_back_target {
 sub back_or {
     my ($c, $alternative_target, $nodetach) = @_;
     my $target = select_back_target($c, $alternative_target);
-    $c->response->redirect($target);
+    $c->response->redirect(check_target($c, $target));
     $c->detach unless($nodetach);
+}
+
+sub check_target {
+
+    my ( $c, $target ) = @_;
+
+    my $safe_fallback = $c->uri_for('/dashboard');
+    return $safe_fallback unless $target;
+
+    my $uri_checker = ref($target) eq 'URI' ? $target : URI->new($target);
+
+    if ($uri_checker->can('host') && $uri_checker->host) {
+        # Check both host and port to prevent cross-port redirects
+        if ($uri_checker->host_port ne $c->req->uri->host_port) {
+            $c->log->warn("Blocked external redirect: " . $uri_checker->as_string);
+            return $safe_fallback;
+        }
+    }
+
+    # todo: check for host header injection
+
+    return $target;
+
 }
 
 1;
