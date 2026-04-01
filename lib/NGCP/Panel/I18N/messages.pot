@@ -747,6 +747,10 @@ msgid "Allow access from the given list of IP addresses and/or IP nets."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Allow asymmetric codecs in RTP streams"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Allow calls to foreign domains"
 msgstr ""
 
@@ -2478,6 +2482,10 @@ msgstr ""
 
 #: share/templates/widgets/subscriber_cf_overview.tt
 msgid "Configure Preferences"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Connect to the final destination using ported number"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -6313,6 +6321,10 @@ msgid "If enabled, outgoing anonymous calls from this user will be dropped"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If enabled, rtpengine will accept mismatched RTP payload type numbers between SDP offer and answer, allowing codec matching by name rather than payload type."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If enabled, rtpengine will always trancode any received media to the first (highest priority) codec offered by the other side that is supported for transcoding."
 msgstr ""
 
@@ -6369,6 +6381,10 @@ msgid "If the Alert-Info Type is set to \"url\", then specify a URL to a ring to
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "If the caller subscriber is ported and the CLI ported number (N2) matches the allowed_cli list, then substitute the CLI with the original number (N1) (used only for lnp local_qor type)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "If this option is set, the announcements defined in 'announce_error_codes_list' preference will be played on behalf callee failure in case of outbound calls. In case of activation it is important that the remote endpoint doesn't play an announcement, otherwise the final result will be to have 2 announcements."
 msgstr ""
 
@@ -6398,6 +6414,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Ignore the Members Call Forwards from a Cloud PBX subscriber when it is called within a huntgroup"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "In case of successful lookup in the lnp table for a call to a non-local ported number, send the outgoing call to the ported number (used only for lnp local_qor type)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8407,6 +8427,10 @@ msgstr ""
 
 #: share/templates/ncos/pattern_list.tt
 msgid "Number Pattern"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Number Portability"
 msgstr ""
 
 #: share/templates/lnp/list.tt share/templates/widgets/admin_topmenu_settings.tt
@@ -11572,6 +11596,10 @@ msgstr ""
 #. ($c->stash->{provisioning_template_name})
 #: lib/NGCP/Panel/Controller/BatchProvisioning.pm
 msgid "Subscribers using Provisioning Template '%1' from CSV"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Substitute the CLI with the original number (N1)"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm
