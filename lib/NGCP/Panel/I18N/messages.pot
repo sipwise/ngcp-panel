@@ -13907,6 +13907,10 @@ msgstr ""
 msgid "The voucher to topup with."
 msgstr ""
 
+#: share/layout/body.tt
+msgid "This interface is not supported anymore and it will be discontinued in future versions. Please use the new interface for the configuration of the system."
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "This is a termination mode for call legs in the early dialog stage. Can be: bye or cancel."
 msgstr ""
