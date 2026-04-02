@@ -37,6 +37,13 @@
 
 <body>
 <div id="wrapper">
+    <div id="banner">
+        <div class="container">
+          <span class="pull-right">
+          [% c.loc("This interface is not supported anymore and it will be discontinued in future versions. Please use the new interface for the configuration of the system.") %]
+          </span>
+        </div>
+    </div>
     <div id="topbar">
         <div class="container">
 
