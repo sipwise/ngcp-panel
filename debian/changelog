@@ -1,3 +1,37 @@
+ngcp-panel (14.2.1.0+0~mr14.2.1.0) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [12e8992] MT#64115 add peer multi site support
+  * [81a4a2f] MT#64434 /api/platforminfo add multisite support
+  * [d128001] MT#62339 /api/subscriberregistrations add total_count support
+  * [8b28808] MT#62339 RedisLocationResultSet fix $filter assignment typo
+
+  [ Guillem Jover ]
+  * [324279c] MT#62763 Do not return undef, just return
+  * [43f176d] MT#64527 ngcp-panel-create-keys: Fix TLS keys/certs files and dirs permissions
+  * [d48ff17] MT#64527 ngcp-panel-create-keys: Do not allow RSA keys sizes below 2048 bits
+  * [5190438] MT#64527 ngcp-panel-create-keys: Increase the default RSA key size to 3072
+  * [fb44ee8] MT#64527 ngcp-panel-create-keys: Fix race condition when creating TLS certs
+  * [5e174ba] MT#64527 ngcp-panel-create-keys: Add missing import
+
+  [ Sipwise Jenkins Builder ]
+  * [c537282] TT#4166 I18N dump: snapshot 2026.02.10-23.20.18
+  * [6194119] TT#4166 I18N dump: snapshot 2026.03.19-23.20.28
+  * [d302f95] TT#4166 I18N dump: snapshot 2026.04.01-22.20.05
+  * [d152830] TT#4166 I18N dump: snapshot 2026.04.02-22.20.09
+
+  [ Rene Krenn ]
+  * [14caac3] MT#62342 encode XMLRPC request body, decode XMLRPC response body
+  * [36dfb7c] MT#63401 upgrade to jquery 3.6.4 and jquery-ui 1.13.2
+  * [03fec29] MT#64584 prov templates: contract_balance support
+  * [9752c6c] MT#63401 jquery upgrade: restore .attr( behaviour
+  * [47b5cc7] MT#64594 prov templates: fraud preferences support
+  * [8481c5a] MT#64761 prov templates: support contract-only mode
+  * [a040dc4] MT#64788 mitigate CVE-2024-28344
+  * [e160026] MT#64787 deprecation banner for admin panel
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Apr 2026 12:57:31 +0200
+
 ngcp-panel (14.2.0.0+0~mr14.2.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
