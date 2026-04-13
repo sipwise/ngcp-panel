@@ -81,7 +81,8 @@ sub PATCH :Allow {
         my $peer_enabled   = !$old_resource->{enabled} && $resource->{enabled};
         my $probe_disabled = $old_resource->{probe} && !$resource->{probe};
         my $probe_enabled  = !$old_resource->{probe} && $resource->{probe};
-        my $probe_updated  = $peer_disabled || $peer_enabled || $probe_disabled || $probe_enabled;
+        my $transport_updated  = $old_resource->{transport} != $resource->{transport} ? 1 : 0;
+        my $probe_updated  = $peer_disabled || $peer_enabled || $probe_disabled || $probe_enabled || $transport_updated;
 
         try {
             if ($peer_disabled) {
@@ -174,7 +175,8 @@ sub PUT :Allow {
         my $peer_enabled   = !$old_resource->{enabled} && $resource->{enabled};
         my $probe_disabled = $old_resource->{probe} && !$resource->{probe};
         my $probe_enabled  = !$old_resource->{probe} && $resource->{probe};
-        my $probe_updated  = $peer_disabled || $peer_enabled || $probe_disabled || $probe_enabled;
+        my $transport_updated  = $old_resource->{transport} != $resource->{transport} ? 1 : 0;
+        my $probe_updated  = $peer_disabled || $peer_enabled || $probe_disabled || $probe_enabled || $transport_updated;
 
         try {
             if ($peer_disabled) {
