@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.29+0~mr13.5.1.29) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [fb83ee2] MT#64891 enhance Redis connection handling
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Apr 2026 18:14:51 +0200
+
 ngcp-panel (13.5.1.28+0~mr13.5.1.28) unstable; urgency=medium
 
   [ Marco Capetta ]
