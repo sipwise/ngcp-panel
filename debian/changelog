@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.28+0~mr13.5.1.28) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [5760e35] MT#64627 Call sip_dispatcher_reload when peer transport is updated
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Apr 2026 11:54:43 +0200
+
 ngcp-panel (13.5.1.27+0~mr13.5.1.27) unstable; urgency=medium
 
   [ Kirill Solomko ]
