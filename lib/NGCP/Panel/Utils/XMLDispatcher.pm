@@ -3,6 +3,7 @@ package NGCP::Panel::Utils::XMLDispatcher;
 use Sipwise::Base;
 use Net::HTTP;
 use Errno;
+use Encode qw/encode_utf8 decode_utf8/;
 
 sub dispatch {
     my ($c, $target, $all, $sync, $body, $schema) = @_;
@@ -38,7 +39,7 @@ sub dispatch {
                 return [$hostid, -1, '']; # skip the host as it is not active
             };
 
-            my $res = $s->write_request("POST", $path || "/", "User-Agent" => "Sipwise XML Dispatcher", "Content-Type" => "text/xml", $body);
+            my $res = $s->write_request($method, $path || "/", "User-Agent" => "Sipwise HTTP Dispatcher", "Content-Type" => $content_type, encode_utf8($body));
             $res or die "did not get result";
 
             my ($code, $mess, @headers) = $s->read_response_headers();
@@ -58,6 +59,14 @@ sub dispatch {
             }
 
             # successful request
+
+            eval {
+                $body = decode_utf8($body, Encode::FB_CROAK);
+            };
+            if ($@) {
+                # If strict UTF-8 decoding fails, use lenient decoding
+                $body = decode_utf8($body, Encode::FB_QUIET);
+            }
 
             return [$hostid, 1, $body]; # return from eval only
         };
