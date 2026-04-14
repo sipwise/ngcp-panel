@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.54+0~mr12.5.1.54) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [843a00e] MT#62342 encode XMLRPC request body, decode XMLRPC response body (12.5)
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Apr 2026 11:30:00 +0200
+
 ngcp-panel (12.5.1.53+0~mr12.5.1.53) unstable; urgency=medium
 
   [ Kirill Solomko ]
