@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.56+0~mr12.5.1.56) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [b29028b] MT#62342 Fix wrong backport in commit 6a3fe3e9b6f22
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 15 Apr 2026 10:18:18 +0200
+
 ngcp-panel (12.5.1.55+0~mr12.5.1.55) unstable; urgency=medium
 
   [ Marco Capetta ]
