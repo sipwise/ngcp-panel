@@ -39,7 +39,7 @@ sub dispatch {
                 return [$hostid, -1, '']; # skip the host as it is not active
             };
 
-            my $res = $s->write_request($method, $path || "/", "User-Agent" => "Sipwise HTTP Dispatcher", "Content-Type" => $content_type, encode_utf8($body));
+            my $res = $s->write_request("POST", $path || "/", "User-Agent" => "Sipwise XML Dispatcher", "Content-Type" => "text/xml", encode_utf8($body));
             $res or die "did not get result";
 
             my ($code, $mess, @headers) = $s->read_response_headers();
