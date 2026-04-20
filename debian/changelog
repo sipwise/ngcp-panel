@@ -1,3 +1,13 @@
+ngcp-panel (26.0.1.0+0~mr26.0.1.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [226b256] MT#64627 Call sip_dispatcher_reload when peer transport is updated
+
+  [ Kirill Solomko ]
+  * [4946ffb] MT#64891 enhance Redis connection handling
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Apr 2026 10:31:13 +0200
+
 ngcp-panel (26.0.0.0+0~mr26.0.0.0) unstable; urgency=medium
 
   * New release.
