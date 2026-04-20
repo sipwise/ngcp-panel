@@ -1,3 +1,10 @@
+ngcp-panel (11.5.1.38+0~mr11.5.1.38) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9b7359d] MT#64788 mitigate CVE-2024-28344
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Apr 2026 11:59:30 +0200
+
 ngcp-panel (11.5.1.37+0~mr11.5.1.37) unstable; urgency=medium
 
   [ Rene Krenn ]
