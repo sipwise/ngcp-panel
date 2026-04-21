@@ -1,3 +1,9 @@
+ngcp-panel (26.0.1.0+0~mr26.0.1.0) unstable; urgency=medium
+
+  * New release.
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 Apr 2026 16:25:34 +0200
+
 ngcp-panel (26.0.0.1+0~mr26.0.0.1) unstable; urgency=medium
 
   [ Marco Capetta ]
