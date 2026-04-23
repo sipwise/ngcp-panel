@@ -281,6 +281,8 @@ sub POST :Allow {
                         . "' that is assigned to Customer's Contact '$resource->{contact_id}'");
                     return;
                 }
+            } elsif (exists $resource->{$field}) {
+                next;
             } else {
                 next unless $t_def_name;
 
@@ -289,22 +291,7 @@ sub POST :Allow {
                     'me.reseller_id' => $custcontact->reseller_id,
                 })->first;
 
-                unless ($template) {
-                    my $raw_def_template = $c->model('DB')->resultset($t_table)->search({
-                        'me.name' => $t_def_name,
-                        'me.reseller_id' => undef
-                    })->first;
-
-                    unless ($raw_def_template) {
-                        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Cannot find basic default template '$t_def_name'");
-                        return;
-                    }
-
-                    my $copy_template = { $raw_def_template->get_inflated_columns };
-                    delete $copy_template->{id};
-                    $copy_template->{reseller_id} = $custcontact->reseller_id;
-                    $template = $c->model('DB')->resultset('email_templates')->create($copy_template);
-                }
+                next unless $template;
 
                 $resource->{$field} = $template->id;
             }
