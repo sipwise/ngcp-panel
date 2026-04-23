@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.32+0~mr13.5.1.32) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [64772bd] MT#64972 /api/customers email_template auto assign change
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 23 Apr 2026 19:03:30 +0200
+
 ngcp-panel (13.5.1.31+0~mr13.5.1.31) unstable; urgency=medium
 
   [ Rene Krenn ]
