@@ -959,6 +959,10 @@ msgid "An external ID to identify the top-up request in the top-up log."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "An internal flag for the phonebook pseudo-preference feature to be able to map it do subscriber profiles. Not directly used."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "An optional emergency prefix the emergency code is mapped to."
 msgstr ""
 
@@ -9289,7 +9293,7 @@ msgstr ""
 msgid "Phone/Fax"
 msgstr ""
 
-#: share/templates/customer/details.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/subscriber/master.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/customer/details.tt share/templates/phonebook/list.tt share/templates/reseller/details.tt share/templates/subscriber/master.tt share/templates/widgets/admin_topmenu_settings.tt share/templates/widgets/reseller_topmenu_settings.tt
 msgid "Phonebook"
 msgstr ""
 
