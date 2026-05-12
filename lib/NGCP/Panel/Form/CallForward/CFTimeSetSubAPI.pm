@@ -12,6 +12,11 @@ has_field 'name' => (
     required => 1,
 );
 
+has_field 'own' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'times' => (
     type => 'Repeatable',
     do_wrapper => 1,

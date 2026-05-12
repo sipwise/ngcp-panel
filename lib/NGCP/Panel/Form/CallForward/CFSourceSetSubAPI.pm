@@ -15,6 +15,11 @@ has_field 'name' => (
     },
 );
 
+has_field 'own' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'mode' => (
     type => 'Select',
     options => [

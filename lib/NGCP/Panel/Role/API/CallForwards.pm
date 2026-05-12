@@ -52,7 +52,7 @@ sub hal_from_item {
             prov_subscriber => $prov_subs,
             pref_list => [qw/cfu cfb cft cfna cfs cfr cfo/],
         );
-    @resource{qw/cfu cfb cft cfna cfs cfr cfo/} = ({}) x 5;
+    @resource{qw/cfu cfb cft cfna cfs cfr cfo/} = ({}) x 7;
     for my $item_cf ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         next unless ($allowed_prefs->{$item_cf->type});
         $resource{$item_cf->type} = $self->_contents_from_cfm($c, $item_cf, $item);
@@ -435,6 +435,24 @@ sub _contents_from_cfm {
     my $dset = $dset_item ? { $dset_item->get_inflated_columns } : undef;
     my $bnumberset = $bnumberset_item ? { $bnumberset_item->get_inflated_columns } : undef;
     my $timeset = $timeset_item ? { $timeset_item->get_inflated_columns } : undef;
+
+    if ($dset) {
+        $dset->{own} =
+            $dset_item->subscriber_id == $cfm_item->subscriber_id ? 1 : 0;
+    }
+    if ($sourceset) {
+        $sourceset->{own} =
+            $sourceset_item->subscriber_id == $cfm_item->subscriber_id ? 1 : 0;
+    }
+    if ($bnumberset) {
+        $bnumberset->{own} =
+            $bnumberset_item->subscriber_id == $cfm_item->subscriber_id ? 1 : 0;
+    }
+    if ($timeset) {
+        $timeset->{own} =
+            $timeset_item->subscriber_id == $cfm_item->subscriber_id ? 1 : 0;
+    }
+
     for my $time ($timeset_item ? $timeset_item->voip_cf_periods->all : () ) {
         push @times, {$time->get_inflated_columns};
         delete @{$times[-1]}{'time_set_id', 'id'};

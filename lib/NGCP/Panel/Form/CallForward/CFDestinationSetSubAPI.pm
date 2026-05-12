@@ -17,6 +17,11 @@ has_field 'name' => (
     },
 );
 
+has_field 'own' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'destinations' => (
     type => 'Repeatable',
     element_attr => {

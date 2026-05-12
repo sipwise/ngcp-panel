@@ -318,6 +318,10 @@ sub hal_from_item {
     my $b_subs_id = $item->subscriber->voip_subscriber->id;
     $resource{subscriber_id} = $b_subs_id;
 
+    if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        $resource{own} = $item->subscriber_id == $c->user->id ? 1 : 0;
+    }
+
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
