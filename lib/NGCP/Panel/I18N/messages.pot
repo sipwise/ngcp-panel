@@ -3185,10 +3185,6 @@ msgstr ""
 msgid "D-Series"
 msgstr ""
 
-#: share/templates/widgets/admin_topmenu_settings.tt
-msgid "DB Statistics"
-msgstr ""
-
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "DTLS fingerprint hashing function"
 msgstr ""
@@ -7202,7 +7198,7 @@ msgid "Key Definition"
 msgstr ""
 
 #: share/templates/widgets/admin_topmenu_settings.tt
-msgid "KeyDB Statistics"
+msgid "KeyValue DB Statistics"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -8776,6 +8772,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Override on deployed device"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Own"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -10510,6 +10510,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm
 msgid "SN Prefix"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt
+msgid "SQL DB Statistics"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
