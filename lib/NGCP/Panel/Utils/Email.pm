@@ -2,19 +2,19 @@ package NGCP::Panel::Utils::Email;
 
 use Sipwise::Base;
 use Template;
-use Email::Sender::Simple qw();
+use Net::SMTP;
 use Email::Simple;
 use Email::Simple::Creator;
-use Email::Sender::Transport::Sendmail qw();
 
 sub send_email {
     my %args = @_;
-    my $subject = $args{subject};
-    my $body = $args{body};
-    my $from = $args{from};
-    my $to = $args{to};
+    my $subject   = $args{subject};
+    my $body      = $args{body};
+    my $from      = $args{from};
+    my $to        = $args{to};
+    my $smtp_host = $args{smtp_host} // 'localhost';
+    my $smtp_port = $args{smtp_port} // 25;
 
-    my $transport = Email::Sender::Transport::Sendmail->new;
     my $email = Email::Simple->create(
         header => [
             To      => $to,
@@ -23,11 +23,15 @@ sub send_email {
         ],
         body => $body,
     );
-    try {
-        Email::Sender::Simple->send($email, { transport => $transport });
-    } catch($e) {
-        return $e->message;
-    }
+
+    my $smtp = Net::SMTP->new($smtp_host, Port => $smtp_port, Timeout => 30);
+    return "Failed to connect to SMTP server $smtp_host:$smtp_port" unless $smtp;
+
+    $smtp->mail($from)             or return "SMTP MAIL FROM failed: " . $smtp->message;
+    $smtp->to($to)                 or return "SMTP RCPT TO failed: "   . $smtp->message;
+    $smtp->data($email->as_string) or return "SMTP DATA failed: "      . $smtp->message;
+    $smtp->quit;
+
     return;
 }
 
@@ -45,29 +49,19 @@ sub send_template {
     $t->process(\$subject, $vars, \$processed_subject) || 
         die "error processing email template, type=".$t->error->type.", info='".$t->error->info."'";
 
+    my $smtp_config = $c->config->{email} // {};
+
     my $err = send_email(
-        subject => $processed_subject,
-        body => $processed_body,
-        from => $from,
-        to => $to,
+        subject   => $processed_subject,
+        body      => $processed_body,
+        from      => $from,
+        to        => $to,
+        smtp_host => $smtp_config->{smtp_host},
+        smtp_port => $smtp_config->{smtp_port},
     );
 
-    #my $template_processed = process_template({
-    #    subject => $subject,
-    #    body => $body,
-    #    from_email => $from,
-    #    to => $to,
-    #},$vars);
-    #
-    #send_email(
-    #    subject => $template_processed->{subject},
-    #    body => $template_processed->{body},
-    #    from => $template_processed->{from_email},
-    #    to => $template_processed->{to},
-    #);
-
-    $err ? $c->log->info("Could not send email from '" . $c->qs($from) . "' to '" . $c->qs($to) . "' error=$err")
-         : $c->log->error("Successfully handed over mail from '" . $c->qs($from) . "' to '" . $c->qs($to) . "'");
+    $err ? $c->log->error("Could not send email from '" . $c->qs($from) . "' to '" . $c->qs($to) . "' error=$err")
+         : $c->log->info("Successfully handed over mail from '" . $c->qs($from) . "' to '" . $c->qs($to) . "'");
 
     return 1;
 }
