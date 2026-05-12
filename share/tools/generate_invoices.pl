@@ -21,23 +21,6 @@ my $opt = {};
 my $opt_cfg = {};
 my $cfg_raw = {};
 
-# XXX: Remove after mr10.5.
-sub old_scalar_option {
-    my ($name, $value) = @_;
-    my $newname = $name =~ tr/_/-/r;
-    $opt->{$name} = $value;
-    warn "$0: option --$name is deprecated; use --$newname instead\n";
-}
-
-# XXX: Remove after mr10.5.
-sub old_array_option {
-    my ($name, $value) = @_;
-    my $newname = $name =~ tr/_/-/r;
-    push @{$opt->{$name}}, $value;
-    warn "$0: option --$name is deprecated; use --$newname instead\n";
-}
-
-
 sub parse_scalar_option {
     my ($name, $value) = @_;
     $name =~ tr/-/_/;
@@ -51,11 +34,8 @@ sub parse_array_option {
 }
 
 my @opt_spec = (
-    'reseller_id=i@' => \&old_array_option,
     'reseller-id=i@' => \&parse_array_option,
-    'client_contact_id=i@' => \&old_array_option,
     'client-contact-id=i@' => \&parse_array_option,
-    'client_contract_id=i@' => \&old_array_option,
     'client-contract-id=i@' => \&parse_array_option,
     'stime=s',
     'etime=s',
@@ -64,17 +44,11 @@ my @opt_spec = (
     'send',
     'resend',
     'regenerate',
-    'allow_terminated' => \&old_scalar_option,
     'allow-terminated' => \&parse_scalar_option,
-    'backward_is_active' => \&old_scalar_option,
     'backward-is-active' => \&parse_scalar_option,
-    'update_contract_balance' => \&old_scalar_option,
     'update-contract-balance' => \&parse_scalar_option,
-    'update_contract_balance_nonzero' => \&old_scalar_option,
     'update-contract-balance-nonzero' => \&parse_scalar_option,
-    'force_unrated' => \&old_scalar_option,
     'force-unrated' => \&parse_scalar_option,
-    'no_empty' => \&old_scalar_option,
     'no-empty' => \&parse_scalar_option,
     'enable',
     'help|?',
