@@ -520,6 +520,9 @@ sub update_preferences {
         $full_rs = $elem->voip_contract_preferences->search_rs(
                     { location_id => $c->request->param('location_id') || undef },
                     undef);
+        my ($stmt, @bind_vals) = @{${$full_rs->as_query}};
+        @bind_vals = map { $_->[1]; } @bind_vals;
+        $c->log->debug("got contract preferences rs with sql: " . $stmt . " and bind values: " . join(",", @bind_vals));
         $pref_type = 'contract_pref';
         $reseller_id = $item->contact->reseller_id;
     } elsif($type eq "pbxdevicemodels") {
@@ -619,7 +622,7 @@ sub update_preferences {
                             }
                         } else {
                             unless (exists $resource->{$k}) {
-                                my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k);
+                                my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k, { location => $c->request->param('location_id') || undef });
                                 last SWITCH unless $rs; # unknown resource, just ignore
                                 $rs->delete;
                             }
@@ -642,7 +645,7 @@ sub update_preferences {
                     };
                     /^cdr_export_sclidui_rwrs/ && do {
                         unless(exists $resource->{$k}) {
-                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_id');
+                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_id', { location_id => $c->request->param('location_id') || undef });
                             last SWITCH unless $rs; # unknown resource, just ignore
                             $rs->delete;
                         }
@@ -650,7 +653,7 @@ sub update_preferences {
                     };
                     /^(adm_)?(cf_)?ncos(_set)?$/ && do {
                         unless(exists $resource->{$k}) {
-                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_id');
+                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_id', { location_id => $c->request->param('location_id') || undef });
                             last SWITCH unless $rs; # unknown resource, just ignore
                             $rs->delete;
                         }
@@ -658,7 +661,7 @@ sub update_preferences {
                     };
                     /^emergency_mapping_container$/ && do {
                         unless(exists $resource->{$k}) {
-                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_id');
+                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_id', { location_id => $c->request->param('location_id') || undef });
                             last SWITCH unless $rs; # unknown resource, just ignore
                             $rs->delete;
                         }
@@ -666,7 +669,7 @@ sub update_preferences {
                     };
                     /^(man_)?allowed_ips$/ && do {
                         unless(exists $resource->{$k}) {
-                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_grp');
+                            my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k . '_grp', { location_id => $c->request->param('location_id') || undef });
                             last SWITCH unless $rs; # unknown resource, just ignore
                             if($rs->first) {
                                 $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
@@ -679,7 +682,7 @@ sub update_preferences {
                     };
                     # default
                     unless(exists $resource->{$k}) {
-                        my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k);
+                        my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $k, { location_id => $c->request->param('location_id') || undef });
                         last SWITCH unless $rs; # unknown resource, just ignore
                         $rs->delete;
                         if ($type eq "subscribers" && ($k eq 'voicemail_echo_number' || $k eq 'cli')) {
@@ -704,7 +707,7 @@ sub update_preferences {
 
     foreach my $pref(keys %{ $resource }) {
         next if (not defined $resource->{$pref} and not $nullable{$pref});
-        my $pref_rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref);
+        my $pref_rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref, { location_id => $c->request->param('location_id') || undef });
         unless($pref_rs) {
             $c->log->debug("removing unknown preference '$pref' from update");
             next;
@@ -771,7 +774,7 @@ sub update_preferences {
                                     caller_in_dpid callee_in_dpid
                                     caller_out_dpid callee_out_dpid
                                     caller_lnp_dpid callee_lnp_dpid/) {
-                        my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, 'rewrite_'.$k);
+                        my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, 'rewrite_'.$k, { location_id => $c->request->param('location_id') || undef });
                         if($rs->first) {
                             $rs->first->update({ value => $rwr_set->$k });
                         } else {
@@ -791,7 +794,7 @@ sub update_preferences {
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown rewrite_rule_set '".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name);
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name, { location_id => $c->request->param('location_id') || undef });
                     if($rs->first) {
                         $rs->first->update({ value => $rwr_set->id });
                     } else {
@@ -809,7 +812,7 @@ sub update_preferences {
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown header_rule_set '".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref);
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref, { location_id => $c->request->param('location_id') || undef });
                     if ($rs->first) {
                         $rs->first->update({ value => $hdr_set->id });
                     } else {
@@ -829,7 +832,7 @@ sub update_preferences {
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown ncos_level '".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name);
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name, { location_id => $c->request->param('location_id') || undef });
                     if($rs->first) {
                         $rs->first->update({ value => $ncos->id });
                     } else {
@@ -848,7 +851,7 @@ sub update_preferences {
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown ncos_set '".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name);
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name, { location_id => $c->request->param('location_id') || undef });
                     if($rs->first) {
                         $rs->first->update({ value => $ncos->id });
                     } else {
@@ -867,7 +870,7 @@ sub update_preferences {
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown emergency mapping container '".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name);
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name, { location_id => $c->request->param('location_id') || undef });
                     if($rs->first) {
                         $rs->first->update({ value => $container->id });
                     } else {
@@ -907,7 +910,7 @@ sub update_preferences {
                         &$err_code(HTTP_UNPROCESSABLE_ENTITY, "Unknown $pref '".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref);
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref, { location_id => $c->request->param('location_id') || undef });
                     if($rs->first) {
                         $rs->first->update({ value => $set->id });
                     } else {
@@ -919,7 +922,7 @@ sub update_preferences {
                     my $pref_name = $pref . "_grp";
                     my $aig_rs;
                     my $aig_group_id;
-                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name);
+                    my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref_name, { location_id => $c->request->param('location_id') || undef });
                     if($rs->first) {
                         $aig_group_id = $rs->first->value;
                         $aig_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
@@ -977,10 +980,14 @@ sub update_preferences {
                         }
                     }
                 };
+                my ($stmt, @bind_vals) = @{${$pref_rs->as_query}};
+                @bind_vals = map { $_->[1]; } @bind_vals;
+                $c->log->debug("preferences update rs with sql: " . $stmt . " and bind values: " . join(",", @bind_vals));
+
                 if ($meta->data_type eq 'blob') {
                     if ($resource->{$pref}->{data} ne '#blob'){
                         my $file = decode_base64($resource->{$pref}->{data});
-                        my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref);
+                        my $rs = get_preference_rs($c, $TYPE_PREF_MAP->{$type}, $elem, $pref, { location_id => $c->request->param('location_id') || undef });
                         my $blob_rs = $c->model('DB')->resultset("voip_$TYPE_PREF_MAP->{$type}_preferences_blob");
                         if ($rs->first) {
                             my $blob = $blob_rs->search({ preference_id => $rs->first->id });
@@ -1751,6 +1758,7 @@ sub create_preference_form {
                     attribute_id => $c->stash->{preference_meta}->id,
                     value => $form->field($attribute)->value,
                 });
+
                 NGCP::Panel::Utils::Message::info(
                     c => $c,
                     data  => \%log_data,
