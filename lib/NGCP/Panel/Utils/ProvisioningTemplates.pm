@@ -30,8 +30,21 @@ use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::Kamailio qw();
 use NGCP::Panel::Utils::CallForwards qw();
 
-use JE::Destroyer qw();
-use JE qw();
+BEGIN {
+    # Temporarily override the warning handler
+    local $SIG{__WARN__} = sub {
+        my $warning = shift;
+        # Ignore this specific message, print all others
+        warn $warning unless $warning =~ /Old package separator "'" deprecated/;
+    };
+
+    # Use require and import instead of 'use' so the local handler applies
+    require JE;
+    JE->import();
+
+    require JE::Destroyer;
+}
+
 use JSON qw();
 use NGCP::Panel::Utils::Generic qw(escape_js);
 
@@ -266,11 +279,19 @@ sub create_provisioning_template_form {
                 context => $context,
             );
             if (exists $context->{subscriber}) {
-                NGCP::Panel::Utils::Message::info(
-                    c => $c,
-                    data => \%log_data,
-                    desc => $c->loc("Provisioning template '[_1]' done: subscriber [_2] processed", $template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}),
-                );
+                if ($context->{subscriber}->{username} and $context->{domain}->{domain}) {
+                    NGCP::Panel::Utils::Message::info(
+                        c => $c,
+                        data => \%log_data,
+                        desc => $c->loc("Provisioning template '[_1]' done: subscriber [_2] processed", $template, $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}),
+                    );
+                } else {
+                    NGCP::Panel::Utils::Message::info(
+                        c => $c,
+                        data => \%log_data,
+                        desc => $c->loc("Provisioning template '[_1]' done: subscriber id [_2] processed", $template, $context->{subscriber}->{id}),
+                    );
+                }
             } else {
                 NGCP::Panel::Utils::Message::info(
                     c => $c,
@@ -379,6 +400,7 @@ sub provision_begin {
     my $context = {};
     $context->{_dfrd} = {};
     $context->{_purge} = $purge // 0;
+    $context->{_now} = NGCP::Panel::Utils::DateTime::current_local();
 
     my $fields = get_fields($c,1);
     my $init_values = {};
@@ -463,14 +485,15 @@ sub provision_begin {
         $context,
         $context->{_lang} = $c->stash->{provisioning_templates}->{$template}->{lang},
         perl => sub {
-            $context->{now} = NGCP::Panel::Utils::DateTime::current_local();
+            #$context->{now} = NGCP::Panel::Utils::DateTime::current_local();
+            $context->{now} = $context->{_now};
             $context->{schema} = $schema;
             @{$context}{keys %subs} = values %subs;
         },
         js => sub {
             $context->{_je} = JE->new();
             $context->{_je}->eval($JS_ENV . "\nvar _func;\nvar now = new Date('" .
-                NGCP::Panel::Utils::DateTime::current_local() . "');\n");
+                $context->{_now} . "');\n");
             $subs{'quotemeta'} = sub {
                 return quotemeta(_unbox_je_value(shift @_));
             };
@@ -706,7 +729,11 @@ sub provision_commit_row {
     $guard->commit;
 
     if (exists $context->{subscriber}) {
-        $c->log->debug("provisioning template $template done: " . $context->{subscriber}->{username} . '@' . $context->{domain}->{domain});
+        if ($context->{subscriber}->{username} and $context->{domain}->{domain}) {
+            $c->log->debug("provisioning template $template done: " . $context->{subscriber}->{username} . '@' . $context->{domain}->{domain});
+        } else {
+            $c->log->debug("provisioning template $template done: subscriber id " . $context->{subscriber}->{id});
+        }
     } else {
         $c->log->debug("provisioning template $template done: contract id " . $context->{contract}->{id});
     }
@@ -775,6 +802,7 @@ sub _init_row_context {
     delete $context->{product};
 
     delete $context->{_bm};
+    delete $context->{_dm};
     delete $context->{_cb};
     delete $context->{_cp};
     delete $context->{_cs};
@@ -847,8 +875,8 @@ sub _init_contract_context {
         } else {
             delete $contract_contact{id};
         }
-        $contract_contact{create_timestamp} //= $context->{now};
-        $contract_contact{modify_timestamp} //= $context->{now};
+        $contract_contact{create_timestamp} //= $context->{_now};
+        $contract_contact{modify_timestamp} //= $context->{_now};
         if (exists $contract_contact{timezone} and $contract_contact{timezone}) {
             die("invalid timezone $contract_contact{timezone}") unless DateTime::TimeZone->is_valid_name($contract_contact{timezone});
         }
@@ -912,6 +940,13 @@ sub _init_contract_context {
         #todo: invoice_email_template_id
         #todo: invoice_template_id
 
+
+        my $old_resource;
+        #delete $old_resource->{profile_package_id};
+        #my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $now, contract => $customer, );
+        #$old_resource->{billing_profile_id} = $billing_mapping->billing_profile->id;
+        #$old_resource->{billing_profile_definition} = undef;
+
         $context->{contract} = \%contract;
         if (scalar @identifiers) {
             delete $contract{id};
@@ -920,25 +955,31 @@ sub _init_contract_context {
                 })->all) {
                 if ('terminated' ne $e->status) {
                     $contract{id} = $e->id;
+
+                    $old_resource = { $e->get_inflated_columns };
+
                     last;
                 }
             }
         } else {
             delete $contract{id};
         }
-        $contract{create_timestamp} //= $context->{now};
-        $contract{modify_timestamp} //= $context->{now};
+        $contract{create_timestamp} //= $context->{_now};
+        $contract{modify_timestamp} //= $context->{_now};
 
         $context->{_bm} = [];
+        $context->{_dm} = 0;
         NGCP::Panel::Utils::BillingMappings::prepare_billing_mappings(
             c => $c,
             resource => $context->{contract},
-            old_resource => undef,
+            old_resource => $old_resource,
             mappings_to_create => $context->{_bm},
+            now => $context->{_now},
+            #delete_mappings => \{$context->{dm}},
             err_code => sub {
                 my ($err) = @_;
                 die($err);
-        });
+        }) unless $context->{contract}->{id};
 
         $c->log->debug("provisioning template - contract: " . Dumper($context->{contract}));
 
@@ -1021,7 +1062,7 @@ sub _init_subscriber_context {
                 return $contract;
             },
             item => $item,
-        );
+        ) unless $context->{subscriber}->{id};
 
         $c->log->debug("provisioning template - subscriber: " . Dumper($context->{subscriber}));
     }
@@ -1063,7 +1104,7 @@ sub _init_contract_balance_context {
             contract => $schema->resultset('contracts')->find({
                 id => $context->{contract}->{id},
             }),
-            now => $context->{now},
+            now => $context->{_now},
         );
 
         my %contract_balance = (
@@ -1227,7 +1268,63 @@ sub _create_contract {
     my ($c, $context, $schema) = @_;
 
     if (exists $context->{contract}) {
-        unless ($context->{contract}->{id}) {
+        if ($context->{contract}->{id}) {
+            # my $customer = $schema->resultset('contracts')->find($context->{contract}->{id});
+            # $customer->update($context->{contract});
+            # NGCP::Panel::Utils::BillingMappings::append_billing_mappings(c => $c,
+            #     contract => $customer,
+            #     mappings_to_create => $context->{_bm},
+            #     now => $context->{_now},
+            #     delete_mappings => $context->{_dm},
+            # );
+            # $customer = $schema->resultset('contracts')->find($customer->id); #refresh after update and billing mapping changes
+
+            # my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+            #     contract => $customer,
+            #     old_package => $old_package,
+            #     now => $context->{_now}); #make balance_intervals.t work
+            # $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
+            #     contract => $customer,
+            #     old_package => $old_package,
+            #     balance => $balance,
+            #     now => $context->{_now},
+            #     profiles_added => ($set_package ? scalar @{$context->{_bm}} : 0),
+            #     );
+
+            # my $billing_mapping = NGCP::Panel::Utils::BillingMappings::get_actual_billing_mapping(c => $c, now => $context->{_now}, contract => $customer, );
+            # my $billing_profile = $billing_mapping->billing_profile;
+
+            # if(($customer->external_id // '') ne $old_ext_id) {
+            #     foreach my $sub($customer->voip_subscribers->all) {
+            #         my $prov_sub = $sub->provisioning_voip_subscriber;
+            #         next unless($prov_sub);
+            #         NGCP::Panel::Utils::Subscriber::update_preferences(
+            #             c => $c,
+            #             prov_subscriber => $prov_sub,
+            #             preferences => { ext_contract_id => $customer->external_id }
+            #         );
+            #     }
+            # }
+
+            # NGCP::Panel::Utils::Subscriber::switch_prepaid_contract(c => $c,
+            #     prepaid => $billing_profile->prepaid,
+            #     contract => $customer,
+            # );
+
+            # if($old_resource->{status} ne $resource->{status}) {
+            #     if($customer->id == 1) {
+            #         $self->error($c, HTTP_FORBIDDEN, "Cannot set customer status to '".$resource->{status}."' for customer id '1'");
+            #         return;
+            #     }
+            #     NGCP::Panel::Utils::Contract::recursively_lock_contract(
+            #         c => $c,
+            #         contract => $customer,
+            #     );
+            # }
+
+            # $c->log->debug("provisioning template - contract id $context->{contract}->{id} updated");
+
+        } else {
             $context->{contract}->{contact_id} //= $context->{contract_contact}->{id};
             die("contact_id for contract required") unless $context->{contract}->{contact_id};
             my $contract = $schema->resultset('contracts')->create(
@@ -1239,7 +1336,7 @@ sub _create_contract {
                 mappings_to_create => $context->{_bm},
             );
             NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balances(c => $c,
-                 contract => $contract,
+                contract => $contract,
             );
             $c->log->debug("provisioning template - contract id $context->{contract}->{id} created");
         }
@@ -1261,12 +1358,12 @@ sub _set_contract_balance {
             balance => $context->{_cb},
             cash_balance => $context->{contract_balance}->{cash_balance},
             free_time_balance => $context->{contract_balance}->{free_time_balance},
-            now => $context->{now},
+            now => $context->{_now},
             log_vals => $log_vals);
 
         my $topup_log = NGCP::Panel::Utils::ProfilePackages::create_topup_log_record(
             c => $c,
-            now => $context->{now},
+            now => ($context->{_now} // NGCP::Panel::Utils::DateTime::current_local()),
             entities => $entities,
             log_vals => $log_vals,
             request_token => NGCP::Panel::Utils::ProfilePackages::API_DEFAULT_TOPUP_REQUEST_TOKEN,
