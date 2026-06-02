@@ -9655,6 +9655,11 @@ msgstr ""
 msgid "Provisioning template '%1' done: subscriber %2 processed"
 msgstr ""
 
+#. ($template, $context->{subscriber}->{id})
+#: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
+msgid "Provisioning template '%1' done: subscriber id %2 processed"
+msgstr ""
+
 #. ($template, $e)
 #: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
 msgid "Provisioning template '%1' failed: %2"
