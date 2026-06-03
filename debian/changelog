@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.33+0~mr13.5.1.33) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [d1ef649] MT#65243 Plugin::NGCP::Redis handle 'active-replica' state
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 03 Jun 2026 18:27:43 +0200
+
 ngcp-panel (13.5.1.32+0~mr13.5.1.32) unstable; urgency=medium
 
   [ Kirill Solomko ]
