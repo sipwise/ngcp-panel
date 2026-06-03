@@ -50,7 +50,8 @@ sub _wait_for_master_role {
     my $wait = 5;
 
     while ($cnt < $wait) {
-        return 1 if _get_replication_role($conn_ref) eq 'master';
+        my $repl_role = _get_replication_role($conn_ref);
+        return 1 if $repl_role =~ /^(master|active-replica)$/;
         sleep $interval;
         $cnt += $interval;
     }
