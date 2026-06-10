@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.34+0~mr13.5.1.34) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [a0974c6] MT#65048 check subscriber profile preferences on update
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 10 Jun 2026 14:45:02 +0200
+
 ngcp-panel (13.5.1.33+0~mr13.5.1.33) unstable; urgency=medium
 
   [ Kirill Solomko ]
