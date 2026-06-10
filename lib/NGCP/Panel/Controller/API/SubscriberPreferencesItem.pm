@@ -82,7 +82,6 @@ sub GET :Allow {
         }
         unless ($c->has_errors) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
-            last;
         }
     }
     return;
@@ -150,7 +149,6 @@ sub PATCH :Allow {
         }
         unless ($c->has_errors) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
-            last;
         }
     }
     return;
@@ -213,7 +211,6 @@ sub PUT :Allow {
         }
         unless ($c->has_errors) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
-            last;
         }
     }
     return;

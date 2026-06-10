@@ -442,6 +442,8 @@ sub update_preferences {
     my $reseller_id;
     my $full_rs;
     my $old_auth_prefs = {};
+    my $has_profile = 0;
+    my %profile_allowed_attrs;
 
     if($type eq "domains") {
         delete $resource->{domain_id};
@@ -481,10 +483,13 @@ sub update_preferences {
             });
 
             if ($elem && $elem->voip_subscriber_profile) {
-                my @allowed_attr_ids = $elem->voip_subscriber_profile->profile_attributes
-                    ->get_column('attribute_id')->all;
+                $has_profile = 1;
+                %profile_allowed_attrs =
+                    map { $_ => 1 }
+                        $elem->voip_subscriber_profile->profile_attributes
+                            ->get_column('attribute_id')->all;
                 $full_rs = $full_rs->search_rs({
-                    'attribute.id' => { '-in' => \@allowed_attr_ids },
+                    'attribute.id' => { '-in' => [keys %profile_allowed_attrs] },
                 });
             }
         }
@@ -720,6 +725,11 @@ sub update_preferences {
         unless($meta) {
             $c->log->error("failed to get voip_preference entry for '$pref'");
             &$err_code(HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+            return;
+        }
+
+        if ($has_profile && !$profile_allowed_attrs{$meta->id}) {
+            &$err_code(HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: A pointer that references a non-existent value (pointer: /$pref)", "requested profile preference '$pref' is not enabled");
             return;
         }
 
