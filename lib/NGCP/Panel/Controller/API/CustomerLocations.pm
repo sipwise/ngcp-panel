@@ -22,6 +22,19 @@ sub api_description {
 sub query_params {
     return [
         {
+            param => 'contract_id',
+            description => 'Filter for customer locations of a specific contract',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'contract.id' => $q };
+                },
+                second => sub {
+                    return { join => 'contract', };
+                },
+            },
+        },
+        {
             param => 'ip',
             description => 'Filter for customer locations containing a specific IP address',
             query => {

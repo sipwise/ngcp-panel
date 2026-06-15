@@ -72,8 +72,8 @@ sub _item_rs {
     my $item_rs = $c->model('DB')->resultset('voip_contract_locations');
 
     if ($c->user->roles eq "reseller") {
-        $item_rs->search({ 'contacts.reseller_id' => $c->user->reseller_id },
-                         { join => { 'contracts' => 'contacts' } });
+        $item_rs = $item_rs->search({ 'contacts.reseller_id' => $c->user->reseller_id },
+                         { join => { 'contract' => 'contacts' } });
     }
 
     return $item_rs;
