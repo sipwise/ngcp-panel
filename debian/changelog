@@ -1,3 +1,35 @@
+ngcp-panel (26.1.1.0+0~mr26.1.1.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [079ae19] MT#64627 Call sip_dispatcher_reload when peer transport is updated
+  * [3377270] MT#63396 Add 'phonebook' internal preference to show/hide CSC menu
+
+  [ Kirill Solomko ]
+  * [e5d7232] MT#64891 enhance Redis connection handling
+  * [e956227] MT#64972 /api/customers email_template auto assign change
+  * [ce12aed] MT#64923 callforward sets add own boolean field
+  * [5d7e137] MT#65243 Plugin::NGCP::Redis handle 'active-replica' state
+  * [a7f1333] MT#65048 check subscriber profile preferences on update
+
+  [ Sipwise Jenkins Builder ]
+  * [5091368] TT#4166 I18N dump: snapshot 2026.04.24-22.20.31
+  * [a8ec178] TT#4166 I18N dump: snapshot 2026.05.12-22.18.30
+  * [c593702] TT#4166 I18N dump: snapshot 2026.06.02-22.20.34
+
+  [ Guillem Jover ]
+  * [1098163] MT#65037 grafana: Rename KeyDB dashboard to KeyValue DB
+  * [d1173ba] MT#65037 grafana: Rename Database dashboard to SQL DB
+  * [42a254e] MT#65090 generate_invoices: Remove obsolete backwards compatibility code
+
+  [ Michael Prokop ]
+  * [5993a1e] MT#55576 Switch mail interface from sendmail(1) to SMTP
+
+  [ Rene Krenn ]
+  * [9088159] MT#60441 fix saving contract prefs with location_id
+  * [baab52c] MT#65218 prov templates: improve contract and subscriber lookup
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jun 2026 15:32:27 +0200
+
 ngcp-panel (26.1.0.0+0~mr26.1.0.0) unstable; urgency=medium
 
   [ Kirill Solomko ]
