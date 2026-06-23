@@ -23,8 +23,10 @@ Catalyst Controller.
 
 =cut
 
-sub logout_index :Path {
+sub auto :Private {
     my ($self, $c) = @_;
+
+    return 1;
 }
 
 sub logout :Chained('/') :PathPart('logout') :Args(0) {
