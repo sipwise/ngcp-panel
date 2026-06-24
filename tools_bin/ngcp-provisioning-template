@@ -17,6 +17,7 @@ use NGCP::Schema qw();
 #use lib "/home/rkrenn/sipwise/git/ngcp-panel/lib";
 #use lib "/usr/local/devel/ngcp-panel/lib";
 use NGCP::Panel::Utils::ProvisioningTemplates qw();
+use NGCP::Panel::Utils::License qw();
 
 my @panel_configs = qw(
    /etc/ngcp-panel/ngcp_panel.conf
@@ -277,6 +278,42 @@ sub _create_c {
         },
         request => $req,
         req => $req,
+        license => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_license($self, @_);
+        },
+        licenses => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_licenses($self, @_);
+        },
+        license_meta => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_license_meta($self, @_);
+        },
+        license_max_pbx_groups => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_max_pbx_groups($self, @_);
+        },
+        license_max_pbx_subscribers => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_max_pbx_subscribers($self, @_);
+        },
+        license_max_subscribers => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_max_subscribers($self, @_);
+        },
+        license_current_pbx_groups => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_current_pbx_groups($self, @_);
+        },
+        license_current_pbx_subscribers => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_current_pbx_subscribers($self, @_);
+        },
+        license_current_subscribers => sub {
+            my $self = shift;
+            return NGCP::Panel::Utils::License::get_current_subscribers($self, @_);
+        },
 
     );
 
