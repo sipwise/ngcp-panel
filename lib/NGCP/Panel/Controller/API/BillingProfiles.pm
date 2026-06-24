@@ -43,6 +43,18 @@ sub query_params {
             description => 'Filter for billing profiles with a specific name',
             query_type => 'wildcard',
         },
+        {
+            param => 'contract_cnt',
+            description => 'Show the number of contracts using this billing profile (optional limit, defaults to 10)',
+        },
+        {
+            param => 'contract_exists',
+            description => 'Show whether any contract is using this billing profile',
+        },
+        {
+            param => 'package_cnt',
+            description => 'Show the number of packages using this billing profile',
+        },
     ];
 }
 

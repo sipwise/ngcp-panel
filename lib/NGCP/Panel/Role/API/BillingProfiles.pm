@@ -14,15 +14,59 @@ use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Billing qw();
 
+sub _usage_select_entries {
+    my ($self, %opts) = @_;
+    my @select;
+
+    if ($opts{contract_cnt}) {
+        my $limit = $opts{contract_cnt_limit};
+        $limit = 10 if !defined($limit) || $limit eq '' || !is_int($limit);
+        push @select, { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt($limit) ], -as => 'contract_cnt' };
+    }
+    if ($opts{contract_exists}) {
+        push @select, { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ], -as => 'contract_exists' };
+    }
+    if ($opts{package_cnt}) {
+        push @select, { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ], -as => 'package_cnt' };
+    }
+
+    return @select;
+}
+
+sub _usage_search_attrs {
+    my ($self, $c) = @_;
+    my $params = $c->req->query_params;
+    my @select = $self->_usage_select_entries(
+        contract_cnt       => exists $params->{contract_cnt},
+        contract_cnt_limit => (exists $params->{contract_cnt} ? $params->{contract_cnt} : undef),
+        contract_exists    => exists $params->{contract_exists},
+        package_cnt        => exists $params->{package_cnt},
+    );
+
+    return @select ? { '+select' => \@select } : {};
+}
+
+sub _load_profile_usage_columns {
+    my ($self, $c, $profile) = @_;
+    return $profile if $profile->has_column_loaded('contract_exists');
+
+    my @select = $self->_usage_select_entries(
+        contract_exists    => 1,
+        contract_cnt       => 1,
+        contract_cnt_limit => 10,
+    );
+    ($profile) = $c->model('DB')->resultset('billing_profiles')->search(
+        { 'me.id' => $profile->id },
+        { '+select' => \@select },
+    )->all;
+    return $profile;
+}
+
 sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('billing_profiles');
-    my $search_xtra = {
-            '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt(10) ] , -as => 'contract_cnt' },
-                           { '' => \[ NGCP::Panel::Utils::Billing::get_contract_exists_stmt() ] , -as => 'contract_exists' },
-                           { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
-            };
+    my $search_xtra = $self->_usage_search_attrs($c);
     if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         $item_rs = $item_rs->search({
             'me.status' => { '!=' => 'terminated' },
@@ -70,6 +114,17 @@ sub resource_from_item {
     $resource{peaktime_weekdays} = $weekday_peaktimes;
     $resource{peaktime_special} = $special_peaktimes;
 
+    my $params = $c->req->query_params;
+    if (exists $params->{contract_cnt} && $profile->has_column_loaded('contract_cnt')) {
+        $resource{contract_cnt} = int($profile->get_column('contract_cnt'));
+    }
+    if (exists $params->{contract_exists} && $profile->has_column_loaded('contract_exists')) {
+        $resource{contract_exists} = $profile->get_column('contract_exists') ? 1 : 0;
+    }
+    if (exists $params->{package_cnt} && $profile->has_column_loaded('package_cnt')) {
+        $resource{package_cnt} = int($profile->get_column('package_cnt'));
+    }
+
     return \%resource;
 }
 
@@ -115,6 +170,8 @@ sub lock_profile {
 
 sub update_profile {
     my ($self, $c, $profile, $old_resource, $resource, $form) = @_;
+
+    $profile = $self->_load_profile_usage_columns($c, $profile);
 
     #if ($profile->status eq 'terminated') {
     #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Billing profile is already terminated and cannot be changed.');
