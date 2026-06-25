@@ -1426,7 +1426,7 @@ sub expand_fields {
 }
 
 sub expand_field {
-    my ($self, $c, $resource, $resource_form, $field, $depth) = @_;
+    my ($self, $c, $resource, $resource_form, $field, $depth, $use_full_name) = @_;
 
     $depth //= 0;
     my ($pri_field, $key_field, $found);
@@ -1438,27 +1438,44 @@ sub expand_field {
     my @sub_fields = splice(@parents, $depth);
     shift @sub_fields; # remove current field
     my $parent = join('.', @parents);
+
     $key_field = $depth == 0 ? $pri_field : $parent . '.' . $pri_field;
 
     return unless exists $resource->{$pri_field};
+
     $found = 1;
 
     my $cache = $c->stash->{expand_cache}{$key_field} //= {};
 
     return if $cache->{invalid};
 
+    if ($depth == 0) {
+        if (my $res_field = $resource_form->field($pri_field)) {
+            if ($res_field->type eq 'Repeatable') {
+                @sub_fields = ();
+                foreach my $rep_field ($res_field->field('0')->fields) {
+                    for (my $i=0; $i<=$#{$resource->{$pri_field}}; $i++) {
+                        my $rep_field_name = $pri_field.'.'.$rep_field->name;
+                        $self->expand_field($c, $resource->{$pri_field}[$i], $resource_form, $rep_field_name, $depth+1, 1);
+                    }
+                }
+            }
+        }
+    }
+
     my $expand_form = $cache->{expand_form} //=
         NGCP::Panel::Form::get("NGCP::Panel::Form::Expand", $c);
 
     my ($attr, $expand) = @{$cache}{qw(attr expand)};
     if (!$attr || !$expand) {
-        if (my $f_field = $resource_form->field($pri_field)) {
+        my $e_field = $use_full_name ? $key_field : $pri_field;
+        if (my $f_field = $resource_form->field($e_field)) {
             $attr     = $f_field->element_attr;
             $expand   = $attr->{expand};
         }
 
         if (!$expand) { # use default field expand if specified
-            if (my $f_field = $expand_form->field($pri_field)) {
+            if (my $f_field = $expand_form->field($e_field)) {
                 $attr     = $f_field->element_attr;
                 $expand   = $attr->{expand};
             }

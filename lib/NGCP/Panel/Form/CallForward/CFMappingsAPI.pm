@@ -108,6 +108,12 @@ has_field 'cfu.destinationset' => (
 has_field 'cfu.destinationset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFDestinationSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfu.timeset' => (
@@ -119,6 +125,12 @@ has_field 'cfu.timeset' => (
 has_field 'cfu.timeset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFTimeSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfu.sourceset' => (
@@ -130,6 +142,12 @@ has_field 'cfu.sourceset' => (
 has_field 'cfu.sourceset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFSourceSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfu.bnumberset' => (
@@ -141,6 +159,12 @@ has_field 'cfu.bnumberset' => (
 has_field 'cfu.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFBNumberSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfu.cfm_id' => (
@@ -157,6 +181,12 @@ has_field 'cfb.destinationset' => (
 has_field 'cfb.destinationset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFDestinationSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfu.enabled' => (
@@ -178,6 +208,12 @@ has_field 'cfb.timeset' => (
 has_field 'cfb.timeset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFTimeSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfb.sourceset' => (
@@ -189,6 +225,12 @@ has_field 'cfb.sourceset' => (
 has_field 'cfb.sourceset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFSourceSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfb.bnumberset' => (
@@ -200,6 +242,12 @@ has_field 'cfb.bnumberset' => (
 has_field 'cfb.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFBNumberSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfb.enabled' => (
@@ -226,6 +274,12 @@ has_field 'cft.destinationset' => (
 has_field 'cft.destinationset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFDestinationSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cft.timeset' => (
@@ -237,6 +291,12 @@ has_field 'cft.timeset' => (
 has_field 'cft.timeset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFTimeSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cft.sourceset' => (
@@ -248,6 +308,12 @@ has_field 'cft.sourceset' => (
 has_field 'cft.sourceset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFSourceSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cft.bnumberset' => (
@@ -259,6 +325,12 @@ has_field 'cft.bnumberset' => (
 has_field 'cft.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFBNumberSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cft.enabled' => (
@@ -285,6 +357,12 @@ has_field 'cfna.destinationset' => (
 has_field 'cfna.destinationset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFDestinationSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfna.timeset' => (
@@ -296,6 +374,12 @@ has_field 'cfna.timeset' => (
 has_field 'cfna.timeset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFTimeSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfna.sourceset' => (
@@ -307,6 +391,12 @@ has_field 'cfna.sourceset' => (
 has_field 'cfna.sourceset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFSourceSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfna.bnumberset' => (
@@ -318,6 +408,12 @@ has_field 'cfna.bnumberset' => (
 has_field 'cfna.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFBNumberSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfna.enabled' => (
@@ -344,6 +440,12 @@ has_field 'cfs.destinationset' => (
 has_field 'cfs.destinationset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFDestinationSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfs.timeset' => (
@@ -355,6 +457,12 @@ has_field 'cfs.timeset' => (
 has_field 'cfs.timeset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFTimeSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfs.sourceset' => (
@@ -366,6 +474,12 @@ has_field 'cfs.sourceset' => (
 has_field 'cfs.sourceset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFSourceSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfs.bnumberset' => (
@@ -377,6 +491,12 @@ has_field 'cfs.bnumberset' => (
 has_field 'cfs.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFBNumberSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfs.enabled' => (
@@ -409,6 +529,12 @@ has_field 'cfr.destinationset' => (
 has_field 'cfr.destinationset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFDestinationSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfr.timeset' => (
@@ -420,6 +546,12 @@ has_field 'cfr.timeset' => (
 has_field 'cfr.timeset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFTimeSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfr.sourceset' => (
@@ -431,6 +563,12 @@ has_field 'cfr.sourceset' => (
 has_field 'cfr.sourceset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFSourceSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfr.bnumberset' => (
@@ -442,6 +580,12 @@ has_field 'cfr.bnumberset' => (
 has_field 'cfr.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFBNumberSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfr.enabled' => (
@@ -468,6 +612,12 @@ has_field 'cfo.destinationset' => (
 has_field 'cfo.destinationset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFDestinationSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfo.timeset' => (
@@ -479,6 +629,12 @@ has_field 'cfo.timeset' => (
 has_field 'cfo.timeset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFTimeSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfo.sourceset' => (
@@ -490,6 +646,12 @@ has_field 'cfo.sourceset' => (
 has_field 'cfo.sourceset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFSourceSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfo.bnumberset' => (
@@ -501,6 +663,12 @@ has_field 'cfo.bnumberset' => (
 has_field 'cfo.bnumberset_id' => (
     type => 'PosInteger',
     do_label => 0,
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::CFBNumberSets',
+            allowed_roles => [qw(admin reseller ccareadmin ccare subscriberadmin subscriber)],
+        },
+    },
 );
 
 has_field 'cfo.enabled' => (
