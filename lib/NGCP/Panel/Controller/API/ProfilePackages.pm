@@ -43,8 +43,8 @@ sub query_params {
             description => 'Filter for profile packages containing a billing profile with specific name pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
-                    { 'billing_profile.name' => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    { 'billing_profile.name' => { $op => $q } };
                 },
                 second => sub {
                     return { join => { profiles => 'billing_profile' },
@@ -57,8 +57,8 @@ sub query_params {
             description => 'Filter for profile packages containing a billing network with specific name pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
-                    { 'billing_network.name' => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    { 'billing_network.name' => { $op => $q } };
                 },
                 second => sub {
                     return { join => { profiles => 'billing_network' },
