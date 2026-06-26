@@ -419,6 +419,10 @@ sub resource_from_item {
         push @{$resource->{times}}, \%period;
     }
 
+    if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        $resource->{own} = $item->subscriber_id == $c->user->id ? 1 : 0;
+    }
+
     return $resource;
 
 }

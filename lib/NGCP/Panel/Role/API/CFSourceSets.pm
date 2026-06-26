@@ -116,6 +116,28 @@ sub item_by_id {
     return $item_rs->find($id);
 }
 
+sub resource_from_item {
+    my ($self, $c, $item, $form) = @_;
+
+    my $resource = { $item->get_inflated_columns };
+
+    my @sources;
+    for my $dest ($item->voip_cf_sources->all) {
+        push @sources, { $dest->get_inflated_columns, };
+        delete @{$sources[-1]}{'source_set_id', 'id'};
+    }
+    $resource->{sources} = \@sources;
+
+    my $b_subs_id = $item->subscriber->voip_subscriber->id;
+    $resource->{subscriber_id} = $b_subs_id;
+
+    if ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        $resource->{own} = $item->subscriber_id == $c->user->id ? 1 : 0;
+    }
+
+    return $resource;
+}
+
 sub check_subscriber_can_update_item {
     my ($self, $c, $item) = @_;
 
