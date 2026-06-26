@@ -80,8 +80,8 @@ sub query_params {
             description => 'Filter for subscribers in specific domain pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
-                    return { 'domain.domain' => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    return { 'domain.domain' => { $op => $q } };
                 },
                 second => sub {
                     my $q = shift;
@@ -107,8 +107,8 @@ sub query_params {
             description => 'Filter for subscribers of a specific customer external_id pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
-                    return { 'contract.external_id' => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    return { 'contract.external_id' => { $op => $q } };
                 },
                 second => sub {
                     return { join => 'contract' };
@@ -120,8 +120,8 @@ sub query_params {
             description => 'Filter for subscribers by subscriber\'s external_id pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
-                    return { 'me.external_id' => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    return { 'me.external_id' => { $op => $q } };
                 },
                 second => sub {
                     return { };
@@ -184,9 +184,9 @@ sub query_params {
             description => 'Filter for subscribers who has specified alias pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
+                    my ($q, $op) = parse_search_string(shift);
                     {
-                        'voip_dbaliases.username' => { like => $q },
+                        'voip_dbaliases.username' => { $op => $q },
                     };
                 },
                 second => sub {
@@ -226,9 +226,8 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific primary number pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
-                    { \['concat(primary_number.cc, primary_number.ac, primary_number.sn) like ?', $q ] };
-
+                    my ($q, $op) = parse_search_string(shift);
+                    { \["concat(primary_number.cc, primary_number.ac, primary_number.sn) $op ?", $q ] };
                 },
                 second => sub {
                     return { join => 'primary_number' }
@@ -240,8 +239,8 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific PBX extension',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
-                    { 'provisioning_voip_subscriber.pbx_extension' => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    { 'provisioning_voip_subscriber.pbx_extension' => { $op => $q } };
 
                 },
                 second => sub {
@@ -254,10 +253,10 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific display name',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    my ($q, $op) = parse_search_string(shift);
                     {
                         'attribute.attribute' => 'display_name',
-                        'voip_usr_preferences.value' => { like => $q }
+                        'voip_usr_preferences.value' => { $op => $q }
                     };
 
                 },
