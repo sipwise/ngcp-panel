@@ -1,3 +1,10 @@
+ngcp-panel (26.0.1.8+0~mr26.0.1.8) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [492a617] MT#65092 address query param string pattern match in certain endpoints
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 26 Jun 2026 19:31:04 +0200
+
 ngcp-panel (26.0.1.7+0~mr26.0.1.7) unstable; urgency=medium
 
   [ Kirill Solomko ]
