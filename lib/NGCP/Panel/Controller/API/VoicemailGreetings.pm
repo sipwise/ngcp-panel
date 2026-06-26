@@ -62,10 +62,9 @@ sub query_params {
             description => 'Filter for the greeting type',
             query => {
                 first => sub {
-                    my $q = shift;
-                    ($q, my $is_pattern) = escape_search_string_pattern('/var/spool/asterisk/voicemail/*/' . $q);
+                    my ($q, $op) = parse_search_string('/var/spool/asterisk/voicemail/*/' . shift);
                     return {
-                        'me.dir' => { like => $q },
+                        'me.dir' => { $op => $q },
                     };
                 },
                 second => sub {},

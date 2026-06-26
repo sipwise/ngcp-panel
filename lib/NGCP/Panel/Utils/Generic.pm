@@ -8,9 +8,9 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type array_to_map escape_js escape_uri trim escape_search_string_pattern run_module_method get_module_var);
-%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern &run_module_method &get_module_var)],
-    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern &run_module_method &get_module_var)]);
+@EXPORT_OK   = qw(is_int is_integer is_decimal merge compare is_false is_true get_inflated_columns_all hash2obj mime_type_to_extension extension_to_mime_type array_to_map escape_js escape_uri trim escape_search_string_pattern parse_search_string run_module_method get_module_var);
+%EXPORT_TAGS = ( DEFAULT => [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern &parse_search_string &run_module_method &get_module_var)],
+    all    =>  [qw(&is_int &is_integer &is_decimal &merge &compare &is_false &is_true &get_inflated_columns_all &hash2obj &mime_type_to_extension &extension_to_mime_type &array_to_map &escape_js &escape_uri &trim &escape_search_string_pattern &parse_search_string &run_module_method &get_module_var)]);
 
 use Hash::Merge;
 use Data::Compare qw//;
@@ -261,6 +261,22 @@ sub escape_search_string_pattern {
     }
     return ($searchString_escaped,$is_pattern);
 
+}
+
+sub parse_search_string {
+    my $str = shift;
+
+    my $has_wildcards = $str =~ /(?<!\\)[\*\?]/;
+
+    $str =~ s/(?<!\\)([%_])/\\$1/g if $has_wildcards;
+
+    my $op = (
+        $str =~ s/(?<!\\)\*/%/g
+            ||
+        $str =~ s/(?<!\\)\?/_/g
+    ) ? 'like' : '=';
+
+    return ($str, $op);
 }
 
 sub _load_module {
