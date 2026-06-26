@@ -31,8 +31,8 @@ sub query_params {
             description => 'Filter for domains matching the given pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
-                    { domain => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    { domain => { $op => $q } };
                 },
                 second => sub { },
             },

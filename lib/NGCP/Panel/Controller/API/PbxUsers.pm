@@ -27,8 +27,8 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific primary number pattern',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
-                    { \['concat(primary_number.cc, primary_number.ac, primary_number.sn) like ?', $q ] };
+                    my ($q, $op) = parse_search_string(shift);
+                    { \["concat(primary_number.cc, primary_number.ac, primary_number.sn) $op ?", $q ] };
 
                 },
                 second => sub {
@@ -41,8 +41,8 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific PBX extension',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift,0,1,1);
-                    { 'provisioning_voip_subscriber.pbx_extension' => { like => $q } };
+                    my ($q, $op) = parse_search_string(shift);
+                    { 'provisioning_voip_subscriber.pbx_extension' => { $op => $q } };
 
                 },
                 second => sub {
@@ -55,10 +55,10 @@ sub query_params {
             description => 'Filter for subscribers of contracts with a specific display name',
             query => {
                 first => sub {
-                    my ($q,$is_pattern) = escape_search_string_pattern(shift);
+                    my ($q, $op) = parse_search_string(shift);
                     {
                         'attribute.attribute' => 'display_name',
-                        'voip_usr_preferences.value' => { like => $q }
+                        'voip_usr_preferences.value' => { $op => $q }
                     };
 
                 },
