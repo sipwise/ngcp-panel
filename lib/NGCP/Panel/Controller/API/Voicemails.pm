@@ -45,7 +45,7 @@ sub query_params {
             description => 'Filter for voicemails in a specific folder (one of INBOX, Old, Friends, Family, Cust1 to Cust4)',
             query => {
                 first => sub {
-                    my ($str, $op) = parse_search_string('*/' . shift);
+                    my ($q, $op) = parse_search_string('*/' . shift);
                     # join is already done in get_item_rs
                     { 'me.dir' => { $op => $q } };
                 },
