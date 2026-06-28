@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.37+0~mr13.5.1.37) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [38dfa27] MT#65092 fix /api/voicemails $q variable typo
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 28 Jun 2026 19:25:05 +0200
+
 ngcp-panel (13.5.1.36+0~mr13.5.1.36) unstable; urgency=medium
 
   [ Kirill Solomko ]
