@@ -87,6 +87,8 @@ sub validate {
     } elsif(defined $sn && $sn ne '' && (!defined $cc || $cc eq '')) {
         my $err_msg = 'Country Code required if Subscriber Number is set';
         $self->add_error($err_msg);
+    } elsif (defined $cc && !($cc > 0)) {
+        $self->add_error("Country code must be greater than zero");
     }
 }
 
