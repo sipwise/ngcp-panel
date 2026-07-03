@@ -139,6 +139,8 @@ sub resource_from_item {
         $resource{primary_number}->{ac} = $item->primary_number->ac;
         $resource{primary_number}->{sn} = $item->primary_number->sn;
         $resource{primary_number}->{number_id} = int($item->primary_number->id);
+    } else {
+        $resource{primary_number} = undef;
     }
 
     my @aliases = ();

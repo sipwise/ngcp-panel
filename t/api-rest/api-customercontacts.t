@@ -420,6 +420,11 @@ sub _create_subscriber {
         username => 'subscriber_' . (scalar keys %subscriber_map) . '_'.$t,
         password => 'subscriber_password',
         customer_id => $customer->{id},
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 0011,
+        },
         #status => "active",
         @further_opts,
     }));

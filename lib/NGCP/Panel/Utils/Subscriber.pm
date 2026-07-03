@@ -1379,7 +1379,20 @@ sub update_subscriber_numbers {
     }
 
     if ($same_primary_number) {
-        # skip primary number processing for the same number
+        if ($c->config->{numbermanagement}->{auto_sync_cli}) {
+            my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
+            if ($cli_pref->first) {
+                if (number_as_string($primary_number) ne $cli_pref->first->value) {
+                    $cli_pref->first->update({ value => $new_pri_cli });
+                }
+            } else {
+                $cli_pref->create({
+                    subscriber_id => $prov_subs->id,
+                    value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn}
+                });
+            }
+        }
     } elsif (exists $params{primary_number} && !defined $primary_number) {
         $billing_subs->update({
             primary_number_id => undef,

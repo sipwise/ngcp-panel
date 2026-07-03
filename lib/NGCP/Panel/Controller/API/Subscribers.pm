@@ -522,7 +522,6 @@ sub POST :Allow {
         }
         unless ($c->has_errors) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, 'Internal Server Error', $e);
-            last;
         }
     }
     return;

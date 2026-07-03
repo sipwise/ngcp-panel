@@ -170,7 +170,7 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
     $put2get_check_params->{compare_cb} = sub{
         #$put_in->{content}, $put_get_out->{content};
         my($put_in_content,$put_get_out_content) = @_;
-        delete $put_get_out_content->{primary_number}->{number_id} if exists $put_get_out_content->{primary_number};
+        delete $put_get_out_content->{primary_number}->{number_id} if defined $put_get_out_content->{primary_number};
     };
     ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
     is($preferences_get->{content}->{cli}, $intentional_cli, "1. check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");

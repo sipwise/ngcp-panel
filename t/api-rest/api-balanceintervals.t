@@ -1927,7 +1927,7 @@ sub _create_subscriber {
             primary_number => {
                 cc => 43,
                 ac => 1,
-                sn => 0001,
+                sn => 0031,
             },
             #status => "active",
         };
