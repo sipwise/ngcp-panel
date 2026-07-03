@@ -165,7 +165,7 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
 
     my ($subscriber_put, $subscriber_get, $preferences_get);
 
-#1
+    #1
     $subscriber->{content}->{primary_number} = $intentional_primary_number;
     $put2get_check_params->{compare_cb} = sub{
         #$put_in->{content}, $put_get_out->{content};
@@ -173,37 +173,36 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
         delete $put_get_out_content->{primary_number}->{number_id} if defined $put_get_out_content->{primary_number};
     };
     ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
-    is($preferences_get->{content}->{cli}, $intentional_cli, "1. check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
-#/1
-#2
+    is($preferences_get->{content}->{cli}, $intentional_cli, "check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
+    #/1
+
+    #2
     delete $subscriber->{content}->{primary_number};
-    ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
-    is($preferences_get->{content}->{cli}, $intentional_cli, "2. check that cli was preserved on subscriber phones update: $preferences_get->{content}->{cli} == $intentional_cli");
-#/2
+    my ($res, $content_put) = $test_machine->request_put($subscriber->{content}, $subscriber->{uri});
+    $test_machine->http_code_msg(422, "check that the primary_number cannot be deleted", $res, $content_put);
+    #/2
+
     #now prepare preferences for zero situation, when synchronization will be restarted again
+    #3
     delete $preferences->{content}->{cli};
     (undef, $preferences_put->{content}) = $test_machine->request_put($preferences->{content},$preferences->{uri});
     is($preferences_put->{content}->{cli}, undef, "check that cli was deleted on subscriberpreferences put with empty cli");
+    #/3
     if($remote_config->{config}->{numbermanagement}->{auto_sync_cli}){
-    #3
+    #4
         $subscriber->{content}->{primary_number} = $intentional_primary_number;
         ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
         is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was created on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
-    #/3
+    #/4
         $intentional_primary_number = {
             'cc' => '222',
             'ac' => '333',
             'sn' => '444'.time(),
         };
-    #4
+    #5
         $subscriber->{content}->{primary_number} = $intentional_primary_number;
         ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params );
         is($preferences_get->{content}->{cli}, number_as_string($intentional_primary_number), "check that cli was updated on subscriber phones update: $preferences_get->{content}->{cli} == ".number_as_string($intentional_primary_number) );
-    #/4
-    #5
-        delete $subscriber->{content}->{primary_number};
-        ($subscriber_put,$subscriber_get,$preferences_get) = $test_machine->put_and_get($subscriber, $preferences_put, $put2get_check_params);
-        is($preferences_get->{content}->{cli}, undef, "check that cli was deleted on subscriber phones update");
     #/5
     }
     $test_machine->clear_test_data_all();#fake data aren't registered in this test machine, so they will stay.

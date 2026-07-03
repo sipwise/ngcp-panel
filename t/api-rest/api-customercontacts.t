@@ -311,8 +311,22 @@ my %customer_contact_map = ();
     my $subscriber1_contact = _create_customer_contact();
     my $subscriber2_contact = _create_customer_contact();
     my $customer = _create_customer($customer_contact->{id});
-    my $subscriber1 = _create_subscriber($customer,contact_id => $subscriber1_contact->{id});
-    my $subscriber2 = _create_subscriber($customer,contact_id => $subscriber2_contact->{id});
+    my $subscriber1 = _create_subscriber($customer,
+        contact_id => $subscriber1_contact->{id},
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 139089401,
+        }
+    );
+    my $subscriber2 = _create_subscriber($customer,
+        contact_id => $subscriber2_contact->{id},
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 139089402,
+        }
+    );
     #termination whether subscriber is terminated or not.
     _delete_customer_contact($subscriber1_contact);
     _delete_subscriber($subscriber2);
@@ -420,11 +434,6 @@ sub _create_subscriber {
         username => 'subscriber_' . (scalar keys %subscriber_map) . '_'.$t,
         password => 'subscriber_password',
         customer_id => $customer->{id},
-        primary_number => {
-            cc => 43,
-            ac => 1,
-            sn => 139089401,
-        },
         #status => "active",
         @further_opts,
     }));

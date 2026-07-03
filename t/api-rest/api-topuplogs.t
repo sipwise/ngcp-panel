@@ -88,7 +88,13 @@ my $request_count = 0;
 
     my $customer = _create_customer(billing_profile_definition => 'id',
         billing_profile_id => $profile->{id},);
-    my $subscriber = _create_subscriber($customer);
+    my $subscriber = _create_subscriber($customer,
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 569833121,
+        }
+    );
     my $voucher_1 = _create_voucher(10,'test1'.$t,$customer);
     my $voucher_2 = _create_voucher(10,'test2'.$t,$customer,undef,valid_until => '2010-01-01 00:00:00');
 
@@ -154,7 +160,13 @@ my $request_count = 0;
 
     my $customer = _create_customer(billing_profile_definition => 'package',
         profile_package_id => $package_1->{id},);
-    my $subscriber = _create_subscriber($customer);
+    my $subscriber = _create_subscriber($customer,
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 569833122,
+        }
+    );
     my $voucher_1 = _create_voucher(10,'test3'.$t,$customer);
 
     my $request_token_1 = $t."_".$request_count; $request_count++;
@@ -445,7 +457,7 @@ sub _create_voucher {
 }
 
 sub _create_subscriber {
-    my ($customer) = @_;
+    my ($customer,@further_opts) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/subscribers/');
     $req->header('Content-Type' => 'application/json');
     my $req_data = {
@@ -453,11 +465,7 @@ sub _create_subscriber {
         username => 'cust_subscriber_' . (scalar keys %$subscriber_map) . '_'.$t,
         password => 'cust_subscriber_password',
         customer_id => $customer->{id},
-        primary_number => {
-            cc => 43,
-            ac => 1,
-            sn => 56983312,
-        },
+        @further_opts,
         #status => "active",
     };
     $req->content(JSON::to_json($req_data));
