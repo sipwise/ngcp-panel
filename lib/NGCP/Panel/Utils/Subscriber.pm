@@ -403,6 +403,17 @@ sub prepare_resource {
 
     my $customer = &$getcustomer_code($resource->{customer_id});
     return unless($customer);
+
+    if (!defined $resource->{e164} || !$resource->{e164}{cc}) {
+        if ($customer->product->class eq 'pbxaccount' && $resource->{is_pbx_pilot}) {
+            &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "A primary_number is required for the PBX pilot subscriber.");
+            return;
+        } elsif ($customer->product->class eq 'sipaccount') {
+            &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "A primary_number is required for the SIP subscriber.");
+            return;
+        }
+    }
+
     if(!$item && defined $customer->max_subscribers && $customer->voip_subscribers->search({
             status => { '!=' => 'terminated' },
         })->count >= $customer->max_subscribers) {

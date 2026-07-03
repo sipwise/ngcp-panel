@@ -453,6 +453,11 @@ sub _create_subscriber {
         username => 'cust_subscriber_' . (scalar keys %$subscriber_map) . '_'.$t,
         password => 'cust_subscriber_password',
         customer_id => $customer->{id},
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 0001,
+        },
         #status => "active",
     };
     $req->content(JSON::to_json($req_data));
