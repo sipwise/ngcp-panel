@@ -423,7 +423,7 @@ sub _create_subscriber {
         primary_number => {
             cc => 43,
             ac => 1,
-            sn => 0011,
+            sn => 139089401,
         },
         #status => "active",
         @further_opts,

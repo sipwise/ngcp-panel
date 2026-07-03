@@ -2219,7 +2219,7 @@ sub test_subscriber {
         primary_number => {
             cc => 43,
             ac => 1,
-            sn => 0001,
+            sn => 210094135,
         },
         #status => "active",
         #administrative
@@ -2270,7 +2270,7 @@ sub test_subscriber {
         primary_number => {
             cc => 43,
             ac => 1,
-            sn => 0002,
+            sn => 310094136,
         },
     }));
     $res = $ua->request($req);
@@ -2318,7 +2318,7 @@ sub test_subscriber {
         primary_number => {
             cc => 43,
             ac => 1,
-            sn => 0003,
+            sn => 410094137,
         },
     }));
     $res = $ua->request($req);
