@@ -2216,7 +2216,11 @@ sub test_subscriber {
         username => 'test_customer_subscriber_'.($t-1),
         password => 'test_customer_subscriber_password',
         customer_id => $customer->{id},
-        #primary_number
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 0001,
+        },
         #status => "active",
         #administrative
         #is_pbx_pilot
@@ -2263,6 +2267,11 @@ sub test_subscriber {
         username => 'test_customer_subscriber_'.($t-1),
         password => => 'test_customer_subscriber_password_PUT',
         customer_id => $customer->{id},
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 0001,
+        },
     }));
     $res = $ua->request($req);
     is($res->code, 200, _get_request_test_message("PUT test subscriber"));
@@ -2306,6 +2315,11 @@ sub test_subscriber {
         username => 'test_customer_subscriber_'.$t,
         password => => 'test_customer_subscriber_password',
         customer_id => $customer->{id},
+        primary_number => {
+            cc => 43,
+            ac => 1,
+            sn => 0001,
+        },
     }));
     $res = $ua->request($req);
     is($res->code, 201, _get_request_test_message("POST another test subscriber"));
