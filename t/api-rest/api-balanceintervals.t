@@ -270,7 +270,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-14 13:00:00'));
 
         my $customer = _create_customer($package,'underrun_1');
-        my $subscriber = _create_subscriber($customer,'of customer underrun_1');
+        my $subscriber = _create_subscriber($customer,'of customer underrun_1',
+            primary_number => { cc => 43, ac => 1, sn => 710930450141 }
+        );
 
         _check_interval_history($customer,[
             { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 1, profile => $profile_initial->{id} },
@@ -331,7 +333,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-23 13:00:00'));
 
         my $customer = _create_customer($package_1,'1');
-        my $subscriber = _create_subscriber($customer,'of customer 1');
+        my $subscriber = _create_subscriber($customer,'of customer 1',
+            primary_number => { cc => 43, ac => 1, sn => 710930450142 }
+        );
 
         _check_interval_history($customer,[
             { start => '2015-01-01 00:00:00', stop => '2015-01-31 23:59:59', cash => 0.49, profile => $profile_underrun_1->{id} },
@@ -371,7 +375,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-20 13:00:00'));
 
         my $customer = _create_customer($package,'2');
-        my $subscriber = _create_subscriber($customer,'of customer 2');
+        my $subscriber = _create_subscriber($customer,'of customer 2',
+            primary_number => { cc => 43, ac => 1, sn => 710930450143 }
+        );
 
         _check_interval_history($customer,[
             { start => '~2015-07-20 13:00:00', stop => $infinite_future, cash => 0, profile => $profile_underrun->{id} },
@@ -421,7 +427,10 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_A = _create_customer($base_package,'A');
-        my $subscriber_A = _create_subscriber($customer_A,'of customer A');
+        my $subscriber_A = _create_subscriber($customer_A,'of customer A',
+            primary_number => { cc => 43, ac => 1, sn => 710930450144 }
+        );
+
         #_start_recording();
         my $v_silver_1 = _create_voucher(10,'SILVER_1_'.$t,undef,$silver_package);
         #print _stop_recording();
@@ -442,7 +451,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_B = _create_customer($base_package,'B');
-        my $subscriber_B = _create_subscriber($customer_B,'of customer B');
+        my $subscriber_B = _create_subscriber($customer_B,'of customer B',
+            primary_number => { cc => 43, ac => 1, sn => 710930450145 }
+        );
         my $v_silver_2 = _create_voucher(10,'SILVER_2_'.$t,undef,$silver_package);
         my $v_extension_1 = _create_voucher(2,'EXTENSION_1_'.$t,undef,$extension_package);
 
@@ -467,7 +478,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_C = _create_customer($base_package,'C');
-        my $subscriber_C = _create_subscriber($customer_C,'of customer C');
+        my $subscriber_C = _create_subscriber($customer_C,'of customer C',
+            primary_number => { cc => 43, ac => 1, sn => 710930450146 }
+        );
         my $v_gold_1 = _create_voucher(20,'GOLD_1_'.$t,undef,$gold_package);
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-02 13:00:00'));
@@ -717,7 +730,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         my $voucher2 = _create_voucher(10,'topup_start_mode_test2'.$t,$customer,$prof_package_create1m);
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
         $req_identifier = $cnt . '. create subscriber for customer ' . $customer->{id}; diag($req_identifier); $cnt++;
-        my $subscriber = _create_subscriber($customer);
+        my $subscriber = _create_subscriber($customer, undef,
+            primary_number => { cc => 43, ac => 1, sn => 710930450147 }
+        );
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
 
         $t1 = $ts;
@@ -833,7 +848,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             topup_profiles => [{ profile_id => $profile_topup->{id}, }, ],
             underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
         my $customer = _create_customer($package);
-        my $subscriber = _create_subscriber($customer);
+        my $subscriber = _create_subscriber($customer, undef,
+            primary_number => { cc => 43, ac => 1, sn => 710930450148 }
+        );
         my $v_notopup = _create_voucher(10,'notopup'.$t);
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
@@ -867,7 +884,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
         my $customer = _create_customer($package);
-        my $subscriber = _create_subscriber($customer);
+        my $subscriber = _create_subscriber($customer, undef,
+            primary_number => { cc => 43, ac => 1, sn => 710930450149 }
+        );
         #my $v_notopup = _create_voucher(10,'notopup'.$t);
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
@@ -906,7 +925,9 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
         my $customer = _create_customer($package);
-        my $subscriber = _create_subscriber($customer);
+        my $subscriber = _create_subscriber($customer, undef,
+            primary_number => { cc => 43, ac => 1, sn => 710930450150 }
+        );
         #my $v_notopup = _create_voucher(10,'notopup'.$t);
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
@@ -938,9 +959,15 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-21 13:00:00'));
 
         my $customer = _create_customer($package,'multi_topup');
-        my $subscriber_1 = _create_subscriber($customer,'of customer multi_topup');
-        my $subscriber_2 = _create_subscriber($customer,'of customer multi_topup');
-        my $subscriber_3 = _create_subscriber($customer,'of customer multi_topup');
+        my $subscriber_1 = _create_subscriber($customer,'of customer multi_topup',
+            primary_number => { cc => 43, ac => 1, sn => 710930450151 }
+        );
+        my $subscriber_2 = _create_subscriber($customer,'of customer multi_topup',
+            primary_number => { cc => 43, ac => 1, sn => 710930450152 }
+        );
+        my $subscriber_3 = _create_subscriber($customer,'of customer multi_topup',
+            primary_number => { cc => 43, ac => 1, sn => 710930450153 }
+        );
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-22 13:00:00'));
         my $delay = 5; #try 0 to provoke the concurrent action error
@@ -1514,17 +1541,27 @@ sub _create_customers_threaded {
     my $t0 = time;
     my @t_cs = ();
     #my $number_of_customers = 3;
+    my $c_idx = 0;
     for (1..$number_of_customers) {
         my $t_c;
         $t_c = threads->create(sub {
             my $customer = _create_customer($package,undef,$custcontact);
             if (defined $subscribers_per_customer && $subscribers_per_customer > 0) {
+                my $s_idx = 1;
                 for (1..$subscribers_per_customer) {
-                    _create_subscriber($customer);
+                    _create_subscriber($customer, undef,
+                        primary_number => {
+                            cc => 43,
+                            ac => 1,
+                            sn => sprintf('%d%d%d', 7109304599, $c_idx, $s_idx),
+                        }
+                    );
+                    $s_idx++;
                 }
             }
         });
         push(@t_cs,$t_c);
+        $c_idx++;
     }
     foreach my $t_c (@t_cs) {
         $t_c->join();
@@ -1912,7 +1949,7 @@ sub _create_voucher {
 }
 
 sub _create_subscriber {
-    my ($customer,$record_label) = @_;
+    my ($customer,$record_label,@further_opts) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/subscribers/');
     $req->header('Content-Type' => 'application/json');
     $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
@@ -1924,12 +1961,8 @@ sub _create_subscriber {
             username => 'cust_subscriber_' . (scalar keys %subscriber_map) . '_'.$t,
             password => 'cust_subscriber_password',
             customer_id => $customer->{id},
-            primary_number => {
-                cc => 43,
-                ac => 1,
-                sn => '71093045014'. time(),
-            },
             #status => "active",
+            @further_opts,
         };
         $req->content(JSON::to_json($req_data, { allow_nonref => 1, allow_blessed => 1, convert_blessed => 1, pretty => 0 }));
         $res = $ua->request($req);
