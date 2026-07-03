@@ -334,7 +334,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         my $customer = _create_customer($package_1,'1');
         my $subscriber = _create_subscriber($customer,'of customer 1',
-            primary_number => { cc => 43, ac => 1, sn => 710930450142 }
+            primary_number => { cc => 43, ac => '1'. threads->tid(), sn => 710930450142 }
         );
 
         _check_interval_history($customer,[
@@ -376,7 +376,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         my $customer = _create_customer($package,'2');
         my $subscriber = _create_subscriber($customer,'of customer 2',
-            primary_number => { cc => 43, ac => 1, sn => 710930450143 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450143 }
         );
 
         _check_interval_history($customer,[
@@ -428,7 +428,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_A = _create_customer($base_package,'A');
         my $subscriber_A = _create_subscriber($customer_A,'of customer A',
-            primary_number => { cc => 43, ac => 1, sn => 710930450144 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450144 }
         );
 
         #_start_recording();
@@ -452,7 +452,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_B = _create_customer($base_package,'B');
         my $subscriber_B = _create_subscriber($customer_B,'of customer B',
-            primary_number => { cc => 43, ac => 1, sn => 710930450145 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450145 }
         );
         my $v_silver_2 = _create_voucher(10,'SILVER_2_'.$t,undef,$silver_package);
         my $v_extension_1 = _create_voucher(2,'EXTENSION_1_'.$t,undef,$extension_package);
@@ -479,7 +479,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_C = _create_customer($base_package,'C');
         my $subscriber_C = _create_subscriber($customer_C,'of customer C',
-            primary_number => { cc => 43, ac => 1, sn => 710930450146 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450146 }
         );
         my $v_gold_1 = _create_voucher(20,'GOLD_1_'.$t,undef,$gold_package);
 
@@ -731,7 +731,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
         $req_identifier = $cnt . '. create subscriber for customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         my $subscriber = _create_subscriber($customer, undef,
-            primary_number => { cc => 43, ac => 1, sn => 710930450147 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450147 }
         );
         push(@$gantt_events,{ name => $req_identifier, t => $ts });
 
@@ -849,7 +849,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
             underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
         my $customer = _create_customer($package);
         my $subscriber = _create_subscriber($customer, undef,
-            primary_number => { cc => 43, ac => 1, sn => 710930450148 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450148 }
         );
         my $v_notopup = _create_voucher(10,'notopup'.$t);
 
@@ -885,7 +885,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
         my $customer = _create_customer($package);
         my $subscriber = _create_subscriber($customer, undef,
-            primary_number => { cc => 43, ac => 1, sn => 710930450149 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450149 }
         );
         #my $v_notopup = _create_voucher(10,'notopup'.$t);
 
@@ -926,7 +926,7 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
         my $customer = _create_customer($package);
         my $subscriber = _create_subscriber($customer, undef,
-            primary_number => { cc => 43, ac => 1, sn => 710930450150 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450150 }
         );
         #my $v_notopup = _create_voucher(10,'notopup'.$t);
 
@@ -960,13 +960,13 @@ if (_get_allow_fake_client_time()) { # && $enable_profile_packages) {
 
         my $customer = _create_customer($package,'multi_topup');
         my $subscriber_1 = _create_subscriber($customer,'of customer multi_topup',
-            primary_number => { cc => 43, ac => 1, sn => 710930450151 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450151 }
         );
         my $subscriber_2 = _create_subscriber($customer,'of customer multi_topup',
-            primary_number => { cc => 43, ac => 1, sn => 710930450152 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450152 }
         );
         my $subscriber_3 = _create_subscriber($customer,'of customer multi_topup',
-            primary_number => { cc => 43, ac => 1, sn => 710930450153 }
+            primary_number => { cc => 43, ac => '1' . threads->tid(), sn => 710930450153 }
         );
 
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-22 13:00:00'));
@@ -1552,7 +1552,7 @@ sub _create_customers_threaded {
                     _create_subscriber($customer, undef,
                         primary_number => {
                             cc => 43,
-                            ac => 1,
+                            ac => '1' . threads->tid(),
                             sn => sprintf('%d%d%d', 7109304599, $c_idx, $s_idx),
                         }
                     );
