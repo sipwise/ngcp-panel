@@ -2270,7 +2270,7 @@ sub test_subscriber {
         primary_number => {
             cc => 43,
             ac => 1,
-            sn => 0001,
+            sn => 0002,
         },
     }));
     $res = $ua->request($req);
@@ -2318,7 +2318,7 @@ sub test_subscriber {
         primary_number => {
             cc => 43,
             ac => 1,
-            sn => 0001,
+            sn => 0003,
         },
     }));
     $res = $ua->request($req);
