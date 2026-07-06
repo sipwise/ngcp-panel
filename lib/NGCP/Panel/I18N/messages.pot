@@ -831,6 +831,22 @@ msgid "Always offer the audio codec G.723.1 (8 kHz) to this subscriber or peer."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec G.726 (8 kHz/16 kbps) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec G.726 (8 kHz/24 kbps) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec G.726 (8 kHz/32 kbps) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Always offer the audio codec G.726 (8 kHz/40 kbps) to this subscriber or peer."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Always offer the audio codec G.729 (8 kHz) to this subscriber or peer."
 msgstr ""
 
@@ -14236,6 +14252,22 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Transcode to G.723.1"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.726 16 kbps"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.726 24 kbps"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.726 32 kbps"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Transcode to G.726 40 kbps"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
