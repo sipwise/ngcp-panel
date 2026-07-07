@@ -7443,6 +7443,10 @@ msgid "List of audio and video codecs to whitelist or blacklist. Valid codecs na
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "List of codecs, separated by commas, to determine the order of preference for transcoded codecs."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "List of error codes and respective announcements"
 msgstr ""
 
@@ -8524,6 +8528,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Offer OSRTP"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Offer codecs for transcoding in the given order of preference"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
