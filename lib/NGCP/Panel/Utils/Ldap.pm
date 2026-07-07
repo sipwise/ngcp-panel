@@ -35,7 +35,8 @@ sub get_user_dn {
     my @args = @_;
     my $user = shift;
     my ($entry, $code, $message) = search_dn($c, $user, @args);
-    $user = $entry->dn() if $user;
+    return undef unless $entry;
+    $user = $entry->dn();
     my $dn_format = $c->config->{ldap_admin}->{format} ||= '%s';
     return sprintf($dn_format, $user, @args);
 
@@ -100,7 +101,7 @@ sub search_dn {
             }
 
         } else {
-            $message = $@;
+            $message = $@ || ($ldap_uri ? 'failed to connect to ldap server' : 'ldap uri not configured');
             $c->log->debug($label . $message);
             return (undef, $ldapconnecterror, $message);
         }
