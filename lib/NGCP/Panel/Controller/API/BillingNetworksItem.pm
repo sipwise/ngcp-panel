@@ -8,6 +8,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use Clone qw/clone/;
 
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::Reseller qw();
@@ -54,7 +55,8 @@ sub GET :Allow {
         my $bn = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, billingnetwork => $bn);
 
-        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
+        my $form = $self->get_form($c);
+        my $hal = $self->hal_from_item($c, $bn, $self->resource_from_item($c, $bn, $form), $form);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -86,15 +88,15 @@ sub PATCH :Allow {
 
         my $bn = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, billingnetwork => $bn);
-        my $old_resource = $self->hal_from_item($c, $bn, "billingnetworks")->resource;
-        my $resource = $self->apply_patch($c, $old_resource, $json);
+        my $form = $self->get_form($c);
+        my $old_resource = $self->resource_from_item($c, $bn, $form);
+        my $resource = $self->apply_patch($c, clone($old_resource), $json);
         last unless $resource;
 
-        my $form = $self->get_form($c);
         $bn = $self->update_item($c, $bn, $old_resource, $resource, $form);
         last unless $bn;
 
-        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
+        my $hal = $self->hal_from_item($c, $bn, $self->resource_from_item($c, $bn, $form), $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
         
         $guard->commit; 
@@ -119,13 +121,14 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $bn->get_inflated_columns };
 
         my $form = $self->get_form($c);
+        my $old_resource = $self->resource_from_item($c, $bn, $form);
+
         $bn = $self->update_item($c, $bn, $old_resource, $resource, $form);
         last unless $bn;
-        
-        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
+
+        my $hal = $self->hal_from_item($c, $bn, $self->resource_from_item($c, $bn, $form), $form);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -141,6 +144,7 @@ sub DELETE :Allow {
    {
        my $billing_network = $self->item_by_id($c, $id);
        last unless $self->resource_exists($c, billingnetwork => $billing_network);
+       $billing_network = $self->_load_network_usage_columns($c, $billing_network);
        last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c, $billing_network->reseller_id, sub {
            my ($err) = @_;
            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);

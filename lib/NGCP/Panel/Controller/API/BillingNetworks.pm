@@ -50,6 +50,18 @@ sub query_params {
             description => 'Filter for billing networks matching a name pattern',
             query_type => 'wildcard',
         },
+        {
+            param => 'contract_cnt',
+            description => 'Show the number of contracts using this billing network (optional limit, defaults to 10)',
+        },
+        {
+            param => 'contract_exists',
+            description => 'Show whether any contract is using this billing network',
+        },
+        {
+            param => 'package_cnt',
+            description => 'Show the number of packages using this billing network',
+        },
     ];
 }
 
@@ -82,9 +94,10 @@ sub GET :Allow {
 
         (my $total_count, $bns, my $bns_rows) = $self->paginate_order_collection($c, $bns);
         my (@embedded, @links);
+        my $form = $self->get_form($c);
         $self->expand_prepare_collection($c);
         for my $bn (@$bns_rows) {
-            push @embedded, $self->hal_from_item($c, $bn, "billingnetworks");
+            push @embedded, $self->hal_from_item($c, $bn, $self->resource_from_item($c, $bn, $form), $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $bn->id),
@@ -168,7 +181,8 @@ sub POST :Allow {
             my $self = shift;
             my ($c) = @_;
             my $_bn = $self->item_by_id($c, $bn->id);
-            return $self->hal_from_item($c, $_bn, "billingnetworks"); });
+            my $form = $self->get_form($c);
+            return $self->hal_from_item($c, $_bn, $self->resource_from_item($c, $_bn, $form), $form); });
         
         $guard->commit;
 

@@ -24,8 +24,10 @@ sub check_network_update_item {
         return 0 unless &{$err_code}("Billing network is already terminated and cannot be changed.",'status');
     }
 
-    #my $contract_cnt = $old_item->get_column('contract_cnt');
-    #my $package_cnt = $old_item->get_column('package_cnt');
+    #my $contract_cnt = $old_item->has_column_loaded('contract_cnt')
+    #    ? $old_item->get_column('contract_cnt') : undef;
+    #my $package_cnt = $old_item->has_column_loaded('package_cnt')
+    #    ? $old_item->get_column('package_cnt') : undef;
 
     return 1;
 
