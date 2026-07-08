@@ -164,6 +164,7 @@ sub DELETE :Allow {
 
        my $billing_profile = $self->item_by_id($c, $id);
        last unless $self->resource_exists($c, billingprofile => $billing_profile);
+       $billing_profile = $self->_load_profile_usage_columns($c, $billing_profile);
        last unless NGCP::Panel::Utils::Reseller::check_reseller_delete_item($c, $billing_profile->reseller_id, sub {
            my ($err) = @_;
            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);

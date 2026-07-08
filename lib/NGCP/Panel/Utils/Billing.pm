@@ -31,19 +31,24 @@ sub check_profile_update_item {
     #    return 0 unless &{$err_code}("The prepaid rating library is mandatory for a prepaid profile.",'prepaid_library');
     #}
 
-    my $contract_exists = $old_item->get_column('contract_exists');
-    my $contract_cnt = $old_item->get_column('contract_cnt');
+    my $contract_exists = $old_item->has_column_loaded('contract_exists')
+        ? $old_item->get_column('contract_exists') : undef;
+    my $contract_cnt = $old_item->has_column_loaded('contract_cnt')
+        ? $old_item->get_column('contract_cnt') : undef;
     #my $package_cnt = $old_item->get_column('package_cnt');
 
     if ($contract_exists
+        && $new_resource
         && defined $new_resource->{interval_charge} && $old_item->interval_charge != $new_resource->{interval_charge}) {
         return 0 unless &{$err_code}("Interval charge cannot be changed (profile linked to $contract_cnt contracts).",'interval_charge');
     }
     if ($contract_exists
+        && $new_resource
         && defined $new_resource->{interval_free_time} && $old_item->interval_free_time != $new_resource->{interval_free_time}) {
         return 0 unless &{$err_code}("Interval free time cannot be changed (profile linked to $contract_cnt contracts).",'interval_free_time');
     }
     if ($contract_exists
+        && $new_resource
         && defined $new_resource->{interval_free_cash} && $old_item->interval_free_cash != $new_resource->{interval_free_cash}) {
         return 0 unless &{$err_code}("Interval free cash cannot be changed (profile linked to $contract_cnt contracts).",'interval_free_cash');
     }
