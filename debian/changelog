@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.38+0~mr13.5.1.38) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f6642e6] MT#65464 fix LDAP login 500 when user lookup fails
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Jul 2026 16:36:32 +0200
+
 ngcp-panel (13.5.1.37+0~mr13.5.1.37) unstable; urgency=medium
 
   [ Kirill Solomko ]
