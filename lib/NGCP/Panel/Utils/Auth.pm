@@ -170,7 +170,9 @@ sub perform_auth {
             $log_failed_login_attempt = 0; # do not log failed attempt if there was an ldap error
         } else {
             $res = 1;
-            $c->set_authenticated($dbadmin); # logs the user in and calls persist_user
+            my $auth_user = wrap_admin_auth_user($c, $dbadmin, $bcrypt_realm);
+            $c->set_authenticated($auth_user, $bcrypt_realm);
+            $auth_user->auth_realm($bcrypt_realm) if $auth_user->can('auth_realm');
         }
     } else {
         $c->log->error("unsupported auth_mode " . $dbadmin->auth_mode);
@@ -187,6 +189,7 @@ sub perform_auth {
             }) if ($dbadmin->show_otp_registration_info);
         } else {
             $res = -3;
+            $c->user->logout if $c->user_exists;
         }
         
     }
@@ -324,6 +327,7 @@ sub perform_subscriber_auth {
             if NGCP::Panel::Utils::Auth::get_subscriber_show_otp_registration_info($c,$sub);
         } else {
             $res = -3;
+            $c->user->logout if $c->user_exists;
         }
     }
 
@@ -911,6 +915,27 @@ sub get_subscriber_otp_secret {
 
     return $otp_secret;
 
+}
+
+sub wrap_admin_auth_user {
+    my ($c, $dbadmin, $realm) = @_;
+    return $dbadmin unless $dbadmin;
+
+    my $store = eval { $c->get_auth_realm($realm)->store };
+    unless ($store) {
+        $c->log->error("wrap_admin_auth_user: unknown auth realm '$realm'");
+        return $dbadmin;
+    }
+
+    my $auth_user = $store->find_user({ id => $dbadmin->id }, $c)
+        // $store->find_user({ login => $dbadmin->login }, $c);
+    if ($auth_user && $auth_user->can('auth_realm')) {
+        $auth_user->auth_realm($realm);
+        return $auth_user;
+    }
+
+    $c->log->error("wrap_admin_auth_user: failed to wrap admin id=" . $dbadmin->id);
+    return $dbadmin;
 }
 
 sub clear_otp_secret {
