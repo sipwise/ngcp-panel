@@ -52,9 +52,20 @@ sub get_log_params {
     my $r_user = '';
     my $is_subscriber = 0;
     if ($c->user_exists) {
-        if ($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') {
+        my $roles;
+        if ($c->user->can('roles')) {
+            local $@;
+            $roles = eval { $c->user->roles };
+            undef $roles if $@;
+        }
+        if (defined $roles && ($roles eq 'admin' || $roles eq 'reseller')) {
             $r_user = $c->user->login;
-        } elsif ($c->user->roles eq 'subscriberadmin' || $c->user->roles eq 'subscriber') {
+        } elsif (defined $roles && ($roles eq 'subscriberadmin' || $roles eq 'subscriber')) {
+            $r_user = $c->qs($c->user->webusername . '@' . $c->user->domain->domain);
+            $is_subscriber = 1;
+        } elsif (ref($c->user) eq 'NGCP::Panel::Model::DB::admins') {
+            $r_user = $c->user->login;
+        } elsif (ref($c->user) eq 'NGCP::Panel::Model::DB::provisioning_voip_subscribers') {
             $r_user = $c->qs($c->user->webusername . '@' . $c->user->domain->domain);
             $is_subscriber = 1;
         }
