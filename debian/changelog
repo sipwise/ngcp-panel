@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.39+0~mr13.5.1.39) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f1dfa01] MT#65464 Fix LDAP OTP registration crash on /api/otpsecret
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 16 Jul 2026 17:08:20 +0200
+
 ngcp-panel (13.5.1.38+0~mr13.5.1.38) unstable; urgency=medium
 
   [ Rene Krenn ]
