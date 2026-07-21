@@ -93,6 +93,8 @@ sub resource_from_item {
         $resource->{own} = $item->subscriber_id == $c->user->id ? 1 : 0;
     }
 
+    $resource->{usage_count} = $item->voip_cf_mappings->count;
+
     return $resource;
 }
 

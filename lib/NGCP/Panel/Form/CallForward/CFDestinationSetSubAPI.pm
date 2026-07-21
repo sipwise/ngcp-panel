@@ -22,6 +22,11 @@ has_field 'own' => (
     do_label => 0,
 );
 
+has_field 'usage_count' => (
+    type => 'PosInteger',
+    do_label => 0,
+);
+
 has_field 'destinations' => (
     type => 'Repeatable',
     element_attr => {
