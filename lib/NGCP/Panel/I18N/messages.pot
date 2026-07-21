@@ -14523,6 +14523,10 @@ msgid "Uri"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Usage count"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Use IP address for \"allowed_ips\" check from a header name provided in this preference"
 msgstr ""
 
