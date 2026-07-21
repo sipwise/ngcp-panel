@@ -41,7 +41,16 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
         Journal => [qw/admin reseller ccareadmin ccare/],
-    }
+    },
+    DELETE => {
+        query_params => [
+            {
+                param => 'unassign_first',
+                description => 'When provided, the set is unassigned from the places where it is used and only then deleted',
+                query_type => 'integer',
+            },
+        ],
+    },
 });
 
 sub GET :Allow {

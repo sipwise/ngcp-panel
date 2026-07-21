@@ -348,6 +348,20 @@ sub generate_swagger_datastructure {
                     },
                 }
             };
+
+            my $query_params = $col->{item_config}->{action}->{PUT}->{query_params};
+
+            push @{$item_p->{put}{parameters}},
+                { '$ref' => '#/components/parameters/ItemIdParameter' };
+
+            for my $query_param (@{ $query_params // [] }) {
+                push @{$item_p->{put}{parameters}}, {
+                    name => $query_param->{param},
+                    description => $query_param->{description},
+                    in => 'query',
+                    schema => {type => $query_param->{query_type} // 'string'},
+                };
+            }
         }
 
         if (grep {m/^PATCH$/} @{ $col->{item_actions} }) {
@@ -374,6 +388,20 @@ sub generate_swagger_datastructure {
                     },
                 }
             };
+
+            my $query_params = $col->{item_config}->{action}->{PATCH}->{query_params};
+
+            push @{$item_p->{patch}{parameters}},
+                { '$ref' => '#/components/parameters/ItemIdParameter' };
+
+            for my $query_param (@{ $query_params // [] }) {
+                push @{$item_p->{patch}{parameters}}, {
+                    name => $query_param->{param},
+                    description => $query_param->{description},
+                    in => 'query',
+                    schema => {type => $query_param->{query_type} // 'string'},
+                };
+            }
         }
 
         if (grep {m/^DELETE$/} @{ $col->{item_actions} }) {
@@ -387,15 +415,26 @@ sub generate_swagger_datastructure {
                     },
                 }
             };
+
+            my $query_params = $col->{item_config}->{action}->{DELETE}->{query_params};
+
+            push @{$item_p->{delete}{parameters}},
+                { '$ref' => '#/components/parameters/ItemIdParameter' };
+
+            for my $query_param (@{ $query_params // [] }) {
+                push @{$item_p->{delete}{parameters}}, {
+                    name => $query_param->{param},
+                    description => $query_param->{description},
+                    in => 'query',
+                    schema => {type => $query_param->{query_type} // 'string'},
+                };
+            }
         }
 
         #push @paths, $p;
         $paths{'/'.$chapter.'/'} = $p;
         if (keys %{ $item_p }) {
             $item_p->{description} = $col->{description};
-            $item_p->{parameters} = [
-                { '$ref' => '#/components/parameters/ItemIdParameter' },
-            ];
             $paths{'/'.$chapter.'/{id}'} = $item_p;
         }
 

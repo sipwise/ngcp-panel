@@ -66,6 +66,15 @@ sub relation{
 
 __PACKAGE__->set_config({
     allowed_roles => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
+        DELETE => {
+        query_params => [
+            {
+                param => 'unassign_first',
+                description => 'When provided, the set is unassigned from the places where it is used first and only then deleted',
+                query_type => 'integer',
+            },
+        ],
+    },
 });
 
 sub GET :Allow {

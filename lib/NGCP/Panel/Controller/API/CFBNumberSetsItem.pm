@@ -31,6 +31,15 @@ __PACKAGE__->set_config({
         Journal => [qw/admin reseller ccareadmin ccare/],
     },
     PATCH => { ops => [qw/add replace remove copy/] },
+    DELETE => {
+        query_params => [
+            {
+                param => 'unassign_first',
+                description => 'When provided, the set is unassigned from the places where it is used and only then deleted',
+                query_type => 'integer',
+            },
+        ],
+    },
 });
 
 sub get_journal_methods{
