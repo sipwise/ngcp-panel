@@ -490,5 +490,13 @@ sub update_item {
     return $item;
 }
 
+sub unassign_from_cf_mappings {
+    my ($self, $c, $item) = @_;
+
+    $item->voip_cf_mappings->update({ time_set_id => undef });
+
+    return;
+}
+
 1;
 # vim: set tabstop=4 expandtab:

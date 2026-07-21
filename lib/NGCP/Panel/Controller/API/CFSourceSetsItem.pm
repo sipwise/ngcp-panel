@@ -147,6 +147,10 @@ sub DELETE :Allow {
             return $self->hal_from_item($c, $sset, "cfsourcesets"); });
 
         try {
+            if ($c->req->params->{unassign_first}) {
+                $self->unassign_from_cf_mappings($c, $sset);
+            }
+
             $sset->delete;
         } catch($e) {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",

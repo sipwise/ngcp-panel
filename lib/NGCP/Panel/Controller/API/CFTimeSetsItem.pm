@@ -51,6 +51,10 @@ sub delete_item {
     return unless $self->check_subscriber_can_update_item($c, $item);
 
     try {
+        if ($c->req->params->{unassign_first}) {
+            $self->unassign_from_cf_mappings($c, $item);
+        }
+
         $item->delete;
     } catch($e) {
         my $id = $item->id;

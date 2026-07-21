@@ -27,7 +27,6 @@ sub get_form {
     my ($self, $c) = @_;
 
     my $form = (NGCP::Panel::Form::get("NGCP::Panel::Form::Pbx::UserAPI", $c));
-    print "GOT FORM: $form\n";
     return $form
 }
 

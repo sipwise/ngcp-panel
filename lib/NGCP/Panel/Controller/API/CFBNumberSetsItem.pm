@@ -42,7 +42,20 @@ sub delete_item {
 
     return unless $self->check_subscriber_can_update_item($c, $item);
 
-    return $self->SUPER::delete_item($c, $item);
+    try {
+        if ($c->req->params->{unassign_first}) {
+            $self->unassign_from_cf_mappings($c, $item);
+        }
+
+        $item->delete;
+    } catch($e) {
+        my $id = $item->id;
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                     "Failed to delete cftimeset with id '$id'", $e);
+        return;
+    }
+
+    return 1;
 }
 
 1;

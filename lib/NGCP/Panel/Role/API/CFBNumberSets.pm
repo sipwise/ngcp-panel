@@ -201,5 +201,13 @@ sub post_process_commit {
     return;
 }
 
+sub unassign_from_cf_mappings {
+    my ($self, $c, $item) = @_;
+
+    $item->voip_cf_mappings->update({ bnumber_set_id => undef });
+
+    return;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
