@@ -315,6 +315,9 @@ sub generate_swagger_datastructure {
                     }
                 }
             };
+
+            push @{$item_p->{get}{parameters}},
+                { '$ref' => '#/components/parameters/ItemIdParameter' };
         }
 
         if (grep {m/^PUT$/} @{ $col->{item_actions} }) {
