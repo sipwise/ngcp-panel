@@ -41,7 +41,25 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller ccareadmin ccare subscriberadmin subscriber/],
         Journal => [qw/admin reseller ccareadmin ccare/],
-    }
+    },
+    PATCH => {
+        query_params => [
+            {
+                param => 'delete_unused_sets',
+                description => 'When provided, all sets previously assigned to the cf mappings that are not used anymore by this or any other subscriber are deleted',
+                query_type => 'integer',
+            },
+        ],
+    },
+    PUT => {
+        query_params => [
+            {
+                param => 'delete_unused_sets',
+                description => 'When provided, all sets previously assigned to the cf mappings that are not used anymore by this or any other subscriber are deleted',
+                query_type => 'integer',
+            },
+        ],
+    },
 });
 
 sub GET :Allow {

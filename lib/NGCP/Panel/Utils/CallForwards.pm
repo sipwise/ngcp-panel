@@ -4,6 +4,8 @@ use warnings;
 
 use Sipwise::Base;
 
+use List::Util qw(any);
+
 use NGCP::Panel::Utils::Generic qw(:all);
 use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
@@ -341,6 +343,38 @@ sub update_cf_mappings {
         $schema->resultset('voip_cf_periods')->populate(\@new_times);
         $schema->resultset('voip_cf_sources')->populate(\@new_sources);
         $schema->resultset('voip_cf_bnumbers')->populate(\@new_bnumbers);
+
+        if ($c->req->params->{delete_unused_sets}) {
+            my $done_csets = {};
+            my $csets_map = {
+                destination_set_id => $dsets_rs,
+                time_set_id => $tsets_rs,
+                bnumber_set_id => $bsets_rs,
+                source_set_id => $ssets_rs,
+            };
+            foreach my $cfm ($mappings_rs->all) {
+                foreach my $cset_field (keys %{$csets_map}) {
+                    my $cset_rs = $csets_map->{$cset_field};
+                    my $cset_id = $cfm->$cset_field;
+                    if ($cset_id && !$done_csets->{$cset_field}{$cset_id}) {
+                        if (!any { $_>{$cset_field} && $_->{$cset_field} == $cset_id } @new_mappings) {
+                            my $used_by_other_subs =
+                                $schema->resultset('voip_cf_mappings')->search({
+                                    $cset_field => $cset_id,
+                                    subscriber_id => { '!=' => $p_subs_id },
+                                })->count;
+                            if (!$used_by_other_subs) {
+                                my $cset = $cset_rs->find($cset_id);
+                                if ($cset->subscriber_id == $p_subs_id) {
+                                    $cset->delete;
+                                }
+                            }
+                        }
+                        $done_csets->{$cset_field}{$cset_id} = 1;
+                    }
+                }
+            }
+        }
 
         unless ($params->{add_only}) {
             foreach my $map($mappings_rs->all) {
