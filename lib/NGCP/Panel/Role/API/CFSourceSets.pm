@@ -287,8 +287,8 @@ sub check_duplicate {
         subscriber_id => $subscriber->id
     })->first;
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A Sourceset with this name already exists",
-                     "source_set name '$$resource{name}' already exists");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "a source set with this name already exists",
+                     "a source set name '$$resource{name}' already exists");
         return;
     }
     return 1;

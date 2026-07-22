@@ -201,6 +201,40 @@ sub post_process_commit {
     return;
 }
 
+sub check_duplicate {
+    my ($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $schema = $c->model('DB');
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
+        id => $resource->{subscriber_id},
+    });
+
+    unless ($b_subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
+        return;
+    }
+
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+    unless ($subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
+        return;
+    }
+
+    my $existing_item = $schema->resultset('voip_cf_bnumber_sets')->search({
+        name => $resource->{name},
+        subscriber_id => $subscriber->id
+    })->first;
+
+    if ($existing_item && (!$item || $item->id != $existing_item->id)) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "a bnumber set with this name already exists",
+                     "a bnumber set name '$$resource{name}' already exists");
+        return;
+    }
+
+    return 1;
+}
+
 sub unassign_from_cf_mappings {
     my ($self, $c, $item) = @_;
 
