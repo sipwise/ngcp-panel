@@ -69,39 +69,8 @@ sub create_item {
 
     my $dset;
 
-    if($c->user->roles eq "subscriberadmin") {
-        $resource->{subscriber_id} //= $c->user->voip_subscriber->id;
-    } elsif($c->user->roles eq "subscriber") {
-        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
-    }
-
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
-            id => $resource->{subscriber_id},
-        });
-    unless($b_subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-        return;
-    }
-
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
     my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-    unless($subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-        return;
-    }
-    if (! exists $resource->{destinations} ) {
-        $resource->{destinations} = [];
-    }
-
-    if (!NGCP::Panel::Utils::CallForwards::check_destinations(
-        c => $c,
-        resource => $resource,
-        err_code => sub {
-            my ($err) = @_;
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
-        },
-    )) {
-        return;
-    }
 
     try {
         my $primary_nr_rs = $b_subscriber->primary_number;
@@ -114,9 +83,10 @@ sub create_item {
         my $domain = $subscriber->domain->domain // '';
 
         $dset = $schema->resultset('voip_cf_destination_sets')->create({
-                name => $resource->{name},
-                subscriber_id => $subscriber->id,
-            });
+            name => $resource->{name},
+            subscriber_id => $subscriber->id,
+        });
+
         for my $d ( @{$resource->{destinations}} ) {
             delete $d->{destination_set_id};
             delete $d->{simple_destination};

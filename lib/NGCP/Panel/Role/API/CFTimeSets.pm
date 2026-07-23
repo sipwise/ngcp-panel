@@ -19,7 +19,7 @@ use NGCP::Panel::Utils::DateTime qw();
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
+    if ($c->user->roles eq "subscriber") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFTimeSetSubAPI", $c);
     } else {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFTimeSetAPI", $c);
@@ -445,32 +445,16 @@ sub update_item {
         resource => $resource,
     );
 
-    if (! exists $resource->{times} ) {
-        $resource->{times} = [];
-    }
-    if (ref $resource->{times} ne "ARRAY") {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
-        return;
-    }
-
-    if($c->user->roles eq "subscriber" || $c->user->roles eq "subscriberadmin") {
-        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
-    }
-
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
-    unless ($b_subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-        return;
-    }
-    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-    unless($subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-        last;
-    }
+    return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form);
+    return unless $self->check_resource($c, $item, $old_resource, $resource, $form);
+    return unless $self->check_duplicate($c, $item, $old_resource, $resource, $form);
 
     my $times = $resource->{times};
     # enable tz and use_owner_tz params for PUT/PATCH/POST:
     #$times = $self->apply_owner_timezone($c,$b_subscriber,$resource->{times},'deflate');
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
 
     try {
         $item->update({
@@ -490,14 +474,39 @@ sub update_item {
     return $item;
 }
 
-sub check_duplicate {
-    my ($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+sub process_form_resource {
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    if ($c->user->roles eq "subscriberadmin") {
+        $resource->{subscriber_id} //= $c->user->voip_subscriber->id;
+    } elsif ($c->user->roles eq "subscriber") {
+        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
+    } elsif (!defined $resource->{subscriber_id}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
+        return;
+    }
+
+    return $resource;
+}
+
+sub check_resource {
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     my $schema = $c->model('DB');
 
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
-        id => $resource->{subscriber_id},
-    });
+    my $b_subscriber;
+
+    if ($c->user->roles eq "subscriberadmin") {
+        my $customer_id = $c->user->account_id;
+        $b_subscriber = $schema->resultset('voip_subscribers')->search({
+            id => $resource->{subscriber_id},
+            contract_id => $customer_id,
+        })->first;
+    } else {
+        $b_subscriber = $schema->resultset('voip_subscribers')->find({
+            id => $resource->{subscriber_id},
+        });
+    }
 
     unless ($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
@@ -505,14 +514,35 @@ sub check_duplicate {
     }
 
     my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-    unless ($subscriber) {
+
+    unless($subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
         return;
     }
 
+    if (! exists $resource->{times} ) {
+        $resource->{times} = [];
+    }
+
+    if (ref $resource->{times} ne "ARRAY") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
+        return;
+    }
+
+    return 1; # all good
+}
+
+sub check_duplicate {
+    my ($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $schema = $c->model('DB');
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+
     my $existing_item = $schema->resultset('voip_cf_time_sets')->search({
         name => $resource->{name},
-        subscriber_id => $subscriber->id
+        subscriber_id => $subscriber->id,
     })->first;
 
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {

@@ -16,9 +16,7 @@ use NGCP::Panel::Utils::CallForwards qw();
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "subscriber") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI", $c);
-    } elsif($c->user->roles eq "subscriberadmin") {
+    if ($c->user->roles eq "subscriber") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFDestinationSetSubAPI", $c);
     } else {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFDestinationSetAPI", $c);
@@ -170,7 +168,6 @@ sub resource_from_item {
     $resource->{usage_count} = $item->voip_cf_mappings->count;
 
     return $resource;
-
 }
 
 sub update_item {
@@ -187,36 +184,12 @@ sub update_item {
         resource => $resource,
     );
 
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
-    }
-
-    if (! exists $resource->{destinations} ) {
-        $resource->{destinations} = [];
-    }
-    
-    if(!NGCP::Panel::Utils::CallForwards::check_destinations(
-        c => $c,
-        schema => $schema,
-        resource => $resource,
-        err_code => sub {
-            my ($err) = @_;
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
-        },
-    )){
-        return;
-    }
+    return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form);
+    return unless $self->check_resource($c, $item, $old_resource, $resource, $form);
+    return unless $self->check_duplicate($c, $item, $old_resource, $resource, $form);
 
     my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
-    unless ($b_subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-        return;
-    }
     my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-    unless($subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-        return;
-    }
 
     try {
         my $primary_nr_rs = $b_subscriber->primary_number;
@@ -263,28 +236,89 @@ sub update_item {
     return $item;
 }
 
-sub check_duplicate {
-    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+sub process_form_resource {
+    my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    if ($c->user->roles eq "subscriberadmin") {
+        $resource->{subscriber_id} ||= $c->user->voip_subscriber->id;
+    } elsif ($c->user->roles eq "subscriber") {
+        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
+    } elsif (!defined $resource->{subscriber_id}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
+        return;
+    }
+
+    return $resource;
+}
+
+sub check_resource {
+    my($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     my $schema = $c->model('DB');
 
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
-        id => $resource->{subscriber_id},
-    });
-    unless($b_subscriber) {
+    my $b_subscriber;
+
+    if ($c->user->roles eq "subscriberadmin") {
+        my $customer_id = $c->user->account_id;
+        $b_subscriber = $schema->resultset('voip_subscribers')->search({
+            id => $resource->{subscriber_id},
+            contract_id => $customer_id,
+        })->first;
+    } else {
+        $b_subscriber = $schema->resultset('voip_subscribers')->find({
+            id => $resource->{subscriber_id},
+        });
+    }
+
+    unless ($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
         return;
     }
+
     my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+
     unless($subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
         return;
     }
 
+    if (! exists $resource->{destinations} ) {
+        $resource->{destinations} = [];
+    }
+
+    if (ref $resource->{destinations} ne "ARRAY") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
+        return;
+    }
+
+    if (!NGCP::Panel::Utils::CallForwards::check_destinations(
+        c => $c,
+        schema => $schema,
+        resource => $resource,
+        err_code => sub {
+            my ($err) = @_;
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+        },
+    )) {
+        return;
+    }
+
+    return 1; # all good
+}
+
+sub check_duplicate {
+    my($self, $c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+
+    my $schema = $c->model('DB');
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+
     my $existing_item = $schema->resultset('voip_cf_destination_sets')->search({
         name => $resource->{name},
-        subscriber_id => $subscriber->id
+        subscriber_id => $subscriber->id,
     })->first;
+
     if ($existing_item && (!$item || $item->id != $existing_item->id)) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "a destination set with this name already exists",
                      "a destination set name '$$resource{name}' already exists");

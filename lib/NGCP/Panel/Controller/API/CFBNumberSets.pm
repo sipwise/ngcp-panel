@@ -62,21 +62,22 @@ sub create_item {
     my $schema = $c->model('DB');
     my $bset;
 
-    try {
-        # no checks, they are in check_resource
-        my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
-        my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
 
+    try {
         $bset = $schema->resultset('voip_cf_bnumber_sets')->create({
-                name => $resource->{name},
-                mode => $resource->{mode},
-                is_regex => $resource->{is_regex} // 0,
-                subscriber_id => $subscriber->id,
-            });
+            name => $resource->{name},
+            mode => $resource->{mode},
+            is_regex => $resource->{is_regex} // 0,
+            subscriber_id => $subscriber->id,
+        });
+
         for my $s ( @{$resource->{bnumbers}} ) {
             $bset->create_related("voip_cf_bnumbers", {
                 bnumber => $s->{bnumber},
             });
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;

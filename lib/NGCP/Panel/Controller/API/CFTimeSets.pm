@@ -68,39 +68,18 @@ sub create_item {
 
     my $tset;
 
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $resource->{subscriber_id} = $c->user->voip_subscriber->id;
-    } elsif(!defined $resource->{subscriber_id}) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
-        return;
-    }
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
-            id => $resource->{subscriber_id},
-        });
-    unless($b_subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-        return;
-    }
-    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-    unless($subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-        return;
-    }
-    if (! exists $resource->{times} ) {
-        $resource->{times} = [];
-    }
-    if (ref $resource->{times} ne "ARRAY") {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'times'. Must be an array.");
-        return;
-    }
     my $times = $resource->{times};
     # enable tz and use_owner_tz params for POST:
     #$times = $self->apply_owner_timezone($c,$b_subscriber,$resource->{times},'deflate');
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+
     try {
         $tset = $schema->resultset('voip_cf_time_sets')->create({
-                name => $resource->{name},
-                subscriber_id => $subscriber->id,
-            });
+            name => $resource->{name},
+            subscriber_id => $subscriber->id,
+        });
         for my $t ( @$times ) {
             delete $t->{time_set_id};
             $tset->create_related("voip_cf_periods", $t);

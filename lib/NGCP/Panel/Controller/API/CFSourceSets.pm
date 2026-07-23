@@ -126,22 +126,24 @@ sub create_item {
 
     my $schema = $c->model('DB');
     my $sset;
+
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+
     try {
-        my $b_subscriber = $schema->resultset('voip_subscribers')->find({
-            id => $resource->{subscriber_id},
-        });
-        my $subscriber = $b_subscriber->provisioning_voip_subscriber;
         $sset = $schema->resultset('voip_cf_source_sets')->create({
             name => $resource->{name},
             mode => $resource->{mode},
             is_regex => $resource->{is_regex} // 0,
             subscriber_id => $subscriber->id,
         });
+
         for my $s ( @{$resource->{sources}} ) {
             $sset->create_related("voip_cf_sources", {
                 source => $s->{source},
             });
         }
+
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
