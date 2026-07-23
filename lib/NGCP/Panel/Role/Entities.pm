@@ -300,21 +300,21 @@ sub post {
                     goto TX_END;
                 }
 
-                unless ($self->check_duplicate($c, undef, undef, $resource, $form, $process_extras)) {
-                    if ($c->has_errors) {
-                        goto TX_END;
-                    }
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
-                                 '#check_duplicates') unless $c->has_errors;
-                    goto TX_END;
-                }
-
                 unless ($self->check_resource($c, undef, undef, $resource, $form, $process_extras)) {
                     if ($c->has_errors) {
                         goto TX_END;
                     }
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
                                  '#check_resource') unless $c->has_errors;
+                    goto TX_END;
+                }
+
+                unless ($self->check_duplicate($c, undef, undef, $resource, $form, $process_extras)) {
+                    if ($c->has_errors) {
+                        goto TX_END;
+                    }
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Could not validate request data',
+                                 '#check_duplicates') unless $c->has_errors;
                     goto TX_END;
                 }
 

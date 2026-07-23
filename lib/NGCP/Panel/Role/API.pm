@@ -1661,8 +1661,8 @@ sub update_item {
 
     return unless $self->process_form_resource($c, $item, $old_resource, $resource, $form, $process_extras);
     return unless $resource;
-    return unless $self->check_duplicate($c, $item, $old_resource, $resource, $form, $process_extras);
     return unless $self->check_resource($c, $item, $old_resource, $resource, $form, $process_extras);
+    return unless $self->check_duplicate($c, $item, $old_resource, $resource, $form, $process_extras);
 
     $item = $self->update_item_model($c, $item, $old_resource, $resource, $form, $process_extras);
 
