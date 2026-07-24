@@ -29,6 +29,7 @@ use NGCP::Panel::Utils::Subscriber qw();
 use NGCP::Panel::Utils::Preferences qw();
 use NGCP::Panel::Utils::Kamailio qw();
 use NGCP::Panel::Utils::CallForwards qw();
+use NGCP::Panel::Utils::Events qw();
 
 BEGIN {
     # Temporarily override the warning handler
@@ -603,7 +604,7 @@ sub provision_commit_row {
             $schema,
             $c->stash->{provisioning_templates}->{$template},
         );
-        _create_subscriber(
+        _create_update_subscriber(
             $c,
             $context,
             $schema,
@@ -619,7 +620,7 @@ sub provision_commit_row {
         if ($purge && $subscriber) {
             $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
             NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-            _create_subscriber(
+            _create_update_subscriber(
                 $c,
                 $context,
                 $schema,
@@ -644,7 +645,7 @@ sub provision_commit_row {
                 $schema,
                 $c->stash->{provisioning_templates}->{$template},
             );
-            _create_subscriber(
+            _create_update_subscriber(
                 $c,
                 $context,
                 $schema,
@@ -652,7 +653,7 @@ sub provision_commit_row {
         } else {
             die $msg;
         }
-    } catch($e where { /alias '([^']+)' already exists/ }) {
+    } catch($e where { /alias '([^']+)' already exists/ or /more than \d+ provided aliases already exist/ }) {
         my ($msg, $subscriber) = _get_duplicate_subs(
             $c,
             $context,
@@ -671,7 +672,7 @@ sub provision_commit_row {
                     $schema,
                     $c->stash->{provisioning_templates}->{$template},
                 );
-                _create_subscriber(
+                _create_update_subscriber(
                     $c,
                     $context,
                     $schema,
@@ -865,15 +866,17 @@ sub _init_contract_context {
         }
         $context->{contract_contact} = \%contract_contact;
         if (scalar @identifiers) {
-            delete $contract_contact{id};
+            my $found;
             foreach my $e ($schema->resultset('contacts')->search_rs({
                     map { $_ => $contract_contact{$_}; } @identifiers
                 })->all) {
                 if ('terminated' ne $e->status) {
                     $contract_contact{id} = $e->id;
+                    $found = 1;
                     last;
                 }
             }
+            delete $contract_contact{id} unless $found;
         } else {
             delete $contract_contact{id};
         }
@@ -951,7 +954,7 @@ sub _init_contract_context {
 
         $context->{contract} = \%contract;
         if (scalar @identifiers) {
-            delete $contract{id};
+            my $found;
             foreach my $e ($schema->resultset('contracts')->search_rs({
                     map { $_ => $contract{$_}; } @identifiers
                 })->all) {
@@ -960,9 +963,11 @@ sub _init_contract_context {
 
                     $old_resource = { $e->get_inflated_columns };
 
+                    $found = 1;
                     last;
                 }
             }
+            delete $contract{id} unless $found;
         } else {
             delete $contract{id};
         }
@@ -1025,23 +1030,36 @@ sub _init_subscriber_context {
         
         my $item;
         if (scalar @identifiers) {
-            delete $subscriber{id};
+            my $found;
             foreach my $e ($schema->resultset('voip_subscribers')->search_rs({
                     map { $_ => $subscriber{$_}; } @identifiers
                 },{
                     #join => 'domain',
                 })->all) {
                 if ('terminated' ne $e->status) {
+                    my $from_item = NGCP::Panel::Utils::Subscriber::resource_from_item(
+                        c => $c,
+                        item => $e,
+                    );
+                    if ($from_item) {
+                        foreach my $k (keys %$from_item) {
+                            next if $k eq 'id';
+                            $subscriber{$k} = $from_item->{$k} unless exists $subscriber{$k};
+                        }
+                    }
                     $subscriber{id} = $e->id;
                     $item = $e;
+                    $found = 1;
                     last;
                 }
             }
+            delete $subscriber{id} unless $found;
         } else {
             delete $subscriber{id};
         }
 
         $context->{subscriber}->{customer_id} //= $context->{contract}->{id};
+        $context->{_subscriber_item} = $item;
 
         $context->{_cs} = NGCP::Panel::Utils::Subscriber::prepare_resource(
             c => $c,
@@ -1064,7 +1082,7 @@ sub _init_subscriber_context {
                 return $contract;
             },
             item => $item,
-        ) unless $context->{subscriber}->{id};
+        );
 
         $c->log->debug("provisioning template - subscriber: " . Dumper($context->{subscriber}));
     }
@@ -1404,57 +1422,73 @@ sub _set_fraud_preferences {
 
 }
 
-sub _create_subscriber {
+sub _create_update_subscriber {
 
     my ($c, $context, $schema) = @_;
 
-    if (exists $context->{subscriber} and not $context->{subscriber}->{id}) {
-        my $error_info = { extended => {} };
-    
-        my @events_to_create = ();
-        my $event_context = { events_to_create => \@events_to_create };
-        my $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
-            c             => $c,
-            schema        => $schema,
-            contract      => $context->{_cs}->{customer},
-            params        => $context->{_cs}->{resource},
-            preferences   => $context->{_cs}->{preferences},
-            admin_default => 0,
-            event_context => $event_context,
-            error         => $error_info,
-        );
-        $context->{subscriber}->{id} = $subscriber->id;
-        if($context->{_cs}->{resource}->{status} eq 'locked') {
-            NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+    if (exists $context->{subscriber}) {
+        if ($context->{subscriber}->{id}) {
+            my $subscriber = NGCP::Panel::Utils::Subscriber::update_subscriber(
                 c => $c,
-                prov_subscriber => $subscriber->provisioning_voip_subscriber,
-                level => $context->{_cs}->{resource}->{lock} || 4,
+                schema => $schema,
+                item => $context->{_subscriber_item},
+                full_resource => $context->{_cs},
+                resource => $context->{_cs}->{resource},
+                err_code => sub {
+                    my ($code, $msg) = @_;
+                    die($msg);
+                },
             );
+            die("failed to update subscriber") unless $subscriber;
+            $c->log->debug("provisioning template - subscriber id $context->{subscriber}->{id} updated");
         } else {
-            NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
+            my $error_info = { extended => {} };
+        
+            my @events_to_create = ();
+            my $event_context = { events_to_create => \@events_to_create };
+            my $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+                c             => $c,
+                schema        => $schema,
+                contract      => $context->{_cs}->{customer},
+                params        => $context->{_cs}->{resource},
+                preferences   => $context->{_cs}->{preferences},
+                admin_default => 0,
+                event_context => $event_context,
+                error         => $error_info,
+            );
+            $context->{subscriber}->{id} = $subscriber->id;
+            if($context->{_cs}->{resource}->{status} eq 'locked') {
+                NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                    c => $c,
+                    prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                    level => $context->{_cs}->{resource}->{lock} || 4,
+                );
+            } else {
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
+            }
+            NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                c              => $c,
+                schema         => $schema,
+                alias_numbers  => $context->{_cs}->{alias_numbers},
+                reseller_id    => $context->{_cs}->{customer}->contact->reseller_id,
+                subscriber_id  => $subscriber->id,
+            );
+            $subscriber->discard_changes; # reload row because of new number
+            NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+                c            => $c,
+                schema       => $schema,
+                groups       => $context->{_cs}->{groups},
+                groupmembers => $context->{_cs}->{groupmembers},
+                customer     => $context->{_cs}->{customer},
+                subscriber   => $subscriber,
+            );
+            NGCP::Panel::Utils::Events::insert_deferred(
+                c => $c, schema => $schema,
+                events_to_create => \@events_to_create,
+            );
+        
+            $c->log->debug("provisioning template - subscriber id $context->{subscriber}->{id} created");
         }
-        NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-            c              => $c,
-            schema         => $schema,
-            alias_numbers  => $context->{_cs}->{alias_numbers},
-            reseller_id    => $context->{_cs}->{customer}->contact->reseller_id,
-            subscriber_id  => $subscriber->id,
-        );
-        $subscriber->discard_changes; # reload row because of new number
-        NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
-            c            => $c,
-            schema       => $schema,
-            groups       => $context->{_cs}->{groups},
-            groupmembers => $context->{_cs}->{groupmembers},
-            customer     => $context->{_cs}->{customer},
-            subscriber   => $subscriber,
-        );
-        NGCP::Panel::Utils::Events::insert_deferred(
-            c => $c, schema => $schema,
-            events_to_create => \@events_to_create,
-        );
-    
-        $c->log->debug("provisioning template - subscriber id $context->{subscriber}->{id} created");
     }
 }
 
@@ -1817,6 +1851,36 @@ sub _get_duplicate_subs {
                 },undef)->all) {
                 $subscriber = $alias->subscriber->voip_subscriber;
                 $subs{$subscriber->id} = $subscriber unless exists $subs{$subscriber->id};
+            }
+            $subscriber = [ values %subs ];
+        }
+    } elsif ($e =~ /more than \d+ provided aliases already exist/) {
+        $msg = $e;
+        if ($get) {
+            $c->log->debug("provisioning template - $msg");
+            my %subs = ();
+            my @usernames = ();
+            foreach my $alias (@{ $context->{_cs}->{alias_numbers} // [] }) {
+                my $e164 = $alias->{e164} // $alias;
+                push @usernames, ($e164->{cc} // '') . ($e164->{ac} // '') . ($e164->{sn} // '');
+            }
+            if (my $e164 = $context->{_cs}->{resource}->{e164}) {
+                push @usernames, ($e164->{cc} // '') . ($e164->{ac} // '') . ($e164->{sn} // '');
+            }
+            @usernames = grep { length $_ } @usernames;
+            if (scalar @usernames) {
+                my $own_prov_id = $context->{_subscriber_item}
+                    ? $context->{_subscriber_item}->provisioning_voip_subscriber->id
+                    : undef;
+                foreach my $alias ($c->model('DB')->resultset('voip_dbaliases')->search_rs({
+                        username => { -in => \@usernames },
+                        (defined $own_prov_id ? (subscriber_id => { '!=' => $own_prov_id }) : ()),
+                    }, undef)->all) {
+                    next unless $alias->subscriber;
+                    my $sub = $alias->subscriber->voip_subscriber;
+                    next unless $sub;
+                    $subs{$sub->id} = $sub unless exists $subs{$sub->id};
+                }
             }
             $subscriber = [ values %subs ];
         }
