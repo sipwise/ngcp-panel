@@ -115,7 +115,7 @@
         Content-Type: application/json
     content:
         subscriber_id: ${subscriber_id}
-        name: Weekend days 2
+        name: Weekend days 3
         destinations: ${destinations}
     retain:
         cfdestinationsets_path3: header.location
