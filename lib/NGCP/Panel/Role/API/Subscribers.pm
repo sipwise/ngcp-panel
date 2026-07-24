@@ -47,189 +47,29 @@ sub get_form {
 
 sub resource_from_item {
     my ($self, $c, $item, $form, $patch_mode) = @_;
-    my $pref;
 
-    my $bill_resource = { $item->get_inflated_columns };
-    my $prov_resource = { $item->provisioning_voip_subscriber->get_inflated_columns };
-    my $customer = $self->get_customer($c, $item->contract_id);
-    delete $prov_resource->{domain_id};
-    delete $prov_resource->{account_id};
-    my %resource = %{ merge($bill_resource, $prov_resource) };
-    $resource{administrative} = delete $resource{admin};
-
-    unless($customer->product->class eq 'pbxaccount') {
-        delete $resource{is_pbx_group};
-        delete $resource{is_pbx_pilot};
-        delete $resource{pbx_extension};
-    }
-    unless(is_true($resource{is_pbx_group})) {
-        delete $resource{pbx_hunt_policy};
-        delete $resource{cloud_pbx_hunt_policy};
-        delete $resource{pbx_hunt_timeout};
-        delete $resource{cloud_pbx_hunt_timeout};
-        delete $resource{pbx_hunt_cancel_mode};
-        delete $resource{cloud_pbx_hunt_cancel_mode};
-    }
-    delete $resource{contact_id};
-    if($item->contact) {
-        $resource{email} = $item->contact->email;
-        $resource{timezone} = $item->contact->timezone;
-    } else {
-        $resource{email} = undef;
-        $resource{timezone} = undef;
-    }
-    my $sippassword = $resource{password};
-    my $webpassword = $resource{webpassword};
-
-    if(!$form){
+    if (!$form) {
         ($form) = $self->get_form($c);
     }
 
-    # form validation during PATCH causes
-    # fields to be removed from the %resource
-    # and then apply_patch() removes the fields
-    # that were not a part the PATCH ops from
-    # the database, therefore a copy of the resource
-    # is validated instead, preserving the original one
-    # when $patch_mode is enabled
-    my %validate_resource = %resource;
-    last unless $self->validate_form(
+    return NGCP::Panel::Utils::Subscriber::resource_from_item(
         c => $c,
-        resource => $patch_mode ? \%validate_resource : \%resource,
-        form => $form,
-        run => 0,
+        item => $item,
+        patch_mode => $patch_mode,
+        get_customer_code => sub {
+            my ($cid) = @_;
+            return $self->get_customer($c, $cid);
+        },
+        validate_code => sub {
+            my ($resource) = @_;
+            return $self->validate_form(
+                c => $c,
+                resource => $resource,
+                form => $form,
+                run => 0,
+            );
+        },
     );
-
-    $resource{_password} = $sippassword;
-    $resource{_webpassword} = $webpassword;
-
-    if($customer->product->class eq 'pbxaccount') {
-        if ($resource{administrative} == 1) {
-            $resource{ext_range_min} = $customer->voip_contract_preferences->search(
-                {
-                    'attribute.attribute' => 'ext_range_min'
-                },
-                {
-                    join => 'attribute',
-                }
-            )->get_column('value')->first;
-
-            $resource{ext_range_max} = $customer->voip_contract_preferences->search(
-                {
-                    'attribute.attribute' => 'ext_range_max'
-                },
-                {
-                    join => 'attribute',
-                }
-            )->get_column('value')->first;
-        }
-        $resource{pbx_group_ids} = [];
-        foreach my $group($item->provisioning_voip_subscriber->voip_pbx_groups->search_rs(undef,{'order_by' => 'me.id'})->all) {
-            push @{ $resource{pbx_group_ids} }, int($group->group->voip_subscriber->id);
-        }
-        if($item->provisioning_voip_subscriber->is_pbx_group) {
-            $resource{pbx_groupmember_ids} = [];
-            foreach my $member($item->provisioning_voip_subscriber->voip_pbx_group_members->search_rs(undef,{'order_by' => 'me.id'})->all) {
-                push @{ $resource{pbx_groupmember_ids} }, int($member->subscriber->voip_subscriber->id);
-            }
-        }
-    }
-
-    if($item->primary_number) {
-        $resource{primary_number}->{cc} = $item->primary_number->cc;
-        $resource{primary_number}->{ac} = $item->primary_number->ac;
-        $resource{primary_number}->{sn} = $item->primary_number->sn;
-        $resource{primary_number}->{number_id} = int($item->primary_number->id);
-    }
-
-    my @aliases = ();
-    if($item->voip_numbers->first) {
-        foreach my $n ($item->voip_numbers->search(undef,{
-                prefetch => 'voip_dbalias',
-            })->all) {
-            my $alias = {
-                cc => $n->cc,
-                ac => $n->ac,
-                sn => $n->sn,
-                number_id => int($n->id),
-            };
-            next if ($resource{primary_number} && $resource{primary_number}->{number_id} == $alias->{number_id});
-            $alias->{is_devid} = 0;
-            if (defined $n->voip_dbalias) {
-                $alias->{is_devid} = $n->voip_dbalias->is_devid;
-            }
-            $alias->{is_devid} = bool $alias->{is_devid};
-            push(@aliases, $alias);
-        }
-    }
-    $resource{alias_numbers} = \@aliases;
-
-    $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'display_name',
-        prov_subscriber => $item->provisioning_voip_subscriber);
-    if($pref->first && $pref->first->value) {
-        $resource{display_name} = $pref->first->value;
-    } else {
-        $resource{display_name} = undef;
-    }
-
-    $resource{id} = int($item->id);
-    $resource{domain} = $item->domain->domain;
-
-    # don't leak internal info to subscribers via API for those fields
-    # not filtered via forms
-    my $contract_id = int(delete $resource{contract_id});
-    if ($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
-        $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
-        $resource{customer_id} = $contract_id;
-        $resource{uuid} = $item->uuid;
-
-        my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, attribute => 'lock',
-            prov_subscriber => $item->provisioning_voip_subscriber);
-        $resource{lock} = 0;
-        if($pref->first and length($pref->first->value) > 0) {
-            #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
-            $resource{lock} = $pref->first->value;
-        }else{
-            $resource{lock} = undef;
-        }
-        if ($c->user->show_passwords) {
-            foreach my $k(qw/password webpassword/) {
-                eval {
-                    if (not NGCP::Panel::Utils::Auth::is_salted_hash($resource{$k})) {
-                        $resource{'_' . $k} = NGCP::Panel::Utils::Encryption::encrypt_rsa($c,$resource{$k});
-                    } else {
-                        delete $resource{'_' . $k};
-                    }
-                };
-                if ($@) {
-                    $c->error("Failed to encrypt $k: " . $@);
-                    delete $resource{'_' . $k};
-                }
-            }
-        } else {
-            foreach my $k(qw/password webpassword/) {
-                delete $resource{'_' . $k};
-            }
-        }
-    } else {
-        delete $resource{'password'} if $c->user->roles eq 'subscriber';
-
-        if ($c->user->roles eq "subscriberadmin") {
-            $resource{customer_id} = $contract_id;
-            if ($item->id != $c->user->voip_subscriber->id) {
-                if (!$c->config->{security}->{password}->{sip_expose_subadmin}) {
-                    delete $resource{_password};
-                }
-                if (!$c->config->{security}->{password}->{web_expose_subadmin}) {
-                    delete $resource{_webpassword};
-                }
-            }
-        }
-    }
-
-    return \%resource;
 }
 
 sub hal_from_item {
@@ -422,208 +262,19 @@ sub update_item {
 
     return unless $self->check_write_access($c, $item->id);
 
-    my $subscriber = $item;
-    my $customer = $full_resource->{customer};
-    my $alias_numbers = $full_resource->{alias_numbers};
-    my $preferences = $full_resource->{preferences};
-    my $groups = $full_resource->{groups};
-    my $groupmembers = $full_resource->{groupmembers};
-    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
-
     $self->process_form_resource($c, $item, $full_resource, $resource, $form);
 
-    if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !is_true($resource->{is_pbx_pilot})) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot revoke is_pbx_pilot status from a subscriber.");
-        return;
-    }
-
-    if($resource->{customer_id} && ( $resource->{customer_id} != $subscriber->contract->id ) ){
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "customer_id can't be changed.");
-        return;
-    }
-
-    if ($resource->{timezone} && !NGCP::Panel::Utils::DateTime::is_valid_timezone_name($resource->{timezone})) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "invalid timezone name.");
-        return;
-    }
-
-    if($subscriber->status ne $resource->{status}) {
-        if($resource->{status} eq 'locked') {
-            $resource->{lock} = 4;
-        } elsif($subscriber->status eq 'locked' && $resource->{status} eq 'active') {
-            $resource->{lock} ||= 0;
-        } elsif($resource->{status} eq 'terminated') {
-            try {
-                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-                return $subscriber;
-            } catch($e) {
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber",
-                             "failed to terminate subscriber id ".$subscriber->id, $e);
-                return;
-            }
-        }
-    }
-    try {
-        NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-            c => $c,
-            prov_subscriber => $prov_subscriber,
-            level => $resource->{lock} || 0,
-        );
-    } catch($e) {
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock",
-                     "failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock}, $e);
-        return;
-    };
-
-    my ($error,$profile_set,$profile) = NGCP::Panel::Utils::Subscriber::check_profile_set_and_profile($c, $resource, $subscriber);
-    if ($error) {
-        $self->error($c, $error->{response_code}, $error->{description}, $error->{error});
-        return;
-    }
-
-    if($resource->{email} || $resource->{timezone}) {
-        my $contact = $subscriber->contact;
-        unless ($contact) {
-            $contact = $schema->resultset('contacts')->create({
-                reseller_id => $subscriber->contract->contact->reseller_id,
-            });
-        }
-        if(not $contact->email or ($contact->email ne $resource->{email})) {
-            $contact->update({
-                email => $resource->{email},
-            });
-        }
-        if(not $contact->timezone or ($contact->timezone ne $resource->{timezone})) {
-            $contact->update({
-                timezone => $resource->{timezone},
-            });
-        }
-        $resource->{contact_id} = $contact->id;
-    } elsif($subscriber->contact) {
-        try {
-            $c->log->debug("delete contact id ".$subscriber->contact->id);
-            $subscriber->contact->delete;
-        } catch($e) {
-            $c->log->debug("contact still in use: ".$e);
-        }
-        $resource->{contact_id} = undef; # mark for clearance
-    }
-    delete $resource->{email};
-    delete $resource->{timezone};
-
-    my $aliases_before = NGCP::Panel::Utils::Events::get_aliases_snapshot(
+    return NGCP::Panel::Utils::Subscriber::update_subscriber(
         c => $c,
         schema => $schema,
-        subscriber => $subscriber,
+        item => $item,
+        full_resource => $full_resource,
+        resource => $resource,
+        err_code => sub {
+            my ($code, $msg, @errors) = @_;
+            $self->error($c, $code, $msg, @errors);
+        },
     );
-
-    try {
-        NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-            c => $c,
-            schema => $schema,
-            primary_number => $resource->{e164},
-            alias_numbers => $alias_numbers,
-            reseller_id => $customer->contact->reseller_id,
-            subscriber_id => $subscriber->id,
-        );
-    } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
-        $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.",
-                     "failed to update subscriber, number " . $c->qs($1) . " already exists");
-        return;
-    } catch ($e where { /alias \d+ already exists/ }) {
-        $e =~ /alias (\d+) already exists/;
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '" . $1 . "' already exists.", "Number already exists.",
-                     "failed to update subscriber, alias " . $c->qs($1) . " already exists");
-        return;
-    } catch ($e where { /aliases \S+ already exist/ }) {
-        $e =~ /aliases (\S+) already exist/;
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Numbers '" . $1 . "' already exist.", "Numbers already exist.",
-                     "failed to update subscriber, aliases " . $c->qs($1) . " already exist");
-        return;
-    } catch ($e where { /more than \d+ provided aliases/ }) {
-        my $err_msg = "more than 10 provided aliases already exist";
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err_msg);
-        return;
-    }
-
-    my $billing_res = {
-        external_id => $resource->{external_id},
-        status => $resource->{status},
-        contact_id => $resource->{contact_id},
-    };
-
-    if ($resource->{password} && $resource->{password} ne $prov_subscriber->password) {
-        NGCP::Panel::Utils::Subscriber::insert_password_journal(
-            $c, $prov_subscriber, $resource->{password}
-        );
-    }
-
-    if ($resource->{webpassword}) {
-        NGCP::Panel::Utils::Subscriber::insert_webpassword_journal(
-            $c, $prov_subscriber, $resource->{webpassword}
-        );
-    }
-
-    if (exists $resource->{webpassword} and $NGCP::Panel::Utils::Auth::ENCRYPT_SUBSCRIBER_WEBPASSWORDS) {
-        $resource->{webpassword} = NGCP::Panel::Utils::Auth::generate_salted_hash($resource->{webpassword});
-    }
-
-    my $provisioning_res = {
-        webusername => $resource->{webusername},
-        is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
-        is_pbx_group => $resource->{is_pbx_group} // 0,
-        modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-        profile_set_id => $profile_set ? $profile_set->id : undef,
-        profile_id => $profile ? $profile->id : undef,
-        pbx_extension => $resource->{pbx_extension},
-        defined $resource->{administrative} ? (admin => $resource->{administrative}) : (),
-    };
-    $provisioning_res->{password} = $resource->{password} if exists $resource->{password};
-    $provisioning_res->{webpassword} = $resource->{webpassword} if exists $resource->{webpassword};
-    if(is_true($resource->{is_pbx_group})) {
-        $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
-        $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
-        $provisioning_res->{pbx_hunt_cancel_mode} = $resource->{pbx_hunt_cancel_mode};
-        NGCP::Panel::Utils::Subscriber::update_preferences(
-            c => $c,
-            prov_subscriber => $prov_subscriber,
-            'preferences'   => {
-                cloud_pbx_hunt_policy  => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_policy},
-                cloud_pbx_hunt_timeout => $resource->{cloud_pbx_hunt_timeout} // $resource->{pbx_hunt_timeout},
-                cloud_pbx_hunt_cancel_mode => $resource->{cloud_pbx_hunt_cancel_mode} // $resource->{pbx_hunt_cancel_mode},
-            }
-        );
-    }
-    my $old_profile = $prov_subscriber->profile_id;
-
-    $subscriber->update($billing_res);
-    $subscriber->discard_changes;
-    $prov_subscriber->update($provisioning_res);
-    $prov_subscriber->discard_changes;
-
-    NGCP::Panel::Utils::Events::insert_profile_events(
-        c => $c, schema => $schema, subscriber_id => $subscriber->id,
-        old => $old_profile, new => $prov_subscriber->profile_id,
-        %$aliases_before,
-    );
-
-    NGCP::Panel::Utils::Subscriber::update_preferences(
-        c => $c,
-        prov_subscriber => $prov_subscriber,
-        preferences => $preferences,
-    );
-
-    NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
-        c            => $c,
-        schema       => $schema,
-        groups       => $groups,
-        groupmembers => $groupmembers,
-        customer     => $customer,
-        subscriber   => $subscriber,
-    );
-
-    return $subscriber;
 }
 
 sub check_write_access {
