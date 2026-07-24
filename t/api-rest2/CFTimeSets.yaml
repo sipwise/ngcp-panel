@@ -137,7 +137,7 @@
         Content-Type: application/json
     content:
         subscriber_id: ${subscriber_id}
-        name: API_test call forward time-set
+        name: API_test call forward time-set 2
         times:
             -
                 wday: '6-1'
