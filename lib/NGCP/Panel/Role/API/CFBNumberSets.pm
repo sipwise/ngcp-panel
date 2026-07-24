@@ -23,8 +23,6 @@ sub get_form {
     my ($self, $c) = @_;
     if($c->user->roles eq "subscriber") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFBNumberSetSubAPI", $c);
-    } elsif($c->user->roles eq "subscriberadmin") {
-        return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFBNumberSetSubAPI", $c);
     } else {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::CallForward::CFBNumberSetAPI", $c);
     }
@@ -101,16 +99,29 @@ sub check_resource {
 
     my $schema = $c->model('DB');
 
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+    if ($c->user->roles eq "subscriberadmin") {
+        $resource->{subscriber_id} ||= $c->user->voip_subscriber->id;
+    } elsif ($c->user->roles eq "subscriber") {
         $resource->{subscriber_id} = $c->user->voip_subscriber->id;
-    } elsif(!defined $resource->{subscriber_id}) {
+    } elsif (!defined $resource->{subscriber_id}) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
         return;
     }
 
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
+    my $b_subscriber;
+
+    if ($c->user->roles eq "subscriberadmin") {
+        my $customer_id = $c->user->account_id;
+        $b_subscriber = $schema->resultset('voip_subscribers')->search({
+            id => $resource->{subscriber_id},
+            contract_id => $customer_id,
+        })->first;
+    } else {
+        $b_subscriber = $schema->resultset('voip_subscribers')->find({
             id => $resource->{subscriber_id},
         });
+    }
+
     unless($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
         return;
