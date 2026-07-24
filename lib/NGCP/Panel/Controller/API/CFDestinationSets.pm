@@ -69,15 +69,29 @@ sub create_item {
 
     my $dset;
 
-    if($c->user->roles eq "subscriberadmin") {
-        $resource->{subscriber_id} //= $c->user->voip_subscriber->id;
-    } elsif($c->user->roles eq "subscriber") {
+    if ($c->user->roles eq "subscriberadmin") {
+        $resource->{subscriber_id} ||= $c->user->voip_subscriber->id;
+    } elsif ($c->user->roles eq "subscriber") {
         $resource->{subscriber_id} = $c->user->voip_subscriber->id;
+    } elsif (!defined $resource->{subscriber_id}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
+        return;
     }
 
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find({
+    my $b_subscriber;
+
+    if ($c->user->roles eq "subscriberadmin") {
+        my $customer_id = $c->user->account_id;
+        $b_subscriber = $schema->resultset('voip_subscribers')->search({
+            id => $resource->{subscriber_id},
+            contract_id => $customer_id,
+        })->first;
+    } else {
+        $b_subscriber = $schema->resultset('voip_subscribers')->find({
             id => $resource->{subscriber_id},
         });
+    }
+
     unless($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
         return;
