@@ -25,7 +25,7 @@ use HTTP::Status qw(:constants);
 use IPC::System::Simple qw/capturex/;
 use File::Slurp qw/read_file/;
 use NGCP::Panel::Utils::Encryption qw();
-use boolean qw(true);
+use boolean qw(true false);
 
 my %LOCK = (
     0, 'none',
@@ -307,7 +307,7 @@ sub resource_from_item {
             if (defined $n->voip_dbalias) {
                 $alias->{is_devid} = $n->voip_dbalias->is_devid;
             }
-            $alias->{is_devid} = bool $alias->{is_devid};
+            $alias->{is_devid} = $alias->{is_devid} ? true : false;
             push(@aliases, $alias);
         }
     }
