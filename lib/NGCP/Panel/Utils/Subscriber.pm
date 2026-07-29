@@ -21,11 +21,11 @@ use NGCP::Panel::Utils::RedisLocationResultSet;
 use NGCP::Panel::Utils::Auth;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
+use JSON::Types ();
 use HTTP::Status qw(:constants);
 use IPC::System::Simple qw/capturex/;
 use File::Slurp qw/read_file/;
 use NGCP::Panel::Utils::Encryption qw();
-use boolean qw(true false);
 
 my %LOCK = (
     0, 'none',
@@ -307,7 +307,7 @@ sub resource_from_item {
             if (defined $n->voip_dbalias) {
                 $alias->{is_devid} = $n->voip_dbalias->is_devid;
             }
-            $alias->{is_devid} = $alias->{is_devid} ? true : false;
+            $alias->{is_devid} = JSON::Types::bool($alias->{is_devid});
             push(@aliases, $alias);
         }
     }
