@@ -1,3 +1,10 @@
+ngcp-panel (26.1.1.6+0~mr26.1.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [4aea8f6] MT#65432 add cf sets subscriber_id support subscriberadmin
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Jul 2026 18:20:05 +0200
+
 ngcp-panel (26.1.1.5+0~mr26.1.1.5) unstable; urgency=medium
 
   [ Rene Krenn ]
