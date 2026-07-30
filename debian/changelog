@@ -1,3 +1,12 @@
+ngcp-panel (26.1.1.7+0~mr26.1.1.7) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [7b0d622] MT#65579 support updating existing subscribers via prov templates
+  * [399c25e] MT#65579 fix is_devid boolean conversion in resource_from_item
+  * [4a97f58] MT#65579 use JSON::Types::bool for is_devid in resource_from_item
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 30 Jul 2026 09:53:00 +0200
+
 ngcp-panel (26.1.1.6+0~mr26.1.1.6) unstable; urgency=medium
 
   [ Kirill Solomko ]
