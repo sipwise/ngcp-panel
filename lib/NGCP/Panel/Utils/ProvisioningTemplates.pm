@@ -151,12 +151,13 @@ sub validate_template {
     my ($data,$prefix) = @_;
     $prefix //= 'template: ';
     die($prefix . "not a hash\n") unless 'HASH' eq ref $data;
-    # todo: validate fields
 
-    #foreach my $section (qw/subscriber/) {
-    #    die($prefix . "section '$section' required\n") unless exists $data->{$section};
-    #    die($prefix . "section '$section' is not a hash\n") unless 'HASH' eq ref $data->{$section};
-    #}
+    if (grep { exists $data->{$_} } qw(contract_balance fraud_preferences contract_preferences)) {
+        die($prefix . "section 'contract' required\n") unless exists $data->{contract};
+    }
+    if (grep { exists $data->{$_} } qw(subscriber_preferences registrations trusted_sources cf_mappings)) {
+        die($prefix . "section 'subscriber' required\n") unless exists $data->{subscriber};
+    }
 
 }
 
