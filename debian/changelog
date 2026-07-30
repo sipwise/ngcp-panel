@@ -1,3 +1,13 @@
+ngcp-panel (26.0.1.11+0~mr26.0.1.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [d21b903] MT#65218 prov templates: improve contract and subscriber lookup
+  * [d07b591] MT#65579 support updating existing subscribers via prov templates
+  * [9d5d820] MT#65579 fix is_devid boolean conversion in resource_from_item
+  * [176b154] MT#65579 use JSON::Types::bool for is_devid in resource_from_item
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 30 Jul 2026 13:48:50 +0200
+
 ngcp-panel (26.0.1.10+0~mr26.0.1.10) unstable; urgency=medium
 
   [ Kirill Solomko ]
