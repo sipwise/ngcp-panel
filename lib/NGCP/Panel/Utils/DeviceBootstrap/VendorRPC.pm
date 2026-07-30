@@ -104,7 +104,7 @@ sub rpc_https_call{
         alarm(25);
         my $ua = $self->_ua;
         $cfg->{port} //= '';
-        my $uri = $cfg->{proto}.'://'.$cfg->{host}.($cfg->{port} ? ':' : '').$cfg->{port}.$cfg->{path};
+        my $uri = $cfg->{proto}.'://'.$cfg->{host}.($cfg->{port} ? ':' : '').$cfg->{port}.$cfg->{path}.$cfg->{query_string};
         my $request = POST $uri,
             Content_Type => $cfg->{content_type} // 'text/xml',
             %{$cfg->{headers}},
