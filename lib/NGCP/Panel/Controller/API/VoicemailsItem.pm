@@ -125,8 +125,14 @@ sub DELETE :Allow {
 
         my $cli  = $item->mailboxuser->provisioning_voip_subscriber->username;
         my $uuid = $item->mailboxuser->provisioning_voip_subscriber->uuid;
+        my $mailboxuser = $item->get_column('mailboxuser');
+        my $dir = $item->dir;
 
         $item->delete;
+
+        NGCP::Panel::Utils::Subscriber::renumber_voicemail_folder(
+            c => $c, mailboxuser => $mailboxuser, dir => $dir,
+        );
 
         NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
 
