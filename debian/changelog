@@ -1,3 +1,10 @@
+ngcp-panel (26.0.1.12+0~mr26.0.1.12) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [0667447] MT#65579 do not set primary_number undef in shared resource_from_item
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 31 Jul 2026 16:28:28 +0200
+
 ngcp-panel (26.0.1.11+0~mr26.0.1.11) unstable; urgency=medium
 
   [ Rene Krenn ]
