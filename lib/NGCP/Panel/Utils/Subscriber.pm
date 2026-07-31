@@ -2870,6 +2870,60 @@ sub vmnotify {
     return;
 }
 
+sub renumber_voicemail_folder {
+    my (%params) = @_;
+    my ($c, $mailboxuser, $dir) = @params{qw(c mailboxuser dir)};
+
+    #msgnum must be contiguous 0..N-1 per folder, as asterisk's odbc
+    #voicemail storage expects it
+    my $vm_rs = $c->model('DB')->resultset('voicemail_spool')->search({
+        mailboxuser => $mailboxuser,
+        dir         => $dir,
+        msgnum      => { '>=' => 0 },
+    },{
+        order_by => [{ -asc => 'msgnum' }, { -asc => 'id' }],
+    });
+
+    return $c->model('DB')->txn_do(sub {
+        my $msgnum = 0;
+        for my $msg ($vm_rs->all) {
+            $msg->update({ msgnum => $msgnum }) if $msg->msgnum != $msgnum;
+            $msgnum++;
+        }
+        return $msgnum;
+    });
+}
+
+sub move_voicemail_to_folder {
+    my (%params) = @_;
+    my ($c, $voicemail, $dir_new) = @params{qw(c voicemail dir_new)};
+
+    my $dir_old = $voicemail->dir;
+    return if $dir_old eq $dir_new;
+
+    my $mailboxuser = $voicemail->get_column('mailboxuser');
+
+    $c->model('DB')->txn_do(sub {
+        #append at the end of the target folder like asterisk does (last_msg_index + 1)
+        my $msgnum_max = $c->model('DB')->resultset('voicemail_spool')->search({
+            mailboxuser => $mailboxuser,
+            dir         => $dir_new,
+            msgnum      => { '>=' => 0 },
+        })->get_column('msgnum')->max;
+
+        $voicemail->update({
+            dir    => $dir_new,
+            msgnum => defined $msgnum_max ? $msgnum_max + 1 : 0,
+        });
+
+        #compact both folders
+        renumber_voicemail_folder(c => $c, mailboxuser => $mailboxuser, dir => $dir_old);
+        renumber_voicemail_folder(c => $c, mailboxuser => $mailboxuser, dir => $dir_new);
+    });
+
+    return;
+}
+
 sub mark_voicemail_read {
     my (%params) = @_;
 
@@ -2877,7 +2931,7 @@ sub mark_voicemail_read {
     my $voicemail = $params{voicemail};
     my $dir = $voicemail->dir;
     $dir =~ s/INBOX$/Old/;
-    $voicemail->update({ dir => $dir });
+    move_voicemail_to_folder(c => $c, voicemail => $voicemail, dir_new => $dir);
     return;
 }
 

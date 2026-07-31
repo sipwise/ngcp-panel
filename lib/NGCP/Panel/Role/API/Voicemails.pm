@@ -117,17 +117,17 @@ sub update_item {
     );
 
     my $f = $resource->{folder};
-    my $upresource = {};
-    $upresource->{dir} = $item->dir;
     my $dir_old = $item->dir;
-    $upresource->{dir} =~ s/\/[^\/]+$/\/$f/;
+    my $dir_new = $dir_old;
+    $dir_new =~ s/\/[^\/]+$/\/$f/;
 
-    $item->update($upresource);
+    if ($dir_old ne $dir_new) {
+        NGCP::Panel::Utils::Subscriber::move_voicemail_to_folder(
+            c => $c, voicemail => $item, dir_new => $dir_new,
+        );
 
-    my $cli  = $item->mailboxuser->provisioning_voip_subscriber->username;
-    my $uuid = $item->mailboxuser->provisioning_voip_subscriber->uuid;
-
-    if ($dir_old ne $upresource->{dir}) {
+        my $cli  = $item->mailboxuser->provisioning_voip_subscriber->username;
+        my $uuid = $item->mailboxuser->provisioning_voip_subscriber->uuid;
         NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
     }
 
