@@ -287,8 +287,6 @@ sub resource_from_item {
         $resource{primary_number}->{ac} = $item->primary_number->ac;
         $resource{primary_number}->{sn} = $item->primary_number->sn;
         $resource{primary_number}->{number_id} = int($item->primary_number->id);
-    } else {
-        $resource{primary_number} = undef;
     }
 
     my @aliases = ();
@@ -343,7 +341,7 @@ sub resource_from_item {
             c => $c, attribute => 'lock',
             prov_subscriber => $item->provisioning_voip_subscriber);
         $resource{lock} = 0;
-        if ($lock_pref && $lock_pref->first and length($lock_pref->first->value) > 0) {
+        if ($lock_pref && $lock_pref->first && length($lock_pref->first->value) > 0) {
             #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
             $resource{lock} = $lock_pref->first->value;
         } else {
