@@ -4330,6 +4330,8 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
     my $file = $c->stash->{voicemail};
     my $cli  = $file->mailboxuser->provisioning_voip_subscriber->username;
     my $uuid = $file->mailboxuser->provisioning_voip_subscriber->uuid;
+    my $mailboxuser = $file->get_column('mailboxuser');
+    my $dir = $file->dir;
 
     $c->detach('/denied_page')
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller" ||
@@ -4337,6 +4339,9 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{voicemail}->delete;
+        NGCP::Panel::Utils::Subscriber::renumber_voicemail_folder(
+            c => $c, mailboxuser => $mailboxuser, dir => $dir,
+        );
         NGCP::Panel::Utils::Subscriber::vmnotify(c => $c, cli => $cli, uuid => $uuid);
         NGCP::Panel::Utils::Message::info(
             c    => $c,
