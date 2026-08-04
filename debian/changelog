@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.60+0~mr12.5.1.60) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [16d8c40] MT#56865 Fix autoprovisioning of Grandstream devices
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 04 Aug 2026 08:20:28 +0200
+
 ngcp-panel (12.5.1.59+0~mr12.5.1.59) unstable; urgency=medium
 
   [ Rene Krenn ]
