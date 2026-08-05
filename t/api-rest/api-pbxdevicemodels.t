@@ -169,6 +169,56 @@ foreach my $type(qw/extension phone/){
         is($res->code, 422, "check patched invalid reseller");
     }
 }
+# redirect server credentials are stored in autoprov_redirect_credentials, while the
+# profile is a sync parameter. GET has to return all of them, not just the profile.
+{
+    my $t = time;
+    my %polycom = (
+        bootstrap_config_redirect_polycom_user     => 'polycom_user_'.$t,
+        bootstrap_config_redirect_polycom_password => 'polycom_pass_'.$t,
+        bootstrap_config_redirect_polycom_profile  => 'polycom_profile_'.$t,
+    );
+    my ($res) = $test_machine->check_item_post(sub{
+        my $data = shift;
+        $data->{json}->{model} = 'api_test polycom_redirect_'.$t;
+        $data->{json}->{type} = 'phone';
+        $data->{json}->{bootstrap_method} = 'redirect_polycom';
+        @{$data->{json}}{keys %polycom} = values %polycom;
+    });
+    is($res->code, 201, "create redirect_polycom model");
+    my $location = $res->header('Location');
+    ok($location, "check location of the created redirect_polycom model");
+    if($location){
+        my (undef, $item) = $test_machine->check_item_get($location);
+        foreach my $field(sort keys %polycom){
+            is($item->{$field}, $polycom{$field}, "check $field returned by GET");
+        }
+        # patching an unrelated field must not drop the redirect credentials
+        my $patched_model = 'api_test polycom_redirect_patched_'.$t;
+        my ($patch_res) = $test_machine->request_patch(
+            [ { op => 'replace', path => '/model', value => $patched_model } ],
+            $location,
+        );
+        is($patch_res->code, 200, "patch model of the redirect_polycom model");
+        (undef, $item) = $test_machine->check_item_get($location);
+        is($item->{model}, $patched_model, "check patched model");
+        foreach my $field(sort keys %polycom){
+            is($item->{$field}, $polycom{$field}, "check $field preserved after PATCH");
+        }
+        $test_machine->request_delete($location);
+    }
+}
+# bootstrap methods other than redirect_* have no credentials fields at all
+{
+    my $location = $connactable_devices->{phone}->{data}->[0]->{location};
+    if($location){
+        my (undef, $item) = $test_machine->check_item_get($location);
+        is($item->{bootstrap_method}, 'http', "check bootstrap_method of the http model");
+        foreach my $field(qw/bootstrap_config_http_user bootstrap_config_http_password/){
+            ok(!exists $item->{$field}, "check absence of $field");
+        }
+    }
+}
 #pbxdevicemodels doesn't have DELETE method
 #`echo 'delete from autoprov_devices where model like "%api_test %" or model like "patched model%";'|mysql -u root provisioning`;
 done_testing;
