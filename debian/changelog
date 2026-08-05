@@ -1,3 +1,10 @@
+ngcp-panel (26.1.1.10+0~mr26.1.1.10) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [2eb778c] MT#65224 renumber voicemail msgnum on folder change and delete
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 05 Aug 2026 11:13:50 +0200
+
 ngcp-panel (26.1.1.9+0~mr26.1.1.9) unstable; urgency=medium
 
   [ Marco Capetta ]
