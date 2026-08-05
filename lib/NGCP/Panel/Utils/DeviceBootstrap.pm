@@ -160,6 +160,23 @@ sub devmod_sync_parameters_prefetch_api{
     return $resource;
 }
 
+sub devmod_sync_credentials_prefetch_api{
+    my($c,$item,$resource) = @_;
+    $resource //= {};
+    my $bootstrap_method = $item->get_column('bootstrap_method');
+    #only redirect_* methods have user/password fields in the form
+    return $resource unless $bootstrap_method && $bootstrap_method =~ /^redirect_/;
+    my $schema = $c->model('DB');
+    my $credentials = $schema->resultset('autoprov_redirect_credentials')->search_rs({
+        'me.device_id' => $item->id,
+    })->first;
+    return $resource unless $credentials;
+    foreach (qw/user password/){
+        $resource->{'bootstrap_config_'.$bootstrap_method.'_'.$_} = $credentials->get_column($_);
+    }
+    return $resource;
+}
+
 sub devmod_sync_credentials_prefetch{
     my($c,$devmod,$params) = @_;
     my $schema = $c->model('DB');
