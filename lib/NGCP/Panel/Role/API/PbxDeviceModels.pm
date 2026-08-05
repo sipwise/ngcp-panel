@@ -99,6 +99,11 @@ sub resource_from_item {
 
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch_api($c, $item,\%resource);
 
+    #redirect server credentials are only exposed to the roles allowed to write them
+    if($c->user && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")){
+        NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch_api($c, $item,\%resource);
+    }
+
     if('extension' eq $item->type){
         # show possible devices for extension
         $resource{connectable_models} = [map {$_->device->id} ($item->autoprov_extension_device_link->all) ];
