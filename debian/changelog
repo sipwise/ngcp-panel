@@ -1,3 +1,10 @@
+ngcp-panel (26.1.1.11+0~mr26.1.1.11) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ac0ad9e] MT#65652 update primary number when only cc/ac/sn split changes
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 06 Aug 2026 16:38:12 +0200
+
 ngcp-panel (26.1.1.10+0~mr26.1.1.10) unstable; urgency=medium
 
   [ Marco Capetta ]
