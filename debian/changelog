@@ -1,3 +1,63 @@
+ngcp-panel (26.2.1.0+0~mr26.2.1.0) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [91ac920] MT#65177 contract_id filter for CustomerLocations
+  * [9714863] MT#65173 add optional usage columns to billing profiles API
+  * [99a92aa] MT#65377 fix ngcp-provisioning-template Catalyst stub missing license methods
+  * [3e1d3c0] MT#65464 fix LDAP login 500 when user lookup fails
+  * [12d2906] MT#65173 billing profiles DELETE usage checks
+  * [19ed6c9] MT#65173 billing networks optional usage columns
+  * [70d5c89] MT#65464 Fix LDAP OTP registration crash on /api/otpsecret
+  * [a0bfa93] MT#65579 support updating existing subscribers via prov templates
+  * [e485aff] MT#65579 fix is_devid boolean conversion in resource_from_item
+  * [9767845] MT#65579 use JSON::Types::bool for is_devid in resource_from_item
+  * [22623e7] MT#65618 require contract/subscriber sections in prov templates
+  * [f3ba2df] MT#65652 update primary number when only cc/ac/sn split changes
+
+  [ Kirill Solomko ]
+  * [f21064a] MT#65368 fix UI /logout link
+  * [5f9d05e] MT#65382 add repeatable field expand support
+  * [9e8b35f] MT#65382 timesets add missing own+subscriber_id in resource_from_item()
+  * [8089861] MT#65092 address query param string pattern match in certain endpoints
+  * [44cab5c] MT#65092 fix /api/voicemails $q variable typo
+  * [f7f2d4f] MT#65406 /api/subscribers e164 (primary_number) field is mandatory
+  * [3711b5d] MT#65426 E164 field cc must be greater than zero
+  * [863a805] MT#65406 Adjust subscriber primary_number validation
+  * [2a1770d] MT#65406 remove e164 field required flag
+  * [76f3837] MT#65406 include primary_number in api-journals.t
+  * [b4974dc] MT#65406 api-journals assign different primary_number
+  * [9a12bc2] MT#65445 autosync "cli" on update with the same primary_number
+  * [7eccb12] MT#65406 adjust t/api-rest certain primary numbers
+  * [4913912] MT#65406 fix primary_number uniqness for tests
+  * [b256a90] MT#65406 api-balanceintervals.t fix dynamic primary_number
+  * [64bf49c] MT#65406 api-balanceintervals.t primary_number + thread id
+  * [331dcd6] MT#65548 cf sets add usage_count field
+  * [0c9f3e5] MT#65549 add cf sets DELETE ?unassign_first=1 support
+  * [67f7eaa] MT#65550 add PUT,PATCH,DELETE swagger query_params support
+  * [deeaa10] MT#64924 add PUT|PATCH cfmappings delete_unused_sets support
+  * [51876d2] MT#65550 restore swagger doc id parameter for GET /{id} path
+  * [7f9af10] MT#65553 add check duplicates for call forward sets
+  * [9470652] MT#65572 rework call forward sets resource validation
+  * [79817b3] MT#65573 change order of check_resource() and check_duplicate()
+  * [7256474] MT#65572 fix api-test2 duplicate cfdestinationset name
+  * [f677173] MT#65572 fix api-test2 duplicate cftimeset name
+
+  [ Sipwise Jenkins Builder ]
+  * [3296f04] TT#4166 I18N dump: snapshot 2026.07.06-22.34.19
+  * [fd4b1b9] TT#4166 I18N dump: snapshot 2026.07.07-22.21.15
+  * [9c1b762] TT#4166 I18N dump: snapshot 2026.07.21-22.28.18
+
+  [ Michael Prokop ]
+  * [ca8a567] MT#65478 ngcp-panel-tools: add missing perl dependencies
+  * [a9bc9cd] TT#76552 Apply more strict systemd hardening
+
+  [ Marco Capetta ]
+  * [cc34719] MT#56865 Fix autoprovisioning of Grandstream devices
+  * [d01cff8] MT#65224 renumber voicemail msgnum on folder change and delete
+  * [8042d9f] MT#65665 return redirect credentials on pbxdevicemodels on GET API
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 Aug 2026 14:20:22 +0200
+
 ngcp-panel (26.2.0.0+0~mr26.2.0.0) unstable; urgency=medium
 
   [ Marco Capetta ]
