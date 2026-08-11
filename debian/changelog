@@ -1,3 +1,10 @@
+ngcp-panel (26.0.1.16+0~mr26.0.1.16) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [40e2419] MT#65665 return redirect credentials on pbxdevicemodels on GET API
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 Aug 2026 08:45:31 +0200
+
 ngcp-panel (26.0.1.15+0~mr26.0.1.15) unstable; urgency=medium
 
   [ Rene Krenn ]
