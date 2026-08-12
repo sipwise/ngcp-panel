@@ -245,6 +245,71 @@ my %package_map = ();
     
 }
 
+{ # expand initial_profiles, topup_profiles, underrun_profiles
+    my $pkg = _post_profile_package(
+        initial_profiles => [
+            { profile_id => $billingprofile->{id}, network_id => undef },
+            { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id} },
+        ],
+        topup_profiles => [
+            { profile_id => $billingprofile->{id}, network_id => undef },
+            { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id} },
+        ],
+        underrun_profiles => [
+            { profile_id => $billingprofile->{id}, network_id => undef },
+            { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id} },
+        ],
+    );
+    ok(ref $pkg eq 'HASH', "create profile package for expand tests");
+
+    my $expand = 'initial_profiles,topup_profiles,underrun_profiles';
+    $req = HTTP::Request->new('GET', $pkg->{uri}.'?expand='.$expand);
+    $res = $ua->request($req);
+    is($res->code, 200, "GET profilepackage item with expand=$expand");
+    my $expanded = JSON::from_json($res->decoded_content);
+
+    for my $field (qw(initial_profiles topup_profiles underrun_profiles)) {
+        ok(ref $expanded->{$field} eq 'ARRAY' && @{$expanded->{$field}} == 2,
+            "expanded $field has two mappings");
+        my ($any_net, $with_net) = @{$expanded->{$field}};
+
+        ok(ref $any_net->{profile_id_expand} eq 'HASH',
+            "$field mapping without network has profile_id_expand");
+        is($any_net->{profile_id_expand}{id}, $billingprofile->{id},
+            "$field mapping without network profile_id_expand.id matches");
+        is($any_net->{profile_id_expand}{handle}, $billingprofile->{handle},
+            "$field mapping without network profile_id_expand.handle matches");
+        ok(!exists $any_net->{network_id_expand} || !defined $any_net->{network_id_expand},
+            "$field mapping without network has no network_id_expand");
+
+        ok(ref $with_net->{profile_id_expand} eq 'HASH',
+            "$field mapping with network has profile_id_expand");
+        is($with_net->{profile_id_expand}{id}, $billingprofile->{id},
+            "$field mapping with network profile_id_expand.id matches");
+        ok(ref $with_net->{network_id_expand} eq 'HASH',
+            "$field mapping with network has network_id_expand");
+        is($with_net->{network_id_expand}{id}, $billingnetwork->{id},
+            "$field mapping with network network_id_expand.id matches");
+        is($with_net->{network_id_expand}{name}, $billingnetwork->{name},
+            "$field mapping with network network_id_expand.name matches");
+    }
+
+    $req = HTTP::Request->new('GET', $uri.'/api/profilepackages/?page=1&rows=10&name='.
+        URI::Escape::uri_escape($pkg->{get}{name}).'&expand='.$expand);
+    $res = $ua->request($req);
+    is($res->code, 200, "GET profilepackages collection with expand=$expand");
+    my $coll = JSON::from_json($res->decoded_content);
+    my ($coll_item) = grep { $_->{id} == $pkg->{get}{id} }
+        @{$coll->{_embedded}{'ngcp:profilepackages'} // []};
+    ok($coll_item, "found package in expanded collection");
+    ok(ref $coll_item->{initial_profiles}[0]{profile_id_expand} eq 'HASH',
+        "collection expand includes initial_profiles.profile_id_expand");
+
+    $req = HTTP::Request->new('GET', $pkg->{uri}.'?expand=not_a_real_field');
+    $res = $ua->request($req);
+    is($res->code, 409, "invalid expand field returns 409");
+}
+
 done_testing;
 
 sub _post_profile_package {

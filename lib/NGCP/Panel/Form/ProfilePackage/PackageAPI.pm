@@ -56,12 +56,24 @@ has_field 'initial_profiles.profile_id' => (
     type => 'PosInteger',
     required => 1,
     label => 'Billing profile id',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::BillingProfiles',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
 );
 
 has_field 'initial_profiles.network_id' => (
     type => 'PosInteger',
     required => 0,
     label => 'Optional billing network id',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::BillingNetworks',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
 );
 
 has_field 'balance_interval_unit' => (
@@ -197,12 +209,24 @@ has_field 'underrun_profiles.profile_id' => (
     type => 'PosInteger',
     required => 1,
     label => 'Billing profile id',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::BillingProfiles',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
 );
 
 has_field 'underrun_profiles.network_id' => (
     type => 'PosInteger',
     required => 0,
     label => 'Optional billing network id',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::BillingNetworks',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
 );
 
 
@@ -246,12 +270,24 @@ has_field 'topup_profiles.profile_id' => (
     type => 'PosInteger',
     required => 1,
     label => 'Billing profile id',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::BillingProfiles',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
 );
 
 has_field 'topup_profiles.network_id' => (
     type => 'PosInteger',
     required => 0,
     label => 'Optional billing network id',
+    element_attr => {
+        expand => {
+            class => 'NGCP::Panel::Role::API::BillingNetworks',
+            allowed_roles => [qw(admin reseller ccareadmin ccare)],
+        },
+    },
 );
 
 sub _deflate_lock_level {

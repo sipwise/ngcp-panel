@@ -1452,13 +1452,13 @@ sub expand_field {
     if ($depth == 0) {
         if (my $res_field = $resource_form->field($pri_field)) {
             if ($res_field->type eq 'Repeatable') {
-                @sub_fields = ();
                 foreach my $rep_field ($res_field->field('0')->fields) {
                     for (my $i=0; $i<=$#{$resource->{$pri_field}}; $i++) {
                         my $rep_field_name = $pri_field.'.'.$rep_field->name;
                         $self->expand_field($c, $resource->{$pri_field}[$i], $resource_form, $rep_field_name, $depth+1, 1);
                     }
                 }
+                return $found;
             }
         }
     }
