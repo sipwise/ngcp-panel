@@ -62,6 +62,42 @@ $test_machine->check_bundle();
 }
 
 $test_machine->clear_test_data_all();
+
+# csv upload and download. this runs after clear_test_data_all, so the table
+# contains exactly the uploaded rows and the download can be compared literally
+{
+    my $csv_data = <<'EOS_CSV';
+csvtest1.example.org,outgoing,^431,obfuscate,csv1
+csvtest2.example.org,incoming,^432,filter,csv2
+EOS_CSV
+
+    $test_machine->content_type->{POST} = 'text/csv';
+
+    my ($res, $content) = $test_machine->request_post(
+        $csv_data, '/api/calllistsuppressions/?purge_existing=true');
+    $test_machine->http_code_msg(201, "check csv upload", $res, $content);
+
+    #the Accept header has to be exactly "text/csv", any addition to it falls
+    #back to the usual collection listing
+    my $req = $test_machine->get_request_get('/api/calllistsuppressions/');
+    $req->header('Accept' => 'text/csv');
+    ($res, $content) = $test_machine->request($req);
+    $test_machine->http_code_msg(200, "check csv download", $res, $content);
+    is($res->filename, 'call_list_suppressions.csv', "check downloaded csv filename");
+    is($res->content, $csv_data, "check downloaded csv content");
+
+    #clear off the uploaded rows, they are out of the Collection control. a one
+    #field line is skipped by the upload, so this only purges. an empty body
+    #can't be used for it, as it is rejected with 400
+    ($res, $content) = $test_machine->request_post(
+        'purgeonly', '/api/calllistsuppressions/?purge_existing=true');
+    $test_machine->http_code_msg(201, "check csv purge", $res, $content);
+
+    #restore by assigning the value: content_type returns the hash reference
+    #itself, so saving and setting it back again would be a no-op
+    $test_machine->content_type->{POST} = 'application/json';
+}
+
 done_testing;
 
 # vim: set tabstop=4 expandtab:
