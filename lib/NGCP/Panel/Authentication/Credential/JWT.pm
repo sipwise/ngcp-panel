@@ -59,13 +59,22 @@ sub authenticate {
     try {
         $jwt_data = decode_jwt(token=>$token, key=>$self->jwt_key, accepted_alg => $self->alg);
         if ($jwt_data->{$self->id_field} && $jwt_data->{$self->id_field} eq 'uuid') {
-            $c->log->debug('decoded subscriber JWT token');
+            $jwt_data->{auth_token}
+                ? $c->log->debug('decoded subscriber auth token')
+                : $c->log->debug('decoded subscriber JWT token');
         } else {
-            $c->log->debug('decoded admin JWT token');
+            $jwt_data->{auth_token}
+                ? $c->log->debug('decoded admin auth token')
+                : $c->log->debug('decoded admin JWT token');
         }
     } catch ($e) {
         # something happened
         $c->log->debug("Error decoding token: $e") if $self->debug;
+        return;
+    }
+
+    if ($jwt_data->{auth_token} && $c->req->uri->path !~ /^\/login_jwt$/) {
+        $c->log->debug("Auth tokens can only be used for /login_jwt") if $self->debug;
         return;
     }
 
