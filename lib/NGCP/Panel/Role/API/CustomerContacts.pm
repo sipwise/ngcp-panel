@@ -5,20 +5,33 @@ use Sipwise::Base;
 
 use parent 'NGCP::Panel::Role::API';
 
-
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 
+sub resource_name{
+    return 'customercontacts';
+}
+
 sub _item_rs {
     my ($self, $c) = @_;
 
+    my $resource_name = $self->resource_name();
+
+    my $include_terminated =
+        $c->req->param('expand')
+        &&
+        ($c->req->path !~ m#^\Q$resource_name\E/?(?:(\d+))?$#);
+
     my $item_rs = $c->model('DB')->resultset('contacts')->search({
         reseller_id => { '-not' => undef },
-        'me.status' => { '!=' => 'terminated' },
+        $include_terminated
+            ? ()
+            : ('me.status' => { '!=' => 'terminated' }),
     });
+
     if ($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
     } elsif ($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({

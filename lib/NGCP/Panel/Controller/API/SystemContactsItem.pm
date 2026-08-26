@@ -18,10 +18,6 @@ sub allowed_methods{
 
 use parent qw/NGCP::Panel::Role::EntitiesItem NGCP::Panel::Role::API::SystemContacts/;
 
-sub resource_name{
-    return 'systemcontacts';
-}
-
 sub dispatch_path{
     return '/api/systemcontacts/';
 }
