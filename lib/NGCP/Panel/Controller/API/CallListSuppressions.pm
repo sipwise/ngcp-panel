@@ -46,7 +46,7 @@ sub query_params {
         {
             param => 'domain',
             description => 'Filter for call list suppressions of a specific domain. Use an empty value to filter for the suppressions applying to any domain.',
-            query_type => 'string_eq',
+            query_type => 'wildcard',
         },
         {
             param => 'direction',

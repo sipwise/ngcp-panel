@@ -35,6 +35,36 @@ $test_machine->form_data_item( );
 
 # create 3 new call list suppressions from DATA_ITEM
 $test_machine->check_create_correct( 3, sub{ $_[0]->{pattern} .= $_[1]->{i} ; } );
+
+# the domain filter supports "*" wildcards. this runs right after the creation,
+# where the 3 items above are the only ones sharing DATA_ITEM_STORE's domain
+{
+    my $domain = $test_machine->DATA_ITEM_STORE->{domain};
+    my ($head, $tail) = split(/\./, $domain, 2);
+
+    my %expected = (
+        #no wildcard at all still means an exact match
+        $domain         => 3,
+        "*$domain"      => 3,
+        "$domain*"      => 3,
+        "*$tail"        => 3,
+        "$head*"        => 3,
+        "*$head*"       => 3,
+        "$head*$tail"   => 3,
+        'nosuchdomain*' => 0,
+        #no implicit trailing wildcard is added
+        "$domain.*"     => 0,
+    );
+
+    foreach my $filter (sort keys %expected) {
+        my ($res, $content) = $test_machine->request_get(
+            '/api/calllistsuppressions/?page=1&rows=10&domain='.$filter);
+        $test_machine->http_code_msg(200, "check domain filter '$filter'", $res, $content);
+        is($content->{total_count}, $expected{$filter},
+           "check domain filter '$filter' result count");
+    }
+}
+
 $test_machine->check_get2put();
 $test_machine->check_bundle();
 
