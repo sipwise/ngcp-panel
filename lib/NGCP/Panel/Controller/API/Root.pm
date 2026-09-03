@@ -407,6 +407,7 @@ sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
             } else {
                 $data->{multisite} = {};
             }
+            $data->{call_flow} = $c->config->{callflow} // {};
         }
 
         return to_json($data, {pretty => 1, canonical => 1});
