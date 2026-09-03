@@ -1,3 +1,10 @@
+ngcp-panel (13.5.1.46+0~mr13.5.1.46) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [fd6781d] MT#65890 Fix regression on PATCH calls to CallForwardsItem api
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 03 Sep 2026 08:14:35 +0200
+
 ngcp-panel (13.5.1.45+0~mr13.5.1.45) unstable; urgency=medium
 
   [ Marco Capetta ]
