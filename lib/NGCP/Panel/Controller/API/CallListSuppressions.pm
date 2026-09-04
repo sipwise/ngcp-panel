@@ -5,6 +5,8 @@ use Sipwise::Base;
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::CallListSuppressions/;
 
+use HTTP::Status qw(:constants);
+
 use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::MySQL;
 
@@ -27,7 +29,8 @@ sub api_description {
            'In "filter" mode matching calls do not appear at all, in "obfuscate" mode the number is replaced by the given "label", and in "disabled" mode the suppression is not applied. '.
            'Admin and reseller users always see the unsuppressed call lists. The combination of "domain", "direction" and "pattern" must be unique. '.
            'You can POST suppressions individually one-by-one using json. For bulk uploads specify the Content-Type as "text/csv" and POST the CSV in the request body to the collection with an optional parameter "purge_existing=true". '.
-           'The CSV columns are "domain,direction,pattern,mode,label" without a header row. To download all the suppressions in CSV format, GET the collection with an "Accept: text/csv" header.';
+           'The CSV columns are "domain,direction,pattern,mode,label" without a header row. If any row of the CSV is rejected, the upload returns a 422 reporting how many rows were imported and the line numbers which were skipped. '.
+           'To download all the suppressions in CSV format, GET the collection with an "Accept: text/csv" header.';
 }
 
 sub order_by_cols {
@@ -104,13 +107,19 @@ sub process_data :Private {
         );
     }
 
-    #upload_suppressions_csv returns two values only, unlike the upload_csv of
-    #the other resources, which also return the list of the accepted records
-    my ($fails, $text_success) = NGCP::Panel::Utils::CallList::upload_suppressions_csv(
+    my ($imported, $fails, $text_success) = NGCP::Panel::Utils::CallList::upload_suppressions_csv(
         c      => $c,
         data   => $data_ref,
         schema => $schema,
     );
+
+    if (@{ $fails }) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+            sprintf('Call list suppressions upload incomplete, imported %d row(s), skipped the following line numbers: %s',
+                    $imported, join(", ", @{ $fails })));
+        return;
+    }
+
     $c->log->info($$text_success);
 
     return;

@@ -573,22 +573,33 @@ sub upload_suppressions_csv {
     my @fields ;
     my @fails = ();
     my $linenum = 0;
+    my $imported = 0;
     my @suppressions = ();
     open(my $fh, '<:encoding(utf8)', $data);
     $start = time;
     my $chunk_size = 2000;
-    while ( my $line = $csv->getline($fh)) {
+    #to don't stop on first failed parse - don't use "while($csv->getline)"
+    while ( my $line = <$fh> ){
         ++$linenum;
-        unless (scalar @{ $line } == scalar @cols) {
+        #not chomp, to don't leave a \r in the last field of a CRLF file
+        $line =~ s/\r?\n\z//;
+        next unless length $line;
+        unless($csv->parse($line)) {
+            push @fails, $linenum;
+            next;
+        }
+        @fields = $csv->fields();
+        unless (scalar @fields == scalar @cols) {
             push @fails, $linenum;
             next;
         }
         my $row = {};
-        @{$row}{@cols} = @{ $line };
+        @{$row}{@cols} = @fields;
 
         push @suppressions, [ $row->{domain}, $row->{direction}, $row->{pattern}, $row->{mode}, $row->{label} ];
+        ++$imported;
 
-        if($linenum % $chunk_size == 0) {
+        if(scalar @suppressions == $chunk_size) {
             _insert_suppressions_csv_batch($c, $schema, \@suppressions, $chunk_size);
             @suppressions = ();
         }
@@ -605,7 +616,7 @@ sub upload_suppressions_csv {
         $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
     }
 
-    return ( \@fails, \$text );
+    return ( $imported, \@fails, \$text );
 
 }
 

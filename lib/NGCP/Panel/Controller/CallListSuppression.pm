@@ -248,7 +248,7 @@ sub upload :Chained('list') :PathPart('upload') :Args(0) {
                     $end = time;
                     $c->log->debug("Purging call list suppressions took " . ($end - $start) . "s");
                 }
-                ( $fails, $text_success ) = NGCP::Panel::Utils::CallList::upload_suppressions_csv(
+                ( undef, $fails, $text_success ) = NGCP::Panel::Utils::CallList::upload_suppressions_csv(
                     c       => $c,
                     data    => \$data,
                     schema  => $schema,

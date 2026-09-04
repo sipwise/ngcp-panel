@@ -116,15 +116,49 @@ EOS_CSV
     is($res->filename, 'call_list_suppressions.csv', "check downloaded csv filename");
     is($res->content, $csv_data, "check downloaded csv content");
 
-    #clear off the uploaded rows, they are out of the Collection control. a one
-    #field line is skipped by the upload, so this only purges. an empty body
-    #can't be used for it, as it is rejected with 400
-    ($res, $content) = $test_machine->request_post(
-        'purgeonly', '/api/calllistsuppressions/?purge_existing=true');
-    $test_machine->http_code_msg(201, "check csv purge", $res, $content);
+    #the uploaded rows are out of the Collection control, the first upload of the
+    #next block purges them
 
     #restore by assigning the value: content_type returns the hash reference
     #itself, so saving and setting it back again would be a no-op
+    $test_machine->content_type->{POST} = 'application/json';
+}
+
+# a malformed csv has to be reported and not silently accepted
+{
+    $test_machine->content_type->{POST} = 'text/csv';
+
+    #a row with a wrong number of columns
+    my ($res, $err) = $test_machine->request_post(
+        "csvtest3.example.org,outgoing,^433\n",
+        '/api/calllistsuppressions/?purge_existing=true');
+    $test_machine->http_code_msg(422, "check csv upload with a wrong column count", $res, $err);
+    ok($err->{message} =~ /skipped the following line numbers: 1/,
+        "check the skipped line number is reported");
+    ok($err->{message} =~ /imported 0 row/, "check the imported amount is reported");
+
+    #a row csv can't parse at all. it used to end the upload silently, dropping
+    #the rest of the file and still reporting success
+    my $csv_broken = <<'EOS_CSV';
+csvtest4.example.org,outgoing,^434,obfuscate,csv4
+csvtest5.example.org,outgoing,"^435,obfuscate,csv5
+csvtest6.example.org,outgoing,^436,obfuscate,csv6
+EOS_CSV
+    ($res, $err) = $test_machine->request_post(
+        $csv_broken, '/api/calllistsuppressions/?purge_existing=true');
+    $test_machine->http_code_msg(422, "check csv upload with an unparseable row", $res, $err);
+    ok($err->{message} =~ /skipped the following line numbers: 2/,
+        "check the unparseable line number is reported");
+    #the line after the broken one has to be imported anyway
+    ok($err->{message} =~ /imported 2 row/, "check the lines after the broken one are imported");
+
+    #leave no rows behind, they are out of the Collection control. the one field
+    #line is rejected on purpose, this request is only done for the purge. an
+    #empty body can't be used for it, as it is rejected with 400
+    ($res, $err) = $test_machine->request_post(
+        'purgeonly', '/api/calllistsuppressions/?purge_existing=true');
+    $test_machine->http_code_msg(422, "check csv purge with a rejected row", $res, $err);
+
     $test_machine->content_type->{POST} = 'application/json';
 }
 
