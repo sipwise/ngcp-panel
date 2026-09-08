@@ -160,6 +160,7 @@ sub POST :Allow {
             resource => $resource,
             form => $form,
         );
+        delete @{$resource}{qw(contract_cnt voucher_cnt)};
         
         last unless NGCP::Panel::Utils::Reseller::check_reseller_create_item($c,$resource->{reseller_id},sub {
             my ($err) = @_;

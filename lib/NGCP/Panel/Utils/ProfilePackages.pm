@@ -1350,10 +1350,22 @@ sub field_to_discriminator {
 }
 
 sub get_contract_count_stmt {
+    my $count_limit = shift;
+    if (defined $count_limit and $count_limit > 0) {
+        $count_limit = int($count_limit) + 1;
+        return "select least(count(distinct c.id), $count_limit) from `billing`.`contracts` c where c.`profile_package_id` = `me`.`id` and c.status != 'terminated'";
+    }
+
     return "select count(distinct c.id) from `billing`.`contracts` c where c.`profile_package_id` = `me`.`id` and c.status != 'terminated'";
 }
 
 sub get_voucher_count_stmt {
+    my $count_limit = shift;
+    if (defined $count_limit and $count_limit > 0) {
+        $count_limit = int($count_limit) + 1;
+        return "select least(count(distinct v.id), $count_limit) from `billing`.`vouchers` v where v.`package_id` = `me`.`id`"; # and v.`used_by_subscriber_id` is null";
+    }
+
     return "select count(distinct v.id) from `billing`.`vouchers` v where v.`package_id` = `me`.`id`"; # and v.`used_by_subscriber_id` is null";
 }
 
@@ -1368,8 +1380,10 @@ sub get_datatable_cols {
 
     my ($c) = @_;
     return (
-        { name => "contract_cnt", sortable => 0, search => 0, title => $c->loc("Contracts"), },
-        { name => "voucher_cnt", sortable => 0, search => 0, title => $c->loc("Vouchers"), },
+        { name => "contract_cnt", sortable => 0, search => 0, title => $c->loc("Contracts"),
+          custom_renderer => 'function ( data, type, full, opt ) { if(full.contract_cnt > 10){return \'10+\'}return full.contract_cnt; }' },
+        { name => "voucher_cnt", sortable => 0, search => 0, title => $c->loc("Vouchers"),
+          custom_renderer => 'function ( data, type, full, opt ) { if(full.voucher_cnt > 10){return \'10+\'}return full.voucher_cnt; }' },
         { name => 'initial_profiles_grp', accessor => "initial_profiles_grp", search => 0, title => $c->loc('Initial Profiles'),
          literal_sql => _get_profile_set_group_stmt(INITIAL_PROFILE_DISCRIMINATOR) },
         { name => 'underrun_profiles_grp', accessor => "underrun_profiles_grp", search => 0, title => $c->loc('Underrun Profiles'),

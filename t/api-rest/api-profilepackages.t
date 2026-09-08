@@ -141,6 +141,12 @@ my %package_map = ();
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed profilepackage");
     my $profilepackage = JSON::from_json($res->decoded_content);
+    ok(exists $profilepackage->{contract_cnt}, "POSTed profilepackage has contract_cnt");
+    ok(exists $profilepackage->{voucher_cnt}, "POSTed profilepackage has voucher_cnt");
+    like($profilepackage->{contract_cnt}, qr/^\d+$/, "contract_cnt is numeric");
+    like($profilepackage->{voucher_cnt}, qr/^\d+$/, "voucher_cnt is numeric");
+    is($profilepackage->{contract_cnt}, 0, "fresh profilepackage contract_cnt is 0");
+    is($profilepackage->{voucher_cnt}, 0, "fresh profilepackage voucher_cnt is 0");
     
     $req = HTTP::Request->new('PUT', $profilepackage_uri);
     $req->header('Content-Type' => 'application/json');
@@ -356,8 +362,14 @@ sub _post_profile_package {
         my $get = JSON::from_json($res->decoded_content);
         $package_map{$get->{id}} = $get;
         $test_data{get} = Storable::dclone($get);
+        ok(exists $get->{contract_cnt} && $get->{contract_cnt} =~ /^\d+$/,
+            "created profile package $i has numeric contract_cnt");
+        ok(exists $get->{voucher_cnt} && $get->{voucher_cnt} =~ /^\d+$/,
+            "created profile package $i has numeric voucher_cnt");
         delete $get->{id};
         delete $get->{_links};
+        delete $get->{contract_cnt};
+        delete $get->{voucher_cnt};
         is_deeply($get,$test_data{post}, "check created profile package $i deeply");
         return \%test_data;
     } else {

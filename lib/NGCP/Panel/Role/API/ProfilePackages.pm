@@ -82,6 +82,13 @@ sub hal_from_item {
         run => 0,
     );
 
+    if ($item->has_column_loaded('contract_cnt')) {
+        $resource{contract_cnt} = int($item->get_column('contract_cnt'));
+    }
+    if ($item->has_column_loaded('voucher_cnt')) {
+        $resource{voucher_cnt} = int($item->get_column('voucher_cnt'));
+    }
+
     $self->expand_fields($c, \%resource);
     $hal->resource(\%resource);
     return $hal;
@@ -93,7 +100,7 @@ sub _item_rs {
     my $item_rs = $c->model('DB')->resultset('profile_packages')->search_rs();
     my $search_xtra = {
             '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt(10) ] , -as => 'contract_cnt' },
-                           { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt(10) ] , -as => 'voucher_cnt' },
                            ],
             };       
     if($c->user->roles eq "admin") {
@@ -120,6 +127,7 @@ sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     delete $resource->{id};
+    delete @{$resource}{qw(contract_cnt voucher_cnt)};
     my $schema = $c->model('DB');
     
     #$resource{initial_balance} *= 100.0 if exists $resource{initial_balance} && defined $resource{initial_balance}; #prevent auto-vivivication..
@@ -135,6 +143,7 @@ sub update_item {
         form => $form,
         resource => $resource,
     );
+    delete @{$resource}{qw(contract_cnt voucher_cnt)};
     
     return unless NGCP::Panel::Utils::Reseller::check_reseller_update_item($c,$resource->{reseller_id},$old_resource->{reseller_id},sub {
         my ($err) = @_;

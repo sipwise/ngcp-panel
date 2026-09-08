@@ -48,7 +48,7 @@ sub _package_resultset_admin {
          })->search_rs(
             undef,
             { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt(10) ] , -as => 'contract_cnt' },
-                             { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
+                             { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt(10) ] , -as => 'voucher_cnt' },
                              ],
             });
 }
@@ -65,7 +65,7 @@ sub _package_resultset_reseller {
          })->search_rs(
             undef,
             { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt(10) ] , -as => 'contract_cnt' },
-                             { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
+                             { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt(10) ] , -as => 'voucher_cnt' },
                              ],
             });
 }

@@ -290,6 +290,26 @@ has_field 'topup_profiles.network_id' => (
     },
 );
 
+has_field 'contract_cnt' => (
+    type => 'Integer',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The number of non-terminated contracts using this profile package (capped; values above 10 mean 10+).'],
+    },
+);
+
+has_field 'voucher_cnt' => (
+    type => 'Integer',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The number of vouchers using this profile package (capped; values above 10 mean 10+).'],
+    },
+);
+
 sub _deflate_lock_level {
     my ($self,$value) = @_;
     if (defined $value and length($value) == 0) {
