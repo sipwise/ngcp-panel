@@ -2666,6 +2666,10 @@ msgstr ""
 msgid "Contract balance before id"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Contract cnt"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Contract.pm
 msgid "Contract does not exist"
 msgstr ""
@@ -13197,11 +13201,19 @@ msgid "The number of free seconds of the reseller used for this call."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The number of non-terminated contracts using this profile package (capped; values above 10 mean 10+)."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of top-ups performed in the 'timely' span of this interval."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The number of top-ups performed in this interval."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The number of vouchers using this profile package (capped; values above 10 mean 10+)."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
@@ -14887,6 +14899,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/ProfilePackages.pm
 msgid "Voucher ID"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Voucher cnt"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
