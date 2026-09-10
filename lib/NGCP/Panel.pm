@@ -19,6 +19,7 @@ use IO::Socket::UNIX qw(SOCK_DGRAM);
 #                 directory
 
 use Catalyst qw/
+    Cache
     ConfigLoader
     Static::Simple
     Authentication
@@ -111,6 +112,13 @@ __PACKAGE__->config(
         ],
         ABSOLUTE => 1,
         EVAL_PERL => 1,
+    },
+
+    'Plugin::Cache' => {
+        backend => {
+            class    => "Cache::MemoryCache",
+            namespace => __PACKAGE__,
+        },
     },
 
     'Plugin::Static::Simple' => {

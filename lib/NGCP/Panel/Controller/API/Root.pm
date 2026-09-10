@@ -18,6 +18,7 @@ use parent qw/Catalyst::Controller NGCP::Panel::Role::API/;
 
 use NGCP::Panel::Utils::Journal qw();
 use NGCP::Panel::Utils::License;
+use NGCP::Panel::Utils::MetaRelease qw(get_meta_release_data);
 
 #with 'NGCP::Panel::Role::API';
 
@@ -408,6 +409,7 @@ sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
                 $data->{multisite} = {};
             }
             $data->{call_flow} = $c->config->{callflow} // {};
+            $data->{release_info} = get_meta_release_data($c);
         }
 
         return to_json($data, {pretty => 1, canonical => 1});
