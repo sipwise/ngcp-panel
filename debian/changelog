@@ -1,3 +1,10 @@
+ngcp-panel (12.5.1.65+0~mr12.5.1.65) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [963cb51] MT#65377 fix ngcp-provisioning-template Catalyst stub missing license methods
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Sep 2026 11:26:24 +0200
+
 ngcp-panel (12.5.1.64+0~mr12.5.1.64) unstable; urgency=medium
 
   [ Marco Capetta ]
