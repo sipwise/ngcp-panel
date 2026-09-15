@@ -82,7 +82,7 @@ sub hal_links {
     my($self, $c, $item, $resource, $form) = @_;
     my $adm = $c->user->roles eq "admin";
     return [
-        $adm ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),
+        $adm && $item->reseller_id ? Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)) : (),
     ];
 }
 
