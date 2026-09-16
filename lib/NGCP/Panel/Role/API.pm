@@ -1123,6 +1123,22 @@ sub item_rs {
     return $item_rs;
 }
 
+sub add_id_to_query_params {
+    my ($self, $c, $query_params) = @_;
+
+    if (any { exists $_->{id} } @{$query_params}) {
+        return;
+    }
+
+    unshift @{$query_params}, {
+        param => 'id',
+        description => 'Filter the collection by resource ID',
+        query_type  => 'string_eq',
+    };
+
+    return;
+}
+
 sub apply_query_params {
 
     my ($self,$c,$query_params,$item_rs) = @_;
@@ -1130,6 +1146,8 @@ sub apply_query_params {
     unless(@{ $query_params }) {
         return $item_rs;
     }
+
+    $self->add_id_to_query_params($c, $query_params);
 
     my $form = $self->get_form($c);
 

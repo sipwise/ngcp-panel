@@ -125,6 +125,8 @@ sub GET : Allow {
         if($full_mod->can('query_params')) {
             $query_params = $full_mod->query_params;
         }
+        $self->add_id_to_query_params($c, $query_params);
+
         my $actions = [];
         if($c->user->read_only) {
             foreach my $m(sort keys %{ $full_mod->config->{action} }) {
