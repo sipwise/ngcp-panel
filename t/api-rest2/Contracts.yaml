@@ -932,6 +932,72 @@
         is:
             code: 404
 
+#GET contracts with status=terminated
+-
+    name: GET contracts with status=terminated
+    type: item
+    method: GET
+    path: '/api/contracts/?page=1&rows=50&status=terminated&contact_id=${system_contact_id}'
+    retain:
+        terminated_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{terminated_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{terminated_statuses_ok} = (grep { $_->{status} ne 'terminated' } @items) ? 0 : 1;
+            $retained->{terminated_found} = (grep { ($_->{_links}{self}{href} // '') eq $retained->{contract_path} } @items) ? 1 : 0;
+        }
+    conditions:
+        is:
+            code: 200
+            '${terminated_statuses_ok}': 1
+            '${terminated_found}': 1
+
+#GET contracts with not_status=terminated
+-
+    name: GET contracts with not_status=terminated
+    type: item
+    method: GET
+    path: '/api/contracts/?page=1&rows=50&not_status=terminated'
+    retain:
+        not_terminated_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{not_terminated_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{not_terminated_statuses_ok} = (grep { $_->{status} eq 'terminated' } @items) ? 0 : 1;
+            $retained->{not_terminated_excludes_contract} = (grep { ($_->{_links}{self}{href} // '') eq $retained->{contract_path} } @items) ? 0 : 1;
+        }
+    conditions:
+        is:
+            code: 200
+            '${not_terminated_statuses_ok}': 1
+            '${not_terminated_excludes_contract}': 1
+
+#GET contracts with status=active,pending
+-
+    name: GET contracts with status=active,pending
+    type: item
+    method: GET
+    path: '/api/contracts/?page=1&rows=50&status=active,pending'
+    retain:
+        active_pending_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{active_pending_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{active_pending_count_ok} = scalar(@items) > 0 ? 1 : 0;
+            $retained->{active_pending_statuses_ok} = (grep { $_->{status} ne 'active' && $_->{status} ne 'pending' } @items) ? 0 : 1;
+        }
+    conditions:
+        is:
+            code: 200
+            '${active_pending_count_ok}': 1
+            '${active_pending_statuses_ok}': 1
+
 #terminate billingprofile
 -
     name: 'terminate billingprofile'
