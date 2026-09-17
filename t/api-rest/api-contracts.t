@@ -677,6 +677,48 @@ my @allcontracts = ();
     $res = $ua->request($req);
     is($res->code, 404, "check fetching of terminated contract");
 
+    my $contact_q = 'contact_id='.$syscontact->{id};
+
+    $res = $ua->get($uri.'/api/contracts/?page=1&rows=50&'.$contact_q);
+    is($res->code, 200, "fetch unfiltered contracts for terminated contact");
+    my $unfiltered_items = JSON::from_json($res->decoded_content)->{_embedded}{'ngcp:contracts'};
+    my @unfiltered_items = !$unfiltered_items ? () : (ref $unfiltered_items eq 'ARRAY' ? @$unfiltered_items : ($unfiltered_items));
+    foreach my $item (@unfiltered_items) {
+        ok($item->{status} ne "terminated", "unfiltered collection still excludes terminated contracts");
+    }
+
+    $res = $ua->get($uri.'/api/contracts/?page=1&rows=50&status=terminated&'.$contact_q);
+    is($res->code, 200, "fetch contracts with status=terminated");
+    my $terminated_items = JSON::from_json($res->decoded_content)->{_embedded}{'ngcp:contracts'};
+    my @terminated_items = !$terminated_items ? () : (ref $terminated_items eq 'ARRAY' ? @$terminated_items : ($terminated_items));
+    ok(scalar(@terminated_items) > 0, "status=terminated returns contracts");
+    my %terminated_found;
+    foreach my $item (@terminated_items) {
+        is($item->{status}, "terminated", "status=terminated item is terminated");
+        $terminated_found{$item->{_links}->{self}->{href}} = 1;
+    }
+    foreach my $loc (@allcontracts) {
+        ok($terminated_found{$loc}, "terminated test contract $loc found via status=terminated");
+    }
+
+    $res = $ua->get($uri.'/api/contracts/?page=1&rows=50&not_status=terminated');
+    is($res->code, 200, "fetch contracts with not_status=terminated");
+    my $not_term_items = JSON::from_json($res->decoded_content)->{_embedded}{'ngcp:contracts'};
+    my @not_term_items = !$not_term_items ? () : (ref $not_term_items eq 'ARRAY' ? @$not_term_items : ($not_term_items));
+    foreach my $item (@not_term_items) {
+        ok($item->{status} ne "terminated", "not_status=terminated excludes terminated");
+        ok(!$terminated_found{$item->{_links}->{self}->{href}}, "terminated test contract not returned by not_status=terminated");
+    }
+
+    $res = $ua->get($uri.'/api/contracts/?page=1&rows=50&status=active,pending');
+    is($res->code, 200, "fetch contracts with status=active,pending");
+    my $ap_items = JSON::from_json($res->decoded_content)->{_embedded}{'ngcp:contracts'};
+    my @ap_items = !$ap_items ? () : (ref $ap_items eq 'ARRAY' ? @$ap_items : ($ap_items));
+    ok(scalar(@ap_items) > 0, "status=active,pending returns contracts");
+    foreach my $item (@ap_items) {
+        ok($item->{status} eq "active" || $item->{status} eq "pending", "status=active,pending item has allowed status");
+    }
+
     # check if deletion of contact is now ok
     # TODO: are we supposed to be able to delete a contact for a terminated
     # contract? there are still DB contstraints in the way!
