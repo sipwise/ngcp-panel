@@ -37,11 +37,24 @@ sub query_params {
         },
         {
             param => 'status',
-            description => 'Filter for contracts with a specific status (except "terminated")',
+            description => 'Filter for contracts with a specific status (comma-separated list of statuses to include possible)',
             query => {
                 first => sub {
                     my $q = shift;
-                    { 'me.status' => $q };
+                    my @l = split /,/, $q;
+                    { 'me.status' => { -in => \@l }};
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'not_status',
+            description => 'Filter for contracts not having a specific status (comma-separated list of statuses to exclude possible)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my @l = split /,/, $q;
+                    { 'me.status' => { -not_in => \@l }};
                 },
                 second => sub {},
             },
@@ -92,7 +105,10 @@ sub GET :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $now = NGCP::Panel::Utils::DateTime::current_local;
-        my $contracts_rs = $self->item_rs($c,0,$now);
+        my $include_terminated =
+            defined $c->request->query_params->{status}
+            || defined $c->request->query_params->{not_status};
+        my $contracts_rs = $self->item_rs($c, $include_terminated ? 1 : 0, $now);
         (my $total_count, $contracts_rs, my $contracts_rows) = $self->paginate_order_collection($c, $contracts_rs);
 
         my $contracts;
