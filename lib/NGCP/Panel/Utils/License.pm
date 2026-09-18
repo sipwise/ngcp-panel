@@ -14,7 +14,7 @@ sub get_license_status {
     my $fd;
     {
         no autodie qw(sysopen);
-        if (!sysopen($fd, '/proc/ngcp/check', O_NONBLOCK|O_RDONLY)) {
+        if (!sysopen($fd, '/proc/ngcp/raw_check', O_NONBLOCK|O_RDONLY)) {
             $c->log->error('License status check failed: could not check license')
                 unless $c->config->{general}{ngcp_type} eq 'spce';
             return 'missing';
@@ -79,7 +79,7 @@ sub get_license {
 
     return 1 if $c->config->{general}{ngcp_type} eq 'spce';
 
-    my $proc_dir = '/proc/ngcp/flags';
+    my $proc_dir = '/proc/ngcp/raw_flags';
     unless (-d $proc_dir) {
         $c->log->error("Failed to access $proc_dir")
             unless $c->config->{general}{ngcp_type} eq 'spce';
@@ -105,7 +105,7 @@ sub get_license {
 sub get_licenses {
     my $c = shift;
 
-    my $proc_dir = '/proc/ngcp/flags';
+    my $proc_dir = '/proc/ngcp/raw_flags';
     unless (-d $proc_dir) {
         $c->log->error("Failed to access $proc_dir")
             unless $c->config->{general}{ngcp_type} eq 'spce';
@@ -148,7 +148,7 @@ sub get_license_meta {
 
     my $meta = {};
     my @collect = qw(
-        check
+        raw_check
         current_calls
         current_pbx_groups
         current_pbx_subscribers
@@ -160,7 +160,7 @@ sub get_license_meta {
         max_pbx_subscribers
         max_registered_subscribers
         max_subscribers
-        valid
+        raw_valid
     );
 
     opendir(my $dh, $proc_dir) || do {
