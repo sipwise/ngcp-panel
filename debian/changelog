@@ -1,3 +1,10 @@
+ngcp-panel (26.0.1.19+0~mr26.0.1.19) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [d6892be] MT#65953 add status/not_status filters to contracts API
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Sep 2026 17:31:04 +0200
+
 ngcp-panel (26.0.1.18+0~mr26.0.1.18) unstable; urgency=medium
 
   [ Rene Krenn ]
