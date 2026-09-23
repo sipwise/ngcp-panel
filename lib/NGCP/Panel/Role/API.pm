@@ -528,7 +528,7 @@ sub get_allowed_roles {
     my ($allowed_roles_default, $allowed_roles_journal, $allowed_roles_per_methods);
 
     if('HASH' eq ref $roles_config){
-        $allowed_roles_default = delete $roles_config->{Default};
+        $allowed_roles_default = $roles_config->{Default};
         $allowed_roles_per_methods = {map {
             $_ => $roles_config->{$_} // $allowed_roles_default;
         } @{ $self->allowed_methods }, 'Journal' };
@@ -1141,13 +1141,15 @@ sub add_id_to_query_params {
 
 sub apply_query_params {
 
-    my ($self,$c,$query_params,$item_rs) = @_;
+    my ($self,$c,$query_params,$item_rs,$skip_expand_filter) = @_;
     # no query params defined in collection controller
     unless(@{ $query_params }) {
         return $item_rs;
     }
 
-    $self->add_id_to_query_params($c, $query_params);
+    unless ($skip_expand_filter) {
+        $self->add_id_to_query_params($c, $query_params);
+    }
 
     my $form = $self->get_form($c);
 
@@ -1177,7 +1179,97 @@ sub apply_query_params {
     #use Data::Dumper;
     #$c->log->debug(Dumper(DBIx::Class::Helper::ResultSet::Explain::explain($item_rs)));
 
+    return $item_rs if $skip_expand_filter;
+
+    $item_rs = $self->apply_expand_query_params($c, $form, $item_rs);
+
     return $item_rs;
+}
+
+sub apply_expand_query_params {
+    my ($self, $c, $form, $item_rs) = @_;
+
+    return $item_rs unless $form;
+
+    foreach my $qp (keys %{$c->req->query_params}) {
+        next unless $qp =~ /\./;
+        my $q = $c->req->query_params->{$qp};
+        next unless defined $q && length $q;
+
+        my ($pri_field, $expand_class, $rest) = $self->_check_expand_field($c, $form, $qp);
+        next unless $expand_class;
+
+        my $expand_rs = $self->_apply_expand_filter_rs($c, $expand_class, $rest, $q);
+        next unless $expand_rs;
+
+        $item_rs = $item_rs->search({
+            'me.'.$pri_field => { -in => $expand_rs->get_column('id')->as_query }
+        });
+    }
+
+    return $item_rs;
+}
+
+sub _check_expand_field {
+    my ($self, $c, $form, $path) = @_;
+
+    my ($key, $rest) = split /\./, $path, 2;
+    my ($pri_field, $expand) = $self->_get_expand_field($c, $form, $key);
+    return unless $expand;
+
+    return unless $expand->{allowed_roles};
+    my $allowed_roles = $self->get_allowed_roles($expand->{allowed_roles}, $c->req->method);
+    return unless $allowed_roles && any { $c->user->roles eq $_ } @{$allowed_roles};
+
+    my $expand_class =
+        $expand->{controller_class} // ($expand->{class} =~ s/::Role::API::/::Controller::API::/r);
+    return ($pri_field, $expand_class, $rest);
+}
+
+sub _apply_expand_filter_rs {
+    my ($self, $c, $class, $path, $value) = @_;
+
+    if ($path =~ /\./) {
+        my ($pri_field, $expand_class, $rest) = $self->_check_expand_field($c, $class->get_form($c), $path);
+        if ($expand_class) {
+            my $nested_rs = $self->_apply_expand_filter_rs($c, $expand_class, $rest, $value);
+            return unless $nested_rs;
+
+            return $class->_item_rs($c)->search({
+                'me.'.$pri_field => { -in => $nested_rs->get_column('id')->as_query }
+            });
+        }
+    }
+
+    return unless $class->can('query_params');
+    my ($query_param) = grep { ($_->{param} // '') eq $path } @{$class->query_params // []};
+    return unless $query_param;
+
+    local $c->req->query_params->{$path} = $value;
+    return $class->apply_query_params($c, [$query_param], $class->_item_rs($c), 1);
+}
+
+sub _get_expand_field {
+    my ($self, $c, $form, $expand_key) = @_;
+
+    my ($pri_field, $expand) = $self->_find_expand_field($form, $expand_key);
+    unless ($expand) {
+        my $expand_form = NGCP::Panel::Form::get("NGCP::Panel::Form::Expand", $c);
+        ($pri_field, $expand) = $self->_find_expand_field($expand_form, $expand_key);
+    }
+    return ($pri_field, $expand);
+}
+
+sub _find_expand_field {
+    my ($self, $form, $expand_key) = @_;
+
+    return unless $form;
+    foreach my $field ($form->fields) {
+        my $expand = $field->element_attr->{expand} // next;
+        my $to = $expand->{to} // $field->name.'_expand';
+        return ($field->name, $expand) if $to eq $expand_key;
+    }
+    return;
 }
 
 sub _get_sorted_query_params {
@@ -1512,7 +1604,8 @@ sub expand_field {
     if (!$to || !$class || !$form) {
         try {
             die unless $expand->{allowed_roles};
-            die unless any { $c->user->roles eq $_ } @{$expand->{allowed_roles}};
+            my $allowed_roles = $self->get_allowed_roles($expand->{allowed_roles}, $c->req->method);
+            die unless $allowed_roles && any { $c->user->roles eq $_ } @{$allowed_roles};
 
             $to = $expand->{to} // $pri_field . '_expand';
             $class = $expand->{class} // die;
