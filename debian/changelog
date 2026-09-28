@@ -1,3 +1,11 @@
+ngcp-panel (26.0.1.20+0~mr26.0.1.20) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [bff783f] MT#66012 add collections filter by resource ID
+  * [435732f] MT#65991 add recusrive expand filters support
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 28 Sep 2026 16:29:20 +0200
+
 ngcp-panel (26.0.1.19+0~mr26.0.1.19) unstable; urgency=medium
 
   [ Rene Krenn ]
