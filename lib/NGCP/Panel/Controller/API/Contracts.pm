@@ -19,7 +19,7 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.';
+    return 'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals. The "contact_id" and "billing_profile_id" fields can be resolved into the referenced resources via "?expand=contact_id,billing_profile_id".';
 };
 
 sub query_params {
@@ -76,7 +76,54 @@ sub query_params {
                 second => sub {},
             },
         },
+        {
+            param => 'contact_email',
+            description => 'Filter for contracts whose contact has a specific email address',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'contact.email' => $q } if !defined $q || ref $q;
+                    my ($pattern,$is_pattern) = escape_search_string_pattern($q);
+                    { 'contact.email' => { like => $pattern } };
+                },
+                second => sub {
+                    return { join => 'contact' };
+                },
+            },
+        },
+        {
+            param => 'billing_profile_name',
+            description => 'Filter for contracts whose currently active billing profile has a specific name',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'billing_profile.name' => $q } if !defined $q || ref $q;
+                    my ($pattern,$is_pattern) = escape_search_string_pattern($q);
+                    { 'billing_profile.name' => { like => $pattern } };
+                },
+                second => sub {
+                    return { join => { actual_billing_profile => 'billing_profile' } };
+                },
+            },
+        },
     ];
+}
+
+sub order_by_cols {
+    return
+        {
+            contact_email => 'contact.email',
+            billing_profile_name => 'billing_profile.name',
+        },
+        {
+            columns_are_additional => 1,
+            contact_email => {
+                join => 'contact',
+            },
+            billing_profile_name => {
+                join => { actual_billing_profile => 'billing_profile' },
+            },
+        };
 }
 
 use parent qw/NGCP::Panel::Role::Entities NGCP::Panel::Role::API::Contracts/;

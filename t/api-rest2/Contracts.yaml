@@ -36,6 +36,7 @@
             code: 201
     retain:
         billing_profile_id: header.location
+        billing_profile: body
 
 #create a Customer Contact
 -
@@ -997,6 +998,204 @@
             code: 200
             '${active_pending_count_ok}': 1
             '${active_pending_statuses_ok}': 1
+
+#GET contracts with expand=contact_id,billing_profile_id
+-
+    name: GET contracts with expand=contact_id,billing_profile_id
+    type: item
+    method: GET
+    path: '/api/contracts/?page=1&rows=50&expand=contact_id,billing_profile_id&contact_id=${system_contact_id}'
+    retain:
+        expanded_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{expanded_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{expand_found} = scalar(@items) > 0 ? 1 : 0;
+            $retained->{expand_contact_ok} = (grep {
+                !$_->{contact_id_expand}
+                || ($_->{contact_id_expand}->{id} // 0) != $_->{contact_id}
+                || ($_->{contact_id_expand}->{email} // '') ne $retained->{system_contact}->{email}
+            } @items) ? 0 : 1;
+            $retained->{expand_profile_ok} = (grep {
+                !$_->{billing_profile_id_expand}
+                || ($_->{billing_profile_id_expand}->{id} // 0) != $_->{billing_profile_id}
+                || ($_->{billing_profile_id_expand}->{name} // '') ne $retained->{billing_profile}->{name}
+            } @items) ? 0 : 1;
+
+            my $escape = sub {
+                my $s = shift // '';
+                $s =~ s/([^A-Za-z0-9\-_.~])/sprintf('%%%02X', ord($1))/ge;
+                return $s;
+            };
+            my $email = $escape->($retained->{system_contact}->{email});
+            my $profile_name = $escape->($retained->{billing_profile}->{name});
+            if (@items) {
+                $retained->{item_expand_link} = $items[0]->{_links}->{self}->{href}
+                    . '?expand=contact_id,billing_profile_id';
+            }
+            $retained->{contact_email_link} = '/api/contracts/?page=1&rows=50&contact_email=' . $email;
+            $retained->{contact_email_wildcard_link} = '/api/contracts/?page=1&rows=50&contact_email=sys%5Fcontact%40*';
+            $retained->{profile_name_link} = '/api/contracts/?page=1&rows=50&billing_profile_name=' . $profile_name;
+            $retained->{combined_filter_link} = '/api/contracts/?page=1&rows=50&contact_email=' . $email
+                . '&billing_profile_name=' . $profile_name;
+            $retained->{nomatch_filter_link} = '/api/contracts/?page=1&rows=50&contact_email=does.not.exist%40nowhere.invalid';
+        }
+    conditions:
+        is:
+            code: 200
+            '${expand_found}': 1
+            '${expand_contact_ok}': 1
+            '${expand_profile_ok}': 1
+
+#GET single contract with expand=contact_id,billing_profile_id
+-
+    name: GET single contract with expand=contact_id,billing_profile_id
+    type: item
+    method: GET
+    path: '/${item_expand_link}'
+    retain:
+        expanded_contract: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $item = $retained->{expanded_contract};
+            $retained->{item_expand_contact_ok} =
+                ($item->{contact_id_expand}
+                 && ($item->{contact_id_expand}->{id} // 0) == $item->{contact_id}
+                 && ($item->{contact_id_expand}->{email} // '') eq $retained->{system_contact}->{email}) ? 1 : 0;
+            $retained->{item_expand_profile_ok} =
+                ($item->{billing_profile_id_expand}
+                 && ($item->{billing_profile_id_expand}->{id} // 0) == $item->{billing_profile_id}
+                 && ($item->{billing_profile_id_expand}->{name} // '') eq $retained->{billing_profile}->{name}) ? 1 : 0;
+        }
+    conditions:
+        is:
+            code: 200
+            '${item_expand_contact_ok}': 1
+            '${item_expand_profile_ok}': 1
+        ok:
+            '${expanded_contract}.contact_id_expand': defined
+            '${expanded_contract}.billing_profile_id_expand': defined
+
+#GET contracts filtered by contact_email
+-
+    name: GET contracts filtered by contact_email
+    type: item
+    method: GET
+    path: '/${contact_email_link}'
+    retain:
+        contact_email_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{contact_email_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{contact_email_found} = scalar(@items) > 0 ? 1 : 0;
+            $retained->{contact_email_count} = scalar @items;
+            $retained->{contact_email_all_match} = (grep {
+                $_->{contact_id} != $retained->{system_contact_id}
+            } @items) ? 0 : 1;
+        }
+    conditions:
+        is:
+            code: 200
+            '${contact_email_found}': 1
+            '${contact_email_all_match}': 1
+
+#GET contracts filtered by contact_email wildcard
+-
+    name: GET contracts filtered by contact_email wildcard
+    type: item
+    method: GET
+    path: '/${contact_email_wildcard_link}'
+    retain:
+        contact_email_wildcard_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{contact_email_wildcard_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{contact_email_wildcard_found} = scalar(@items) > 0 ? 1 : 0;
+            $retained->{contact_email_wildcard_all_match} = (grep {
+                $_->{contact_id} != $retained->{system_contact_id}
+            } @items) ? 0 : 1;
+        }
+    conditions:
+        is:
+            code: 200
+            '${contact_email_wildcard_found}': 1
+            '${contact_email_wildcard_all_match}': 1
+
+#GET contracts filtered by billing_profile_name
+-
+    name: GET contracts filtered by billing_profile_name
+    type: item
+    method: GET
+    path: '/${profile_name_link}'
+    retain:
+        profile_name_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{profile_name_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{profile_name_found} = scalar(@items) > 0 ? 1 : 0;
+            $retained->{profile_name_count} = scalar @items;
+            $retained->{profile_name_all_match} = (grep {
+                $_->{billing_profile_id} != $retained->{billing_profile_id}
+            } @items) ? 0 : 1;
+            my %seen;
+            $seen{$_->{id}} = 1 for @items;
+            $retained->{profile_name_no_dupes} = (scalar(keys %seen) == scalar(@items)) ? 1 : 0;
+        }
+    conditions:
+        is:
+            code: 200
+            '${profile_name_found}': 1
+            '${profile_name_all_match}': 1
+            '${profile_name_no_dupes}': 1
+
+#GET contracts filtered by contact_email and billing_profile_name
+-
+    name: GET contracts filtered by contact_email and billing_profile_name
+    type: item
+    method: GET
+    path: '/${combined_filter_link}'
+    retain:
+        combined_filter_contracts: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            my $embedded = $retained->{combined_filter_contracts}->{_embedded}->{'ngcp:contracts'};
+            my @items = !$embedded ? () : (ref $embedded eq 'ARRAY' ? @$embedded : ($embedded));
+            $retained->{combined_filter_all_match} = (grep {
+                $_->{contact_id} != $retained->{system_contact_id}
+                || $_->{billing_profile_id} != $retained->{billing_profile_id}
+            } @items) ? 0 : 1;
+            $retained->{combined_filter_matches_singles} =
+                (scalar(@items) == $retained->{contact_email_count}
+                 && scalar(@items) == $retained->{profile_name_count}) ? 1 : 0;
+        }
+    conditions:
+        is:
+            code: 200
+            '${combined_filter_all_match}': 1
+            '${combined_filter_matches_singles}': 1
+
+#GET contracts filtered by non-matching contact_email
+-
+    name: GET contracts filtered by non-matching contact_email
+    type: item
+    method: GET
+    path: '/${nomatch_filter_link}'
+    retain:
+        nomatch_filter_contracts: body
+    conditions:
+        is:
+            code: 200
+            '${nomatch_filter_contracts}.total_count': 0
 
 #terminate billingprofile
 -
