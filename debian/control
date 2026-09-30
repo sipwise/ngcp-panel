@@ -49,6 +49,7 @@ Depends:
  libdata-printer-perl,
  libdata-serializer-perl,
  libdata-structure-util-perl,
+ libdata-uuid-perl,
  libdata-validate-ip-perl,
  libdatetime-format-http-perl,
  libdatetime-format-iso8601-perl,
