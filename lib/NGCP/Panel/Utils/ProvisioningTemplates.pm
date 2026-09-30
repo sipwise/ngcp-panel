@@ -767,6 +767,32 @@ sub provision_finish {
 
 }
 
+sub get_provisioned_entity {
+
+    my ($context) = @_;
+
+    return unless $context;
+
+    if (exists $context->{subscriber}) {
+        return {
+            type  => 'subscriber',
+            id    => $context->{subscriber}->{id},
+            label => (($context->{subscriber}->{username}
+                and $context->{domain} and $context->{domain}->{domain})
+                ? $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}
+                : undef),
+        };
+    }
+
+    return {
+        type => 'contract',
+        id   => $context->{contract}->{id},
+    } if exists $context->{contract};
+
+    return;
+
+}
+
 sub provision_cleanup {
 
     my ($c, $context) = @_;

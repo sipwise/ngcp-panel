@@ -366,11 +366,7 @@ sub post {
                 c => $c,
                 context => $context,
             );
-            $c->log->debug(sprintf("Provisioning template '%s' done: subscriber %s created",
-                $id,
-                $context->{subscriber}->{username} . '@' . $context->{domain}->{domain}
-            ));
-            $c->response->header(Location => sprintf('%s%d', NGCP::Panel::Role::API::Subscribers::dispatch_path(), $context->{subscriber}->{id}));
+            $self->log_provisioning_result($c, $id, $context);
         } catch($e) {
             run_module_method('Utils::ProvisioningTemplates::provision_cleanup',$c, $context);
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Provisioning template '$id' failed", $e);
@@ -398,6 +394,41 @@ sub post {
     }
 
     $self->return_representation_post($c);
+
+    return;
+}
+
+sub log_provisioning_result {
+    my ($self, $c, $id, $context) = @_;
+
+    # the provisioning transaction is already committed here, so a failure
+    # must not be reported as a failed provisioning run
+    try {
+        my $entity = run_module_method('Utils::ProvisioningTemplates::get_provisioned_entity', $context);
+        if (not $entity or not defined $entity->{id}) {
+            $c->log->debug(sprintf("Provisioning template '%s' done", $id));
+        } elsif ('subscriber' eq $entity->{type}) {
+            if (defined $entity->{label}) {
+                $c->log->debug(sprintf("Provisioning template '%s' done: subscriber %s created",
+                    $id, $entity->{label}));
+            } else {
+                $c->log->debug(sprintf("Provisioning template '%s' done: subscriber id %d created",
+                    $id, $entity->{id}));
+            }
+            $c->response->header(Location => sprintf('%s%d',
+                NGCP::Panel::Role::API::Subscribers::dispatch_path(), $entity->{id}));
+        } else {
+            $c->log->debug(sprintf("Provisioning template '%s' done: contract id %d created",
+                $id, $entity->{id}));
+            my $contract = $c->model('DB')->resultset('contracts')->find($entity->{id});
+            my $dispatch_path = ($contract and $contract->contact and $contract->contact->reseller_id)
+                ? run_module_method('Controller::API::Customers::dispatch_path')
+                : run_module_method('Controller::API::Contracts::dispatch_path');
+            $c->response->header(Location => sprintf('%s%d', $dispatch_path, $entity->{id}));
+        }
+    } catch($e) {
+        $c->log->warn("Provisioning template '$id' done, but failed to log the result: $e");
+    }
 
     return;
 }

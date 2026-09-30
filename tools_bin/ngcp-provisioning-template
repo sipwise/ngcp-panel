@@ -118,7 +118,16 @@ if (exists $c->stash->{'provisioning_templates'}->{$template_name}) {
                 c => $c,
                 context => $context,
             );
-            print ("Provisioning template '$template_name' done: subscriber " . $context->{subscriber}->{username} . '@' . $context->{domain}->{domain} . " created\n");
+            my $entity = NGCP::Panel::Utils::ProvisioningTemplates::get_provisioned_entity($context);
+            if (not $entity or not defined $entity->{id}) {
+                print("Provisioning template '$template_name' done\n");
+            } elsif ('subscriber' eq $entity->{type}) {
+                print("Provisioning template '$template_name' done: subscriber "
+                    . ($entity->{label} // 'id ' . $entity->{id}) . " created\n");
+            } else {
+                print("Provisioning template '$template_name' done: contract id "
+                    . $entity->{id} . " created\n");
+            }
         };
         if ($@) {
             die("Provisioning template '$template_name' failed: " . $@ . "\n");
