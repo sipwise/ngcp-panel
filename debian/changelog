@@ -1,3 +1,37 @@
+ngcp-panel (26.3.1.0+0~mr26.3.1.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [6a94206] MT#51865 add calllistsuppressions API endpoint
+  * [50b518c] MT#51865 support CSV upload and download on calllistsuppressions API
+  * [5cf446e] MT#65852 support wildcard search on calllistsuppressions domain
+  * [f7ac7d9] MT#65890 Fix regression on PATCH calls to CallForwardsItem api
+  * [6ff94fc] MT#66024 Report license warnings/errors even if not enforced
+  * [45aafa7] MT#65904 report rejected CSV rows on calllistsuppressions API
+
+  [ Rene Krenn ]
+  * [3af6080] MT#65586 add expand for profilepackages profile mapping arrays
+  * [871f002] MT#65713 include contract_cnt and voucher_cnt in profilepackages
+  * [ae0be66] MT#65953 add status/not_status filters to contracts API
+  * [7251904] MT#66160 fix 500 on contract-only provisioning templates
+  * [5e9aeb2] MT#66071 add contact_email and billing_profile_name filters to contracts API
+
+  [ Kirill Solomko ]
+  * [eba04a3] MT#65383 add auth token validation support
+  * [ed41c13] MT#65799 customercontacts, systemcontacts expand terminated contacts
+  * [d12b794] MT#65906 /api/platforminfo returns call_flow data
+  * [db77631] MT#65239 enhance /api/platforminfo with meta release info
+  * [3966cdb] MT#66009 /api/admins safeguard links for nonexisting reseller_id
+  * [e4a0c7b] MT#66012 add collections filter by resource ID
+  * [1836eaa] MT#65991 add recusrive expand filters support
+
+  [ Sipwise Jenkins Builder ]
+  * [16f107f] TT#4166 I18N dump: snapshot 2026.09.10-22.19.00
+
+  [ Michael Prokop ]
+  * [3198cd8] MT#66165 Add libdata-uuid-perl to depends
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 05 Oct 2026 12:35:32 +0200
+
 ngcp-panel (26.3.0.0+0~mr26.3.0.0) unstable; urgency=medium
 
   [ Rene Krenn ]
