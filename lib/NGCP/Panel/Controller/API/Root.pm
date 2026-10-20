@@ -411,6 +411,7 @@ sub platforminfo :Path('/api/platforminfo') :CaptureArgs(0) {
                 $data->{multisite} = {};
             }
             $data->{call_flow} = $c->config->{callflow} // {};
+            $data->{grafana} = $c->config->{grafana} // {};
             $data->{release_info} = get_meta_release_data($c);
         }
 
