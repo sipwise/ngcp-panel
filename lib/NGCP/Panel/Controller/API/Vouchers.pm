@@ -18,7 +18,15 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Defines vouchers to top-up subscriber balances.';
+    return 'Defines vouchers to top-up subscriber balances. You can POST vouchers individually one-by-one using json. '.
+           'To bulk-upload vouchers, specify the Content-Type as "text/csv" and POST the CSV in the request body to the '.
+           'collection with an optional parameter "purge_existing=true". '.
+           'The CSV has no header row, the columns order is "code,amount,valid_until,customer_id", an admin has to add '.
+           'the "reseller_id" as first column. The valid_until is either "YYYY-MM-DD" or "YYYY-MM-DD hh:mm:ss" and '.
+           'customer_id can be empty. As admin, purge_existing deletes the vouchers of all the resellers, as reseller only the own ones. '.
+           'Lines with less than two columns are skipped. A line which cannot be parsed, an invalid value, a code which '.
+           'already exists for the reseller or an unknown reseller, customer or package rejects the whole upload with a 422, '.
+           'in which case nothing is imported or purged.';
 };
 
 sub query_params {
@@ -80,6 +88,22 @@ __PACKAGE__->set_config({
     required_licenses => [qw/billing/],
 });
 
+sub auto :Private {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    if ($self->get_config('log_request') && !$self->_is_csv_upload($c)) {
+        $self->log_request($c);
+    }
+
+    return $self->validate_request($c);
+}
+
+sub _is_csv_upload {
+    my ($self, $c) = @_;
+    return index($self->get_content_type($c) // '', 'text/csv') == 0;
+}
+
 sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
@@ -137,11 +161,54 @@ sub POST :Allow {
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $resource = $self->get_valid_post_data(
-            c => $c, 
-            media_type => 'application/json',
+        my $data = $self->get_valid_raw_post_data(
+            c => $c,
+            media_type => [qw#application/json text/csv#],
         );
-        last unless $resource;
+        last unless $data;
+
+        if ($self->_is_csv_upload($c)) {
+            my $purge_existing = $c->req->query_params->{purge_existing} // '';
+            my $text;
+            try {
+                (undef, undef, $text) = NGCP::Panel::Utils::Voucher::upload_csv(
+                    c              => $c,
+                    data           => \$data,
+                    rs             => $self->_item_rs($c),
+                    purge_existing => ($purge_existing eq 'true' || $purge_existing eq '1'),
+                );
+            } catch(DBIx::Class::Exception $e where { /Duplicate entry .* for key '\S*vouchers_rescode_idx'/ }) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                    "Failed to upload vouchers, a voucher code is duplicated or already exists for its reseller", $e);
+                last;
+            } catch(DBIx::Class::Exception $e where { /foreign key constraint fails/ }) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                    "Failed to upload vouchers, unknown reseller_id, customer_id or package_id", $e);
+                last;
+            } catch(DBIx::Class::Exception $e where { /Incorrect \w+ value|Data truncated|cannot be null|Out of range value/ }) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                    "Failed to upload vouchers, invalid voucher data", $e);
+                last;
+            } catch($e where { ref $_ eq 'ARRAY' }) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to upload vouchers, $e->[0]");
+                last;
+            } catch($e) {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                             "failed to upload csv", $e);
+                last;
+            };
+
+            $c->log->info($$text);
+
+            $guard->commit;
+
+            $c->response->status(HTTP_CREATED);
+            $c->response->body(q());
+            last;
+        }
+
+        last unless $self->require_wellformed_json($c, 'application/json', $data);
+        my $resource = JSON::from_json($data, { utf8 => 1 });
 
         my $form = $self->get_form($c);
         last unless $self->validate_form(

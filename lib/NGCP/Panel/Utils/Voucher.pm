@@ -2,6 +2,7 @@ package NGCP::Panel::Utils::Voucher;
 use Sipwise::Base;
 use Crypt::Rijndael;
 use MIME::Base64;
+use Text::CSV_XS;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract qw();
 
@@ -183,6 +184,70 @@ sub get_datatable_cols {
         { name => "used_at", "search" => 1, "title" => $c->loc("Used At") },
         { name => "used_by_subscriber.id", "search" => 1, "title" => $c->loc("Used By Subscriber #") },
     );
+}
+
+sub upload_csv {
+    my %params = @_;
+    my ($c,$data,$rs,$purge_existing) = @params{qw/c data rs purge_existing/};
+
+    my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
+    my @cols = @{ $c->config->{voucher_csv}->{element_order} };
+    if($c->user->roles eq "admin") {
+        unshift @cols, 'reseller_id';
+    }
+    $csv->column_names (@cols);
+    my @fails = ();
+    my $linenum = 0;
+    my @vouchers = ();
+
+    my $dtf = $c->model('DB')->storage->datetime_parser;
+    my $created_at = $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local);
+
+    if ($purge_existing) {
+        $rs->delete;
+    }
+
+    open(my $fh, '<', $data);
+    while(my $row = $csv->getline_hr($fh)) {
+        ++$linenum;
+        if($csv->is_missing(1)) {
+            push @fails, $linenum;
+            next;
+        }
+        if(defined $row->{valid_until} && $row->{valid_until} =~ /^\d{4}\-\d{2}\-\d{2}$/) {
+            my $valid_until;
+            try {
+                $valid_until = NGCP::Panel::Utils::DateTime::from_string($row->{valid_until})
+                    ->add(days => 1)->subtract(seconds => 1);
+            } catch($e) {
+                die(["line $linenum has an invalid valid_until '$row->{valid_until}'", "showdetails"]);
+            }
+            $row->{valid_until} = $dtf->format_datetime($valid_until);
+        }
+        $row->{customer_id} = undef if(defined $row->{customer_id} && $row->{customer_id} eq "");
+        $row->{package_id} = undef if(defined $row->{package_id} && $row->{package_id} eq "");
+        $row->{code} = encrypt_code($c, $row->{code});
+        if($c->user->roles eq "reseller") {
+            $row->{reseller_id} = $c->user->reseller_id;
+        }
+        $row->{created_at} = $created_at;
+        push @vouchers, $row;
+    }
+
+    my ($diag) = $csv->error_diag;
+    unless ($csv->eof && (!$diag || $diag == 2012)) {
+        die(["line " . ($linenum + 1) . " could not be parsed", "showdetails"]);
+    }
+    close $fh;
+
+    $c->model('DB')->resultset('vouchers')->populate(\@vouchers);
+
+    my $text = $c->loc('Billing Vouchers successfully uploaded');
+    if(@fails) {
+        $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
+    }
+
+    return ( \@vouchers, \@fails, \$text );
 }
 
 1;

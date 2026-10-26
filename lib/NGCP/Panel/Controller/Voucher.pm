@@ -1,7 +1,6 @@
 package NGCP::Panel::Controller::Voucher;
 use NGCP::Panel::Utils::Generic qw(:all);
 use Sipwise::Base;
-use Text::CSV_XS;
 use DateTime::Format::ISO8601;
 
 use parent 'Catalyst::Controller';
@@ -333,50 +332,20 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
             return;
         }
 
-        my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
-        my @cols = @{ $c->config->{voucher_csv}->{element_order} };
-        if($c->user->roles eq "admin") {
-            unshift @cols, 'reseller_id';
-        }
-        $csv->column_names (@cols);
-        my @fails = ();
-        my $linenum = 0;
-
-        my @vouchers = ();
+        my $data = $upload->slurp;
         try {
+            my $text;
             $c->model('DB')->txn_do(sub {
-                if ($c->req->params->{purge_existing}) {
-                    $c->stash->{'voucher_rs'}->delete;
-                }
-
-                while(my $row = $csv->getline_hr($upload->fh)) {
-                    ++$linenum;
-                    if($csv->is_missing(1)) {
-                        push @fails, $linenum;
-                        next;
-                    }
-                    if($row->{valid_until} =~ /^\d{4}\-\d{2}\-\d{2}$/) {
-                        $row->{valid_until} = NGCP::Panel::Utils::DateTime::from_string($row->{valid_until})
-                            ->add(days => 1)->subtract(seconds => 1);
-                    }
-                    $row->{customer_id} = undef if(defined $row->{customer_id} && $row->{customer_id} eq "");
-                    $row->{package_id} = undef if(defined $row->{package_id} && $row->{package_id} eq "");
-                    $row->{code} = NGCP::Panel::Utils::Voucher::encrypt_code($c, $row->{code});
-                    push @vouchers, $row;
-                }
-                unless ($csv->eof()) {
-                    die "Some lines could not be parsed. Did not reach eof. Last successful: $linenum.";
-                }
-                $c->stash->{voucher_rs}->populate(\@vouchers);
+                (undef, undef, $text) = NGCP::Panel::Utils::Voucher::upload_csv(
+                    c              => $c,
+                    data           => \$data,
+                    rs             => $c->stash->{voucher_rs},
+                    purge_existing => $c->req->params->{purge_existing},
+                );
             });
-
-            my $text = $c->loc('Billing Vouchers successfully uploaded');
-            if(@fails) {
-                $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
-            }
             NGCP::Panel::Utils::Message::info(
                 c => $c,
-                desc => $text,
+                desc => $$text,
             );
         } catch($e) {
             NGCP::Panel::Utils::Message::error(
