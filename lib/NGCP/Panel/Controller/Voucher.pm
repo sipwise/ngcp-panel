@@ -334,9 +334,9 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
         }
 
         my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
-        my @cols = $c->config->{voucher_csv}->{element_order};
+        my @cols = @{ $c->config->{voucher_csv}->{element_order} };
         if($c->user->roles eq "admin") {
-            unshift @{ $cols[0] }, 'reseller_id';
+            unshift @cols, 'reseller_id';
         }
         $csv->column_names (@cols);
         my @fails = ();
