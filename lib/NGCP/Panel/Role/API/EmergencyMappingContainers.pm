@@ -87,6 +87,9 @@ sub update_item {
         form => $form,
         resource => $resource,
     );
+    if($c->user->roles eq "reseller") {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    }
 
     my $reseller_item = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
     unless($reseller_item) {

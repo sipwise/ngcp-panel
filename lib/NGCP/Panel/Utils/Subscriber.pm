@@ -416,6 +416,37 @@ sub prepare_resource {
         $getcustomer_code = sub { return; };
     }
 
+    # subscribers and subscriberadmins must not change their own lock level and status,
+    # subscriberadmins may change them for the other subscribers of the customer
+    my $lock_level;
+    if ($item && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+        $lock_level = get_provisoning_voip_subscriber_lock_level(
+            c => $c,
+            prov_subscriber => $item->provisioning_voip_subscriber,
+        );
+        if ($item->id == $c->user->voip_subscriber->id) {
+            my @readonly = (
+                (exists $resource->{lock} && ($resource->{lock} // 0) ne ($lock_level // 0) ? 'lock' : ()),
+                (exists $resource->{status} && ($resource->{status} // '') ne $item->status ? 'status' : ()),
+            );
+            if (@readonly) {
+                &{$err_code}(HTTP_UNPROCESSABLE_ENTITY,
+                    "Read-only field(s) for authenticated role: " . join(', ', @readonly));
+                return;
+            }
+        } else {
+            $lock_level = $resource->{lock} if exists $resource->{lock};
+            if (defined $lock_level && $lock_level !~ /^[1-5]$/) {
+                &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Invalid 'lock', must be null or 1-5.");
+                return;
+            }
+            if (($resource->{status} // '') eq 'terminated') {
+                &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Use DELETE to terminate a subscriber.");
+                return;
+            }
+        }
+    }
+
     my $groups = [];
     my $groupmembers = [];
     my $domain;
@@ -463,7 +494,7 @@ sub prepare_resource {
             $resource->{domain_id} = $domain->id;
             $resource->{customer_id} = $item->provisioning_voip_subscriber->account_id;
         }
-        $resource->{status} = 'active';
+        $resource->{status} = $item ? $resource->{status} // $item->status : 'active';
         #deny to create subscriberadmin, the same as in the web ui
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     } elsif($c->user->roles eq "subscriber") {
@@ -477,7 +508,7 @@ sub prepare_resource {
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
         $resource->{customer_id} = $item->provisioning_voip_subscriber->account_id;
-        $resource->{status} = 'active';
+        $resource->{status} = $item ? $resource->{status} // $item->status : 'active';
 
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     }
@@ -551,6 +582,12 @@ sub prepare_resource {
 
     # this format is expected by NGCP::Panel::Utils::Subscriber::create_subscriber
     $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
+
+    # lock is not a field of the subscriberadmin/subscriber forms (removed by the validation),
+    # apply the one determined above
+    if ($item && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+        $resource->{lock} = $lock_level;
+    }
 
     unless($domain) {
         $domain = $c->model('DB')->resultset('domains')->search({'me.id' => $resource->{domain_id}});
