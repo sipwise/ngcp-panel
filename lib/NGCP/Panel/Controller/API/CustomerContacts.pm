@@ -125,12 +125,10 @@ sub POST :Allow {
         $resource->{timezone} = NGCP::Panel::Utils::DateTime::get_timezone_link($c, $resource->{timezone});
 
         my $reseller_id;
-        if($c->user->roles eq "admin") {
+        if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
             $reseller_id = $resource->{reseller_id};
-        } elsif($c->user->roles eq "reseller") {
+        } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
             $reseller_id = $c->user->reseller_id;
-        } else {
-            $reseller_id = $c->user->contract->contact->reseller_id;
         }
 
         my $reseller = $c->model('DB')->resultset('resellers')

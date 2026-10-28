@@ -126,6 +126,10 @@ sub resource_from_item {
 
 sub pre_process_form_resource{
     my($self,$c, $item, $old_resource, $resource, $form, $process_extras) = @_;
+    #reseller_id is mandatory in the form, but implied for resellers
+    if($c->user->roles eq "reseller") {
+        $resource->{reseller_id} = $c->user->reseller_id;
+    }
     #API form doesn't consider default value somehow
     $resource->{type} //= 'phone';
 }
