@@ -178,7 +178,7 @@ msgstr ""
 msgid "(including PBX groups) "
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Voucher.pm lib/NGCP/Panel/Utils/Billing.pm lib/NGCP/Panel/Utils/CallList.pm lib/NGCP/Panel/Utils/EmergencyMapping.pm lib/NGCP/Panel/Utils/Lnp.pm lib/NGCP/Panel/Utils/Phonebook.pm
+#: lib/NGCP/Panel/Utils/Billing.pm lib/NGCP/Panel/Utils/CallList.pm lib/NGCP/Panel/Utils/EmergencyMapping.pm lib/NGCP/Panel/Utils/Lnp.pm lib/NGCP/Panel/Utils/Phonebook.pm lib/NGCP/Panel/Utils/Voucher.pm
 msgid ", but skipped the following line numbers: "
 msgstr ""
 
@@ -1307,7 +1307,7 @@ msgstr ""
 msgid "Billing Vouchers"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Voucher.pm
+#: lib/NGCP/Panel/Utils/Voucher.pm
 msgid "Billing Vouchers successfully uploaded"
 msgstr ""
 
@@ -8595,6 +8595,10 @@ msgid "Only one is allowed."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Only used together with play_emulated_ringback_tone. The emulated ringback tone is also played if the callee answers with a 183 Session Progress with SDP, announcing early media, and it is stopped as soon as the first media packet from the callee is received, which is then forwarded to the caller. Useful for callees announcing early media without sending any."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Onpeak extra rate"
 msgstr ""
 
@@ -11425,6 +11429,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "Stop "
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Stop emulated ringback tone on media from the callee"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
