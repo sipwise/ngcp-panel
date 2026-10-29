@@ -1,11 +1,11 @@
 package NGCP::Panel::Controller::Contact;
 use NGCP::Panel::Utils::Generic qw(:all);
-use Geography::Countries qw/countries country CNT_I_FLAG CNT_I_CODE2/;
 use Sipwise::Base;
 use parent 'Catalyst::Controller';
 
 use NGCP::Panel::Form;
 
+use NGCP::Panel::Utils::Contact;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime qw();
@@ -342,17 +342,13 @@ sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) :Doe
 
     my $top_entry;
     my @aaData = map {
-        my @c = country($_);
-        if($c[CNT_I_CODE2]) {
-            my $e = { name => $_, id => $c[CNT_I_CODE2] };
-            if($top && !$top_entry && $top eq $e->{id}) {
-                $top_entry = $e;
-                (); # we insert it as top element after the map
-            } else {
-                $e;
-            }
-        } else { (); }
-    } countries;
+        if($top && !$top_entry && $top eq $_->{id}) {
+            $top_entry = $_;
+            (); # we insert it as top element after the map
+        } else {
+            $_;
+        }
+    } @{ NGCP::Panel::Utils::Contact::list_countries($c) };
     if($top_entry) {
         unshift @aaData, $top_entry;
     }

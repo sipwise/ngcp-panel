@@ -1,0 +1,121 @@
+---
+#check options
+-
+    name: check OPTIONS for countries
+    type: item
+    method: OPTIONS
+    path: /api/countries/
+    conditions:
+        is:
+            code: 200
+            header:
+                Accept-Post: application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-countries
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#verify pagination
+-
+    name: verify pagination
+    type: pagination
+    method: GET
+    path: '/api/countries/?page=1&rows=10'
+    retain:
+        collection: body
+    conditions:
+        is:
+            code: 200
+
+#check options on item
+-
+    name: check OPTIONS for countries item
+    type: item
+    method: OPTIONS
+    path: /api/countries/AT
+    conditions:
+        is:
+            code: 200
+        ok:
+            options:
+                - GET
+                - HEAD
+                - OPTIONS
+
+#get a country
+-
+    name: GET country AT
+    type: item
+    method: GET
+    path: /api/countries/AT
+    conditions:
+        is:
+            code: 200
+            body.id: AT
+            body.name: Austria
+
+#get a country with lowercase code
+-
+    name: GET country de (lowercase)
+    type: item
+    method: GET
+    path: /api/countries/de
+    conditions:
+        is:
+            code: 200
+            body.id: DE
+            body.name: Germany
+
+#get an unknown country
+-
+    name: GET unknown country XX
+    type: item
+    method: GET
+    path: /api/countries/XX
+    conditions:
+        is:
+            code: 404
+
+#get a country with an invalid id
+-
+    name: GET country with invalid id
+    type: item
+    method: GET
+    path: /api/countries/AUT
+    conditions:
+        is:
+            code: 400
+
+#filter by id
+-
+    name: filter countries by id
+    type: item
+    method: GET
+    path: '/api/countries/?id=at'
+    conditions:
+        is:
+            code: 200
+            body.total_count: 1
+
+#filter by name
+-
+    name: filter countries by name
+    type: item
+    method: GET
+    path: '/api/countries/?name=germany'
+    conditions:
+        is:
+            code: 200
+            body.total_count: 1
+
+#search by code or name
+-
+    name: search countries by code or name
+    type: item
+    method: GET
+    path: '/api/countries/?q=zzzz'
+    conditions:
+        is:
+            code: 200
+            body.total_count: 0

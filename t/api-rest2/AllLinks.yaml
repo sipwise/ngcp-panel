@@ -2198,3 +2198,23 @@
     conditions:
         is:
             code: 200
+
+#check options for /api/countries/
+-
+    name: check OPTIONS for /api/countries/
+    type: item
+    method: OPTIONS
+    path: /api/countries/
+    conditions:
+        is:
+            code: 200
+
+#GET /api/countries/
+-
+    name: GET /api/countries/
+    type: item
+    method: GET
+    path: /api/countries/
+    conditions:
+        is:
+            code: 200
