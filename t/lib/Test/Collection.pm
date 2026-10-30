@@ -29,6 +29,8 @@ Moose::Exporter->setup_import_methods(
     as_is     => [ 'is_int' ],
 );
 my $tmpfilename : shared;
+my $cert_generation : shared = 0;
+my %subscriber_jwt;
 my $requests_time = [];
 my $failed_http_tests = [];
 
@@ -144,6 +146,12 @@ has 'subscriber_user' => (
 has 'subscriber_pass' => (
     is => 'rw',
     isa => 'Str',
+);
+
+has 'subscriber_auth' => (
+    is => 'rw',
+    isa => 'Str',
+    default => sub { $ENV{API_SUBSCRIBER_AUTH} // 'jwt' },
 );
 
 has 'reseller_admin_user' => (
@@ -359,14 +367,26 @@ sub init_ua {
 
 sub _create_ua {
     my ($self,$init_cert) = @_;
-    my $ua = LWP::UserAgent->new;
+    my $ua = LWP::UserAgent->new(keep_alive => 1);
+    # a thread inherits a clone of the parent's keep-alive connections, never reuse them there
+    $ua->{ngcp_tid} = threads->tid;
+    $ua->add_handler(request_prepare => sub {
+        my (undef, $ua) = @_;
+        return if $ua->{ngcp_tid} == threads->tid;
+        $ua->conn_cache->drop if $ua->conn_cache;
+        $ua->{ngcp_tid} = threads->tid;
+        return;
+    });
     my $uri = $self->base_uri;
     $uri =~ s/^https?:\/\///;
     my($user,$pass,$role,$realm) = $self->get_role_credentials();
     $ua->credentials( $uri, $realm, $user, $pass);
+    # the default PQ hybrid key share (OpenSSL 3.5) can slow down the TLS handshake by seconds
+    my $tls_groups = $ENV{API_TLS_GROUPS} // 'X25519:prime256v1';
     $ua->ssl_opts(
         verify_hostname => 0,
         SSL_verify_mode => 0,
+        $tls_groups ? (SSL_ecdh_curve => $tls_groups) : (),
     );
     if($init_cert) {
         $self->init_ssl_cert($ua, $role);
@@ -416,11 +436,19 @@ sub init_ssl_cert {
         (my $tmpfh,$tmpfilename) = File::Temp::tempfile('apicert_XXXX', DIR => '/tmp', SUFFIX => '.pem', UNLINK => 0);
         print $tmpfh $data;
         close $tmpfh;
+        $cert_generation++;
     }
-    $ua->ssl_opts(
-        SSL_cert_file => $tmpfilename,
-        SSL_key_file => $tmpfilename,
-    ) if $ua;
+    if ($ua) {
+        # keep-alive connections stay bound to the previous (revoked) certificate
+        if (($ua->{ngcp_cert_generation} // -1) != $cert_generation) {
+            $ua->conn_cache->drop if $ua->conn_cache;
+            $ua->{ngcp_cert_generation} = $cert_generation;
+        }
+        $ua->ssl_opts(
+            SSL_cert_file => $tmpfilename,
+            SSL_key_file => $tmpfilename,
+        );
+    }
     return $tmpfilename;
 }
 
@@ -459,7 +487,14 @@ sub runas {
         $self->clear_cert;
         $self->ua($self->_create_ua(0));
     }
-    $self->ua->credentials( $uri, $realm, $user, $pass);
+    $self->ua->default_headers->remove_header('Authorization');
+    my $jwt = $role eq 'subscriber' ? $self->get_subscriber_jwt : undef;
+    if ($jwt) {
+        $self->ua->credentials( $uri, $realm, undef, undef);
+        $self->ua->default_header(Authorization => "Bearer $jwt");
+    } else {
+        $self->ua->credentials( $uri, $realm, $user, $pass);
+    }
     $self->runas_role($role);
     $self->init_ssl_cert($self->ua, $role);
     diag("runas: $role;");
@@ -489,6 +524,26 @@ sub get_role_credentials{
         $port = '443';
     }
     return($user,$pass,$role,$realm,$port);
+}
+
+# a JWT avoids the bcrypt password check on every subscriber request
+sub get_subscriber_jwt {
+    my($self) = @_;
+    return if $self->subscriber_auth ne 'jwt';
+    my($user,$pass) = ($self->subscriber_user, $self->subscriber_pass);
+    return unless defined $user && defined $pass;
+    my $key = join("\0", $self->base_uri, $user, $pass);
+    return $subscriber_jwt{$key} //= do {
+        my $res = $self->_create_ua(0)->post(
+            $self->normalize_uri('/login_jwt'),
+            Content_Type => 'application/json',
+            Content => JSON::to_json({ username => $user, password => $pass }),
+        );
+        my $content = $res->is_success ? eval { JSON::from_json($res->decoded_content) } : undef;
+        diag("login_jwt for '$user' failed (" . $res->status_line . "), using basic auth")
+            unless $content && $content->{jwt};
+        $content ? $content->{jwt} : undef;
+    };
 }
 
 sub set_subscriber_credentials{
