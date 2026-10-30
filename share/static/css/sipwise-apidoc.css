@@ -52,3 +52,16 @@ body {
 .swagger-ui .info a {
      display: none;
 }
+.apidoc-pdf-download {
+     color: white;
+     background-color: #54893B;
+     border: none;
+     border-radius: 4px;
+     padding: 0.6em 1.2em;
+     font-weight: bold;
+     cursor: pointer;
+}
+.apidoc-pdf-download:disabled {
+     opacity: 0.6;
+     cursor: wait;
+}

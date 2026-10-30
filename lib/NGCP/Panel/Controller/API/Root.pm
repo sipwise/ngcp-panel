@@ -69,6 +69,14 @@ sub GET : Allow {
         $response_type = 'swaggerui';
     }
 
+    my %user_roles = map {$_ => 1} $c->user->roles;
+
+    if ($user_roles{subscriber} || $user_roles{subscriberadmin}) {
+        $c->stash(is_subscriber_api => 1);
+    } else {
+        $c->stash(is_admin_api => 1);
+    }
+
     if ($response_type eq 'swaggerui') {
         $c->detach('swaggerui');
     }
@@ -89,7 +97,6 @@ sub GET : Allow {
     };
 
     my $colls = NGCP::Panel::Utils::API::get_collections_files;
-    my %user_roles = map {$_ => 1} $c->user->roles;
     foreach my $coll(@$colls) {
         my $mod = $coll;
         $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
@@ -295,12 +302,6 @@ sub GET : Allow {
             journal_resource_config => $journal_resource_config,
         };
 
-    }
-
-    if ($user_roles{subscriber} || $user_roles{subscriberadmin}) {
-        $c->stash(is_subscriber_api => 1);
-    } else {
-        $c->stash(is_admin_api => 1);
     }
 
     if ($response_type eq 'plain_json') {
