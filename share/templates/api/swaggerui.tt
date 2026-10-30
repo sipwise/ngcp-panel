@@ -5,6 +5,7 @@
           <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="/static/css/sipwise-apidoc.css">
         <link rel="stylesheet" type="text/css" href="/static/js/swaggerui/swagger-ui.css" >
+        <script src="/static/js/libs/ngcp-apidoc-pdf.js"></script>
     </head>
 <body>
 
@@ -35,6 +36,9 @@
         </div>
         <div class ="sipwclass">
             NGCP API 2.0 documentation is available <a href="/api/v2">here</a>
+        </div>
+        <div class ="sipwclass">
+            <button type="button" id="apidoc-pdf-download" class="apidoc-pdf-download">Download as PDF</button>
         </div>
     <div class="chapter sipwclass">
         <h2 class="nocount">Table of Contents</h2>
