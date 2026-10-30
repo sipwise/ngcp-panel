@@ -21,3 +21,5 @@ ngcp-panel source: source-is-missing *share/static/js/swaggerui/swagger-ui-bundl
 ngcp-panel source: source-is-missing *share/static/js/swaggerui/swagger-ui.css*
 ngcp-panel source: source-is-missing *share/static/js/swaggerui/swagger-ui-standalone-preset.js*
 ngcp-panel source: source-is-missing *share/static/js/libs/jquery-ui-1.13.2.js*
+ngcp-panel source: source-is-missing *share/static/js/libs/pdfmake/pdfmake.min.js*
+ngcp-panel source: source-is-missing *share/static/js/libs/pdfmake/vfs_fonts.js*
