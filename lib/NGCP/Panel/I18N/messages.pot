@@ -147,6 +147,18 @@ msgid "%1<span class=\"pull-right\">for %2s</span>"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'Admin Management Only' - An internal flag to restrict the subscriberadmin role to management functions only. Profile attribute, not directly used."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'CDR APP Info' - An internal flag to be able to map the smartphone APP information visibility to subscriber profiles. Not directly used"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "'CDR PBX Statistics' - An internal flag to be able to map PBX CDR visibility to subscriber profiles. Not directly used"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "'CSC Conversations' - An internal flag to be able to map Conversations visibility to subscriber profiles. Not directly used"
 msgstr ""
 
@@ -576,6 +588,10 @@ msgstr ""
 
 #: share/templates/customer/details.tt
 msgid "Address"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Admin Management Only"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Login.pm
@@ -1618,6 +1634,14 @@ msgstr ""
 #. ($result)
 #: lib/NGCP/Panel/Controller/Administrator.pm
 msgid "CA certificate verification failed: "
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CDR APP Info"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "CDR PBX Statistics"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
