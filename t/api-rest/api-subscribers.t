@@ -6,8 +6,6 @@ use Test::FakeData;
 use Test::More;
 use Data::Dumper;
 use Clone qw/clone/;
-use JSON ();
-use List::Util qw/any/;
 use feature 'state';
 #use NGCP::Panel::Utils::Subscriber;
 #use Data::Compare qw//;
@@ -417,7 +415,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{is_pbx_group} = 0;
             $_[0]->{is_pbx_pilot} = ($pilot || $_[1]->{i} > 1)? 0 : 1;
         } )->[0];
-        $test_machine->set_subscriber_credentials({ %{$pbxsubscriberadmin->{content}}, webpassword => 'api_test_webpassword' });
+        $test_machine->set_subscriber_credentials($pbxsubscriberadmin->{content});
         $test_machine->runas('subscriber');
         my $subscriber = $test_machine->check_create_correct(1, sub {
             my $num = $_[1]->{i};
@@ -496,7 +494,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             delete $_[0]->{alias_numbers};
         } )->[0];
 
-        $test_machine->set_subscriber_credentials({ %{$pbxsubscriberadmin->{content}}, webpassword => 'api_test_webpassword' });
+        $test_machine->set_subscriber_credentials($pbxsubscriberadmin->{content});
         $test_machine->runas('subscriber');
         my $subscriber = $test_machine->check_create_correct(1, sub {
             my $num = $_[1]->{i};
@@ -529,15 +527,10 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             #print Dumper [$subscriber->{content}];
             #subscriberadmin is not supposed to changed profile and profile_set. Subscriberadmin even don't contain these fields.
 
-            my (undef, $subscriber_before) = $test_machine->check_item_get($subscriber->{location});
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_set_id', value => $wrong_profile_sets->[0]->{content}->{id} } ], $subscriber->{location} );
-            $test_machine->http_code_msg(422, "Check profile_set_id patch for subscriberadmin is rejected", $res, $content,
-                'Read-only field.s. for authenticated role: profile_set_id');
+            $test_machine->http_code_msg(422, "Check profile_set_id patch for subscriberadmin", $res, $content);
             ($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/profile_id', value => $wrong_profiles->[0]->{content}->{id} } ], $subscriber->{location} );
-            $test_machine->http_code_msg(422, "Check profile_id patch for subscriberadmin is rejected", $res, $content,
-                'Read-only field.s. for authenticated role: profile_id');
-            (undef, $content) = $test_machine->check_item_get($subscriber->{location});
-            is($content->{profile_id}, $subscriber_before->{profile_id}, "Check profile_id unchanged by subscriberadmin");
+            $test_machine->http_code_msg(422, "Check profile_id patch for subscriberadmin", $res, $content);
 
             #($res,$content,$req) = $test_machine->request_patch( [ { op => 'replace', path => '/alias_numbers', value => [{'cc' => '111','ac' => '222','sn' => '444'.time(),}] } ], $subscriber->{location} );
             #$test_machine->http_code_msg(200, "Check patch alias_numbers not belonging to the pilot for subscriberadmin", $res, $content);
@@ -579,11 +572,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             test_machine => $test_machine_other_reseller,
         );
         $fake_data_other_reseller->load_collection_data('subscribers');
-        $fake_data_other_reseller->load_data_from_script('domains');
         $fake_data_other_reseller->apply_data({
-            'domains' => {
-                'domain' => 'other_reseller_'.time().'.api_test',
-            },
             'customers' => {
                 'external_id' => 'other_reseller',
                 'type'        => 'pbxaccount',
@@ -663,7 +652,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         my($subscribers, $subscriberadmins)
             = create_subs_and_subadmin($fake_data, $test_machine);
 
-        $test_machine->set_subscriber_credentials({ %{$subscriberadmins->[0]->{content}}, webpassword => 'api_test_webpassword' });
+        $test_machine->set_subscriber_credentials($subscriberadmins->[0]->{content});
         $test_machine->runas('subscriber');
         diag("\n\n\nSUBSCRIBERADMIN ".$subscriberadmins->[0]->{content}->{id}.":");
 
@@ -677,7 +666,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             $_[0]->{pbx_extension} = '43350'.$uniq;
             $_[0]->{primary_number}->{ac} = '43350'.$uniq;
             $_[0]->{is_pbx_pilot} = 0;
-            $_[0]->{administrative} = 0;
+            $_[0]->{administrative} = 1;
             delete $_[0]->{profile_id};
             delete $_[0]->{profile_set_id};
             delete $_[0]->{alias_numbers};
@@ -697,16 +686,11 @@ if($remote_config->{config}->{features}->{cloudpbx}){
             "check that subscriberadminadmin customer_id ".$subscriberadmins->[0]->{content}->{customer_id}
             ." was applied instead of ".$sub_create_attempt->{content_post}->{customer_id});
 
-        my $subadmin_create_uniq = Test::FakeData::seq;
-        ($res, $content) = $test_machine->request_post({
-            %{ $sub_create_attempt->{content_post} },
-            webusername    => '43350_admin_'.$subadmin_create_uniq,
-            username       => '43350_admin_'.$subadmin_create_uniq,
-            pbx_extension  => '43351'.$subadmin_create_uniq,
-            administrative => 1,
-        });
-        $test_machine->http_code_msg(422, "check that subscriberadmin can't create subscriberadmin", $res, $content,
-            'Read-only field.s. for authenticated role: administrative');
+        ok( ($sub_create_attempt->{content}->{administrative} == 0)
+            && ($sub_create_attempt->{content_post}->{administrative} == 1),
+            "check that subscriberadminadmin can't create subscriberadmin: "
+            .$sub_create_attempt->{content_post}->{administrative}
+            ."=>".$sub_create_attempt->{content}->{administrative}.";");
 
         #here we have unexpected error:
         #Sep  9 22:37:02 sp1 ngcp-panel: DEBUG: username:43350_8_; resource.domain_id:101;item.domain_id:535;
@@ -775,8 +759,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         delete $content_put->{_links};
         $content_put->{profile_id} = $subscribers_other_customer->[0]->{content}->{profile_id};
         ($res, $content_put) = $test_machine->request_put( $content_put, $subscribers->[0]->{location});
-        $test_machine->http_code_msg(422, "check that subscribersadmin others customers profile_id is rejected", $res, $content_put,
-            'Read-only field.s. for authenticated role: .*profile_id');
+        $test_machine->http_code_msg(422, "check that subscribersadmin can't manage others customers profile_id", $res, $content_put);
         ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
         $content_get->{profile_id} //= '';
         ok($content_get->{profile_id} != $subscribers_other_customer->[0]->{content}->{profile_id},
@@ -814,8 +797,7 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $content_put->{profile_id} = $subscriberprofile_other_profile_set->{content}->{id};
         $content_put->{display_name} = 'test_other_profileset_profile';
         ($res, $content_put) = $test_machine->request_put( $content_put, $subscribers->[0]->{location});
-        $test_machine->http_code_msg(422, "check that subscribersadmin other profileset profile_id is rejected", $res, $content_put,
-            'Read-only field.s. for authenticated role: .*profile_id');
+        $test_machine->http_code_msg(422, "check that subscribersadmin can't assign other profileset profile_id", $res, $content_put);
         ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
         $content_get->{profile_id} //= '';
         ok($content_get->{profile_id} != $subscriberprofile_other_profile_set->{content}->{id},
@@ -850,11 +832,12 @@ if($remote_config->{config}->{features}->{cloudpbx}){
         $content_put->{profile_id} = $subscriberprofile_other->{content}->{id};
         $content_put->{display_name} = 'test_other_profileset_profile';
         ($res, $content_put) = $test_machine->request_put( $content_put, $subscribers->[0]->{location});
-        $test_machine->http_code_msg(422, "check that subscribersadmin profile from correct profile_set is rejected", $res, $content_put,
-            'Read-only field.s. for authenticated role: .*profile_id');
+        $test_machine->http_code_msg(200, "check that subscribersadmin can assign other profile from correct profile_set", $res, $content_put);
         ($res,$content_get) = $test_machine->check_item_get($subscribers->[0]->{location});
-        is($content_get->{profile_id}, $subscribers->[0]->{content}->{profile_id},
-            "check that subscribersadmin can't change profile_id, even from the correct profile_set");
+        $content_get->{profile_id} //= '';
+        ok($content_get->{profile_id} eq $subscriberprofile_other->{content}->{id},
+            "check that subscribersadmin can't apply other profileset profile_id. "
+            .$subscriberprofile_other->{content}->{id}." => ".$content_get->{profile_id});
 
 
         diag("#--------------------------4. MISC: Check that subscriberadmin can manage something ------------ ");
@@ -933,522 +916,6 @@ $test_machine->runas('admin');
     $data->{alias_numbers} = ["49221222899813", "49221222899814", "49221222899814"];
     ($res,$content) = $test_machine->request_post( $data);
     $test_machine->http_code_msg(422, "Alias numbers should be the hashes", $res, $content);
-}
-
-#subscriber/subscriberadmin restricted fields and the PBX numbers pool
-{
-    diag("check subscriber/subscriberadmin restricted fields and the PBX numbers pool;\n");
-    my $admin = Test::Collection->new(name => 'subscribers');
-    $admin->runas('admin');
-    my $user = Test::Collection->new(name => 'subscribers');
-    # the client certificate file is shared by all Test::Collection instances and removed on a role switch,
-    # drop the stale one from the ua before fetching it again
-    my $admin_cert = sub {
-        my ($machine) = @_;
-        $machine->ua->ssl_opts(SSL_cert_file => undef, SSL_key_file => undef);
-        $machine->init_ssl_cert($machine->ua, 'admin');
-        return $machine;
-    };
-    my $as_admin = sub { return $admin_cert->($admin) };
-
-    my $ts = time();
-    my $base = substr($ts, -6);
-    my ($cc, $ac) = ('43', '99');
-    my $password = 'Rf9#kLm2$Qx7!pZa';
-    my ($res, $content, $own);
-
-    my $number = sub { return { cc => $cc, ac => $ac, sn => $base . $_[0] } };
-    my $numbers = sub { return [ map { number_as_string($number->($_)) } @_ ] };
-    my $created_id = sub { my ($id) = ($_[0]->header('Location') // '') =~ m{/(\d+)$}; return $id };
-    my $admin_post = sub {
-        my ($collection, $data, $name) = @_;
-        my ($res, $content) = $as_admin->()->request_post($data, "/api/$collection/");
-        is($res->code, 201, "admin: create $name") or diag(explain $content);
-        return $created_id->($res);
-    };
-    my $admin_get = sub {
-        my ($res, $content) = $as_admin->()->request_get("/api/subscribers/$_[0]");
-        is($res->code, 200, "admin: get subscriber $_[0]");
-        return $content;
-    };
-    my $state = sub {
-        my $s = $admin_get->($_[0]);
-        return {
-            (map { $_ => $s->{$_} }
-                qw/lock status administrative profile_set_id profile_id pbx_extension display_name timezone email/),
-            primary_number => $s->{primary_number} ? number_as_string($s->{primary_number}) : undef,
-            aliases => [ sort map { number_as_string($_) . ($_->{is_devid} ? ':devid' : '') }
-                @{ $s->{alias_numbers} // [] } ],
-        };
-    };
-    my $aliases = sub { return [ sort map { s/:devid$//r } @{ $state->($_[0])->{aliases} } ] };
-    my $number_exists = sub {
-        my $n = $number->($_[0]);
-        my ($res, $content) = $as_admin->()->request_get("/api/numbers/?cc=$n->{cc}&ac=$n->{ac}&sn=$n->{sn}");
-        return ($content->{total_count} // 0) > 0;
-    };
-    my $login = sub {
-        $user->set_subscriber_credentials({ %{$_[0]}, webpassword => $password });
-        $user->runas('subscriber');
-    };
-    my $code_ok = sub {
-        my ($res, $content, $code, $name, $message) = @_;
-        is($res->code, $code, "$name: $code") or diag(explain $content);
-        like((ref $content eq 'HASH' ? $content->{message} : undef) // '', qr/\Q$message\E/, "$name: message")
-            if defined $message;
-    };
-    my $patch = sub { return $user->request_patch($_[1], "/api/subscribers/$_[0]") };
-    my $admin_patch = sub { return $as_admin->()->request_patch($_[1], "/api/subscribers/$_[0]") };
-    # the request succeeds, restricted fields keep their values, only %changed is applied
-    my $patch_state_ok = sub {
-        my ($id, $ops, $name, %changed) = @_;
-        my $before = $state->($id);
-        my ($res, $content) = $patch->($id, $ops);
-        is($res->code, 200, "$name: 200") or diag(explain $content);
-        is_deeply($state->($id), { %{$before}, %changed }, "$name: state");
-    };
-    my $put_state_ok = sub {
-        my ($id, $data, $name, %changed) = @_;
-        my $before = $state->($id);
-        my ($res, $content) = $user->request_put($data, "/api/subscribers/$id");
-        is($res->code, 200, "$name: 200") or diag(explain $content);
-        is_deeply($state->($id), { %{$before}, %changed }, "$name: state");
-    };
-    # the request is rejected, nothing changes
-    my $readonly_message = sub { return 'Read-only field(s) for authenticated role: ' . join(', ', @_) };
-    my $rejected_ok = sub {
-        my ($method, $id, $data, $name, @fields) = @_;
-        my $before = $state->($id);
-        my ($res, $content) = $method eq 'PUT'
-            ? $user->request_put($data, "/api/subscribers/$id")
-            : $patch->($id, $data);
-        $code_ok->($res, $content, 422, $name);
-        is(ref $content eq 'HASH' ? $content->{message} : undef, $readonly_message->(@fields), "$name: message");
-        is_deeply($state->($id), $before, "$name: state");
-    };
-    my $rejected_cases = sub {
-        my ($id, $name, @cases) = @_;
-        $rejected_ok->('PATCH', $id, $_->[1], "$name PATCH $_->[0] rejected", $_->[2]) for @cases;
-    };
-    my $own_get = sub {
-        my ($res, $content) = $user->request_get("/api/subscribers/$_[0]");
-        my $resource = clone($content);
-        delete $resource->{_links};
-        return $resource;
-    };
-    my $visibility_ok = sub {
-        my ($id, $name) = @_;
-        my ($res, $content) = $user->request_get("/api/subscribers/$id");
-        ok(exists $content->{administrative} && exists $content->{profile_id},
-            "$name: administrative and profile_id visible");
-        ok(!exists $content->{profile_set_id} && !exists $content->{lock},
-            "$name: profile_set_id and lock hidden");
-    };
-    my $not_found_ok = sub {
-        my ($id, $name, @methods) = @_;
-        for my $method (@methods) {
-            my ($res, $content);
-            if ($method eq 'PATCH') {
-                ($res, $content) = $patch->($id, [ { op => 'replace', path => '/display_name', value => 'not applied' } ]);
-            } elsif ($method eq 'PUT') {
-                ($res, $content) = $user->request_put({ display_name => 'not applied' }, "/api/subscribers/$id");
-            } elsif ($method eq 'DELETE') {
-                (undef, $res, $content) = $user->request_delete("/api/subscribers/$id");
-            } else {
-                ($res, $content) = $user->request_get("/api/subscribers/$id");
-            }
-            $code_ok->($res, $content, 404, "$name: $method", "Entity 'subscriber' not found");
-        }
-    };
-    my $non_existent_id = 2**31 - 1;
-    my %restricted_ops = (
-        'status locked'     => [ { op => 'replace', path => '/status', value => 'locked' } ],
-        'status terminated' => [ { op => 'replace', path => '/status', value => 'terminated' } ],
-        'lock 4'            => [ { op => 'add', path => '/lock', value => 4 } ],
-        'lock null'         => [ { op => 'add', path => '/lock', value => undef } ],
-        'primary_number'    => [ { op => 'replace', path => '/primary_number', value => $number->('03') } ],
-        'add alias'         => [ { op => 'add', path => '/alias_numbers/-', value => $number->('04') } ],
-        'add pool alias'    => [ { op => 'add', path => '/alias_numbers/-', value => $number->('91') } ],
-        'remove alias'      => [ { op => 'remove', path => '/alias_numbers/0' } ],
-        'alias is_devid'    => [ { op => 'replace', path => '/alias_numbers/0/is_devid', value => JSON::false } ],
-        'copy primary to alias' => [ { op => 'copy', from => '/primary_number', path => '/alias_numbers/-' } ],
-        'pbx_extension'     => [ { op => 'add', path => '/pbx_extension', value => '19' } ],
-        'profile_id'        => [ { op => 'replace', path => '/profile_id', value => undef } ],
-        'profile_set_id'    => [ { op => 'add', path => '/profile_set_id', value => undef } ],
-        'administrative on' => [ { op => 'replace', path => '/administrative', value => JSON::true } ],
-        'administrative off' => [ { op => 'replace', path => '/administrative', value => JSON::false } ],
-    );
-    my %restricted_field = (
-        (map { $_ => 'alias_numbers' } grep { /alias/ } keys %restricted_ops),
-        (map { $_ => (split / /)[0] } grep { !/alias/ } keys %restricted_ops),
-    );
-    my $cases = sub { return map { [ $_, $restricted_ops{$_}, $restricted_field{$_} ] } @_ };
-
-    #---- setup (admin)
-    my $domain = "restricted-$ts.test";
-    $admin_post->('domains', { domain => $domain, reseller_id => 1 }, 'domain');
-    my $contact_id = $admin_post->('customercontacts', { reseller_id => 1, email => "restricted-$ts\@test.invalid" }, 'contact');
-    ($res, $content) = $as_admin->()->request_get('/api/billingprofiles/?reseller_id=1&rows=1');
-    my $billing_profile_id = $content->{_embedded}->{'ngcp:billingprofiles'}->[0]->{id};
-    my %customer;
-    my $create_customer = sub {
-        $customer{$_[0]} = $admin_post->('customers', {
-            contact_id         => $contact_id,
-            billing_profile_id => $billing_profile_id,
-            type               => $_[0],
-            status             => 'active',
-        }, "$_[0] customer");
-    };
-    $create_customer->('sipaccount');
-    my $profile_set_id = $admin_post->('subscriberprofilesets',
-        { reseller_id => 1, name => "restricted_set_$ts", description => 'restricted' }, 'profile set');
-    my $profile_id = $admin_post->('subscriberprofiles', {
-        profile_set_id => $profile_set_id,
-        name           => "restricted_profile_$ts",
-        description    => 'restricted',
-        set_default    => JSON::true,
-        attributes     => [ 'ncos' ],
-    }, 'profile');
-    my $create_subscriber = sub {
-        my ($name, $customer_id, %data) = @_;
-        my $subscriber = {
-            customer_id    => $customer_id,
-            domain         => $domain,
-            username       => "restricted_${name}_$ts",
-            webusername    => "restricted_${name}_$ts",
-            password       => $password,
-            webpassword    => $password,
-            status         => 'active',
-            profile_set_id => $profile_set_id,
-            profile_id     => $profile_id,
-            %data,
-        };
-        $subscriber->{id} = $admin_post->('subscribers', $subscriber, "subscriber $name");
-        return $subscriber;
-    };
-    my $sip = $create_subscriber->('sip', $customer{sipaccount},
-        primary_number => $number->('01'),
-        alias_numbers  => [ { %{ $number->('02') }, is_devid => JSON::true } ],
-    );
-    my $sip_admin = $create_subscriber->('sip_admin', $customer{sipaccount}, administrative => 1, primary_number => $number->('06'));
-    my $sip_other = $create_subscriber->('sip_other', $customer{sipaccount}, primary_number => $number->('07'));
-    ($res, $content) = $admin_patch->($sip->{id}, [ { op => 'replace', path => '/lock', value => 2 } ]);
-    $code_ok->($res, $content, 200, 'admin: lock sip subscriber');
-
-    #---- subscriber (sipaccount), own resource
-    $login->($sip);
-    $visibility_ok->($sip->{id}, 'subscriber: own GET');
-    $rejected_cases->($sip->{id}, 'subscriber:', $cases->(
-        'status locked', 'status terminated', 'lock 4', 'lock null', 'primary_number', 'add alias', 'remove alias',
-        'alias is_devid', 'copy primary to alias', 'pbx_extension', 'profile_id', 'profile_set_id', 'administrative on'));
-    $rejected_ok->('PATCH', $sip->{id}, [
-        { op => 'replace', path => '/email', value => "restricted-sip-$ts\@test.invalid" },
-        { op => 'replace', path => '/status', value => 'locked' },
-        { op => 'replace', path => '/primary_number', value => $number->('03') },
-    ], 'subscriber: PATCH email with restricted fields', qw/status primary_number/);
-    $patch_state_ok->($sip->{id}, [
-        { op => 'replace', path => '/email', value => "restricted-sip-$ts\@test.invalid" },
-        { op => 'replace', path => '/status', value => 'active' },
-        { op => 'add', path => '/lock', value => 2 },
-        { op => 'replace', path => '/administrative', value => JSON::false },
-        { op => 'replace', path => '/alias_numbers/0/is_devid', value => JSON::true },
-        { op => 'replace', path => '/primary_number', value => $number->('01') },
-    ], 'subscriber: PATCH email with unchanged restricted fields', email => "restricted-sip-$ts\@test.invalid");
-    $own = $own_get->($sip->{id});
-    $put_state_ok->($sip->{id}, $own, 'subscriber: PUT own GET representation');
-    $put_state_ok->($sip->{id}, { %{$own}, lock => 2, timezone => 'Europe/Vienna' },
-        'subscriber: PUT with unchanged lock', timezone => 'Europe/Vienna');
-    $rejected_ok->('PUT', $sip->{id}, {
-        %{$own},
-        status         => 'locked',
-        lock           => 4,
-        primary_number => $number->('05'),
-        alias_numbers  => [],
-        administrative => JSON::true,
-        profile_id     => undef,
-        timezone       => 'Europe/Paris',
-    }, 'subscriber: PUT with changed restricted fields', qw/lock status primary_number alias_numbers profile_id administrative/);
-    $rejected_ok->('PUT', $sip->{id}, { %{$own}, alias_numbers => [ { %{ $number->('02') }, is_devid => JSON::false } ] },
-        'subscriber: PUT alias is_devid', 'alias_numbers');
-    delete @{$own}{qw/primary_number alias_numbers status lock pbx_extension profile_set_id profile_id administrative/};
-    $own->{timezone} = 'Europe/Berlin';
-    $put_state_ok->($sip->{id}, $own, 'subscriber: PUT without restricted fields', timezone => 'Europe/Berlin');
-    is($state->($sip->{id})->{lock}, 2, 'subscriber: lock still 2');
-    is_deeply($state->($sip->{id})->{aliases}, [ number_as_string($number->('02')) . ':devid' ], 'subscriber: alias and is_devid kept');
-    ok(!$number_exists->('03') && !$number_exists->('04') && !$number_exists->('05'), 'subscriber: no numbers created');
-    $not_found_ok->($sip_other->{id}, 'subscriber: other subscriber', qw/GET PATCH PUT/);
-    $not_found_ok->($non_existent_id, 'subscriber: non-existent subscriber', qw/GET PATCH PUT/);
-    is($state->($sip_other->{id})->{display_name}, undef, 'subscriber: other subscriber unchanged');
-
-    #---- subscriberadmin (sipaccount), own resource
-    $login->($sip_admin);
-    $visibility_ok->($sip_admin->{id}, 'sip subscriberadmin: own GET');
-    $rejected_cases->($sip_admin->{id}, 'sip subscriberadmin: own', $cases->(
-        'status locked', 'status terminated', 'lock 4', 'primary_number', 'add alias', 'profile_id', 'administrative off'));
-    $own = $own_get->($sip_admin->{id});
-    $put_state_ok->($sip_admin->{id}, $own, 'sip subscriberadmin: PUT own GET representation');
-    ok(!$number_exists->('03') && !$number_exists->('04'), 'sip subscriberadmin: no numbers created');
-    $not_found_ok->($non_existent_id, 'sip subscriberadmin: non-existent subscriber', qw/GET PATCH PUT DELETE/);
-
-    #---- subscriberadmin (sipaccount) on another subscriber of the customer
-    if (($remote_config->{config}->{privileges}->{subscriberadmin}->{subscribers} // '') =~ /write/) {
-        $patch_state_ok->($sip_other->{id}, [ { op => 'add', path => '/lock', value => 3 } ],
-            'sip subscriberadmin: other PATCH lock 3', lock => 3);
-        $rejected_cases->($sip_other->{id}, 'sip subscriberadmin: other', $cases->('profile_id', 'administrative on'));
-        ($res, $content) = $patch->($sip_other->{id}, [ { op => 'add', path => '/alias_numbers/-', value => $number->('09') } ]);
-        $code_ok->($res, $content, 422, 'sip subscriberadmin: other PATCH new alias (no pool without pilot)',
-            "Invalid 'alias_numbers', not available in the PBX pool: " . number_as_string($number->('09')));
-        ok(!$number_exists->('09'), 'sip subscriberadmin: new number not created');
-        ($res, $content) = $user->request_post({
-            customer_id    => $customer{sipaccount},
-            domain         => $domain,
-            username       => "restricted_sip_new_$ts",
-            password       => $password,
-            primary_number => $number->('08'),
-            administrative => JSON::true,
-        }, '/api/subscribers/');
-        $code_ok->($res, $content, 422, 'sip subscriberadmin: POST administrative');
-        is($content->{message}, $readonly_message->('administrative'), 'sip subscriberadmin: POST administrative: message');
-        ($res, $content) = $user->request_post({
-            customer_id    => $customer{sipaccount},
-            domain         => $domain,
-            username       => "restricted_sip_new_$ts",
-            password       => $password,
-            primary_number => $number->('08'),
-        }, '/api/subscribers/');
-        $code_ok->($res, $content, 201, 'sip subscriberadmin: POST with write privileges');
-        my $sip_new_id = $created_id->($res);
-        is($admin_get->($sip_new_id)->{customer_id}, $customer{sipaccount}, 'sip subscriberadmin: POST in own customer');
-        $as_admin->()->request_delete("/api/subscribers/$sip_new_id");
-    } else {
-        my $before = $state->($sip_other->{id});
-        for my $case ([ 'lock 3', [ { op => 'add', path => '/lock', value => 3 } ] ],
-                      [ 'display_name', [ { op => 'replace', path => '/display_name', value => 'not applied' } ] ]) {
-            ($res, $content) = $patch->($sip_other->{id}, $case->[1]);
-            $code_ok->($res, $content, 403, "sip subscriberadmin: other PATCH $case->[0] without write privileges",
-                'Read-only resource for authenticated role');
-        }
-        is_deeply($state->($sip_other->{id}), $before, 'sip subscriberadmin: other unchanged');
-        ($res, $content) = $user->request_post({
-            customer_id    => $customer{sipaccount},
-            domain         => $domain,
-            username       => "restricted_sip_new_$ts",
-            password       => $password,
-            primary_number => $number->('08'),
-        }, '/api/subscribers/');
-        $code_ok->($res, $content, 403, 'sip subscriberadmin: POST without write privileges',
-            'Read-only resource for authenticated role');
-        ($res, $content) = $as_admin->()->request_get("/api/subscribers/?username=restricted_sip_new_$ts");
-        is($content->{total_count}, 0, 'sip subscriberadmin: POST without write privileges created nothing');
-    }
-
-    #---- admin is not restricted
-    ($res, $content) = $admin_patch->($sip->{id}, [
-        { op => 'replace', path => '/lock', value => 3 },
-        { op => 'add', path => '/alias_numbers/-', value => $number->('97') },
-        { op => 'replace', path => '/primary_number', value => $number->('98') },
-        { op => 'replace', path => '/profile_id', value => undef },
-        { op => 'replace', path => '/profile_set_id', value => undef },
-    ]);
-    $code_ok->($res, $content, 200, 'admin: PATCH lock, alias_numbers, primary_number, profile');
-    my $admin_state = $state->($sip->{id});
-    is($admin_state->{lock}, 3, 'admin: lock changed');
-    is($admin_state->{primary_number}, number_as_string($number->('98')), 'admin: primary number changed');
-    ok((any { $_ eq number_as_string($number->('97')) } @{ $admin_state->{aliases} }), 'admin: new alias assigned');
-    ok(!defined $admin_state->{profile_id} && !defined $admin_state->{profile_set_id}, 'admin: profile removed');
-    my $admin_put = clone($admin_get->($sip->{id}));
-    delete $admin_put->{_links};
-    ($res, $content) = $as_admin->()->request_put($admin_put, "/api/subscribers/$sip->{id}");
-    $code_ok->($res, $content, 200, 'admin: PUT GET representation');
-
-    if ($remote_config->{config}->{features}->{cloudpbx}) {
-        $create_customer->('pbxaccount');
-        my $pilot = $create_subscriber->('pilot', $customer{pbxaccount},
-            administrative => 1,
-            is_pbx_pilot   => 1,
-            primary_number => { cc => $cc, ac => $ac, sn => $base },
-            alias_numbers  => [ map { $number->($_) } qw/91 92 93 94/ ],
-        );
-        my $subadmin = $create_subscriber->('subadmin', $customer{pbxaccount}, administrative => 1, pbx_extension => '10');
-        my $seat_t = $create_subscriber->('seat_t', $customer{pbxaccount}, pbx_extension => '11', alias_numbers => [ $number->('81') ]);
-        my $seat_u = $create_subscriber->('seat_u', $customer{pbxaccount}, pbx_extension => '12', alias_numbers => [ $number->('82') ]);
-        my $group = $create_subscriber->('group', $customer{pbxaccount}, pbx_extension => '20', is_pbx_group => 1);
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/91 92 93 94/), 'setup: pilot pool');
-
-        #---- subscriber (PBX seat), own resource
-        $login->($seat_t);
-        $visibility_ok->($seat_t->{id}, 'seat: own GET');
-        $rejected_cases->($seat_t->{id}, 'seat:', $cases->('pbx_extension', 'primary_number', 'add pool alias', 'status locked'));
-        $own = $own_get->($seat_t->{id});
-        $put_state_ok->($seat_t->{id}, $own, 'seat: PUT own GET representation');
-        $rejected_ok->('PUT', $seat_t->{id}, { %{$own}, pbx_extension => '19', alias_numbers => [] },
-            'seat: PUT with changed restricted fields', qw/alias_numbers pbx_extension/);
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/91 92 93 94/), 'seat: pilot pool unchanged');
-
-        #---- subscriberadmin (non-pilot), own resource
-        $login->($subadmin);
-        $visibility_ok->($subadmin->{id}, 'subscriberadmin: own GET');
-        $rejected_cases->($subadmin->{id}, 'subscriberadmin: own', $cases->(
-            'status terminated', 'lock 4', 'primary_number', 'add pool alias', 'profile_id', 'administrative off'));
-        for my $case ([ 'seat', '11' ], [ 'group', '20' ]) {
-            ($res, $content) = $patch->($subadmin->{id}, [ { op => 'replace', path => '/pbx_extension', value => $case->[1] } ]);
-            $code_ok->($res, $content, 422, "subscriberadmin: own PATCH pbx_extension of a $case->[0]",
-                'The pbx_extension already exists for this customer.');
-        }
-        $patch_state_ok->($subadmin->{id}, [ { op => 'replace', path => '/pbx_extension', value => '19' } ],
-            'subscriberadmin: own PATCH free pbx_extension', pbx_extension => '19', primary_number => number_as_string($number->('19')));
-        $patch_state_ok->($subadmin->{id}, [ { op => 'replace', path => '/pbx_extension', value => '10' } ],
-            'subscriberadmin: own PATCH pbx_extension back', pbx_extension => '10', primary_number => number_as_string($number->('10')));
-
-        $not_found_ok->($sip->{id}, 'subscriberadmin: other customer subscriber', qw/GET PATCH PUT DELETE/);
-        $not_found_ok->($non_existent_id, 'subscriberadmin: non-existent subscriber', qw/GET PATCH PUT DELETE/);
-        is($state->($sip->{id})->{status}, 'active', 'subscriberadmin: other customer subscriber not terminated');
-
-        #---- subscriberadmin (non-pilot) on the pilot
-        $visibility_ok->($pilot->{id}, 'subscriberadmin: pilot GET');
-        $rejected_cases->($pilot->{id}, 'subscriberadmin: pilot', $cases->(
-            'status terminated', 'status locked', 'lock 4', 'primary_number', 'remove alias', 'profile_id', 'administrative off'));
-        $patch_state_ok->($pilot->{id}, [ { op => 'replace', path => '/display_name', value => 'Restricted Pilot' } ],
-            'subscriberadmin: pilot PATCH display_name', display_name => 'Restricted Pilot');
-        my (undef, $del_res) = $user->request_delete("/api/subscribers/$pilot->{id}");
-        is($del_res->code, 403, 'subscriberadmin: DELETE pilot: 403');
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/91 92 93 94/), 'subscriberadmin: pilot pool unchanged');
-
-        #---- subscriberadmin (non-pilot) on its subscribers: lock, status, pbx_extension, profile
-        $visibility_ok->($seat_t->{id}, 'subscriberadmin: seat GET');
-        $patch_state_ok->($seat_t->{id}, [ { op => 'add', path => '/lock', value => 3 } ], 'subscriberadmin: seat PATCH lock 3', lock => 3);
-        for my $lock (0, 6, 'x') {
-            ($res, $content) = $patch->($seat_t->{id}, [ { op => 'add', path => '/lock', value => $lock } ]);
-            $code_ok->($res, $content, 422, "subscriberadmin: seat PATCH lock $lock", "field='lock'");
-        }
-        $patch_state_ok->($seat_t->{id}, [ { op => 'replace', path => '/display_name', value => 'Seat T' } ],
-            'subscriberadmin: seat PATCH without lock keeps it', display_name => 'Seat T');
-        $patch_state_ok->($seat_t->{id}, [ { op => 'add', path => '/lock', value => undef } ],
-            'subscriberadmin: seat PATCH lock null', lock => undef);
-        $patch_state_ok->($seat_t->{id}, [ { op => 'replace', path => '/status', value => 'locked' } ],
-            'subscriberadmin: seat PATCH status locked', status => 'locked', lock => 4);
-        $patch_state_ok->($seat_t->{id}, [ { op => 'replace', path => '/status', value => 'active' }, { op => 'add', path => '/lock', value => undef } ],
-            'subscriberadmin: seat PATCH status active', status => 'active', lock => undef);
-        $patch_state_ok->($seat_t->{id}, [ { op => 'replace', path => '/status', value => 'locked' } ],
-            'subscriberadmin: seat PATCH status locked again', status => 'locked', lock => 4);
-        my $seat_lock_put = $own_get->($seat_t->{id});
-        delete @{$seat_lock_put}{qw/status lock/};
-        $put_state_ok->($seat_t->{id}, $seat_lock_put, 'subscriberadmin: seat PUT without lock and status resets them',
-            status => 'active', lock => undef);
-        $rejected_cases->($seat_t->{id}, 'subscriberadmin: seat', $cases->('profile_id', 'profile_set_id', 'administrative on'));
-        $patch_state_ok->($seat_t->{id}, [ { op => 'replace', path => '/pbx_extension', value => '15' } ],
-            'subscriberadmin: seat PATCH pbx_extension', pbx_extension => '15', primary_number => number_as_string($number->('15')));
-        $rejected_ok->('PATCH', $seat_t->{id}, [ { op => 'replace', path => '/primary_number', value => $number->('05') } ],
-            'subscriberadmin: seat PATCH primary_number', 'primary_number');
-        $rejected_ok->('PATCH', $seat_t->{id}, [
-            { op => 'replace', path => '/pbx_extension', value => '14' },
-            { op => 'replace', path => '/primary_number', value => $number->('05') },
-        ], 'subscriberadmin: seat PATCH pbx_extension with other primary_number', 'primary_number');
-        $patch_state_ok->($seat_t->{id}, [
-            { op => 'replace', path => '/pbx_extension', value => '14' },
-            { op => 'replace', path => '/primary_number', value => $number->('14') },
-        ], 'subscriberadmin: seat PATCH pbx_extension with derived primary_number',
-            pbx_extension => '14', primary_number => number_as_string($number->('14')));
-        my $seat_ext_put = $own_get->($seat_t->{id});
-        $put_state_ok->($seat_t->{id}, { %{$seat_ext_put}, pbx_extension => '15' },
-            'subscriberadmin: seat PUT pbx_extension with stored primary_number',
-            pbx_extension => '15', primary_number => number_as_string($number->('15')));
-
-        #---- subscriberadmin (non-pilot) on its subscribers: numbers pool
-        $patch_state_ok->($seat_t->{id}, [ { op => 'add', path => '/alias_numbers/-', value => $number->('91') } ],
-            'subscriberadmin: seat PATCH assign pool number', aliases => $numbers->(qw/81 91/));
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/92 93 94/), 'subscriberadmin: pool number moved from the pilot');
-        for my $case ([ 'new number', '95' ], [ 'number of other seat', '82' ]) {
-            ($res, $content) = $patch->($seat_t->{id}, [ { op => 'add', path => '/alias_numbers/-', value => $number->($case->[1]) } ]);
-            $code_ok->($res, $content, 422, "subscriberadmin: seat PATCH assign $case->[0]",
-                "Invalid 'alias_numbers', not available in the PBX pool: " . number_as_string($number->($case->[1])));
-        }
-        ok(!$number_exists->('95'), 'subscriberadmin: new number not created');
-        is_deeply($aliases->($seat_u->{id}), $numbers->('82'), 'subscriberadmin: other seat keeps its number');
-        is_deeply($aliases->($seat_t->{id}), $numbers->(qw/81 91/), 'subscriberadmin: seat aliases unchanged after rejects');
-
-        my $seat_put = $own_get->($seat_t->{id});
-        delete $seat_put->{alias_numbers};
-        $put_state_ok->($seat_t->{id}, { %{$seat_put}, display_name => 'Seat T PUT' },
-            'subscriberadmin: seat PUT without alias_numbers revokes them', display_name => 'Seat T PUT', aliases => []);
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/81 91 92 93 94/), 'subscriberadmin: PUT revoked numbers are in the pool');
-        $put_state_ok->($seat_t->{id}, { %{$seat_put}, display_name => 'Seat T PUT', alias_numbers => [ $number->('81'), $number->('92') ] },
-            'subscriberadmin: seat PUT assign + revoke', aliases => $numbers->(qw/81 92/));
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/91 93 94/), 'subscriberadmin: 91 revoked to the pool, 92 taken');
-        $patch_state_ok->($seat_t->{id}, [ { op => 'replace', path => '/alias_numbers', value => [] } ],
-            'subscriberadmin: seat PATCH revoke all', aliases => []);
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/81 91 92 93 94/), 'subscriberadmin: revoked numbers are in the pool');
-
-        my $new_seat = sub {
-            my ($name, $extension, @aliases) = @_;
-            return $user->request_post({
-                customer_id   => $customer{pbxaccount},
-                domain        => $domain,
-                username      => "restricted_${name}_$ts",
-                webusername   => "restricted_${name}_$ts",
-                password      => $password,
-                webpassword   => $password,
-                pbx_extension => $extension,
-                alias_numbers => [ map { $number->($_) } @aliases ],
-            }, '/api/subscribers/');
-        };
-        ($res, $content) = $user->request_post({
-            customer_id    => $customer{pbxaccount},
-            domain         => $domain,
-            username       => "restricted_seat_adm_$ts",
-            password       => $password,
-            pbx_extension  => '13',
-            administrative => JSON::true,
-        }, '/api/subscribers/');
-        $code_ok->($res, $content, 422, 'subscriberadmin: POST administrative seat');
-        is($content->{message}, $readonly_message->('administrative'), 'subscriberadmin: POST administrative seat: message');
-        ($res, $content) = $as_admin->()->request_get("/api/subscribers/?username=restricted_seat_adm_$ts");
-        is($content->{total_count}, 0, 'subscriberadmin: administrative seat not created');
-        ($res, $content) = $new_seat->('seat_v', '16', '93');
-        $code_ok->($res, $content, 201, 'subscriberadmin: POST seat with pool number');
-        my $seat_v_id = $created_id->($res);
-        is_deeply($aliases->($seat_v_id), $numbers->('93'), 'subscriberadmin: new seat got the pool number');
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/81 91 92 94/), 'subscriberadmin: pool number moved to the new seat');
-        for my $case ([ 'new number', 'seat_w', '17', '96' ], [ 'number of other seat', 'seat_x', '18', '82' ]) {
-            my ($name, $username, $extension, $n) = @{$case};
-            ($res, $content) = $new_seat->($username, $extension, $n);
-            $code_ok->($res, $content, 422, "subscriberadmin: POST seat with $name",
-                "Invalid 'alias_numbers', not available in the PBX pool: " . number_as_string($number->($n)));
-            ($res, $content) = $as_admin->()->request_get("/api/subscribers/?username=restricted_${username}_$ts");
-            is($content->{total_count}, 0, "subscriberadmin: seat with $name not created");
-        }
-        ok(!$number_exists->('96'), 'subscriberadmin: new number not created on POST');
-        ($res, $content) = $patch->($seat_v_id, [ { op => 'replace', path => '/status', value => 'terminated' } ]);
-        $code_ok->($res, $content, 200, 'subscriberadmin: seat PATCH status terminated');
-        ($res) = $as_admin->()->request_get("/api/subscribers/$seat_v_id");
-        is($res->code, 404, 'subscriberadmin: terminated seat is gone');
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/81 91 92 93 94/), 'subscriberadmin: terminated seat numbers back in the pool');
-
-        #---- pilot (subscriberadmin) as the actor
-        $login->($pilot);
-        $visibility_ok->($pilot->{id}, 'pilot: own GET');
-        $rejected_cases->($pilot->{id}, 'pilot: own', $cases->('status locked', 'remove alias', 'lock 4', 'administrative off'));
-        $patch_state_ok->($seat_u->{id}, [ { op => 'add', path => '/alias_numbers/-', value => $number->('94') } ],
-            'pilot: seat PATCH assign pool number', aliases => $numbers->(qw/82 94/));
-        is_deeply($aliases->($pilot->{id}), $numbers->(qw/81 91 92 93/), 'pilot: pool number moved');
-
-        #---- admin is not restricted (PBX)
-        ($res, $content) = $admin_patch->($pilot->{id}, [ { op => 'add', path => '/alias_numbers/-', value => $number->('99') } ]);
-        $code_ok->($res, $content, 200, 'admin: PATCH pilot alias_numbers');
-        ($res, $content) = $admin_patch->($seat_u->{id}, [ { op => 'replace', path => '/status', value => 'locked' } ]);
-        $code_ok->($res, $content, 200, 'admin: PATCH seat status');
-
-        for my $id ($group->{id}, $seat_t->{id}, $seat_u->{id}, $subadmin->{id}, $pilot->{id}) {
-            $as_admin->()->request_delete("/api/subscribers/$id");
-        }
-    }
-
-    for my $id ($sip_other->{id}, $sip_admin->{id}, $sip->{id}) {
-        $as_admin->()->request_delete("/api/subscribers/$id");
-    }
-    $as_admin->()->request_delete("/api/subscriberprofiles/$profile_id");
-    $as_admin->()->request_delete("/api/subscriberprofilesets/$profile_set_id");
-    $admin_cert->($test_machine);
 }
 
 $test_machine->init_ssl_cert();

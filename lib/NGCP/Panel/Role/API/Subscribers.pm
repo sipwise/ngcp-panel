@@ -283,16 +283,14 @@ sub check_write_access {
         $c->user->roles eq "ccareadmin" || $c->user->roles eq "ccare") {
             return 1;
     } elsif ($c->user->roles eq "subscriberadmin") {
-        if (!$self->check_subscriber_same_customer($c, $id)) {
-            return $self->resource_exists($c, subscriber => undef);
-        }
         if (!$self->subscriberadmin_write_access($c, $id) && $id != $c->user->voip_subscriber->id) {
             $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
             return;
         }
     } elsif($c->user->roles eq "subscriber") {
         if ($id != $c->user->voip_subscriber->id) {
-            return $self->resource_exists($c, subscriber => undef);
+            $self->error($c, HTTP_FORBIDDEN, "Read-only resource for authenticated role");
+            return;
         }
     }
     return 1;

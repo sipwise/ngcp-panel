@@ -7,8 +7,6 @@ use Sipwise::Base;
 use NGCP::Panel::Utils::Generic qw(:all);
 
 use DBIx::Class::Exception;
-use List::Util qw(any none);
-use Scalar::Util qw(blessed);
 use String::MkPasswd;
 use NGCP::Panel::Utils::Auth;
 use NGCP::Panel::Utils::DateTime;
@@ -183,87 +181,6 @@ sub switch_prepaid {
 sub switch_prepaid_contract {
     my %params = @_;
 
-}
-
-sub get_readonly_fields {
-    my %params = @_;
-    my ($c, $item) = @params{qw/c item/};
-
-    my $role = $c->user->roles;
-    return () unless $item && ($role eq "subscriberadmin" || $role eq "subscriber");
-    my @readonly = qw/administrative profile_set_id profile_id/;
-    if ($role eq "subscriber") {
-        push @readonly, qw/lock status primary_number alias_numbers pbx_extension/;
-    } elsif ($item->id == $c->user->voip_subscriber->id) {
-        push @readonly, qw/lock status primary_number alias_numbers/;
-    } elsif ($item->provisioning_voip_subscriber->is_pbx_pilot) {
-        push @readonly, qw/lock status primary_number alias_numbers/;
-    }
-    return @readonly;
-}
-
-# 0/1 of a boolean API value, undef if invalid
-sub _api_flag {
-    my ($v) = @_;
-    return 0 unless defined $v;
-    return $v ? 1 : 0 if JSON::is_bool($v);
-    $v = ${$v} if ref $v eq 'SCALAR'; # JSON::Types::bool
-    return ref $v || $v !~ /^[01]$/ ? undef : int($v);
-}
-
-# 'cc:ac:sn' of an API number hash or a number row, '' if none, undef if invalid
-sub _api_number {
-    my ($n) = @_;
-    return '' unless defined $n;
-    $n = { map { $_ => $n->get_column($_) } qw/cc ac sn/ } if blessed $n;
-    return undef unless ref $n eq 'HASH';
-    return join(':', map { $n->{$_} // '' } qw/cc ac sn/) =~ s/^::$//r;
-}
-
-# read-only fields sent with a value other than the stored one
-sub get_readonly_changes {
-    my %params = @_;
-    my ($c, $item, $resource, $readonly) = @params{qw/c item resource readonly/};
-
-    my $prov_sub = $item->provisioning_voip_subscriber;
-    my %differs = (
-        administrative => sub { (_api_flag($_[0]) // -1) != $prov_sub->admin },
-        profile_set_id => sub { ($_[0] // 0) ne ($prov_sub->profile_set_id // 0) },
-        profile_id     => sub { ($_[0] // 0) ne ($prov_sub->profile_id // 0) },
-        pbx_extension  => sub { ($_[0] // '') ne ($prov_sub->pbx_extension // '') },
-        status         => sub { ($_[0] // '') ne $item->status },
-        lock           => sub {
-            my $lock = get_provisoning_voip_subscriber_lock_level(c => $c, prov_subscriber => $prov_sub);
-            return ($_[0] // 0) ne ($lock // 0);
-        },
-        primary_number => sub {
-            my $sent = _api_number($_[0]);
-            return !defined $sent || $sent ne _api_number($item->primary_number);
-        },
-        alias_numbers  => sub {
-            my ($sent) = @_;
-            return 1 unless ref $sent eq 'ARRAY';
-            my %stored = map {;
-                _api_number($_) => ($_->voip_dbalias && $_->voip_dbalias->is_devid ? 1 : 0)
-            } $item->voip_numbers->search({
-                'me.id' => { '!=' => $item->primary_number_id // 0 },
-            }, {
-                prefetch => 'voip_dbalias',
-            })->all;
-            my %seen;
-            for my $alias (@{$sent}) {
-                my $n = _api_number($alias);
-                return 1 if !defined $n || !exists $stored{$n} || $seen{$n}++;
-                if (exists $alias->{is_devid}) {
-                    my $devid = _api_flag($alias->{is_devid});
-                    return 1 if !defined $devid || $devid != $stored{$n};
-                }
-            }
-            return keys %seen != keys %stored;
-        },
-    );
-    return grep { $readonly->{$_} && exists $resource->{$_} && $differs{$_}->($resource->{$_}) }
-        qw/lock status primary_number alias_numbers pbx_extension profile_set_id profile_id administrative/;
 }
 
 sub get_lock_string {
@@ -499,13 +416,34 @@ sub prepare_resource {
         $getcustomer_code = sub { return; };
     }
 
-    my %readonly = map { $_ => 1 } get_readonly_fields(c => $c, item => $item);
-    if (%readonly) {
-        my @changed = get_readonly_changes(c => $c, item => $item, resource => $resource, readonly => \%readonly);
-        if (@changed) {
-            &{$err_code}(HTTP_UNPROCESSABLE_ENTITY,
-                "Read-only field(s) for authenticated role: " . join(', ', @changed));
-            return;
+    # subscribers and subscriberadmins must not change their own lock level and status,
+    # subscriberadmins may change them for the other subscribers of the customer
+    my $lock_level;
+    if ($item && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+        $lock_level = get_provisoning_voip_subscriber_lock_level(
+            c => $c,
+            prov_subscriber => $item->provisioning_voip_subscriber,
+        );
+        if ($item->id == $c->user->voip_subscriber->id) {
+            my @readonly = (
+                (exists $resource->{lock} && ($resource->{lock} // 0) ne ($lock_level // 0) ? 'lock' : ()),
+                (exists $resource->{status} && ($resource->{status} // '') ne $item->status ? 'status' : ()),
+            );
+            if (@readonly) {
+                &{$err_code}(HTTP_UNPROCESSABLE_ENTITY,
+                    "Read-only field(s) for authenticated role: " . join(', ', @readonly));
+                return;
+            }
+        } else {
+            $lock_level = $resource->{lock} if exists $resource->{lock};
+            if (defined $lock_level && $lock_level !~ /^[1-5]$/) {
+                &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Invalid 'lock', must be null or 1-5.");
+                return;
+            }
+            if (($resource->{status} // '') eq 'terminated') {
+                &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Use DELETE to terminate a subscriber.");
+                return;
+            }
         }
     }
 
@@ -545,10 +483,6 @@ sub prepare_resource {
             }
             $resource->{customer_id} = $pilot->account_id;
         } else {
-            if (!$item && ($c->config->{privileges}->{subscriberadmin}->{subscribers} // '') !~ /write/) {
-                &{$err_code}(HTTP_FORBIDDEN, "Read-only resource for authenticated role");
-                return;
-            }
             $domain = $schema->resultset('domains')
                 ->search({ domain => $resource->{domain} });
             $domain = $domain->first;
@@ -558,14 +492,10 @@ sub prepare_resource {
             }
             delete $resource->{domain};
             $resource->{domain_id} = $domain->id;
-            $resource->{customer_id} = $item ? $item->provisioning_voip_subscriber->account_id : $c->user->account_id;
+            $resource->{customer_id} = $item->provisioning_voip_subscriber->account_id;
         }
-        $resource->{status} = $item ? $resource->{status} // 'active' : 'active';
+        $resource->{status} = $item ? $resource->{status} // $item->status : 'active';
         #deny to create subscriberadmin, the same as in the web ui
-        if (!$item && (_api_flag($resource->{administrative}) // 1)) {
-            &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Read-only field(s) for authenticated role: administrative");
-            return;
-        }
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     } elsif($c->user->roles eq "subscriber") {
         $domain = $schema->resultset('domains')
@@ -578,7 +508,7 @@ sub prepare_resource {
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
         $resource->{customer_id} = $item->provisioning_voip_subscriber->account_id;
-        $resource->{status} = $item ? $resource->{status} // 'active' : 'active';
+        $resource->{status} = $item ? $resource->{status} // $item->status : 'active';
 
         $resource->{administrative} = $item ? $item->provisioning_voip_subscriber->admin : 0;
     }
@@ -650,76 +580,14 @@ sub prepare_resource {
 
     return unless &$validate_code($resource);
 
-    my $alias_rows = sub {
-        my ($subscriber) = @_;
-        return $subscriber->voip_numbers->search({
-            'me.id' => { '!=' => $subscriber->primary_number_id // 0 },
-        }, {
-            prefetch => 'voip_dbalias',
-        })->all;
-    };
-    my $row_number = sub { $_[0]->cc . ($_[0]->ac // '') . $_[0]->sn };
-
-    # read-only fields omitted from the request keep their stored values
-    if ($item && %readonly) {
-        my $prov_sub = $item->provisioning_voip_subscriber;
-        if ($readonly{primary_number}) {
-            my $primary = $item->primary_number;
-            $resource->{e164} = $primary
-                ? { cc => $primary->cc, ac => $primary->ac, sn => $primary->sn }
-                : undef;
-        }
-        $resource->{pbx_extension} = $prov_sub->pbx_extension if $readonly{pbx_extension};
-        $resource->{profile_set}{id} = $prov_sub->profile_set_id if $readonly{profile_set_id};
-        $resource->{profile}{id} = $prov_sub->profile_id if $readonly{profile_id};
-        $resource->{administrative} = $prov_sub->admin if $readonly{administrative};
-        $resource->{status} = $item->status if $readonly{status};
-        if ($readonly{lock} || (!exists $resource->{lock} && $c->req->method ne 'PUT')) {
-            $resource->{lock} = get_provisoning_voip_subscriber_lock_level(
-                c => $c,
-                prov_subscriber => $prov_sub,
-            );
-        }
-        if ($readonly{alias_numbers}) {
-            # is_devid as well, update_subscriber_numbers() resets it otherwise
-            $resource->{alias_numbers} = [ map { {
-                cc => $_->cc,
-                ac => $_->ac,
-                sn => $_->sn,
-                is_devid => ($_->voip_dbalias ? $_->voip_dbalias->is_devid : 0),
-            } } $alias_rows->($item) ];
-        }
-    }
-
-    # subscriberadmin assigning/revoking alias numbers of its subscribers (its own and the
-    # pilot's ones are read-only), only numbers from the PBX pool (the pilot's aliases) are allowed
-    my ($pbx_pilot, $pool_selected);
-    if ($c->user->roles eq "subscriberadmin" && !$readonly{alias_numbers}) {
-        $pbx_pilot = $schema->resultset('voip_subscribers')->search({
-            'me.contract_id' => $c->user->account_id,
-            'me.status' => { '!=' => 'terminated' },
-            'provisioning_voip_subscriber.is_pbx_pilot' => 1,
-        }, {
-            join => 'provisioning_voip_subscriber',
-        })->first;
-        my %current = map { $row_number->($_) => $_->id } ($item ? $alias_rows->($item) : ());
-        my %pool = map { $row_number->($_) => $_->id } ($pbx_pilot ? $alias_rows->($pbx_pilot) : ());
-        my @requested = map { my $n = $_; join('', map { $n->{$_} // '' } qw/cc ac sn/) }
-            @{ $resource->{alias_numbers} // [] };
-        my @unavailable = map { exists $current{$_} || exists $pool{$_} ? () : $_ } @requested;
-        if (@unavailable) {
-            &{$err_code}(HTTP_UNPROCESSABLE_ENTITY,
-                "Invalid 'alias_numbers', not available in the PBX pool: " . join(', ', @unavailable));
-            return;
-        }
-        my $changed = @requested != keys %current || any { !exists $current{$_} } @requested;
-        if ($pbx_pilot && $changed) {
-            $pool_selected = [ map { $current{$_} // $pool{$_} } @requested ];
-        }
-    }
-
     # this format is expected by NGCP::Panel::Utils::Subscriber::create_subscriber
     $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
+
+    # lock is not a field of the subscriberadmin/subscriber forms (removed by the validation),
+    # apply the one determined above
+    if ($item && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+        $resource->{lock} = $lock_level;
+    }
 
     unless($domain) {
         $domain = $c->model('DB')->resultset('domains')->search({'me.id' => $resource->{domain_id}});
@@ -874,20 +742,9 @@ sub prepare_resource {
                 return;
             }
 
-            my $e164 = {
-                cc => $pilot->primary_number->cc,
-                ac => $pilot->primary_number->ac // '',
-                sn => $pilot->primary_number->sn . $resource->{pbx_extension},
-            };
-            # the primary number of a seat is derived from its pbx_extension
-            if ($item && $c->user->roles eq "subscriberadmin" && defined $resource->{e164}) {
-                my $sent = _api_number($resource->{e164});
-                if (!defined $sent || none { $sent eq $_ } _api_number($item->primary_number), _api_number($e164)) {
-                    &{$err_code}(HTTP_UNPROCESSABLE_ENTITY, "Read-only field(s) for authenticated role: primary_number");
-                    return;
-                }
-            }
-            $resource->{e164} = $e164;
+            $resource->{e164}->{cc} = $pilot->primary_number->cc;
+            $resource->{e164}->{ac} = $pilot->primary_number->ac // '';
+            $resource->{e164}->{sn} = $pilot->primary_number->sn . $resource->{pbx_extension};
 
             unless(is_true($resource->{is_pbx_group})) {
                 if(exists $resource->{pbx_group_ids}) {
@@ -1015,8 +872,6 @@ sub prepare_resource {
         preferences => $preferences,
         groups => $groups,
         groupmembers => $groupmembers,
-        pool_selected => $pool_selected,
-        pbx_pilot => $pbx_pilot,
     };
 
     return $r;
@@ -1408,17 +1263,6 @@ sub update_subscriber {
         schema => $schema,
         subscriber => $subscriber,
     );
-
-    if ($full_resource->{pool_selected}) {
-        update_subadmin_sub_aliases(
-            c => $c,
-            schema => $schema,
-            subscriber => $subscriber,
-            contract_id => $subscriber->contract_id,
-            alias_selected => $full_resource->{pool_selected},
-            sadmin => $full_resource->{pbx_pilot},
-        );
-    }
 
     try {
         update_subscriber_numbers(
