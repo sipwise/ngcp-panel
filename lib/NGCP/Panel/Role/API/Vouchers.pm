@@ -48,6 +48,8 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)),
+            (defined $item->customer_id ? Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->customer_id)) : ()),
+            (defined $item->used_by_subscriber_id ? Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->used_by_subscriber_id)) : ()),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -62,6 +64,8 @@ sub hal_from_item {
     );
 
     $resource{valid_until} = $item->valid_until->ymd('-') . ' ' . $item->valid_until->hms(':');
+    # an unused voucher has a zero used_at, which inflates to undef
+    $resource{used_at} = $item->used_at ? $item->used_at->ymd('-') . ' ' . $item->used_at->hms(':') : undef;
     if($c->user->billing_data) {
         $resource{code} = NGCP::Panel::Utils::Voucher::decrypt_code($c, $item->code);
     } else {

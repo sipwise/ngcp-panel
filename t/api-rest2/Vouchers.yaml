@@ -112,10 +112,16 @@
             my ($retained) = @_;
             delete $retained->{vouchers3}->{id};
             delete $retained->{vouchers3}->{_links};
+            $retained->{vouchers3_readonly} = {
+                map { $_ => delete $retained->{vouchers3}->{$_} } qw(used_at used_by_subscriber_id)
+            };
         }
     conditions:
         is:
             code: 200
+        ok:
+            '${vouchers3_readonly}.used_at': undefined
+            '${vouchers3_readonly}.used_by_subscriber_id': undefined
         is_deeply:
             '${vouchers3}': *content
 
@@ -140,7 +146,8 @@
             my ($retained) = @_;
             delete $retained->{modified_voucher}->{id};
             delete $retained->{modified_voucher}->{_links};
-        } 
+            delete $retained->{modified_voucher}->{$_} for qw(used_at used_by_subscriber_id);
+        }
     conditions:
         is: 
             code: 200
@@ -164,6 +171,32 @@
     conditions:
         is: 
             code: 422
+
+#filter unused vouchers
+-
+    name: filter unused vouchers
+    type: item
+    method: GET
+    path: '/api/vouchers/?used=0&reseller_id=1&base64_code=YXBpdGVzdGNvZGVfMw=='
+    retain:
+        unused_vouchers: body
+    conditions:
+        is:
+            code: 200
+            '${unused_vouchers}.total_count': 1
+
+#filter used vouchers
+-
+    name: filter used vouchers
+    type: item
+    method: GET
+    path: '/api/vouchers/?used=1&reseller_id=1&base64_code=YXBpdGVzdGNvZGVfMw=='
+    retain:
+        used_vouchers: body
+    conditions:
+        is:
+            code: 200
+            '${used_vouchers}.total_count': 0
 
 #verify pagination
 -

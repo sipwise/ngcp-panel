@@ -418,6 +418,43 @@
         is:
             code: 204
 
+#check used voucher
+-
+    name: check used voucher
+    type: item
+    method: GET
+    path: '${voucher_path1}?expand=reseller_id'
+    retain:
+        used_voucher: body
+    conditions:
+        is:
+            code: 200
+            '${used_voucher}.used_by_subscriber_id': ${subscriber_id}
+            '${used_voucher}.customer_id': ${customer_id}
+        ok:
+            '${used_voucher}.used_at': defined
+            '${used_voucher}.reseller_id_expand.name': defined
+
+#filter vouchers used by subscriber
+-
+    name: filter vouchers used by subscriber
+    type: item
+    method: GET
+    path: '/api/vouchers/?used=1&used_by_subscriber_id=${subscriber_id}'
+    retain:
+        used_vouchers: body
+    perl_code: !!perl/code |
+        {
+            my ($retained) = @_;
+            $retained->{used_vouchers_first} = $retained->{used_vouchers}->{_embedded}->{'ngcp:vouchers'}->[0];
+            $retained->{voucher1_id} = $retained->{voucher1}->{id};
+        }
+    conditions:
+        is:
+            code: 200
+            '${used_vouchers}.total_count': 1
+            '${used_vouchers_first}.id': ${voucher1_id}
+
 #perform same topup voucher
 -
     name: perform same topup voucher

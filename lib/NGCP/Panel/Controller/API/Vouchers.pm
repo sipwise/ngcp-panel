@@ -26,7 +26,9 @@ sub api_description {
            'customer_id can be empty. As admin, purge_existing deletes the vouchers of all the resellers, as reseller only the own ones. '.
            'Lines with less than two columns are skipped. A line which cannot be parsed, an invalid value, a code which '.
            'already exists for the reseller or an unknown reseller, customer or package rejects the whole upload with a 422, '.
-           'in which case nothing is imported or purged.';
+           'in which case nothing is imported or purged. '.
+           'The read-only "used_at" and "used_by_subscriber_id" fields show when and by which subscriber the voucher was used '.
+           'for a top-up (null if not used yet), "used_by_subscriber_id" can be resolved via "?expand=used_by_subscriber_id".';
 };
 
 sub query_params {
@@ -51,6 +53,39 @@ sub query_params {
                     { package_id => $q };
                 },
                 second => sub {},
+            },
+        },
+        {
+            param => 'customer_id',
+            description => 'Filter for vouchers reserved for a specific customer contract',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { customer_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'used_by_subscriber_id',
+            description => 'Filter for vouchers used by a specific subscriber',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { used_by_subscriber_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'used',
+            description => 'Filter for used (1 or true) or unused (0 or false) vouchers',
+            new_rs => sub {
+                my ($c, $q, $rs) = @_;
+                my $used = ($q eq '1' || $q eq 'true');
+                return $rs->search_rs({
+                    used_at => { ($used ? '!=' : '=') => \"'0000-00-00 00:00:00'" },
+                });
             },
         },
         {

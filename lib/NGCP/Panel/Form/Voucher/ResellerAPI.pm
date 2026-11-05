@@ -60,6 +60,30 @@ has_field 'package' => (
     },
 );
 
+has_field 'used_at' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) the voucher was used for a top-up, null if not used yet.']
+    },
+);
+
+has_field 'used_by_subscriber_id' => (
+    type => 'PosInteger',
+    required => 0,
+    readonly => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The subscriber who used the voucher for a top-up, null if not used yet.'],
+        expand => {
+            class => 'NGCP::Panel::Role::API::Subscribers',
+            allowed_roles => [qw(admin reseller)],
+        },
+    },
+);
+
 sub validate_valid_until {
     my ($self, $field) = @_;
 
