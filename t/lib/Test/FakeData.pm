@@ -386,6 +386,11 @@ sub build_data{
                 handle      => 'api_test'.time(),
                 reseller_id => sub { return shift->get_id('resellers',@_); },
             },
+            'create_special' => sub {
+                my ($self, $collection_name, $test_machine) = @_;
+                return $test_machine->check_create_correct(1,
+                    $self->data->{$collection_name}->{data_callbacks}->{uniquizer_cb});
+            },
             'default' => 'billing_profiles',
             'no_delete_available' => 1,
             'dependency_requires_recreation' => ['resellers'],
