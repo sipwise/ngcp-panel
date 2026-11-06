@@ -439,6 +439,16 @@ sub POST :Allow {
                     ) if exists $resource->{lock};
                     NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $subscriber);
                 }
+                if ($r->{pool_selected}) {
+                    NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
+                        c              => $c,
+                        schema         => $schema,
+                        subscriber     => $subscriber,
+                        contract_id    => $subscriber->contract_id,
+                        alias_selected => $r->{pool_selected},
+                        sadmin         => $r->{pbx_pilot},
+                    );
+                }
                 NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                     c              => $c,
                     schema         => $schema,
