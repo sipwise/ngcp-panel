@@ -118,6 +118,15 @@ has_field 'status' => (
     },
 );
 
+has_field 'lock' => (
+    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    label => 'Lock Level',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The lock level of the subscriber.'],
+    },
+);
+
 has_field 'timezone' => (
     type => 'Text',
     label => 'Timezone',
