@@ -1,13 +1,13 @@
 use strict;
 use warnings;
-use JE qw();
+use JavaScript::QuickJS qw();
 use Test::More;
 
-my $je = JE->new();
-my $je_result = $je->eval(<<EOJS
+my $js = JavaScript::QuickJS->new();
+my $js_result = $js->eval(<<EOJS
 var f = function() {
     var ud = 'john\@doe.com';
-    var i;
+    var i, h;
     var checksum = 0;
     var result = '';
     var packed = [ 0, 0x45, 0x80, ud.length ];
@@ -30,7 +30,7 @@ var f = function() {
 f();
 EOJS
 );
-diag('js result: ' . $je_result);
+diag('js result: ' . $js_result);
 
 my $ps = sub {
     #my $ud = $subscriber{username} . '@' . $domain{domain};
@@ -46,6 +46,6 @@ my $ps = sub {
 my $ps_result = $ps->();
 diag('perl result: ' . $ps_result);
 
-is($je_result, $ps_result, 'result is the same');
+is($js_result, $ps_result, 'result is the same');
 
 done_testing();

@@ -82,7 +82,7 @@ Depends:
  libio-string-perl,
  libipc-run3-perl,
  libipc-system-simple-perl,
- libje-perl,
+ libjavascript-quickjs-perl,
  libjson-multivalueordered-perl,
  libjson-perl,
  libjson-pointer-perl,

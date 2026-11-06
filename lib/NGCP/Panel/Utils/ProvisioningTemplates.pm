@@ -31,22 +31,9 @@ use NGCP::Panel::Utils::Kamailio qw();
 use NGCP::Panel::Utils::CallForwards qw();
 use NGCP::Panel::Utils::Events qw();
 
-BEGIN {
-    # Temporarily override the warning handler
-    local $SIG{__WARN__} = sub {
-        my $warning = shift;
-        # Ignore this specific message, print all others
-        warn $warning unless $warning =~ /Old package separator "'" deprecated/;
-    };
-
-    # Use require and import instead of 'use' so the local handler applies
-    require JE;
-    JE->import();
-
-    require JE::Destroyer;
-}
-
+use JavaScript::QuickJS qw();
 use JSON qw();
+use JSON::PP qw();
 use NGCP::Panel::Utils::Generic qw(escape_js);
 
 my $IDENTIFIER_FNAME = 'identifier';
@@ -57,8 +44,8 @@ my @INIT_FIELD_NAMES = qw(cc_ac_map default_cc);
 my $PURGE_FIELD_NAME = 'purge';
 my $SUBSCRIBER_SAVEPOINT = 'provisioning_template_subscriber';
 
-my $JE_ANON_CLASS = 'je_anon';
-sub je_anon::TO_JSON {
+my $ANON_CLASS = 'prov_anon';
+sub prov_anon::TO_JSON {
     return _unbless(@_);
 };
 my $STRICT_CLOSURE = 1;
@@ -451,7 +438,7 @@ sub provision_begin {
         $subs{split_number} = sub {
             my ($dn) = @_;
             $dn //= '';
-            $dn = '' . $dn; #force JE:: unboxing
+            $dn = '' . $dn;
             my ($cc,$ac,$sn) = ('','',$dn);
 
             if ($default_cc) {
@@ -482,13 +469,13 @@ sub provision_begin {
                 }
             }
 
-            return bless { ac => $ac, cc => $cc, sn => $sn, }, $JE_ANON_CLASS;
+            return bless { ac => $ac, cc => $cc, sn => $sn, }, $ANON_CLASS;
         };
     }
 
     foreach my $sub (qw(debug info warn error)) {
         $subs{$sub} = sub {
-            return $c->log->$sub(( map { _unbox_je_value($_); } @_));
+            return $c->log->$sub(( map { _unbox_js_value($_); } @_));
         };
     }
 
@@ -502,29 +489,32 @@ sub provision_begin {
             @{$context}{keys %subs} = values %subs;
         },
         js => sub {
-            $context->{_je} = JE->new();
-            $context->{_je}->eval($JS_ENV . "\nvar _func;\nvar now = new Date('" .
+            $context->{_js} = JavaScript::QuickJS->new();
+            $context->{_js}->eval($JS_ENV . "\nvar _func;\nvar now = new Date('" .
                 $context->{_now} . "');\n");
+            if (my $split_number = $subs{split_number}) {
+                $subs{split_number} = sub {
+                    return _unbless($split_number->(@_));
+                };
+            }
             $subs{'quotemeta'} = sub {
-                return quotemeta(_unbox_je_value(shift @_));
+                return quotemeta(_unbox_js_value(shift @_));
             };
             $subs{'sprintf'} = sub {
-                return sprintf(_unbox_je_value(shift @_), map {
-                    _unbox_je_value($_);
+                return sprintf(_unbox_js_value(shift @_), map {
+                    _unbox_js_value($_);
                 } @_);
             };
             $subs{'trim'} = sub {
-                my $string = _unbox_je_value(shift @_);
+                my $string = _unbox_js_value(shift @_);
                 $string =~ s/^\s+|\s+$//g;
                 return $string;
             };
             $subs{'die'} = sub {
-                return die(( map { _unbox_je_value($_); } @_));
+                return die(( map { _unbox_js_value($_); } @_));
             };
-            while (each %subs) {
-                $context->{_je}->new_function($_ => $subs{$_});
-            }
-            $context->{_je_env} = {};
+            $context->{_js}->set_globals(%subs);
+            $context->{_js_env} = {};
         }
     );
 
@@ -789,10 +779,9 @@ sub provision_cleanup {
 
     return unless $context;
 
-    if ($context->{_je}) {
-        JE::Destroyer::destroy($context->{_je}); # break circular refs
-        undef $context->{_je};
-        undef $context->{_je_env};
+    if ($context->{_js}) {
+        undef $context->{_js};
+        undef $context->{_js_env};
     }
 
 }
@@ -1822,7 +1811,7 @@ sub _calculate {
                                     ('@' . $_) => $context->{$_};
                                   } elsif ('HASH' eq ref $context->{$_}) {
                                     ('%' . $_) => $context->{$_};
-                                  } elsif ($JE_ANON_CLASS eq ref $context->{$_}) {
+                                  } elsif ($ANON_CLASS eq ref $context->{$_}) {
                                     ('%' . $_) => _unbless($context->{$_});
                                   } elsif ('CODE' eq ref $context->{$_}) {
                                     ('&' . $_) => $context->{$_};
@@ -1850,7 +1839,7 @@ sub _calculate {
                 my $v;
                 eval {
                     $v = $cl->($context);
-                    $v = _unbless($v) if ($v and $JE_ANON_CLASS eq ref $v);
+                    $v = _unbless($v) if ($v and $ANON_CLASS eq ref $v);
                 };
                 if ($@) {
                     die("$f: " . $@);
@@ -1859,29 +1848,31 @@ sub _calculate {
             },
             js => sub {
 
-                $context->{_je}->eval(join (";\n",
-                    map { if ('CODE' eq ref $context->{$_}) {
-                        die('no coderefs allowed');
-                    } elsif (('ARRAY' eq ref $context->{$_})
-                        or ('HASH' eq ref $context->{$_})
-                        or ($JE_ANON_CLASS eq ref $context->{$_})) {
-                    if ($context->{_je_env}->{$_}) {
-                        $_ . ' = ' . _to_json($context->{$_});
-                    } else { $context->{_je_env}->{$_} = 1;
-                        'var ' . $_ . ' = ' . _to_json($context->{$_}); }
-                    } elsif (ref $context->{$_}) {
-                        die('no refs allowed');
-                    } else { if ($context->{_je_env}->{$_}) {
-                        $_ . " = '" . escape_js($context->{$_}) . "'";
-                    } else { $context->{_je_env}->{$_} = 1;
-                        'var ' . $_ . " = '" . escape_js($context->{$_}) . "'"; }
-                    } } grep { substr($_,0,1) ne '_'; } keys %$context) .
-                    ";\n_func = $c;");
+                eval {
+                    $context->{_js}->eval(join (";\n",
+                        map { if ('CODE' eq ref $context->{$_}) {
+                            die('no coderefs allowed');
+                        } elsif (('ARRAY' eq ref $context->{$_})
+                            or ('HASH' eq ref $context->{$_})
+                            or ($ANON_CLASS eq ref $context->{$_})) {
+                        if ($context->{_js_env}->{$_}) {
+                            $_ . ' = ' . _to_json($context->{$_});
+                        } else { $context->{_js_env}->{$_} = 1;
+                            'var ' . $_ . ' = ' . _to_json($context->{$_}); }
+                        } elsif (ref $context->{$_}) {
+                            die('no refs allowed');
+                        } else { if ($context->{_js_env}->{$_}) {
+                            $_ . " = '" . escape_js($context->{$_}) . "'";
+                        } else { $context->{_js_env}->{$_} = 1;
+                            'var ' . $_ . " = '" . escape_js($context->{$_}) . "'"; }
+                        } } grep { substr($_,0,1) ne '_'; } keys %$context) .
+                        ";\n_func = $c;");
+                };
                 die("$f: " . $@) if $@;
                 my $v;
                 my $err;
                 eval {
-                    $v = _unbox_je_value($context->{_je}->eval('_func();'));
+                    $v = _unbox_js_value($context->{_js}->eval('_func();'));
                     $err = $@;
                 };
                 if ($err or ($err = $@)) {
@@ -1913,27 +1904,23 @@ sub _calculate {
 
 }
 
-sub _unbox_je_value {
+sub _unbox_js_value {
 
     my $v = shift;
-    return unless defined $v;
-    if ((ref $v) =~ /^JE::Object/) {
-        $v = $v->value;
-    } elsif ((ref $v) =~ /^JE::String/) {
-        $v = $v . '';
-    } elsif ((ref $v) =~ /^JE::Number/) {
-        $v = $v + 0;
-    } elsif ((ref $v) =~ /^JE::Boolean/) {
+    return $v unless defined $v; # keep null array elements and hash values
+    if (JSON::PP::is_bool($v)) {
         $v = ($v ? 1 : 0);
-    } elsif ((ref $v) =~ /^JE::(Null|Undefined)/) {
-        $v = undef;
-    } elsif ($JE_ANON_CLASS eq ref $v) {
+    } elsif ('JavaScript::QuickJS::Date' eq ref $v) {
+        $v = int($v->getTime() / 1000); # epoch seconds, as with JE
+    } elsif ((ref $v) =~ /^JavaScript::QuickJS::/) {
+        die('unsupported js value: ' . ref $v);
+    } elsif ($ANON_CLASS eq ref $v) {
         $v = _unbless($v);
     }
     if ('ARRAY' eq ref $v) {
-        return [ map { _unbox_je_value($_); } @$v ];
+        return [ map { _unbox_js_value($_); } @$v ];
     } elsif ('HASH' eq ref $v) {
-        return { map { $_ => _unbox_je_value($v->{$_}); } keys %$v };
+        return { map { $_ => _unbox_js_value($v->{$_}); } keys %$v };
     } else {
         return $v;
     }
