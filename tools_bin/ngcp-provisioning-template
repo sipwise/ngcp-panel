@@ -73,9 +73,10 @@ if (exists $c->stash->{'provisioning_templates'}->{$template_name}) {
     Getopt::Long::Configure("no_permute");
     GetOptions(
         ( map { ($_ . ($fields->{$_}->{required} ? '=' : ':') . 's') => \$values->{$_}; } keys %$values ),
-        "purge" => \$purge,
+        "purge:s" => \$purge,
         "file:s" => \$csv_file,
     ) or pod2usage(2);
+    $purge = 1 if (defined $purge and not length($purge));
 
     if ($csv_file) {
         my $csv_data = File::Slurp::read_file($csv_file);
@@ -119,7 +120,12 @@ if (exists $c->stash->{'provisioning_templates'}->{$template_name}) {
                 context => $context,
             );
             my $entity = NGCP::Panel::Utils::ProvisioningTemplates::get_provisioned_entity($context);
-            if (not $entity or not defined $entity->{id}) {
+            if ($entity and 'purged' eq $entity->{type}) {
+                print("Provisioning template '$template_name' done: subscriber ids ("
+                    . join(', ', @{$entity->{subscribers}}) . "), contract ids ("
+                    . join(', ', @{$entity->{contracts}}) . "), contact ids ("
+                    . join(', ', @{$entity->{contacts}}) . ") purged\n");
+            } elsif (not $entity or not defined $entity->{id}) {
                 print("Provisioning template '$template_name' done\n");
             } elsif ('subscriber' eq $entity->{type}) {
                 print("Provisioning template '$template_name' done: subscriber "
@@ -455,9 +461,11 @@ Specify a .csv file to process. Each row represents form values for one subscrib
 
 Provide an input attribute name and its value, as defined within the 'fields' tag in the provisioning template (Attribute must not be internal, i.e. 'calculated' type). Only relevant if no --file is specified.
 
-=item B<--purge>
+=item B<--purge>[=I<only>]
 
-Terminate an existing subscriber with duplicate number/aliases first.
+Terminate existing subscribers with a duplicate username/number/aliases first, then create the subscriber.
+With B<--purge=only>, only terminate the subscribers matched by the input (and the contract matched by its
+identifier, once it has no active subscribers left, and its contact, once no longer in use), without creating anything.
 
 =item B<--log-level>
 
@@ -474,6 +482,10 @@ ngcp-provisioning-template "My First Provisioning Template" --first-name="John" 
 ngcp-provisioning-template "Reseller1/Provisioning Template 1" --file="subscriberdata.csv" --purge
 
 ... runs "Provisioning Template 1" of "Reseller1" for each row in "subscriberdata.csv"
+
+ngcp-provisioning-template "Reseller1/Provisioning Template 1" --file="subscriberdata.csv" --purge=only
+
+... terminates the subscribers (and their contracts) matched by each row in "subscriberdata.csv"
 
 =head1 AUTHOR
 

@@ -17,7 +17,12 @@ sub allowed_methods{
 }
 
 sub api_description {
-    return 'Manage "provisioning templates" for creating subscribers with batch provisioning.';
+    return 'Manage "provisioning templates" for creating subscribers with batch provisioning. '.
+           'When POSTing to a provisioning template item, the optional parameter "purge_existing=true" terminates '.
+           'conflicting subscribers before recreating them, while "purge_existing=only" just terminates the matching '.
+           'subscribers (and the contract matched by its identifier, once it has no active subscribers left, and its '.
+           'contact, once no longer in use) '.
+           'without provisioning anything.';
 };
 
 sub order_by_cols {

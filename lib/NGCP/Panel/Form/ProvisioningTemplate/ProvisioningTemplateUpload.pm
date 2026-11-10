@@ -17,7 +17,13 @@ has_field 'csv' => (
 );
 
 has_field 'purge_existing' => (
-    type => 'Boolean',
+    type => 'Select',
+    label => 'Purge existing',
+    options => [
+        { value => '', label => 'no' },
+        { value => '1', label => 'purge and recreate' },
+        { value => 'only', label => 'purge only (no recreate)' },
+    ],
 );
 
 has_field 'save' => (

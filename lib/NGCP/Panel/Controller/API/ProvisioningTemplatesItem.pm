@@ -342,13 +342,6 @@ sub post {
     );
     return unless $resource;
     my $purge = $c->req->params->{purge_existing};
-    if (length($purge)
-        and ('1' eq $purge
-        or 'true' eq lc($purge))) {
-        $purge = 1;
-    } else {
-        $purge = 0;
-    }
 
     if (!$non_json_data || !$data) {
         my $context;
@@ -405,7 +398,11 @@ sub log_provisioning_result {
     # must not be reported as a failed provisioning run
     try {
         my $entity = run_module_method('Utils::ProvisioningTemplates::get_provisioned_entity', $context);
-        if (not $entity or not defined $entity->{id}) {
+        if ($entity and 'purged' eq $entity->{type}) {
+            $c->log->debug(sprintf("Provisioning template '%s' done: subscriber ids (%s), contract ids (%s), contact ids (%s) purged",
+                $id, join(', ', @{$entity->{subscribers}}), join(', ', @{$entity->{contracts}}),
+                join(', ', @{$entity->{contacts}})));
+        } elsif (not $entity or not defined $entity->{id}) {
             $c->log->debug(sprintf("Provisioning template '%s' done", $id));
         } elsif ('subscriber' eq $entity->{type}) {
             if (defined $entity->{label}) {

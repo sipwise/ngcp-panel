@@ -55,6 +55,7 @@ my $FIELD_TYPE_ATTRIBUTE = 'type';
 my $FIELD_VALUE_ATTRIBUTE = 'value';
 my @INIT_FIELD_NAMES = qw(cc_ac_map default_cc);
 my $PURGE_FIELD_NAME = 'purge';
+my $SUBSCRIBER_SAVEPOINT = 'provisioning_template_subscriber';
 
 my $JE_ANON_CLASS = 'je_anon';
 sub je_anon::TO_JSON {
@@ -280,7 +281,15 @@ sub create_provisioning_template_form {
                 c => $c,
                 context => $context,
             );
-            if (exists $context->{subscriber}) {
+            if (exists $context->{_purged}) {
+                NGCP::Panel::Utils::Message::info(
+                    c => $c,
+                    data => \%log_data,
+                    desc => $c->loc("Provisioning template '[_1]' done: [_2] subscriber(s), [_3] contract(s), [_4] contact(s) purged", $template,
+                        scalar @{$context->{_purged}->{subscribers}}, scalar @{$context->{_purged}->{contracts}},
+                        scalar @{$context->{_purged}->{contacts}}),
+                );
+            } elsif (exists $context->{subscriber}) {
                 if ($context->{subscriber}->{username} and $context->{domain}->{domain}) {
                     NGCP::Panel::Utils::Message::info(
                         c => $c,
@@ -401,7 +410,7 @@ sub provision_begin {
 
     my $context = {};
     $context->{_dfrd} = {};
-    $context->{_purge} = $purge // 0;
+    $context->{_purge} = _purge_mode($purge);
     $context->{_now} = NGCP::Panel::Utils::DateTime::current_local();
 
     my $fields = get_fields($c,1);
@@ -543,6 +552,17 @@ sub provision_commit_row {
         $values,
     );
 
+    my $purge = $context->{_purge} || _purge_mode($values->{$PURGE_FIELD_NAME});
+    if ('only' eq $purge) {
+        _purge_row(
+            $c,
+            $context,
+            $schema,
+            $c->stash->{provisioning_templates}->{$template},
+        );
+        return;
+    }
+
     my $guard = $schema->txn_scope_guard;
     _init_contract_context(
         $c,
@@ -594,50 +614,14 @@ sub provision_commit_row {
         $schema,
     );
 
-    my $purge = $context->{_purge} || $values->{$PURGE_FIELD_NAME};
-
-    try {
-        _init_subscriber_context(
-            $c,
-            $context,
-            $schema,
-            $c->stash->{provisioning_templates}->{$template},
-        );
-        _create_update_subscriber(
-            $c,
-            $context,
-            $schema,
-        );
-    } catch(DBIx::Class::Exception $e where { /Duplicate entry/ }) {
-        my ($msg, $subscriber) = _get_duplicate_subs(
-            $c,
-            $context,
-            $schema,
-            $e,
-            $purge,
-        );
-        if ($purge && $subscriber) {
-            $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
-            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-            _create_update_subscriber(
-                $c,
-                $context,
-                $schema,
-            );
-        } else {
-            die $msg;
-        }
-    } catch($e where { /Subscriber already exists/ }) {
-        my ($msg, $subscriber) = _get_duplicate_subs(
-            $c,
-            $context,
-            $schema,
-            $e,
-            $purge,
-        );
-        if ($purge && $subscriber) {
-            $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
-            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+    # each attempt runs in a savepoint, so a unique violation does not leave
+    # a half-created subscriber behind. when purging, the conflicting
+    # subscribers are terminated and the attempt is repeated.
+    my %purged = ();
+    while (1) {
+        my ($done, $error) = (0, undef);
+        $schema->storage->svp_begin($SUBSCRIBER_SAVEPOINT);
+        try {
             _init_subscriber_context(
                 $c,
                 $context,
@@ -649,36 +633,35 @@ sub provision_commit_row {
                 $context,
                 $schema,
             );
-        } else {
-            die $msg;
+            $done = 1;
+        } catch($e) {
+            $error = $e;
         }
-    } catch($e where { /alias '([^']+)' already exists/ or /more than \d+ provided aliases already exist/ }) {
-        my ($msg, $subscriber) = _get_duplicate_subs(
+        unless ($done) {
+            $schema->storage->svp_rollback($SUBSCRIBER_SAVEPOINT);
+        }
+        $schema->storage->svp_release($SUBSCRIBER_SAVEPOINT);
+        last if $done;
+
+        my ($msg, $subscribers) = _get_duplicate_subs(
             $c,
             $context,
             $schema,
-            $e,
+            $error,
             $purge,
         );
-        if ($purge && $subscriber && scalar @$subscriber) {
-            foreach (@$subscriber) {
-                $subscriber = $_;
-                $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
-                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-                _init_subscriber_context(
-                    $c,
-                    $context,
-                    $schema,
-                    $c->stash->{provisioning_templates}->{$template},
-                );
-                _create_update_subscriber(
-                    $c,
-                    $context,
-                    $schema,
-                );
-            }
-        } else {
-            die $msg;
+        die $error unless $msg;
+        my $own_id = $context->{_subscriber_item} ? $context->{_subscriber_item}->id : undef;
+        my @subscribers = grep {
+            not exists $purged{$_->id}
+            and 'terminated' ne $_->status
+            and not (defined $own_id and $own_id == $_->id);
+        } @{$subscribers // []};
+        die $msg unless ($purge and scalar @subscribers);
+        foreach my $subscriber (@subscribers) {
+            $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
+            NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+            $purged{$subscriber->id} = 1;
         }
     }
 
@@ -773,6 +756,13 @@ sub get_provisioned_entity {
 
     return unless $context;
 
+    return {
+        type        => 'purged',
+        subscribers => $context->{_purged}->{subscribers},
+        contracts   => $context->{_purged}->{contracts},
+        contacts    => $context->{_purged}->{contacts},
+    } if exists $context->{_purged};
+
     if (exists $context->{subscriber}) {
         return {
             type  => 'subscriber',
@@ -836,6 +826,8 @@ sub _init_row_context {
     delete $context->{_cs};
 
     delete $context->{row};
+    delete $context->{_subscriber_item};
+    delete $context->{_purged};
 
     my $fields = get_fields($c,1);
     my %row = ();
@@ -1023,6 +1015,38 @@ sub _init_subscriber_context {
 
     my ($c, $context, $schema, $template) = @_;
 
+    if (_calculate_subscriber_context($c, $context, $schema, $template)) {
+        $context->{_cs} = NGCP::Panel::Utils::Subscriber::prepare_resource(
+            c => $c,
+            schema => $schema,
+            resource => $context->{subscriber},
+            err_code => sub {
+                my ($code, $msg) = @_;
+                die($msg);
+            },
+            validate_code => sub {
+                my ($res) = @_;
+                #todo
+                return 1;
+            },
+            getcustomer_code => sub {
+                my ($cid) = @_;
+                my $contract = $schema->resultset('contracts')->find($cid);
+                NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
+                    c => $c, schema => $schema, contract_id => $contract->id) if $contract;
+                return $contract;
+            },
+            item => $context->{_subscriber_item},
+        );
+
+        $c->log->debug("provisioning template - subscriber: " . Dumper($context->{subscriber}));
+    }
+}
+
+sub _calculate_subscriber_context {
+
+    my ($c, $context, $schema, $template) = @_;
+
     if (exists $template->{subscriber}) {
         my @identifiers = _get_identifiers($template->{subscriber});
         my %subscriber = ();
@@ -1086,31 +1110,129 @@ sub _init_subscriber_context {
         $context->{subscriber}->{customer_id} //= $context->{contract}->{id};
         $context->{_subscriber_item} = $item;
 
-        $context->{_cs} = NGCP::Panel::Utils::Subscriber::prepare_resource(
-            c => $c,
-            schema => $schema,
-            resource => $context->{subscriber},
-            err_code => sub {
-                my ($code, $msg) = @_;
-                die($msg);
-            },
-            validate_code => sub {
-                my ($res) = @_;
-                #todo
-                return 1;
-            },
-            getcustomer_code => sub {
-                my ($cid) = @_;
-                my $contract = $schema->resultset('contracts')->find($cid);
-                NGCP::Panel::Utils::Contract::acquire_contract_rowlocks(
-                    c => $c, schema => $schema, contract_id => $contract->id) if $contract;
-                return $contract;
-            },
-            item => $item,
-        );
-
-        $c->log->debug("provisioning template - subscriber: " . Dumper($context->{subscriber}));
+        return 1;
     }
+    return 0;
+}
+
+sub _purge_row {
+
+    my ($c, $context, $schema, $template) = @_;
+
+    my $guard = $schema->txn_scope_guard;
+    _init_contract_context(
+        $c,
+        $context,
+        $schema,
+        $template,
+    );
+
+    tie(my %subscribers, 'Tie::IxHash');
+    if (_calculate_subscriber_context($c, $context, $schema, $template)) {
+        my $item = $context->{_subscriber_item};
+        $subscribers{$item->id} = $item if $item;
+        my $domain_id = $context->{provisioning_domain}->{id};
+        if ($domain_id) {
+            foreach my $col (qw(username webusername)) {
+                next unless length($context->{subscriber}->{$col});
+                foreach my $prov_subscriber ($schema->resultset('provisioning_voip_subscribers')->search_rs({
+                        $col => $context->{subscriber}->{$col},
+                        domain_id => $domain_id,
+                    })->all) {
+                    my $subscriber = $prov_subscriber->voip_subscriber;
+                    $subscribers{$subscriber->id} = $subscriber if $subscriber;
+                }
+            }
+        }
+        foreach my $number ($context->{subscriber}->{primary_number}, $context->{subscriber}->{e164},
+            @{_force_array($context->{subscriber}->{alias_numbers})}) {
+            next unless 'HASH' eq ref $number;
+            my $e164 = $number->{e164} // $number;
+            next unless 'HASH' eq ref $e164 and length($e164->{sn});
+            foreach my $voip_number ($schema->resultset('voip_numbers')->search_rs({
+                    cc => $e164->{cc},
+                    ac => $e164->{ac} // '',
+                    sn => $e164->{sn},
+                })->all) {
+                my $subscriber = $voip_number->subscriber;
+                $subscribers{$subscriber->id} = $subscriber if $subscriber;
+            }
+        }
+    }
+
+    my @subscriber_ids = ();
+    foreach my $subscriber (values %subscribers) {
+        next if 'terminated' eq $subscriber->status;
+        $c->log->debug("provisioning template - terminating subscriber id " . $subscriber->id);
+        NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+        push(@subscriber_ids, $subscriber->id);
+    }
+
+    my @contract_ids = ();
+    if (exists $context->{contract} and $context->{contract}->{id}) {
+        my $contract = $schema->resultset('contracts')->find($context->{contract}->{id});
+        if ($contract and 'terminated' ne $contract->status) {
+            die("cannot terminate contract with the id 1") if $contract->id == 1;
+            if ($contract->voip_subscribers->search_rs({
+                    'me.status' => { '!=' => 'terminated' },
+                })->count) {
+                $c->log->debug("provisioning template - contract id " . $contract->id . " has active subscribers, not terminated");
+            } else {
+                $c->log->debug("provisioning template - terminating contract id " . $contract->id);
+                $contract->voip_contract_preferences->delete;
+                $contract->update({
+                    status => 'terminated',
+                    terminate_timestamp => $context->{_now},
+                });
+                $contract->discard_changes;
+                NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                    c => $c,
+                    contract => $contract,
+                    schema => $schema,
+                );
+                push(@contract_ids, $contract->id);
+            }
+        }
+    }
+
+    my @contact_ids = ();
+    if (exists $context->{contract_contact} and $context->{contract_contact}->{id}) {
+        my $contact = $schema->resultset('contacts')->find($context->{contract_contact}->{id});
+        if ($contact and 'terminated' ne $contact->status) {
+            if ($schema->resultset('contracts')->search_rs({
+                    contact_id => $contact->id,
+                    status => { '!=' => 'terminated' },
+                })->first or $schema->resultset('voip_subscribers')->search_rs({
+                    contact_id => $contact->id,
+                    status => { '!=' => 'terminated' },
+                })->first) {
+                $c->log->debug("provisioning template - contact id " . $contact->id . " still in use, not terminated");
+            } else {
+                $c->log->debug("provisioning template - terminating contact id " . $contact->id);
+                $contact->update({
+                    status => 'terminated',
+                    terminate_timestamp => $context->{_now},
+                });
+                push(@contact_ids, $contact->id);
+            }
+        }
+    }
+
+    $guard->commit;
+
+    delete $context->{subscriber};
+    delete $context->{contract};
+    delete $context->{contract_contact};
+    $context->{_purged} = {
+        subscribers => \@subscriber_ids,
+        contracts => \@contract_ids,
+        contacts => \@contact_ids,
+    };
+
+    $c->log->debug("provisioning template " . $c->stash->{provisioning_template_name} . " purged: subscriber ids "
+        . join(', ', @subscriber_ids) . ", contract ids " . join(', ', @contract_ids)
+        . ", contact ids " . join(', ', @contact_ids));
+
 }
 
 sub _init_subscriber_preferences_context {
@@ -1857,91 +1979,78 @@ sub get_fields {
 sub _get_duplicate_subs {
 
     my ($c, $context, $schema, $e, $get) = @_;
-    my $idx;
-    my $val;
     my $msg;
-    my $subscriber;
-    if ($e =~ /Duplicate entry '([^']+)' for key '([^']+)'/) {
-        $idx = $2;
-        $val = $1;
-    }
-    if ($e =~ /alias '([^']+)' already exists/) {
-        $val = $1;
-        $msg = $e;
-        if ($get) {
-            $c->log->debug("provisioning template - $msg");
-            my %subs = ();
-            foreach my $alias ($c->model('DB')->resultset('voip_dbaliases')->search_rs({
-                    username => $val,
-                },undef)->all) {
-                $subscriber = $alias->subscriber->voip_subscriber;
-                $subs{$subscriber->id} = $subscriber unless exists $subs{$subscriber->id};
-            }
-            $subscriber = [ values %subs ];
-        }
-    } elsif ($e =~ /more than \d+ provided aliases already exist/) {
-        $msg = $e;
-        if ($get) {
-            $c->log->debug("provisioning template - $msg");
-            my %subs = ();
-            my @usernames = ();
-            foreach my $alias (@{ $context->{_cs}->{alias_numbers} // [] }) {
-                my $e164 = $alias->{e164} // $alias;
-                push @usernames, ($e164->{cc} // '') . ($e164->{ac} // '') . ($e164->{sn} // '');
-            }
-            if (my $e164 = $context->{_cs}->{resource}->{e164}) {
-                push @usernames, ($e164->{cc} // '') . ($e164->{ac} // '') . ($e164->{sn} // '');
-            }
-            @usernames = grep { length $_ } @usernames;
-            if (scalar @usernames) {
-                my $own_prov_id = $context->{_subscriber_item}
-                    ? $context->{_subscriber_item}->provisioning_voip_subscriber->id
-                    : undef;
-                foreach my $alias ($c->model('DB')->resultset('voip_dbaliases')->search_rs({
-                        username => { -in => \@usernames },
-                        (defined $own_prov_id ? (subscriber_id => { '!=' => $own_prov_id }) : ()),
-                    }, undef)->all) {
-                    next unless $alias->subscriber;
-                    my $sub = $alias->subscriber->voip_subscriber;
-                    next unless $sub;
-                    $subs{$sub->id} = $sub unless exists $subs{$sub->id};
-                }
-            }
-            $subscriber = [ values %subs ];
-        }
-    } elsif ($idx and 'number_idx' eq $idx) {
+    my @numbers = ();
+    my $col;
+    if ($e =~ /Duplicate entry '([^']+)' for key '(?:[^']+\.)?number_idx'/) {
         $msg = "number already exists: $e";
-        if ($get) {
-            $c->log->debug("provisioning template - $msg");
-            my %flt;
-            @flt{qw(cc ac sn)} = split(/-/,$val);
-            $subscriber = $c->model('DB')->resultset('voip_numbers')->find({
-                %flt
-            })->subscriber;
-        }
-    } elsif (not $idx or ($idx and 'user_dom_idx' eq $idx)) {
+        @numbers = ($1);
+    } elsif ($e =~ /Duplicate entry '[^']+' for key '(?:[^']+\.)?user_dom_idx'/
+        or $e =~ /Subscriber already exists/) {
         $msg = "username already exists: $e";
-        if ($get) {
-            $c->log->debug("provisioning template - $msg");
-            $subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
-                username => $context->{subscriber}->{username},
-                domain_id => $context->{provisioning_domain}->{id},
-            })->voip_subscriber;
-        }
-    } elsif ($idx and 'webuser_dom_idx' eq $idx) {
+        $col = 'username';
+    } elsif ($e =~ /Duplicate entry '[^']+' for key '(?:[^']+\.)?webuser_dom_idx'/) {
         $msg = "webusername already exists: $e";
-        if ($get) {
-            $c->log->debug("provisioning template - $msg");
-            $subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
-                webusername => $context->{subscriber}->{webusername},
-                domain_id => $context->{provisioning_domain}->{id},
-            })->voip_subscriber;
-        }
-    } else {
+        $col = 'webusername';
+    } elsif ($e =~ /more than \d+ provided aliases already exist/) {
         $msg = "$e";
+        foreach my $alias (@{ $context->{_cs}->{alias_numbers} // [] }) {
+            my $e164 = $alias->{e164} // $alias;
+            push @numbers, ($e164->{cc} // '') . ($e164->{ac} // '') . ($e164->{sn} // '');
+        }
+        if (my $e164 = $context->{_cs}->{resource}->{e164}) {
+            push @numbers, ($e164->{cc} // '') . ($e164->{ac} // '') . ($e164->{sn} // '');
+        }
+    } elsif ($e =~ /\b(?:alias(?:es)?|Numbers?) '?([\d,-]+)'? already exist/) {
+        # create: "alias 'x' already exists", "alias x already exists", "aliases x,y already exist"
+        # update: "Number 'x' already exists.", "Numbers 'x,y' already exist."
+        $msg = "$e";
+        @numbers = split(/,/, $1);
+    }
+    return unless $msg;
+    return ($msg) unless $get;
+
+    $c->log->debug("provisioning template - $msg");
+    my %subs = ();
+    if ($col) {
+        foreach my $prov_subscriber ($schema->resultset('provisioning_voip_subscribers')->search_rs({
+                $col => $context->{subscriber}->{$col},
+                domain_id => $context->{provisioning_domain}->{id},
+            })->all) {
+            my $subscriber = $prov_subscriber->voip_subscriber;
+            $subs{$subscriber->id} = $subscriber if $subscriber;
+        }
+    }
+    foreach my $number (grep { length $_; } @numbers) {
+        if ($number =~ /-/) { # cc-ac-sn
+            my %flt;
+            @flt{qw(cc ac sn)} = split(/-/, $number, 3);
+            foreach my $voip_number ($schema->resultset('voip_numbers')->search_rs(\%flt)->all) {
+                my $subscriber = $voip_number->subscriber;
+                $subs{$subscriber->id} = $subscriber if $subscriber;
+            }
+        } else {
+            foreach my $alias ($schema->resultset('voip_dbaliases')->search_rs({
+                    username => $number,
+                })->all) {
+                next unless $alias->subscriber;
+                my $subscriber = $alias->subscriber->voip_subscriber;
+                $subs{$subscriber->id} = $subscriber if $subscriber;
+            }
+        }
     }
 
-    return ($msg, $subscriber);
+    return ($msg, [ values %subs ]);
+
+}
+
+sub _purge_mode {
+
+    my ($purge) = @_;
+    return 0 unless $purge;
+    return 'only' if 'only' eq lc($purge);
+    return 0 if 'false' eq lc($purge);
+    return 1;
 
 }
 
