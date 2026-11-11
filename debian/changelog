@@ -1,3 +1,10 @@
+ngcp-panel (26.3.1.2+0~mr26.3.1.2) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [f7b9594] MT#66497 restrict subscriber roles in /api/subscribers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Nov 2026 12:50:30 +0100
+
 ngcp-panel (26.3.1.1+0~mr26.3.1.1) unstable; urgency=medium
 
   * New release.
