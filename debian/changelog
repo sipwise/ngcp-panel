@@ -1,3 +1,11 @@
+ngcp-panel (13.5.1.49+0~mr13.5.1.49) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [57daa9c] MT#66500 add PDF download of the API documentation
+  * [277ec16] MT#66497 restrict subscriber roles in /api/subscribers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Nov 2026 12:50:08 +0100
+
 ngcp-panel (13.5.1.48+0~mr13.5.1.48) unstable; urgency=medium
 
   [ Rene Krenn ]
