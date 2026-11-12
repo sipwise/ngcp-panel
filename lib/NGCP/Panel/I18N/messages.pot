@@ -9701,6 +9701,11 @@ msgstr ""
 msgid "Provisioning Template"
 msgstr ""
 
+#. ($template,                        scalar @{$context->{_purged}->{subscribers}}, scalar @{$context->{_purged}->{contracts}},                        scalar @{$context->{_purged}->{contacts}})
+#: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
+msgid "Provisioning template '%1' done: %2 subscriber(s), %3 contract(s), %4 contact(s) purged"
+msgstr ""
+
 #. ($template, $context->{contract}->{id})
 #: lib/NGCP/Panel/Utils/ProvisioningTemplates.pm
 msgid "Provisioning template '%1' done: contract %2 processed"
@@ -15813,7 +15818,7 @@ msgstr ""
 msgid "new interval for each top-up"
 msgstr ""
 
-#: share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt
+#: lib/NGCP/Panel/Utils/DbStrings.pm share/templates/rewrite/rules_list.tt share/templates/subscriber/preferences.tt
 msgid "no"
 msgstr ""
 
@@ -15936,6 +15941,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "private"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "purge and recreate"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "purge only (no recreate)"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
