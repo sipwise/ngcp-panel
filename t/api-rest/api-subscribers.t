@@ -211,6 +211,50 @@ my $put2get_check_params = { ignore_fields => $fake_data->data->{subscribers}->{
     #remove pilot aliases to don't intersect with them. On subscriber termination admin adopt numbers, see ticket#4967
     $pilot and $test_machine->request_patch(  [ { op => 'replace', path => '/alias_numbers', value => [] } ], $pilot->{location} );
 }
+#------- allowed_clis follow alias numbers (auto_allow_cli)
+if($remote_config->{config}->{numbermanagement}->{auto_allow_cli}){
+    diag("allowed_clis cleanup on alias removal");
+    my $uniq = time();
+    my $alias_keep   = { cc => '43', ac => '991', sn => '1'.$uniq };
+    my $alias_remove = { cc => '43', ac => '992', sn => '2'.$uniq };
+    my $as_string = sub { my $n = shift; return $n->{cc} . ($n->{ac} // '') . $n->{sn}; };
+
+    my $subscriber = $test_machine->check_create_correct(1, sub{
+            $_[0]->{username} .= $uniq.'_acli';
+            $_[0]->{webusername} .= $uniq.'_acli';
+            $_[0]->{pbx_extension} .= 'acli'.Test::FakeData::seq;
+            $_[0]->{primary_number} = { cc => '43', ac => '990', sn => '0'.$uniq };
+            $_[0]->{alias_numbers} = [ $alias_keep, $alias_remove ];
+            $_[0]->{customer_id} = $fake_data->get_id('customer_sipaccount');
+        }
+    )->[0];
+    my $preferences_uri = '/api/subscriberpreferences/'.$test_machine->get_id_from_created($subscriber);
+
+    my (undef, $preferences) = $test_machine->check_item_get($preferences_uri);
+    my %allowed = map { $_ => 1 } @{ $preferences->{allowed_clis} // [] };
+    ok($allowed{$as_string->($alias_keep)} && $allowed{$as_string->($alias_remove)},
+        "check that aliases were added to allowed_clis on subscriber create");
+
+    my ($res, $content) = $test_machine->request_patch(
+        [ { op => 'replace', path => '/alias_numbers', value => [ $alias_keep ] } ], $subscriber->{location});
+    $test_machine->http_code_msg(200, "check patch to remove one alias number", $res, $content);
+
+    (undef, $preferences) = $test_machine->check_item_get($preferences_uri);
+    %allowed = map { $_ => 1 } @{ $preferences->{allowed_clis} // [] };
+    ok(!$allowed{$as_string->($alias_remove)}, "check that removed alias was removed from allowed_clis");
+    ok($allowed{$as_string->($alias_keep)}, "check that remaining alias is still in allowed_clis");
+    ok($allowed{$as_string->($subscriber->{content}->{primary_number})}, "check that primary number is still in allowed_clis");
+
+    ($res, $content) = $test_machine->request_patch(
+        [ { op => 'replace', path => '/alias_numbers', value => [] } ], $subscriber->{location});
+    $test_machine->http_code_msg(200, "check patch to remove all alias numbers", $res, $content);
+
+    (undef, $preferences) = $test_machine->check_item_get($preferences_uri);
+    %allowed = map { $_ => 1 } @{ $preferences->{allowed_clis} // [] };
+    ok(!$allowed{$as_string->($alias_keep)}, "check that last removed alias was removed from allowed_clis");
+
+    $test_machine->clear_test_data_all();
+}
 
 if($remote_config->{config}->{features}->{cloudpbx}){
     {
