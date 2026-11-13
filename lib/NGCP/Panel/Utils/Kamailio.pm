@@ -132,6 +132,7 @@ sub _compose_location_path {
 #The "path" uri points to the sip_int on the LB node to which this subscriber belongs.
 #The "socket" points to the LB interface from which the incoming calls to this registration should be sent out.
 #See detailed description of the implemented logic in the workfron tasks 37459, 14589
+#In multi-site setups the LB is taken from the site the socket belongs to
     my $socket = $params->{socket};
     my $path_default = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
     if (!$socket) {
@@ -139,7 +140,6 @@ sub _compose_location_path {
         $c->log->debug('_compose_location_path: socket is empty, return default path:'.$path_default);
         return $path_default;
     }
-    my $lb_clusters = $c->config->{cluster_sets};
     my $subscriber_lb_ptr_preference_rs = NGCP::Panel::Utils::Preferences::get_chained_preference_rs(
         $c,
         'lbrtp_set',
@@ -151,15 +151,85 @@ sub _compose_location_path {
     );
     my ($subscriber_lb_ptr,$subscriber_lb);
     if ($subscriber_lb_ptr_preference_rs && $subscriber_lb_ptr_preference_rs->first) {
-        $c->log->debug('_compose_location_path: lbrtp_set:'.$subscriber_lb_ptr_preference_rs->first->value);
         $subscriber_lb_ptr = $subscriber_lb_ptr_preference_rs->first->value;
+        $c->log->debug('_compose_location_path: lbrtp_set:'.($subscriber_lb_ptr // 'undef'));
     }
-    $subscriber_lb_ptr //= $lb_clusters->{default};
+
+    my ($site_id, $site) = get_socket_site($c, $socket);
+    if ($site) {
+        $subscriber_lb = select_lb_uri($site->{cluster_sets}, $subscriber_lb_ptr, $site->{lb_uri});
+        if ($subscriber_lb) {
+            $c->log->debug("_compose_location_path: using LB of site $site_id for socket $socket");
+        } else {
+            $c->log->warn("_compose_location_path: no LB configured for site $site_id of socket $socket, using local LB");
+        }
+    }
     #TODO: is it ok to use default 'sip:lb@127.0.0.1:5060;lr' here?
-    $subscriber_lb = $lb_clusters->{$subscriber_lb_ptr} // 'sip:lb@127.0.0.1:5060;lr';
+    $subscriber_lb //= select_lb_uri($c->config->{cluster_sets}, $subscriber_lb_ptr, 'sip:lb@127.0.0.1:5060;lr');
     my $path = '<'.$subscriber_lb.';socket='.$socket.'>';
     $c->log->debug('_compose_location_path: path:'.$path);
     return $path;
+}
+
+sub select_lb_uri {
+    my ($cluster_sets, $lb_ptr, $fallback) = @_;
+    $cluster_sets = {} unless ref $cluster_sets eq 'HASH';
+    $lb_ptr //= $cluster_sets->{default};
+    my $lb_uri = defined $lb_ptr ? $cluster_sets->{$lb_ptr} : undef;
+    return $lb_uri // $fallback;
+}
+
+sub get_socket_site {
+    my ($c, $socket) = @_;
+
+    my $multisite = $c->config->{multisite} // {};
+    my $sites = $multisite->{sites};
+    return unless $multisite->{site_id} && ref $sites eq 'HASH' && $socket;
+
+    # the web form shows udp sockets as sip:
+    my @values = ($socket);
+    push @values, "udp:$1" if $socket =~ /^sip:(.+)$/;
+    push @values, "sip:$1" if $socket =~ /^udp:(.+)$/;
+
+    my @labels = map { $_->label } $c->model('DB')->resultset('voip_preferences_enum')->search_rs({
+        'preference.attribute' => 'outbound_socket',
+        'me.value' => { -in => \@values },
+    },{
+        join => 'preference',
+        columns => [qw/me.label/],
+    })->all;
+
+    my ($site_id, $error) = site_from_socket_labels($sites, $multisite->{site_id}, \@labels);
+    unless (defined $site_id) {
+        $c->log->warn("get_socket_site: cannot resolve site of socket $socket ($error), using local LB");
+        return;
+    }
+    return ($site_id, $sites->{$site_id});
+}
+
+sub site_from_socket_labels {
+    my ($sites, $local_site_id, $labels) = @_;
+
+    return (undef, 'no sites configured') unless ref $sites eq 'HASH';
+    return (undef, 'socket not found in outbound_socket list') unless $labels && @$labels;
+
+    my %site_id_by_key = map {
+        my $key = ref $sites->{$_} eq 'HASH' ? $sites->{$_}{key} : undef;
+        defined $key && length $key ? ($key => $_) : ();
+    } keys %{$sites};
+
+    my %matched;
+    foreach my $label (@{$labels}) {
+        next unless defined $label && $label =~ /^([^:]+):/;
+        my $id = $site_id_by_key{$1} // next;
+        $matched{$id} = 1;
+    }
+
+    my @ids = sort keys %matched;
+    return (undef, 'no site matches the socket labels') unless @ids;
+    return ($ids[0]) if @ids == 1;
+    return ($local_site_id) if defined $local_site_id && $matched{$local_site_id};
+    return (undef, 'socket matches multiple sites: '.join(',', @ids));
 }
 
 1;

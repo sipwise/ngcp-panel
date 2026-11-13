@@ -73,6 +73,44 @@ $test_machine->check_create_correct( 1, sub{ $_[0]->{contact} .= time().'_'.$_[1
     $test_machine->http_code_msg(422, "check creation of the subscriber registration without required expires. MT#14891.",$res,$content);
 }
 
+{
+    # outbound socket: it is kept in the Path, which in multi-site points to
+    # the LB of the site the socket belongs to.
+    # Set TEST_MULTISITE_LB="<site key>=<lb uri>,..." (e.g.
+    # "wien=sip:lb@172.16.255.250:5060;lr,graz=sip:lb@172.17.255.250:5060;lr")
+    # to also check the LB selected for the sockets of each site.
+    my %site_lb = map { split /=/, $_, 2 } grep { length } split /,/, ($ENV{TEST_MULTISITE_LB} // '');
+    my (undef, $prefdefs) = $test_machine->request_get('/api/subscriberpreferencedefs/');
+    my @sockets = grep { defined $_->{value} && length $_->{value} }
+        @{ (ref $prefdefs eq 'HASH' && $prefdefs->{outbound_socket}{enum_values}) || [] };
+    unless (%site_lb) {
+        # without expected LBs, one socket is enough
+        @sockets = @sockets[0 .. 0] if @sockets;
+    }
+    SKIP: {
+        skip 'no outbound_socket values available', 1 unless @sockets;
+        foreach my $socket_enum (@sockets) {
+            my ($socket, $label) = @{$socket_enum}{qw/value label/};
+            my ($res, $content) = $test_machine->check_item_post(sub{
+                $_[0]->{socket} = $socket;
+                $_[0]->{contact} .= time().'_socket_'.$label;
+            });
+            $test_machine->http_code_msg(201, "create subscriber registration with socket $label", $res, $content);
+            my $location = $res->header('Location');
+            next unless $location;
+            my (undef, $item) = $test_machine->request_get($location);
+            is($item->{socket}, $socket, "socket $label round-trips");
+            like($item->{path} // '', qr/;socket=\Q$socket\E>$/, "path contains socket $label");
+            my ($site_key) = ($label // '') =~ /^([^:]+):/;
+            if (defined $site_key && $site_lb{$site_key}) {
+                is(index($item->{path} // '', '<'.$site_lb{$site_key}.';socket='), 0,
+                    "path of socket $label points to the LB of site $site_key");
+            }
+            $test_machine->request_delete($location);
+        }
+    }
+}
+
 #api doesn't deny extra fields
 #{
 #    my($res, $content) = $test_machine->check_item_post(sub{$_[0]->{user_agent} = 'Test User Agent';$_[0]->{contact} .= time().'_MT14789' ;});
