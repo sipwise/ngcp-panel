@@ -2255,9 +2255,16 @@ sub update_subscriber_numbers {
 
     push @nums, $billing_subs->primary_number_id
         if($billing_subs->primary_number_id);
-    $billing_subs->voip_numbers->search({
+    my $released_numbers_rs = $billing_subs->voip_numbers->search({
         id => { 'not in' => \@nums },
-    })->update({
+    });
+    if(defined $acli_pref) {
+        # numbers no longer owned by the subscriber must not stay allowed as CLI
+        my @released_clis = map { $_->cc . ($_->ac // '') . $_->sn } $released_numbers_rs->all;
+        $acli_pref->search({ value => { -in => \@released_clis } })->delete
+            if(@released_clis);
+    }
+    $released_numbers_rs->update({
         subscriber_id => undef,
         reseller_id => undef,
     });
