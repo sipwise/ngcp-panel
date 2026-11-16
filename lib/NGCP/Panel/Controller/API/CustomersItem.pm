@@ -43,6 +43,8 @@ sub journal_query_params {
 __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller ccareadmin ccare subscriberadmin/],
+        PUT     => [qw/admin reseller ccareadmin ccare/],
+        PATCH   => [qw/admin reseller ccareadmin ccare/],
         Journal => [qw/admin reseller ccareadmin ccare/],
     }
 });
