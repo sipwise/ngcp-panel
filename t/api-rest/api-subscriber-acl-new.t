@@ -507,6 +507,25 @@ my $items;
         item => $ref->data('my_foreign_customer'),
         expected_result => { 'code' => 403 }
     );
+
+    # customers are read-only for a subscriberadmin
+    $customer_res->test_patch(
+        name => 'modify-patch own customer as privileged subscriber',
+        item => $customer,
+        data_replace => { field => 'status', value => 'terminated', op => 'replace' },
+        expected_result => { 'code' => 403, error_re => 'Invalid user' }
+    );
+    $customer_res->test_patch(
+        name => 'modify-patch foreign customer as privileged subscriber',
+        item => $ref->data('my_foreign_customer'),
+        data_replace => { field => 'status', value => 'terminated', op => 'replace' },
+        expected_result => { 'code' => 403, error_re => 'Invalid user' }
+    );
+    $customer_res->test_put(
+        name => 'modify-put foreign customer as privileged subscriber',
+        item => $ref->data('my_foreign_customer'),
+        expected_result => { 'code' => 403, error_re => 'Invalid user' }
+    );
 }
 
 # TODO: more tests for unprivileged subscriber!
