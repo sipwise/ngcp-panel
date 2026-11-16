@@ -62,8 +62,9 @@ sub _item_rs {
 
 sub packets_by_callid {
     my ($self, $c, $id) = @_;
+    my $msg_rs = $self->_item_rs($c)->search({ 'me.call_id' => $id });
     my $item_rs = $c->model('Storage')->resultset('packets')->search({
-        'message.call_id' => $id
+        'message.id' => { -in => $msg_rs->get_column('me.id')->as_query },
     },{
         join => { message_packets => 'message' }
     });
