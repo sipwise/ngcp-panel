@@ -23,7 +23,7 @@ sub _item_rs {
 
     if ($c->user->roles eq "admin") {
     } elsif ($c->user->roles eq "reseller" ||
-             $c->user->roles eq "subsriberadmin") {
+             $c->user->roles eq "subscriberadmin") {
         #TODO: possibly store reseller_id inside sipstats.messages
         # as such logic becomes quite expensive on large amount of subscribers
         # per reseller
