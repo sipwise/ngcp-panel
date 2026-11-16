@@ -25,6 +25,8 @@ $fake_data->set_data_from_script({
             package_id => undef,
             reseller_id => sub { return shift->get_id('resellers', @_); },
             valid_until => '2037-01-01 12:00:00',
+            used_at => undef,
+            used_by_subscriber_id => undef,
         },
         'query' => ['code','reseller_id'],
     },
