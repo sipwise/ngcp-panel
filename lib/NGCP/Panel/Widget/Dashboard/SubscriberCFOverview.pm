@@ -23,7 +23,7 @@ sub _get_cf_type_descriptions {
              cft  => $c->loc("Call Forward Timeout"),
              cfna => $c->loc("Call Forward Unavailable"),
              cfs => $c->loc("Call Forward SMS"),
-             cfr => $c->loc("Call Forward on Response"), };
+             cfr => $c->loc("Call Forward on Response"),
              cfo => $c->loc("Call Forward on Overflow"), };
 }
 

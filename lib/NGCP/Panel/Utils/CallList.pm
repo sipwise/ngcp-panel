@@ -6,10 +6,9 @@ use warnings;
 use JSON qw();
 use Scalar::Util;
 use Text::CSV_XS;
-use NGCP::Panel::Utils::MySQL;
-use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::Subscriber;
 
+# constants come before the Utils imports: Subscriber -> Contract refers to
+# them while this module is still being compiled
 use constant OWNER_VAT_SETTINGS => 1;
 
 use constant SUPPRESS_OUT => 1;
@@ -20,6 +19,10 @@ use constant SOURCE_CLI_SUPPRESSION_ID_COLNAME => 'source_cli_suppression_id';
 use constant DESTINATION_USER_IN_SUPPRESSION_ID_COLNAME => 'destination_user_in_suppression_id';
 
 use constant ENABLE_SUPPRESSIONS => 1; #setting to 0 totally disables call list suppressions -> no discussion about performance difference.
+
+use NGCP::Panel::Utils::MySQL;
+use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Subscriber;
 
 # owner:
 #     * subscriber (optional)

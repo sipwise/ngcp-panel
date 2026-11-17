@@ -96,7 +96,7 @@ sub GET : Allow {
         "OTPSecret" => 1,
     };
 
-    my $colls = NGCP::Panel::Utils::API::get_collections_files;
+    my $colls = NGCP::Panel::Utils::API::get_collections_files();
     foreach my $coll(@$colls) {
         my $mod = $coll;
         $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
@@ -443,7 +443,7 @@ sub OPTIONS : Allow {
 sub collections_link_headers : Private {
     my ($self) = @_;
 
-    my $colls = NGCP::Panel::Utils::API::get_collections_files;
+    my $colls = NGCP::Panel::Utils::API::get_collections_files();
 
     # create Link header for each of the collections
     my @links = ();

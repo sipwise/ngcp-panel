@@ -8,6 +8,7 @@ use File::Basename;
 use File::Find::Rule;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::API;
 
 
 sub allowed_methods{
@@ -67,7 +68,7 @@ sub GET :Allow {
 
     my $res = { username => $c->user->login, role => $c->user->roles };
 
-    my $colls = NGCP::Panel::Utils::API::get_collections_files;
+    my $colls = NGCP::Panel::Utils::API::get_collections_files();
     my %user_roles = map {$_ => 1} $c->user->roles;
     foreach my $coll (@$colls) {
         my $mod = $coll;
