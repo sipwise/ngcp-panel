@@ -12682,6 +12682,10 @@ msgid "The datetime (YYYY-MM-DD HH:mm:ss) pointing the last second belonging to 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The datetime (YYYY-MM-DD HH:mm:ss) the voucher was used for a top-up, null if not used yet."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The datetime (YYYY-MM-DD HH:mm:ss) when the billing profile gets active."
 msgstr ""
 
@@ -13726,6 +13730,10 @@ msgid "The subscriber to use on this line/key"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "The subscriber who used the voucher for a top-up, null if not used yet."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
 msgid "The subscriber's customer contract."
 msgstr ""
 
@@ -14669,6 +14677,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/Voucher.pm
 msgid "Used By Subscriber #"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Used at"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm
+msgid "Used by subscriber id"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Security.pm lib/NGCP/Panel/Utils/ProfilePackages.pm
