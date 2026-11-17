@@ -213,7 +213,7 @@ sub POST :Allow {
                     purge_existing => ($purge_existing eq 'true' || $purge_existing eq '1'),
                 );
             } catch($e) {
-                if ($e->isa('DBIx::Class::Exception' && $e =~ /Duplicate entry .* for key '\S*vouchers_rescode_idx'/) {
+                if ($e->isa('DBIx::Class::Exception' && $e =~ /Duplicate entry .* for key '\S*vouchers_rescode_idx'/)) {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
                         "Failed to upload vouchers, a voucher code is duplicated or already exists for its reseller", $e);
                     last;
