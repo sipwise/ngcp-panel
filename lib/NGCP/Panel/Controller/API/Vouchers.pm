@@ -9,6 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MIME::Base64;
+use Scalar::Util qw(blessed);
 
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Voucher;
@@ -213,15 +214,15 @@ sub POST :Allow {
                     purge_existing => ($purge_existing eq 'true' || $purge_existing eq '1'),
                 );
             } catch($e) {
-                if ($e->isa('DBIx::Class::Exception') && $e =~ /Duplicate entry .* for key '\S*vouchers_rescode_idx'/) {
+                if (blessed($e) && $e->isa('DBIx::Class::Exception') && $e =~ /Duplicate entry .* for key '\S*vouchers_rescode_idx'/) {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
                         "Failed to upload vouchers, a voucher code is duplicated or already exists for its reseller", $e);
                     last;
-                } elsif ($e->isa('DBIx::Class::Exception') && $e =~ /foreign key constraint fails/) {
+                } elsif (blessed($e) && $e->isa('DBIx::Class::Exception') && $e =~ /foreign key constraint fails/) {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
                         "Failed to upload vouchers, unknown reseller_id, customer_id or package_id", $e);
                     last;
-                } elsif ($e->isa('DBIx::Class::Exception') && $e =~ /Incorrect \w+ value|Data truncated|cannot be null|Out of range value/) {
+                } elsif (blessed($e) && $e->isa('DBIx::Class::Exception') && $e =~ /Incorrect \w+ value|Data truncated|cannot be null|Out of range value/) {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
                         "Failed to upload vouchers, invalid voucher data", $e);
                     last;
