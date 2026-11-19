@@ -1,3 +1,10 @@
+ngcp-panel (26.0.1.23+0~mr26.0.1.23) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [3a5b0bf] MT#66764 NcosLevels: allow ccare roles to GET collection
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Nov 2026 18:37:49 +0100
+
 ngcp-panel (26.0.1.22+0~mr26.0.1.22) unstable; urgency=medium
 
   [ Marco Capetta ]
