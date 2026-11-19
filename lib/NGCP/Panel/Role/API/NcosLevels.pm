@@ -16,8 +16,8 @@ sub _item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('ncos_levels');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
     } elsif($c->user->roles eq "subscriberadmin") {
         my $contract = $c->model('DB')->resultset('contracts')->find($c->user->account_id);
@@ -31,9 +31,9 @@ sub _item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "admin") {
+    if($c->user->roles eq "admin" || $c->user->roles eq "ccareadmin") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::AdminLevelAPI", $c);
-    } elsif($c->user->roles eq "reseller") {
+    } elsif($c->user->roles eq "reseller" || $c->user->roles eq "ccare") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::ResellerLevelAPI", $c);
     } elsif($c->user->roles eq "subscriberadmin") {
         return NGCP::Panel::Form::get("NGCP::Panel::Form::NCOS::SubAdminLevelAPI", $c);
