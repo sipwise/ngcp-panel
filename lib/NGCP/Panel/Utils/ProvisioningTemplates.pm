@@ -1831,11 +1831,10 @@ sub _calculate {
                         $cl = $context->{_cr_c}->{$c};
                     } else {
                         ## no critic (BuiltinFunctions::ProhibitStringyEval)
-                        $cl = eval($PERL_ENV . $c);
+                        $cl = eval($PERL_ENV . $c) or die("$f: " . $@);
                         $context->{_cr_c}->{$c} = $cl;
                     }
                 }
-                die("$f: " . $@) if $@;
                 my $v;
                 eval {
                     $v = $cl->($context);
@@ -1870,14 +1869,10 @@ sub _calculate {
                 };
                 die("$f: " . $@) if $@;
                 my $v;
-                my $err;
                 eval {
                     $v = _unbox_js_value($context->{_js}->eval('_func();'));
-                    $err = $@;
                 };
-                if ($err or ($err = $@)) {
-                    die("$f: " . $err);
-                }
+                die("$f: " . $@) if $@;
                 return ($1 => $v);
 
             }
