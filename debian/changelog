@@ -1,3 +1,12 @@
+ngcp-panel (12.5.1.68+0~mr12.5.1.68) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [0819bf1] MT#66288 sipcaptures: fix subscriberadmin filter
+  * [af7827c] MT#66288 sipcaptures: scope item GET by role
+  * [5ca9c25] MT#66288 customers: deny subadmin PATCH/PUT
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Nov 2026 09:47:39 +0100
+
 ngcp-panel (12.5.1.67+0~mr12.5.1.67) unstable; urgency=medium
 
   [ Kirill Solomko ]
