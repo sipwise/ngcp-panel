@@ -57,7 +57,7 @@ __PACKAGE__->set_config({
     allowed_roles => {
         Default => [qw/admin reseller/],
         Journal => [qw/admin reseller/],
-        GET     => [qw/admin reseller subscriberadmin/],
+        GET     => [qw/admin reseller ccareadmin ccare subscriberadmin/],
     },
 });
 
