@@ -1,3 +1,10 @@
+ngcp-panel (26.3.1.6+0~mr26.3.1.6) unstable; urgency=medium
+
+  [ Kirill Solomko ]
+  * [79782b8] MT#66467 fix reseller_id handling for reseller/ccare roles
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Nov 2026 17:39:53 +0100
+
 ngcp-panel (26.3.1.5+0~mr26.3.1.5) unstable; urgency=medium
 
   [ Marco Capetta ]
