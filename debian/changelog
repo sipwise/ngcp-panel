@@ -1,3 +1,10 @@
+ngcp-panel (26.0.1.24+0~mr26.0.1.24) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [40e9cec] MT#66714 Drop allowed_clis entry of removed alias
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Nov 2026 14:21:41 +0100
+
 ngcp-panel (26.0.1.23+0~mr26.0.1.23) unstable; urgency=medium
 
   [ Kirill Solomko ]
