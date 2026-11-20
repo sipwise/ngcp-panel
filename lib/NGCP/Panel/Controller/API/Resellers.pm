@@ -56,7 +56,10 @@ sub relation{
 }
 
 __PACKAGE__->set_config({
-    allowed_roles => [qw/admin/],
+    allowed_roles => {
+        Default => [qw/admin/],
+        GET     => [qw/admin ccareadmin/],
+    },
     required_licenses => {
         POST => [qw/reseller/],
     }
